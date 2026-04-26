@@ -19,26 +19,6 @@ This site provides students with module content, quizzes, interactive Python san
 
 ---
 
-## Running Locally
-
-No build step required. Clone the repo and open `index.html` directly in your browser:
-
-```bash
-git clone https://github.com/greg-longo/520_full.git
-cd 520_full
-open index.html
-```
-
-Or serve it with Python for full functionality (recommended for the Python sandbox features):
-
-```bash
-python3 -m http.server 8000
-```
-
-Then visit http://localhost:8000 in your browser.
-
----
-
 ## Credits
 
 Course content and module material created by **Jamie Andrews**.
