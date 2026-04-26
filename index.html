@@ -465,7 +465,7 @@
         <div class="hero-stat-label">Modules</div>
       </div>
       <div class="hero-stat">
-        <div class="hero-stat-num" id="simCount">2</div>
+        <div class="hero-stat-num" id="simCount">--</div>
         <div class="hero-stat-label">Simulations</div>
       </div>
       <div class="hero-stat">
@@ -714,6 +714,13 @@
     }
 
     loadProgress();
+
+    // Auto-count active (unlocked) simulations
+    const simCountEl = document.getElementById('simCount');
+    if (simCountEl) {
+      const activeSims = document.querySelectorAll('a.sim-card').length;
+      simCountEl.textContent = activeSims;
+    }
   </script>
 
 
