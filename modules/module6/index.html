@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 6: Git & GitHub - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --maroon: #8B1C40;
+      --maroon-light: #a82050;
+      --blue: #2A7195;
+      --blue-light: #3388b0;
+      --gray: #646469;
+      --gray-light: #9a9aa0;
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --bg-card2: #211f1d;
+      --text: #e8e4de;
+      --text-dim: #a09a92;
+      --border: #2e2b28;
+      --accent: #8B1C40;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Zilla Slab', serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    /* ---- NAV ---- */
+    nav {
+      background: var(--maroon);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.875rem;
+    }
+
+    .nav-home {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+    }
+
+    .nav-home:hover { color: #fff; }
+    .nav-sep { color: rgba(255,255,255,0.35); }
+    .nav-current { color: #fff; font-weight: 500; }
+
+    .nav-links {
+      display: flex;
+      gap: 0.25rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.875rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+
+    .nav-links a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+    /* ---- MODULE HEADER ---- */
+    .mod-header {
+      background: linear-gradient(160deg, #1e1210 0%, #0f0e0d 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 3.5rem 2rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mod-header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--maroon);
+    }
+
+    .mod-header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .mod-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--maroon-light);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .mod-header h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+    }
+
+    .mod-header p {
+      font-size: 1rem;
+      color: var(--text-dim);
+      max-width: 600px;
+      margin-bottom: 1.25rem;
+    }
+
+    .mod-meta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .meta-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.07);
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+    }
+
+    .mod-progress-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.25rem 1.5rem;
+      min-width: 160px;
+      text-align: center;
+    }
+
+    .mod-progress-box .pct {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 2rem;
+      color: var(--maroon-light);
+      font-weight: 500;
+    }
+
+    .mod-progress-box .pct-label {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+    }
+
+    /* ---- LAYOUT ---- */
+    .page-body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    /* ---- SIDEBAR ---- */
+    .sidebar {
+      position: sticky;
+      top: 72px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.25rem;
+    }
+
+    .sidebar-card h4 {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 0.75rem;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .toc-list a {
+      display: block;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.825rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      padding: 0.3rem 0.5rem;
+      border-radius: 3px;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .toc-list a:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+
+    .sim-cta {
+      background: var(--maroon);
+      border: none;
+      border-radius: 4px;
+      padding: 1.25rem;
+      text-decoration: none;
+      display: block;
+      transition: background 0.15s;
+    }
+
+    .sim-cta:hover { background: var(--maroon-light); }
+
+    .sim-cta-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .sim-cta h4 {
+      font-family: 'Zilla Slab', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.4rem;
+    }
+
+    .sim-cta p {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.45;
+    }
+
+    /* ---- CONTENT ---- */
+    .content h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 2.5rem;
+      margin-bottom: 0.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .content h2:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+
+    .content h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .content p {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      margin-bottom: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .content p strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .objectives {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      border-top: 3px solid var(--maroon);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .objectives h3 {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--maroon-light);
+      margin: 0 0 0.75rem 0;
+    }
+
+    .objectives ol {
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .objectives ol li {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* ---- CODE BLOCKS ---- */
+    pre {
+      background: #111010;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--maroon);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0 1.25rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.83rem;
+      line-height: 1.6;
+      color: #c8c3bc;
+    }
+
+    code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85em;
+      background: rgba(255,255,255,0.06);
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+      color: #c8c3bc;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      font-size: inherit;
+    }
+
+    .cmd { color: #3388b0; }
+    .cmt { color: #6a6460; }
+    .str { color: #8bba6a; }
+    .kw  { color: #c87832; }
+
+    /* ---- CALLOUT ---- */
+    .callout {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--blue);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
+    }
+
+    .callout-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--blue-light);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .callout p {
+      margin-bottom: 0;
+      font-size: 0.875rem;
+    }
+
+    .callout.warn { border-left-color: #c07b30; }
+    .callout.warn .callout-title { color: #c07b30; }
+
+    /* ---- CONCEPT GRID ---- */
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0 1.5rem;
+    }
+
+    .concept-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem;
+    }
+
+    .concept-box h4 {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--maroon-light);
+      margin-bottom: 0.4rem;
+    }
+
+    .concept-box p {
+      font-size: 0.825rem;
+      margin-bottom: 0;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* ---- QUIZ ---- */
+    .quiz-section {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+
+    .quiz-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .quiz-header h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+      border: none;
+      padding: 0;
+    }
+
+    .quiz-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+    }
+
+    .quiz-question {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .q-text {
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 0.9rem;
+      font-weight: 500;
+    }
+
+    .q-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .q-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      cursor: pointer;
+      padding: 0.5rem 0.75rem;
+      border-radius: 3px;
+      border: 1px solid transparent;
+      transition: background 0.12s, border-color 0.12s;
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      background: none;
+      text-align: left;
+      width: 100%;
+      font-family: 'Zilla Slab', serif;
+    }
+
+    .q-option:hover:not(:disabled) {
+      background: rgba(255,255,255,0.05);
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .q-option.selected { border-color: var(--blue); color: var(--text); background: rgba(42,113,149,0.1); }
+    .q-option.correct  { border-color: #4a9e6b; color: #6bc98a; background: rgba(74,158,107,0.1); }
+    .q-option.wrong    { border-color: #9e4a4a; color: #c87070; background: rgba(158,74,74,0.1); }
+
+    .q-radio {
+      width: 14px; height: 14px;
+      border: 2px solid var(--gray);
+      border-radius: 50%;
+      margin-top: 2px;
+      flex-shrink: 0;
+      transition: border-color 0.12s, background 0.12s;
+    }
+
+    .q-option.selected .q-radio { border-color: var(--blue); background: var(--blue); }
+    .q-option.correct  .q-radio { border-color: #4a9e6b; background: #4a9e6b; }
+    .q-option.wrong    .q-radio { border-color: #9e4a4a; background: #9e4a4a; }
+
+    .q-feedback {
+      font-size: 0.825rem;
+      margin-top: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 3px;
+      display: none;
+      line-height: 1.45;
+    }
+
+    .q-feedback.show { display: block; }
+    .q-feedback.correct-fb { background: rgba(74,158,107,0.12); color: #6bc98a; }
+    .q-feedback.wrong-fb   { background: rgba(158,74,74,0.12);  color: #c87070; }
+
+    .quiz-submit {
+      background: var(--maroon);
+      color: #fff;
+      border: none;
+      padding: 0.7rem 1.75rem;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.15s;
+    }
+
+    .quiz-submit:hover { background: var(--maroon-light); }
+    .quiz-submit:disabled { background: var(--gray); cursor: default; }
+
+    .quiz-result {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--maroon);
+      border-radius: 4px;
+      padding: 1.5rem;
+      margin-top: 1.25rem;
+      display: none;
+      text-align: center;
+    }
+
+    .quiz-result.show { display: block; }
+
+    .result-score {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 2.5rem;
+      font-weight: 500;
+      color: var(--maroon-light);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .result-label {
+      font-size: 1rem;
+      color: var(--text);
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .result-sub {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 740px) {
+      .page-body { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .mod-header-inner { grid-template-columns: 1fr; }
+      .mod-progress-box { display: none; }
+      .concept-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-left">
+      <a class="nav-home" href="../../index.html">DTSC 520</a>
+      <span class="nav-sep">/</span>
+      <span class="nav-current">Module 6</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="../../index.html#modules">All Modules</a></li>
+      <li><a href="branch_crisis_sim.html">Branch Crisis Sim</a></li>
+    </ul>
+  </nav>
+
+  <div class="mod-header">
+    <div class="mod-header-inner">
+      <div>
+        <div class="mod-num">Module 06</div>
+        <h1>Git &amp; GitHub</h1>
+        <p>Version control is the foundation of professional data science. Learn to track changes, collaborate on code, and manage your project history with Git and GitHub.</p>
+        <div class="mod-meta">
+          <span class="meta-pill">Version Control</span>
+          <span class="meta-pill">Branching</span>
+          <span class="meta-pill">Merging</span>
+          <span class="meta-pill">Collaboration</span>
+          <span class="meta-pill">10-question quiz</span>
+        </div>
+      </div>
+      <div class="mod-progress-box">
+        <div class="pct" id="quizScore">--</div>
+        <div class="pct-label">Quiz Score</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-body">
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <div class="objectives">
+        <h3>Learning Objectives</h3>
+        <ol>
+          <li>Explain what version control is and why it matters for data science work</li>
+          <li>Distinguish between local and remote repositories</li>
+          <li>Use the core Git workflow: <code>add</code>, <code>commit</code>, <code>push</code>, <code>pull</code></li>
+          <li>Create and switch between branches to isolate work</li>
+          <li>Merge branches and resolve conflicts when they arise</li>
+          <li>Open and review a Pull Request on GitHub</li>
+        </ol>
+      </div>
+
+      <!-- SECTION 1 -->
+      <h2 id="version-control">What is Version Control?</h2>
+
+      <p>
+        A version control system records every change you make to your files over time, so you can go back to any earlier state of your project. Think of it as an unlimited undo history - not just for one file, but for your entire project directory.
+      </p>
+
+      <p>
+        For data scientists, this matters because your work is rarely linear. You'll try an approach, hit a dead end, and need to backtrack. You'll share a notebook with a teammate who changes it in ways that break your analysis. You'll want to know exactly what changed between the version that worked and the version that didn't. Version control handles all of this.
+      </p>
+
+      <p>
+        <strong>Git</strong> is the most widely used version control system in the world. <strong>GitHub</strong> is a hosting platform built on top of Git that adds collaboration features like pull requests, code review, and issue tracking.
+      </p>
+
+      <!-- SECTION 2 -->
+      <h2 id="three-states">The Three States</h2>
+
+      <p>Every file in a Git project lives in one of three states at any given moment:</p>
+
+      <div class="concept-grid">
+        <div class="concept-box">
+          <h4>Working Directory</h4>
+          <p>Your actual files on disk. When you edit a notebook or Python script, the changes live here until you stage them.</p>
+        </div>
+        <div class="concept-box">
+          <h4>Staging Area</h4>
+          <p>A holding zone for changes you're about to commit. You choose which changes to include - not every edit has to go into the same commit.</p>
+        </div>
+        <div class="concept-box">
+          <h4>Repository</h4>
+          <p>The committed history. Once changes are committed, Git permanently records a snapshot. This is your undo history.</p>
+        </div>
+        <div class="concept-box">
+          <h4>Remote (GitHub)</h4>
+          <p>A copy of your repository hosted on GitHub. Push to share your commits with others; pull to receive theirs.</p>
+        </div>
+      </div>
+
+      <!-- SECTION 3 -->
+      <h2 id="basic-workflow">The Core Workflow</h2>
+
+      <p>Almost every Git session follows the same pattern. Once you have a repository set up, the day-to-day cycle looks like this:</p>
+
+<pre><code><span class="cmt"># 1. Pull in any changes your teammates made</span>
+<span class="cmd">git pull origin main</span>
+
+<span class="cmt"># 2. Make changes to your files (edit, add, delete)</span>
+
+<span class="cmt"># 3. Stage the changes you want to include</span>
+<span class="cmd">git add analysis.py</span>          <span class="cmt"># stage one file</span>
+<span class="cmd">git add .</span>                    <span class="cmt"># stage everything</span>
+
+<span class="cmt"># 4. Commit with a descriptive message</span>
+<span class="cmd">git commit -m <span class="str">"Add batting average normalization step"</span></span>
+
+<span class="cmt"># 5. Push your commits to GitHub</span>
+<span class="cmd">git push origin main</span></code></pre>
+
+      <div class="callout">
+        <div class="callout-title">Good commit messages</div>
+        <p>Write commit messages as if you're finishing the sentence "This commit will..." - so "Add batting average normalization step" rather than "stuff" or "fixed it". Your future self will thank you when you're scrolling through history three months later.</p>
+      </div>
+
+      <!-- SECTION 4 -->
+      <h2 id="repos">Setting Up a Repository</h2>
+
+      <p>There are two ways to start a Git project. You can initialize a new one locally, or you can clone an existing one from GitHub.</p>
+
+<pre><code><span class="cmt"># Option A: Start fresh locally</span>
+<span class="cmd">git init</span>
+<span class="cmd">git remote add origin https://github.com/your-username/your-repo.git</span>
+
+<span class="cmt"># Option B: Clone from GitHub (more common)</span>
+<span class="cmd">git clone https://github.com/your-username/your-repo.git</span>
+<span class="cmd">cd your-repo</span></code></pre>
+
+      <p>For this course, you'll fork a starter repo on GitHub and clone it to your machine or open it in a Codespace. Forking gives you your own copy of the repository under your GitHub account - any changes you push go to your fork, not the original.</p>
+
+      <!-- SECTION 5 -->
+      <h2 id="branching">Branching</h2>
+
+      <p>
+        A branch is an independent copy of your project history that you can work on without touching the main codebase. When you're building a new feature, fixing a bug, or running an experiment, you do that work on a branch. If it goes well, you merge it back. If it doesn't, you discard the branch and nothing is lost.
+      </p>
+
+<pre><code><span class="cmt"># See all branches (the * marks your current branch)</span>
+<span class="cmd">git branch</span>
+
+<span class="cmt"># Create a new branch and switch to it</span>
+<span class="cmd">git checkout -b feature/add-salary-viz</span>
+
+<span class="cmt"># Do your work, commit as normal, then push the branch</span>
+<span class="cmd">git push origin feature/add-salary-viz</span>
+
+<span class="cmt"># Switch back to main</span>
+<span class="cmd">git checkout main</span></code></pre>
+
+      <p>
+        The convention is to keep <strong>main</strong> always in a working, deployable state. All active development happens on branches. This is how professional teams prevent broken code from reaching the shared codebase.
+      </p>
+
+      <!-- SECTION 6 -->
+      <h2 id="merging">Merging and Conflicts</h2>
+
+      <p>
+        When your branch is ready, you merge it back into main. Git will try to combine the changes automatically. If two branches modified the same lines of the same file, Git cannot decide which version is correct - that's a <strong>merge conflict</strong>.
+      </p>
+
+<pre><code><span class="cmt"># Merge a branch into main</span>
+<span class="cmd">git checkout main</span>
+<span class="cmd">git merge feature/add-salary-viz</span>
+
+<span class="cmt"># If a conflict occurs, Git marks the file:</span>
+<span class="cmt"># <<<<<<< HEAD</span>
+<span class="cmt"># your version of the code</span>
+<span class="cmt"># =======</span>
+<span class="cmt"># the incoming version</span>
+<span class="cmt"># >>>>>>> feature/add-salary-viz</span>
+
+<span class="cmt"># Edit the file to resolve, then:</span>
+<span class="cmd">git add analysis.py</span>
+<span class="cmd">git commit -m <span class="str">"Merge salary viz feature, resolve conflict"</span></span></code></pre>
+
+      <div class="callout warn">
+        <div class="callout-title">Conflicts aren't failures</div>
+        <p>Merge conflicts are a normal part of collaborative work - not a sign something went wrong. Git is simply telling you it needs a human to decide which version of the code is correct. Read both sides carefully before choosing.</p>
+      </div>
+
+      <!-- SECTION 7 -->
+      <h2 id="pull-requests">Pull Requests</h2>
+
+      <p>
+        On GitHub, you don't usually merge branches directly from the command line when working on a team. Instead, you open a <strong>Pull Request</strong> (PR) - a proposal to merge your branch into main, with a built-in discussion thread for code review.
+      </p>
+
+      <p>The pull request workflow looks like this:</p>
+      <p>
+        Push your branch to GitHub, then open a PR through the GitHub interface. A teammate reviews your changes, leaves comments, and either approves or requests changes. Once approved, the branch is merged and you delete the branch to keep the repo clean.
+      </p>
+
+      <div class="callout">
+        <div class="callout-title">Best practices recap</div>
+        <p>Always <code>git pull</code> before you start new work. Write clear commit messages. Use branches for every new feature or fix. Review your own PR before asking someone else to. Delete merged branches.</p>
+      </div>
+
+      <!-- QUIZ -->
+      <div class="quiz-section" id="quiz">
+        <div class="quiz-header">
+          <h2>Module 6 Quiz</h2>
+          <span class="quiz-tag">10 questions</span>
+        </div>
+
+        <div id="quizForm">
+
+          <div class="quiz-question" data-idx="0" data-correct="1">
+            <div class="q-text">1. What does <code>git add .</code> do?</div>
+            <div class="q-options">
+              <button class="q-option" data-val="0"><div class="q-radio"></div>Creates a new branch called "add"</button>
+              <button class="q-option" data-val="1"><div class="q-radio"></div>Stages all modified files in the current directory for the next commit</button>
+              <button class="q-option" data-val="2"><div class="q-radio"></div>Pushes all local commits to GitHub</button>
+              <button class="q-option" data-val="3"><div class="q-radio"></div>Adds a new remote repository called "origin"</button>
+            </div>
+            <div class="q-feedback"></div>
+          </div>
+
+          <div class="quiz-question" data-idx="1" data-correct="2">
+            <div class="q-text">2. Which of the following best describes the <em>staging area</em>?</div>
+            <div class="q-options">
+              <button class="q-option" data-val="0"><div class="q-radio"></div>The remote GitHub repository where your team collaborates</button>
+              <button class="q-option" data-val="1"><div class="q-radio"></div>Your working directory where files are edited</button>
+              <button class="q-option" data-val="2"><div class="q-radio"></div>A holding area where you decide which changes will be included in the next commit</button>
+              <button class="q-option" data-val="3"><div class="q-radio"></div>A temporary backup of deleted files</button>
+            </div>
+            <div class="q-feedback"></div>
+          </div>
+
+          <div class="quiz-question" data-idx="2" data-correct="0">
+            <div class="q-text">3. You run <code>git commit -m "Add player age column"</code>. Where does this commit initially exist?</div>
+            <div class="q-options">
+              <button class="q-option" data-val="0"><div class="q-radio"></div>Only in your local repository</button>
+              <button class="q-option" data-val="1"><div class="q-radio"></div>Only on GitHub</button>
+              <button class="q-option" data-val="2"><div class="q-radio"></div>Both locally and on GitHub simultaneously</button>
+              <button class="q-option" data-val="3"><div class="q-radio"></div>In the staging area, waiting for a push</button>
+            </div>
+            <div class="q-feedback"></div>
+          </div>
+
+          <div class="quiz-question" data-idx="3" data-correct="3">
+            <div class="q-text">4. What is the purpose of creating a branch before starting new work?</div>
+            <div class="q-options">
+              <button class="q-option" data-val="0"><div class="q-radio"></div>To make your commits upload faster to GitHub</button>
+              <button class="q-option" data-val="1"><div class="q-radio"></div>Branches are required by GitHub - you cannot commit without one</button>
+              <button class="q-option" data-val="2"><div class="q-radio"></div>To create a backup copy of the repository on a second server</button>
+              <button class="q-option" data-val="3"><div class="q-radio"></div>To isolate your work so changes don't affect the main codebase until they're ready</button>
+            </div>
+            <div class="q-feedback"></div>
+          </div>
+
+          <div class="quiz-question" data-idx="4" data-correct="1">
+            <div class="q-text">5. A merge conflict occurs when...</div>
+            <div class="q-options">
+              <button class="q-option" data-val="0"><div class="q-radio"></div>You try to push without a commit message</button>
+              <button class="q-option" data-val="1"><div class="q-radio"></div>Two branches have made changes to the same lines in the same file</button>
+              <button class="q-option" data-val="2"><div class="q-radio"></div>Your internet connection drops during a <code>git push</code></button>
+              <button class="q-option" data-val="3"><div class="q-radio"></div>A branch name already exists in the remote repository</button>
+            </div>
+            <div class="q-feedback"></div>
+          </div>
+
+          <div class="quiz-question" data-idx="5" data-correct="2">
+            <div class="q-text">6. What does <code>git pull origin main</code> do?</div>
+            <div class="q-options">
+              <button class="q-option" data-val="0"><div class="q-radio"></div>Uploads your local main branch to GitHub</button>
+              <button class="q-option" data-val="1"><div class="q-radio"></div>Creates a new branch called "origin" from main</button>
+              <button class="q-option" data-val="2"><div class="q-radio"></div>Downloads commits from the remote main branch and merges them into your local branch</button>
+              <button class="q-option" data-val="3"><div class="q-radio"></div>Deletes the main branch from the remote</button>
+            </div>
+            <div class="q-feedback"></div>
+          </div>
+
+          <div class="quiz-question" data-idx="6" data-correct="0">
+            <div class="q-text">7. What is a Pull Request on GitHub?</div>
+            <div class="q-options">
+              <button class="q-option" data-val="0"><div class="q-radio"></div>A proposal to merge one branch into another, with a thread for code review and discussion</button>
+              <button class="q-option" data-val="1"><div class="q-radio"></div>A request to pull someone else's repository to your machine</button>
+              <button class="q-option" data-val="2"><div class="q-radio"></div>An automated script that pulls new commits every hour</button>
+              <button class="q-option" data-val="3"><div class="q-radio"></div>A way to request read access to a private repository</button>
+            </div>
+            <div class="q-feedback"></div>
+          </div>
+
+          <div class="quiz-question" data-idx="7" data-correct="3">
+            <div class="q-text">8. Which command creates a new branch called <code>feature/clean-data</code> AND switches to it in one step?</div>
+            <div class="q-options">
+              <button class="q-option" data-val="0"><div class="q-radio"></div><code>git branch feature/clean-data</code></button>
+              <button class="q-option" data-val="1"><div class="q-radio"></div><code>git switch feature/clean-data</code></button>
+              <button class="q-option" data-val="2"><div class="q-radio"></div><code>git merge feature/clean-data</code></button>
+              <button class="q-option" data-val="3"><div class="q-radio"></div><code>git checkout -b feature/clean-data</code></button>
+            </div>
+            <div class="q-feedback"></div>
+          </div>
+
+          <div class="quiz-question" data-idx="8" data-correct="1">
+            <div class="q-text">9. What is <strong>forking</strong> a repository on GitHub?</div>
+            <div class="q-options">
+              <button class="q-option" data-val="0"><div class="q-radio"></div>Splitting a repository into two separate projects permanently</button>
+              <button class="q-option" data-val="1"><div class="q-radio"></div>Creating your own copy of someone else's repository under your GitHub account</button>
+              <button class="q-option" data-val="2"><div class="q-radio"></div>Creating a branch on the remote repository</button>
+              <button class="q-option" data-val="3"><div class="q-radio"></div>Downloading the repository without version history</button>
+            </div>
+            <div class="q-feedback"></div>
+          </div>
+
+          <div class="quiz-question" data-idx="9" data-correct="2">
+            <div class="q-text">10. After resolving a merge conflict, what do you need to do before the merge is complete?</div>
+            <div class="q-options">
+              <button class="q-option" data-val="0"><div class="q-radio"></div>Run <code>git conflict --resolve</code></button>
+              <button class="q-option" data-val="1"><div class="q-radio"></div>Delete the branch that caused the conflict</button>
+              <button class="q-option" data-val="2"><div class="q-radio"></div>Stage the resolved file with <code>git add</code> and then commit</button>
+              <button class="q-option" data-val="3"><div class="q-radio"></div>Push the conflicted file to GitHub so a teammate can fix it</button>
+            </div>
+            <div class="q-feedback"></div>
+          </div>
+
+          <button class="quiz-submit" id="submitBtn" onclick="submitQuiz()">Submit Quiz</button>
+
+          <div class="quiz-result" id="quizResult">
+            <div class="result-score" id="resultScore"></div>
+            <div class="result-label" id="resultLabel"></div>
+            <div class="result-sub" id="resultSub"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="sidebar-card">
+        <h4>On this page</h4>
+        <ul class="toc-list">
+          <li><a href="#version-control">What is Version Control?</a></li>
+          <li><a href="#three-states">The Three States</a></li>
+          <li><a href="#basic-workflow">Core Workflow</a></li>
+          <li><a href="#repos">Setting Up a Repo</a></li>
+          <li><a href="#branching">Branching</a></li>
+          <li><a href="#merging">Merging &amp; Conflicts</a></li>
+          <li><a href="#pull-requests">Pull Requests</a></li>
+          <li><a href="#quiz">Quiz</a></li>
+        </ul>
+      </div>
+
+      <a class="sim-cta" href="branch_crisis_sim.html">
+        <div class="sim-cta-label">Simulation</div>
+        <h4>The Branch Crisis</h4>
+        <p>A bad merge just hit the StatDeck repo. Work through the fallout - branching, conflicts, and pull requests under pressure.</p>
+      </a>
+
+      <div class="sidebar-card">
+        <h4>Key Commands</h4>
+        <ul class="toc-list">
+          <li><a href="#basic-workflow"><code>git add</code> / <code>git commit</code></a></li>
+          <li><a href="#basic-workflow"><code>git push</code> / <code>git pull</code></a></li>
+          <li><a href="#branching"><code>git checkout -b</code></a></li>
+          <li><a href="#merging"><code>git merge</code></a></li>
+          <li><a href="#repos"><code>git clone</code></a></li>
+        </ul>
+      </div>
+
+    </aside>
+
+  </div><!-- /page-body -->
+
+  <footer>
+    This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.<br>&copy; Eastern University. All rights reserved.
+  </footer>
+
+  <script>
+    const feedbackTexts = [
+      { correct: "Correct. <code>git add .</code> stages all changes in the current directory, preparing them for the next commit.", wrong: "Not quite. <code>git add .</code> stages changes - it doesn't branch, push, or configure remotes." },
+      { correct: "Right. The staging area is where you curate exactly what goes into a commit before writing it to history.", wrong: "Not quite. The staging area sits between your working directory and the repository - it's where you decide what to commit." },
+      { correct: "Correct. Commits are local first. They don't reach GitHub until you run <code>git push</code>.", wrong: "Not quite. <code>git commit</code> writes to your local repository only. A <code>git push</code> is needed to send it to GitHub." },
+      { correct: "Exactly. Branches let you develop in isolation so your experiments and in-progress work never break the main codebase.", wrong: "Not quite. The purpose of branching is isolation - keeping your work separate from main until it's ready to merge." },
+      { correct: "Correct. Conflicts happen when the same lines in the same file were changed on two different branches.", wrong: "Not quite. A merge conflict is specifically about two branches modifying the same lines - Git can't decide which is correct without you." },
+      { correct: "Correct. <code>git pull</code> is a two-step operation: fetch (download) + merge, bringing your local branch up to date.", wrong: "Not quite. <code>git pull</code> downloads changes from the remote and merges them into your current branch." },
+      { correct: "Right. A Pull Request is a GitHub feature that lets you propose, review, and discuss a branch merge before it happens.", wrong: "Not quite. A Pull Request is a proposal to merge your branch into another (usually main), with a code review thread attached." },
+      { correct: "Correct. <code>git checkout -b branchname</code> creates the branch and switches to it in one command.", wrong: "Not quite. <code>git branch name</code> creates but doesn't switch. <code>git checkout -b name</code> does both in one step." },
+      { correct: "Correct. Forking creates a copy of the repository under your own GitHub account so you can freely make changes without affecting the original.", wrong: "Not quite. Forking means creating your own GitHub copy of someone else's repo. It's different from branching or cloning." },
+      { correct: "Correct. After editing the conflicted file, you stage it with <code>git add</code> and then commit to complete the merge.", wrong: "Not quite. To finish resolving a conflict: edit the file, then <code>git add</code> it, then <code>git commit</code>." }
+    ];
+
+    const answers = {};
+
+    document.querySelectorAll('.quiz-question').forEach(qEl => {
+      const idx = parseInt(qEl.dataset.idx);
+      qEl.querySelectorAll('.q-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (answers[idx] !== undefined) return; // locked after submit
+          qEl.querySelectorAll('.q-option').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          answers[idx] = parseInt(btn.dataset.val);
+        });
+      });
+    });
+
+    function submitQuiz() {
+      const questions = document.querySelectorAll('.quiz-question');
+      if (Object.keys(answers).length < questions.length) {
+        alert('Please answer all 10 questions before submitting.');
+        return;
+      }
+
+      let correct = 0;
+      questions.forEach(qEl => {
+        const idx = parseInt(qEl.dataset.idx);
+        const correctVal = parseInt(qEl.dataset.correct);
+        const chosen = answers[idx];
+        const fb = qEl.querySelector('.q-feedback');
+
+        qEl.querySelectorAll('.q-option').forEach(btn => {
+          btn.disabled = true;
+          const v = parseInt(btn.dataset.val);
+          if (v === correctVal) btn.classList.add('correct');
+          else if (v === chosen) btn.classList.add('wrong');
+        });
+
+        if (chosen === correctVal) {
+          correct++;
+          fb.innerHTML = feedbackTexts[idx].correct;
+          fb.className = 'q-feedback show correct-fb';
+        } else {
+          fb.innerHTML = feedbackTexts[idx].wrong;
+          fb.className = 'q-feedback show wrong-fb';
+        }
+      });
+
+      const pct = Math.round((correct / questions.length) * 100);
+      document.getElementById('submitBtn').disabled = true;
+
+      const resultEl = document.getElementById('quizResult');
+      document.getElementById('resultScore').textContent = pct + '%';
+
+      let label, sub;
+      if (pct >= 90) {
+        label = 'Excellent - ready for the simulation';
+        sub = correct + '/10 correct. Strong command of Git concepts. Head to the Branch Crisis sim to apply them under pressure.';
+      } else if (pct >= 70) {
+        label = 'Solid understanding';
+        sub = correct + '/10 correct. Review the sections where you missed answers, then try the Branch Crisis sim.';
+      } else {
+        label = 'Keep reviewing';
+        sub = correct + '/10 correct. Re-read the sections above, especially on branching and the core workflow. You can retake this quiz anytime.';
+      }
+
+      document.getElementById('resultLabel').textContent = label;
+      document.getElementById('resultSub').textContent = sub;
+      resultEl.classList.add('show');
+
+      // Save to localStorage
+      localStorage.setItem('dtsc520_quiz_m6', JSON.stringify({ completed: true, score: pct, correct, total: 10 }));
+      document.getElementById('quizScore').textContent = pct + '%';
+
+      resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Load saved score on page load
+    const saved = JSON.parse(localStorage.getItem('dtsc520_quiz_m6') || '{}');
+    if (saved.score !== undefined) {
+      document.getElementById('quizScore').textContent = saved.score + '%';
+    }
+  </script>
+
+
+<a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
+<style>
+  #back-to-top {
+    position: fixed; top: 64px; left: 1rem; z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+    width: 2.1rem; height: 2.1rem;
+    background: rgba(20,18,16,0.85); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px; color: rgba(255,255,255,0.55);
+    font-size: 1.25rem; line-height: 1; text-decoration: none;
+    backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s, color 0.15s, border-color 0.15s;
+  }
+  #back-to-top.visible { opacity: 1; pointer-events: auto; }
+  #back-to-top:hover { color: #fff; border-color: rgba(255,255,255,0.35); }
+</style>
+<script>
+(function(){
+  var btn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function(){
+    btn.classList.toggle('visible', window.scrollY > 300);
+  }, {passive: true});
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+})();
+</script>
+</body>
+</html>

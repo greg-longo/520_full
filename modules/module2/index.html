@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 2: Introduction to Python - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --maroon: #8B1C40;
+      --maroon-light: #a82050;
+      --accent: #7a5fb5;
+      --accent-light: #9878d4;
+      --accent-dim: rgba(122,95,181,0.15);
+      --blue: #2A7195;
+      --blue-light: #3388b0;
+      --gray: #646469;
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --bg-card2: #211f1d;
+      --bg-code: #0d0c0b;
+      --text: #e8e4de;
+      --text-dim: #a09a92;
+      --text-bright: #f5f2ee;
+      --border: #2e2b28;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Zilla Slab', serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    /* ---- NAV ---- */
+    nav {
+      background: #141210;
+      border-bottom: 3px solid var(--accent);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.875rem;
+    }
+
+    .nav-home { color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.15s; }
+    .nav-home:hover { color: #fff; }
+    .nav-sep { color: rgba(255,255,255,0.2); margin: 0 0.1rem; }
+    .nav-current { color: var(--accent-light); font-weight: 500; }
+
+    .nav-right {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .nav-right a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      padding: 0.25rem 0.6rem;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+      transition: all 0.15s;
+    }
+
+    .nav-right a:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+    /* ---- MODULE BANNER ---- */
+    .mod-banner {
+      background: linear-gradient(135deg, #17141a 0%, #110e0d 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2.5rem;
+      position: relative;
+    }
+
+    .mod-banner::after {
+      content: 'Python';
+      position: absolute;
+      right: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 6rem;
+      font-weight: 500;
+      color: rgba(122,95,181,0.06);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .banner-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .banner-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .mod-banner h1 {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      line-height: 1.2;
+      margin-bottom: 0.65rem;
+    }
+
+    .mod-banner p {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      max-width: 580px;
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+
+    .banner-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 3px;
+      background: rgba(122,95,181,0.12);
+      color: var(--accent-light);
+      border: 1px solid rgba(122,95,181,0.25);
+      letter-spacing: 0.04em;
+    }
+
+    /* ---- SECTION TABS ---- */
+    .section-tabs {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .section-tabs::-webkit-scrollbar { display: none; }
+
+    .tab-link {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      text-decoration: none;
+      padding: 0.75rem 1rem;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .tab-link:hover { color: var(--text); border-bottom-color: var(--accent); }
+
+    /* ---- PAGE LAYOUT ---- */
+    .page-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 5rem;
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    /* ---- SIDEBAR ---- */
+    .sidebar {
+      position: sticky;
+      top: 68px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.1rem;
+    }
+
+    .sidebar-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.65rem;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toc-list a {
+      display: block;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      padding: 0.28rem 0.4rem;
+      border-radius: 3px;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .toc-list a:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+
+    .toc-list .sub {
+      padding-left: 1rem;
+      font-size: 0.75rem;
+    }
+
+    .sim-cta {
+      background: var(--accent);
+      border-radius: 4px;
+      padding: 1.1rem;
+      text-decoration: none;
+      display: block;
+      transition: background 0.15s;
+    }
+
+    .sim-cta:hover { background: var(--accent-light); }
+
+    .sim-cta-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+
+    .sim-cta h4 {
+      font-family: 'Zilla Slab', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .sim-cta p {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.4;
+    }
+
+    .quiz-cta {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1.1rem;
+      text-align: center;
+    }
+
+    .quiz-cta p {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-bottom: 0.6rem;
+    }
+
+    .quiz-btn {
+      display: block;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 3px;
+      transition: background 0.15s;
+    }
+
+    .quiz-btn:hover { background: var(--accent-light); }
+
+    .score-display {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.5rem;
+      color: var(--accent-light);
+      font-weight: 500;
+      margin-bottom: 0.2rem;
+    }
+
+    /* ---- CONTENT ---- */
+    .content section {
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    .content section:first-child {
+      padding-top: 0;
+      border-top: none;
+    }
+
+    .content h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 0.65rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .content h2 .sec-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--accent-light);
+      background: var(--accent-dim);
+      padding: 0.15rem 0.45rem;
+      border-radius: 3px;
+      letter-spacing: 0.06em;
+    }
+
+    .content h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 1.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .content p {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      margin-bottom: 0.85rem;
+      line-height: 1.7;
+    }
+
+    .content p strong { color: var(--text); }
+
+    /* ---- CODE BLOCKS ---- */
+    pre {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1rem 1.2rem;
+      overflow-x: auto;
+      margin: 0.75rem 0 1.25rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.65;
+      color: #c8c3bc;
+    }
+
+    pre code { background: none; padding: 0; }
+
+    code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.84em;
+      background: rgba(122,95,181,0.1);
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+      color: var(--accent-light);
+    }
+
+    pre code { color: inherit; font-size: inherit; }
+
+    .kw  { color: #c07b30; }
+    .str { color: #7aaa58; }
+    .cmt { color: #5a5550; }
+    .num { color: #6ab0d0; }
+    .fn  { color: #9878d4; }
+    .bi  { color: #5ab8e0; }
+
+    /* rendered output blocks */
+    .output-block {
+      background: #0a0908; border: 1px solid #1e1c1a;
+      border-left: 3px solid #3a3530; border-radius: 4px;
+      margin: -0.75rem 0 1.5rem; padding: 0.75rem 1.25rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.81rem;
+      color: #c8c4be; line-height: 1.6; overflow-x: auto;
+    }
+    .output-block-label {
+      font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #4a4642; margin-bottom: 0.5rem;
+    }
+    .output-block .out-num { color: #6ab0d0; }
+    .output-block .out-str { color: #7aaa58; }
+    .output-block .out-idx { color: #6a6460; }
+
+    /* ---- CALLOUT ---- */
+    .callout {
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 0.9rem 1.1rem;
+      margin: 1rem 0 1.25rem;
+      background: var(--bg-card);
+    }
+
+    .callout.tip  { border-left-color: #4a9e6b; }
+    .callout.warn { border-left-color: #c07b30; }
+
+    .callout-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.67rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: 0.35rem;
+    }
+
+    .callout.tip  .callout-title { color: #6bc98a; }
+    .callout.warn .callout-title { color: #d4984a; }
+
+    .callout p { font-size: 0.875rem; margin-bottom: 0; }
+
+    /* ---- CONCEPT GRID ---- */
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.7rem;
+      margin: 0.75rem 0 1.25rem;
+    }
+
+    .concept-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.9rem 1rem;
+    }
+
+    .concept-box h4 {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--accent-light);
+      margin-bottom: 0.35rem;
+    }
+
+    .concept-box p { font-size: 0.82rem; margin: 0; line-height: 1.5; }
+
+    /* ---- ERROR TABLE ---- */
+    .error-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.75rem 0 1.25rem;
+      font-size: 0.85rem;
+    }
+
+    .error-table th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.67rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      padding: 0.4rem 0.75rem;
+      text-align: left;
+    }
+
+    .error-table td {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid rgba(46,43,40,0.5);
+      color: var(--text-dim);
+      vertical-align: top;
+    }
+
+    .error-table tr:last-child td { border-bottom: none; }
+    .error-table td:first-child { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; color: #d47a7a; }
+
+    /* ---- OBJECTIVES ---- */
+    .objectives {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1.1rem 1.4rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .objectives h3 {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.67rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-light);
+      margin: 0 0 0.65rem 0;
+    }
+
+    .objectives ol {
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .objectives li { font-size: 0.88rem; color: var(--text-dim); line-height: 1.5; }
+
+    /* ---- QUIZ ---- */
+    .quiz-section {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+
+    .quiz-title-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .quiz-title-row h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      border: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .quiz-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+    }
+
+    .quiz-q {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.1rem 1.3rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .q-text {
+      font-size: 0.92rem;
+      color: var(--text);
+      font-weight: 500;
+      margin-bottom: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .q-opts { display: flex; flex-direction: column; gap: 0.4rem; }
+
+    .q-opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.55rem;
+      cursor: pointer;
+      padding: 0.45rem 0.7rem;
+      border-radius: 3px;
+      border: 1px solid transparent;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      background: none;
+      text-align: left;
+      width: 100%;
+      font-family: 'Zilla Slab', serif;
+      transition: background 0.1s, border-color 0.1s;
+    }
+
+    .q-opt:hover:not(:disabled) { background: rgba(255,255,255,0.04); border-color: var(--border); color: var(--text); }
+    .q-opt.selected  { border-color: var(--accent); color: var(--text); background: rgba(122,95,181,0.08); }
+    .q-opt.correct   { border-color: #4a9e6b; color: #6bc98a; background: rgba(74,158,107,0.08); }
+    .q-opt.wrong     { border-color: #9e4a4a; color: #c87070; background: rgba(158,74,74,0.08); }
+    .q-opt.reveal-correct { border-color: #4a9e6b; background: rgba(74,158,107,0.05); }
+
+    .q-radio {
+      width: 13px; height: 13px;
+      border: 2px solid var(--gray);
+      border-radius: 50%;
+      margin-top: 2px;
+      flex-shrink: 0;
+      transition: all 0.1s;
+    }
+
+    .q-opt.selected .q-radio  { border-color: var(--accent); background: var(--accent); }
+    .q-opt.correct  .q-radio  { border-color: #4a9e6b; background: #4a9e6b; }
+    .q-opt.wrong    .q-radio  { border-color: #9e4a4a; background: #9e4a4a; }
+    .q-opt.reveal-correct .q-radio { border-color: #4a9e6b; background: #4a9e6b; }
+
+    .q-fb {
+      font-size: 0.8rem;
+      margin-top: 0.65rem;
+      padding: 0.5rem 0.7rem;
+      border-radius: 3px;
+      display: none;
+      line-height: 1.45;
+    }
+
+    .q-fb.show { display: block; }
+    .q-fb.ok  { background: rgba(74,158,107,0.1); color: #6bc98a; }
+    .q-fb.bad { background: rgba(158,74,74,0.1);  color: #c87070; }
+
+    .submit-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.65rem 1.6rem;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.15s;
+    }
+
+    .submit-btn:hover { background: var(--accent-light); }
+    .submit-btn:disabled { background: var(--gray); cursor: default; }
+
+    .quiz-result {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 1.4rem;
+      margin-top: 1.1rem;
+      text-align: center;
+      display: none;
+    }
+
+    .quiz-result.show { display: block; }
+    .result-pct { font-family: 'IBM Plex Mono', monospace; font-size: 2.4rem; font-weight: 500; color: var(--accent-light); line-height: 1; margin-bottom: 0.4rem; }
+    .result-label { font-size: 0.95rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.3rem; }
+    .result-sub { font-size: 0.82rem; color: var(--text-dim); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 720px) {
+      .page-wrap { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .concept-grid { grid-template-columns: 1fr; }
+      .mod-banner::after { display: none; }
+    }
+  </style>
+  <!-- CodeMirror 5 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/theme/material-darker.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/closebrackets.min.js"></script>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-left">
+      <a class="nav-home" href="../../index.html">DTSC 520</a>
+      <span class="nav-sep">/</span>
+      <span class="nav-current">Module 2 - Python</span>
+    </div>
+    <div class="nav-right">
+      <a href="../../index.html#modules">All Modules</a>
+      <a href="#quiz">Quiz</a>
+    </div>
+  </nav>
+
+  <!-- BANNER -->
+  <div class="mod-banner">
+    <div class="banner-inner">
+      <div class="banner-eyebrow">Module 02 &nbsp;·&nbsp; DTSC 520</div>
+      <h1>Introduction to Python</h1>
+      <p>From your first print statement to custom functions and data structures. Learn to think like a programmer and write Python code that actually runs - with exercises throughout.</p>
+      <div class="banner-pills">
+        <span class="pill">Getting Started</span>
+        <span class="pill">Variables &amp; Types</span>
+        <span class="pill">Strings</span>
+        <span class="pill">Conditions</span>
+        <span class="pill">Loops</span>
+        <span class="pill">Data Structures</span>
+        <span class="pill">Functions</span>
+        <span class="pill">10-question quiz</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION TABS -->
+  <div class="section-tabs">
+    <a class="tab-link" href="#getting-started">Getting Started</a>
+    <a class="tab-link" href="#variables">Variables &amp; Types</a>
+    <a class="tab-link" href="#strings">Strings</a>
+    <a class="tab-link" href="#conditions">Conditions</a>
+    <a class="tab-link" href="#loops">Loops</a>
+    <a class="tab-link" href="#data-structures">Data Structures</a>
+    <a class="tab-link" href="#functions">Functions</a>
+    <a class="tab-link" href="#quiz">Quiz</a>
+  </div>
+
+  <div class="page-wrap">
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <div class="objectives">
+        <h3>Learning Objectives</h3>
+        <ol>
+          <li>Write and run basic Python programs using print statements, variables, and expressions</li>
+          <li>Use Python's core data types: int, float, string, and boolean</li>
+          <li>Control program flow with if, elif, else, while, and for statements</li>
+          <li>Store and manipulate collections of data using lists, tuples, and dictionaries</li>
+          <li>Define and call custom functions with parameters and return values</li>
+          <li>Read and interpret common Python error messages</li>
+        </ol>
+      </div>
+
+      <!-- GETTING STARTED -->
+      <section id="getting-started">
+        <h2><span class="sec-num">01</span> Getting Started</h2>
+
+        <p>Python programs run line by line, top to bottom. The most basic program you can write is a single <code>print()</code> call - it displays output to the screen.</p>
+
+<pre><code><span class="fn">print</span>(<span class="str">"Hello, world!"</span>)
+<span class="fn">print</span>(<span class="str">"StatDeck Analytics - ready."</span>)</code></pre>
+
+        <h3>Python as a Calculator</h3>
+        <p>Python handles arithmetic directly. Operators work as you'd expect, with one exception worth noting: division always returns a float.</p>
+
+<pre><code><span class="cmt"># Basic arithmetic</span>
+<span class="fn">print</span>(<span class="num">10</span> + <span class="num">3</span>)      <span class="cmt"># 13</span>
+<span class="fn">print</span>(<span class="num">10</span> - <span class="num">3</span>)      <span class="cmt"># 7</span>
+<span class="fn">print</span>(<span class="num">10</span> * <span class="num">3</span>)      <span class="cmt"># 30</span>
+<span class="fn">print</span>(<span class="num">10</span> / <span class="num">3</span>)      <span class="cmt"># 3.3333... (always float)</span>
+<span class="fn">print</span>(<span class="num">10</span> // <span class="num">3</span>)     <span class="cmt"># 3 (integer division)</span>
+<span class="fn">print</span>(<span class="num">10</span> % <span class="num">3</span>)      <span class="cmt"># 1 (remainder)</span>
+<span class="fn">print</span>(<span class="num">2</span> ** <span class="num">8</span>)      <span class="cmt"># 256 (exponent)</span></code></pre>
+
+        <div class="output-block">
+          <div class="output-block-label">output</div>
+<span class="out-num">13</span>
+<span class="out-num">7</span>
+<span class="out-num">30</span>
+<span class="out-num">3.3333333333333335</span>
+<span class="out-num">3</span>
+<span class="out-num">1</span>
+<span class="out-num">256</span>
+        </div>
+
+        <h3>Reading Error Messages</h3>
+        <p>Python errors are not failures - they're instructions. Learning to read them quickly is one of the most important skills you'll develop.</p>
+
+        <table class="error-table">
+          <thead>
+            <tr><th>Error</th><th>What it means</th><th>Common cause</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>SyntaxError</td><td>Python can't parse your code</td><td>Missing colon, mismatched parentheses</td></tr>
+            <tr><td>NameError</td><td>Variable or function not found</td><td>Typo in variable name, used before assignment</td></tr>
+            <tr><td>TypeError</td><td>Wrong type for an operation</td><td>Adding a string and an int, calling a non-function</td></tr>
+            <tr><td>ZeroDivisionError</td><td>Division by zero</td><td>Divisor is 0, often from bad data</td></tr>
+            <tr><td>IndentationError</td><td>Wrong indentation</td><td>Mixed tabs/spaces, missing indent after <code>:</code></td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout tip">
+          <div class="callout-title">How to watch the videos</div>
+          <p>Don't watch passively - have a notebook open and try every example yourself as you go. Pause and re-run anything you don't understand. Check the Python docs when a function surprises you.</p>
+        </div>
+      </section>
+
+      <!-- VARIABLES -->
+      <section id="variables">
+        <h2><span class="sec-num">02</span> Variables &amp; Data Types</h2>
+
+        <p>A <strong>variable</strong> is a named container for a value. You create one with the assignment operator <code>=</code>. Python figures out the type automatically.</p>
+
+<pre><code><span class="cmt"># Assigning variables</span>
+player_name = <span class="str">"Marcus Rivera"</span>     <span class="cmt"># str</span>
+jersey_number = <span class="num">14</span>               <span class="cmt"># int</span>
+batting_avg = <span class="num">0.287</span>              <span class="cmt"># float</span>
+is_eligible = <span class="kw">True</span>               <span class="cmt"># bool</span>
+
+<span class="fn">print</span>(player_name, <span class="str">"#"</span> + <span class="fn">str</span>(jersey_number))
+<span class="fn">print</span>(<span class="str">f"Batting average: </span>{batting_avg}<span class="str">"</span>)</code></pre>
+
+        <div class="output-block">
+          <div class="output-block-label">output</div>
+<span class="out-str">Marcus Rivera</span> #<span class="out-num">14</span>
+Batting average: <span class="out-num">0.287</span>
+        </div>
+
+        <div class="concept-grid">
+          <div class="concept-box">
+            <h4>int</h4>
+            <p>Whole numbers. <code>14</code>, <code>-3</code>, <code>0</code>. No decimal point.</p>
+          </div>
+          <div class="concept-box">
+            <h4>float</h4>
+            <p>Decimal numbers. <code>0.287</code>, <code>3.14</code>, <code>-1.5</code>.</p>
+          </div>
+          <div class="concept-box">
+            <h4>str</h4>
+            <p>Text in quotes. <code>"Marcus"</code>, <code>'StatDeck'</code>. Immutable.</p>
+          </div>
+          <div class="concept-box">
+            <h4>bool</h4>
+            <p>Either <code>True</code> or <code>False</code>. Used in conditions.</p>
+          </div>
+        </div>
+
+        <h3>Type Conversion</h3>
+        <p>Types don't automatically mix. Use <code>int()</code>, <code>float()</code>, and <code>str()</code> to convert between them.</p>
+
+<pre><code>age_str = <span class="str">"25"</span>
+age_int = <span class="fn">int</span>(age_str)         <span class="cmt"># "25" → 25</span>
+
+games = <span class="num">82</span>
+label = <span class="str">"Games: "</span> + <span class="fn">str</span>(games) <span class="cmt"># must convert int to str first</span>
+
+<span class="fn">print</span>(<span class="fn">type</span>(batting_avg))       <span class="cmt"># &lt;class 'float'&gt;</span></code></pre>
+
+        <h3>Augmented Assignment Operators</h3>
+        <p>These operators update a variable in place - a shorter way to write common update patterns.</p>
+
+<pre><code>hits = <span class="num">45</span>
+hits += <span class="num">3</span>     <span class="cmt"># hits = hits + 3  →  48</span>
+hits -= <span class="num">1</span>     <span class="cmt"># hits = hits - 1  →  47</span>
+hits *= <span class="num">2</span>     <span class="cmt"># hits = hits * 2  →  94</span>
+hits //= <span class="num">5</span>    <span class="cmt"># hits = hits // 5  →  18</span>
+
+<span class="cmt"># Commonly used in loops to keep a running total</span>
+total_runs = <span class="num">0</span>
+<span class="kw">for</span> game_runs <span class="kw">in</span> [<span class="num">3</span>, <span class="num">1</span>, <span class="num">5</span>, <span class="num">2</span>]:
+    total_runs += game_runs
+<span class="fn">print</span>(total_runs)   <span class="cmt"># 11</span></code></pre>
+
+        <h3>Variable Names and Keywords</h3>
+        <p>Variable names must start with a letter or underscore, can contain letters, digits, and underscores, and are case-sensitive. Python uses <strong>snake_case</strong> by convention (<code>batting_avg</code>, not <code>BattingAvg</code>).</p>
+        <p>Certain words are <strong>reserved keywords</strong> and cannot be used as variable names:</p>
+
+<pre><code><span class="cmt"># Python keywords - cannot be used as variable names</span>
+<span class="cmt"># False  None   True   and    as     assert  async  await</span>
+<span class="cmt"># break  class  continue  def  del    elif   else   except</span>
+<span class="cmt"># finally  for  from  global  if  import  in  is  lambda</span>
+<span class="cmt"># nonlocal  not  or  pass  raise  return  try  while  with  yield</span>
+
+<span class="cmt"># These will cause SyntaxError:</span>
+<span class="cmt"># class = "Freshman"   ← 'class' is a keyword</span>
+<span class="cmt"># return = 42          ← 'return' is a keyword</span>
+
+<span class="cmt"># Valid alternatives:</span>
+student_class = <span class="str">"Freshman"</span>
+return_value = <span class="num">42</span></code></pre>
+
+        <h3>Comparison Operators</h3>
+        <p>Comparisons return a boolean (<code>True</code> or <code>False</code>) and are the foundation of all decision-making in Python.</p>
+
+<pre><code>batting_avg = <span class="num">0.287</span>
+<span class="fn">print</span>(batting_avg > <span class="num">0.300</span>)    <span class="cmt"># False</span>
+<span class="fn">print</span>(batting_avg >= <span class="num">0.250</span>)   <span class="cmt"># True</span>
+<span class="fn">print</span>(batting_avg == <span class="num">0.287</span>)   <span class="cmt"># True  (note: == not =)</span>
+<span class="fn">print</span>(batting_avg != <span class="num">0.300</span>)   <span class="cmt"># True</span></code></pre>
+      </section>
+
+      <!-- STRINGS -->
+      <section id="strings">
+        <h2><span class="sec-num">03</span> Strings</h2>
+
+        <p>Strings are sequences of characters. You can use single quotes, double quotes, or triple quotes (for multi-line strings). Strings are <strong>immutable</strong> - you can't change individual characters, but you can build new strings from old ones.</p>
+
+<pre><code>name = <span class="str">"St. Davids Eagles"</span>
+<span class="fn">print</span>(name.<span class="fn">upper</span>())          <span class="cmt"># ST. DAVIDS EAGLES</span>
+<span class="fn">print</span>(name.<span class="fn">lower</span>())          <span class="cmt"># st. davids eagles</span>
+<span class="fn">print</span>(name.<span class="fn">replace</span>(<span class="str">"Eagles"</span>, <span class="str">"A's"</span>))
+<span class="fn">print</span>(name.<span class="fn">split</span>(<span class="str">"."</span>))        <span class="cmt"># ['St', ' Davids Eagles']</span>
+<span class="fn">print</span>(<span class="fn">len</span>(name))              <span class="cmt"># 17</span></code></pre>
+
+        <div class="output-block">
+          <div class="output-block-label">output</div>
+<span class="out-str">ST. DAVIDS EAGLES</span>
+<span class="out-str">st. davids eagles</span>
+<span class="out-str">St. Davids A's</span>
+[<span class="out-str">'St'</span>, <span class="out-str">' Davids Eagles'</span>]
+<span class="out-num">17</span>
+        </div>
+
+        <h3>Indexing &amp; Slicing</h3>
+        <p>Every character in a string has a position (index), starting at 0. Slicing lets you extract a substring using <code>[start:stop]</code>.</p>
+
+<pre><code>team = <span class="str">"Eagles"</span>
+<span class="fn">print</span>(team[<span class="num">0</span>])       <span class="cmt"># E  (first character)</span>
+<span class="fn">print</span>(team[-<span class="num">1</span>])      <span class="cmt"># s  (last character)</span>
+<span class="fn">print</span>(team[<span class="num">0</span>:<span class="num">3</span>])     <span class="cmt"># Eag  (index 0,1,2 - stop is exclusive)</span>
+<span class="fn">print</span>(team[:<span class="num">3</span>])      <span class="cmt"># Eag  (same - start defaults to 0)</span></code></pre>
+
+        <h3>f-strings</h3>
+        <p>f-strings (formatted string literals) are the cleanest way to embed variables inside text. Prefix with <code>f</code> and put variables in <code>{}</code>.</p>
+
+<pre><code>name = <span class="str">"Marcus Rivera"</span>
+avg = <span class="num">0.287</span>
+<span class="fn">print</span>(<span class="str">f"</span>{name}<span class="str"> is batting </span>{avg:.3f}<span class="str"> this season."</span>)
+<span class="cmt"># Marcus Rivera is batting 0.287 this season.</span></code></pre>
+
+        <div class="output-block">
+          <div class="output-block-label">output &mdash; string slicing + f-string</div>
+team[0]   &rarr;  <span class="out-str">'E'</span>
+team[-1]  &rarr;  <span class="out-str">'s'</span>
+team[0:3] &rarr;  <span class="out-str">'Eag'</span>
+<span class="out-str">Marcus Rivera is batting 0.287 this season.</span>
+        </div>
+      </section>
+
+      <!-- CONDITIONS -->
+      <section id="conditions">
+        <h2><span class="sec-num">04</span> Conditions</h2>
+
+        <p>Conditions let your program make decisions. The <code>if</code> statement checks a boolean expression; if it's <code>True</code>, the indented block runs. Python uses <strong>indentation</strong> (4 spaces) to define blocks - not curly braces.</p>
+
+<pre><code>batting_avg = <span class="num">0.287</span>
+
+<span class="kw">if</span> batting_avg >= <span class="num">0.300</span>:
+    <span class="fn">print</span>(<span class="str">"All-Star candidate"</span>)
+<span class="kw">elif</span> batting_avg >= <span class="num">0.260</span>:
+    <span class="fn">print</span>(<span class="str">"Solid starter"</span>)      <span class="cmt"># this runs</span>
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"Needs improvement"</span>)</code></pre>
+
+        <div class="output-block">
+          <div class="output-block-label">output &mdash; batting_avg = 0.287</div>
+<span class="out-str">Solid starter</span>
+        </div>
+
+        <h3>Boolean Operators</h3>
+        <p>Combine conditions with <code>and</code>, <code>or</code>, and <code>not</code>.</p>
+
+<pre><code>avg = <span class="num">0.287</span>
+games = <span class="num">120</span>
+
+<span class="kw">if</span> avg >= <span class="num">0.260</span> <span class="kw">and</span> games >= <span class="num">100</span>:
+    <span class="fn">print</span>(<span class="str">"Qualifies for batting title"</span>)
+
+<span class="kw">if</span> <span class="str">"Rivera"</span> <span class="kw">in</span> player_name:
+    <span class="fn">print</span>(<span class="str">"Found Rivera on roster"</span>)
+
+<span class="kw">if</span> <span class="kw">not</span> is_eligible:
+    <span class="fn">print</span>(<span class="str">"Player is ineligible"</span>)</code></pre>
+
+        <div class="callout warn">
+          <div class="callout-title">= vs ==</div>
+          <p><code>=</code> assigns a value to a variable. <code>==</code> compares two values. Using <code>=</code> inside an <code>if</code> condition is one of the most common beginner mistakes.</p>
+        </div>
+      </section>
+
+      <!-- LOOPS -->
+      <section id="loops">
+        <h2><span class="sec-num">05</span> Loops</h2>
+
+        <p>Loops let you repeat code without copy-pasting. Python has two kinds: <code>for</code> loops (iterate over a sequence) and <code>while</code> loops (repeat while a condition is true).</p>
+
+        <h3>for loops</h3>
+
+<pre><code>roster = [<span class="str">"Rivera"</span>, <span class="str">"Chen"</span>, <span class="str">"Okafor"</span>, <span class="str">"Patel"</span>]
+
+<span class="kw">for</span> player <span class="kw">in</span> roster:
+    <span class="fn">print</span>(<span class="str">f"Player: </span>{player}<span class="str">"</span>)
+
+<span class="cmt"># range() generates a sequence of numbers</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>):
+    <span class="fn">print</span>(i)           <span class="cmt"># 0, 1, 2, 3, 4</span>
+
+<span class="cmt"># enumerate() gives index AND value</span>
+<span class="kw">for</span> i, player <span class="kw">in</span> <span class="fn">enumerate</span>(roster):
+    <span class="fn">print</span>(<span class="str">f"</span>{i}<span class="str">: </span>{player}<span class="str">"</span>)</code></pre>
+
+        <div class="output-block">
+          <div class="output-block-label">output &mdash; for loop + enumerate</div>
+<span class="out-str">Player: Rivera</span>
+<span class="out-str">Player: Chen</span>
+<span class="out-str">Player: Okafor</span>
+<span class="out-str">Player: Patel</span>
+<span class="out-idx">--- enumerate ---</span>
+<span class="out-num">0</span>: <span class="out-str">Rivera</span>
+<span class="out-num">1</span>: <span class="out-str">Chen</span>
+<span class="out-num">2</span>: <span class="out-str">Okafor</span>
+<span class="out-num">3</span>: <span class="out-str">Patel</span>
+        </div>
+
+        <h3>while loops</h3>
+
+<pre><code>score = <span class="num">0</span>
+<span class="kw">while</span> score < <span class="num">3</span>:
+    <span class="fn">print</span>(<span class="str">f"Score is </span>{score}<span class="str">"</span>)
+    score += <span class="num">1</span>        <span class="cmt"># don't forget to update - or loop forever</span></code></pre>
+
+        <div class="output-block">
+          <div class="output-block-label">output &mdash; while loop</div>
+<span class="out-str">Score is 0</span>
+<span class="out-str">Score is 1</span>
+<span class="out-str">Score is 2</span>
+        </div>
+
+        <h3>break &amp; continue</h3>
+
+<pre><code><span class="kw">for</span> player <span class="kw">in</span> roster:
+    <span class="kw">if</span> player == <span class="str">"Okafor"</span>:
+        <span class="kw">break</span>           <span class="cmt"># stop the loop entirely</span>
+    <span class="fn">print</span>(player)
+
+<span class="kw">for</span> player <span class="kw">in</span> roster:
+    <span class="kw">if</span> player == <span class="str">"Chen"</span>:
+        <span class="kw">continue</span>        <span class="cmt"># skip this iteration, keep going</span>
+    <span class="fn">print</span>(player)</code></pre>
+
+        <div class="output-block">
+          <div class="output-block-label">output &mdash; break (stops at Okafor) / continue (skips Chen)</div>
+<span class="out-idx">--- break ---</span>
+<span class="out-str">Rivera</span>
+<span class="out-str">Chen</span>
+<span class="out-idx">--- continue ---</span>
+<span class="out-str">Rivera</span>
+<span class="out-str">Okafor</span>
+<span class="out-str">Patel</span>
+        </div>
+      </section>
+
+      <!-- DATA STRUCTURES -->
+      <section id="data-structures">
+        <h2><span class="sec-num">06</span> Built-In Data Structures</h2>
+
+        <p>Python's built-in data structures let you store collections of values. Choosing the right one for the job matters.</p>
+
+        <div class="concept-grid">
+          <div class="concept-box">
+            <h4>list</h4>
+            <p>Ordered, mutable. Use for sequences you'll modify. <code>[1, 2, 3]</code></p>
+          </div>
+          <div class="concept-box">
+            <h4>tuple</h4>
+            <p>Ordered, immutable. Use for fixed data. <code>(1, 2, 3)</code></p>
+          </div>
+          <div class="concept-box">
+            <h4>dict</h4>
+            <p>Key-value pairs, mutable. Use for labeled data. <code>{"avg": 0.287}</code></p>
+          </div>
+          <div class="concept-box">
+            <h4>set</h4>
+            <p>Unordered, unique values. Use to deduplicate. <code>{1, 2, 3}</code></p>
+          </div>
+        </div>
+
+        <h3>Lists</h3>
+
+<pre><code>roster = [<span class="str">"Rivera"</span>, <span class="str">"Chen"</span>, <span class="str">"Okafor"</span>]
+
+roster.<span class="fn">append</span>(<span class="str">"Patel"</span>)        <span class="cmt"># add to end</span>
+roster.<span class="fn">insert</span>(<span class="num">0</span>, <span class="str">"Garcia"</span>)   <span class="cmt"># add at index</span>
+roster.<span class="fn">remove</span>(<span class="str">"Chen"</span>)        <span class="cmt"># remove by value</span>
+<span class="fn">print</span>(roster[<span class="num">0</span>])              <span class="cmt"># first element</span>
+<span class="fn">print</span>(<span class="fn">len</span>(roster))            <span class="cmt"># count</span>
+<span class="fn">print</span>(<span class="str">"Rivera"</span> <span class="kw">in</span> roster)     <span class="cmt"># True</span></code></pre>
+
+        <div class="output-block">
+          <div class="output-block-label">output &mdash; list after append/insert/remove</div>
+roster  &rarr;  [<span class="out-str">'Garcia'</span>, <span class="out-str">'Rivera'</span>, <span class="out-str">'Okafor'</span>, <span class="out-str">'Patel'</span>]
+roster[0]  &rarr;  <span class="out-str">'Garcia'</span>
+len(roster)  &rarr;  <span class="out-num">4</span>
+'Rivera' in roster  &rarr;  <span class="out-num">True</span>
+        </div>
+
+        <h3>Dictionaries</h3>
+
+<pre><code>player = {
+    <span class="str">"name"</span>: <span class="str">"Marcus Rivera"</span>,
+    <span class="str">"number"</span>: <span class="num">14</span>,
+    <span class="str">"avg"</span>: <span class="num">0.287</span>,
+    <span class="str">"stats"</span>: {<span class="str">"HR"</span>: <span class="num">8</span>, <span class="str">"RBI"</span>: <span class="num">42</span>}   <span class="cmt"># nested dict</span>
+}
+
+<span class="fn">print</span>(player[<span class="str">"name"</span>])          <span class="cmt"># Marcus Rivera</span>
+<span class="fn">print</span>(player[<span class="str">"stats"</span>][<span class="str">"HR"</span>])  <span class="cmt"># 8</span>
+player[<span class="str">"avg"</span>] = <span class="num">0.301</span>          <span class="cmt"># update a value</span>
+
+<span class="kw">for</span> key, val <span class="kw">in</span> player.<span class="fn">items</span>():
+    <span class="fn">print</span>(<span class="str">f"</span>{key}<span class="str">: </span>{val}<span class="str">"</span>)</code></pre>
+
+        <div class="output-block">
+          <div class="output-block-label">output &mdash; dictionary access + .items() loop</div>
+player["name"]         &rarr;  <span class="out-str">'Marcus Rivera'</span>
+player["stats"]["HR"]  &rarr;  <span class="out-num">8</span>
+<span class="out-idx">--- .items() loop ---</span>
+<span class="out-str">name</span>: <span class="out-str">Marcus Rivera</span>
+<span class="out-str">number</span>: <span class="out-num">14</span>
+<span class="out-str">avg</span>: <span class="out-num">0.301</span>
+<span class="out-str">stats</span>: {<span class="out-str">'HR'</span>: <span class="out-num">8</span>, <span class="out-str">'RBI'</span>: <span class="out-num">42</span>}
+        </div>
+      </section>
+
+      <!-- FUNCTIONS -->
+      <section id="functions">
+        <h2><span class="sec-num">07</span> Functions</h2>
+
+        <p>A <strong>function</strong> is a reusable block of code with a name. You define it once with <code>def</code>, then call it as many times as you need. Functions make code shorter, more readable, and easier to debug.</p>
+
+<pre><code><span class="kw">def</span> <span class="fn">greet_player</span>(name):
+    <span class="fn">print</span>(<span class="str">f"Welcome to StatDeck, </span>{name}<span class="str">!"</span>)
+
+<span class="fn">greet_player</span>(<span class="str">"Marcus Rivera"</span>)   <span class="cmt"># call it</span>
+<span class="fn">greet_player</span>(<span class="str">"Jonah Reyes"</span>)</code></pre>
+
+        <div class="output-block">
+          <div class="output-block-label">output</div>
+<span class="out-str">Welcome to StatDeck, Marcus Rivera!</span>
+<span class="out-str">Welcome to StatDeck, Jonah Reyes!</span>
+        </div>
+
+        <h3>Parameters &amp; Return Values</h3>
+        <p>Functions can take multiple parameters and return a value with <code>return</code>. Default parameter values make some arguments optional.</p>
+
+<pre><code><span class="kw">def</span> <span class="fn">batting_grade</span>(avg, threshold=<span class="num">0.270</span>):
+    <span class="kw">if</span> avg >= threshold + <span class="num">0.030</span>:
+        <span class="kw">return</span> <span class="str">"Excellent"</span>
+    <span class="kw">elif</span> avg >= threshold:
+        <span class="kw">return</span> <span class="str">"Solid"</span>
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="str">"Needs work"</span>
+
+grade = <span class="fn">batting_grade</span>(<span class="num">0.287</span>)
+<span class="fn">print</span>(grade)                   <span class="cmt"># Solid</span>
+<span class="fn">print</span>(<span class="fn">batting_grade</span>(<span class="num">0.315</span>))   <span class="cmt"># Excellent</span></code></pre>
+
+        <div class="output-block">
+          <div class="output-block-label">output &mdash; batting_grade(0.287) / batting_grade(0.315)</div>
+<span class="out-str">Solid</span>
+<span class="out-str">Excellent</span>
+        </div>
+
+        <h3>return vs print</h3>
+        <p><code>print()</code> displays output to the screen but the value disappears. <code>return</code> sends a value back to the caller so it can be stored and used. In data science, you almost always want <code>return</code>.</p>
+
+<pre><code><span class="kw">def</span> <span class="fn">double_print</span>(x):
+    <span class="fn">print</span>(x * <span class="num">2</span>)       <span class="cmt"># works once, then gone</span>
+
+<span class="kw">def</span> <span class="fn">double_return</span>(x):
+    <span class="kw">return</span> x * <span class="num">2</span>       <span class="cmt"># caller gets the value</span>
+
+result = <span class="fn">double_return</span>(<span class="num">5</span>)
+<span class="fn">print</span>(result + <span class="num">1</span>)    <span class="cmt"># 11 - we can use the returned value</span></code></pre>
+
+        <h3>Comments</h3>
+        <p>A <strong>comment</strong> is text in your code that Python ignores. Use comments to explain <em>why</em> your code does something, not just what it does. Good comments make code understandable months later - or to a teammate reading it for the first time.</p>
+
+<pre><code><span class="cmt"># This is a single-line comment</span>
+batting_avg = <span class="num">0.287</span>   <span class="cmt"># inline comment - use sparingly</span>
+
+<span class="cmt"># Avoid redundant comments (this one says nothing new):</span>
+<span class="cmt"># x = x + 1   # add 1 to x</span>
+
+<span class="cmt"># Useful comment - explains why, not just what:</span>
+<span class="cmt"># Multiply by 1000 to convert from feet to inches (sensor outputs feet)</span>
+height_in = sensor_value * <span class="num">12</span></code></pre>
+
+        <h3>Variable Scope</h3>
+        <p><strong>Scope</strong> determines where a variable is accessible. Variables defined inside a function are <strong>local</strong> - they exist only while the function runs and cannot be accessed outside it.</p>
+
+<pre><code><span class="kw">def</span> <span class="fn">calc_ops</span>(ab, hits):
+    avg = hits / ab          <span class="cmt"># 'avg' is local to this function</span>
+    <span class="kw">return</span> avg
+
+result = <span class="fn">calc_ops</span>(<span class="num">400</span>, <span class="num">115</span>)
+<span class="fn">print</span>(result)   <span class="cmt"># 0.2875 - OK</span>
+
+<span class="cmt"># print(avg)    # NameError: 'avg' not defined here</span>
+<span class="cmt"># Variables defined outside functions are 'global'</span>
+<span class="cmt"># and accessible everywhere - but modifying globals inside</span>
+<span class="cmt"># functions is usually a design smell to avoid</span></code></pre>
+
+        <div class="callout tip">
+          <div class="callout-title">Next Steps</div>
+          <p>This module covers the core Python you need for data science. When you're ready for more, work through exercises on <strong>Exercism</strong> or <strong>LeetCode Easy</strong> problems. Consider taking DTSC-575 for deeper Python coverage.</p>
+        </div>
+      </section>
+
+      <!-- QUIZ -->
+      <div class="quiz-section" id="quiz">
+        <div class="quiz-title-row">
+          <h2>Module 2 Quiz</h2>
+          <span class="quiz-tag">10 questions</span>
+        </div>
+
+        <div id="quizForm">
+
+          <div class="quiz-q" data-idx="0" data-correct="2">
+            <div class="q-text">1. What does <code>print(10 / 3)</code> output in Python?</div>
+            <div class="q-opts">
+              <button class="q-opt" data-val="0"><div class="q-radio"></div>3</button>
+              <button class="q-opt" data-val="1"><div class="q-radio"></div>3.0</button>
+              <button class="q-opt" data-val="2"><div class="q-radio"></div>3.3333333333333335</button>
+              <button class="q-opt" data-val="3"><div class="q-radio"></div>Error - cannot divide integers</button>
+            </div>
+            <div class="q-fb"></div>
+          </div>
+
+          <div class="quiz-q" data-idx="1" data-correct="1">
+            <div class="q-text">2. Which of these is a valid Python variable name?</div>
+            <div class="q-opts">
+              <button class="q-opt" data-val="0"><div class="q-radio"></div><code>2nd_base</code></button>
+              <button class="q-opt" data-val="1"><div class="q-radio"></div><code>batting_avg</code></button>
+              <button class="q-opt" data-val="2"><div class="q-radio"></div><code>batting-avg</code></button>
+              <button class="q-opt" data-val="3"><div class="q-radio"></div><code>batting avg</code></button>
+            </div>
+            <div class="q-fb"></div>
+          </div>
+
+          <div class="quiz-q" data-idx="2" data-correct="0">
+            <div class="q-text">3. What is the output of <code>print("Eagles"[0])</code>?</div>
+            <div class="q-opts">
+              <button class="q-opt" data-val="0"><div class="q-radio"></div>E</button>
+              <button class="q-opt" data-val="1"><div class="q-radio"></div>Ea</button>
+              <button class="q-opt" data-val="2"><div class="q-radio"></div>s</button>
+              <button class="q-opt" data-val="3"><div class="q-radio"></div>Error - strings are not indexable</button>
+            </div>
+            <div class="q-fb"></div>
+          </div>
+
+          <div class="quiz-q" data-idx="3" data-correct="3">
+            <div class="q-text">4. What prints when <code>avg = 0.287</code> and you run <code>print(avg >= 0.300)</code>?</div>
+            <div class="q-opts">
+              <button class="q-opt" data-val="0"><div class="q-radio"></div>0.287</button>
+              <button class="q-opt" data-val="1"><div class="q-radio"></div>0.300</button>
+              <button class="q-opt" data-val="2"><div class="q-radio"></div>True</button>
+              <button class="q-opt" data-val="3"><div class="q-radio"></div>False</button>
+            </div>
+            <div class="q-fb"></div>
+          </div>
+
+          <div class="quiz-q" data-idx="4" data-correct="2">
+            <div class="q-text">5. How do you add "Patel" to the end of <code>roster = ["Rivera", "Chen"]</code>?</div>
+            <div class="q-opts">
+              <button class="q-opt" data-val="0"><div class="q-radio"></div><code>roster.add("Patel")</code></button>
+              <button class="q-opt" data-val="1"><div class="q-radio"></div><code>roster + "Patel"</code></button>
+              <button class="q-opt" data-val="2"><div class="q-radio"></div><code>roster.append("Patel")</code></button>
+              <button class="q-opt" data-val="3"><div class="q-radio"></div><code>roster.insert("Patel")</code></button>
+            </div>
+            <div class="q-fb"></div>
+          </div>
+
+          <div class="quiz-q" data-idx="5" data-correct="1">
+            <div class="q-text">6. What does <code>range(4)</code> produce?</div>
+            <div class="q-opts">
+              <button class="q-opt" data-val="0"><div class="q-radio"></div>1, 2, 3, 4</button>
+              <button class="q-opt" data-val="1"><div class="q-radio"></div>0, 1, 2, 3</button>
+              <button class="q-opt" data-val="2"><div class="q-radio"></div>0, 1, 2, 3, 4</button>
+              <button class="q-opt" data-val="3"><div class="q-radio"></div>A list <code>[0, 1, 2, 3]</code></button>
+            </div>
+            <div class="q-fb"></div>
+          </div>
+
+          <div class="quiz-q" data-idx="6" data-correct="0">
+            <div class="q-text">7. In a dictionary <code>player = {"name": "Rivera", "avg": 0.287}</code>, how do you access the average?</div>
+            <div class="q-opts">
+              <button class="q-opt" data-val="0"><div class="q-radio"></div><code>player["avg"]</code></button>
+              <button class="q-opt" data-val="1"><div class="q-radio"></div><code>player[1]</code></button>
+              <button class="q-opt" data-val="2"><div class="q-radio"></div><code>player.avg</code></button>
+              <button class="q-opt" data-val="3"><div class="q-radio"></div><code>player.get(0.287)</code></button>
+            </div>
+            <div class="q-fb"></div>
+          </div>
+
+          <div class="quiz-q" data-idx="7" data-correct="2">
+            <div class="q-text">8. What is the difference between <code>return</code> and <code>print()</code> inside a function?</div>
+            <div class="q-opts">
+              <button class="q-opt" data-val="0"><div class="q-radio"></div>There is no difference - both produce the same result</button>
+              <button class="q-opt" data-val="1"><div class="q-radio"></div><code>return</code> only works inside loops; <code>print()</code> works anywhere</button>
+              <button class="q-opt" data-val="2"><div class="q-radio"></div><code>return</code> sends a value back to the caller so it can be used; <code>print()</code> just displays it</button>
+              <button class="q-opt" data-val="3"><div class="q-radio"></div><code>print()</code> is faster than <code>return</code> for large datasets</button>
+            </div>
+            <div class="q-fb"></div>
+          </div>
+
+          <div class="quiz-q" data-idx="8" data-correct="3">
+            <div class="q-text">9. Which error would this cause: <code>name = "Rivera"; print(name + 14)</code>?</div>
+            <div class="q-opts">
+              <button class="q-opt" data-val="0"><div class="q-radio"></div>SyntaxError</button>
+              <button class="q-opt" data-val="1"><div class="q-radio"></div>NameError</button>
+              <button class="q-opt" data-val="2"><div class="q-radio"></div>ValueError</button>
+              <button class="q-opt" data-val="3"><div class="q-radio"></div>TypeError</button>
+            </div>
+            <div class="q-fb"></div>
+          </div>
+
+          <div class="quiz-q" data-idx="9" data-correct="1">
+            <div class="q-text">10. What does <code>f"Player: {name}"</code> do?</div>
+            <div class="q-opts">
+              <button class="q-opt" data-val="0"><div class="q-radio"></div>Creates a function called <code>f</code> with parameter <code>name</code></button>
+              <button class="q-opt" data-val="1"><div class="q-radio"></div>Creates a formatted string with the value of <code>name</code> embedded in it</button>
+              <button class="q-opt" data-val="2"><div class="q-radio"></div>Filters a list using the variable <code>name</code></button>
+              <button class="q-opt" data-val="3"><div class="q-radio"></div>Converts <code>name</code> to a float</button>
+            </div>
+            <div class="q-fb"></div>
+          </div>
+
+          <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">Submit Quiz</button>
+
+          <div class="quiz-result" id="quizResult">
+            <div class="result-pct" id="resultPct"></div>
+            <div class="result-label" id="resultLabel"></div>
+            <div class="result-sub" id="resultSub"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="sidebar-card">
+        <div class="sidebar-label">Quiz Score</div>
+        <div class="score-display" id="quizScore">--</div>
+        <div style="font-family:'IBM Plex Sans',sans-serif;font-size:0.72rem;color:var(--text-dim);">Module 2</div>
+      </div>
+
+      <a class="sim-cta" href="../../python_sim/index.html">
+        <div class="sim-cta-label">Simulation</div>
+        <h4>Python Field Training</h4>
+        <p>Run real Python in your browser. Scout players for the Eagles using variables, lists, and loops.</p>
+      </a>
+
+      <div class="sidebar-card">
+        <div class="sidebar-label">On This Page</div>
+        <ul class="toc-list">
+          <li><a href="#getting-started">Getting Started</a></li>
+          <li><a href="#variables" class="sub">Variables &amp; Types</a></li>
+          <li><a href="#strings" class="sub">Strings</a></li>
+          <li><a href="#conditions" class="sub">Conditions</a></li>
+          <li><a href="#loops" class="sub">Loops</a></li>
+          <li><a href="#data-structures" class="sub">Data Structures</a></li>
+          <li><a href="#functions" class="sub">Functions</a></li>
+          <li><a href="#quiz">Quiz</a></li>
+        </ul>
+      </div>
+
+      <div class="quiz-cta">
+        <p>Ready to test your knowledge?</p>
+        <a class="quiz-btn" href="#quiz">Take the Quiz</a>
+      </div>
+
+    </aside>
+
+  </div><!-- /page-wrap -->
+
+  <footer>
+    This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.<br>&copy; Eastern University. All rights reserved.
+  </footer>
+
+  <script>
+    const FB = [
+      { ok: "Correct. Division with <code>/</code> always returns a float in Python 3, even when dividing two integers.", bad: "Not quite. Python 3's <code>/</code> operator always returns a float. Use <code>//</code> for integer (floor) division." },
+      { ok: "Right. Variable names can contain letters, numbers, and underscores, but can't start with a number or contain spaces or hyphens.", bad: "Not quite. Variable names can't start with a digit, contain hyphens, or contain spaces. <code>batting_avg</code> uses underscores, which is the Python convention." },
+      { ok: "Correct. String indexing starts at 0, so <code>[0]</code> is the first character.", bad: "Not quite. Python uses 0-based indexing - <code>[0]</code> is the first character, <code>[-1]</code> is the last." },
+      { ok: "Correct. 0.287 is less than 0.300, so <code>>=</code> returns False.", bad: "Not quite. 0.287 < 0.300, so the comparison <code>0.287 >= 0.300</code> is False." },
+      { ok: "Correct. <code>list.append()</code> adds an element to the end of a list.", bad: "Not quite. Lists use <code>.append(value)</code> to add to the end. <code>.add()</code> is for sets, not lists." },
+      { ok: "Correct. <code>range(4)</code> generates 0, 1, 2, 3 - starting at 0, up to but not including 4.", bad: "Not quite. <code>range(n)</code> starts at 0 and goes up to n-1, so <code>range(4)</code> gives 0, 1, 2, 3. Note: it's a range object, not a list." },
+      { ok: "Correct. Dictionary values are accessed by key using square brackets.", bad: "Not quite. Dictionaries use key-based access: <code>dict[key]</code>. Integer indexes and dot notation don't work on plain dicts." },
+      { ok: "Correct. <code>return</code> passes the value back to the caller for further use. <code>print()</code> just displays it - the value is gone after that.", bad: "Not quite. The key distinction: <code>return</code> gives the value back to the caller so it can be stored and used. <code>print()</code> just shows it on screen." },
+      { ok: "Correct. You can't concatenate a string and an integer directly - Python raises a TypeError because the types are incompatible.", bad: "Not quite. This raises a TypeError because <code>+</code> can't combine a string and an integer. You'd need <code>str(14)</code> first." },
+      { ok: "Correct. f-strings (formatted string literals) embed expressions inside <code>{}</code> directly in the string.", bad: "Not quite. The <code>f</code> prefix creates an f-string - a formatted string where anything inside <code>{}</code> is evaluated as Python code and inserted into the text." }
+    ];
+
+    const answers = {};
+
+    document.querySelectorAll('.quiz-q').forEach(qEl => {
+      const idx = parseInt(qEl.dataset.idx);
+      qEl.querySelectorAll('.q-opt').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (answers[idx] !== undefined) return;
+          qEl.querySelectorAll('.q-opt').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          answers[idx] = parseInt(btn.dataset.val);
+        });
+      });
+    });
+
+    function submitQuiz() {
+      const qs = document.querySelectorAll('.quiz-q');
+      if (Object.keys(answers).length < qs.length) {
+        alert('Please answer all 10 questions before submitting.');
+        return;
+      }
+
+      let correct = 0;
+      qs.forEach(qEl => {
+        const idx = parseInt(qEl.dataset.idx);
+        const cv = parseInt(qEl.dataset.correct);
+        const chosen = answers[idx];
+        const fb = qEl.querySelector('.q-fb');
+
+        qEl.querySelectorAll('.q-opt').forEach(btn => {
+          btn.disabled = true;
+          const v = parseInt(btn.dataset.val);
+          if (v === cv) btn.classList.add('reveal-correct');
+          else if (v === chosen) btn.classList.add('wrong');
+        });
+
+        if (chosen === cv) {
+          correct++;
+          fb.innerHTML = FB[idx].ok;
+          fb.className = 'q-fb show ok';
+        } else {
+          fb.innerHTML = FB[idx].bad;
+          fb.className = 'q-fb show bad';
+        }
+      });
+
+      const pct = Math.round((correct / qs.length) * 100);
+      document.getElementById('submitBtn').disabled = true;
+
+      let label, sub;
+      if (pct >= 90) {
+        label = 'Strong grasp of Python fundamentals';
+        sub = correct + '/10 correct. Head to Python Field Training to apply this in code.';
+      } else if (pct >= 70) {
+        label = 'Solid foundation';
+        sub = correct + '/10 correct. Review the sections where you missed, then try the sim.';
+      } else {
+        label = 'Keep reviewing';
+        sub = correct + '/10 correct. Re-read the sections above before moving on.';
+      }
+
+      document.getElementById('resultPct').textContent = pct + '%';
+      document.getElementById('resultLabel').textContent = label;
+      document.getElementById('resultSub').textContent = sub;
+      document.getElementById('quizResult').classList.add('show');
+      document.getElementById('quizScore').textContent = pct + '%';
+
+      localStorage.setItem('dtsc520_quiz_m2', JSON.stringify({ completed: true, score: pct, correct, total: 10 }));
+      document.getElementById('quizResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    const saved = JSON.parse(localStorage.getItem('dtsc520_quiz_m2') || '{}');
+    if (saved.score !== undefined) document.getElementById('quizScore').textContent = saved.score + '%';
+  </script>
+
+
+<a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
+<style>
+  #back-to-top {
+    position: fixed; top: 64px; left: 1rem; z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+    width: 2.1rem; height: 2.1rem;
+    background: rgba(20,18,16,0.85); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px; color: rgba(255,255,255,0.55);
+    font-size: 1.25rem; line-height: 1; text-decoration: none;
+    backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s, color 0.15s, border-color 0.15s;
+  }
+  #back-to-top.visible { opacity: 1; pointer-events: auto; }
+  #back-to-top:hover { color: #fff; border-color: rgba(255,255,255,0.35); }
+</style>
+<!-- ── Python Sandbox ── -->
+
+<!-- Floating trigger button -->
+<button id="sandbox-btn" title="Python Sandbox" aria-label="Open Python Sandbox">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+  <span>Python</span>
+</button>
+
+<!-- Sandbox modal -->
+<div id="sandbox-modal" role="dialog" aria-modal="true" aria-label="Python Sandbox">
+  <div class="sb-box">
+    <div class="sb-header">
+      <div class="sb-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Python Sandbox
+        <span class="sb-status" id="sb-status">ready</span>
+      </div>
+      <div class="sb-header-actions">
+        <button class="sb-action-btn" id="sb-clear-btn" title="Clear editor">Clear</button>
+        <button class="sb-action-btn" id="sb-reset-btn" title="Reset output">Reset output</button>
+        <button class="sb-close" id="sb-close" aria-label="Close sandbox">&times;</button>
+      </div>
+    </div>
+    <div class="sb-body">
+      <div class="sb-editor-pane">
+        <div class="sb-pane-label">
+          Code
+          <button class="sb-run-btn" id="sb-run">&#9654; Run</button>
+        </div>
+        <div id="sb-editor-wrap"></div>
+      </div>
+      <div class="sb-output-pane">
+        <div class="sb-pane-label">Output</div>
+        <div id="sb-output"><span class="sb-placeholder">Output will appear here after you run code.</span></div>
+      </div>
+    </div>
+    <div class="sb-footer">
+      Session resets when you leave this page &bull; Code is saved automatically
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Floating button */
+  #sandbox-btn {
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 998;
+    display: flex; align-items: center; gap: 0.45rem;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 5px; cursor: pointer;
+    padding: 0.55rem 1rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.45);
+    transition: background 0.15s, transform 0.1s;
+  }
+  #sandbox-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
+  #sandbox-btn:active { transform: translateY(0); }
+
+  /* Modal overlay */
+  #sandbox-modal {
+    display: none; position: fixed; inset: 0; z-index: 2100;
+    background: rgba(0,0,0,0.75);
+    align-items: center; justify-content: center;
+    padding: 1.25rem;
+  }
+  #sandbox-modal.open { display: flex; }
+
+  /* Modal box */
+  .sb-box {
+    background: #161412;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    border-radius: 6px;
+    width: 100%; max-width: 920px;
+    height: 80vh; max-height: 680px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+  }
+
+  /* Header */
+  .sb-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.6rem 1rem; border-bottom: 1px solid var(--border);
+    flex-shrink: 0; gap: 0.75rem;
+  }
+  .sb-title {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-light);
+  }
+  .sb-status {
+    font-size: 0.62rem; letter-spacing: 0.06em; padding: 0.15rem 0.5rem;
+    border-radius: 3px; background: rgba(122,95,181,0.15);
+    color: var(--accent-light); text-transform: uppercase;
+    transition: background 0.2s, color 0.2s;
+  }
+  .sb-status.loading { background: rgba(192,123,48,0.2); color: #d9913e; }
+  .sb-status.running { background: rgba(74,143,107,0.2); color: #6abf8a; }
+  .sb-status.error   { background: rgba(180,60,60,0.2);  color: #e07070; }
+
+  .sb-header-actions { display: flex; align-items: center; gap: 0.5rem; }
+  .sb-action-btn {
+    background: none; border: 1px solid var(--border); color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 0.25rem 0.6rem; border-radius: 3px; cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .sb-action-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+  .sb-close {
+    background: none; border: none; color: rgba(255,255,255,0.45);
+    font-size: 1.3rem; line-height: 1; cursor: pointer; padding: 0 0.2rem;
+    transition: color 0.15s;
+  }
+  .sb-close:hover { color: #fff; }
+
+  /* Body */
+  .sb-body {
+    display: grid; grid-template-columns: 1fr 1fr;
+    flex: 1; min-height: 0; overflow: hidden;
+  }
+  .sb-pane-label {
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim);
+    padding: 0.45rem 1rem; border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  /* Editor pane */
+  .sb-editor-pane {
+    display: flex; flex-direction: column;
+    border-right: 1px solid var(--border); overflow: hidden;
+  }
+
+  /* CodeMirror overrides */
+  #sb-editor-wrap { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+  #sb-editor-wrap .CodeMirror {
+    flex: 1; height: 100%; min-height: 0;
+    background: #0d0c0b;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.84rem; line-height: 1.6;
+    border: none;
+  }
+  #sb-editor-wrap .CodeMirror-scroll { min-height: 0; }
+  #sb-editor-wrap .CodeMirror-gutters { background: #0d0c0b; border-right: 1px solid #2e2b28; }
+  #sb-editor-wrap .CodeMirror-linenumber { color: #4a4540; }
+  #sb-editor-wrap .CodeMirror-cursor { border-left-color: #9878d4; }
+  #sb-editor-wrap .CodeMirror-selected { background: rgba(122,95,181,0.2) !important; }
+  #sb-editor-wrap .CodeMirror-focused .CodeMirror-selected { background: rgba(122,95,181,0.25) !important; }
+  #sb-editor-wrap .CodeMirror-matchingbracket { color: #9878d4 !important; font-weight: bold; outline: 1px solid rgba(122,95,181,0.5); }
+
+  /* Run button */
+  .sb-run-btn {
+    background: var(--accent); color: #fff; border: none;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 0.25rem 0.75rem; border-radius: 3px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .sb-run-btn:hover { background: var(--accent-light); }
+  .sb-run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Output pane */
+  .sb-output-pane { display: flex; flex-direction: column; overflow: hidden; }
+  #sb-output {
+    flex: 1; min-height: 0; overflow-y: auto;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; line-height: 1.6;
+    padding: 0.85rem 1rem; white-space: pre-wrap; word-break: break-word;
+    color: #e8e4de;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
+  .sb-placeholder { color: #4a4540; font-style: italic; }
+  .sb-output-block { margin-bottom: 0.75rem; }
+  .sb-output-block + .sb-output-block { border-top: 1px solid var(--border); padding-top: 0.75rem; }
+  .sb-out-text  { color: #e8e4de; }
+  .sb-out-error { color: #e07070; }
+  .sb-out-run-label {
+    font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 0.35rem;
+  }
+
+  /* Footer */
+  .sb-footer {
+    border-top: 1px solid var(--border); padding: 0.4rem 1rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+    color: #7a7470; letter-spacing: 0.04em; flex-shrink: 0; text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .sb-body { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+    .sb-editor-pane { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'dtsc520_sandbox_m2';
+  let pyodide = null;
+  let pyodideReady = false;
+  let pyodideLoading = false;
+  let runCount = 0;
+  let cm = null; // CodeMirror instance
+
+  const modal   = document.getElementById('sandbox-modal');
+  const btn     = document.getElementById('sandbox-btn');
+  const closeBtn= document.getElementById('sb-close');
+  const output  = document.getElementById('sb-output');
+  const runBtn  = document.getElementById('sb-run');
+  const status  = document.getElementById('sb-status');
+  const clearBtn= document.getElementById('sb-clear-btn');
+  const resetBtn= document.getElementById('sb-reset-btn');
+
+  // ── Init CodeMirror (once DOM is ready) ──
+  function initCM() {
+    if (cm) return;
+    const wrap = document.getElementById('sb-editor-wrap');
+    cm = CodeMirror(wrap, {
+      value: '',
+      mode: 'python',
+      theme: 'material-darker',
+      lineNumbers: true,
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      indentUnit: 4,
+      tabSize: 4,
+      indentWithTabs: false,
+      lineWrapping: false,
+      extraKeys: {
+        'Tab': function(cm) {
+          if (cm.somethingSelected()) { cm.indentSelection('add'); }
+          else { cm.replaceSelection('    ', 'end'); }
+        },
+        'Ctrl-Enter': runCode,
+        'Cmd-Enter':  runCode
+      }
+    });
+
+    // Restore saved code
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) cm.setValue(saved);
+      else cm.setValue('# Type your Python here and click Run\n# Variables persist while this page is open\n\nprint("Hello, world!")');
+    } catch(e) {
+      cm.setValue('# Type your Python here and click Run\n# Variables persist while this page is open\n\nprint("Hello, world!")');
+    }
+
+    // Auto-save on change
+    cm.on('change', function() {
+      try { localStorage.setItem(STORAGE_KEY, cm.getValue()); } catch(e) {}
+    });
+  }
+
+  // ── Open modal ──
+  function openSandbox() {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Init CM on first open, then refresh layout
+    initCM();
+    setTimeout(function() { cm.refresh(); cm.focus(); }, 50);
+    if (!pyodideReady && !pyodideLoading) loadPyodide();
+  }
+
+  // ── Close modal (keep Pyodide alive) ──
+  function closeSandbox() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', openSandbox);
+  closeBtn.addEventListener('click', closeSandbox);
+  modal.addEventListener('click', function(e) { if (e.target === modal) closeSandbox(); });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeSandbox();
+  });
+
+  clearBtn.addEventListener('click', function() {
+    if (cm) { cm.setValue(''); cm.focus(); }
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  });
+
+  resetBtn.addEventListener('click', function() {
+    output.innerHTML = '<span class="sb-placeholder">Output will appear here after you run code.</span>';
+    runCount = 0;
+  });
+
+  // ── Load Pyodide ──
+  async function loadPyodide() {
+    pyodideLoading = true;
+    setStatus('loading', 'loading...');
+    runBtn.disabled = true;
+    try {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js';
+        s.onload = resolve;
+        s.onerror = () => reject(new Error('Failed to load Pyodide script'));
+        document.head.appendChild(s);
+      });
+      pyodide = await window.loadPyodide({
+        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/'
+      });
+      pyodide.runPython('import sys, io\nclass _Capture(io.StringIO): pass\nsys.stdout = _Capture()\nsys.stderr = _Capture()');
+      pyodideReady = true;
+      pyodideLoading = false;
+      setStatus('ready', 'ready');
+      runBtn.disabled = false;
+    } catch(err) {
+      pyodideLoading = false;
+      setStatus('error', 'load failed');
+      appendOutput('error', 'Could not load Python runtime. ' + err.message);
+      runBtn.disabled = false;
+    }
+  }
+
+  // ── Run code ──
+  runBtn.addEventListener('click', runCode);
+
+  async function runCode() {
+    const code = cm ? cm.getValue().trim() : '';
+    if (!code) return;
+    if (!pyodideReady) {
+      if (!pyodideLoading) loadPyodide();
+      appendOutput('error', 'Python is still loading - please wait a moment and try again.');
+      return;
+    }
+    setStatus('running', 'running...');
+    runBtn.disabled = true;
+    runCount++;
+    try {
+      pyodide.runPython('sys.stdout.truncate(0); sys.stdout.seek(0)\nsys.stderr.truncate(0); sys.stderr.seek(0)');
+      await pyodide.runPythonAsync(code);
+      const stdout = pyodide.runPython('sys.stdout.getvalue()');
+      const stderr = pyodide.runPython('sys.stderr.getvalue()');
+      const outText = (stdout || '').trimEnd();
+      const errText = (stderr || '').trimEnd();
+      if (!outText && !errText) { appendOutput('text', '(no output)'); }
+      else {
+        if (outText) appendOutput('text',  outText);
+        if (errText) appendOutput('error', errText);
+      }
+      setStatus('ready', 'ready');
+    } catch(err) {
+      const lines = (err.message || String(err)).split('\n');
+      const short = lines.filter(function(l){ return l.trim(); }).slice(-4).join('\n');
+      appendOutput('error', short || String(err));
+      setStatus('error', 'error');
+      setTimeout(function(){ setStatus('ready', 'ready'); }, 2500);
+    }
+    runBtn.disabled = false;
+  }
+
+  function setStatus(cls, text) {
+    status.className = 'sb-status ' + cls;
+    status.textContent = text;
+  }
+
+  function appendOutput(type, text) {
+    const placeholder = output.querySelector('.sb-placeholder');
+    if (placeholder) placeholder.remove();
+    const block = document.createElement('div');
+    block.className = 'sb-output-block';
+    const label = document.createElement('div');
+    label.className = 'sb-out-run-label';
+    label.textContent = 'run ' + runCount;
+    block.appendChild(label);
+    const content = document.createElement('div');
+    content.className = type === 'error' ? 'sb-out-error' : 'sb-out-text';
+    content.textContent = text;
+    block.appendChild(content);
+    output.appendChild(block);
+    output.scrollTop = output.scrollHeight;
+  }
+
+})();
+</script>
+
+</body>
+</html>

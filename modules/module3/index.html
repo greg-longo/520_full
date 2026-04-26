@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 3: NumPy - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --accent: #4a8f6b;
+      --accent-light: #5cad84;
+      --accent-dim: rgba(74,143,107,0.15);
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --bg-card2: #211f1d;
+      --bg-code: #0d0c0b;
+      --text: #e8e4de;
+      --text-dim: #a09a92;
+      --text-bright: #f5f2ee;
+      --border: #2e2b28;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Zilla Slab', serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+
+    nav {
+      background: #141210; border-bottom: 3px solid var(--accent);
+      padding: 0 2rem; display: flex; align-items: center;
+      justify-content: space-between; height: 52px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-left { display: flex; align-items: center; gap: 0.5rem; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.875rem; }
+    .nav-home { color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.15s; }
+    .nav-home:hover { color: #fff; }
+    .nav-sep { color: rgba(255,255,255,0.2); margin: 0 0.1rem; }
+    .nav-current { color: var(--accent-light); font-weight: 500; }
+    .nav-right { display: flex; gap: 0.5rem; }
+    .nav-right a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: rgba(255,255,255,0.45);
+      text-decoration: none; padding: 0.25rem 0.6rem; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 3px; letter-spacing: 0.04em; transition: all 0.15s;
+    }
+    .nav-right a:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+    .mod-banner {
+      background: linear-gradient(135deg, #111a14 0%, #0e110e 100%);
+      border-bottom: 1px solid var(--border); padding: 3rem 2rem 2.5rem;
+      position: relative; overflow: hidden;
+    }
+    .mod-banner::after {
+      content: 'NumPy'; position: absolute; right: 2rem; top: 50%;
+      transform: translateY(-50%); font-family: 'IBM Plex Mono', monospace;
+      font-size: 5.5rem; font-weight: 500; color: rgba(74,143,107,0.06);
+      line-height: 1; pointer-events: none; user-select: none;
+    }
+    .banner-inner { max-width: 960px; margin: 0 auto; }
+    .banner-eyebrow {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent-light); margin-bottom: 0.75rem;
+    }
+    .mod-banner h1 { font-size: 2.1rem; font-weight: 700; color: var(--text-bright); line-height: 1.2; margin-bottom: 0.65rem; }
+    .mod-banner p { font-size: 0.95rem; color: var(--text-dim); max-width: 580px; line-height: 1.6; margin-bottom: 1.25rem; }
+    .banner-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .pill {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; padding: 0.25rem 0.6rem;
+      border-radius: 3px; background: rgba(74,143,107,0.12); color: var(--accent-light);
+      border: 1px solid rgba(74,143,107,0.25); letter-spacing: 0.04em;
+    }
+
+    .section-tabs {
+      background: var(--bg-card); border-bottom: 1px solid var(--border);
+      padding: 0 2rem; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none;
+    }
+    .section-tabs::-webkit-scrollbar { display: none; }
+    .tab-link {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.05em;
+      color: var(--text-dim); text-decoration: none; padding: 0.75rem 1rem;
+      border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-link:hover { color: var(--text); border-bottom-color: var(--accent); }
+
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem;
+      display: grid; grid-template-columns: 1fr 240px; gap: 2.5rem; align-items: start;
+    }
+
+    .content-col section { margin-bottom: 3.5rem; }
+    .content-col h2 {
+      font-size: 1.5rem; font-weight: 700; color: var(--text-bright);
+      margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+    }
+    .content-col h3 { font-size: 1.1rem; font-weight: 600; color: var(--accent-light); margin: 1.5rem 0 0.6rem; }
+    .content-col p { margin-bottom: 0.9rem; font-size: 0.96rem; color: var(--text); }
+    .content-col ul, .content-col ol { margin: 0.5rem 0 1rem 1.5rem; font-size: 0.95rem; }
+    .content-col li { margin-bottom: 0.35rem; }
+
+    pre {
+      background: var(--bg-code); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); border-radius: 4px;
+      padding: 1rem 1.25rem; overflow-x: auto; margin: 1rem 0 1.5rem;
+      font-size: 0.83rem; line-height: 1.7;
+    }
+    code { font-family: 'IBM Plex Mono', monospace; color: #e8c98a; }
+    pre code { color: var(--text); }
+    .cm { color: #6a6460; font-style: italic; }
+    .kw { color: #4a8f6b; }
+    .fn { color: #6baacc; }
+    .st { color: #85b87d; }
+    .nm { color: #b58fd0; }
+
+    /* rendered output blocks */
+    .output-block {
+      background: #0a0908; border: 1px solid #1e1c1a;
+      border-left: 3px solid #3a3530; border-radius: 4px;
+      margin: -0.75rem 0 1.5rem; padding: 0.75rem 1.25rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.81rem;
+      color: #c8c4be; line-height: 1.6; overflow-x: auto;
+    }
+    .output-block-label {
+      font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #4a4642; margin-bottom: 0.5rem;
+    }
+    .output-block .out-num { color: #b58fd0; }
+    .output-block .out-str { color: #85b87d; }
+    .output-block .out-idx { color: #6a6460; }
+    .df-wrap { overflow-x: auto; }
+    .df-table { border-collapse: collapse; font-size: 0.8rem;
+      font-family: 'IBM Plex Mono', monospace; }
+    .df-table th { color: #8fc47a; text-align: right; padding: 0.3rem 0.9rem 0.3rem 0.4rem;
+      border-bottom: 1px solid #3a3530; font-weight: 500; }
+    .df-table th.idx-col { color: #4a4642; text-align: left; }
+    .df-table td { padding: 0.25rem 0.9rem 0.25rem 0.4rem; text-align: right;
+      border-bottom: 1px solid #1e1c1a; color: #c8c4be; }
+    .df-table td.idx-col { color: #6a6460; text-align: left; }
+    .df-table tr:last-child td { border-bottom: none; }
+    .df-table .out-nan { color: #b04040; }
+
+    .callout {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); border-radius: 4px;
+      padding: 1rem 1.25rem; margin: 1.25rem 0; font-size: 0.92rem;
+    }
+    .callout-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent-light); margin-bottom: 0.4rem;
+    }
+    .callout-warn { border-left-color: #b04040; }
+    .callout-warn .callout-label { color: #d06060; }
+
+    .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+    .concept-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.1rem; }
+    .concept-card h4 {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--accent-light); margin-bottom: 0.6rem;
+    }
+    .concept-card p { font-size: 0.88rem; color: var(--text-dim); margin-bottom: 0.4rem; }
+
+    .data-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0 1.75rem; font-size: 0.88rem; }
+    .data-table th {
+      background: var(--bg-card2); color: var(--text-bright);
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 0.6rem 0.9rem; text-align: left; border-bottom: 2px solid var(--accent);
+    }
+    .data-table td { padding: 0.55rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .mono { font-family: 'IBM Plex Mono', monospace; color: #e8c98a; font-size: 0.83rem; }
+
+    #quiz-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 2rem; }
+    #quiz-section h2 { border-bottom: none; margin-bottom: 0.4rem; }
+    .quiz-intro { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1.5rem; }
+    .q-block { margin-bottom: 1.75rem; padding-bottom: 1.75rem; border-bottom: 1px solid var(--border); }
+    .q-block:last-of-type { border-bottom: none; }
+    .q-text { font-size: 0.97rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.75rem; line-height: 1.5; }
+    .q-num { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; display: block; margin-bottom: 0.35rem; }
+    .options { display: flex; flex-direction: column; gap: 0.45rem; }
+    .opt-label {
+      display: flex; align-items: flex-start; gap: 0.65rem;
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.65rem 0.9rem; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s; font-size: 0.92rem;
+    }
+    .opt-label:hover { border-color: var(--accent); background: rgba(74,143,107,0.06); }
+    .opt-label input { margin-top: 0.2rem; accent-color: var(--accent); flex-shrink: 0; }
+    .opt-correct { border-color: #4a9e6b !important; background: rgba(74,158,107,0.1) !important; }
+    .opt-wrong   { border-color: #b04040 !important; background: rgba(176,64,64,0.1) !important; }
+    .q-feedback { margin-top: 0.6rem; font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: 3px; display: none; }
+    .q-feedback.show { display: block; }
+    .q-feedback.correct { background: rgba(74,158,107,0.15); color: #7ecfa0; border-left: 3px solid #4a9e6b; }
+    .q-feedback.wrong   { background: rgba(176,64,64,0.12); color: #e08080; border-left: 3px solid #b04040; }
+    .quiz-submit {
+      background: var(--accent); color: #fff; border: none;
+      padding: 0.75rem 2rem; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase;
+      border-radius: 4px; cursor: pointer; transition: background 0.15s; margin-top: 1rem;
+    }
+    .quiz-submit:hover { background: var(--accent-light); }
+    .quiz-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+    .quiz-result {
+      margin-top: 1.25rem; padding: 1rem 1.25rem; background: var(--bg-card2);
+      border: 1px solid var(--border); border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem; display: none;
+    }
+    .quiz-result.show { display: block; }
+    .score-big { font-size: 2rem; font-weight: 700; color: var(--accent-light); }
+    .grade-label { color: var(--text-dim); margin-top: 0.35rem; font-size: 0.82rem; }
+
+    .sidebar { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 70px; max-height: calc(100vh - 80px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
+    .sidebar-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1.1rem; }
+    .sidebar-card h4 {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.75rem;
+    }
+    .score-display { font-family: 'IBM Plex Mono', monospace; font-size: 1.6rem; color: var(--accent-light); font-weight: 700; }
+    .score-sub { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.2rem; }
+    .toc-links { display: flex; flex-direction: column; gap: 0.3rem; }
+    .toc-links a { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; color: var(--text-dim); text-decoration: none; padding: 0.2rem 0; transition: color 0.15s; }
+    .toc-links a:hover { color: var(--accent-light); }
+    .quiz-cta-btn {
+      display: block; border: 1px solid var(--accent); color: var(--accent-light);
+      text-decoration: none; text-align: center; padding: 0.55rem 1rem; border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.05em; text-transform: uppercase; transition: all 0.15s; margin-top: 0.5rem;
+    }
+    .quiz-cta-btn:hover { background: rgba(74,143,107,0.1); }
+    .next-mod {
+      background: linear-gradient(135deg, #14180f 0%, #0e110e 100%);
+      border: 1px solid rgba(74,143,107,0.25); border-radius: 4px; padding: 1.1rem;
+    }
+    .next-mod h4 {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem;
+    }
+    .next-mod p { font-size: 0.83rem; color: var(--text-dim); margin-bottom: 0.85rem; line-height: 1.5; }
+    .next-mod-btn {
+      display: block; background: var(--accent); color: #fff; text-decoration: none;
+      text-align: center; padding: 0.55rem 1rem; border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.05em; text-transform: uppercase; transition: background 0.15s;
+    }
+    .next-mod-btn:hover { background: var(--accent-light); }
+
+    footer {
+      background: #0c0b0a; border-top: 1px solid var(--border); padding: 1.25rem 2rem;
+      text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    @media (max-width: 768px) {
+      .page-wrap { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .concept-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+  <!-- CodeMirror 5 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/theme/material-darker.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/closebrackets.min.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <a href="../../index.html" class="nav-home">DTSC 520</a>
+    <span class="nav-sep">/</span>
+    <span class="nav-current">Module 3: NumPy</span>
+  </div>
+  <div class="nav-right">
+    <a href="../../index.html">Course Home</a>
+    <a href="#quiz">Take Quiz</a>
+  </div>
+</nav>
+
+<div class="mod-banner">
+  <div class="banner-inner">
+    <div class="banner-eyebrow">Module 03 - Numerical Computing</div>
+    <h1>NumPy: Arrays and Vectorized Operations</h1>
+    <p>Learn how NumPy replaces slow Python loops with fast, vectorized array operations. The foundation of scientific Python - and the engine that powers pandas, scikit-learn, and virtually every other data science library.</p>
+    <div class="banner-pills">
+      <span class="pill">ndarray</span>
+      <span class="pill">Indexing &amp; Slicing</span>
+      <span class="pill">Vectorization</span>
+      <span class="pill">Statistical Methods</span>
+      <span class="pill">Boolean Indexing</span>
+      <span class="pill">Fancy Indexing</span>
+    </div>
+  </div>
+</div>
+
+<nav class="section-tabs">
+  <a href="#arrays" class="tab-link">Arrays</a>
+  <a href="#indexing" class="tab-link">Indexing</a>
+  <a href="#vectorization" class="tab-link">Vectorization</a>
+  <a href="#stats" class="tab-link">Statistical Methods</a>
+  <a href="#boolean" class="tab-link">Boolean Indexing</a>
+  <a href="#fancy" class="tab-link">Fancy Indexing</a>
+  <a href="#quiz" class="tab-link">Quiz</a>
+</nav>
+
+<div class="page-wrap">
+  <div class="content-col">
+
+    <!-- ARRAYS -->
+    <section id="arrays">
+      <h2>The ndarray: NumPy's Core Object</h2>
+      <p>NumPy's central data structure is the <strong>ndarray</strong> (n-dimensional array) - a fixed-type, fixed-size grid of values. Unlike a Python list, every element in a NumPy array is the same data type, and they are stored contiguously in memory. This is what makes NumPy so fast.</p>
+
+      <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Create a 1D array from a list</span>
+batting_avgs = np.<span class="fn">array</span>([<span class="nm">.312</span>, <span class="nm">.287</span>, <span class="nm">.301</span>, <span class="nm">.268</span>, <span class="nm">.295</span>])
+
+<span class="cm"># Key attributes</span>
+batting_avgs.shape    <span class="cm"># (5,) - one dimension, 5 elements</span>
+batting_avgs.dtype    <span class="cm"># float64</span>
+batting_avgs.ndim     <span class="cm"># 1</span>
+batting_avgs.size     <span class="cm"># 5 - total number of elements</span>
+
+<span class="cm"># 2D array: rows = players, cols = [avg, hr, rbi]</span>
+stats = np.<span class="fn">array</span>([
+    [<span class="nm">.312</span>, <span class="nm">4</span>, <span class="nm">22</span>],
+    [<span class="nm">.287</span>, <span class="nm">2</span>, <span class="nm">15</span>],
+    [<span class="nm">.301</span>, <span class="nm">7</span>, <span class="nm">31</span>],
+    [<span class="nm">.268</span>, <span class="nm">1</span>, <span class="nm">9</span>]
+])
+stats.shape    <span class="cm"># (4, 3) - 4 rows, 3 columns</span></code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; batting_avgs / stats arrays</div>
+batting_avgs:  [<span class="out-num">0.312  0.287  0.301  0.268  0.295</span>]  dtype: float64
+stats (4x3):
+  [[<span class="out-num">0.312  4.   22.</span>]
+   [<span class="out-num">0.287  2.   15.</span>]
+   [<span class="out-num">0.301  7.   31.</span>]
+   [<span class="out-num">0.268  1.    9.</span>]]
+stats.shape:   (<span class="out-num">4</span>, <span class="out-num">3</span>)   stats.dtype: float64
+      </div>
+
+      <h3>Creating arrays</h3>
+      <pre><code><span class="cm"># Arrays filled with zeros or ones</span>
+np.<span class="fn">zeros</span>(<span class="nm">5</span>)           <span class="cm"># [0. 0. 0. 0. 0.]</span>
+np.<span class="fn">ones</span>((<span class="nm">3</span>, <span class="nm">4</span>))       <span class="cm"># 3x4 matrix of 1.0</span>
+
+<span class="cm"># Range of values (like Python range, but as an array)</span>
+np.<span class="fn">arange</span>(<span class="nm">0</span>, <span class="nm">10</span>, <span class="nm">2</span>)  <span class="cm"># [0 2 4 6 8]</span>
+
+<span class="cm"># Evenly spaced values between two endpoints</span>
+np.<span class="fn">linspace</span>(<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">5</span>) <span class="cm"># [0.   0.25  0.5  0.75  1.  ]</span>
+
+<span class="cm"># Random arrays (useful for simulation and testing)</span>
+np.random.<span class="fn">rand</span>(<span class="nm">4</span>)        <span class="cm"># 4 uniform random floats in [0, 1)</span>
+np.random.<span class="fn">randn</span>(<span class="nm">4</span>)       <span class="cm"># 4 standard normal random values</span>
+np.random.<span class="fn">randint</span>(<span class="nm">1</span>, <span class="nm">10</span>, size=<span class="nm">5</span>)  <span class="cm"># 5 random ints in [1, 10)</span></code></pre>
+
+      <h3>Reshaping arrays</h3>
+      <pre><code><span class="cm"># Reshape without changing data</span>
+flat = np.<span class="fn">arange</span>(<span class="nm">12</span>)        <span class="cm"># [0  1  2 ... 11]</span>
+grid = flat.<span class="fn">reshape</span>(<span class="nm">3</span>, <span class="nm">4</span>)   <span class="cm"># 3x4 matrix</span>
+col  = flat.<span class="fn">reshape</span>(-<span class="nm">1</span>, <span class="nm">1</span>) <span class="cm"># -1 = "infer this dimension"</span>
+
+<span class="cm"># Flatten back to 1D</span>
+grid.<span class="fn">flatten</span>()
+grid.<span class="fn">ravel</span>()  <span class="cm"># faster - returns a view when possible</span></code></pre>
+
+      <div class="callout">
+        <div class="callout-label">Why not just use Python lists?</div>
+        Python lists can hold mixed types, but that flexibility costs speed. NumPy stores values of one type in a single contiguous memory block, allowing C-level loops instead of Python-level loops. For large datasets, NumPy operations can be 10-100x faster than the equivalent Python list comprehension.
+      </div>
+    </section>
+
+    <!-- INDEXING -->
+    <section id="indexing">
+      <h2>Indexing and Slicing</h2>
+      <p>NumPy indexing is similar to Python list slicing but extends to multiple dimensions. Slicing returns a <strong>view</strong> of the original data, not a copy - so modifying the slice modifies the original array too.</p>
+
+      <pre><code>avgs = np.<span class="fn">array</span>([<span class="nm">.312</span>, <span class="nm">.287</span>, <span class="nm">.301</span>, <span class="nm">.268</span>, <span class="nm">.295</span>])
+
+<span class="cm"># Basic indexing (0-based)</span>
+avgs[<span class="nm">0</span>]      <span class="cm"># 0.312  - first element</span>
+avgs[-<span class="nm">1</span>]     <span class="cm"># 0.295  - last element</span>
+
+<span class="cm"># Slicing: start:stop:step (stop is exclusive)</span>
+avgs[<span class="nm">1</span>:<span class="nm">4</span>]    <span class="cm"># [.287, .301, .268]  - indices 1, 2, 3</span>
+avgs[:<span class="nm">3</span>]     <span class="cm"># [.312, .287, .301]  - first 3</span>
+avgs[::-<span class="nm">1</span>]   <span class="cm"># reversed array</span></code></pre>
+
+      <h3>2D indexing</h3>
+      <pre><code><span class="cm"># stats array: rows = players, cols = [avg, hr, rbi]</span>
+stats = np.<span class="fn">array</span>([
+    [<span class="nm">.312</span>, <span class="nm">4</span>, <span class="nm">22</span>],
+    [<span class="nm">.287</span>, <span class="nm">2</span>, <span class="nm">15</span>],
+    [<span class="nm">.301</span>, <span class="nm">7</span>, <span class="nm">31</span>],
+    [<span class="nm">.268</span>, <span class="nm">1</span>, <span class="nm">9</span>]
+])
+
+<span class="cm"># Single element: row, col</span>
+stats[<span class="nm">0</span>, <span class="nm">1</span>]     <span class="cm"># 4.0  (Rivera's HRs)</span>
+
+<span class="cm"># Full row</span>
+stats[<span class="nm">2</span>]        <span class="cm"># [.301, 7, 31]  (Walker)</span>
+
+<span class="cm"># Full column: all rows, column index 0</span>
+stats[:, <span class="nm">0</span>]    <span class="cm"># [.312, .287, .301, .268]  (all batting avgs)</span>
+
+
+<span class="cm"># Submatrix: first 2 players, first 2 stats</span>
+stats[:<span class="nm">2</span>, :<span class="nm">2</span>]  <span class="cm"># [[.312, 4], [.287, 2]]</span></code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; 2D indexing examples</div>
+stats[0, 1]      &rarr;  <span class="out-num">4.0</span>               <span class="out-idx"># Rivera's HRs</span>
+stats[2]         &rarr;  [<span class="out-num">0.301  7.  31.</span>]   <span class="out-idx"># Walker's full row</span>
+stats[:, 0]      &rarr;  [<span class="out-num">0.312  0.287  0.301  0.268</span>]  <span class="out-idx"># all batting avgs</span>
+stats[:2, :2]    &rarr;  [[<span class="out-num">0.312  4.</span>]
+                        [<span class="out-num">0.287  2.</span>]]
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-label">Views vs. copies</div>
+        NumPy slices return views, not copies. If you do <code>sub = stats[:2]</code> and then <code>sub[0, 0] = 0</code>, you will also change <code>stats[0, 0]</code>. To get an independent copy, call <code>.copy()</code>: <code>sub = stats[:2].copy()</code>.
+      </div>
+    </section>
+
+    <!-- VECTORIZATION -->
+    <section id="vectorization">
+      <h2>Vectorization: No Loops Required</h2>
+      <p>The most important NumPy concept is <strong>vectorization</strong> - applying an operation to every element of an array at once, without writing a Python loop. This both simplifies your code and makes it dramatically faster because the loop runs in compiled C code instead of the Python interpreter.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h4>Python loop (slow)</h4>
+          <p>Iterates in the Python interpreter. Each element requires a separate Python object operation.</p>
+          <p>For 1 million elements, this creates 1 million Python overhead events.</p>
+        </div>
+        <div class="concept-card">
+          <h4>NumPy vectorized (fast)</h4>
+          <p>Passes the entire array to a C routine. The loop runs at C speed with no Python object overhead.</p>
+          <p>For 1 million elements, this is typically 10-100x faster.</p>
+        </div>
+      </div>
+
+      <pre><code>avgs = np.<span class="fn">array</span>([<span class="nm">.312</span>, <span class="nm">.287</span>, <span class="nm">.301</span>, <span class="nm">.268</span>])
+salaries = np.<span class="fn">array</span>([<span class="nm">16800</span>, <span class="nm">14400</span>, <span class="nm">19200</span>, <span class="nm">14400</span>])
+
+<span class="cm"># Arithmetic - applied to every element</span>
+avgs * <span class="nm">1000</span>          <span class="cm"># [312.  287.  301.  268.]</span>
+avgs + <span class="nm">0.050</span>         <span class="cm"># add .050 to all</span>
+salaries / <span class="nm">52</span>        <span class="cm"># weekly pay for all players</span>
+
+<span class="cm"># Element-wise operations between two arrays</span>
+avgs * salaries      <span class="cm"># each player's avg x salary</span>
+
+<span class="cm"># Broadcasting: scalar vs. array (as above)</span>
+<span class="cm"># Broadcasting: 1D vs. 2D (NumPy auto-expands dims)</span>
+stats = np.<span class="fn">array</span>([[<span class="nm">.312</span>, <span class="nm">4</span>], [<span class="nm">.287</span>, <span class="nm">2</span>]])
+weights = np.<span class="fn">array</span>([<span class="nm">100</span>, <span class="nm">1</span>])
+stats * weights      <span class="cm"># [[31.2, 4], [28.7, 2]]</span>
+
+<span class="cm"># Universal functions (ufuncs) - vectorized math</span>
+np.<span class="fn">sqrt</span>(avgs)        <span class="cm"># square root of each element</span>
+np.<span class="fn">log</span>(salaries)     <span class="cm"># natural log (useful for skewed data)</span>
+np.<span class="fn">abs</span>(avgs - <span class="nm">.300</span>)  <span class="cm"># distance from .300 for each player</span></code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; vectorized operations</div>
+avgs * 1000          &rarr;  [<span class="out-num">312.   287.   301.   268.</span>]
+avgs + 0.050         &rarr;  [<span class="out-num">0.362  0.337  0.351  0.318</span>]
+salaries / 52        &rarr;  [<span class="out-num">323.08  276.92  369.23  276.92</span>]  <span class="out-idx"># weekly pay</span>
+np.abs(avgs - .300)  &rarr;  [<span class="out-num">0.012  0.013  0.001  0.032</span>]
+stats * weights      &rarr;  [[<span class="out-num">31.2   4.</span>]
+                            [<span class="out-num">28.7   2.</span>]]
+      </div>
+
+      <h3>Aggregating along axes</h3>
+      <pre><code>stats = np.<span class="fn">array</span>([
+    [<span class="nm">.312</span>, <span class="nm">4</span>, <span class="nm">22</span>],
+    [<span class="nm">.287</span>, <span class="nm">2</span>, <span class="nm">15</span>],
+    [<span class="nm">.301</span>, <span class="nm">7</span>, <span class="nm">31</span>]
+])
+
+<span class="cm"># No axis: collapse everything to one number</span>
+stats.<span class="fn">sum</span>()           <span class="cm"># total of all 9 values</span>
+
+<span class="cm"># axis=0: collapse rows - result has shape (3,) = one value per column</span>
+stats.<span class="fn">sum</span>(axis=<span class="nm">0</span>)    <span class="cm"># [.900, 13, 68] - column totals</span>
+stats.<span class="fn">mean</span>(axis=<span class="nm">0</span>)  <span class="cm"># [.300, 4.33, 22.67] - column means</span>
+
+<span class="cm"># axis=1: collapse columns - result has shape (3,) = one value per row</span>
+stats.<span class="fn">sum</span>(axis=<span class="nm">1</span>)   <span class="cm"># [26.312, 17.287, 38.301] - row totals</span></code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; axis aggregations on stats (3x3 array)</div>
+stats.sum()         &rarr;  <span class="out-num">102.9</span>                         <span class="out-idx"># grand total</span>
+stats.sum(axis=0)   &rarr;  [<span class="out-num"> 0.900  13.000  68.000</span>]       <span class="out-idx"># column totals</span>
+stats.mean(axis=0)  &rarr;  [<span class="out-num"> 0.300   4.333  22.667</span>]       <span class="out-idx"># column means</span>
+stats.sum(axis=1)   &rarr;  [<span class="out-num">26.312  17.287  38.301</span>]       <span class="out-idx"># row totals (per player)</span>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section id="stats">
+      <h2>Statistical Methods</h2>
+      <p>NumPy provides a comprehensive set of statistical functions. These are the building blocks for exploratory data analysis before you even reach pandas.</p>
+
+      <table class="data-table">
+        <thead><tr><th>Function</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">np.mean(a)</td><td>Arithmetic mean</td><td>Mean batting avg</td></tr>
+          <tr><td class="mono">np.median(a)</td><td>Middle value (50th percentile)</td><td>Median salary</td></tr>
+          <tr><td class="mono">np.std(a)</td><td>Standard deviation</td><td>Spread of batting avgs</td></tr>
+          <tr><td class="mono">np.var(a)</td><td>Variance (std squared)</td><td>Variance in HR counts</td></tr>
+          <tr><td class="mono">np.min(a) / np.max(a)</td><td>Minimum / maximum</td><td>Lowest/highest avg</td></tr>
+          <tr><td class="mono">np.sum(a)</td><td>Sum of all elements</td><td>Total RBI count</td></tr>
+          <tr><td class="mono">np.percentile(a, q)</td><td>qth percentile value</td><td>75th percentile salary</td></tr>
+          <tr><td class="mono">np.argmin(a) / np.argmax(a)</td><td>Index of min/max value</td><td>Who hit the most HRs?</td></tr>
+          <tr><td class="mono">np.cumsum(a)</td><td>Cumulative sum</td><td>Running RBI total</td></tr>
+          <tr><td class="mono">np.unique(a)</td><td>Sorted unique values</td><td>Unique positions in roster</td></tr>
+        </tbody>
+      </table>
+
+      <pre><code>salaries = np.<span class="fn">array</span>([<span class="nm">16800</span>, <span class="nm">14400</span>, <span class="nm">19200</span>, <span class="nm">760000</span>])
+
+<span class="fn">print</span>(<span class="st">f"Mean:   </span>{np.<span class="fn">mean</span>(salaries):<span class="nm">.0f</span>}<span class="st">"</span>)    <span class="cm"># 202600</span>
+<span class="fn">print</span>(<span class="st">f"Median: </span>{np.<span class="fn">median</span>(salaries):<span class="nm">.0f</span>}<span class="st">"</span>)  <span class="cm"># 18000</span>
+<span class="fn">print</span>(<span class="st">f"Std:    </span>{np.<span class="fn">std</span>(salaries):<span class="nm">.0f</span>}<span class="st">"</span>)    <span class="cm"># ~370000</span>
+
+<span class="cm"># Who has the highest salary?</span>
+idx = np.<span class="fn">argmax</span>(salaries)   <span class="cm"># 3</span>
+players = np.<span class="fn">array</span>([<span class="st">'Rivera'</span>, <span class="st">'Chen'</span>, <span class="st">'Walker'</span>, <span class="st">'Kim'</span>])
+<span class="fn">print</span>(players[idx])          <span class="cm"># 'Kim'</span>
+
+<span class="cm"># Percentile analysis</span>
+np.<span class="fn">percentile</span>(salaries, <span class="nm">25</span>)   <span class="cm"># 25th percentile</span>
+np.<span class="fn">percentile</span>(salaries, [<span class="nm">25</span>, <span class="nm">50</span>, <span class="nm">75</span>])  <span class="cm"># quartiles</span></code></pre>
+    </section>
+
+    <!-- BOOLEAN INDEXING -->
+    <section id="boolean">
+      <h2>Boolean Indexing</h2>
+      <p>Boolean indexing lets you select elements based on a condition. A comparison on a NumPy array produces a boolean array of the same shape. Using that boolean array as an index returns only the elements where the condition is True.</p>
+
+      <pre><code>avgs = np.<span class="fn">array</span>([<span class="nm">.312</span>, <span class="nm">.287</span>, <span class="nm">.301</span>, <span class="nm">.268</span>, <span class="nm">.295</span>])
+
+<span class="cm"># Step 1: comparison creates a boolean array</span>
+mask = avgs &gt; <span class="nm">.295</span>
+<span class="cm"># array([ True, False,  True, False, False])</span>
+
+<span class="cm"># Step 2: use the mask as an index</span>
+avgs[mask]     <span class="cm"># [.312, .301]</span>
+
+<span class="cm"># Same thing in one line</span>
+avgs[avgs &gt; <span class="nm">.295</span>]
+
+<span class="cm"># Combine conditions with & (and), | (or), ~ (not)</span>
+avgs[(avgs &gt; <span class="nm">.285</span>) &amp; (avgs &lt; <span class="nm">.310</span>)]  <span class="cm"># [.287, .301, .295]</span>
+
+<span class="cm"># Use boolean mask to select from a DIFFERENT array</span>
+players = np.<span class="fn">array</span>([<span class="st">'Rivera'</span>, <span class="st">'Chen'</span>, <span class="st">'Walker'</span>, <span class="st">'Kim'</span>, <span class="st">'Jones'</span>])
+players[avgs &gt; <span class="nm">.295</span>]   <span class="cm"># ['Rivera', 'Walker']</span>
+
+<span class="cm"># Modify values matching a condition</span>
+avgs[avgs &lt; <span class="nm">.280</span>] = <span class="nm">.280</span>   <span class="cm"># floor all avgs at .280</span></code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; boolean indexing</div>
+mask = avgs &gt; .295         &rarr;  [<span class="out-num"> True  False   True  False  False</span>]
+avgs[mask]                  &rarr;  [<span class="out-num">0.312  0.301</span>]
+avgs[(avgs&gt;.285)&amp;(avgs&lt;.310)] &rarr;  [<span class="out-num">0.287  0.301  0.295</span>]
+players[avgs &gt; .295]        &rarr;  [<span class="out-str">'Rivera'  'Walker'</span>]
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Boolean indexing vs. np.where</div>
+        <code>np.where(condition, x, y)</code> returns elements from array <code>x</code> where the condition is True, and from <code>y</code> where it is False. This is useful for conditional assignment: <code>np.where(avgs > .300, 'hot', 'cold')</code> returns <code>['hot', 'cold', 'hot', 'cold', 'cold']</code>.
+      </div>
+    </section>
+
+    <!-- FANCY INDEXING -->
+    <section id="fancy">
+      <h2>Fancy Indexing</h2>
+      <p>Fancy indexing means passing an array of <em>integers</em> as an index - instead of a single index or a slice, you hand NumPy a list of positions and it returns exactly those elements, in that order. Unlike slicing, fancy indexing always returns a <strong>copy</strong>, not a view.</p>
+
+      <pre><code>players = np.<span class="fn">array</span>([<span class="st">'Rivera'</span>, <span class="st">'Chen'</span>, <span class="st">'Walker'</span>, <span class="st">'Kim'</span>, <span class="st">'Jones'</span>])
+
+<span class="cm"># Select specific indices in any order</span>
+idx = [<span class="nm">0</span>, <span class="nm">2</span>, <span class="nm">4</span>]
+players[idx]     <span class="cm"># ['Rivera', 'Walker', 'Jones']</span>
+
+<span class="cm"># Repeat indices are allowed</span>
+players[[<span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">2</span>]]  <span class="cm"># ['Rivera', 'Rivera', 'Walker']</span>
+
+<span class="cm"># Reverse order</span>
+players[[-<span class="nm">1</span>, -<span class="nm">2</span>, -<span class="nm">3</span>]]  <span class="cm"># ['Jones', 'Kim', 'Walker']</span>
+
+<span class="cm"># Fancy indexing in 2D: select specific rows</span>
+stats = np.<span class="fn">array</span>([
+    [<span class="nm">.312</span>, <span class="nm">4</span>, <span class="nm">22</span>],
+    [<span class="nm">.287</span>, <span class="nm">2</span>, <span class="nm">15</span>],
+    [<span class="nm">.301</span>, <span class="nm">7</span>, <span class="nm">31</span>],
+    [<span class="nm">.268</span>, <span class="nm">1</span>, <span class="nm">9</span>]
+])
+stats[[<span class="nm">0</span>, <span class="nm">2</span>]]     <span class="cm"># rows 0 and 2: Rivera and Walker</span>
+stats[[<span class="nm">3</span>, <span class="nm">1</span>, <span class="nm">0</span>]]  <span class="cm"># any order you want</span>
+
+<span class="cm"># Combine fancy + regular indexing</span>
+stats[[<span class="nm">0</span>, <span class="nm">2</span>], <span class="nm">1</span>]   <span class="cm"># HRs for Rivera and Walker: [4, 7]</span></code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; fancy indexing</div>
+players[[0,2,4]]     &rarr;  [<span class="out-str">'Rivera'  'Walker'  'Jones'</span>]
+players[[0,0,2]]     &rarr;  [<span class="out-str">'Rivera'  'Rivera'  'Walker'</span>]
+stats[[0,2]]         &rarr;  [[<span class="out-num">0.312  4.   22.</span>]   <span class="out-idx"># Rivera</span>
+                            [<span class="out-num">0.301  7.   31.</span>]]  <span class="out-idx"># Walker</span>
+stats[[0,2], 1]      &rarr;  [<span class="out-num">4.   7.</span>]             <span class="out-idx"># HRs only</span>
+      </div>
+
+      <h3>Sorting with argsort</h3>
+      <pre><code>avgs = np.<span class="fn">array</span>([<span class="nm">.312</span>, <span class="nm">.287</span>, <span class="nm">.301</span>, <span class="nm">.268</span>])
+
+<span class="cm"># argsort returns the indices that would sort the array</span>
+order = np.<span class="fn">argsort</span>(avgs)       <span class="cm"># [3, 1, 2, 0] (ascending)</span>
+
+<span class="cm"># Use those indices to sort both arrays together</span>
+players = np.<span class="fn">array</span>([<span class="st">'Rivera'</span>, <span class="st">'Chen'</span>, <span class="st">'Walker'</span>, <span class="st">'Kim'</span>])
+players[order]  <span class="cm"># ['Kim', 'Chen', 'Walker', 'Rivera']</span>
+avgs[order]     <span class="cm"># [.268, .287, .301, .312]</span>
+
+<span class="cm"># Descending: reverse the order array</span>
+players[order[::-<span class="nm">1</span>]]  <span class="cm"># ['Rivera', 'Walker', 'Chen', 'Kim']</span></code></pre>
+
+      <div class="callout">
+        <div class="callout-label">NumPy as pandas' engine</div>
+        Every pandas Series and DataFrame column is backed by a NumPy array. When you call <code>df['avg'].values</code>, you get the underlying NumPy array. Understanding NumPy means you understand what pandas is doing under the hood - and you can drop down to NumPy when you need maximum performance.
+      </div>
+    </section>
+
+    <!-- RANDOM NUMBER GENERATION -->
+    <section id="content">
+      <h2>Pseudorandom Number Generation</h2>
+      <p>Random numbers are essential in data science for simulations, sampling, and setting up reproducible experiments. NumPy's random module generates <strong>pseudorandom</strong> numbers - they look random but are produced by a deterministic algorithm seeded with a starting value.</p>
+
+      <h3>Setting a seed for reproducibility</h3>
+      <p>A <strong>seed</strong> pins the random number generator so every run produces the same sequence. This is critical when you need reproducible results - for example, when splitting data for machine learning or writing tests.</p>
+      <pre><code>import numpy as np
+
+<span class="cm"># Old-style (still common in tutorials)</span>
+np.random.<span class="fn">seed</span>(<span class="nm">42</span>)
+np.random.<span class="fn">randn</span>(<span class="nm">5</span>)          <span class="cm"># same 5 values every time</span>
+
+<span class="cm"># Modern style (preferred)</span>
+rng = np.random.<span class="fn">default_rng</span>(<span class="nm">42</span>)
+rng.<span class="fn">normal</span>(size=<span class="nm">5</span>)            <span class="cm"># reproducible normal distribution</span>
+rng.<span class="fn">integers</span>(<span class="nm">1</span>, <span class="nm">7</span>, size=<span class="nm">10</span>)  <span class="cm"># 10 random integers 1-6 (like dice rolls)</span></code></pre>
+
+      <h3>Common random functions</h3>
+      <pre><code>rng = np.random.<span class="fn">default_rng</span>(<span class="nm">0</span>)
+
+rng.<span class="fn">random</span>(<span class="nm">5</span>)          <span class="cm"># 5 floats in [0, 1)</span>
+rng.<span class="fn">normal</span>(<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">100</span>) <span class="cm"># 100 values from standard normal</span>
+rng.<span class="fn">choice</span>(students, size=<span class="nm">2</span>, replace=<span class="kw">False</span>)  <span class="cm"># random partner pairs</span>
+rng.<span class="fn">shuffle</span>(arr)       <span class="cm"># shuffle in place</span></code></pre>
+
+      <div class="callout">
+        <div class="callout-label">Why "pseudo" random?</div>
+        Computers can't generate true randomness - they use a mathematical formula that produces sequences <em>that look</em> random. The seed is just the starting point for that formula. Same seed = same sequence every time, which makes your analysis reproducible.
+      </div>
+    </section>
+
+    <!-- CONDITIONAL LOGIC AS ARRAY OPERATIONS -->
+    <section id="content">
+      <h2>Conditional Logic as Array Operations</h2>
+      <p>Instead of writing Python <code>if/else</code> loops over arrays (slow!), NumPy provides vectorized conditional operations that apply logic element-wise across entire arrays at once.</p>
+
+      <h3>np.where - vectorized if/else</h3>
+      <p><code>np.where(condition, x, y)</code> returns elements from <code>x</code> where the condition is <code>True</code>, and elements from <code>y</code> where it is <code>False</code>.</p>
+      <pre><code>scores = np.<span class="fn">array</span>([<span class="nm">85</span>, <span class="nm">72</span>, <span class="nm">91</span>, <span class="nm">60</span>, <span class="nm">78</span>])
+
+<span class="cm"># Label each score as Pass or Fail</span>
+labels = np.<span class="fn">where</span>(scores >= <span class="nm">75</span>, <span class="st">'Pass'</span>, <span class="st">'Fail'</span>)
+<span class="cm"># ['Pass', 'Fail', 'Pass', 'Fail', 'Pass']</span>
+
+<span class="cm"># Remap values: cap any score above 90 at exactly 90</span>
+capped = np.<span class="fn">where</span>(scores > <span class="nm">90</span>, <span class="nm">90</span>, scores)
+<span class="cm"># [85, 72, 90, 60, 78]</span></code></pre>
+
+      <h3>Replacing values in an array</h3>
+      <p>Boolean indexing with assignment is another form of conditional logic - select elements that meet a condition, then replace them:</p>
+      <pre><code>temps = np.<span class="fn">array</span>([<span class="nm">55</span>, <span class="nm">72</span>, <span class="nm">89</span>, <span class="nm">65</span>, <span class="nm">91</span>, <span class="nm">78</span>])
+
+<span class="cm"># Replace any temperature above 85 with exactly 85</span>
+temps[temps > <span class="nm">85</span>] = <span class="nm">85</span>
+<span class="cm"># [55, 72, 85, 65, 85, 78]</span>
+
+<span class="cm"># Categorize: hot vs cool</span>
+category = np.<span class="fn">where</span>(temps > <span class="nm">70</span>, <span class="st">'Hot'</span>, <span class="st">'Cool'</span>)</code></pre>
+
+      <div class="callout">
+        <div class="callout-label">np.where vs Python loops</div>
+        A Python <code>for</code> loop checking 1 million values might take seconds. <code>np.where</code> on the same array takes milliseconds - it runs compiled C code under the hood. Always prefer vectorized operations when working with large datasets.
+      </div>
+    </section>
+
+    <!-- CONCATENATING, STACKING, SPLITTING -->
+    <section id="content">
+      <h2>Concatenating, Stacking, and Splitting</h2>
+      <p>Real data often arrives in pieces - sensor readings from different days, student scores from different exams, etc. NumPy provides tools to combine and split arrays efficiently.</p>
+
+      <h3>Concatenation: joining 1D arrays</h3>
+      <pre><code><span class="cm"># Weather data from two weeks</span>
+week1_temps = np.<span class="fn">array</span>([<span class="nm">72</span>, <span class="nm">75</span>, <span class="nm">68</span>, <span class="nm">71</span>, <span class="nm">74</span>, <span class="nm">69</span>, <span class="nm">73</span>])
+week2_temps = np.<span class="fn">array</span>([<span class="nm">76</span>, <span class="nm">78</span>, <span class="nm">80</span>, <span class="nm">77</span>, <span class="nm">75</span>, <span class="nm">72</span>, <span class="nm">74</span>])
+
+two_weeks = np.<span class="fn">concatenate</span>([week1_temps, week2_temps])
+<span class="cm"># One 14-element array</span></code></pre>
+
+      <h3>Stacking: combining 2D arrays</h3>
+      <p><code>np.vstack</code> stacks arrays vertically (adds rows). <code>np.hstack</code> stacks horizontally (adds columns).</p>
+      <pre><code>exam1 = np.<span class="fn">array</span>([[<span class="nm">85</span>, <span class="nm">90</span>, <span class="nm">78</span>],
+                   [<span class="nm">92</span>, <span class="nm">88</span>, <span class="nm">76</span>]])
+
+exam2 = np.<span class="fn">array</span>([[<span class="nm">79</span>, <span class="nm">84</span>, <span class="nm">91</span>],
+                   [<span class="nm">88</span>, <span class="nm">93</span>, <span class="nm">82</span>]])
+
+<span class="cm"># vstack: 4 rows (both exams as separate rows)</span>
+np.<span class="fn">vstack</span>([exam1, exam2])   <span class="cm"># shape (4, 3)</span>
+
+<span class="cm"># hstack: add exam2 as new columns alongside exam1</span>
+np.<span class="fn">hstack</span>([exam1, exam2])   <span class="cm"># shape (2, 6)</span>
+
+<span class="cm"># vstack is equivalent to np.concatenate([...], axis=0)</span>
+<span class="cm"># hstack is equivalent to np.concatenate([...], axis=1)</span></code></pre>
+
+      <h3>Splitting arrays</h3>
+      <p><code>np.array_split</code> divides an array into sub-arrays. Unlike <code>np.split</code>, it handles uneven splits without raising an error.</p>
+      <pre><code>monthly_sales = np.<span class="fn">array</span>([<span class="nm">120</span>, <span class="nm">135</span>, <span class="nm">150</span>,   <span class="cm"># Q1</span>
+                           <span class="nm">180</span>, <span class="nm">165</span>, <span class="nm">200</span>,   <span class="cm"># Q2</span>
+                           <span class="nm">210</span>, <span class="nm">195</span>, <span class="nm">220</span>,   <span class="cm"># Q3</span>
+                           <span class="nm">240</span>, <span class="nm">260</span>, <span class="nm">280</span>])  <span class="cm"># Q4</span>
+
+<span class="cm"># Split evenly into 4 quarters</span>
+q1, q2, q3, q4 = np.<span class="fn">split</span>(monthly_sales, <span class="nm">4</span>)
+<span class="cm"># q1 = [120, 135, 150]</span>
+
+<span class="cm"># Split at specific indices</span>
+first_half, second_half = np.<span class="fn">split</span>(monthly_sales, [<span class="nm">6</span>])
+<span class="cm"># first_half = first 6 months, second_half = last 6</span></code></pre>
+
+      <div class="callout">
+        <div class="callout-label">vstack vs concatenate(axis=0)</div>
+        <code>np.vstack</code> and <code>np.concatenate([...], axis=0)</code> do the same thing. <code>vstack</code> is more readable when you're stacking rows; <code>concatenate</code> is more explicit and flexible. You'll see both in practice - knowing they're equivalent prevents confusion.
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz">
+      <div id="quiz-section">
+        <h2>Module 3 Quiz</h2>
+        <p class="quiz-intro">Ten questions covering arrays, indexing, vectorization, statistical methods, and boolean/fancy indexing. Select one answer per question, then submit.</p>
+
+        <div class="q-block" data-correct="c">
+          <span class="q-num">Question 01</span>
+          <p class="q-text">What does <code>np.array([.312, .287, .301]).dtype</code> return?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q1" value="a"> <code>float32</code></label>
+            <label class="opt-label"><input type="radio" name="q1" value="b"> <code>int64</code></label>
+            <label class="opt-label"><input type="radio" name="q1" value="c"> <code>float64</code></label>
+            <label class="opt-label"><input type="radio" name="q1" value="d"> <code>object</code></label>
+          </div>
+          <div class="q-feedback" id="fb1"></div>
+        </div>
+
+        <div class="q-block" data-correct="b">
+          <span class="q-num">Question 02</span>
+          <p class="q-text">Given <code>a = np.array([10, 20, 30, 40, 50])</code>, what does <code>a[1:4]</code> return?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q2" value="a"> <code>[10, 20, 30, 40]</code></label>
+            <label class="opt-label"><input type="radio" name="q2" value="b"> <code>[20, 30, 40]</code></label>
+            <label class="opt-label"><input type="radio" name="q2" value="c"> <code>[20, 30, 40, 50]</code></label>
+            <label class="opt-label"><input type="radio" name="q2" value="d"> <code>[10, 20, 30]</code></label>
+          </div>
+          <div class="q-feedback" id="fb2"></div>
+        </div>
+
+        <div class="q-block" data-correct="a">
+          <span class="q-num">Question 03</span>
+          <p class="q-text">You have a 2D array <code>stats</code> with shape (4, 3). What does <code>stats[:, 0]</code> return?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q3" value="a"> A 1D array of the first column - all 4 rows, column 0.</label>
+            <label class="opt-label"><input type="radio" name="q3" value="b"> The first row of the array.</label>
+            <label class="opt-label"><input type="radio" name="q3" value="c"> A 4x1 2D array (different from a 1D array).</label>
+            <label class="opt-label"><input type="radio" name="q3" value="d"> An error because you cannot slice a 2D array this way.</label>
+          </div>
+          <div class="q-feedback" id="fb3"></div>
+        </div>
+
+        <div class="q-block" data-correct="d">
+          <span class="q-num">Question 04</span>
+          <p class="q-text">What is the main reason NumPy vectorized operations are faster than Python loops?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q4" value="a"> NumPy uses parallel processing across multiple CPU cores by default.</label>
+            <label class="opt-label"><input type="radio" name="q4" value="b"> NumPy skips bounds checking, which makes it less safe but faster.</label>
+            <label class="opt-label"><input type="radio" name="q4" value="c"> NumPy compresses the data before operating on it.</label>
+            <label class="opt-label"><input type="radio" name="q4" value="d"> NumPy stores data in a contiguous memory block and loops run in compiled C code, eliminating Python interpreter overhead per element.</label>
+          </div>
+          <div class="q-feedback" id="fb4"></div>
+        </div>
+
+        <div class="q-block" data-correct="c">
+          <span class="q-num">Question 05</span>
+          <p class="q-text">Given <code>a = np.array([1, 2, 3, 4])</code> and <code>b = np.array([10, 20, 30, 40])</code>, what does <code>a * b</code> produce?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q5" value="a"> A scalar: the dot product 1*10 + 2*20 + 3*30 + 4*40 = 300.</label>
+            <label class="opt-label"><input type="radio" name="q5" value="b"> A single number: sum of all products.</label>
+            <label class="opt-label"><input type="radio" name="q5" value="c"> An array: <code>[10, 40, 90, 160]</code> - element-wise multiplication.</label>
+            <label class="opt-label"><input type="radio" name="q5" value="d"> An error because * is not defined for arrays.</label>
+          </div>
+          <div class="q-feedback" id="fb5"></div>
+        </div>
+
+        <div class="q-block" data-correct="b">
+          <span class="q-num">Question 06</span>
+          <p class="q-text">The Eagles roster has salaries <code>[16800, 14400, 19200, 760000]</code>. <code>np.mean(salaries)</code> returns ~202,600. Which function would give the more representative "typical" salary?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q6" value="a"> <code>np.std(salaries)</code></label>
+            <label class="opt-label"><input type="radio" name="q6" value="b"> <code>np.median(salaries)</code></label>
+            <label class="opt-label"><input type="radio" name="q6" value="c"> <code>np.var(salaries)</code></label>
+            <label class="opt-label"><input type="radio" name="q6" value="d"> <code>np.sum(salaries) / np.max(salaries)</code></label>
+          </div>
+          <div class="q-feedback" id="fb6"></div>
+        </div>
+
+        <div class="q-block" data-correct="a">
+          <span class="q-num">Question 07</span>
+          <p class="q-text">What is the key difference between a NumPy slice (<code>a[1:3]</code>) and fancy indexing (<code>a[[1, 3]]</code>) in terms of memory?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q7" value="a"> A slice returns a view (no copy made); fancy indexing always returns a copy.</label>
+            <label class="opt-label"><input type="radio" name="q7" value="b"> A slice returns a copy; fancy indexing returns a view.</label>
+            <label class="opt-label"><input type="radio" name="q7" value="c"> Both always return copies.</label>
+            <label class="opt-label"><input type="radio" name="q7" value="d"> Both always return views.</label>
+          </div>
+          <div class="q-feedback" id="fb7"></div>
+        </div>
+
+        <div class="q-block" data-correct="d">
+          <span class="q-num">Question 08</span>
+          <p class="q-text">Given <code>avgs = np.array([.312, .287, .301, .268])</code>, what does <code>avgs[avgs > .295]</code> return?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q8" value="a"> <code>[True, False, True, False]</code></label>
+            <label class="opt-label"><input type="radio" name="q8" value="b"> The indices where avgs > .295: <code>[0, 2]</code></label>
+            <label class="opt-label"><input type="radio" name="q8" value="c"> The count of values above .295: <code>2</code></label>
+            <label class="opt-label"><input type="radio" name="q8" value="d"> <code>[.312, .301]</code> - the values themselves where the condition is True.</label>
+          </div>
+          <div class="q-feedback" id="fb8"></div>
+        </div>
+
+        <div class="q-block" data-correct="c">
+          <span class="q-num">Question 09</span>
+          <p class="q-text">You have a stats array with shape (4, 3). What does <code>stats.mean(axis=0)</code> return?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q9" value="a"> A single number: the mean of all 12 elements.</label>
+            <label class="opt-label"><input type="radio" name="q9" value="b"> An array of shape (4,): the mean of each row.</label>
+            <label class="opt-label"><input type="radio" name="q9" value="c"> An array of shape (3,): the mean of each column.</label>
+            <label class="opt-label"><input type="radio" name="q9" value="d"> An error because axis=0 is not valid for 2D arrays.</label>
+          </div>
+          <div class="q-feedback" id="fb9"></div>
+        </div>
+
+        <div class="q-block" data-correct="b">
+          <span class="q-num">Question 10</span>
+          <p class="q-text">What does <code>np.argmax(avgs)</code> return?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q10" value="a"> The maximum value in the array.</label>
+            <label class="opt-label"><input type="radio" name="q10" value="b"> The index (position) of the maximum value.</label>
+            <label class="opt-label"><input type="radio" name="q10" value="c"> A boolean array where the maximum occurs.</label>
+            <label class="opt-label"><input type="radio" name="q10" value="d"> The number of elements equal to the maximum.</label>
+          </div>
+          <div class="q-feedback" id="fb10"></div>
+        </div>
+
+        <button class="quiz-submit" id="quizSubmit" onclick="submitQuiz()">Submit Quiz</button>
+        <div class="quiz-result" id="quizResult">
+          <div class="score-big" id="scoreDisplay"></div>
+          <div class="grade-label" id="gradeDisplay"></div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /content-col -->
+
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h4>Quiz Score</h4>
+      <div class="score-display" id="sidebarScore">--</div>
+      <div class="score-sub">Module 3 - 10 questions</div>
+      <a href="#quiz" class="quiz-cta-btn">Take the Quiz</a>
+    </div>
+    <div class="next-mod">
+      <h4>Next Module</h4>
+      <p>NumPy arrays power pandas DataFrames. Put these skills to work with real tabular data in Module 4.</p>
+      <a href="../module4/index.html" class="next-mod-btn">Module 4: Pandas &rarr;</a>
+    </div>
+    <div class="sidebar-card">
+      <h4>On This Page</h4>
+      <div class="toc-links">
+        <a href="#arrays">Arrays</a>
+        <a href="#indexing">Indexing</a>
+        <a href="#vectorization">Vectorization</a>
+        <a href="#stats">Statistical Methods</a>
+        <a href="#boolean">Boolean Indexing</a>
+        <a href="#fancy">Fancy Indexing</a>
+        <a href="#quiz">Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<footer>
+  Built for DTSC 520 - Eastern University &bull; <a href="../../index.html">Course Home</a><br>&copy; Eastern University. All rights reserved.
+</footer>
+
+<script>
+const STORAGE_KEY = 'dtsc520_quiz_m3';
+
+const ANSWERS = {
+  q1: { correct: 'c', feedback: {
+    a: 'Incorrect. NumPy defaults to float64, not float32, for Python float literals.',
+    b: 'Incorrect. These are decimal values, so NumPy uses float64, not int64.',
+    c: 'Correct! Python float literals default to 64-bit floats. NumPy preserves that precision with dtype float64.',
+    d: 'Incorrect. object dtype is used for Python objects like strings, not numeric values.'
+  }},
+  q2: { correct: 'b', feedback: {
+    a: 'Incorrect. a[1:4] starts at index 1 and stops before index 4.',
+    b: 'Correct! Slicing is start-inclusive and stop-exclusive. a[1:4] gives indices 1, 2, 3 - the values 20, 30, 40.',
+    c: 'Incorrect. That would be a[1:5] or a[1:].',
+    d: 'Incorrect. That would be a[:3] or a[0:3].'
+  }},
+  q3: { correct: 'a', feedback: {
+    a: 'Correct! In a 2D array, the first index is rows and the second is columns. stats[:, 0] means "all rows, column 0" - which is the entire first column as a 1D array.',
+    b: 'Incorrect. The first row would be stats[0] or stats[0, :].',
+    c: 'Incorrect. stats[:, 0] returns a true 1D array of shape (4,), not (4, 1). To get shape (4,1) you would use stats[:, 0:1].',
+    d: 'Incorrect. This is valid NumPy syntax for selecting a column.'
+  }},
+  q4: { correct: 'd', feedback: {
+    a: 'Incorrect. NumPy does not automatically use multiple cores for basic operations.',
+    b: 'Incorrect. NumPy does perform bounds checking.',
+    c: 'Incorrect. NumPy does not compress data before operating.',
+    d: 'Correct! NumPy stores homogeneous data in contiguous memory blocks. Operations run in compiled C code - the loop executes at C speed with no per-element Python overhead.'
+  }},
+  q5: { correct: 'c', feedback: {
+    a: 'Incorrect. That describes np.dot(a, b) or a @ b, not a * b.',
+    b: 'Incorrect. That would be np.sum(a * b).',
+    c: 'Correct! The * operator on NumPy arrays is element-wise multiplication. Each position is multiplied independently: [1*10, 2*20, 3*30, 4*40] = [10, 40, 90, 160].',
+    d: 'Incorrect. * is well-defined for NumPy arrays - it performs element-wise multiplication.'
+  }},
+  q6: { correct: 'b', feedback: {
+    a: 'Incorrect. std measures spread, not central tendency.',
+    b: "Correct! The median is resistant to outliers. Kim's $760,000 rehab salary inflates the mean to ~$202,600, while the median (~$18,000) accurately reflects what a typical player earns.",
+    c: 'Incorrect. var measures variance (spread squared), not central tendency.',
+    d: 'Incorrect. This formula has no meaningful statistical interpretation.'
+  }},
+  q7: { correct: 'a', feedback: {
+    a: 'Correct! Slices return views - they share memory with the original array. Fancy indexing (passing an array of integers) always returns a new copy. This matters when you modify the result.',
+    b: 'Incorrect. It is the opposite: slices are views, fancy indexing produces copies.',
+    c: 'Incorrect. Slices are views, not copies.',
+    d: 'Incorrect. Fancy indexing produces copies, not views.'
+  }},
+  q8: { correct: 'd', feedback: {
+    a: 'Incorrect. That is what the comparison avgs > .295 alone returns - the boolean mask, not the final result.',
+    b: 'Incorrect. np.where(avgs > .295) or np.nonzero(avgs > .295) would return indices. Boolean indexing returns values.',
+    c: 'Incorrect. (avgs > .295).sum() would give the count.',
+    d: 'Correct! Boolean indexing uses the boolean mask to select elements. avgs[avgs > .295] returns the actual values where the condition is True: [.312, .301].'
+  }},
+  q9: { correct: 'c', feedback: {
+    a: 'Incorrect. That would be stats.mean() with no axis argument.',
+    b: 'Incorrect. axis=1 collapses columns and gives one value per row - shape (4,).',
+    c: 'Correct! axis=0 collapses along the row dimension. For a (4, 3) array, this produces shape (3,) - one mean per column.',
+    d: 'Incorrect. axis=0 is perfectly valid for 2D arrays.'
+  }},
+  q10: { correct: 'b', feedback: {
+    a: 'Incorrect. np.max(avgs) returns the maximum value. argmax returns the position.',
+    b: 'Correct! np.argmax() returns the integer index of the maximum value. You can then use that index to look up the corresponding player name or other aligned array.',
+    c: 'Incorrect. There is no such function; argmax returns a single integer.',
+    d: 'Incorrect. (avgs == avgs.max()).sum() would give the count of elements equal to the max.'
+  }}
+};
+
+function submitQuiz() {
+  let score = 0;
+  const total = 10;
+  const answers = {};
+
+  for (let i = 1; i <= total; i++) {
+    const name = 'q' + i;
+    const sel = document.querySelector('input[name="' + name + '"]:checked');
+    const fb = document.getElementById('fb' + i);
+    const opts = document.querySelectorAll('input[name="' + name + '"]');
+    const info = ANSWERS[name];
+
+    if (!sel) {
+      fb.className = 'q-feedback show wrong';
+      fb.textContent = 'Please select an answer.';
+      continue;
+    }
+
+    const chosen = sel.value;
+    answers[name] = chosen;
+
+    opts.forEach(function(opt) {
+      const lbl = opt.closest('.opt-label');
+      if (opt.value === info.correct) lbl.classList.add('opt-correct');
+      else if (opt.value === chosen && chosen !== info.correct) lbl.classList.add('opt-wrong');
+      opt.disabled = true;
+    });
+
+    if (chosen === info.correct) {
+      score++;
+      fb.className = 'q-feedback show correct';
+      fb.textContent = info.feedback[chosen];
+    } else {
+      fb.className = 'q-feedback show wrong';
+      fb.textContent = info.feedback[chosen];
+    }
+  }
+
+  const pct = Math.round((score / total) * 100);
+  let grade = pct === 100 ? 'Perfect score - NumPy expert!' :
+              pct >= 80  ? 'Solid work - strong NumPy foundation!' :
+              pct >= 60  ? 'Good start - review the sections where you missed.' :
+                           'Review the module content and try again.';
+
+  document.getElementById('scoreDisplay').textContent = score + ' / ' + total;
+  document.getElementById('gradeDisplay').textContent = pct + '% - ' + grade;
+  document.getElementById('quizResult').className = 'quiz-result show';
+  document.getElementById('quizSubmit').disabled = true;
+  document.getElementById('sidebarScore').textContent = score + '/10';
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ score: score, total: total, pct: pct, answers: answers, ts: Date.now() }));
+  } catch(e) {}
+}
+
+(function() {
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved && saved.score !== undefined) {
+      document.getElementById('sidebarScore').textContent = saved.score + '/10';
+    }
+  } catch(e) {}
+})();
+</script>
+
+<a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
+<style>
+  #back-to-top {
+    position: fixed; top: 64px; left: 1rem; z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+    width: 2.1rem; height: 2.1rem;
+    background: rgba(20,18,16,0.85); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px; color: rgba(255,255,255,0.55);
+    font-size: 1.25rem; line-height: 1; text-decoration: none;
+    backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s, color 0.15s, border-color 0.15s;
+  }
+  #back-to-top.visible { opacity: 1; pointer-events: auto; }
+  #back-to-top:hover { color: #fff; border-color: rgba(255,255,255,0.35); }
+</style>
+<script>
+(function(){
+  var btn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function(){
+    btn.classList.toggle('visible', window.scrollY > 300);
+  }, {passive: true});
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+})();
+</script>
+<!-- ── Python Sandbox ── -->
+
+<!-- Floating trigger button -->
+<button id="sandbox-btn" title="Python Sandbox" aria-label="Open Python Sandbox">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+  <span>Python</span>
+</button>
+
+<!-- Sandbox modal -->
+<div id="sandbox-modal" role="dialog" aria-modal="true" aria-label="Python Sandbox">
+  <div class="sb-box">
+    <div class="sb-header">
+      <div class="sb-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Python Sandbox
+        <span class="sb-status" id="sb-status">ready</span>
+      </div>
+      <div class="sb-header-actions">
+        <button class="sb-action-btn" id="sb-clear-btn" title="Clear editor">Clear</button>
+        <button class="sb-action-btn" id="sb-reset-btn" title="Reset output">Reset output</button>
+        <button class="sb-close" id="sb-close" aria-label="Close sandbox">&times;</button>
+      </div>
+    </div>
+    <div class="sb-body">
+      <div class="sb-editor-pane">
+        <div class="sb-pane-label">
+          Code
+          <button class="sb-run-btn" id="sb-run">&#9654; Run</button>
+        </div>
+        <div id="sb-editor-wrap"></div>
+      </div>
+      <div class="sb-output-pane">
+        <div class="sb-pane-label">Output</div>
+        <div id="sb-output"><span class="sb-placeholder">Output will appear here after you run code.</span></div>
+      </div>
+    </div>
+    <div class="sb-footer">
+      Session resets when you leave this page &bull; Code is saved automatically
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Floating button */
+  #sandbox-btn {
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 998;
+    display: flex; align-items: center; gap: 0.45rem;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 5px; cursor: pointer;
+    padding: 0.55rem 1rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.45);
+    transition: background 0.15s, transform 0.1s;
+  }
+  #sandbox-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
+  #sandbox-btn:active { transform: translateY(0); }
+
+  /* Modal overlay */
+  #sandbox-modal {
+    display: none; position: fixed; inset: 0; z-index: 2100;
+    background: rgba(0,0,0,0.75);
+    align-items: center; justify-content: center;
+    padding: 1.25rem;
+  }
+  #sandbox-modal.open { display: flex; }
+
+  /* Modal box */
+  .sb-box {
+    background: #161412;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    border-radius: 6px;
+    width: 100%; max-width: 920px;
+    height: 80vh; max-height: 680px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+  }
+
+  /* Header */
+  .sb-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.6rem 1rem; border-bottom: 1px solid var(--border);
+    flex-shrink: 0; gap: 0.75rem;
+  }
+  .sb-title {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-light);
+  }
+  .sb-status {
+    font-size: 0.62rem; letter-spacing: 0.06em; padding: 0.15rem 0.5rem;
+    border-radius: 3px; background: rgba(122,95,181,0.15);
+    color: var(--accent-light); text-transform: uppercase;
+    transition: background 0.2s, color 0.2s;
+  }
+  .sb-status.loading { background: rgba(192,123,48,0.2); color: #d9913e; }
+  .sb-status.running { background: rgba(74,143,107,0.2); color: #6abf8a; }
+  .sb-status.error   { background: rgba(180,60,60,0.2);  color: #e07070; }
+
+  .sb-header-actions { display: flex; align-items: center; gap: 0.5rem; }
+  .sb-action-btn {
+    background: none; border: 1px solid var(--border); color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 0.25rem 0.6rem; border-radius: 3px; cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .sb-action-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+  .sb-close {
+    background: none; border: none; color: rgba(255,255,255,0.45);
+    font-size: 1.3rem; line-height: 1; cursor: pointer; padding: 0 0.2rem;
+    transition: color 0.15s;
+  }
+  .sb-close:hover { color: #fff; }
+
+  /* Body */
+  .sb-body {
+    display: grid; grid-template-columns: 1fr 1fr;
+    flex: 1; min-height: 0; overflow: hidden;
+  }
+  .sb-pane-label {
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim);
+    padding: 0.45rem 1rem; border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  /* Editor pane */
+  .sb-editor-pane {
+    display: flex; flex-direction: column;
+    border-right: 1px solid var(--border); overflow: hidden;
+  }
+
+  /* CodeMirror overrides */
+  #sb-editor-wrap { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+  #sb-editor-wrap .CodeMirror {
+    flex: 1; height: 100%; min-height: 0;
+    background: #0d0c0b;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.84rem; line-height: 1.6;
+    border: none;
+  }
+  #sb-editor-wrap .CodeMirror-scroll { min-height: 0; }
+  #sb-editor-wrap .CodeMirror-gutters { background: #0d0c0b; border-right: 1px solid #2e2b28; }
+  #sb-editor-wrap .CodeMirror-linenumber { color: #4a4540; }
+  #sb-editor-wrap .CodeMirror-cursor { border-left-color: #9878d4; }
+  #sb-editor-wrap .CodeMirror-selected { background: rgba(122,95,181,0.2) !important; }
+  #sb-editor-wrap .CodeMirror-focused .CodeMirror-selected { background: rgba(122,95,181,0.25) !important; }
+  #sb-editor-wrap .CodeMirror-matchingbracket { color: #9878d4 !important; font-weight: bold; outline: 1px solid rgba(122,95,181,0.5); }
+
+  /* Run button */
+  .sb-run-btn {
+    background: var(--accent); color: #fff; border: none;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 0.25rem 0.75rem; border-radius: 3px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .sb-run-btn:hover { background: var(--accent-light); }
+  .sb-run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Output pane */
+  .sb-output-pane { display: flex; flex-direction: column; overflow: hidden; }
+  #sb-output {
+    flex: 1; min-height: 0; overflow-y: auto;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; line-height: 1.6;
+    padding: 0.85rem 1rem; white-space: pre-wrap; word-break: break-word;
+    color: #e8e4de;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
+  .sb-placeholder { color: #4a4540; font-style: italic; }
+  .sb-output-block { margin-bottom: 0.75rem; }
+  .sb-output-block + .sb-output-block { border-top: 1px solid var(--border); padding-top: 0.75rem; }
+  .sb-out-text  { color: #e8e4de; }
+  .sb-out-error { color: #e07070; }
+  .sb-out-run-label {
+    font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 0.35rem;
+  }
+
+  /* Footer */
+  .sb-footer {
+    border-top: 1px solid var(--border); padding: 0.4rem 1rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+    color: #7a7470; letter-spacing: 0.04em; flex-shrink: 0; text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .sb-body { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+    .sb-editor-pane { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'dtsc520_sandbox_m3';
+  let pyodide = null;
+  let pyodideReady = false;
+  let pyodideLoading = false;
+  let runCount = 0;
+  let cm = null; // CodeMirror instance
+
+  const modal   = document.getElementById('sandbox-modal');
+  const btn     = document.getElementById('sandbox-btn');
+  const closeBtn= document.getElementById('sb-close');
+  const output  = document.getElementById('sb-output');
+  const runBtn  = document.getElementById('sb-run');
+  const status  = document.getElementById('sb-status');
+  const clearBtn= document.getElementById('sb-clear-btn');
+  const resetBtn= document.getElementById('sb-reset-btn');
+
+  // ── Init CodeMirror (once DOM is ready) ──
+  function initCM() {
+    if (cm) return;
+    const wrap = document.getElementById('sb-editor-wrap');
+    cm = CodeMirror(wrap, {
+      value: '',
+      mode: 'python',
+      theme: 'material-darker',
+      lineNumbers: true,
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      indentUnit: 4,
+      tabSize: 4,
+      indentWithTabs: false,
+      lineWrapping: false,
+      extraKeys: {
+        'Tab': function(cm) {
+          if (cm.somethingSelected()) { cm.indentSelection('add'); }
+          else { cm.replaceSelection('    ', 'end'); }
+        },
+        'Ctrl-Enter': runCode,
+        'Cmd-Enter':  runCode
+      }
+    });
+
+    // Restore saved code
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) cm.setValue(saved);
+      else cm.setValue('# Type your Python here and click Run\n# Variables persist while this page is open\n\nprint("Hello, world!")');
+    } catch(e) {
+      cm.setValue('# Type your Python here and click Run\n# Variables persist while this page is open\n\nprint("Hello, world!")');
+    }
+
+    // Auto-save on change
+    cm.on('change', function() {
+      try { localStorage.setItem(STORAGE_KEY, cm.getValue()); } catch(e) {}
+    });
+  }
+
+  // ── Open modal ──
+  function openSandbox() {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Init CM on first open, then refresh layout
+    initCM();
+    setTimeout(function() { cm.refresh(); cm.focus(); }, 50);
+    if (!pyodideReady && !pyodideLoading) loadPyodide();
+  }
+
+  // ── Close modal (keep Pyodide alive) ──
+  function closeSandbox() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', openSandbox);
+  closeBtn.addEventListener('click', closeSandbox);
+  modal.addEventListener('click', function(e) { if (e.target === modal) closeSandbox(); });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeSandbox();
+  });
+
+  clearBtn.addEventListener('click', function() {
+    if (cm) { cm.setValue(''); cm.focus(); }
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  });
+
+  resetBtn.addEventListener('click', function() {
+    output.innerHTML = '<span class="sb-placeholder">Output will appear here after you run code.</span>';
+    runCount = 0;
+  });
+
+  // ── Load Pyodide ──
+  async function loadPyodide() {
+    pyodideLoading = true;
+    setStatus('loading', 'loading...');
+    runBtn.disabled = true;
+    try {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js';
+        s.onload = resolve;
+        s.onerror = () => reject(new Error('Failed to load Pyodide script'));
+        document.head.appendChild(s);
+      });
+      pyodide = await window.loadPyodide({
+        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/'
+      });
+      pyodide.runPython('import sys, io\nclass _Capture(io.StringIO): pass\nsys.stdout = _Capture()\nsys.stderr = _Capture()');
+      // Load scientific packages
+      setStatus('loading', 'loading packages...');
+      await pyodide.loadPackage(['numpy']);
+      pyodideReady = true;
+      pyodideLoading = false;
+      setStatus('ready', 'ready');
+      runBtn.disabled = false;
+    } catch(err) {
+      pyodideLoading = false;
+      setStatus('error', 'load failed');
+      appendOutput('error', 'Could not load Python runtime. ' + err.message);
+      runBtn.disabled = false;
+    }
+  }
+
+  // ── Run code ──
+  runBtn.addEventListener('click', runCode);
+
+  async function runCode() {
+    const code = cm ? cm.getValue().trim() : '';
+    if (!code) return;
+    if (!pyodideReady) {
+      if (!pyodideLoading) loadPyodide();
+      appendOutput('error', 'Python is still loading - please wait a moment and try again.');
+      return;
+    }
+    setStatus('running', 'running...');
+    runBtn.disabled = true;
+    runCount++;
+    try {
+      pyodide.runPython('sys.stdout.truncate(0); sys.stdout.seek(0)\nsys.stderr.truncate(0); sys.stderr.seek(0)');
+      await pyodide.runPythonAsync(code);
+      const stdout = pyodide.runPython('sys.stdout.getvalue()');
+      const stderr = pyodide.runPython('sys.stderr.getvalue()');
+      const outText = (stdout || '').trimEnd();
+      const errText = (stderr || '').trimEnd();
+      if (!outText && !errText) { appendOutput('text', '(no output)'); }
+      else {
+        if (outText) appendOutput('text',  outText);
+        if (errText) appendOutput('error', errText);
+      }
+      setStatus('ready', 'ready');
+    } catch(err) {
+      const lines = (err.message || String(err)).split('\n');
+      const short = lines.filter(function(l){ return l.trim(); }).slice(-4).join('\n');
+      appendOutput('error', short || String(err));
+      setStatus('error', 'error');
+      setTimeout(function(){ setStatus('ready', 'ready'); }, 2500);
+    }
+    runBtn.disabled = false;
+  }
+
+  function setStatus(cls, text) {
+    status.className = 'sb-status ' + cls;
+    status.textContent = text;
+  }
+
+  function appendOutput(type, text) {
+    const placeholder = output.querySelector('.sb-placeholder');
+    if (placeholder) placeholder.remove();
+    const block = document.createElement('div');
+    block.className = 'sb-output-block';
+    const label = document.createElement('div');
+    label.className = 'sb-out-run-label';
+    label.textContent = 'run ' + runCount;
+    block.appendChild(label);
+    const content = document.createElement('div');
+    content.className = type === 'error' ? 'sb-out-error' : 'sb-out-text';
+    content.textContent = text;
+    block.appendChild(content);
+    output.appendChild(block);
+    output.scrollTop = output.scrollHeight;
+  }
+
+})();
+</script>
+
+</body>
+</html>

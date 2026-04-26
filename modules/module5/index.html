@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 5: Matplotlib &amp; Seaborn - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --accent: #3a8fa0;
+      --accent-light: #5db8cc;
+      --accent-dim: rgba(58,143,160,0.15);
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --bg-card2: #211f1d;
+      --bg-code: #0d0c0b;
+      --text: #e8e4de;
+      --text-dim: #a09a92;
+      --text-bright: #f5f2ee;
+      --border: #2e2b28;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Zilla Slab', serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+
+    nav {
+      background: #141210; border-bottom: 3px solid var(--accent);
+      padding: 0 2rem; display: flex; align-items: center;
+      justify-content: space-between; height: 52px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-left { display: flex; align-items: center; gap: 0.5rem; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.875rem; }
+    .nav-home { color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.15s; }
+    .nav-home:hover { color: #fff; }
+    .nav-sep { color: rgba(255,255,255,0.2); margin: 0 0.1rem; }
+    .nav-current { color: var(--accent-light); font-weight: 500; }
+    .nav-right { display: flex; gap: 0.5rem; }
+    .nav-right a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: rgba(255,255,255,0.45);
+      text-decoration: none; padding: 0.25rem 0.6rem; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 3px; letter-spacing: 0.04em; transition: all 0.15s;
+    }
+    .nav-right a:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+    .mod-banner {
+      background: linear-gradient(135deg, #180e13 0%, #110d0f 100%);
+      border-bottom: 1px solid var(--border); padding: 3rem 2rem 2.5rem;
+      position: relative; overflow: hidden;
+    }
+    .mod-banner::after {
+      content: 'Visualize'; position: absolute; right: 1.5rem; top: 50%;
+      transform: translateY(-50%); font-family: 'IBM Plex Mono', monospace;
+      font-size: 4.5rem; font-weight: 500; color: rgba(58,143,160,0.06);
+      line-height: 1; pointer-events: none; user-select: none;
+    }
+    .banner-inner { max-width: 960px; margin: 0 auto; }
+    .banner-eyebrow {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent-light); margin-bottom: 0.75rem;
+    }
+    .mod-banner h1 { font-size: 2.1rem; font-weight: 700; color: var(--text-bright); line-height: 1.2; margin-bottom: 0.65rem; }
+    .mod-banner p { font-size: 0.95rem; color: var(--text-dim); max-width: 580px; line-height: 1.6; margin-bottom: 1.25rem; }
+    .banner-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .pill {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; padding: 0.25rem 0.6rem;
+      border-radius: 3px; background: rgba(58,143,160,0.12); color: var(--accent-light);
+      border: 1px solid rgba(58,143,160,0.25); letter-spacing: 0.04em;
+    }
+
+    .section-tabs {
+      background: var(--bg-card); border-bottom: 1px solid var(--border);
+      padding: 0 2rem; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none;
+    }
+    .section-tabs::-webkit-scrollbar { display: none; }
+    .tab-link {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.05em;
+      color: var(--text-dim); text-decoration: none; padding: 0.75rem 1rem;
+      border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-link:hover { color: var(--text); border-bottom-color: var(--accent); }
+
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem;
+      display: grid; grid-template-columns: 1fr 240px; gap: 2.5rem; align-items: start;
+    }
+
+    .content-col section { margin-bottom: 3.5rem; }
+    .content-col h2 {
+      font-size: 1.5rem; font-weight: 700; color: var(--text-bright);
+      margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+    }
+    .content-col h3 { font-size: 1.1rem; font-weight: 600; color: var(--accent-light); margin: 1.5rem 0 0.6rem; }
+    .content-col p { margin-bottom: 0.9rem; font-size: 0.96rem; color: var(--text); }
+    .content-col ul, .content-col ol { margin: 0.5rem 0 1rem 1.5rem; font-size: 0.95rem; }
+    .content-col li { margin-bottom: 0.4rem; }
+
+    pre {
+      background: var(--bg-code); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); border-radius: 4px;
+      padding: 1rem 1.25rem; overflow-x: auto; margin: 1rem 0 1.5rem;
+      font-size: 0.83rem; line-height: 1.7;
+    }
+    code { font-family: 'IBM Plex Mono', monospace; color: #e8c98a; }
+    pre code { color: var(--text); }
+    .cm { color: #6a6460; font-style: italic; }
+    .kw { color: #3a8fa0; }
+    .fn { color: #6baacc; }
+    .st { color: #85b87d; }
+    .nm { color: #b58fd0; }
+
+    .callout {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); border-radius: 4px;
+      padding: 1rem 1.25rem; margin: 1.25rem 0; font-size: 0.92rem;
+    }
+    .callout-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent-light); margin-bottom: 0.4rem;
+    }
+    .callout-warn { border-left-color: #b04040; }
+    .callout-warn .callout-label { color: #d06060; }
+
+    /* chart type grid */
+    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+    .chart-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 1rem 1.1rem;
+    }
+    .chart-card h4 {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem;
+      color: var(--accent-light); margin-bottom: 0.4rem; letter-spacing: 0.04em;
+    }
+    .chart-card .use-when {
+      font-size: 0.78rem; color: var(--text-dim); font-style: italic;
+      margin-bottom: 0.4rem;
+    }
+    .chart-card p { font-size: 0.86rem; color: var(--text-dim); margin-bottom: 0; line-height: 1.5; }
+
+    /* live chart containers */
+    .chart-demo {
+      background: #1c1917; border: 1px solid var(--border);
+      border-radius: 4px; padding: 1rem 1.25rem; margin: 0.5rem 0 1.5rem;
+    }
+    .chart-demo-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.75rem; display: flex;
+      align-items: center; gap: 0.4rem;
+    }
+    .chart-demo-label::before { content: '▶'; font-size: 0.55rem; }
+    .chart-demo canvas { display: block; max-height: 280px; }
+    .chart-demo-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .chart-demo-row .chart-demo { margin: 0; }
+
+    /* ── Code + Visual Modal ── */
+    .code-modal-btn {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--accent); border: 1px solid rgba(58,143,160,0.35);
+      background: rgba(58,143,160,0.08); border-radius: 3px;
+      padding: 0.35rem 0.75rem; cursor: pointer; margin-bottom: 0.6rem;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .code-modal-btn:hover { background: rgba(58,143,160,0.18); border-color: rgba(58,143,160,0.6); }
+    .code-modal-btn::before { content: '⊞'; font-size: 0.85rem; }
+
+    #codeModal {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,0.82); align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    #codeModal.open { display: flex; }
+    .cm-box {
+      background: #1a1714; border: 1px solid var(--border);
+      border-radius: 6px; width: 100%; max-width: 1100px;
+      max-height: 90vh; display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .cm-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.7rem 1.1rem; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .cm-title {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
+    }
+    .cm-close {
+      background: none; border: none; color: rgba(255,255,255,0.5);
+      font-size: 1.3rem; cursor: pointer; padding: 0 0.25rem; line-height: 1;
+      transition: color 0.15s;
+    }
+    .cm-close:hover { color: #fff; }
+    .cm-body {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      flex: 1; overflow: hidden; min-height: 0;
+    }
+    .cm-code-pane {
+      overflow-y: auto; overflow-x: auto;
+      border-right: 1px solid var(--border); padding: 1.1rem 1.25rem;
+    }
+    .cm-code-pane pre {
+      margin: 0; background: none; border: none; padding: 0;
+      white-space: pre; font-size: 0.82rem; line-height: 1.55;
+    }
+    .cm-chart-pane {
+      display: flex; flex-direction: column; gap: 1rem;
+      overflow-y: auto; padding: 1.1rem 1.25rem; align-items: stretch;
+    }
+    .cm-chart-pane .cm-chart-wrap {
+      background: #1c1917; border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.85rem 1rem;
+    }
+    .cm-chart-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.6rem;
+    }
+    .cm-chart-pane canvas { display: block; width: 100% !important; }
+    @media (max-width: 768px) {
+      .cm-body { grid-template-columns: 1fr; }
+      .cm-code-pane { border-right: none; border-bottom: 1px solid var(--border); max-height: 40vh; }
+    }
+
+    /* best-practice list */
+    .bp-list { list-style: none; margin: 0.75rem 0 1.25rem; padding: 0; }
+    .bp-list li {
+      display: flex; gap: 0.75rem; align-items: flex-start;
+      padding: 0.65rem 0; border-bottom: 1px solid var(--border); font-size: 0.93rem;
+    }
+    .bp-list li:last-child { border-bottom: none; }
+    .bp-num {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--accent); flex-shrink: 0; margin-top: 0.15rem; min-width: 1.5rem;
+    }
+
+    .data-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0 1.75rem; font-size: 0.88rem; }
+    .data-table th {
+      background: var(--bg-card2); color: var(--text-bright);
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 0.6rem 0.9rem; text-align: left; border-bottom: 2px solid var(--accent);
+    }
+    .data-table td { padding: 0.55rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .mono { font-family: 'IBM Plex Mono', monospace; color: #e8c98a; font-size: 0.83rem; }
+
+    /* quiz */
+    #quiz-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 2rem; }
+    #quiz-section h2 { border-bottom: none; margin-bottom: 0.4rem; }
+    .quiz-intro { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1.5rem; }
+    .q-block { margin-bottom: 1.75rem; padding-bottom: 1.75rem; border-bottom: 1px solid var(--border); }
+    .q-block:last-of-type { border-bottom: none; }
+    .q-text { font-size: 0.97rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.75rem; line-height: 1.5; }
+    .q-num { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; display: block; margin-bottom: 0.35rem; }
+    .options { display: flex; flex-direction: column; gap: 0.45rem; }
+    .opt-label {
+      display: flex; align-items: flex-start; gap: 0.65rem;
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.65rem 0.9rem; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s; font-size: 0.92rem;
+    }
+    .opt-label:hover { border-color: var(--accent); background: rgba(58,143,160,0.06); }
+    .opt-label input { margin-top: 0.2rem; accent-color: var(--accent); flex-shrink: 0; }
+    .opt-correct { border-color: #4a9e6b !important; background: rgba(74,158,107,0.1) !important; }
+    .opt-wrong   { border-color: #b04040 !important; background: rgba(176,64,64,0.1) !important; }
+    .q-feedback { margin-top: 0.6rem; font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: 3px; display: none; }
+    .q-feedback.show { display: block; }
+    .q-feedback.correct { background: rgba(74,158,107,0.15); color: #7ecfa0; border-left: 3px solid #4a9e6b; }
+    .q-feedback.wrong   { background: rgba(176,64,64,0.12); color: #e08080; border-left: 3px solid #b04040; }
+    .quiz-submit {
+      background: var(--accent); color: #fff; border: none;
+      padding: 0.75rem 2rem; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase;
+      border-radius: 4px; cursor: pointer; transition: background 0.15s; margin-top: 1rem;
+    }
+    .quiz-submit:hover { background: var(--accent-light); }
+    .quiz-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+    .quiz-result {
+      margin-top: 1.25rem; padding: 1rem 1.25rem; background: var(--bg-card2);
+      border: 1px solid var(--border); border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem; display: none;
+    }
+    .quiz-result.show { display: block; }
+    .score-big { font-size: 2rem; font-weight: 700; color: var(--accent-light); }
+    .grade-label { color: var(--text-dim); margin-top: 0.35rem; font-size: 0.82rem; }
+
+    .sidebar { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 70px; max-height: calc(100vh - 80px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
+    .sidebar-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1.1rem; }
+    .sidebar-card h4 {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.75rem;
+    }
+    .score-display { font-family: 'IBM Plex Mono', monospace; font-size: 1.6rem; color: var(--accent-light); font-weight: 700; }
+    .score-sub { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.2rem; }
+    .toc-links { display: flex; flex-direction: column; gap: 0.3rem; }
+    .toc-links a { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; color: var(--text-dim); text-decoration: none; padding: 0.2rem 0; transition: color 0.15s; }
+    .toc-links a:hover { color: var(--accent-light); }
+    .quiz-cta-btn {
+      display: block; border: 1px solid var(--accent); color: var(--accent-light);
+      text-decoration: none; text-align: center; padding: 0.55rem 1rem; border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.05em; text-transform: uppercase; transition: all 0.15s; margin-top: 0.5rem;
+    }
+    .quiz-cta-btn:hover { background: rgba(58,143,160,0.1); }
+    .next-mod {
+      background: linear-gradient(135deg, #180e13 0%, #110d0f 100%);
+      border: 1px solid rgba(58,143,160,0.25); border-radius: 4px; padding: 1.1rem;
+    }
+    .next-mod h4 {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem;
+    }
+    .next-mod p { font-size: 0.83rem; color: var(--text-dim); margin-bottom: 0.85rem; line-height: 1.5; }
+    .next-mod-btn {
+      display: block; background: var(--accent); color: #fff; text-decoration: none;
+      text-align: center; padding: 0.55rem 1rem; border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.05em; text-transform: uppercase; transition: background 0.15s;
+    }
+    .next-mod-btn:hover { background: var(--accent-light); }
+
+    footer {
+      background: #0c0b0a; border-top: 1px solid var(--border); padding: 1.25rem 2rem;
+      text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    @media (max-width: 768px) {
+      .page-wrap { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .chart-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <a href="../../index.html" class="nav-home">DTSC 520</a>
+    <span class="nav-sep">/</span>
+    <span class="nav-current">Module 5: Matplotlib &amp; Seaborn</span>
+  </div>
+  <div class="nav-right">
+    <a href="../../index.html">Course Home</a>
+    <a href="#quiz">Take Quiz</a>
+  </div>
+</nav>
+
+<div class="mod-banner">
+  <div class="banner-inner">
+    <div class="banner-eyebrow">Module 05 - Data Visualization</div>
+    <h1>Matplotlib &amp; Seaborn: Communicating with Charts</h1>
+    <p>Data without visualization is just numbers. Learn to build clear, accurate, and compelling charts using Matplotlib and Seaborn - and more importantly, learn when each chart type earns its place.</p>
+    <div class="banner-pills">
+      <span class="pill">Chart Types</span>
+      <span class="pill">Matplotlib Basics</span>
+      <span class="pill">Seaborn</span>
+      <span class="pill">Subplots</span>
+      <span class="pill">Styling</span>
+      <span class="pill">Viz Best Practices</span>
+    </div>
+  </div>
+</div>
+
+<nav class="section-tabs">
+  <a href="#chart-types" class="tab-link">Chart Types</a>
+  <a href="#matplotlib" class="tab-link">Matplotlib</a>
+  <a href="#seaborn" class="tab-link">Seaborn</a>
+  <a href="#subplots" class="tab-link">Subplots</a>
+  <a href="#styling" class="tab-link">Styling</a>
+  <a href="#best-practices" class="tab-link">Best Practices</a>
+  <a href="#quiz" class="tab-link">Quiz</a>
+</nav>
+
+<div class="page-wrap">
+  <div class="content-col">
+
+    <!-- CHART TYPES -->
+    <section id="chart-types">
+      <h2>Choosing the Right Chart</h2>
+      <p>The most common visualization mistake is choosing a chart type based on aesthetics rather than the structure of your data and the question you are answering. Every chart type has a job. Using the wrong one obscures the truth; using the right one makes it obvious.</p>
+
+      <div class="chart-grid">
+        <div class="chart-card">
+          <h4>Line Chart</h4>
+          <div class="use-when">Use when: showing change over time or continuous data.</div>
+          <p>Emphasizes trends and continuity. Ideal for time series - batting average over a season, daily ticket sales. The connected line implies the values between points exist and matter.</p>
+        </div>
+        <div class="chart-card">
+          <h4>Bar Chart</h4>
+          <div class="use-when">Use when: comparing discrete categories.</div>
+          <p>Each bar represents one category. The eye compares heights (or lengths in a horizontal bar). Good for: HR counts by player, revenue by region. Always start the y-axis at zero.</p>
+        </div>
+        <div class="chart-card">
+          <h4>Scatter Plot</h4>
+          <div class="use-when">Use when: showing relationship between two continuous variables.</div>
+          <p>Each point is one observation. Reveals correlation, clusters, and outliers. Classic use: batting average vs. on-base percentage. Add color or size for a third variable.</p>
+        </div>
+        <div class="chart-card">
+          <h4>Histogram</h4>
+          <div class="use-when">Use when: showing distribution of a single variable.</div>
+          <p>Groups continuous values into bins and counts how many observations fall in each bin. Shows skew, modality, and spread. Essential for EDA - always plot your distributions before modeling.</p>
+        </div>
+        <div class="chart-card">
+          <h4>Box Plot</h4>
+          <div class="use-when">Use when: comparing distributions across categories.</div>
+          <p>Shows median, quartiles, and outliers in a compact form. Excellent for "salary distribution by position" or "batting avg distribution by team." More informative than a mean-only bar chart.</p>
+        </div>
+        <div class="chart-card">
+          <h4>Heatmap</h4>
+          <div class="use-when">Use when: showing values in a matrix (correlations, co-occurrences).</div>
+          <p>Encodes values as color intensity. Most common use: correlation matrix of numeric features. Reveals which variables move together - essential before building any model.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-label">Charts to avoid</div>
+        Pie charts are rarely the right choice - humans are poor at comparing angles. Use a bar chart instead. 3D charts almost always distort perception. Dual-axis charts often imply a relationship that does not exist. When in doubt, simpler is better.
+      </div>
+    </section>
+
+    <!-- MATPLOTLIB -->
+    <section id="matplotlib">
+      <h2>Matplotlib: The Foundation</h2>
+      <p>Matplotlib is the core plotting library for Python. Almost every other visualization library - Seaborn, pandas' built-in plotting, and others - is built on top of it. Understanding Matplotlib's architecture makes you effective with all of them.</p>
+
+      <h3>The Figure and Axes model</h3>
+      <p>Matplotlib has two key objects. A <strong>Figure</strong> is the entire canvas - the window or image file. An <strong>Axes</strong> is one plot within that canvas (despite the name, it is not just the axis lines). A Figure can contain multiple Axes (subplots). Most of your configuration happens on the Axes object.</p>
+
+      <button class="code-modal-btn" onclick="openCodeModal(this,'Line Chart: Batting Average by Week','chartLine')" data-charts="chartLine">Click to see code &amp; visual</button>
+      <pre><code><span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Data: Eagles roster batting averages over 10 weeks</span>
+weeks = np.<span class="fn">arange</span>(<span class="nm">1</span>, <span class="nm">11</span>)
+rivera = np.<span class="fn">array</span>([<span class="nm">.290</span>, <span class="nm">.295</span>, <span class="nm">.300</span>, <span class="nm">.305</span>, <span class="nm">.308</span>, <span class="nm">.310</span>, <span class="nm">.309</span>, <span class="nm">.311</span>, <span class="nm">.312</span>, <span class="nm">.314</span>])
+walker  = np.<span class="fn">array</span>([<span class="nm">.275</span>, <span class="nm">.280</span>, <span class="nm">.288</span>, <span class="nm">.291</span>, <span class="nm">.295</span>, <span class="nm">.299</span>, <span class="nm">.300</span>, <span class="nm">.301</span>, <span class="nm">.301</span>, <span class="nm">.303</span>])
+
+<span class="cm"># Object-oriented interface (preferred)</span>
+fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">8</span>, <span class="nm">4</span>))
+
+ax.<span class="fn">plot</span>(weeks, rivera, label=<span class="st">'Rivera'</span>, color=<span class="st">'#cc5595'</span>, linewidth=<span class="nm">2</span>)
+ax.<span class="fn">plot</span>(weeks, walker,  label=<span class="st">'Walker'</span>,  color=<span class="st">'#6baacc'</span>, linewidth=<span class="nm">2</span>)
+
+ax.<span class="fn">set_title</span>(<span class="st">'Batting Average by Week'</span>, fontsize=<span class="nm">14</span>)
+ax.<span class="fn">set_xlabel</span>(<span class="st">'Week'</span>)
+ax.<span class="fn">set_ylabel</span>(<span class="st">'Batting Average'</span>)
+ax.<span class="fn">legend</span>()
+ax.<span class="fn">grid</span>(<span class="kw">True</span>, alpha=<span class="nm">0.3</span>)
+
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">savefig</span>(<span class="st">'batting_trend.png'</span>, dpi=<span class="nm">150</span>)
+plt.<span class="fn">show</span>()</code></pre>
+
+      <div class="chart-demo">
+        <div class="chart-demo-label">Rendered output - Line Chart: Batting Average by Week</div>
+        <canvas id="chartLine"></canvas>
+      </div>
+
+      <h3>Common plot types in Matplotlib</h3>
+      <button class="code-modal-btn" onclick="openCodeModal(this,'Common Plot Types: Bar, Scatter, Histogram, Horizontal Bar','chartBar,chartScatter,chartHist,chartBarH')" data-charts="chartBar,chartScatter,chartHist,chartBarH">Click to see code &amp; visual</button>
+      <pre><code>fig, ax = plt.<span class="fn">subplots</span>()
+
+<span class="cm"># Bar chart</span>
+players = [<span class="st">'Rivera'</span>, <span class="st">'Chen'</span>, <span class="st">'Walker'</span>, <span class="st">'Kim'</span>]
+hrs      = [<span class="nm">4</span>, <span class="nm">2</span>, <span class="nm">7</span>, <span class="nm">1</span>]
+ax.<span class="fn">bar</span>(players, hrs, color=<span class="st">'#3a8fa0'</span>, alpha=<span class="nm">0.85</span>)
+ax.<span class="fn">set_ylabel</span>(<span class="st">'Home Runs'</span>)
+
+<span class="cm"># Scatter plot</span>
+avgs     = [<span class="nm">.312</span>, <span class="nm">.287</span>, <span class="nm">.301</span>, <span class="nm">.268</span>]
+salaries = [<span class="nm">16800</span>, <span class="nm">14400</span>, <span class="nm">19200</span>, <span class="nm">760000</span>]
+ax.<span class="fn">scatter</span>(avgs, salaries, s=<span class="nm">80</span>, color=<span class="st">'#3a8fa0'</span>, alpha=<span class="nm">0.7</span>)
+
+<span class="cm"># Histogram</span>
+data = np.random.<span class="fn">normal</span>(<span class="nm">.290</span>, <span class="nm">.020</span>, <span class="nm">200</span>)  <span class="cm"># simulated batting avgs</span>
+ax.<span class="fn">hist</span>(data, bins=<span class="nm">20</span>, color=<span class="st">'#3a8fa0'</span>, edgecolor=<span class="st">'black'</span>, alpha=<span class="nm">0.75</span>)
+
+<span class="cm"># Horizontal bar (easier to read long labels)</span>
+ax.<span class="fn">barh</span>(players, hrs, color=<span class="st">'#3a8fa0'</span>)</code></pre>
+
+      <div class="chart-demo-row">
+        <div class="chart-demo">
+          <div class="chart-demo-label">Bar Chart - Home Runs by Player</div>
+          <canvas id="chartBar"></canvas>
+        </div>
+        <div class="chart-demo">
+          <div class="chart-demo-label">Scatter Plot - Batting Avg vs. Salary</div>
+          <canvas id="chartScatter"></canvas>
+        </div>
+      </div>
+      <div class="chart-demo-row">
+        <div class="chart-demo">
+          <div class="chart-demo-label">Histogram - Simulated Batting Averages</div>
+          <canvas id="chartHist"></canvas>
+        </div>
+        <div class="chart-demo">
+          <div class="chart-demo-label">Horizontal Bar - Home Runs by Player</div>
+          <canvas id="chartBarH"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEABORN -->
+    <section id="seaborn">
+      <h2>Seaborn: Statistical Visualization</h2>
+      <p>Seaborn is built on top of Matplotlib and integrates tightly with pandas DataFrames. It makes statistical plots that would require significant Matplotlib code just a single function call. It also applies attractive default styles automatically.</p>
+
+      <button class="code-modal-btn" onclick="openCodeModal(this,'Seaborn: Scatter, Box, Bar, and Histogram Plots','chartSnsScatter,chartSnsHist')" data-charts="chartSnsScatter,chartSnsHist">Click to see code &amp; visual</button>
+      <pre><code><span class="kw">import</span> seaborn <span class="kw">as</span> sns
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+roster = pd.<span class="fn">DataFrame</span>({
+    <span class="st">'player'</span>:   [<span class="st">'Rivera'</span>, <span class="st">'Chen'</span>, <span class="st">'Walker'</span>, <span class="st">'Kim'</span>, <span class="st">'Jones'</span>, <span class="st">'Patel'</span>],
+    <span class="st">'avg'</span>:      [<span class="nm">.312</span>, <span class="nm">.287</span>, <span class="nm">.301</span>, <span class="nm">.268</span>, <span class="nm">.295</span>, <span class="nm">.310</span>],
+    <span class="st">'hr'</span>:       [<span class="nm">4</span>, <span class="nm">2</span>, <span class="nm">7</span>, <span class="nm">1</span>, <span class="nm">3</span>, <span class="nm">5</span>],
+    <span class="st">'position'</span>: [<span class="st">'OF'</span>, <span class="st">'IF'</span>, <span class="st">'OF'</span>, <span class="st">'IF'</span>, <span class="st">'OF'</span>, <span class="st">'IF'</span>]
+})
+
+<span class="cm"># Scatter with hue - color by category</span>
+sns.<span class="fn">scatterplot</span>(data=roster, x=<span class="st">'avg'</span>, y=<span class="st">'hr'</span>, hue=<span class="st">'position'</span>, s=<span class="nm">100</span>)
+
+<span class="cm"># Box plot - distribution by group</span>
+sns.<span class="fn">boxplot</span>(data=roster, x=<span class="st">'position'</span>, y=<span class="st">'avg'</span>)
+
+<span class="cm"># Bar plot with automatic error bars</span>
+sns.<span class="fn">barplot</span>(data=roster, x=<span class="st">'position'</span>, y=<span class="st">'avg'</span>)
+
+<span class="cm"># Distribution plot (histogram + KDE)</span>
+sns.<span class="fn">histplot</span>(data=roster, x=<span class="st">'avg'</span>, kde=<span class="kw">True</span>)</code></pre>
+
+      <div class="chart-demo-row">
+        <div class="chart-demo">
+          <div class="chart-demo-label">Seaborn Scatter - Avg vs HR, colored by Position</div>
+          <canvas id="chartSnsScatter"></canvas>
+        </div>
+        <div class="chart-demo">
+          <div class="chart-demo-label">Seaborn Histogram + KDE - Batting Average Distribution</div>
+          <canvas id="chartSnsHist"></canvas>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Seaborn vs. Matplotlib</div>
+        Use Seaborn when you want quick, attractive statistical charts that work directly with pandas DataFrames. Use Matplotlib when you need fine-grained control over layout, annotations, or custom visual elements. In practice, you will often use both together - Seaborn to draw the plot, then Matplotlib methods (<code>ax.set_title()</code>, <code>ax.set_xlabel()</code>) to customize it.
+      </div>
+    </section>
+
+    <!-- SUBPLOTS -->
+    <section id="subplots">
+      <h2>Subplots: Multiple Charts in One Figure</h2>
+      <p>Subplots let you arrange multiple related charts side by side for comparison. The key function is <code>plt.subplots(nrows, ncols)</code>, which returns a Figure and an array of Axes objects.</p>
+
+      <button class="code-modal-btn" onclick="openCodeModal(this,'Subplots: 1×2 and 2×2 Grid Layout','chartSubplots')" data-charts="chartSubplots">Click to see code &amp; visual</button>
+      <pre><code><span class="cm"># 1 row, 2 columns</span>
+fig, (ax1, ax2) = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">2</span>, figsize=(<span class="nm">12</span>, <span class="nm">4</span>))
+
+<span class="cm"># Left: batting averages</span>
+ax1.<span class="fn">bar</span>(players, avgs, color=<span class="st">'#3a8fa0'</span>, alpha=<span class="nm">0.85</span>)
+ax1.<span class="fn">set_title</span>(<span class="st">'Batting Averages'</span>)
+ax1.<span class="fn">set_ylabel</span>(<span class="st">'Average'</span>)
+ax1.<span class="fn">set_ylim</span>(<span class="nm">0</span>, <span class="nm">0.4</span>)
+
+<span class="cm"># Right: home run counts</span>
+ax2.<span class="fn">bar</span>(players, hrs, color=<span class="st">'#6baacc'</span>, alpha=<span class="nm">0.85</span>)
+ax2.<span class="fn">set_title</span>(<span class="st">'Home Runs'</span>)
+ax2.<span class="fn">set_ylabel</span>(<span class="st">'Home Runs'</span>)
+
+fig.<span class="fn">suptitle</span>(<span class="st">'Eagles Roster - Key Stats'</span>, fontsize=<span class="nm">14</span>, y=<span class="nm">1.02</span>)
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">show</span>()
+
+<span class="cm"># 2x2 grid</span>
+fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">2</span>, <span class="nm">2</span>, figsize=(<span class="nm">10</span>, <span class="nm">8</span>))
+
+<span class="cm"># Access individual axes</span>
+axes[<span class="nm">0</span>, <span class="nm">0</span>].<span class="fn">plot</span>(weeks, rivera)   <span class="cm"># top-left</span>
+axes[<span class="nm">0</span>, <span class="nm">1</span>].<span class="fn">hist</span>(data)            <span class="cm"># top-right</span>
+axes[<span class="nm">1</span>, <span class="nm">0</span>].<span class="fn">bar</span>(players, hrs)      <span class="cm"># bottom-left</span>
+axes[<span class="nm">1</span>, <span class="nm">1</span>].<span class="fn">scatter</span>(avgs, hrs)    <span class="cm"># bottom-right</span>
+
+plt.<span class="fn">tight_layout</span>()  <span class="cm"># prevents overlap</span></code></pre>
+
+      <div class="chart-demo">
+        <div class="chart-demo-label">Rendered output - 2x2 Subplot Grid: Eagles Roster Stats</div>
+        <canvas id="chartSubplots" style="max-height:340px;"></canvas>
+      </div>
+    </section>
+
+    <!-- STYLING -->
+    <section id="styling">
+      <h2>Styling Your Charts</h2>
+      <p>Default Matplotlib charts are functional but plain. A few small changes - a clean style, consistent colors, clear labels - dramatically improve readability and professionalism.</p>
+
+      <h3>Built-in styles</h3>
+      <pre><code><span class="cm"># Apply a built-in style globally</span>
+plt.<span class="fn">style.use</span>(<span class="st">'seaborn-v0_8-darkgrid'</span>)  <span class="cm"># clean grid</span>
+plt.<span class="fn">style.use</span>(<span class="st">'ggplot'</span>)                <span class="cm"># R-inspired style</span>
+plt.<span class="fn">style.use</span>(<span class="st">'dark_background'</span>)        <span class="cm"># dark theme</span>
+
+<span class="cm"># See all available styles</span>
+<span class="fn">print</span>(plt.style.<span class="fn">available</span>)</code></pre>
+
+      <h3>Key customizations</h3>
+      <pre><code>fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">8</span>, <span class="nm">5</span>))
+
+ax.<span class="fn">bar</span>(players, avgs, color=<span class="st">'#3a8fa0'</span>, edgecolor=<span class="st">'white'</span>, linewidth=<span class="nm">0.5</span>)
+
+<span class="cm"># Labels and title</span>
+ax.<span class="fn">set_title</span>(<span class="st">'Batting Averages - Eagles Roster'</span>, fontsize=<span class="nm">14</span>, pad=<span class="nm">12</span>)
+ax.<span class="fn">set_xlabel</span>(<span class="st">'Player'</span>, fontsize=<span class="nm">11</span>)
+ax.<span class="fn">set_ylabel</span>(<span class="st">'Batting Average'</span>, fontsize=<span class="nm">11</span>)
+
+<span class="cm"># Axis limits and tick formatting</span>
+ax.<span class="fn">set_ylim</span>(<span class="nm">0</span>, <span class="nm">0.40</span>)
+ax.<span class="fn">yaxis.set_major_formatter</span>(plt.FuncFormatter(<span class="kw">lambda</span> y, _: <span class="st">f'</span>{y:.3f}<span class="st">'</span>))
+
+<span class="cm"># Remove unnecessary spines (borders)</span>
+ax.spines[<span class="st">'top'</span>].<span class="fn">set_visible</span>(<span class="kw">False</span>)
+ax.spines[<span class="st">'right'</span>].<span class="fn">set_visible</span>(<span class="kw">False</span>)
+
+<span class="cm"># Add value labels on bars</span>
+<span class="kw">for</span> bar <span class="kw">in</span> ax.<span class="fn">patches</span>:
+    ax.<span class="fn">text</span>(
+        bar.<span class="fn">get_x</span>() + bar.<span class="fn">get_width</span>() / <span class="nm">2</span>,
+        bar.<span class="fn">get_height</span>() + <span class="nm">0.003</span>,
+        <span class="st">f'</span>{bar.<span class="fn">get_height</span>():.3f}<span class="st">'</span>,
+        ha=<span class="st">'center'</span>, va=<span class="st">'bottom'</span>, fontsize=<span class="nm">9</span>
+    )
+
+plt.<span class="fn">tight_layout</span>()</code></pre>
+    </section>
+
+    <!-- PLOTTING WITH PANDAS -->
+    <section id="content">
+      <h2>Plotting with Pandas</h2>
+      <p>Pandas DataFrames and Series have a built-in <code>.plot()</code> method that wraps Matplotlib. For quick, exploratory plots, <code>df.plot()</code> is faster to write than calling Matplotlib directly - it automatically uses the DataFrame's column names as labels and the index as the x-axis.</p>
+
+      <pre><code>import pandas as pd
+import matplotlib.pyplot as plt
+
+monthly = pd.<span class="fn">DataFrame</span>({
+    <span class="st">'revenue'</span>: [<span class="nm">45000</span>, <span class="nm">52000</span>, <span class="nm">48000</span>, <span class="nm">61000</span>],
+    <span class="st">'expenses'</span>: [<span class="nm">38000</span>, <span class="nm">41000</span>, <span class="nm">39000</span>, <span class="nm">44000</span>]
+}, index=[<span class="st">'Q1'</span>, <span class="st">'Q2'</span>, <span class="st">'Q3'</span>, <span class="st">'Q4'</span>])
+
+<span class="cm"># Line plot (default)</span>
+monthly.<span class="fn">plot</span>()
+plt.<span class="fn">title</span>(<span class="st">'Revenue vs Expenses'</span>)
+plt.<span class="fn">ylabel</span>(<span class="st">'USD'</span>)
+plt.<span class="fn">show</span>()</code></pre>
+
+      <h3>Common .plot() chart types</h3>
+      <button class="code-modal-btn" onclick="openCodeModal(this,'Pandas .plot() Chart Types: Bar, Area, Scatter','chartPandasBar,chartPandasArea')" data-charts="chartPandasBar,chartPandasArea">Click to see code &amp; visual</button>
+      <pre><code><span class="cm"># Bar chart</span>
+monthly.<span class="fn">plot</span>(kind=<span class="st">'bar'</span>)
+
+<span class="cm"># Horizontal bar</span>
+monthly.<span class="fn">plot</span>(kind=<span class="st">'barh'</span>)
+
+<span class="cm"># Histogram of a single column</span>
+monthly[<span class="st">'revenue'</span>].<span class="fn">plot</span>(kind=<span class="st">'hist'</span>, bins=<span class="nm">10</span>)
+
+<span class="cm"># Area chart (stacked by default)</span>
+monthly.<span class="fn">plot</span>(kind=<span class="st">'area'</span>, alpha=<span class="nm">0.5</span>)
+
+<span class="cm"># Scatter plot (requires x and y columns)</span>
+monthly.<span class="fn">plot</span>(kind=<span class="st">'scatter'</span>, x=<span class="st">'revenue'</span>, y=<span class="st">'expenses'</span>)</code></pre>
+
+      <div class="chart-demo-row">
+        <div class="chart-demo">
+          <div class="chart-demo-label">df.plot(kind='bar') - Revenue vs Expenses by Quarter</div>
+          <canvas id="chartPandasBar"></canvas>
+        </div>
+        <div class="chart-demo">
+          <div class="chart-demo-label">df.plot(kind='area') - Stacked Area Chart</div>
+          <canvas id="chartPandasArea"></canvas>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">df.plot() vs raw Matplotlib</div>
+        <code>df.plot()</code> is great for quick exploratory analysis during data cleaning and EDA. It produces a Matplotlib <code>Axes</code> object that you can customize further using regular Matplotlib commands. For publication-quality or highly customized charts, work directly with Matplotlib's <code>fig, ax = plt.subplots()</code> pattern - but don't hesitate to start with <code>df.plot()</code> to see what the data looks like first.
+      </div>
+    </section>
+
+    <!-- ANNOTATIONS -->
+    <section id="content">
+      <h2>Annotations: Adding Text and Reference Lines</h2>
+      <p>Annotations guide the reader to the most important parts of a chart. They include text labels, arrows pointing to data points, and reference lines marking thresholds or averages.</p>
+
+      <h3>Adding text and annotations</h3>
+      <pre><code>fig, ax = plt.<span class="fn">subplots</span>()
+ax.<span class="fn">bar</span>([<span class="st">'Rivera'</span>, <span class="st">'Chen'</span>, <span class="st">'Walker'</span>], [<span class="nm">.312</span>, <span class="nm">.287</span>, <span class="nm">.301</span>])
+
+<span class="cm"># Add text at a specific location (x, y)</span>
+ax.<span class="fn">text</span>(<span class="nm">0</span>, <span class="nm">.315</span>, <span class="st">'Team best'</span>, ha=<span class="st">'center'</span>, fontsize=<span class="nm">9</span>)
+
+<span class="cm"># Annotate with an arrow pointing to a data point</span>
+ax.<span class="fn">annotate</span>(<span class="st">'Slump recovery'</span>,
+            xy=(<span class="nm">1</span>, <span class="nm">.287</span>),            <span class="cm"># point the arrow at</span>
+            xytext=(<span class="nm">1.3</span>, <span class="nm">.295</span>),      <span class="cm"># where the label goes</span>
+            arrowprops=<span class="fn">dict</span>(arrowstyle=<span class="st">'->'</span>))</code></pre>
+
+      <h3>Reference lines</h3>
+      <button class="code-modal-btn" onclick="openCodeModal(this,'Annotations: Reference Lines and Text Labels','chartAnnotate')" data-charts="chartAnnotate">Click to see code &amp; visual</button>
+      <pre><code><span class="cm"># Horizontal reference line (e.g., league average)</span>
+ax.<span class="fn">axhline</span>(y=<span class="nm">.285</span>, color=<span class="st">'gray'</span>, linestyle=<span class="st">'--'</span>,
+           label=<span class="st">'League avg'</span>)
+
+<span class="cm"># Vertical reference line (e.g., trade deadline)</span>
+ax.<span class="fn">axvline</span>(x=<span class="st">'Walker'</span>, color=<span class="st">'red'</span>, linestyle=<span class="st">':'</span>)
+
+ax.<span class="fn">legend</span>()
+plt.<span class="fn">show</span>()</code></pre>
+
+      <div class="chart-demo">
+        <div class="chart-demo-label">Rendered output - Bar Chart with Annotations and Reference Line</div>
+        <canvas id="chartAnnotate"></canvas>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">When to annotate</div>
+        Don't annotate everything - only the data points that need context the chart doesn't already provide. A good annotation answers a question the reader is likely to ask: "Why does this spike?" or "What threshold are we comparing against?" Use sparingly so annotations stay meaningful.
+      </div>
+    </section>
+
+    <!-- BEST PRACTICES -->
+    <section id="best-practices">
+      <h2>Visualization Best Practices</h2>
+      <p>A technically correct chart can still mislead. These principles come from data visualization research and decades of practitioner experience. Apply them every time.</p>
+
+      <ul class="bp-list">
+        <li>
+          <span class="bp-num">01</span>
+          <span><strong>Start the y-axis at zero for bar charts.</strong> Truncating the y-axis exaggerates differences. A bar chart with a y-axis starting at .260 makes a .312 vs .290 difference look enormous. Starting at zero shows the true proportion.</span>
+        </li>
+        <li>
+          <span class="bp-num">02</span>
+          <span><strong>Label your axes - always.</strong> A chart without axis labels forces the reader to guess. Every axis needs a label and units. "Salary" is incomplete; "Annual Salary (USD)" is correct.</span>
+        </li>
+        <li>
+          <span class="bp-num">03</span>
+          <span><strong>Use color purposefully, not decoratively.</strong> Color should encode information (category, magnitude, emphasis) - not just make the chart look nice. Use a consistent, colorblind-friendly palette. Seaborn's default palettes are designed for this.</span>
+        </li>
+        <li>
+          <span class="bp-num">04</span>
+          <span><strong>Reduce clutter.</strong> Remove every element that does not add information: unnecessary gridlines, decorative borders (spines), redundant legends. Edward Tufte called this maximizing the "data-ink ratio."</span>
+        </li>
+        <li>
+          <span class="bp-num">05</span>
+          <span><strong>Choose the right chart for the data type.</strong> Use a bar chart for categorical comparisons, a line chart for time series, a scatter for two continuous variables, a histogram to show distribution. The chart type determines what pattern the reader's eye will find.</span>
+        </li>
+        <li>
+          <span class="bp-num">06</span>
+          <span><strong>Show uncertainty.</strong> If you are plotting a mean, show the confidence interval or standard error. A point estimate without uncertainty hides important information about the reliability of the finding.</span>
+        </li>
+        <li>
+          <span class="bp-num">07</span>
+          <span><strong>Write a descriptive title.</strong> "Sales Data" is not a title; "Q3 Sales Declined 12% vs. Prior Year" is. A good title tells the reader the takeaway, not just the topic.</span>
+        </li>
+        <li>
+          <span class="bp-num">08</span>
+          <span><strong>Use <code>plt.tight_layout()</code>.</strong> This prevents labels and subplots from overlapping. Make it a habit to call it before every <code>plt.show()</code> or <code>plt.savefig()</code>.</span>
+        </li>
+      </ul>
+
+      <div class="callout">
+        <div class="callout-label">Saving publication-quality figures</div>
+        <code>plt.savefig('chart.png', dpi=150, bbox_inches='tight')</code> - the <code>dpi</code> parameter controls resolution (150 is good for presentations, 300 for print). <code>bbox_inches='tight'</code> prevents labels from being clipped. For vector graphics (scalable at any size), save as <code>.svg</code> or <code>.pdf</code> instead.
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz">
+      <div id="quiz-section">
+        <h2>Module 5 Quiz</h2>
+        <p class="quiz-intro">Ten questions covering chart selection, Matplotlib, Seaborn, and visualization best practices. Select one answer per question, then submit.</p>
+
+        <div class="q-block" data-correct="b">
+          <span class="q-num">Question 01</span>
+          <p class="q-text">You want to show how batting averages for 5 players changed week-by-week over a season. Which chart type is most appropriate?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q1" value="a"> Bar chart - one bar per player per week.</label>
+            <label class="opt-label"><input type="radio" name="q1" value="b"> Line chart - one line per player, x-axis = week.</label>
+            <label class="opt-label"><input type="radio" name="q1" value="c"> Histogram - to show the distribution of averages.</label>
+            <label class="opt-label"><input type="radio" name="q1" value="d"> Pie chart - to show each player's share of total batting.</label>
+          </div>
+          <div class="q-feedback" id="fb1"></div>
+        </div>
+
+        <div class="q-block" data-correct="c">
+          <span class="q-num">Question 02</span>
+          <p class="q-text">In Matplotlib's object-oriented interface, what is the difference between a <strong>Figure</strong> and an <strong>Axes</strong>?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q2" value="a"> Figure is used for line charts; Axes is used for bar charts.</label>
+            <label class="opt-label"><input type="radio" name="q2" value="b"> They are the same object with different names.</label>
+            <label class="opt-label"><input type="radio" name="q2" value="c"> A Figure is the entire canvas; an Axes is one individual plot within that canvas.</label>
+            <label class="opt-label"><input type="radio" name="q2" value="d"> An Axes is the overall canvas; a Figure is one subplot.</label>
+          </div>
+          <div class="q-feedback" id="fb2"></div>
+        </div>
+
+        <div class="q-block" data-correct="a">
+          <span class="q-num">Question 03</span>
+          <p class="q-text">You want to see whether batting average and home runs are related across the roster. Which chart is best?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q3" value="a"> Scatter plot - one point per player, avg on x-axis, hr on y-axis.</label>
+            <label class="opt-label"><input type="radio" name="q3" value="b"> Histogram of batting averages.</label>
+            <label class="opt-label"><input type="radio" name="q3" value="c"> Line chart over time.</label>
+            <label class="opt-label"><input type="radio" name="q3" value="d"> Pie chart of home run shares.</label>
+          </div>
+          <div class="q-feedback" id="fb3"></div>
+        </div>
+
+        <div class="q-block" data-correct="d">
+          <span class="q-num">Question 04</span>
+          <p class="q-text">Which code creates a 1-row, 2-column subplot layout and returns handles for both Axes?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q4" value="a"> <code>fig = plt.figure(1, 2)</code></label>
+            <label class="opt-label"><input type="radio" name="q4" value="b"> <code>ax1, ax2 = plt.axes(1, 2)</code></label>
+            <label class="opt-label"><input type="radio" name="q4" value="c"> <code>fig, ax = plt.subplots()</code></label>
+            <label class="opt-label"><input type="radio" name="q4" value="d"> <code>fig, (ax1, ax2) = plt.subplots(1, 2)</code></label>
+          </div>
+          <div class="q-feedback" id="fb4"></div>
+        </div>
+
+        <div class="q-block" data-correct="b">
+          <span class="q-num">Question 05</span>
+          <p class="q-text">What is the main advantage of Seaborn over plain Matplotlib for a data scientist?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q5" value="a"> Seaborn can create interactive charts; Matplotlib cannot.</label>
+            <label class="opt-label"><input type="radio" name="q5" value="b"> Seaborn integrates with pandas DataFrames and produces statistical plots with less code, including automatic grouping, error bars, and attractive defaults.</label>
+            <label class="opt-label"><input type="radio" name="q5" value="c"> Seaborn replaces Matplotlib completely and is always preferred.</label>
+            <label class="opt-label"><input type="radio" name="q5" value="d"> Seaborn charts render faster than Matplotlib charts.</label>
+          </div>
+          <div class="q-feedback" id="fb5"></div>
+        </div>
+
+        <div class="q-block" data-correct="c">
+          <span class="q-num">Question 06</span>
+          <p class="q-text">A bar chart showing player home run counts has its y-axis starting at 0.5 instead of 0. Rivera has 4 HRs and Walker has 7. How does this affect the reader's perception?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q6" value="a"> It has no effect - the numbers are labeled on the bars.</label>
+            <label class="opt-label"><input type="radio" name="q6" value="b"> It makes the chart easier to read by zooming in.</label>
+            <label class="opt-label"><input type="radio" name="q6" value="c"> It exaggerates the difference between players, making Walker appear to have far more than 1.75x Rivera's HRs.</label>
+            <label class="opt-label"><input type="radio" name="q6" value="d"> It has no effect because bar heights are still proportional to the data.</label>
+          </div>
+          <div class="q-feedback" id="fb6"></div>
+        </div>
+
+        <div class="q-block" data-correct="a">
+          <span class="q-num">Question 07</span>
+          <p class="q-text">You want to compare the distribution of batting averages between outfielders and infielders on the roster. Which chart is most informative?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q7" value="a"> Box plot with position on the x-axis and batting average on the y-axis.</label>
+            <label class="opt-label"><input type="radio" name="q7" value="b"> A single histogram of all batting averages.</label>
+            <label class="opt-label"><input type="radio" name="q7" value="c"> A pie chart showing each player's share of the total batting average.</label>
+            <label class="opt-label"><input type="radio" name="q7" value="d"> A line chart of batting average over games played.</label>
+          </div>
+          <div class="q-feedback" id="fb7"></div>
+        </div>
+
+        <div class="q-block" data-correct="d">
+          <span class="q-num">Question 08</span>
+          <p class="q-text">What does <code>plt.tight_layout()</code> do?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q8" value="a"> Compresses the figure to a smaller file size.</label>
+            <label class="opt-label"><input type="radio" name="q8" value="b"> Locks the axis limits so they cannot be changed.</label>
+            <label class="opt-label"><input type="radio" name="q8" value="c"> Removes all whitespace from the figure.</label>
+            <label class="opt-label"><input type="radio" name="q8" value="d"> Automatically adjusts subplot spacing to prevent labels and titles from overlapping.</label>
+          </div>
+          <div class="q-feedback" id="fb8"></div>
+        </div>
+
+        <div class="q-block" data-correct="c">
+          <span class="q-num">Question 09</span>
+          <p class="q-text">Which Seaborn function produces a matrix of scatter plots for every pair of numeric variables in a DataFrame?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q9" value="a"> <code>sns.heatmap()</code></label>
+            <label class="opt-label"><input type="radio" name="q9" value="b"> <code>sns.scatterplot()</code></label>
+            <label class="opt-label"><input type="radio" name="q9" value="c"> <code>sns.pairplot()</code></label>
+            <label class="opt-label"><input type="radio" name="q9" value="d"> <code>sns.jointplot()</code></label>
+          </div>
+          <div class="q-feedback" id="fb9"></div>
+        </div>
+
+        <div class="q-block" data-correct="b">
+          <span class="q-num">Question 10</span>
+          <p class="q-text">According to visualization best practices, which of these is the better chart title?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q10" value="a"> "Batting Average Data"</label>
+            <label class="opt-label"><input type="radio" name="q10" value="b"> "Outfielders Batted .308 on Average - 21 Points Above Infielders"</label>
+            <label class="opt-label"><input type="radio" name="q10" value="c"> "Chart 1: Statistics"</label>
+            <label class="opt-label"><input type="radio" name="q10" value="d"> "Eagles"</label>
+          </div>
+          <div class="q-feedback" id="fb10"></div>
+        </div>
+
+        <button class="quiz-submit" id="quizSubmit" onclick="submitQuiz()">Submit Quiz</button>
+        <div class="quiz-result" id="quizResult">
+          <div class="score-big" id="scoreDisplay"></div>
+          <div class="grade-label" id="gradeDisplay"></div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /content-col -->
+
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h4>Quiz Score</h4>
+      <div class="score-display" id="sidebarScore">--</div>
+      <div class="score-sub">Module 5 - 10 questions</div>
+      <a href="#quiz" class="quiz-cta-btn">Take the Quiz</a>
+    </div>
+    <div class="next-mod">
+      <h4>Next Module</h4>
+      <p>Learn Git version control - branching, merging, and pull requests in Module 6.</p>
+      <a href="../module6/index.html" class="next-mod-btn">Module 6: Git &amp; GitHub &rarr;</a>
+    </div>
+    <div class="sidebar-card">
+      <h4>On This Page</h4>
+      <div class="toc-links">
+        <a href="#chart-types">Chart Types</a>
+        <a href="#matplotlib">Matplotlib</a>
+        <a href="#seaborn">Seaborn</a>
+        <a href="#subplots">Subplots</a>
+        <a href="#styling">Styling</a>
+        <a href="#best-practices">Best Practices</a>
+        <a href="#quiz">Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<footer>
+  Built for DTSC 520 - Eastern University &bull; <a href="../../index.html">Course Home</a><br>&copy; Eastern University. All rights reserved.
+</footer>
+
+<script>
+const STORAGE_KEY = 'dtsc520_quiz_m5';
+
+const ANSWERS = {
+  q1: { correct: 'b', feedback: {
+    a: 'Incorrect. A grouped bar chart per week would be cluttered with 5 players x many weeks. A line chart is far clearer for showing change over time.',
+    b: 'Correct! Line charts are the standard for time series. Each player gets a line, the x-axis shows time (week), and the eye naturally follows trends.',
+    c: 'Incorrect. A histogram shows distribution of a single variable - not change over time across multiple players.',
+    d: 'Incorrect. Pie charts show proportions of a whole at one point in time. They cannot show trends.'
+  }},
+  q2: { correct: 'c', feedback: {
+    a: 'Incorrect. Both Figure and Axes can hold any chart type.',
+    b: 'Incorrect. They are distinct objects with different roles.',
+    c: 'Correct! The Figure is the top-level container - the whole canvas. An Axes is one individual plot within that Figure. A Figure can have many Axes (via subplots). Most plot commands go on the Axes object.',
+    d: 'Incorrect. You have Figure and Axes reversed.'
+  }},
+  q3: { correct: 'a', feedback: {
+    a: 'Correct! A scatter plot is designed to show the relationship between two continuous variables. Each point represents one player, and the pattern of points reveals whether a correlation exists.',
+    b: 'Incorrect. A histogram shows the distribution of one variable, not the relationship between two.',
+    c: 'Incorrect. A line chart shows change over time. There is no time dimension here.',
+    d: 'Incorrect. A pie chart shows proportions of a whole - not relationships between variables.'
+  }},
+  q4: { correct: 'd', feedback: {
+    a: 'Incorrect. plt.figure() creates a Figure, not Axes, and does not take rows/cols arguments this way.',
+    b: 'Incorrect. plt.axes() creates a single Axes and does not accept row/col arguments.',
+    c: 'Incorrect. plt.subplots() with no arguments creates 1 row and 1 column - just one Axes.',
+    d: 'Correct! plt.subplots(1, 2) creates 1 row, 2 columns. The tuple unpacking (ax1, ax2) gives you direct handles to each Axes object.'
+  }},
+  q5: { correct: 'b', feedback: {
+    a: 'Incorrect. Seaborn produces static charts just like Matplotlib. For interactivity, you would use Plotly or Bokeh.',
+    b: 'Correct! Seaborn is designed around pandas DataFrames. You pass a DataFrame and column names, and it handles grouping, statistical summaries, and error bars automatically. A Seaborn box plot grouped by category is one line; the equivalent Matplotlib code would be much longer.',
+    c: 'Incorrect. Seaborn is built on top of Matplotlib and complements it rather than replacing it.',
+    d: 'Incorrect. Rendering speed is not a meaningful difference between the two.'
+  }},
+  q6: { correct: 'c', feedback: {
+    a: 'Incorrect. Even with labels, the visual impression of bar height is what the reader perceives first - and truncated axes distort that impression.',
+    b: 'Incorrect. Zooming in for a line chart can be legitimate. For bar charts, the height represents the full quantity, so the axis must start at zero.',
+    c: 'Correct! When the y-axis starts at 0.5 instead of 0, a bar of height 4 looks visually much shorter relative to a bar of height 7 than the actual 4:7 ratio. This visually inflates the perceived difference. Always start bar charts at zero.',
+    d: 'Incorrect. Bar heights are only proportional to the data when the axis starts at zero.'
+  }},
+  q7: { correct: 'a', feedback: {
+    a: 'Correct! A box plot compactly shows median, interquartile range, and outliers for each group side by side. It is the standard tool for comparing distributions across categories.',
+    b: 'Incorrect. A single histogram mixes all positions together and does not let you compare groups.',
+    c: 'Incorrect. A pie chart shows proportions of a whole, not distributions.',
+    d: 'Incorrect. A line chart requires a meaningful continuous x-axis (like time). Position is a category.'
+  }},
+  q8: { correct: 'd', feedback: {
+    a: 'Incorrect. tight_layout does not affect file size.',
+    b: 'Incorrect. tight_layout does not lock axis limits.',
+    c: 'Incorrect. tight_layout adjusts spacing between subplots, it does not remove whitespace globally.',
+    d: 'Correct! plt.tight_layout() adjusts padding between subplots and between plot elements so that titles, labels, and tick marks do not overlap each other or get clipped at the figure edge.'
+  }},
+  q9: { correct: 'c', feedback: {
+    a: 'Incorrect. sns.heatmap() visualizes a matrix as colored cells - typically used for correlation matrices.',
+    b: 'Incorrect. sns.scatterplot() draws one scatter plot for two variables.',
+    c: 'Correct! sns.pairplot() creates a grid of scatter plots for every pair of numeric columns, with distribution plots on the diagonal. It gives you an instant overview of all pairwise relationships.',
+    d: 'Incorrect. sns.jointplot() shows one pair of variables with marginal distributions - it is a single chart, not a matrix.'
+  }},
+  q10: { correct: 'b', feedback: {
+    a: 'Incorrect. "Batting Average Data" describes the topic but tells the reader nothing about the finding.',
+    b: 'Correct! A good title communicates the takeaway, not just the topic. "Outfielders Batted .308 on Average - 21 Points Above Infielders" tells the reader what to look for and why it matters.',
+    c: 'Incorrect. "Chart 1: Statistics" is a label, not a title. It provides zero information.',
+    d: 'Incorrect. "Eagles" identifies the subject but conveys no finding.'
+  }}
+};
+
+function submitQuiz() {
+  let score = 0;
+  const total = 10;
+  const answers = {};
+
+  for (let i = 1; i <= total; i++) {
+    const name = 'q' + i;
+    const sel = document.querySelector('input[name="' + name + '"]:checked');
+    const fb = document.getElementById('fb' + i);
+    const opts = document.querySelectorAll('input[name="' + name + '"]');
+    const info = ANSWERS[name];
+
+    if (!sel) {
+      fb.className = 'q-feedback show wrong';
+      fb.textContent = 'Please select an answer.';
+      continue;
+    }
+
+    const chosen = sel.value;
+    answers[name] = chosen;
+
+    opts.forEach(function(opt) {
+      const lbl = opt.closest('.opt-label');
+      if (opt.value === info.correct) lbl.classList.add('opt-correct');
+      else if (opt.value === chosen && chosen !== info.correct) lbl.classList.add('opt-wrong');
+      opt.disabled = true;
+    });
+
+    if (chosen === info.correct) {
+      score++;
+      fb.className = 'q-feedback show correct';
+      fb.textContent = info.feedback[chosen];
+    } else {
+      fb.className = 'q-feedback show wrong';
+      fb.textContent = info.feedback[chosen];
+    }
+  }
+
+  const pct = Math.round((score / total) * 100);
+  let grade = pct === 100 ? 'Perfect score - data viz expert!' :
+              pct >= 80  ? 'Strong work - charts will be clear!' :
+              pct >= 60  ? 'Good start - review chart selection and best practices.' :
+                           'Review the module content and try again.';
+
+  document.getElementById('scoreDisplay').textContent = score + ' / ' + total;
+  document.getElementById('gradeDisplay').textContent = pct + '% - ' + grade;
+  document.getElementById('quizResult').className = 'quiz-result show';
+  document.getElementById('quizSubmit').disabled = true;
+  document.getElementById('sidebarScore').textContent = score + '/10';
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ score: score, total: total, pct: pct, answers: answers, ts: Date.now() }));
+  } catch(e) {}
+}
+
+(function() {
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved && saved.score !== undefined) {
+      document.getElementById('sidebarScore').textContent = saved.score + '/10';
+    }
+  } catch(e) {}
+})();
+</script>
+
+<script>
+// ── Chart.js defaults for dark theme ──
+Chart.defaults.color = '#a09a92';
+Chart.defaults.borderColor = '#2e2b28';
+Chart.defaults.font.family = 'IBM Plex Mono, monospace';
+Chart.defaults.font.size = 11;
+
+const PINK   = '#3a8fa0';
+const PINK_A = 'rgba(58,143,160,0.75)';
+const BLUE   = '#6baacc';
+const BLUE_A = 'rgba(107,170,204,0.75)';
+const GRID   = 'rgba(255,255,255,0.06)';
+
+// ── 1. Line chart: Batting Average by Week ──
+new Chart(document.getElementById('chartLine'), {
+  type: 'line',
+  data: {
+    labels: [1,2,3,4,5,6,7,8,9,10],
+    datasets: [
+      { label: 'Rivera', data: [.290,.295,.300,.305,.308,.310,.309,.311,.312,.314],
+        borderColor: '#cc5595', backgroundColor: 'transparent', tension: 0.3, pointRadius: 3 },
+      { label: 'Walker', data: [.275,.280,.288,.291,.295,.299,.300,.301,.301,.303],
+        borderColor: BLUE, backgroundColor: 'transparent', tension: 0.3, pointRadius: 3 }
+    ]
+  },
+  options: {
+    plugins: { legend: { position: 'top' } },
+    scales: {
+      x: { title: { display: true, text: 'Week' }, grid: { color: GRID } },
+      y: { title: { display: true, text: 'Batting Average' }, min: 0.26, max: 0.33, grid: { color: GRID } }
+    }
+  }
+});
+
+// ── 2. Bar chart: Home Runs ──
+new Chart(document.getElementById('chartBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Rivera','Chen','Walker','Kim'],
+    datasets: [{ label: 'Home Runs', data: [4,2,7,1],
+      backgroundColor: PINK_A, borderColor: PINK, borderWidth: 1 }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: GRID } },
+      y: { beginAtZero: true, title: { display: true, text: 'Home Runs' }, grid: { color: GRID } }
+    }
+  }
+});
+
+// ── 3. Scatter: Batting Avg vs Salary ──
+new Chart(document.getElementById('chartScatter'), {
+  type: 'scatter',
+  data: {
+    datasets: [{
+      label: 'Players',
+      data: [
+        {x:.312, y:16800}, {x:.287, y:14400},
+        {x:.301, y:19200}, {x:.268, y:760000}
+      ],
+      backgroundColor: PINK_A, pointRadius: 7
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `avg: ${ctx.raw.x}  salary: $${ctx.raw.y.toLocaleString()}` } }
+    },
+    scales: {
+      x: { title: { display: true, text: 'Batting Avg' }, grid: { color: GRID } },
+      y: { title: { display: true, text: 'Salary (USD)' }, grid: { color: GRID } }
+    }
+  }
+});
+
+// ── 4. Histogram: Simulated batting averages ──
+(function(){
+  // Simulate ~200 values from normal(.290, .020) then bin them
+  const rng = () => { let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); };
+  const vals = Array.from({length:200}, () => 0.290 + 0.020*rng());
+  const bins = 15, minV=0.22, maxV=0.36, width=(maxV-minV)/bins;
+  const counts = new Array(bins).fill(0);
+  vals.forEach(v => { const i=Math.floor((v-minV)/width); if(i>=0&&i<bins) counts[i]++; });
+  const labels = Array.from({length:bins}, (_,i) => (minV+i*width).toFixed(3));
+  new Chart(document.getElementById('chartHist'), {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Count', data: counts, backgroundColor: PINK_A, borderColor: PINK, borderWidth: 1 }] },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { title: { display: true, text: 'Batting Avg' }, grid: { color: GRID } },
+        y: { title: { display: true, text: 'Frequency' }, beginAtZero: true, grid: { color: GRID } }
+      },
+      barPercentage: 1.0, categoryPercentage: 1.0
+    }
+  });
+})();
+
+// ── 5. Horizontal bar ──
+new Chart(document.getElementById('chartBarH'), {
+  type: 'bar',
+  data: {
+    labels: ['Rivera','Chen','Walker','Kim'],
+    datasets: [{ label: 'Home Runs', data: [4,2,7,1],
+      backgroundColor: PINK_A, borderColor: PINK, borderWidth: 1 }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { beginAtZero: true, title: { display: true, text: 'Home Runs' }, grid: { color: GRID } },
+      y: { grid: { color: GRID } }
+    }
+  }
+});
+
+// ── 6. Seaborn scatter (hue by position) ──
+new Chart(document.getElementById('chartSnsScatter'), {
+  type: 'scatter',
+  data: {
+    datasets: [
+      { label: 'OF', data: [{x:.312,y:4},{x:.301,y:7},{x:.295,y:3}], backgroundColor:'rgba(58,143,160,0.8)', pointRadius:8 },
+      { label: 'IF', data: [{x:.287,y:2},{x:.268,y:1},{x:.310,y:5}], backgroundColor:'rgba(107,170,204,0.8)', pointRadius:8 }
+    ]
+  },
+  options: {
+    plugins: { legend: { position: 'top' } },
+    scales: {
+      x: { title: { display: true, text: 'Batting Avg' }, grid: { color: GRID } },
+      y: { title: { display: true, text: 'Home Runs' }, beginAtZero: true, grid: { color: GRID } }
+    }
+  }
+});
+
+// ── 7. Seaborn histplot + KDE (approximated) ──
+(function(){
+  const rng = () => { let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); };
+  const vals = [.312,.287,.301,.268,.295,.310, ...Array.from({length:50}, () => 0.293+0.016*rng())];
+  const bins=10, minV=0.25, maxV=0.33, width=(maxV-minV)/bins;
+  const counts=new Array(bins).fill(0);
+  vals.forEach(v=>{const i=Math.floor((v-minV)/width);if(i>=0&&i<bins)counts[i]++;});
+  const labels=Array.from({length:bins},(_,i)=>(minV+i*width).toFixed(3));
+  // KDE approx: smooth the counts
+  const kde = counts.map((_,i) => {
+    const w=[0.25,0.5,0.25]; let s=0;
+    for(let j=-1;j<=1;j++){const idx=i+j;if(idx>=0&&idx<bins)s+=w[j+1]*counts[idx];}
+    return +s.toFixed(2);
+  });
+  new Chart(document.getElementById('chartSnsHist'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { type:'bar', label:'Count', data:counts, backgroundColor:PINK_A, borderColor:PINK, borderWidth:1, yAxisID:'y' },
+        { type:'line', label:'KDE', data:kde, borderColor:BLUE, borderWidth:2, pointRadius:0, tension:0.4, fill:false, yAxisID:'y' }
+      ]
+    },
+    options: {
+      plugins: { legend: { position:'top' } },
+      scales: {
+        x: { title:{display:true,text:'Batting Avg'}, grid:{color:GRID} },
+        y: { title:{display:true,text:'Count'}, beginAtZero:true, grid:{color:GRID} }
+      },
+      barPercentage:1.0, categoryPercentage:1.0
+    }
+  });
+})();
+
+// ── 8. Subplots 2x2 (single Chart.js - line only, labeled) ──
+// We'll render the 1x2 subplot version since Chart.js doesn't do grid subplots natively
+new Chart(document.getElementById('chartSubplots'), {
+  type: 'bar',
+  data: {
+    labels: ['Rivera','Chen','Walker','Kim','Jones','Patel'],
+    datasets: [
+      { label: 'Batting Avg', data: [.312,.287,.301,.268,.295,.310],
+        backgroundColor:'rgba(58,143,160,0.7)', borderColor:PINK, borderWidth:1, yAxisID:'y' },
+      { label: 'Home Runs', data: [4,2,7,1,3,5],
+        backgroundColor:'rgba(107,170,204,0.7)', borderColor:BLUE, borderWidth:1, yAxisID:'y2' }
+    ]
+  },
+  options: {
+    plugins: { legend: { position:'top' }, title:{ display:true, text:'Eagles Roster - Key Stats (Dual Axis)' } },
+    scales: {
+      x: { grid:{color:GRID} },
+      y: { title:{display:true,text:'Batting Avg'}, min:0, max:0.4, position:'left', grid:{color:GRID} },
+      y2: { title:{display:true,text:'Home Runs'}, beginAtZero:true, position:'right', grid:{display:false} }
+    }
+  }
+});
+
+// ── 9. df.plot bar: Revenue vs Expenses ──
+new Chart(document.getElementById('chartPandasBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Q1','Q2','Q3','Q4'],
+    datasets: [
+      { label:'Revenue', data:[45000,52000,48000,61000], backgroundColor:'rgba(58,143,160,0.75)', borderColor:PINK, borderWidth:1 },
+      { label:'Expenses', data:[38000,41000,39000,44000], backgroundColor:'rgba(107,170,204,0.75)', borderColor:BLUE, borderWidth:1 }
+    ]
+  },
+  options: {
+    plugins: { legend: { position:'top' } },
+    scales: {
+      x: { grid:{color:GRID} },
+      y: { title:{display:true,text:'USD'}, beginAtZero:true, grid:{color:GRID} }
+    }
+  }
+});
+
+// ── 10. df.plot area ──
+new Chart(document.getElementById('chartPandasArea'), {
+  type: 'line',
+  data: {
+    labels: ['Q1','Q2','Q3','Q4'],
+    datasets: [
+      { label:'Revenue', data:[45000,52000,48000,61000],
+        backgroundColor:'rgba(58,143,160,0.35)', borderColor:PINK, fill:true, tension:0.3 },
+      { label:'Expenses', data:[38000,41000,39000,44000],
+        backgroundColor:'rgba(107,170,204,0.35)', borderColor:BLUE, fill:true, tension:0.3 }
+    ]
+  },
+  options: {
+    plugins: { legend: { position:'top' } },
+    scales: {
+      x: { grid:{color:GRID} },
+      y: { title:{display:true,text:'USD'}, beginAtZero:true, grid:{color:GRID} }
+    }
+  }
+});
+
+// ── 11. Annotated bar chart with reference line ──
+(function(){
+  const ctx = document.getElementById('chartAnnotate');
+  const avgs = [.312, .287, .301];
+  const labels = ['Rivera','Chen','Walker'];
+  const leagueAvg = 0.285;
+
+  const chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Batting Avg', data: avgs,
+          backgroundColor: avgs.map(v => v >= leagueAvg ? PINK_A : 'rgba(100,100,105,0.6)'),
+          borderColor: avgs.map(v => v >= leagueAvg ? PINK : '#646469'),
+          borderWidth: 1 }
+      ]
+    },
+    options: {
+      plugins: {
+        legend: { display: false },
+        annotation: { annotations: {} }  // placeholder
+      },
+      scales: {
+        x: { grid:{color:GRID} },
+        y: { min:0, max:0.36, title:{display:true,text:'Batting Average'}, grid:{color:GRID} }
+      }
+    },
+    plugins: [{
+      id: 'refline',
+      afterDraw(chart) {
+        const {ctx, chartArea: {left,right,top}, scales: {y}} = chart;
+        const yPixel = y.getPixelForValue(leagueAvg);
+        ctx.save();
+        ctx.setLineDash([6,4]);
+        ctx.strokeStyle = 'rgba(160,154,146,0.7)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(left, yPixel); ctx.lineTo(right, yPixel); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#a09a92';
+        ctx.font = '10px IBM Plex Mono, monospace';
+        ctx.fillText('League avg (.285)', left + 4, yPixel - 5);
+        // "Team best" label on Rivera bar
+        const meta = chart.getDatasetMeta(0);
+        const bar = meta.data[0];
+        ctx.fillStyle = '#f5f2ee';
+        ctx.font = 'bold 10px IBM Plex Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('Team best', bar.x, bar.y - 8);
+        ctx.restore();
+      }
+    }]
+  });
+})();
+</script>
+
+<!-- Code + Visual Modal -->
+<div id="codeModal" role="dialog" aria-modal="true" aria-label="Code and visual">
+  <div class="cm-box">
+    <div class="cm-header">
+      <span class="cm-title" id="cmTitle">Code &amp; Visual</span>
+      <button class="cm-close" id="cmClose" aria-label="Close modal">&times;</button>
+    </div>
+    <div class="cm-body">
+      <div class="cm-code-pane">
+        <pre><code id="cmCode"></code></pre>
+      </div>
+      <div class="cm-chart-pane" id="cmChartPane"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Code + Visual Modal System ──
+(function(){
+
+  // Chart config registry - maps canvas ID -> Chart.js config factory
+  // Each factory returns a fresh config object so we can init a new canvas in the modal
+  const PINK   = '#3a8fa0';
+  const PINK_A = 'rgba(58,143,160,0.75)';
+  const BLUE   = '#6baacc';
+  const BLUE_A = 'rgba(107,170,204,0.75)';
+  const GRID   = 'rgba(255,255,255,0.06)';
+
+  function rng() { let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+  const CHART_CONFIGS = {
+    chartLine: () => ({
+      type: 'line',
+      data: {
+        labels: [1,2,3,4,5,6,7,8,9,10],
+        datasets: [
+          { label:'Rivera', data:[.290,.295,.300,.305,.308,.310,.309,.311,.312,.314], borderColor:'#cc5595', backgroundColor:'transparent', tension:0.3, pointRadius:3 },
+          { label:'Walker', data:[.275,.280,.288,.291,.295,.299,.300,.301,.301,.303], borderColor:BLUE, backgroundColor:'transparent', tension:0.3, pointRadius:3 }
+        ]
+      },
+      options: { plugins:{legend:{position:'top'}}, scales:{ x:{title:{display:true,text:'Week'},grid:{color:GRID}}, y:{title:{display:true,text:'Batting Average'},min:0.26,max:0.33,grid:{color:GRID}} } }
+    }),
+    chartBar: () => ({
+      type: 'bar',
+      data: { labels:['Rivera','Chen','Walker','Kim'], datasets:[{label:'Home Runs',data:[4,2,7,1],backgroundColor:PINK_A,borderColor:PINK,borderWidth:1}] },
+      options: { plugins:{legend:{display:false}}, scales:{ x:{grid:{color:GRID}}, y:{beginAtZero:true,title:{display:true,text:'Home Runs'},grid:{color:GRID}} } }
+    }),
+    chartScatter: () => ({
+      type: 'scatter',
+      data: { datasets:[{label:'Players',data:[{x:.312,y:16800},{x:.287,y:14400},{x:.301,y:19200},{x:.268,y:760000}],backgroundColor:PINK_A,pointRadius:7}] },
+      options: { plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`avg: ${ctx.raw.x}  salary: $${ctx.raw.y.toLocaleString()}`}}}, scales:{ x:{title:{display:true,text:'Batting Avg'},grid:{color:GRID}}, y:{title:{display:true,text:'Salary (USD)'},grid:{color:GRID}} } }
+    }),
+    chartHist: () => {
+      const vals = Array.from({length:200}, () => 0.290 + 0.020*rng());
+      const bins=15, minV=0.22, maxV=0.36, width=(maxV-minV)/bins;
+      const counts=new Array(bins).fill(0);
+      vals.forEach(v=>{const i=Math.floor((v-minV)/width);if(i>=0&&i<bins)counts[i]++;});
+      const labels=Array.from({length:bins},(_,i)=>(minV+i*width).toFixed(3));
+      return { type:'bar', data:{labels,datasets:[{label:'Count',data:counts,backgroundColor:PINK_A,borderColor:PINK,borderWidth:1}]}, options:{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Batting Avg'},grid:{color:GRID}},y:{title:{display:true,text:'Frequency'},beginAtZero:true,grid:{color:GRID}}},barPercentage:1.0,categoryPercentage:1.0} };
+    },
+    chartBarH: () => ({
+      type: 'bar',
+      data: { labels:['Rivera','Chen','Walker','Kim'], datasets:[{label:'Home Runs',data:[4,2,7,1],backgroundColor:PINK_A,borderColor:PINK,borderWidth:1}] },
+      options: { indexAxis:'y', plugins:{legend:{display:false}}, scales:{ x:{beginAtZero:true,title:{display:true,text:'Home Runs'},grid:{color:GRID}}, y:{grid:{color:GRID}} } }
+    }),
+    chartSnsScatter: () => ({
+      type: 'scatter',
+      data: { datasets:[
+        {label:'OF',data:[{x:.312,y:4},{x:.301,y:7},{x:.295,y:3}],backgroundColor:'rgba(58,143,160,0.8)',pointRadius:8},
+        {label:'IF',data:[{x:.287,y:2},{x:.268,y:1},{x:.310,y:5}],backgroundColor:'rgba(107,170,204,0.8)',pointRadius:8}
+      ]},
+      options: { plugins:{legend:{position:'top'}}, scales:{ x:{title:{display:true,text:'Batting Avg'},grid:{color:GRID}}, y:{title:{display:true,text:'Home Runs'},beginAtZero:true,grid:{color:GRID}} } }
+    }),
+    chartSnsHist: () => {
+      const vals = [.312,.287,.301,.268,.295,.310,...Array.from({length:50},()=>0.293+0.016*rng())];
+      const bins=10, minV=0.25, maxV=0.33, width=(maxV-minV)/bins;
+      const counts=new Array(bins).fill(0);
+      vals.forEach(v=>{const i=Math.floor((v-minV)/width);if(i>=0&&i<bins)counts[i]++;});
+      const labels=Array.from({length:bins},(_,i)=>(minV+i*width).toFixed(3));
+      const kde=counts.map((_,i)=>{const w=[0.25,0.5,0.25];let s=0;for(let j=-1;j<=1;j++){const idx=i+j;if(idx>=0&&idx<bins)s+=w[j+1]*counts[idx];}return +s.toFixed(2);});
+      return { type:'bar', data:{labels,datasets:[{type:'bar',label:'Count',data:counts,backgroundColor:PINK_A,borderColor:PINK,borderWidth:1,yAxisID:'y'},{type:'line',label:'KDE',data:kde,borderColor:BLUE,borderWidth:2,pointRadius:0,tension:0.4,fill:false,yAxisID:'y'}]}, options:{plugins:{legend:{position:'top'}},scales:{x:{title:{display:true,text:'Batting Avg'},grid:{color:GRID}},y:{title:{display:true,text:'Count'},beginAtZero:true,grid:{color:GRID}}},barPercentage:1.0,categoryPercentage:1.0} };
+    },
+    chartSubplots: () => ({
+      type: 'bar',
+      data: { labels:['Rivera','Chen','Walker','Kim','Jones','Patel'], datasets:[
+        {label:'Batting Avg',data:[.312,.287,.301,.268,.295,.310],backgroundColor:'rgba(58,143,160,0.7)',borderColor:PINK,borderWidth:1,yAxisID:'y'},
+        {label:'Home Runs',data:[4,2,7,1,3,5],backgroundColor:'rgba(107,170,204,0.7)',borderColor:BLUE,borderWidth:1,yAxisID:'y2'}
+      ]},
+      options: { plugins:{legend:{position:'top'},title:{display:true,text:'Eagles Roster - Key Stats (Dual Axis)'}}, scales:{ x:{grid:{color:GRID}}, y:{title:{display:true,text:'Batting Avg'},min:0,max:0.4,position:'left',grid:{color:GRID}}, y2:{title:{display:true,text:'Home Runs'},beginAtZero:true,position:'right',grid:{display:false}} } }
+    }),
+    chartPandasBar: () => ({
+      type: 'bar',
+      data: { labels:['Q1','Q2','Q3','Q4'], datasets:[
+        {label:'Revenue',data:[45000,52000,48000,61000],backgroundColor:'rgba(58,143,160,0.75)',borderColor:PINK,borderWidth:1},
+        {label:'Expenses',data:[38000,41000,39000,44000],backgroundColor:'rgba(107,170,204,0.75)',borderColor:BLUE,borderWidth:1}
+      ]},
+      options: { plugins:{legend:{position:'top'}}, scales:{ x:{grid:{color:GRID}}, y:{title:{display:true,text:'USD'},beginAtZero:true,grid:{color:GRID}} } }
+    }),
+    chartPandasArea: () => ({
+      type: 'line',
+      data: { labels:['Q1','Q2','Q3','Q4'], datasets:[
+        {label:'Revenue',data:[45000,52000,48000,61000],backgroundColor:'rgba(58,143,160,0.35)',borderColor:PINK,fill:true,tension:0.3},
+        {label:'Expenses',data:[38000,41000,39000,44000],backgroundColor:'rgba(107,170,204,0.35)',borderColor:BLUE,fill:true,tension:0.3}
+      ]},
+      options: { plugins:{legend:{position:'top'}}, scales:{ x:{grid:{color:GRID}}, y:{title:{display:true,text:'USD'},beginAtZero:true,grid:{color:GRID}} } }
+    }),
+    chartAnnotate: () => {
+      const avgs=[.312,.287,.301], labels=['Rivera','Chen','Walker'], leagueAvg=0.285;
+      return {
+        type:'bar',
+        data:{labels,datasets:[{label:'Batting Avg',data:avgs,backgroundColor:avgs.map(v=>v>=leagueAvg?PINK_A:'rgba(100,100,105,0.6)'),borderColor:avgs.map(v=>v>=leagueAvg?PINK:'#646469'),borderWidth:1}]},
+        options:{plugins:{legend:{display:false}},scales:{x:{grid:{color:GRID}},y:{min:0,max:0.36,title:{display:true,text:'Batting Average'},grid:{color:GRID}}}},
+        plugins:[{id:'refline',afterDraw(chart){
+          const {ctx,chartArea:{left,right},scales:{y}}=chart;
+          const yPx=y.getPixelForValue(leagueAvg);
+          ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle='rgba(160,154,146,0.7)';ctx.lineWidth=1.5;
+          ctx.beginPath();ctx.moveTo(left,yPx);ctx.lineTo(right,yPx);ctx.stroke();
+          ctx.setLineDash([]);ctx.fillStyle='#a09a92';ctx.font='10px IBM Plex Mono,monospace';
+          ctx.fillText('League avg (.285)',left+4,yPx-5);
+          const meta=chart.getDatasetMeta(0);const bar=meta.data[0];
+          ctx.fillStyle='#f5f2ee';ctx.font='bold 10px IBM Plex Mono,monospace';ctx.textAlign='center';
+          ctx.fillText('Team best',bar.x,bar.y-8);ctx.restore();
+        }}]
+      };
+    }
+  };
+
+  // Chart label map for modal display
+  const CHART_LABELS = {
+    chartLine:        'Line Chart — Batting Avg by Week',
+    chartBar:         'Bar Chart — Home Runs by Player',
+    chartScatter:     'Scatter Plot — Batting Avg vs. Salary',
+    chartHist:        'Histogram — Simulated Batting Averages',
+    chartBarH:        'Horizontal Bar — Home Runs',
+    chartSnsScatter:  'Seaborn Scatter — Avg vs HR by Position',
+    chartSnsHist:     'Seaborn Histogram + KDE',
+    chartSubplots:    'Subplots — Eagles Roster Stats (Dual Axis)',
+    chartPandasBar:   "df.plot(kind='bar') — Revenue vs Expenses",
+    chartPandasArea:  "df.plot(kind='area') — Stacked Area",
+    chartAnnotate:    'Annotated Bar Chart with Reference Line'
+  };
+
+  // Active modal charts (so we can destroy them on close)
+  let modalCharts = [];
+
+  window.openCodeModal = function(btn, title, chartIdsStr) {
+    // Find the <pre><code> that immediately follows this button
+    const pre = btn.nextElementSibling;
+    const codeEl = pre ? pre.querySelector('code') : null;
+
+    // Set title
+    document.getElementById('cmTitle').textContent = title;
+
+    // Copy code (innerText gives plain text without HTML tags)
+    const cmCode = document.getElementById('cmCode');
+    cmCode.innerHTML = codeEl ? codeEl.innerHTML : '';
+
+    // Build chart pane
+    const pane = document.getElementById('cmChartPane');
+    pane.innerHTML = '';
+
+    // Destroy old charts
+    modalCharts.forEach(c => c.destroy());
+    modalCharts = [];
+
+    const ids = chartIdsStr.split(',').map(s => s.trim()).filter(Boolean);
+    ids.forEach(id => {
+      const configFn = CHART_CONFIGS[id];
+      if (!configFn) return;
+
+      const wrap = document.createElement('div');
+      wrap.className = 'cm-chart-wrap';
+
+      const lbl = document.createElement('div');
+      lbl.className = 'cm-chart-label';
+      lbl.textContent = CHART_LABELS[id] || id;
+      wrap.appendChild(lbl);
+
+      const canvas = document.createElement('canvas');
+      canvas.style.maxHeight = ids.length > 2 ? '180px' : '260px';
+      wrap.appendChild(canvas);
+      pane.appendChild(wrap);
+
+      // Small delay to ensure canvas is in DOM before Chart.js measures it
+      requestAnimationFrame(() => {
+        const config = configFn();
+        // Apply defaults
+        Chart.defaults.color = '#a09a92';
+        Chart.defaults.borderColor = '#2e2b28';
+        Chart.defaults.font.family = 'IBM Plex Mono, monospace';
+        Chart.defaults.font.size = 11;
+        const chart = new Chart(canvas, config);
+        modalCharts.push(chart);
+      });
+    });
+
+    // Open modal
+    const modal = document.getElementById('codeModal');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    // Focus close button for a11y
+    requestAnimationFrame(() => document.getElementById('cmClose').focus());
+  };
+
+  function closeModal() {
+    document.getElementById('codeModal').classList.remove('open');
+    document.body.style.overflow = '';
+    modalCharts.forEach(c => c.destroy());
+    modalCharts = [];
+  }
+
+  document.getElementById('cmClose').addEventListener('click', closeModal);
+
+  document.getElementById('codeModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+})();
+</script>
+
+<a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
+<style>
+  #back-to-top {
+    position: fixed; top: 64px; left: 1rem; z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+    width: 2.1rem; height: 2.1rem;
+    background: rgba(20,18,16,0.85); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px; color: rgba(255,255,255,0.55);
+    font-size: 1.25rem; line-height: 1; text-decoration: none;
+    backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s, color 0.15s, border-color 0.15s;
+  }
+  #back-to-top.visible { opacity: 1; pointer-events: auto; }
+  #back-to-top:hover { color: #fff; border-color: rgba(255,255,255,0.35); }
+</style>
+<script>
+(function(){
+  var btn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function(){
+    btn.classList.toggle('visible', window.scrollY > 300);
+  }, {passive: true});
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+})();
+</script>
+<!-- ── Python Sandbox (matplotlib notice) ── -->
+
+<button id="sandbox-btn" title="Python Sandbox" aria-label="Open Python Sandbox">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+  <span>Python</span>
+</button>
+
+<div id="sandbox-modal" role="dialog" aria-modal="true" aria-label="Python Sandbox">
+  <div class="sb-box sb-notice-box">
+    <div class="sb-header">
+      <div class="sb-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Python Sandbox
+      </div>
+      <button class="sb-close" id="sb-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="sb-notice-body">
+      <div class="sb-notice-icon">&#128268;</div>
+      <h3 class="sb-notice-title">Matplotlib can't run in the browser</h3>
+      <p class="sb-notice-text">
+        Visualization libraries like Matplotlib and Seaborn need a display environment to render charts &mdash; something a browser sandbox can't provide. To run the code from this module, you have a few good options:
+      </p>
+      <div class="sb-notice-options">
+        <a class="sb-notice-option" href="https://colab.research.google.com/" target="_blank" rel="noopener">
+          <span class="sb-option-name">Google Colab</span>
+          <span class="sb-option-desc">Free, runs in your browser, no setup required. Paste any code from this module and it will render charts inline. Recommended for quick practice.</span>
+        </a>
+        <a class="sb-notice-option" href="https://jupyter.org/try-jupyter/lab/" target="_blank" rel="noopener">
+          <span class="sb-option-name">JupyterLite</span>
+          <span class="sb-option-desc">A full Jupyter notebook environment that runs in the browser. Supports Matplotlib with no account needed.</span>
+        </a>
+        <a class="sb-notice-option" href="https://docs.anaconda.com/anaconda/install/" target="_blank" rel="noopener">
+          <span class="sb-option-name">Local Installation (Anaconda)</span>
+          <span class="sb-option-desc">For working on your own machine. Anaconda installs Python, Jupyter, Matplotlib, and the full data science stack in one step. The best long-term setup.</span>
+        </a>
+      </div>
+      <p class="sb-notice-tip">
+        <strong>Tip:</strong> Copy any code block from this page, paste it into Colab, and run it &mdash; charts render immediately, right in the notebook.
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  #sandbox-btn {
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 998;
+    display: flex; align-items: center; gap: 0.45rem;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 5px; cursor: pointer;
+    padding: 0.55rem 1rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.45);
+    transition: background 0.15s, transform 0.1s;
+  }
+  #sandbox-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
+  #sandbox-btn:active { transform: translateY(0); }
+
+  #sandbox-modal {
+    display: none; position: fixed; inset: 0; z-index: 2100;
+    background: rgba(0,0,0,0.75);
+    align-items: center; justify-content: center;
+    padding: 1.25rem;
+  }
+  #sandbox-modal.open { display: flex; }
+
+  .sb-box {
+    background: #161412;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    border-radius: 6px;
+    width: 100%; max-width: 620px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+  }
+  .sb-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .sb-title {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-light);
+  }
+  .sb-close {
+    background: none; border: none; color: rgba(255,255,255,0.45);
+    font-size: 1.3rem; line-height: 1; cursor: pointer; padding: 0 0.2rem;
+    transition: color 0.15s;
+  }
+  .sb-close:hover { color: #fff; }
+
+  .sb-notice-body {
+    padding: 1.75rem 1.75rem 1.5rem;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .sb-notice-icon { font-size: 2rem; line-height: 1; }
+  .sb-notice-title {
+    font-family: 'IBM Plex Sans', sans-serif; font-size: 1.1rem;
+    font-weight: 600; color: var(--text-bright); margin: 0;
+  }
+  .sb-notice-text {
+    font-size: 0.91rem; color: var(--text-dim); line-height: 1.6; margin: 0;
+  }
+  .sb-notice-options {
+    display: flex; flex-direction: column; gap: 0.65rem;
+  }
+  .sb-notice-option {
+    display: block; text-decoration: none;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px; padding: 0.75rem 1rem;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .sb-notice-option:hover {
+    border-color: var(--accent-light);
+    background: var(--bg-card2);
+  }
+  .sb-option-name {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem;
+    font-weight: 500; color: var(--accent-light);
+    letter-spacing: 0.04em; margin-bottom: 0.3rem;
+  }
+  .sb-option-desc {
+    display: block; font-size: 0.84rem; color: var(--text-dim); line-height: 1.5;
+  }
+  .sb-notice-tip {
+    font-size: 0.85rem; color: var(--text-dim); line-height: 1.6;
+    background: rgba(58,143,160,0.08); border: 1px solid rgba(58,143,160,0.2);
+    border-radius: 4px; padding: 0.65rem 0.9rem; margin: 0;
+  }
+  .sb-notice-tip strong { color: var(--accent-light); }
+</style>
+
+<script>
+(function(){
+  const btn     = document.getElementById('sandbox-btn');
+  const modal   = document.getElementById('sandbox-modal');
+  const closeBtn = document.getElementById('sb-close');
+
+  btn.addEventListener('click', function() {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    closeBtn.focus();
+  });
+  closeBtn.addEventListener('click', function() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('open')) {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

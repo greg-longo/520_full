@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 1: Introduction to Data Science - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --accent: #2A7195;
+      --accent-light: #3a8ab0;
+      --accent-dim: rgba(42,113,149,0.15);
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --bg-card2: #211f1d;
+      --bg-code: #0d0c0b;
+      --text: #e8e4de;
+      --text-dim: #a09a92;
+      --text-bright: #f5f2ee;
+      --border: #2e2b28;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Zilla Slab', serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+
+    nav {
+      background: #141210; border-bottom: 3px solid var(--accent);
+      padding: 0 2rem; display: flex; align-items: center;
+      justify-content: space-between; height: 52px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-left { display: flex; align-items: center; gap: 0.5rem; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.875rem; }
+    .nav-home { color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.15s; }
+    .nav-home:hover { color: #fff; }
+    .nav-sep { color: rgba(255,255,255,0.2); margin: 0 0.1rem; }
+    .nav-current { color: var(--accent-light); font-weight: 500; }
+    .nav-right { display: flex; gap: 0.5rem; }
+    .nav-right a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: rgba(255,255,255,0.45);
+      text-decoration: none; padding: 0.25rem 0.6rem; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 3px; letter-spacing: 0.04em; transition: all 0.15s;
+    }
+    .nav-right a:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+    .mod-banner {
+      background: linear-gradient(135deg, #0f1519 0%, #0c0e11 100%);
+      border-bottom: 1px solid var(--border); padding: 3rem 2rem 2.5rem;
+      position: relative; overflow: hidden;
+    }
+    .mod-banner::after {
+      content: 'Data Science'; position: absolute; right: 1rem; top: 50%;
+      transform: translateY(-50%); font-family: 'IBM Plex Mono', monospace;
+      font-size: 3.8rem; font-weight: 500; color: rgba(42,113,149,0.06);
+      line-height: 1; pointer-events: none; user-select: none; white-space: nowrap;
+    }
+    .banner-inner { max-width: 960px; margin: 0 auto; }
+    .banner-eyebrow {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent-light); margin-bottom: 0.75rem;
+    }
+    .mod-banner h1 { font-size: 2.1rem; font-weight: 700; color: var(--text-bright); line-height: 1.2; margin-bottom: 0.65rem; }
+    .mod-banner p { font-size: 0.95rem; color: var(--text-dim); max-width: 580px; line-height: 1.6; margin-bottom: 1.25rem; }
+    .banner-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .pill {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; padding: 0.25rem 0.6rem;
+      border-radius: 3px; background: rgba(42,113,149,0.12); color: var(--accent-light);
+      border: 1px solid rgba(42,113,149,0.25); letter-spacing: 0.04em;
+    }
+
+    .section-tabs {
+      background: var(--bg-card); border-bottom: 1px solid var(--border);
+      padding: 0 2rem; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none;
+    }
+    .section-tabs::-webkit-scrollbar { display: none; }
+    .tab-link {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.05em;
+      color: var(--text-dim); text-decoration: none; padding: 0.75rem 1rem;
+      border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-link:hover { color: var(--text); border-bottom-color: var(--accent); }
+
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem;
+      display: grid; grid-template-columns: 1fr 240px; gap: 2.5rem; align-items: start;
+    }
+
+    .content-col section { margin-bottom: 3.5rem; }
+    .content-col h2 {
+      font-size: 1.5rem; font-weight: 700; color: var(--text-bright);
+      margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+    }
+    .content-col h3 { font-size: 1.1rem; font-weight: 600; color: var(--accent-light); margin: 1.5rem 0 0.6rem; }
+    .content-col p { margin-bottom: 0.9rem; font-size: 0.96rem; color: var(--text); }
+    .content-col ul, .content-col ol { margin: 0.5rem 0 1rem 1.5rem; font-size: 0.95rem; }
+    .content-col li { margin-bottom: 0.4rem; }
+
+    pre {
+      background: var(--bg-code); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); border-radius: 4px;
+      padding: 1rem 1.25rem; overflow-x: auto; margin: 1rem 0 1.5rem;
+      font-size: 0.83rem; line-height: 1.7;
+    }
+    code { font-family: 'IBM Plex Mono', monospace; color: #e8c98a; }
+    pre code { color: var(--text); }
+    .cm { color: #6a6460; font-style: italic; }
+    .kw { color: #2A7195; }
+    .fn { color: #6baacc; }
+    .st { color: #85b87d; }
+    .nm { color: #b58fd0; }
+
+    .callout {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); border-radius: 4px;
+      padding: 1rem 1.25rem; margin: 1.25rem 0; font-size: 0.92rem;
+    }
+    .callout-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent-light); margin-bottom: 0.4rem;
+    }
+
+    /* career / role cards */
+    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+    .role-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-top: 3px solid var(--accent); border-radius: 4px; padding: 1rem 1.1rem;
+    }
+    .role-card h4 {
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 0.95rem;
+      font-weight: 600; color: var(--text-bright); margin-bottom: 0.4rem;
+    }
+    .role-card p { font-size: 0.86rem; color: var(--text-dim); margin-bottom: 0; line-height: 1.5; }
+
+    /* company type table */
+    .data-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0 1.75rem; font-size: 0.88rem; }
+    .data-table th {
+      background: var(--bg-card2); color: var(--text-bright);
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 0.6rem 0.9rem; text-align: left; border-bottom: 2px solid var(--accent);
+    }
+    .data-table td { padding: 0.55rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 0.88rem; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .mono { font-family: 'IBM Plex Mono', monospace; color: #e8c98a; font-size: 0.83rem; }
+
+    /* tool stack grid */
+    .tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin: 1.25rem 0; }
+    .tool-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.85rem 1rem;
+    }
+    .tool-card .tool-name {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem;
+      color: var(--accent-light); font-weight: 500; margin-bottom: 0.3rem;
+    }
+    .tool-card p { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 0; line-height: 1.45; }
+
+    /* pseudocode block */
+    .pseudocode {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); border-radius: 4px;
+      padding: 1rem 1.25rem; margin: 1rem 0 1.5rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem;
+      line-height: 1.75; color: var(--text-dim);
+    }
+    .pseudocode .ps-kw { color: var(--accent-light); font-weight: 500; }
+    .pseudocode .ps-comment { color: #6a6460; font-style: italic; }
+
+    /* quiz */
+    #quiz-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 2rem; }
+    #quiz-section h2 { border-bottom: none; margin-bottom: 0.4rem; }
+    .quiz-intro { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1.5rem; }
+    .q-block { margin-bottom: 1.75rem; padding-bottom: 1.75rem; border-bottom: 1px solid var(--border); }
+    .q-block:last-of-type { border-bottom: none; }
+    .q-text { font-size: 0.97rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.75rem; line-height: 1.5; }
+    .q-num { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; display: block; margin-bottom: 0.35rem; }
+    .options { display: flex; flex-direction: column; gap: 0.45rem; }
+    .opt-label {
+      display: flex; align-items: flex-start; gap: 0.65rem;
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.65rem 0.9rem; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s; font-size: 0.92rem;
+    }
+    .opt-label:hover { border-color: var(--accent); background: rgba(42,113,149,0.06); }
+    .opt-label input { margin-top: 0.2rem; accent-color: var(--accent); flex-shrink: 0; }
+    .opt-correct { border-color: #4a9e6b !important; background: rgba(74,158,107,0.1) !important; }
+    .opt-wrong   { border-color: #b04040 !important; background: rgba(176,64,64,0.1) !important; }
+    .q-feedback { margin-top: 0.6rem; font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: 3px; display: none; }
+    .q-feedback.show { display: block; }
+    .q-feedback.correct { background: rgba(74,158,107,0.15); color: #7ecfa0; border-left: 3px solid #4a9e6b; }
+    .q-feedback.wrong   { background: rgba(176,64,64,0.12); color: #e08080; border-left: 3px solid #b04040; }
+    .quiz-submit {
+      background: var(--accent); color: #fff; border: none;
+      padding: 0.75rem 2rem; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase;
+      border-radius: 4px; cursor: pointer; transition: background 0.15s; margin-top: 1rem;
+    }
+    .quiz-submit:hover { background: var(--accent-light); }
+    .quiz-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+    .quiz-result {
+      margin-top: 1.25rem; padding: 1rem 1.25rem; background: var(--bg-card2);
+      border: 1px solid var(--border); border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem; display: none;
+    }
+    .quiz-result.show { display: block; }
+    .score-big { font-size: 2rem; font-weight: 700; color: var(--accent-light); }
+    .grade-label { color: var(--text-dim); margin-top: 0.35rem; font-size: 0.82rem; }
+
+    /* sidebar */
+    .sidebar { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 70px; max-height: calc(100vh - 80px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
+    .sidebar-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1.1rem; }
+    .sidebar-card h4 {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.75rem;
+    }
+    .score-display { font-family: 'IBM Plex Mono', monospace; font-size: 1.6rem; color: var(--accent-light); font-weight: 700; }
+    .score-sub { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.2rem; }
+    .toc-links { display: flex; flex-direction: column; gap: 0.3rem; }
+    .toc-links a { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; color: var(--text-dim); text-decoration: none; padding: 0.2rem 0; transition: color 0.15s; }
+    .toc-links a:hover { color: var(--accent-light); }
+    .quiz-cta-btn {
+      display: block; border: 1px solid var(--accent); color: var(--accent-light);
+      text-decoration: none; text-align: center; padding: 0.55rem 1rem; border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.05em; text-transform: uppercase; transition: all 0.15s; margin-top: 0.5rem;
+    }
+    .quiz-cta-btn:hover { background: rgba(42,113,149,0.1); }
+    .next-mod {
+      background: linear-gradient(135deg, #0f1519 0%, #0c0e11 100%);
+      border: 1px solid rgba(42,113,149,0.25); border-radius: 4px; padding: 1.1rem;
+    }
+    .next-mod h4 {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem;
+    }
+    .next-mod p { font-size: 0.83rem; color: var(--text-dim); margin-bottom: 0.85rem; line-height: 1.5; }
+    .next-mod-btn {
+      display: block; background: var(--accent); color: #fff; text-decoration: none;
+      text-align: center; padding: 0.55rem 1rem; border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.05em; text-transform: uppercase; transition: background 0.15s;
+    }
+    .next-mod-btn:hover { background: var(--accent-light); }
+
+    footer {
+      background: #0c0b0a; border-top: 1px solid var(--border); padding: 1.25rem 2rem;
+      text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    @media (max-width: 768px) {
+      .page-wrap { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .role-grid, .tool-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <a href="../../index.html" class="nav-home">DTSC 520</a>
+    <span class="nav-sep">/</span>
+    <span class="nav-current">Module 1: Intro to Data Science</span>
+  </div>
+  <div class="nav-right">
+    <a href="../../index.html">Course Home</a>
+    <a href="#quiz">Take Quiz</a>
+  </div>
+</nav>
+
+<div class="mod-banner">
+  <div class="banner-inner">
+    <div class="banner-eyebrow">Module 01 - Foundations</div>
+    <h1>Introduction to Data Science &amp; Analytics</h1>
+    <p>What is data science, who does it, and why does Python dominate the field? Build your mental model of the DS landscape before writing a single line of code.</p>
+    <div class="banner-pills">
+      <span class="pill">What is Data Science?</span>
+      <span class="pill">DS vs. Analytics</span>
+      <span class="pill">Careers &amp; Roles</span>
+      <span class="pill">Key Tools</span>
+      <span class="pill">Why Python</span>
+      <span class="pill">Critical Thinking</span>
+      <span class="pill">Pseudocode</span>
+    </div>
+  </div>
+</div>
+
+<nav class="section-tabs">
+  <a href="#what-is-ds" class="tab-link">What is DS?</a>
+  <a href="#ds-vs-analytics" class="tab-link">DS vs. Analytics</a>
+  <a href="#careers" class="tab-link">Careers</a>
+  <a href="#company-types" class="tab-link">Company Types</a>
+  <a href="#tools" class="tab-link">Key Tools</a>
+  <a href="#why-python" class="tab-link">Why Python</a>
+  <a href="#critical-thinking" class="tab-link">Critical Thinking</a>
+  <a href="#pseudocode" class="tab-link">Pseudocode</a>
+  <a href="#quiz" class="tab-link">Quiz</a>
+</nav>
+
+<div class="page-wrap">
+  <div class="content-col">
+
+    <!-- WHAT IS DS -->
+    <section id="what-is-ds">
+      <h2>What is Data Science?</h2>
+      <p>Data science is the practice of extracting knowledge and insight from data through a combination of statistics, programming, and domain expertise. The oft-cited "Venn diagram" definition says data science sits at the intersection of three areas: <strong>math and statistics</strong>, <strong>computer science and programming</strong>, and <strong>domain knowledge</strong>. You need at least two of the three to be effective, and all three to be exceptional.</p>
+
+      <p>A more practical definition: data scientists build systems that turn raw data into decisions. Those decisions might be automated (a recommendation engine, a fraud detection model) or human-assisted (a dashboard that helps an executive understand churn). Either way, the job is to move from messy, ambiguous data toward a clear, defensible answer.</p>
+
+      <div class="callout">
+        <div class="callout-label">The DS Workflow</div>
+        Most data science work follows a repeating cycle: <strong>Ask</strong> a specific, answerable question &rarr; <strong>Acquire</strong> data that could answer it &rarr; <strong>Clean</strong> and transform it &rarr; <strong>Explore</strong> to understand patterns &rarr; <strong>Model</strong> or analyze &rarr; <strong>Communicate</strong> findings. You will cycle through these steps - often multiple times - on every real project.
+      </div>
+
+      <h3>Data science vs. data engineering vs. ML engineering</h3>
+      <p>The field has fragmented into specializations. Data scientists build models and generate insight. Data engineers build the pipelines that move and store data at scale. ML engineers take a data scientist's prototype model and deploy it into production systems. In a small company, one person often does all three; at large companies they are distinct teams.</p>
+    </section>
+
+    <!-- DS VS ANALYTICS -->
+    <section id="ds-vs-analytics">
+      <h2>Data Science vs. Data Analytics</h2>
+      <p>These two terms are often used interchangeably, but they have a meaningful distinction. Understanding the difference helps you know what kind of work you are being asked to do.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Dimension</th><th>Data Analytics</th><th>Data Science</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Primary question</strong></td>
+            <td>"What happened? Why did it happen?"</td>
+            <td>"What will happen? What should we do?"</td>
+          </tr>
+          <tr>
+            <td><strong>Time orientation</strong></td>
+            <td>Backward-looking (descriptive)</td>
+            <td>Forward-looking (predictive / prescriptive)</td>
+          </tr>
+          <tr>
+            <td><strong>Core methods</strong></td>
+            <td>Aggregation, segmentation, dashboards, SQL</td>
+            <td>Machine learning, statistical modeling, experimentation</td>
+          </tr>
+          <tr>
+            <td><strong>Output</strong></td>
+            <td>Reports, charts, KPI dashboards</td>
+            <td>Trained models, automated decisions, recommendations</td>
+          </tr>
+          <tr>
+            <td><strong>Skills emphasis</strong></td>
+            <td>SQL, Excel/Tableau, business communication</td>
+            <td>Python/R, ML libraries, statistics, software engineering</td>
+          </tr>
+          <tr>
+            <td><strong>Example at a baseball team</strong></td>
+            <td>Which players improved their on-base percentage this season?</td>
+            <td>Which minor-league players are most likely to succeed at the MLB level?</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>In practice, analytics and data science are complementary. Analysts keep the lights on - they make sure the business understands what is happening right now. Data scientists push the frontier - they build systems that automate and scale decisions. Most teams need both.</p>
+    </section>
+
+    <!-- CAREERS -->
+    <section id="careers">
+      <h2>Careers in Data</h2>
+      <p>The data field offers a wide range of roles. Here are the most common entry points and mid-career positions, mapped to the skills this course builds toward.</p>
+
+      <div class="role-grid">
+        <div class="role-card">
+          <h4>Data Analyst</h4>
+          <p>Turns business questions into SQL queries and visualizations. Communicates trends to non-technical stakeholders. Often the best entry-level path for career changers. Median salary ~$70-90k.</p>
+        </div>
+        <div class="role-card">
+          <h4>Data Scientist</h4>
+          <p>Builds predictive models, designs experiments (A/B tests), and develops data products. Requires stronger Python and statistics skills. Median salary ~$110-140k.</p>
+        </div>
+        <div class="role-card">
+          <h4>Data Engineer</h4>
+          <p>Designs and maintains the pipelines that collect, store, and move data. Heavy focus on SQL, cloud platforms (AWS/GCP/Azure), and distributed systems. Median salary ~$120-150k.</p>
+        </div>
+        <div class="role-card">
+          <h4>ML Engineer</h4>
+          <p>Takes models from prototype to production. Focuses on model serving, monitoring, and MLOps infrastructure. Requires the most software engineering depth. Median salary ~$140-180k.</p>
+        </div>
+        <div class="role-card">
+          <h4>Business Intelligence (BI) Developer</h4>
+          <p>Builds and maintains dashboards and reporting infrastructure (Tableau, Power BI, Looker). Bridges the gap between raw data and business decision-makers.</p>
+        </div>
+        <div class="role-card">
+          <h4>Research Scientist</h4>
+          <p>Conducts original research, often in academia or large tech R&amp;D labs. Requires deep statistics and often a PhD. Publishes findings and advances the state of the art.</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Which role is right for me?</div>
+        If you enjoy storytelling and working with business stakeholders, analytics is a natural fit. If you enjoy coding and building systems, data engineering or ML engineering may suit you better. If you enjoy math and research, data science or research science is the direction to pursue. Most practitioners start in analytics and specialize over time.
+      </div>
+    </section>
+
+    <!-- COMPANY TYPES -->
+    <section id="company-types">
+      <h2>Types of Companies Hiring Data Talent</h2>
+      <p>The type of company you work for shapes what data science actually looks like day-to-day. A startup data scientist does very different work than one at a large tech company or a hospital system.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Company Type</th><th>Data Maturity</th><th>What DS Work Looks Like</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Early-stage startup</strong></td>
+            <td>Low - often no data infra yet</td>
+            <td>Generalist work: build dashboards, set up pipelines, and run quick analyses. High impact, high ambiguity.</td>
+          </tr>
+          <tr>
+            <td><strong>Growth-stage tech company</strong></td>
+            <td>Medium - some tooling in place</td>
+            <td>Mix of analytics and modeling. Often involved in experimentation (A/B tests) and building recommendation or personalization features.</td>
+          </tr>
+          <tr>
+            <td><strong>Large tech company (FAANG-adjacent)</strong></td>
+            <td>High - mature ML platform</td>
+            <td>Specialized, deep work. May own one model or one metric for a year. High scale, high rigor, slower iteration.</td>
+          </tr>
+          <tr>
+            <td><strong>Consulting / agency</strong></td>
+            <td>Varies by client</td>
+            <td>Breadth over depth. Work across many industries and problem types. Strong communication skills essential.</td>
+          </tr>
+          <tr>
+            <td><strong>Healthcare / finance / government</strong></td>
+            <td>Varies, often constrained</td>
+            <td>High regulatory requirements. Data is messy and access is restricted. Explainability and compliance matter more than raw model performance.</td>
+          </tr>
+          <tr>
+            <td><strong>Sports analytics</strong></td>
+            <td>Growing rapidly</td>
+            <td>Player evaluation, in-game decision support, ticket pricing, fan engagement. Combines domain expertise with statistical modeling.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- KEY TOOLS -->
+    <section id="tools">
+      <h2>The Data Science Tool Stack</h2>
+      <p>No single tool does everything. A working data scientist typically uses a layered stack - each layer handles a different part of the workflow. Here are the tools you will encounter most often, and the ones this course prepares you to use.</p>
+
+      <div class="tool-grid">
+        <div class="tool-card">
+          <div class="tool-name">Python</div>
+          <p>Primary language for data science. Covers everything from cleaning to modeling to deployment.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">Jupyter Notebooks</div>
+          <p>Interactive coding environment. Mix code, output, and narrative in one document.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">pandas</div>
+          <p>Tabular data manipulation. DataFrames, filtering, aggregation, and cleaning.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">NumPy</div>
+          <p>Numerical computing. Fast array operations that power every other library.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">Matplotlib / Seaborn</div>
+          <p>Visualization. Static charts, distribution plots, heatmaps.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">scikit-learn</div>
+          <p>Machine learning. Classification, regression, clustering, model evaluation.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">SQL</div>
+          <p>The universal language for querying databases. Essential for any data role.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">Git / GitHub</div>
+          <p>Version control. Track code changes, collaborate, and deploy projects.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">Tableau / Power BI</div>
+          <p>Business intelligence dashboards. Drag-and-drop visualization for non-coders.</p>
+        </div>
+      </div>
+
+      <p>This course focuses on the Python layer - pandas, NumPy, Matplotlib, and Git. These are the foundational tools that make the rest of the stack accessible.</p>
+    </section>
+
+    <!-- WHY PYTHON -->
+    <section id="why-python">
+      <h2>Why Python?</h2>
+      <p>Python has become the dominant language of data science. It was not designed specifically for data science - it is a general-purpose language - but a combination of factors made it the community standard.</p>
+
+      <h3>The practical reasons</h3>
+      <p><strong>Readable syntax.</strong> Python reads almost like English pseudocode. A data scientist can spend their cognitive budget on the problem rather than the syntax. Compare writing a loop in Python vs. Java and the difference is immediately apparent.</p>
+
+      <p><strong>The ecosystem.</strong> NumPy, pandas, Matplotlib, scikit-learn, TensorFlow, PyTorch - all Python-first. The open-source community has built an unmatched set of libraries for every step of the data pipeline. This creates a network effect: people use Python because the libraries are there; the libraries improve because people use Python.</p>
+
+      <p><strong>Glue language.</strong> Python can call code written in C, Fortran, R, and Java. The heavy numerical computation in NumPy is actually running C code under the hood. You get ease of use at the surface and raw speed where it counts.</p>
+
+      <p><strong>Community and employers.</strong> The majority of job postings for data science roles list Python as a required or preferred skill. Choosing Python means choosing the largest community, the most Stack Overflow answers, and the most tutorials.</p>
+
+      <h3>Python vs. R</h3>
+      <p>R is Python's main competitor in academic and statistical contexts. R was designed by statisticians for statistical computing and is excellent for certain tasks - particularly advanced statistical modeling and publication-quality plots. But Python has largely displaced R in industry because of its broader applicability. If you go into academic research or biostatistics, you may need R. For most industry data science roles, Python is the right starting point.</p>
+    </section>
+
+    <!-- CRITICAL THINKING -->
+    <section id="critical-thinking">
+      <h2>Critical Thinking for Data Scientists</h2>
+      <p>Technical skills are necessary but not sufficient. A data scientist who cannot think critically about a problem will build the wrong model correctly - which is worse than building nothing at all. These mental habits separate effective practitioners from technically competent ones.</p>
+
+      <h3>Ask the right question first</h3>
+      <p>Most projects fail not because of poor modeling but because the question was never precisely stated. "How do we improve sales?" is not an answerable data science question. "Which customer segments have the highest 90-day churn rate, and what behaviors predict churn 30 days in advance?" is. Before touching data, you should be able to state: what decision will this analysis inform, and what would a good answer look like?</p>
+
+      <h3>Correlation is not causation</h3>
+      <p>This is the most-repeated phrase in statistics for a reason. Finding that two variables move together does not tell you why. Ice cream sales and drowning rates are correlated - because both increase in summer. Acting on that correlation would be absurd. Whenever you find a relationship in data, ask: what third variable could explain this? Could the causality run the other direction? Is this a coincidence in a small sample?</p>
+
+      <h3>Know your data's provenance</h3>
+      <p>Before analyzing data, understand how it was collected. Surveys have response bias. Clickstream data reflects only users who stayed on the page. Hospital admission data does not represent the general population. Every dataset has selection effects baked in. Ignoring them leads to confident, wrong conclusions.</p>
+
+      <h3>Uncertainty is not failure</h3>
+      <p>A good data scientist quantifies uncertainty and communicates it clearly. Saying "we are 80% confident that treatment B outperforms treatment A by 5-15%" is more honest and more useful than saying "B is better than A." Decision-makers need to know the confidence interval, not just the point estimate.</p>
+    </section>
+
+    <!-- PSEUDOCODE -->
+    <section id="pseudocode">
+      <h2>A 6-Step Problem-Solving Framework</h2>
+      <p>Before writing a single line of Python, effective data scientists work through the problem systematically. This six-step framework builds the habit of thinking before coding - which saves far more time than it costs.</p>
+
+      <div class="concept-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+        <div class="concept-box"><h4>1. Understand</h4><p>Comprehend requirements and constraints. Identify the inputs, outputs, and any specific rules or conditions that must be met.</p></div>
+        <div class="concept-box"><h4>2. Plan</h4><p>Consider the logical flow. Make a general outline of the major steps. Think about which data structures or algorithms might be suitable.</p></div>
+        <div class="concept-box"><h4>3. Break It Down</h4><p>Divide the plan into smaller, more manageable sub-problems. Each sub-problem should be solvable independently.</p></div>
+        <div class="concept-box"><h4>4. Pseudocode</h4><p>Write a human-friendly description of what the program should do - without worrying about Python syntax yet.</p></div>
+        <div class="concept-box"><h4>5. Code Each Part</h4><p>Implement each sub-problem in Python. You don't always have to start at the beginning - tackle the parts you understand first.</p></div>
+        <div class="concept-box"><h4>6. Test &amp; Debug</h4><p>Check that your solution works on expected inputs and edge cases. Learn to read error messages as instructions, not failures.</p></div>
+      </div>
+
+      <h2>Pseudocode: Thinking Before Coding</h2>
+      <p>Pseudocode is a structured plain-language description of an algorithm - formal enough to be unambiguous, but free of any specific programming language syntax. It forces you to think through the logic of a solution before you are distracted by syntax errors and edge cases.</p>
+
+      <p>Good data scientists write pseudocode before they open a Jupyter notebook. It is faster to iterate on an idea in plain language than to debug Python that implements the wrong algorithm.</p>
+
+      <h3>Example: finding the best-performing player</h3>
+      <p>Problem: Given a roster of players with batting averages, identify the player with the highest average who has played at least 20 games.</p>
+
+      <div class="pseudocode">
+<span class="ps-comment">// Pseudocode - no Python syntax yet</span>
+
+<span class="ps-kw">INPUT:</span> roster (list of player records, each with name, avg, games_played)
+<span class="ps-kw">OUTPUT:</span> name of the qualifying player with the highest batting average
+
+<span class="ps-kw">SET</span> best_player = null
+<span class="ps-kw">SET</span> best_avg = 0
+
+<span class="ps-kw">FOR EACH</span> player <span class="ps-kw">IN</span> roster:
+    <span class="ps-kw">IF</span> player.games_played >= 20:
+        <span class="ps-kw">IF</span> player.avg > best_avg:
+            <span class="ps-kw">SET</span> best_player = player.name
+            <span class="ps-kw">SET</span> best_avg = player.avg
+
+<span class="ps-kw">RETURN</span> best_player
+      </div>
+
+      <p>Now translating to Python is mechanical - the thinking is already done:</p>
+
+      <pre><code><span class="kw">def</span> <span class="fn">best_qualifying_player</span>(roster, min_games=<span class="nm">20</span>):
+    best_player = <span class="kw">None</span>
+    best_avg = <span class="nm">0</span>
+
+    <span class="kw">for</span> player <span class="kw">in</span> roster:
+        <span class="kw">if</span> player[<span class="st">'games_played'</span>] &gt;= min_games:
+            <span class="kw">if</span> player[<span class="st">'avg'</span>] &gt; best_avg:
+                best_player = player[<span class="st">'name'</span>]
+                best_avg = player[<span class="st">'avg'</span>]
+
+    <span class="kw">return</span> best_player
+
+
+roster = [
+    {<span class="st">'name'</span>: <span class="st">'Rivera'</span>, <span class="st">'avg'</span>: <span class="nm">.312</span>, <span class="st">'games_played'</span>: <span class="nm">28</span>},
+    {<span class="st">'name'</span>: <span class="st">'Chen'</span>,   <span class="st">'avg'</span>: <span class="nm">.287</span>, <span class="st">'games_played'</span>: <span class="nm">15</span>},  <span class="cm"># excluded</span>
+    {<span class="st">'name'</span>: <span class="st">'Walker'</span>, <span class="st">'avg'</span>: <span class="nm">.301</span>, <span class="st">'games_played'</span>: <span class="nm">30</span>},
+]
+
+<span class="fn">print</span>(<span class="fn">best_qualifying_player</span>(roster))  <span class="cm"># 'Rivera'</span></code></pre>
+
+      <div class="callout">
+        <div class="callout-label">Pseudocode vs. comments</div>
+        Pseudocode is written before the code exists. Comments are written inside existing code to explain it. Both are valuable, but pseudocode is a planning tool - it helps you discover edge cases and design flaws before you are invested in a half-written implementation. Get in the habit of sketching logic in plain language first.
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz">
+      <div id="quiz-section">
+        <h2>Module 1 Quiz</h2>
+        <p class="quiz-intro">Ten questions covering the DS landscape, roles, tools, Python's role in the field, critical thinking, and pseudocode. Select one answer per question, then submit.</p>
+
+        <div class="q-block" data-correct="c">
+          <span class="q-num">Question 01</span>
+          <p class="q-text">Which of the following best describes the difference between data analytics and data science?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q1" value="a"> Analytics uses Python; data science uses R.</label>
+            <label class="opt-label"><input type="radio" name="q1" value="b"> Analytics is more technical than data science.</label>
+            <label class="opt-label"><input type="radio" name="q1" value="c"> Analytics is primarily backward-looking (what happened?); data science is primarily forward-looking (what will happen?).</label>
+            <label class="opt-label"><input type="radio" name="q1" value="d"> Data science only works with structured data; analytics works with any data.</label>
+          </div>
+          <div class="q-feedback" id="fb1"></div>
+        </div>
+
+        <div class="q-block" data-correct="b">
+          <span class="q-num">Question 02</span>
+          <p class="q-text">The "three circles" Venn diagram definition of data science places it at the intersection of which three areas?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q2" value="a"> Python, SQL, and statistics.</label>
+            <label class="opt-label"><input type="radio" name="q2" value="b"> Math and statistics, computer science and programming, and domain expertise.</label>
+            <label class="opt-label"><input type="radio" name="q2" value="c"> Data engineering, data analysis, and machine learning.</label>
+            <label class="opt-label"><input type="radio" name="q2" value="d"> Visualization, modeling, and communication.</label>
+          </div>
+          <div class="q-feedback" id="fb2"></div>
+        </div>
+
+        <div class="q-block" data-correct="d">
+          <span class="q-num">Question 03</span>
+          <p class="q-text">Which role is primarily responsible for deploying trained machine learning models into production systems?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q3" value="a"> Data Analyst</label>
+            <label class="opt-label"><input type="radio" name="q3" value="b"> BI Developer</label>
+            <label class="opt-label"><input type="radio" name="q3" value="c"> Data Engineer</label>
+            <label class="opt-label"><input type="radio" name="q3" value="d"> ML Engineer</label>
+          </div>
+          <div class="q-feedback" id="fb3"></div>
+        </div>
+
+        <div class="q-block" data-correct="a">
+          <span class="q-num">Question 04</span>
+          <p class="q-text">A sports analytics team notices that players who drink more water during games have higher batting averages. They conclude that hydration causes better performance and recommend a mandatory hydration program. What critical thinking error is being made?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q4" value="a"> Confusing correlation with causation - a third variable (e.g., overall fitness habits) likely explains both.</label>
+            <label class="opt-label"><input type="radio" name="q4" value="b"> Using too small a sample size.</label>
+            <label class="opt-label"><input type="radio" name="q4" value="c"> Using the wrong statistical test.</label>
+            <label class="opt-label"><input type="radio" name="q4" value="d"> Overfitting the model to training data.</label>
+          </div>
+          <div class="q-feedback" id="fb4"></div>
+        </div>
+
+        <div class="q-block" data-correct="c">
+          <span class="q-num">Question 05</span>
+          <p class="q-text">Which of the following is the most precisely stated, answerable data science question?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q5" value="a"> "How do we improve player performance?"</label>
+            <label class="opt-label"><input type="radio" name="q5" value="b"> "What is happening with our data?"</label>
+            <label class="opt-label"><input type="radio" name="q5" value="c"> "Which minor-league pitchers aged 22-25 have the highest strikeout-to-walk ratio over the past two seasons, and does that ratio predict MLB promotion within 18 months?"</label>
+            <label class="opt-label"><input type="radio" name="q5" value="d"> "Is Python better than R?"</label>
+          </div>
+          <div class="q-feedback" id="fb5"></div>
+        </div>
+
+        <div class="q-block" data-correct="b">
+          <span class="q-num">Question 06</span>
+          <p class="q-text">Why did Python become the dominant language for data science rather than a language built specifically for statistics like R?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q6" value="a"> Python runs faster than R for all operations.</label>
+            <label class="opt-label"><input type="radio" name="q6" value="b"> Python is a general-purpose language with a massive ecosystem of libraries, broad community adoption, and applicability beyond statistics - making it more useful across the full data pipeline and in industry settings.</label>
+            <label class="opt-label"><input type="radio" name="q6" value="c"> R is no longer maintained and has been deprecated.</label>
+            <label class="opt-label"><input type="radio" name="q6" value="d"> Python has better built-in statistical functions than R.</label>
+          </div>
+          <div class="q-feedback" id="fb6"></div>
+        </div>
+
+        <div class="q-block" data-correct="d">
+          <span class="q-num">Question 07</span>
+          <p class="q-text">What is the primary purpose of writing pseudocode before implementing a solution in Python?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q7" value="a"> To generate documentation that can be automatically converted to code.</label>
+            <label class="opt-label"><input type="radio" name="q7" value="b"> To satisfy project requirements that mandate written specs.</label>
+            <label class="opt-label"><input type="radio" name="q7" value="c"> To test code performance before writing it.</label>
+            <label class="opt-label"><input type="radio" name="q7" value="d"> To think through the logic and structure of a solution before being distracted by syntax, so you discover design flaws while they are cheap to fix.</label>
+          </div>
+          <div class="q-feedback" id="fb7"></div>
+        </div>
+
+        <div class="q-block" data-correct="a">
+          <span class="q-num">Question 08</span>
+          <p class="q-text">A hospital dataset shows that patients who receive a certain treatment have worse outcomes than those who do not. A data scientist concludes the treatment is harmful. What should they consider before reaching that conclusion?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q8" value="a"> Selection bias: sicker patients may be more likely to receive the treatment, making the treatment look harmful even if it helps.</label>
+            <label class="opt-label"><input type="radio" name="q8" value="b"> The dataset is probably too small.</label>
+            <label class="opt-label"><input type="radio" name="q8" value="c"> The hospital is probably hiding data.</label>
+            <label class="opt-label"><input type="radio" name="q8" value="d"> The outcome variable should be changed to a different metric.</label>
+          </div>
+          <div class="q-feedback" id="fb8"></div>
+        </div>
+
+        <div class="q-block" data-correct="c">
+          <span class="q-num">Question 09</span>
+          <p class="q-text">Which Python library is most closely associated with tabular data manipulation (loading CSV files, filtering rows, aggregating columns)?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q9" value="a"> NumPy</label>
+            <label class="opt-label"><input type="radio" name="q9" value="b"> Matplotlib</label>
+            <label class="opt-label"><input type="radio" name="q9" value="c"> pandas</label>
+            <label class="opt-label"><input type="radio" name="q9" value="d"> scikit-learn</label>
+          </div>
+          <div class="q-feedback" id="fb9"></div>
+        </div>
+
+        <div class="q-block" data-correct="b">
+          <span class="q-num">Question 10</span>
+          <p class="q-text">A data scientist reports: "Treatment B outperforms Treatment A." A critical thinker should ask which follow-up question first?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q10" value="a"> "Which programming language was used to run the analysis?"</label>
+            <label class="opt-label"><input type="radio" name="q10" value="b"> "By how much, and how confident are we in that estimate? What is the uncertainty range?"</label>
+            <label class="opt-label"><input type="radio" name="q10" value="c"> "Was the analysis done in a Jupyter notebook?"</label>
+            <label class="opt-label"><input type="radio" name="q10" value="d"> "Did the data scientist have a PhD?"</label>
+          </div>
+          <div class="q-feedback" id="fb10"></div>
+        </div>
+
+        <button class="quiz-submit" id="quizSubmit" onclick="submitQuiz()">Submit Quiz</button>
+        <div class="quiz-result" id="quizResult">
+          <div class="score-big" id="scoreDisplay"></div>
+          <div class="grade-label" id="gradeDisplay"></div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /content-col -->
+
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h4>Quiz Score</h4>
+      <div class="score-display" id="sidebarScore">--</div>
+      <div class="score-sub">Module 1 - 10 questions</div>
+      <a href="#quiz" class="quiz-cta-btn">Take the Quiz</a>
+    </div>
+    <div class="next-mod">
+      <h4>Next Module</h4>
+      <p>Ready to start coding? Module 2 covers Python fundamentals - variables, loops, and data structures.</p>
+      <a href="../module2/index.html" class="next-mod-btn">Module 2: Python &rarr;</a>
+    </div>
+    <div class="sidebar-card">
+      <h4>On This Page</h4>
+      <div class="toc-links">
+        <a href="#what-is-ds">What is DS?</a>
+        <a href="#ds-vs-analytics">DS vs. Analytics</a>
+        <a href="#careers">Careers</a>
+        <a href="#company-types">Company Types</a>
+        <a href="#tools">Key Tools</a>
+        <a href="#why-python">Why Python</a>
+        <a href="#critical-thinking">Critical Thinking</a>
+        <a href="#pseudocode">Pseudocode</a>
+        <a href="#quiz">Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<footer>
+  Built for DTSC 520 - Eastern University &bull; <a href="../../index.html">Course Home</a><br>&copy; Eastern University. All rights reserved.
+</footer>
+
+<script>
+const STORAGE_KEY = 'dtsc520_quiz_m1';
+
+const ANSWERS = {
+  q1: { correct: 'c', feedback: {
+    a: 'Incorrect. Both analytics and data science use Python (and R). The distinction is not about tools.',
+    b: 'Incorrect. Data science is generally considered more technical, not less.',
+    c: 'Correct! Analytics focuses on understanding past events (descriptive/diagnostic). Data science focuses on predicting future events or automating decisions (predictive/prescriptive).',
+    d: 'Incorrect. Both analytics and data science work with structured and unstructured data.'
+  }},
+  q2: { correct: 'b', feedback: {
+    a: 'Incorrect. Those are tools, not the three foundational domains.',
+    b: 'Correct! The classic Venn diagram places data science at the intersection of math/statistics, computer science/programming, and domain knowledge. You need all three for the most impactful work.',
+    c: 'Incorrect. Those are roles within the broader data field, not the foundational domains.',
+    d: 'Incorrect. Those describe outputs and communication skills, not the foundational domains.'
+  }},
+  q3: { correct: 'd', feedback: {
+    a: 'Incorrect. Data analysts focus on descriptive analysis and reporting, not production deployment.',
+    b: 'Incorrect. BI developers build dashboards and reporting infrastructure.',
+    c: 'Incorrect. Data engineers build data pipelines and infrastructure, not model deployment.',
+    d: 'Correct! ML engineers specialize in taking a data scientist\'s trained model and deploying it into production - handling serving, monitoring, scaling, and the operational concerns of running ML systems.'
+  }},
+  q4: { correct: 'a', feedback: {
+    a: 'Correct! This is a classic correlation-causation error. A confounding variable (overall fitness, discipline, or heat acclimatization) likely drives both hydration behavior and batting performance. A controlled experiment would be needed to establish causation.',
+    b: 'Incorrect. Sample size is not the issue described - the logical error is about causation.',
+    c: 'Incorrect. No statistical test is mentioned; the error is in interpretation.',
+    d: 'Incorrect. Overfitting refers to a model that memorizes training data - not an issue here.'
+  }},
+  q5: { correct: 'c', feedback: {
+    a: 'Incorrect. "Improve player performance" is too vague - it does not specify what metric, which players, what time period, or what a good answer looks like.',
+    b: 'Incorrect. This is not a question at all.',
+    c: 'Correct! This question specifies the population (minor-league pitchers, age 22-25), the metric (K/BB ratio), the time frame (past two seasons), and the outcome to predict (MLB promotion within 18 months). It is precise and answerable.',
+    d: 'Incorrect. This is an opinion question, not a data science question.'
+  }},
+  q6: { correct: 'b', feedback: {
+    a: 'Incorrect. R is often faster than Python for certain statistical operations. Python\'s speed advantage comes from its C-backed libraries, not Python itself.',
+    b: 'Correct! Python won because of its general-purpose nature - data scientists can use the same language for data cleaning, web scraping, API calls, model serving, and automation. R is excellent at statistics but limited outside that domain. The massive Python community also created a self-reinforcing ecosystem.',
+    c: 'Incorrect. R is actively maintained and widely used in academia and biostatistics.',
+    d: 'Incorrect. R generally has more built-in statistical functions than Python core.'
+  }},
+  q7: { correct: 'd', feedback: {
+    a: 'Incorrect. Pseudocode cannot be automatically compiled or converted to code.',
+    b: 'Incorrect. Pseudocode is a personal thinking tool, not a formal deliverable.',
+    c: 'Incorrect. Pseudocode cannot be executed or benchmarked.',
+    d: 'Correct! Pseudocode is a planning tool. When you think in plain language, you can iterate on logic in seconds. Discovering a design flaw in pseudocode takes 30 seconds to fix; discovering it in half-written Python can take an hour.'
+  }},
+  q8: { correct: 'a', feedback: {
+    a: 'Correct! This is selection bias (specifically, confounding by indication). Treatments are not assigned randomly - doctors give aggressive treatments to the sickest patients. If you do not control for patient severity, the treatment will appear harmful even when it helps. This is why randomized controlled trials are the gold standard.',
+    b: 'Incorrect. Sample size is not the issue - the issue is who received the treatment.',
+    c: 'Incorrect. There is no evidence of data suppression; this is a structural statistical issue.',
+    d: 'Incorrect. Changing the outcome metric does not address the underlying selection bias.'
+  }},
+  q9: { correct: 'c', feedback: {
+    a: 'Incorrect. NumPy handles numerical array computing - it is the engine under pandas, but not the primary tool for tabular data workflows.',
+    b: 'Incorrect. Matplotlib is for visualization - charts, plots, and graphs.',
+    c: 'Correct! pandas is the go-to library for tabular data. Its DataFrame structure maps directly to spreadsheet/SQL-style data, with rich methods for filtering, grouping, cleaning, and merging.',
+    d: 'Incorrect. scikit-learn is for machine learning - classification, regression, clustering, and model evaluation.'
+  }},
+  q10: { correct: 'b', feedback: {
+    a: 'Incorrect. The programming language does not affect the validity of the conclusion.',
+    b: 'Correct! A point estimate ("B is better") without uncertainty is incomplete and potentially misleading. The critical follow-up is: how much better, and how confident are we? A 1% improvement with high uncertainty is very different from a 15% improvement with a narrow confidence interval.',
+    c: 'Incorrect. The tool used does not affect the validity of the finding.',
+    d: 'Incorrect. Credentials do not validate a finding - the evidence and methodology do.'
+  }}
+};
+
+function submitQuiz() {
+  let score = 0;
+  const total = 10;
+  const answers = {};
+
+  for (let i = 1; i <= total; i++) {
+    const name = 'q' + i;
+    const sel = document.querySelector('input[name="' + name + '"]:checked');
+    const fb = document.getElementById('fb' + i);
+    const opts = document.querySelectorAll('input[name="' + name + '"]');
+    const info = ANSWERS[name];
+
+    if (!sel) {
+      fb.className = 'q-feedback show wrong';
+      fb.textContent = 'Please select an answer.';
+      continue;
+    }
+
+    const chosen = sel.value;
+    answers[name] = chosen;
+
+    opts.forEach(function(opt) {
+      const lbl = opt.closest('.opt-label');
+      if (opt.value === info.correct) lbl.classList.add('opt-correct');
+      else if (opt.value === chosen && chosen !== info.correct) lbl.classList.add('opt-wrong');
+      opt.disabled = true;
+    });
+
+    if (chosen === info.correct) {
+      score++;
+      fb.className = 'q-feedback show correct';
+      fb.textContent = info.feedback[chosen];
+    } else {
+      fb.className = 'q-feedback show wrong';
+      fb.textContent = info.feedback[chosen];
+    }
+  }
+
+  const pct = Math.round((score / total) * 100);
+  let grade = pct === 100 ? 'Perfect score - strong foundation!' :
+              pct >= 80  ? 'Solid work - you have the landscape down.' :
+              pct >= 60  ? 'Good start - review the sections you missed.' :
+                           'Review the module content and try again.';
+
+  document.getElementById('scoreDisplay').textContent = score + ' / ' + total;
+  document.getElementById('gradeDisplay').textContent = pct + '% - ' + grade;
+  document.getElementById('quizResult').className = 'quiz-result show';
+  document.getElementById('quizSubmit').disabled = true;
+  document.getElementById('sidebarScore').textContent = score + '/10';
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ score: score, total: total, pct: pct, answers: answers, ts: Date.now() }));
+  } catch(e) {}
+}
+
+(function() {
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved && saved.score !== undefined) {
+      document.getElementById('sidebarScore').textContent = saved.score + '/10';
+    }
+  } catch(e) {}
+})();
+</script>
+
+<a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
+<style>
+  #back-to-top {
+    position: fixed; top: 64px; left: 1rem; z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+    width: 2.1rem; height: 2.1rem;
+    background: rgba(20,18,16,0.85); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px; color: rgba(255,255,255,0.55);
+    font-size: 1.25rem; line-height: 1; text-decoration: none;
+    backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s, color 0.15s, border-color 0.15s;
+  }
+  #back-to-top.visible { opacity: 1; pointer-events: auto; }
+  #back-to-top:hover { color: #fff; border-color: rgba(255,255,255,0.35); }
+</style>
+<script>
+(function(){
+  var btn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function(){
+    btn.classList.toggle('visible', window.scrollY > 300);
+  }, {passive: true});
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+})();
+</script>
+</body>
+</html>

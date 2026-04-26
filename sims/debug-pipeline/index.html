@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Debug the Pipeline - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --maroon: #8B1C40;
+      --orange: #c07830;
+      --orange-light: #e09040;
+      --orange-dim: rgba(192,120,48,0.12);
+      --green: #3e8a58;
+      --green-light: #5aaf78;
+      --red: #9e3a3a;
+      --red-light: #c05050;
+      --blue: #2A7195;
+      --gray: #646469;
+      --bg: #0c0b0a;
+      --bg-panel: #131110;
+      --bg-card: #1b1917;
+      --bg-card2: #222018;
+      --bg-code: #0a0908;
+      --text: #e0dbd4;
+      --text-dim: #9a9490;
+      --text-bright: #f0ece6;
+      --border: #2a2825;
+      --border-l: #222018;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+
+    /* ---- TOPBAR ---- */
+    .topbar {
+      background: #0f0e0c; border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem; height: 50px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 0.75rem; }
+    .tb-icon {
+      width: 28px; height: 28px; background: var(--orange); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; font-weight: 700; color: #fff;
+    }
+    .tb-title {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem;
+      letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-bright);
+    }
+    .tb-sub { font-size: 0.68rem; color: var(--text-dim); margin-left: 0.15rem; }
+    .topbar-right { display: flex; align-items: center; gap: 1.25rem; }
+    .tb-score {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      color: var(--text-dim); letter-spacing: 0.04em;
+    }
+    .tb-score strong { color: var(--orange-light); font-size: 0.9rem; }
+    .tb-pips { display: flex; gap: 0.3rem; align-items: center; }
+    .tb-pip {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--border); border: 1px solid #3a3530; transition: all 0.3s;
+    }
+    .tb-pip.done    { background: var(--green);  border-color: var(--green-light); }
+    .tb-pip.current { background: var(--orange); border-color: var(--orange-light); }
+    .tb-time {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--orange-light); letter-spacing: 0.04em;
+    }
+    .tb-time.urgent { color: #d47a7a; }
+    .tb-back {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.67rem;
+      color: var(--text-dim); text-decoration: none; letter-spacing: 0.04em;
+    }
+    .tb-back:hover { color: var(--text); }
+
+    /* ---- LANDING ---- */
+    #landing {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+    .lbox { max-width: 660px; width: 100%; }
+    .lbadge {
+      display: inline-block; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.67rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--orange-light); border: 1px solid rgba(192,120,48,0.3);
+      background: rgba(192,120,48,0.07); border-radius: 3px;
+      padding: 0.22rem 0.7rem; margin-bottom: 1.1rem;
+    }
+    .lbox h1 {
+      font-family: 'Zilla Slab', serif; font-size: 2.5rem; font-weight: 700;
+      color: var(--text-bright); line-height: 1.15; margin-bottom: 0.9rem;
+    }
+    .lbox h1 em { color: var(--orange-light); font-style: normal; }
+    .lbox .situation {
+      background: var(--bg-panel); border: 1px solid var(--border);
+      border-left: 3px solid var(--orange); border-radius: 4px;
+      padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+    }
+    .situation-who {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--orange-light); margin-bottom: 0.4rem;
+    }
+    .situation p { font-size: 0.93rem; color: var(--text-dim); line-height: 1.7; }
+    .situation p + p { margin-top: 0.5rem; }
+    .lmeta {
+      display: flex; gap: 2rem; margin-bottom: 1.75rem; flex-wrap: wrap;
+    }
+    .lmeta-item { display: flex; flex-direction: column; gap: 0.15rem; }
+    .lmeta-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim);
+    }
+    .lmeta-val {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem; color: var(--orange-light);
+    }
+    .start-btn {
+      background: var(--orange); color: #fff; border: none; border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.75rem 2.25rem; cursor: pointer; transition: background 0.15s, transform 0.1s;
+    }
+    .start-btn:hover { background: var(--orange-light); transform: translateY(-1px); }
+
+    /* ---- SIM LAYOUT ---- */
+    #sim {
+      display: none; flex: 1; padding: 1.25rem 1.5rem; gap: 1.25rem;
+    }
+    #sim.active { display: flex; flex-direction: column; }
+
+    /* Situation bar */
+    .sit-bar {
+      background: var(--bg-panel); border: 1px solid var(--border);
+      border-left: 3px solid var(--orange); border-radius: 4px;
+      padding: 0.85rem 1.1rem; display: flex; gap: 1.25rem; align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .sit-who {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--orange-light); margin-bottom: 0.25rem; white-space: nowrap;
+    }
+    .sit-msg { font-size: 0.9rem; color: var(--text); line-height: 1.55; flex: 1; }
+
+    /* Main split */
+    .sim-split {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
+      flex: 1; min-height: 0;
+    }
+
+    /* Left: pipeline state panel */
+    .pipeline-panel {
+      display: flex; flex-direction: column; gap: 0.75rem;
+      background: var(--bg-panel); border: 1px solid var(--border);
+      border-radius: 4px; padding: 1rem; overflow: hidden;
+    }
+    .pp-header {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .pp-title {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim);
+    }
+    .pp-step {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      color: var(--orange-light); letter-spacing: 0.06em;
+    }
+    /* Terminal output area */
+    .pp-terminal {
+      background: var(--bg-code); border: 1px solid var(--border-l);
+      border-radius: 3px; padding: 0.85rem 1rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      line-height: 1.7; overflow-y: auto; flex: 1; min-height: 200px;
+      color: #c8c4bc;
+    }
+    .pp-terminal .term-prompt { color: #5a5550; }
+    .pp-terminal .term-cmd    { color: var(--orange-light); }
+    .pp-terminal .term-out    { color: #c8c4bc; }
+    .pp-terminal .term-err    { color: #d47a7a; }
+    .pp-terminal .term-warn   { color: #c4892a; }
+    .pp-terminal .term-good   { color: var(--green-light); }
+
+    /* DataFrame table inside terminal */
+    .df-out { margin-top: 0.25rem; overflow-x: auto; }
+    .df-tbl {
+      border-collapse: collapse; font-size: 0.76rem; width: 100%;
+    }
+    .df-tbl th {
+      color: var(--orange-light); text-align: right;
+      padding: 0.2rem 0.75rem 0.2rem 0.3rem;
+      border-bottom: 1px solid #3a3530; font-weight: 500; white-space: nowrap;
+    }
+    .df-tbl th.idx { color: #4a4642; text-align: left; }
+    .df-tbl td {
+      padding: 0.18rem 0.75rem 0.18rem 0.3rem; text-align: right;
+      border-bottom: 1px solid rgba(42,40,37,0.6); color: #c8c4bc; white-space: nowrap;
+    }
+    .df-tbl td.idx  { color: #6a6460; text-align: left; }
+    .df-tbl .v-num  { color: #6ab0d0; }
+    .df-tbl .v-str  { color: #85b87d; }
+    .df-tbl .v-nan  { color: #b04040; }
+    .df-tbl .v-bad  { color: #d47a7a; background: rgba(180,60,60,0.12); border-radius: 2px; padding: 0 0.2rem; }
+    .df-tbl .v-fix  { color: var(--green-light); }
+    .df-tbl tr:last-child td { border-bottom: none; }
+
+    /* Code reveal (fix) */
+    .code-reveal {
+      display: none; margin-top: 0.5rem;
+      background: var(--bg-code); border: 1px solid rgba(62,138,88,0.3);
+      border-left: 3px solid var(--green-light); border-radius: 3px;
+      padding: 0.75rem 1rem; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.77rem; line-height: 1.7; white-space: pre; overflow-x: auto;
+      color: #c8c4bc;
+    }
+    .code-reveal.show { display: block; }
+    .cr-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--green-light);
+      margin-bottom: 0.35rem; display: none;
+    }
+    .cr-label.show { display: block; }
+    .cr .kw   { color: var(--orange-light); }
+    .cr .st   { color: #7aaa58; }
+    .cr .nm   { color: #6ab0d0; }
+    .cr .fn   { color: #d4a84e; }
+    .cr .cmt  { color: #5a5550; font-style: italic; }
+    .cr .fix  { color: var(--green-light); font-weight: 600; }
+
+    /* Right: diagnosis panel */
+    .diag-panel {
+      display: flex; flex-direction: column; gap: 0.85rem;
+    }
+    .diag-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim);
+    }
+    .diag-symptom {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.9rem 1rem;
+    }
+    .sym-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #d47a7a; margin-bottom: 0.35rem;
+    }
+    .sym-text { font-size: 0.9rem; color: var(--text); line-height: 1.6; }
+    .sym-text code {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.82em;
+      color: var(--orange-light); background: rgba(255,255,255,0.06);
+      border-radius: 2px; padding: 0.05em 0.3em;
+    }
+
+    .diag-question { font-size: 0.93rem; color: var(--text-bright); font-weight: 500; line-height: 1.5; }
+
+    /* Choices */
+    .choices { display: flex; flex-direction: column; gap: 0.55rem; }
+    .choice-btn {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.8rem 0.95rem;
+      text-align: left; cursor: pointer; width: 100%;
+      display: flex; gap: 0.7rem; align-items: flex-start;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .choice-btn:hover:not(:disabled) { border-color: var(--orange); background: rgba(192,120,48,0.06); }
+    .choice-btn:disabled { cursor: default; }
+    .ch-key {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; font-weight: 600;
+      color: var(--text-dim); background: rgba(255,255,255,0.05); border-radius: 3px;
+      padding: 0.08rem 0.4rem; flex-shrink: 0; margin-top: 0.1rem;
+    }
+    .ch-text { font-size: 0.87rem; color: var(--text); line-height: 1.5; }
+    .choice-btn.chosen-correct { background: rgba(62,138,88,0.15); border-color: var(--green); }
+    .choice-btn.chosen-wrong   { background: rgba(158,58,58,0.12); border-color: var(--red); }
+    .choice-btn.reveal-correct { background: rgba(62,138,88,0.08); border-color: var(--green-light); }
+    .choice-btn.chosen-correct .ch-key { background: rgba(62,138,88,0.3); color: var(--green-light); }
+    .choice-btn.chosen-wrong   .ch-key { background: rgba(158,58,58,0.25); color: var(--red-light); }
+    .choice-btn.reveal-correct .ch-key { background: rgba(62,138,88,0.2); color: var(--green-light); }
+
+    /* Feedback */
+    .fb-box {
+      display: none; background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.9rem 1rem;
+      font-size: 0.87rem; color: var(--text-dim); line-height: 1.65;
+    }
+    .fb-box.show { display: block; }
+    .fb-box.correct-fb { border-left: 3px solid var(--green); }
+    .fb-box.wrong-fb   { border-left: 3px solid var(--red); }
+    .fb-title {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.45rem;
+    }
+    .correct-fb .fb-title { color: var(--green-light); }
+    .wrong-fb   .fb-title { color: var(--red-light); }
+    .fb-box code {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.82em;
+      color: var(--orange-light); background: rgba(255,255,255,0.06);
+      border-radius: 2px; padding: 0.05em 0.3em;
+    }
+
+    /* Next button */
+    .next-btn {
+      display: none; align-self: flex-end;
+      background: var(--orange); color: #fff; border: none; border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.55rem 1.4rem; cursor: pointer; transition: background 0.15s;
+    }
+    .next-btn.show { display: block; }
+    .next-btn:hover { background: var(--orange-light); }
+
+    /* ---- RESULTS ---- */
+    #results {
+      display: none; flex: 1;
+      align-items: center; justify-content: center; padding: 3rem 1.5rem;
+    }
+    #results.active { display: flex; }
+    .rbox {
+      max-width: 580px; width: 100%;
+      background: var(--bg-panel); border: 1px solid var(--border);
+      border-top: 3px solid var(--orange); border-radius: 6px;
+      padding: 2rem 2.25rem;
+    }
+    .r-kicker {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.63rem;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange-light);
+      margin-bottom: 0.5rem;
+    }
+    .r-score {
+      font-family: 'Zilla Slab', serif; font-size: 3.5rem; font-weight: 700;
+      color: var(--text-bright); line-height: 1; margin-bottom: 0.15rem;
+    }
+    .r-denom { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1rem; }
+    .r-rank { font-family: 'Zilla Slab', serif; font-size: 1.25rem; font-weight: 600; color: var(--orange-light); margin-bottom: 0.6rem; }
+    .r-desc { font-size: 0.9rem; color: var(--text-dim); line-height: 1.65; margin-bottom: 1.5rem; }
+    .r-breakdown { display: flex; flex-direction: column; gap: 0; margin-bottom: 1.5rem; }
+    .r-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.4rem 0; border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .r-row:last-child { border-bottom: none; }
+    .r-row-label { color: var(--text-dim); }
+    .r-row-pts { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--orange-light); font-weight: 600; }
+    .r-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .r-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.55rem 1.25rem; border-radius: 4px; cursor: pointer;
+      text-decoration: none; transition: background 0.15s; border: none;
+    }
+    .r-btn.primary   { background: var(--orange); color: #fff; }
+    .r-btn.primary:hover { background: var(--orange-light); }
+    .r-btn.secondary { background: none; color: var(--text-dim); border: 1px solid var(--border); }
+    .r-btn.secondary:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+    footer {
+      border-top: 1px solid var(--border); padding: 0.85rem 1.5rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.63rem;
+      color: var(--text-dim); text-align: center; flex-shrink: 0;
+    }
+    footer a { color: var(--text-dim); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    @media (max-width: 800px) {
+      .sim-split { grid-template-columns: 1fr; }
+      .lbox h1 { font-size: 1.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="tb-icon">D</div>
+    <span class="tb-title">Debug the Pipeline</span>
+    <span class="tb-sub">DTSC 520</span>
+  </div>
+  <div class="topbar-right">
+    <div class="tb-pips" id="tbPips"></div>
+    <div class="tb-score">Score: <strong id="tbScore">0</strong>/20</div>
+    <div class="tb-time" id="tbTime">7:13 AM</div>
+    <a href="../../index.html" class="tb-back">&#8592; Course Home</a>
+  </div>
+</div>
+
+<!-- LANDING -->
+<div id="landing">
+  <div class="lbox">
+    <div class="lbadge">Simulation &mdash; Module 04 &mdash; pandas / NumPy</div>
+    <h1>Debug the <em>Pipeline</em></h1>
+    <div class="situation">
+      <div class="situation-who">6:47 AM - StatDeck Analytics, Eagles Office</div>
+      <p>Your phone goes off before your coffee is done. It's Jonah, the lead analyst: <em>"The pre-game stat pipeline failed overnight. Coach needs the lineup report by 8 AM or we're dark for the first series."</em></p>
+      <p>You pull up the terminal. Five things are broken in the pipeline. You have 73 minutes. The data doesn't lie - but right now, it's lying about everything.</p>
+    </div>
+    <div class="lmeta">
+      <div class="lmeta-item"><span class="lmeta-label">Bugs to find</span><span class="lmeta-val">5</span></div>
+      <div class="lmeta-item"><span class="lmeta-label">Max score</span><span class="lmeta-val">20 pts</span></div>
+      <div class="lmeta-item"><span class="lmeta-label">Deadline</span><span class="lmeta-val">8:00 AM</span></div>
+      <div class="lmeta-item"><span class="lmeta-label">Skills</span><span class="lmeta-val">pandas / NumPy</span></div>
+    </div>
+    <button class="start-btn" onclick="startSim()">Open Terminal</button>
+  </div>
+</div>
+
+<!-- SIM -->
+<div id="sim">
+  <div class="sit-bar" id="sitBar">
+    <div>
+      <div class="sit-who" id="sitWho"></div>
+      <div class="sit-msg" id="sitMsg"></div>
+    </div>
+  </div>
+
+  <div class="sim-split">
+    <!-- Left: pipeline state -->
+    <div class="pipeline-panel">
+      <div class="pp-header">
+        <span class="pp-title">Pipeline Output</span>
+        <span class="pp-step" id="ppStep">Step 1 of 5</span>
+      </div>
+      <div class="pp-terminal" id="ppTerminal"></div>
+      <span class="cr-label" id="crLabel">Fix Applied</span>
+      <div class="code-reveal cr" id="crReveal"></div>
+    </div>
+
+    <!-- Right: diagnosis -->
+    <div class="diag-panel">
+      <span class="diag-label" id="diagLabel">Stage 1 of 5 &mdash; Diagnose the problem</span>
+      <div class="diag-symptom">
+        <div class="sym-tag">What you're seeing</div>
+        <div class="sym-text" id="symptomText"></div>
+      </div>
+      <div class="diag-question" id="diagQuestion"></div>
+      <div class="choices" id="choicesList"></div>
+      <div class="fb-box" id="fbBox">
+        <div class="fb-title" id="fbTitle"></div>
+        <div id="fbText"></div>
+      </div>
+      <button class="next-btn" id="nextBtn" onclick="nextStage()"></button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="rbox">
+    <div class="r-kicker">Pipeline Report &mdash; Final Status</div>
+    <div class="r-score" id="rScore">0</div>
+    <div class="r-denom">out of 20 points</div>
+    <div class="r-rank" id="rRank"></div>
+    <div class="r-desc" id="rDesc"></div>
+    <div class="r-breakdown" id="rBreakdown"></div>
+    <div class="r-actions">
+      <button class="r-btn primary" onclick="restartSim()">Run Again</button>
+      <a class="r-btn secondary" href="../../index.html">Course Home</a>
+      <a class="r-btn secondary" href="../../modules/module4/index.html">Module 4 Notes</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Built for DTSC 520 &mdash; Eastern University &bull; <a href="../../index.html">Course Home</a><br>
+  &copy; Eastern University. All rights reserved.
+</footer>
+
+<script>
+const STORAGE_KEY = 'dtsc520_debugpipeline';
+
+// ── Clock times per stage (narrative pressure) ──
+const stageTimes = ['6:51 AM', '7:03 AM', '7:18 AM', '7:34 AM', '7:49 AM'];
+const urgentAt   = 3; // stages 4-5 turn clock red
+
+// ── Stage data ──
+const stages = [
+
+  // ── STAGE 1: header=None ──
+  {
+    who: 'Terminal',
+    msg: 'Step 1: Load the roster CSV and check the first few rows.',
+    ppStep: 'Step 1 of 5 &mdash; pd.read_csv()',
+    terminal: `<span class="term-prompt">$</span> <span class="term-cmd">python pipeline.py --step load</span>
+
+<span class="term-out">Running: roster = pd.read_csv('eagles_roster.csv', header=None)</span>
+<span class="term-out">Running: print(roster.head())</span>
+
+<span class="df-out">{TABLE_BROKEN_HEADER}</span>
+
+<span class="term-warn">Warning: 7 rows loaded. Shape: (7, 4)</span>`,
+    tableHtml: buildTable(
+      ['idx','0','1','2','3'],
+      [
+        ['0', {v:'player',c:'v-bad'}, {v:'avg',c:'v-bad'}, {v:'hr',c:'v-bad'}, {v:'salary',c:'v-bad'}],
+        ['1', {v:'Rivera',c:'v-str'}, {v:'.312',c:'v-str'}, {v:'4',c:'v-str'}, {v:'16800',c:'v-str'}],
+        ['2', {v:'Chen',c:'v-str'}, {v:'.287',c:'v-str'}, {v:'2',c:'v-str'}, {v:'14400',c:'v-str'}],
+        ['3', {v:'Walker',c:'v-str'}, {v:'.301',c:'v-str'}, {v:'7',c:'v-str'}, {v:'19200',c:'v-str'}],
+        ['4', {v:'Kim',c:'v-str'}, {v:'.268',c:'v-str'}, {v:'1',c:'v-str'}, {v:'760000',c:'v-str'}],
+      ],
+      'roster.head() &mdash; something is off'
+    ),
+    symptom: 'The DataFrame printed, but the column headers read <code>0, 1, 2, 3</code> instead of <code>player, avg, hr, salary</code>. Row 0 contains the actual column names from the CSV file. The shape is (7, 4) &mdash; one row too many.',
+    question: 'What does this output tell you about how the file was loaded?',
+    choices: [
+      { key:'A', text:'The CSV file uses tabs instead of commas as separators, so the columns merged into one.', pts:0 },
+      { key:'B', text:'The file was loaded in reverse order - the last row became row 0.', pts:0 },
+      { key:'C', text:'The loader was told there is no header row, so the first row of data (the column names) was read in as a regular row of data instead of becoming column labels.', pts:4, correct:true },
+      { key:'D', text:'The file has an extra blank row at the top that pandas cannot skip automatically.', pts:1 },
+    ],
+    feedback: {
+      correct: 'Correct. <code>header=None</code> tells pandas the file has no header row, so pandas assigns numeric column names (0, 1, 2...) and treats row 1 of the file - which contains the real column names - as data. Remove that argument and pandas uses the first row as column labels automatically.',
+      wrong: 'Look at column headers: they are 0, 1, 2, 3 (numbers) instead of player, avg, hr, salary. And row 0 contains those exact names as values. That tells you pandas did not recognise the first row as a header - it read it as data. The culprit is <code>header=None</code>, which tells pandas no header exists.'
+    },
+    fixCode: `<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cmt"># Before: pd.read_csv('eagles_roster.csv', header=None)</span>
+roster = pd.<span class="fn">read_csv</span>(<span class="st">'eagles_roster.csv'</span>)  <span class="fix"># header=None removed</span>
+
+<span class="cmt"># pandas now uses row 1 of the file as column names</span>`,
+    terminalFixed: `<span class="term-prompt">$</span> <span class="term-cmd">python pipeline.py --step load</span>
+
+<span class="term-good">Fix applied: header=None removed</span>
+<span class="term-out">Running: print(roster.head())</span>
+
+<span class="df-out">{TABLE_FIXED_HEADER}</span>
+
+<span class="term-good">Shape: (6, 4) &mdash; 6 players, 4 columns. Column names correct.</span>`,
+    tableHtmlFixed: buildTable(
+      ['idx','player','avg','hr','salary'],
+      [
+        ['0',{v:'Rivera',c:'v-str'},{v:'.312',c:'v-str'},{v:'4',c:'v-str'},{v:'16800',c:'v-str'}],
+        ['1',{v:'Chen',c:'v-str'},{v:'.287',c:'v-str'},{v:'2',c:'v-str'},{v:'14400',c:'v-str'}],
+        ['2',{v:'Walker',c:'v-str'},{v:'.301',c:'v-str'},{v:'7',c:'v-str'},{v:'19200',c:'v-str'}],
+        ['3',{v:'Kim',c:'v-str'},{v:'.268',c:'v-str'},{v:'1',c:'v-str'},{v:'760000',c:'v-str'}],
+        ['4',{v:'Jones',c:'v-str'},{v:'.295',c:'v-str'},{v:'3',c:'v-str'},{v:'15600',c:'v-str'}],
+      ],
+      'roster.head()'
+    ),
+  },
+
+  // ── STAGE 2: avg stored as object dtype ──
+  {
+    who: 'Terminal',
+    msg: 'Step 2: Inspect column data types before running any calculations.',
+    ppStep: 'Step 2 of 5 &mdash; roster.dtypes',
+    terminal: `<span class="term-prompt">$</span> <span class="term-cmd">python pipeline.py --step dtypes</span>
+
+<span class="term-out">Running: print(roster.dtypes)</span>
+
+<span class="term-out">player     object</span>
+<span class="term-out">avg        <span class="term-warn">object</span>   &lt;-- should be float64</span>
+<span class="term-out">hr         <span class="term-warn">object</span>   &lt;-- should be int64</span>
+<span class="term-out">salary     <span class="term-warn">object</span>   &lt;-- should be int64</span>
+<span class="term-out">dtype: object</span>
+
+<span class="term-warn">Next step: roster['avg'].mean() will fail or return NaN</span>`,
+    tableHtml: buildTable(
+      ['idx','player','avg','hr','salary'],
+      [
+        ['0',{v:'Rivera',c:'v-str'},{v:'.312',c:'v-bad'},{v:'4',c:'v-bad'},{v:'16800',c:'v-bad'}],
+        ['1',{v:'Chen',c:'v-str'},{v:'.287',c:'v-bad'},{v:'2',c:'v-bad'},{v:'14400',c:'v-bad'}],
+        ['2',{v:'Walker',c:'v-str'},{v:'.301',c:'v-bad'},{v:'7',c:'v-bad'},{v:'19200',c:'v-bad'}],
+        ['3',{v:'Kim',c:'v-str'},{v:'.268',c:'v-bad'},{v:'1',c:'v-bad'},{v:'760000',c:'v-bad'}],
+        ['4',{v:'Jones',c:'v-str'},{v:'.295',c:'v-bad'},{v:'3',c:'v-bad'},{v:'15600',c:'v-bad'}],
+      ],
+      'roster.head() &mdash; numeric columns stored as text'
+    ),
+    symptom: 'Every numeric column &mdash; <code>avg</code>, <code>hr</code>, <code>salary</code> &mdash; has dtype <code>object</code> instead of <code>float64</code> or <code>int64</code>. Calling <code>.mean()</code> on a column of strings will either raise a TypeError or return NaN.',
+    question: 'What caused all the numeric columns to load as text, and what is the right fix?',
+    choices: [
+      { key:'A', text:'The previous bug (header=None) caused pandas to read everything as strings. Now that the header is fixed, use .astype() to convert each column to its correct numeric type.', pts:4, correct:true },
+      { key:'B', text:'The CSV has trailing spaces in each cell. Use str.strip() on every column to remove them before converting.', pts:1 },
+      { key:'C', text:'Use pd.to_numeric() with errors="coerce" on the whole DataFrame to force all columns to numbers at once.', pts:2 },
+      { key:'D', text:'Reload the CSV with dtype={"avg": float, "hr": int, "salary": int} to specify types at load time.', pts:2 },
+    ],
+    feedback: {
+      correct: 'Right. When <code>header=None</code> was set, pandas read the literal header row ("player", "avg", "hr", "salary") as data row 0, which forced pandas to infer all columns as <code>object</code> (string) since that row contained text. Now that the header is fixed, the columns still carry that inferred type. The fix is <code>.astype()</code> to convert each column explicitly.',
+      wrong: 'The root cause is the previous bug: when pandas read the header row as data, it saw text in every column and inferred <code>object</code> dtype for all of them. That inference sticks even after the header fix. The direct fix is <code>.astype()</code> - for example <code>roster["avg"] = roster["avg"].astype(float)</code>.'
+    },
+    fixCode: `<span class="cmt"># Convert numeric columns to correct types</span>
+roster[<span class="st">'avg'</span>]    = roster[<span class="st">'avg'</span>].<span class="fn">astype</span>(<span class="nm">float</span>)
+roster[<span class="st">'hr'</span>]     = roster[<span class="st">'hr'</span>].<span class="fn">astype</span>(<span class="nm">int</span>)
+roster[<span class="st">'salary'</span>] = roster[<span class="st">'salary'</span>].<span class="fn">astype</span>(<span class="nm">int</span>)
+
+<span class="cmt"># Now roster.dtypes shows float64, int64, int64</span>`,
+    terminalFixed: `<span class="term-good">Fix applied: .astype() conversions</span>
+<span class="term-out">Running: print(roster.dtypes)</span>
+
+<span class="term-good">player     object</span>
+<span class="term-good">avg        float64</span>
+<span class="term-good">hr         int64</span>
+<span class="term-good">salary     int64</span>
+<span class="term-good">dtype: object</span>
+
+<span class="term-good">Numeric columns ready. Calculations will work.</span>`,
+    tableHtmlFixed: buildTable(
+      ['idx','player','avg','hr','salary'],
+      [
+        ['0',{v:'Rivera',c:'v-str'},{v:'0.312',c:'v-num'},{v:'4',c:'v-num'},{v:'16800',c:'v-num'}],
+        ['1',{v:'Chen',c:'v-str'},{v:'0.287',c:'v-num'},{v:'2',c:'v-num'},{v:'14400',c:'v-num'}],
+        ['2',{v:'Walker',c:'v-str'},{v:'0.301',c:'v-num'},{v:'7',c:'v-num'},{v:'19200',c:'v-num'}],
+        ['3',{v:'Kim',c:'v-str'},{v:'0.268',c:'v-num'},{v:'1',c:'v-num'},{v:'760000',c:'v-num'}],
+        ['4',{v:'Jones',c:'v-str'},{v:'0.295',c:'v-num'},{v:'3',c:'v-num'},{v:'15600',c:'v-num'}],
+      ],
+      'roster &mdash; types corrected'
+    ),
+  },
+
+  // ── STAGE 3: = vs == in filter ──
+  {
+    who: 'Terminal',
+    msg: 'Step 3: Filter to active players only. Noah Kim is on rehab assignment - flag him separately.',
+    ppStep: 'Step 3 of 5 &mdash; boolean filter',
+    terminal: `<span class="term-prompt">$</span> <span class="term-cmd">python pipeline.py --step filter</span>
+
+<span class="term-out">Running: active = roster[roster['status'] = 'active']</span>
+<span class="term-err">  File "pipeline.py", line 12</span>
+<span class="term-err">    active = roster[roster['status'] = 'active']</span>
+<span class="term-err">                                     ^</span>
+<span class="term-err">SyntaxError: invalid syntax</span>
+
+<span class="term-warn">Pipeline halted at filter step. 0 rows passed through.</span>`,
+    tableHtml: buildTable(
+      ['idx','player','avg','hr','salary','status'],
+      [
+        ['0',{v:'Rivera',c:'v-str'},{v:'0.312',c:'v-num'},{v:'4',c:'v-num'},{v:'16800',c:'v-num'},{v:'active',c:'v-str'}],
+        ['1',{v:'Chen',c:'v-str'},{v:'0.287',c:'v-num'},{v:'2',c:'v-num'},{v:'14400',c:'v-num'},{v:'active',c:'v-str'}],
+        ['2',{v:'Kim',c:'v-str'},{v:'0.268',c:'v-num'},{v:'1',c:'v-num'},{v:'760000',c:'v-num'},{v:'rehab',c:'v-bad'}],
+        ['3',{v:'Walker',c:'v-str'},{v:'0.301',c:'v-num'},{v:'7',c:'v-num'},{v:'19200',c:'v-num'},{v:'active',c:'v-str'}],
+        ['4',{v:'Jones',c:'v-str'},{v:'0.295',c:'v-num'},{v:'3',c:'v-num'},{v:'15600',c:'v-num'},{v:'active',c:'v-str'}],
+      ],
+      'roster (with status column)'
+    ),
+    symptom: 'The pipeline crashed with a <code>SyntaxError</code> on the filter line. Nothing was filtered &mdash; the entire analysis is blocked until this is resolved.',
+    question: 'Python rejected this line. What is the problem and why?',
+    choices: [
+      { key:'A', text:"The column name 'status' doesn't exist - it should be 'active' to match the filter value.", pts:0 },
+      { key:'B', text:"The filter needs parentheses around the condition: roster[(roster['status'] = 'active')].", pts:0 },
+      { key:'C', text:"The string 'active' should use double quotes, not single quotes, inside a bracket filter.", pts:0 },
+      { key:'D', text:"Single = is the assignment operator, not a comparison. Boolean filtering requires == to produce a True/False result for each row.", pts:4, correct:true },
+    ],
+    feedback: {
+      correct: "Exactly. <code>=</code> means \"set this variable to this value\" &mdash; it is a statement, not an expression. Python cannot use a statement inside brackets. <code>==</code> is the equality comparison operator: it evaluates each row and returns True or False. That boolean Series is what pandas uses to decide which rows to keep.",
+      wrong: "The issue is the single <code>=</code>. In Python, <code>=</code> is the assignment operator &mdash; it assigns a value to a variable. Inside a filter bracket, pandas needs an expression that returns True or False for each row. That requires the comparison operator <code>==</code> (double equals). Python rejects <code>=</code> here with a SyntaxError because assignment is not a valid expression in that context."
+    },
+    fixCode: `<span class="cmt"># Before: roster[roster['status'] = 'active']   # SyntaxError</span>
+active = roster[roster[<span class="st">'status'</span>] <span class="fix">==</span> <span class="st">'active'</span>]  <span class="fix"># == is comparison</span>
+rehab  = roster[roster[<span class="st">'status'</span>] <span class="fix">==</span> <span class="st">'rehab'</span>]
+
+<span class="cmt"># active has 4 rows, rehab has 1 (Kim)</span>`,
+    terminalFixed: `<span class="term-good">Fix applied: = changed to ==</span>
+<span class="term-out">Running: active = roster[roster['status'] == 'active']</span>
+
+<span class="df-out">{TABLE_FIXED}</span>
+
+<span class="term-good">4 active players. Kim isolated to rehab DataFrame.</span>`,
+    tableHtmlFixed: buildTable(
+      ['idx','player','avg','hr','salary','status'],
+      [
+        ['0',{v:'Rivera',c:'v-str'},{v:'0.312',c:'v-num'},{v:'4',c:'v-num'},{v:'16800',c:'v-num'},{v:'active',c:'v-fix'}],
+        ['1',{v:'Chen',c:'v-str'},{v:'0.287',c:'v-num'},{v:'2',c:'v-num'},{v:'14400',c:'v-num'},{v:'active',c:'v-fix'}],
+        ['3',{v:'Walker',c:'v-str'},{v:'0.301',c:'v-num'},{v:'7',c:'v-num'},{v:'19200',c:'v-num'},{v:'active',c:'v-fix'}],
+        ['4',{v:'Jones',c:'v-str'},{v:'0.295',c:'v-num'},{v:'3',c:'v-num'},{v:'15600',c:'v-num'},{v:'active',c:'v-fix'}],
+      ],
+      'active roster &mdash; 4 players'
+    ),
+  },
+
+  // ── STAGE 4: fillna clobbers good salary data ──
+  {
+    who: 'Terminal',
+    msg: "Step 4: One player is missing a salary entry. Fill it with the team average. Don't touch the others.",
+    ppStep: 'Step 4 of 5 &mdash; fillna()',
+    terminal: `<span class="term-prompt">$</span> <span class="term-cmd">python pipeline.py --step clean</span>
+
+<span class="term-out">Running: active = active.fillna(0)</span>
+<span class="term-out">Running: print(active[['player','salary']])</span>
+
+<span class="df-out">{TABLE_BROKEN_SALARY}</span>
+
+<span class="term-warn">Rivera salary changed from 16800 to 0.</span>
+<span class="term-warn">Walker salary changed from 19200 to 0.</span>
+<span class="term-warn">Jones salary was NaN - now 0. But so is everyone else.</span>`,
+    tableHtml: buildTable(
+      ['idx','player','salary'],
+      [
+        ['0',{v:'Rivera',c:'v-str'},{v:'0',c:'v-bad'}],
+        ['1',{v:'Chen',c:'v-str'},{v:'0',c:'v-bad'}],
+        ['3',{v:'Walker',c:'v-str'},{v:'0',c:'v-bad'}],
+        ['4',{v:'Jones',c:'v-str'},{v:'0',c:'v-bad'}],
+      ],
+      "active[['player','salary']] &mdash; all salaries zeroed"
+    ),
+    symptom: "<code>fillna(0)</code> was called on the whole DataFrame. It filled the one missing salary as intended &mdash; but it also replaced every other value that happened to be NaN anywhere in the table, including valid salary entries that were not missing.",
+    question: "The fill zeroed out real salary data. What went wrong, and what is the right approach?",
+    choices: [
+      { key:'A', text:"fillna() should use the column mean, not 0 - otherwise the filled value distorts the average.", pts:1 },
+      { key:'B', text:"fillna(0) was applied to the entire DataFrame, overwriting all NaN values everywhere. It should target only the salary column, and fill with the mean salary rather than 0.", pts:4, correct:true },
+      { key:'C', text:"Use dropna() first to remove the missing row, then add it back manually with the correct salary.", pts:0 },
+      { key:'D', text:"The issue is that active is a slice of roster. Assign back to roster first using .loc to avoid the fill applying incorrectly.", pts:1 },
+    ],
+    feedback: {
+      correct: "Right. <code>df.fillna(0)</code> replaces every NaN in the entire DataFrame &mdash; all columns, all rows. That wipes valid data wherever a NaN happened to appear. The fix is to target exactly the column you want: <code>active['salary'] = active['salary'].fillna(active['salary'].mean())</code>. That leaves every other column and every non-null salary untouched.",
+      wrong: "The problem is scope. <code>active.fillna(0)</code> applied the fill to the entire DataFrame &mdash; every column, every row. Any NaN anywhere got set to 0, including valid salary data in other columns that happened to be null. The correct approach is to fill only the specific column with a meaningful value: <code>active['salary'] = active['salary'].fillna(active['salary'].mean())</code>."
+    },
+    fixCode: `<span class="cmt"># Before: active = active.fillna(0)  # fills everything, everywhere</span>
+mean_sal = active[<span class="st">'salary'</span>].<span class="fn">mean</span>()
+active[<span class="st">'salary'</span>] = active[<span class="st">'salary'</span>].<span class="fn">fillna</span>(mean_sal)  <span class="fix"># target column only</span>
+
+<span class="cmt"># Only the missing salary row is filled. Others unchanged.</span>`,
+    terminalFixed: `<span class="term-good">Fix applied: fillna targeted to salary column only</span>
+<span class="term-out">Running: print(active[['player','salary']])</span>
+
+<span class="df-out">{TABLE_FIXED}</span>
+
+<span class="term-good">Jones salary filled with team mean (17200). Others unchanged.</span>`,
+    tableHtmlFixed: buildTable(
+      ['idx','player','salary'],
+      [
+        ['0',{v:'Rivera',c:'v-str'},{v:'16800',c:'v-num'}],
+        ['1',{v:'Chen',c:'v-str'},{v:'14400',c:'v-num'}],
+        ['3',{v:'Walker',c:'v-str'},{v:'19200',c:'v-num'}],
+        ['4',{v:'Jones',c:'v-str'},{v:'17200',c:'v-fix'}],
+      ],
+      "active[['player','salary']] &mdash; only missing value filled"
+    ),
+  },
+
+  // ── STAGE 5: groupby mean returns NaN because avg still object ──
+  {
+    who: 'Terminal',
+    msg: "Step 5: Final step - aggregate stats by position for the report. This is the last one.",
+    ppStep: 'Step 5 of 5 &mdash; groupby().agg()',
+    terminal: `<span class="term-prompt">$</span> <span class="term-cmd">python pipeline.py --step aggregate</span>
+
+<span class="term-out">Running: by_pos = active.groupby('position').agg(</span>
+<span class="term-out">    avg_avg=('avg', 'mean'),</span>
+<span class="term-out">    total_hr=('hr', 'sum')</span>
+<span class="term-out">)</span>
+<span class="term-out">Running: print(by_pos)</span>
+
+<span class="df-out">{TABLE_BROKEN_AGG}</span>
+
+<span class="term-warn">avg_avg is NaN for all positions. total_hr looks correct.</span>`,
+    tableHtml: buildTable(
+      ['position','avg_avg','total_hr'],
+      [
+        [{v:'IF',c:'v-str'},{v:'NaN',c:'v-nan'},{v:'3',c:'v-num'}],
+        [{v:'OF',c:'v-str'},{v:'NaN',c:'v-nan'},{v:'10',c:'v-num'}],
+      ],
+      'by_pos &mdash; groupby result'
+    ),
+    symptom: "The <code>avg_avg</code> column is <code>NaN</code> for every position group, but <code>total_hr</code> computed correctly. The data is there &mdash; you can see the avg values in the DataFrame.",
+    question: "hr summed fine but avg returned NaN. What does that tell you about the avg column specifically?",
+    choices: [
+      { key:'A', text:"The groupby key 'position' does not exist in the active DataFrame - it needs to be added before aggregating.", pts:0 },
+      { key:'B', text:"The named aggregation syntax is wrong - 'mean' should be passed as a function object (np.mean) not a string.", pts:1 },
+      { key:'C', text:"The avg column is still stored as object (text), not float64. pandas cannot compute a mean of strings, so it returns NaN. The .astype(float) conversion from step 2 was not applied to the active subset.", pts:4, correct:true },
+      { key:'D', text:"Use .mean() directly on the column instead of .agg() - groupby agg does not support 'mean' for decimal columns.", pts:0 },
+    ],
+    feedback: {
+      correct: "Exactly. <code>hr</code> is an integer column so <code>sum</code> worked fine. But <code>avg</code> is still <code>object</code> dtype in the active subset &mdash; when you filtered from roster, the type conversion from step 2 was not carried through correctly. <code>.mean()</code> on a column of strings returns NaN silently. Fix: apply <code>active['avg'] = active['avg'].astype(float)</code> before the groupby, then the mean computes correctly.",
+      wrong: "The clue is that <code>hr</code> (integer) worked and <code>avg</code> (supposed float) returned NaN. That asymmetry points to a data type issue: <code>avg</code> is still stored as <code>object</code> (strings) in the active DataFrame. <code>.mean()</code> on strings returns NaN silently &mdash; no error, just missing results. Apply <code>active['avg'] = active['avg'].astype(float)</code> before the groupby."
+    },
+    fixCode: `<span class="cmt"># Ensure avg is numeric in the active subset</span>
+active[<span class="st">'avg'</span>] = active[<span class="st">'avg'</span>].<span class="fn">astype</span>(<span class="nm">float</span>)  <span class="fix"># fix dtype before aggregating</span>
+
+by_pos = active.<span class="fn">groupby</span>(<span class="st">'position'</span>).<span class="fn">agg</span>(
+    avg_avg  =(<span class="st">'avg'</span>, <span class="st">'mean'</span>),
+    total_hr =(<span class="st">'hr'</span>,  <span class="st">'sum'</span>)
+)`,
+    terminalFixed: `<span class="term-good">Fix applied: active['avg'] = active['avg'].astype(float)</span>
+<span class="term-out">Running: print(by_pos)</span>
+
+<span class="df-out">{TABLE_FIXED}</span>
+
+<span class="term-good">Pipeline complete. Report ready for Coach.</span>
+<span class="term-good">Elapsed: 41 minutes. Made it.</span>`,
+    tableHtmlFixed: buildTable(
+      ['position','avg_avg','total_hr'],
+      [
+        [{v:'IF',c:'v-str'},{v:'0.288',c:'v-fix'},{v:'3',c:'v-num'}],
+        [{v:'OF',c:'v-str'},{v:'0.303',c:'v-fix'},{v:'10',c:'v-num'}],
+      ],
+      'by_pos &mdash; pipeline complete'
+    ),
+  }
+];
+
+// ── Helper: build HTML table ──
+function buildTable(headers, rows, caption) {
+  let h = '<div style="margin-bottom:0.3rem;font-size:0.65rem;color:#5a5550;letter-spacing:0.06em;text-transform:uppercase;">' + caption + '</div>';
+  h += '<table class="df-tbl"><thead><tr>';
+  headers.forEach((hd,i) => {
+    h += '<th class="' + (i===0 && hd==='idx' ? 'idx' : '') + '">' + (hd==='idx'?'':hd) + '</th>';
+  });
+  h += '</tr></thead><tbody>';
+  rows.forEach(row => {
+    h += '<tr>';
+    row.forEach((cell,i) => {
+      if (typeof cell === 'string') {
+        h += '<td class="idx">' + cell + '</td>';
+      } else {
+        h += '<td class="' + (cell.c||'') + '">' + cell.v + '</td>';
+      }
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+  return h;
+}
+
+// ── State ──
+let current  = 0;
+let scores   = [];
+let answered = false;
+
+// ── Clock ──
+let clockInterval = null;
+function startClock(stageIdx) {
+  clearInterval(clockInterval);
+  const el = document.getElementById('tbTime');
+  // Parse start time for this stage
+  const [h, m, ap] = stageTimes[stageIdx].match(/(\d+):(\d+) (AM)/).slice(1);
+  let totalMins = parseInt(h) * 60 + parseInt(m);
+  el.textContent = stageTimes[stageIdx];
+  el.className = 'tb-time' + (stageIdx >= urgentAt ? ' urgent' : '');
+  clockInterval = setInterval(() => {
+    totalMins++;
+    const nh = Math.floor(totalMins/60) % 12 || 12;
+    const nm = String(totalMins%60).padStart(2,'0');
+    el.textContent = nh + ':' + nm + ' AM';
+    // Turn urgent at 7:45
+    if (totalMins >= 7*60+45) el.className = 'tb-time urgent';
+  }, 3000);
+}
+
+// ── Pips ──
+function buildPips() {
+  const c = document.getElementById('tbPips');
+  c.innerHTML = '';
+  stages.forEach((_,i) => {
+    const p = document.createElement('div');
+    p.id = 'pip'+i;
+    p.className = 'tb-pip' + (i===current?' current': scores[i]!==undefined?' done':'');
+    c.appendChild(p);
+  });
+}
+function updatePips() {
+  stages.forEach((_,i) => {
+    const p = document.getElementById('pip'+i);
+    if (!p) return;
+    p.className = 'tb-pip' + (i===current?' current': scores[i]!==undefined?' done':'');
+  });
+}
+
+// ── Render stage ──
+function renderStage() {
+  const s = stages[current];
+  answered = false;
+
+  // Situation bar
+  document.getElementById('sitWho').textContent = s.who;
+  document.getElementById('sitMsg').textContent  = s.msg;
+
+  // Pipeline panel
+  document.getElementById('ppStep').innerHTML = s.ppStep;
+  const terminal = document.getElementById('ppTerminal');
+  terminal.innerHTML = s.terminal.replace(/{TABLE_BROKEN[^}]*}/, s.tableHtml)
+                                  .replace(/{TABLE_FIXED[^}]*}/, s.tableHtml);
+  // Reset fix reveal
+  document.getElementById('crLabel').className = 'cr-label';
+  document.getElementById('crReveal').innerHTML = '';
+  document.getElementById('crReveal').className = 'code-reveal cr';
+
+  // Diagnosis panel
+  document.getElementById('diagLabel').textContent = 'Stage ' + (current+1) + ' of ' + stages.length + ' - Diagnose the problem';
+  document.getElementById('symptomText').innerHTML = s.symptom;
+  document.getElementById('diagQuestion').textContent = s.question;
+
+  // Build choices
+  const list = document.getElementById('choicesList');
+  list.innerHTML = '';
+  s.choices.forEach(ch => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.dataset.correct = ch.correct ? 'true' : 'false';
+    btn.dataset.pts = ch.pts;
+    btn.innerHTML = '<span class="ch-key">' + ch.key + '</span><span class="ch-text">' + ch.text + '</span>';
+    btn.addEventListener('click', () => handleChoice(btn, ch, s));
+    list.appendChild(btn);
+  });
+
+  // Reset feedback
+  const fb = document.getElementById('fbBox');
+  fb.className = 'fb-box';
+  document.getElementById('fbTitle').textContent = '';
+  document.getElementById('fbText').innerHTML = '';
+  const nb = document.getElementById('nextBtn');
+  nb.className = 'next-btn';
+  nb.textContent = current < stages.length-1 ? 'Next Stage ->' : 'See Results ->';
+
+  updatePips();
+  startClock(current);
+}
+
+function handleChoice(btn, ch, s) {
+  if (answered) return;
+  answered = true;
+
+  scores[current] = ch.pts;
+  const total = scores.reduce((a,b)=>a+b,0);
+  document.getElementById('tbScore').textContent = total;
+
+  // Disable + reveal correct
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.correct === 'true') b.classList.add('reveal-correct');
+  });
+  const isCorrect = btn.dataset.correct === 'true';
+  btn.classList.add(isCorrect ? 'chosen-correct' : 'chosen-wrong');
+
+  // Feedback
+  const fb = document.getElementById('fbBox');
+  document.getElementById('fbTitle').textContent = isCorrect ? 'Diagnosis confirmed' : 'Not quite';
+  document.getElementById('fbText').innerHTML = isCorrect ? s.feedback.correct : s.feedback.wrong;
+  fb.className = 'fb-box show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+
+  // Show fix + updated terminal
+  document.getElementById('crLabel').className = 'cr-label show';
+  document.getElementById('crReveal').innerHTML = s.fixCode;
+  document.getElementById('crReveal').className = 'code-reveal cr show';
+
+  // Update terminal with fixed output
+  const terminal = document.getElementById('ppTerminal');
+  terminal.innerHTML = s.terminalFixed.replace(/{TABLE_FIXED[^}]*}/, s.tableHtmlFixed);
+
+  document.getElementById('nextBtn').classList.add('show');
+  updatePips();
+}
+
+function nextStage() {
+  current++;
+  if (current >= stages.length) {
+    showResults();
+  } else {
+    renderStage();
+  }
+}
+
+function showResults() {
+  clearInterval(clockInterval);
+  document.getElementById('sim').classList.remove('active');
+  const total = scores.reduce((a,b)=>a+b,0);
+
+  let rank, desc;
+  if (total === 20) {
+    rank = 'Lead Data Engineer';
+    desc = '20/20. You caught every bug on the first read of the data - not the code. You understood what each output was telling you before you looked for the cause. The report hit Coach\'s desk at 7:28 AM. Jonah sends a slack: "Nice work."';
+  } else if (total >= 15) {
+    rank = 'Senior Analyst';
+    desc = total + '/20. Solid debugging session. You diagnosed most symptoms correctly and kept the pipeline moving. Review any misses - they are usually type errors or scope issues that bite everyone early on.';
+  } else if (total >= 10) {
+    rank = 'Analyst';
+    desc = total + '/20. You found some bugs but a few got past you. Focus on the relationship between what the output shows and what that implies about the underlying data type or operation.';
+  } else {
+    rank = 'Trainee';
+    desc = total + '/20. Debugging from output takes practice. Go back through the Module 4 content on dtypes, boolean filtering, and groupby, then try again - you will catch things you missed the first time.';
+  }
+
+  document.getElementById('rScore').textContent = total;
+  document.getElementById('rRank').textContent  = rank;
+  document.getElementById('rDesc').textContent  = desc;
+
+  const bd = document.getElementById('rBreakdown');
+  bd.innerHTML = '';
+  const labels = ['Load the Roster','Inspect Data Types','Filter Active Players','Fill Missing Salary','Aggregate by Position'];
+  stages.forEach((_,i) => {
+    const row = document.createElement('div');
+    row.className = 'r-row';
+    row.innerHTML = '<span class="r-row-label">' + labels[i] + '</span><span class="r-row-pts">' + (scores[i]||0) + ' / 4</span>';
+    bd.appendChild(row);
+  });
+
+  document.getElementById('results').classList.add('active');
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({score:total, ts:Date.now()})); } catch(e) {}
+}
+
+function startSim() {
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('sim').classList.add('active');
+  current = 0; scores = []; answered = false;
+  buildPips();
+  renderStage();
+}
+
+function restartSim() {
+  clearInterval(clockInterval);
+  current = 0; scores = []; answered = false;
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('tbScore').textContent = '0';
+  document.getElementById('sim').classList.add('active');
+  buildPips();
+  renderStage();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2: The Roster - StatDeck Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+<style>
+  :root {
+    --maroon: #8B1C40;
+    --maroon-light: #a82050;
+    --blue: #2A7195;
+    --blue-light: #3590b8;
+    --gray: #646469;
+    --bg: #0f0e0d;
+    --surface: #1a1816;
+    --surface2: #221f1d;
+    --surface3: #2d2926;
+    --text: #f0ece6;
+    --text-dim: #b8b0a6;
+    --text-muted: #7a7268;
+    --border: #38322d;
+    --green: #4a9e6b;
+    --green-dim: rgba(74,158,107,0.15);
+    --amber: #c8963a;
+    --amber-dim: rgba(200,150,58,0.12);
+    --red: #c04a4a;
+    --red-dim: rgba(192,74,74,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Zilla Slab', serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 3px solid var(--blue);
+    padding: 0 1.5rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-left { display: flex; align-items: center; gap: 1rem; }
+
+  .back-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 5px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--text-dim); }
+
+  .topbar-divider { width: 1px; height: 20px; background: var(--border); }
+
+  .topbar-module {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .topbar-module span { color: var(--blue-light); }
+
+  .topbar-right { display: flex; align-items: center; gap: 1.25rem; }
+
+  .challenge-counter {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .challenge-counter strong { color: var(--text); }
+
+  .score-display {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green);
+    background: var(--green-dim);
+    border: 1px solid rgba(74,158,107,0.3);
+    border-radius: 4px;
+    padding: 4px 10px;
+  }
+
+  .step-strip {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .step-dot { width: 28px; height: 6px; border-radius: 4px; background: var(--border); transition: background 0.3s; }
+  .step-dot.active { background: var(--blue); }
+  .step-dot.done   { background: var(--green); }
+
+  #loadingScreen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    padding: 3rem;
+  }
+  .loading-logo { font-family: 'IBM Plex Mono', monospace; font-size: 2rem; font-weight: 600; color: var(--blue-light); }
+  .loading-text { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--text-muted); }
+  .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #appScreen { display: none; flex: 1; flex-direction: column; }
+
+  .challenge-area {
+    flex: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 2rem 1.5rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .challenge-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--blue);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .challenge-header { padding: 1.25rem 1.5rem 1rem; border-bottom: 1px solid var(--border); }
+  .challenge-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--blue-light); margin-bottom: 0.5rem; }
+  .challenge-title { font-size: 1.25rem; font-weight: 700; color: var(--text); margin-bottom: 0.6rem; }
+  .challenge-desc { font-size: 0.95rem; color: var(--text-dim); line-height: 1.6; }
+  .challenge-desc code { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; background: var(--surface3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; color: var(--blue-light); }
+
+  .info-box { margin: 0 1.5rem; background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--blue); border-radius: 4px; padding: 1rem 1.25rem; }
+  .info-box-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue); margin-bottom: 0.5rem; }
+  .info-box p { font-size: 0.9rem; color: var(--text-dim); line-height: 1.55; margin-bottom: 0.5rem; }
+  .info-box p:last-child { margin-bottom: 0; }
+  .info-box code { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; background: var(--surface3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; color: var(--blue-light); }
+
+  .code-example { font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; background: var(--surface3); border: 1px solid var(--border); border-radius: 4px; padding: 0.75rem 1rem; color: var(--text-dim); line-height: 1.6; margin-top: 0.5rem; white-space: pre; overflow-x: auto; }
+  .code-example .kw  { color: #c792ea; }
+  .code-example .str { color: #c3e88d; }
+  .code-example .num { color: #f78c6c; }
+  .code-example .cmt { color: var(--text-muted); font-style: italic; }
+  .code-example .fn  { color: #82aaff; }
+
+  .editor-wrap { margin: 0 1.5rem; }
+  .editor-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+  .editor-label span { color: var(--text-muted); font-weight: 400; }
+
+  textarea.code-editor { width: 100%; min-height: 140px; background: #0a0908; border: 1px solid var(--border); border-radius: 4px; padding: 1rem; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--text); resize: vertical; outline: none; line-height: 1.6; tab-size: 4; transition: border-color 0.2s; }
+  textarea.code-editor:focus { border-color: var(--blue); }
+
+  .editor-actions { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.75rem; flex-wrap: wrap; }
+
+  .btn-run { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: var(--blue); color: #fff; border: none; border-radius: 4px; padding: 9px 20px; cursor: pointer; transition: background 0.2s; }
+  .btn-run:hover { background: var(--blue-light); }
+  .btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-hint { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: 4px; padding: 8px 16px; cursor: pointer; transition: color 0.2s, border-color 0.2s; }
+  .btn-hint:hover { color: var(--text-dim); border-color: var(--gray); }
+
+  .btn-next { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: var(--maroon); color: #fff; border: none; border-radius: 4px; padding: 9px 20px; cursor: pointer; transition: background 0.2s; display: none; }
+  .btn-next:hover { background: var(--maroon-light); }
+
+  .output-wrap { margin: 0 1.5rem; }
+  .output-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 6px; }
+  .output-box { background: #070605; border: 1px solid var(--border); border-radius: 4px; padding: 1rem; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--text-dim); min-height: 60px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+  .output-box.error { color: var(--red); }
+
+  .feedback-box { margin: 0 1.5rem 1.5rem; border-radius: 4px; padding: 1rem 1.25rem; display: none; }
+  .feedback-box.show { display: block; }
+  .feedback-box.pass    { background: var(--green-dim); border: 1px solid rgba(74,158,107,0.35); border-left: 3px solid var(--green); }
+  .feedback-box.partial { background: var(--amber-dim); border: 1px solid rgba(200,150,58,0.35); border-left: 3px solid var(--amber); }
+  .feedback-box.fail    { background: var(--red-dim); border: 1px solid rgba(192,74,74,0.35); border-left: 3px solid var(--red); }
+  .feedback-verdict { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+  .feedback-box.pass    .feedback-verdict { color: var(--green); }
+  .feedback-box.partial .feedback-verdict { color: var(--amber); }
+  .feedback-box.fail    .feedback-verdict { color: var(--red); }
+  .feedback-text { font-size: 0.9rem; color: var(--text-dim); line-height: 1.55; }
+  .feedback-text code { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; background: var(--surface3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; color: var(--blue-light); }
+
+  .hint-box { margin: 0 1.5rem; background: rgba(42,113,149,0.08); border: 1px solid rgba(42,113,149,0.25); border-radius: 4px; padding: 0.9rem 1.1rem; display: none; }
+  .hint-box.show { display: block; }
+  .hint-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue-light); margin-bottom: 0.4rem; }
+  .hint-text { font-size: 0.9rem; color: var(--text-dim); line-height: 1.55; }
+  .hint-text code { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; background: var(--surface3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; color: var(--blue-light); }
+
+  #debriefScreen { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: flex-start; padding: 3rem 1.5rem 4rem; }
+  .debrief-card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--blue); border-radius: 4px; max-width: 640px; width: 100%; padding: 2.5rem 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  .debrief-headline { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--blue-light); }
+  .debrief-title { font-size: 1.8rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+  .debrief-score-row { display: flex; align-items: baseline; gap: 0.75rem; }
+  .debrief-score-num { font-family: 'IBM Plex Mono', monospace; font-size: 3rem; font-weight: 700; color: var(--green); line-height: 1; }
+  .debrief-score-denom { font-family: 'IBM Plex Mono', monospace; font-size: 1.1rem; color: var(--text-muted); }
+  .debrief-verdict { font-size: 1.1rem; font-weight: 600; color: var(--text); }
+  .debrief-breakdown { border-top: 1px solid var(--border); padding-top: 1.25rem; }
+  .breakdown-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.75rem; }
+  .breakdown-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; color: var(--text-dim); }
+  .breakdown-row:last-child { border-bottom: none; }
+  .breakdown-pts { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; }
+  .pts-full { color: var(--green); }
+  .pts-part { color: var(--amber); }
+  .pts-none { color: var(--red); }
+  .debrief-concept { background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--blue); border-radius: 4px; padding: 1rem 1.25rem; font-size: 0.9rem; color: var(--text-dim); line-height: 1.55; }
+  .debrief-concept strong { color: var(--text); font-weight: 600; }
+  .debrief-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-home { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: 4px; padding: 9px 20px; cursor: pointer; text-decoration: none; transition: color 0.2s, border-color 0.2s; }
+  .btn-home:hover { color: var(--text); border-color: var(--gray); }
+  .btn-next-module { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: var(--maroon); color: #fff; border: none; border-radius: 4px; padding: 9px 20px; cursor: pointer; text-decoration: none; transition: background 0.2s; }
+  .btn-next-module:hover { background: var(--maroon-light); }
+
+  .page-footer { border-top: 1px solid var(--border); padding: 1rem 1.5rem; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); }
+
+  .breakdown-row-link {
+    cursor: pointer;
+    transition: background 0.15s;
+    border-radius: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    margin-left: -6px;
+    margin-right: -6px;
+  }
+  .breakdown-row-link:hover { background: var(--surface3); }
+
+  .revisit-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--blue);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .breakdown-row-link:hover .revisit-hint { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <a href="index.html" class="back-link">&larr; Hub</a>
+    <div class="topbar-divider"></div>
+    <div class="topbar-module"><span>Module 02</span> - The Roster</div>
+  </div>
+  <div class="topbar-right">
+    <span class="challenge-counter">Challenge <strong id="challengeNum">1</strong> of <strong>5</strong></span>
+    <span class="score-display" id="scoreDisplay">0 / 10 pts</span>
+  </div>
+</header>
+
+<div class="step-strip">
+  <div class="step-dot active" id="dot0"></div>
+  <div class="step-dot" id="dot1"></div>
+  <div class="step-dot" id="dot2"></div>
+  <div class="step-dot" id="dot3"></div>
+  <div class="step-dot" id="dot4"></div>
+</div>
+
+<div id="loadingScreen">
+  <div class="loading-logo">[ ]</div>
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Loading Python environment...</div>
+</div>
+
+<div id="appScreen">
+  <div class="challenge-area" id="challengeArea"></div>
+
+  <div id="debriefScreen">
+    <div class="debrief-card">
+      <div>
+        <div class="debrief-headline">Module 02 - The Roster</div>
+        <div class="debrief-title" id="debriefTitle">Module Complete</div>
+      </div>
+      <div class="debrief-score-row">
+        <div class="debrief-score-num" id="debriefScoreNum">0</div>
+        <div class="debrief-score-denom" id="debriefScoreDenom">/ 10 pts</div>
+      </div>
+      <div class="debrief-verdict" id="debriefVerdict"></div>
+      <div class="debrief-breakdown">
+        <div class="breakdown-label">Challenge Breakdown</div>
+        <div id="breakdownRows"></div>
+      </div>
+      <div class="debrief-concept" id="debriefConcept"></div>
+      <div class="debrief-actions">
+        <a href="index.html" class="btn-home">&larr; Back to Hub</a>
+        <a href="module3.html" class="btn-next-module">Next Module &rarr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="page-footer">
+  DTSC 520 - Introduction to Data Science &nbsp;&bull;&nbsp; Eastern University &nbsp;&bull;&nbsp; StatDeck Analytics Training Sim
+</footer>
+
+<script>
+const challenges = [
+  {
+    title: "Build the Roster List",
+    tag: "Lists - Creating",
+    desc: `Jonah drops a CSV printout on your desk. "Load the Eagles' starting lineup into Python." Create a list named <code>roster</code> containing these five player names in order: <code>"Rivera"</code>, <code>"Okafor"</code>, <code>"Chen"</code>, <code>"Williams"</code>, <code>"Torres"</code>. Then print the list.`,
+    info: {
+      label: "Concept: Lists",
+      html: `<p>A <code>list</code> holds multiple values in a specific order, inside square brackets:</p>
+<div class="code-example"><span class="kw">positions</span> = [<span class="str">"SS"</span>, <span class="str">"1B"</span>, <span class="str">"CF"</span>, <span class="str">"3B"</span>, <span class="str">"LF"</span>]
+<span class="fn">print</span>(<span class="kw">positions</span>)   <span class="cmt"># ['SS', '1B', 'CF', '3B', 'LF']</span>
+<span class="fn">print</span>(<span class="fn">len</span>(<span class="kw">positions</span>))  <span class="cmt"># 5</span></div>
+<p style="margin-top:0.5rem">Lists can hold any data type - strings, integers, floats, even other lists.</p>`
+    },
+    starterCode: `# Create a list named "roster" with 5 player last names
+# then print it
+
+roster = ["Rivera",
+`,
+    hint: `Continue the list: <code>roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]</code>`,
+    maxPoints: 2,
+    grader(pyodide, code, stdout, error) {
+      if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
+      const names = ['Rivera','Okafor','Chen','Williams','Torres'];
+      const hasAll = names.every(n => code.includes(`"${n}"`) || code.includes(`'${n}'`));
+      const hasList = /roster\s*=\s*\[/.test(code);
+      const hasPrint = stdout.includes('Rivera') && stdout.includes('Torres');
+      if (hasAll && hasList && hasPrint) return { pts: 2, level: 'pass', msg: `Correct. The list maintains insertion order - this is important. When you load a CSV with pandas, each column becomes a list-like structure. Knowing how to create and inspect lists is the first step to understanding that.` };
+      if (hasList && hasPrint) return { pts: 1, level: 'partial', msg: `List is printing, but double-check all five names are spelled correctly and in the right order.` };
+      return { pts: 0, level: 'fail', msg: `Create <code>roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]</code> and print it.` };
+    }
+  },
+  {
+    title: "Access a Specific Player",
+    tag: "Lists - Indexing",
+    desc: `"Who's batting third?" Jonah asks. Use indexing to get <strong>Chen's name</strong> from the roster and print it. Remember: Python counts from <strong>0</strong>, so the third item is at index 2.`,
+    info: {
+      label: "Concept: Indexing",
+      html: `<p>Access individual items using square brackets and an index number. <strong>Python starts counting at 0:</strong></p>
+<div class="code-example"><span class="kw">roster</span> = [<span class="str">"Rivera"</span>, <span class="str">"Okafor"</span>, <span class="str">"Chen"</span>, <span class="str">"Williams"</span>, <span class="str">"Torres"</span>]
+
+<span class="fn">print</span>(<span class="kw">roster</span>[<span class="num">0</span>])   <span class="cmt"># "Rivera"  (first item)</span>
+<span class="fn">print</span>(<span class="kw">roster</span>[<span class="num">1</span>])   <span class="cmt"># "Okafor"  (second item)</span>
+<span class="fn">print</span>(<span class="kw">roster</span>[<span class="num">-1</span>])  <span class="cmt"># "Torres"  (last item)</span></div>
+<p style="margin-top:0.5rem">Negative indices count from the end: <code>-1</code> is last, <code>-2</code> is second-to-last, etc.</p>`
+    },
+    starterCode: `roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]
+
+# Print the player at batting position 3 (index 2)
+print(roster[  ])`,
+    hint: `Chen is at index 2: <code>print(roster[2])</code>`,
+    maxPoints: 2,
+    grader(pyodide, code, stdout, error) {
+      if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
+      const usesIndex2 = /roster\[2\]/.test(code) || /roster\[-3\]/.test(code);
+      const printsChen = stdout.trim().includes('Chen');
+      if (usesIndex2 && printsChen) return { pts: 2, level: 'pass', msg: `Perfect. Index 2 for the third item is one of the most common "gotchas" for new programmers. Zero-based indexing is universal across Python and most other languages.` };
+      if (printsChen) return { pts: 1, level: 'partial', msg: `Chen printed correctly - but try to use proper bracket indexing: <code>roster[2]</code>.` };
+      return { pts: 0, level: 'fail', msg: `Python counts from 0. The third item (Chen) is at index 2: <code>roster[2]</code>.` };
+    }
+  },
+  {
+    title: "Get the Outfield (Slicing)",
+    tag: "Lists - Slicing",
+    desc: `The Eagles' outfielders are the last three players on the lineup: Williams, Torres, and the just-added <code>"Patel"</code>. First, add Patel to the roster using <code>append()</code>. Then use <strong>slicing</strong> to print only the last three players.`,
+    info: {
+      label: "Concept: Append & Slicing",
+      html: `<p><code>append()</code> adds an item to the end of a list. <strong>Slicing</strong> extracts a portion using <code>[start:end]</code> (end is not included):</p>
+<div class="code-example"><span class="kw">roster</span> = [<span class="str">"Rivera"</span>, <span class="str">"Okafor"</span>, <span class="str">"Chen"</span>]
+<span class="kw">roster</span>.<span class="fn">append</span>(<span class="str">"Williams"</span>)   <span class="cmt"># adds to end</span>
+
+<span class="cmt"># Slice: items at index 1 and 2 (stop before index 3)</span>
+<span class="fn">print</span>(<span class="kw">roster</span>[<span class="num">1</span>:<span class="num">3</span>])   <span class="cmt"># ['Okafor', 'Chen']</span>
+
+<span class="cmt"># Omit start or end to go to the edge</span>
+<span class="fn">print</span>(<span class="kw">roster</span>[<span class="num">2</span>:])    <span class="cmt"># ['Chen', 'Williams']</span>
+<span class="fn">print</span>(<span class="kw">roster</span>[:<span class="num">2</span>])    <span class="cmt"># ['Rivera', 'Okafor']</span></div>`
+    },
+    starterCode: `roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]
+
+# Add "Patel" to the roster
+roster.append(    )
+
+# Print the last three players using a slice
+print(roster[   ])`,
+    hint: `<code>roster.append("Patel")</code> then <code>roster[3:]</code> or <code>roster[-3:]</code> to get the last three.`,
+    maxPoints: 2,
+    grader(pyodide, code, stdout, error) {
+      if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
+      const hasAppend = /roster\.\s*append\s*\(\s*["']Patel["']\s*\)/.test(code);
+      const hasSlice = /roster\s*\[/.test(code) && (/\[3:\]/.test(code) || /\[-3:\]/.test(code) || /\[3:6\]/.test(code) || /\[-3:6\]/.test(code) || /\[3:None\]/.test(code));
+      const outOk = stdout.includes('Williams') && stdout.includes('Torres') && stdout.includes('Patel');
+      if (hasAppend && hasSlice && outOk) return { pts: 2, level: 'pass', msg: `Excellent. Slicing is one of Python's most powerful features. When you work with pandas DataFrames, you'll use similar logic to select rows and columns. The <code>[-3:]</code> pattern - "last N items" - shows up constantly in data work.` };
+      if (hasAppend && outOk) return { pts: 1, level: 'partial', msg: `append() works and output is right. Try using a proper slice like <code>roster[3:]</code> or <code>roster[-3:]</code> for the last three.` };
+      if (outOk) return { pts: 1, level: 'partial', msg: `Output looks correct. Make sure you used both <code>append()</code> to add Patel and a slice to get the last three.` };
+      return { pts: 0, level: 'fail', msg: `Use <code>roster.append("Patel")</code> to add Patel, then <code>roster[-3:]</code> to get the last three players.` };
+    }
+  },
+  {
+    title: "Count the Active Roster",
+    tag: "Lists - len()",
+    desc: `How many players are on the active roster? After appending Patel, the list has 6 players. Use <code>len()</code> to count and print the number. Then print a formatted sentence: <em>"The Eagles have X players on the active roster."</em>`,
+    info: {
+      label: "Concept: len() and String Formatting",
+      html: `<p><code>len()</code> returns the number of items in a list. To include a number in a string, convert it with <code>str()</code>:</p>
+<div class="code-example"><span class="kw">roster</span> = [<span class="str">"A"</span>, <span class="str">"B"</span>, <span class="str">"C"</span>]
+<span class="kw">count</span> = <span class="fn">len</span>(<span class="kw">roster</span>)   <span class="cmt"># 3</span>
+
+<span class="cmt"># Option 1: str() conversion</span>
+<span class="fn">print</span>(<span class="str">"Count: "</span> + <span class="fn">str</span>(<span class="kw">count</span>))
+
+<span class="cmt"># Option 2: comma in print (easier)</span>
+<span class="fn">print</span>(<span class="str">"Count:"</span>, <span class="kw">count</span>)</div>`
+    },
+    starterCode: `roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]
+roster.append("Patel")
+
+# Count the players and store it in a variable
+count =
+
+# Print: "The Eagles have X players on the active roster."
+print("The Eagles have", count, "players on the active roster.")`,
+    hint: `<code>count = len(roster)</code> gives you 6. The print statement above already uses commas to join the pieces.`,
+    maxPoints: 2,
+    grader(pyodide, code, stdout, error) {
+      if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
+      const hasLen = /len\s*\(\s*roster\s*\)/.test(code);
+      const hasCount = /count\s*=\s*len/.test(code) || /count\s*=\s*6/.test(code);
+      const hasSentence = stdout.includes('6') && stdout.toLowerCase().includes('eagles');
+      if (hasLen && hasCount && hasSentence) return { pts: 2, level: 'pass', msg: `Correct. <code>len()</code> is one of Python's most-used built-in functions. You'll call it constantly to check the size of datasets, validate that processing steps worked, and write conditional logic.` };
+      if (hasSentence) return { pts: 1, level: 'partial', msg: `Sentence looks right. Make sure you use <code>count = len(roster)</code> to store the count as a variable.` };
+      return { pts: 0, level: 'fail', msg: `Use <code>count = len(roster)</code> then include count in the printed sentence.` };
+    }
+  },
+  {
+    title: "Find the Cleanup Hitter",
+    tag: "Lists - index() and in",
+    desc: `"What position is Torres batting?" Use <code>.index()</code> to find Torres's position in the roster list (remember: 0-indexed). Then check if <code>"Rivera"</code> is in the list using the <code>in</code> keyword, and print both results.`,
+    info: {
+      label: "Concept: .index() and 'in'",
+      html: `<p>Two useful ways to search a list:</p>
+<div class="code-example"><span class="kw">roster</span> = [<span class="str">"Rivera"</span>, <span class="str">"Okafor"</span>, <span class="str">"Torres"</span>]
+
+<span class="cmt"># .index() returns the position of an item</span>
+<span class="fn">print</span>(<span class="kw">roster</span>.<span class="fn">index</span>(<span class="str">"Torres"</span>))   <span class="cmt"># 2</span>
+
+<span class="cmt"># "in" checks if an item is in the list (returns True/False)</span>
+<span class="fn">print</span>(<span class="str">"Rivera"</span> <span class="kw">in</span> <span class="kw">roster</span>)        <span class="cmt"># True</span>
+<span class="fn">print</span>(<span class="str">"Patel"</span> <span class="kw">in</span> <span class="kw">roster</span>)         <span class="cmt"># False</span></div>`
+    },
+    starterCode: `roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]
+
+# Find Torres's index position
+torres_pos = roster.index(     )
+print("Torres bats at position:", torres_pos + 1)  # +1 to convert to 1-based
+
+# Check if Rivera is in the roster
+print("Rivera on roster:", "Rivera"    roster)`,
+    hint: `<code>roster.index("Torres")</code> gives 4. For the second: <code>"Rivera" in roster</code>`,
+    maxPoints: 2,
+    grader(pyodide, code, stdout, error) {
+      if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
+      const hasIndex = /roster\.\s*index\s*\(\s*["']Torres["']\s*\)/.test(code);
+      const hasIn = /["']Rivera["']\s+in\s+roster/.test(code);
+      const hasFive = stdout.includes('5');
+      const hasTrue = stdout.includes('True');
+      if (hasIndex && hasIn && hasFive && hasTrue) return { pts: 2, level: 'pass', msg: `Perfect. The <code>in</code> keyword is especially useful - you'll use it constantly in real analysis: <em>"is this player on the injured list?"</em>, <em>"is this value in our known bad data list?"</em>. It returns a boolean, which plugs directly into if statements.` };
+      if (hasIndex && hasIn) return { pts: 1, level: 'partial', msg: `Both methods are right. Check that your output shows Torres at position 5 (index 4 + 1) and Rivera as True.` };
+      if (hasIndex || hasIn) return { pts: 1, level: 'partial', msg: `Good start. Make sure you use both <code>roster.index("Torres")</code> and <code>"Rivera" in roster</code>.` };
+      return { pts: 0, level: 'fail', msg: `Use <code>roster.index("Torres")</code> and <code>"Rivera" in roster</code>. Add the missing word <code>in</code> in the second print.` };
+    }
+  }
+];
+
+let pyodideInstance = null;
+let currentChallenge = 0;
+let scores = new Array(challenges.length).fill(null);
+let completed = false;
+
+
+// ===== FRIENDLY ERROR TRANSLATOR =====
+function friendlyError(raw) {
+  if (!raw) return raw;
+  const r = raw;
+
+  // SyntaxError: EOL while scanning string literal
+  if (/EOL while scanning string literal|unterminated string/i.test(r))
+    return `Syntax error: You opened a quote but didn't close it.\nExample fix: player_name = "Marcus Rivera"  (needs a closing quote)`;
+
+  // SyntaxError: invalid syntax - likely missing value after =
+  if (/SyntaxError.*invalid syntax/i.test(r)) {
+    if (/line \d+/.test(r)) {
+      const line = r.match(/line (\d+)/)?.[1];
+      return `Syntax error on line ${line}: Python can't read this line.\nCommon causes: missing value after =, unclosed bracket, or a typo.`;
+    }
+    return `Syntax error: Python can't read your code. Check for missing values, unclosed quotes or brackets, or typos.`;
+  }
+
+  // NameError
+  if (/NameError.*name '(\w+)' is not defined/i.test(r)) {
+    const name = r.match(/name '(\w+)' is not defined/i)?.[1];
+    return `Name error: Python doesn't recognize "${name}".\nDid you mean to put quotes around it (to make it a string)?\nOr did you forget to assign it first?  Example: ${name} = "some value"`;
+  }
+
+  // TypeError
+  if (/TypeError.*can only concatenate str.*not/i.test(r))
+    return `Type error: You tried to join a string and a number with +.\nTip: Use a comma instead: print("Value:", my_number)\nOr convert the number: print("Value: " + str(my_number))`;
+  if (/TypeError/i.test(r))
+    return `Type error: You used a value in a way Python didn't expect.\nCheck that you're using the right type (string vs number vs True/False).`;
+
+  // IndentationError
+  if (/IndentationError/i.test(r))
+    return `Indentation error: A line is indented when it shouldn't be, or it's missing indentation.\nIn Python, the body of a loop or if-statement must be indented with 4 spaces.`;
+
+  // ValueError
+  if (/ValueError/i.test(r))
+    return `Value error: A value was the wrong kind for what you were trying to do.\n` + r.split('\n').slice(-2).join(' ');
+
+  // AttributeError
+  if (/AttributeError/i.test(r)) {
+    const attr = r.match(/has no attribute '(\w+)'/i)?.[1];
+    return attr
+      ? `Attribute error: The value you have doesn't support ".${attr}".\nCheck that you're calling this method on the right type of variable.`
+      : `Attribute error: ` + r.split('\n').slice(-1)[0];
+  }
+
+  // Generic - show just the last meaningful line, not the full traceback
+  const lines = r.split('\n').filter(l => l.trim());
+  const lastLine = lines[lines.length - 1] || r;
+  return lastLine;
+}
+
+async function initPyodide() {
+  document.getElementById('loadingText').textContent = 'Loading Python environment... (first load takes ~10s)';
+  try {
+    pyodideInstance = await loadPyodide();
+    setTimeout(showApp, 400);
+  } catch(e) {
+    document.getElementById('loadingText').textContent = 'Failed to load Python. Check your internet connection and refresh.';
+  }
+}
+
+function showApp() {
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'flex';
+  renderChallenge(currentChallenge);
+}
+
+function renderChallenge(idx) {
+  const c = challenges[idx];
+  document.getElementById('challengeNum').textContent = idx + 1;
+  updateDots(idx);
+
+  document.getElementById('challengeArea').innerHTML = `
+    <div class="challenge-card">
+      <div class="challenge-header">
+        <div class="challenge-tag">${c.tag}</div>
+        <div class="challenge-title">${c.title}</div>
+        <div class="challenge-desc">${c.desc}</div>
+      </div>
+      <div class="info-box" style="margin-top:1.25rem">
+        <div class="info-box-label">${c.info.label}</div>
+        ${c.info.html}
+      </div>
+      <div class="editor-wrap" style="margin-top:1.25rem">
+        <div class="editor-label">Your Code <span>Tab key inserts 4 spaces</span></div>
+        <textarea class="code-editor" id="codeEditor" spellcheck="false">${c.starterCode}</textarea>
+        <div class="editor-actions">
+          <button class="btn-run" id="btnRun" onclick="runCode(${idx})">&#9654; Run Code</button>
+          <button class="btn-hint" onclick="toggleHint()">Hint</button>
+          <button class="btn-next" id="btnNext" onclick="nextChallenge()" style="display:none">
+            ${idx < challenges.length - 1 ? 'Next Challenge &rarr;' : 'See Results &rarr;'}
+          </button>
+        </div>
+      </div>
+      <div class="hint-box" id="hintBox">
+        <div class="hint-label">Hint</div>
+        <div class="hint-text">${c.hint}</div>
+      </div>
+      <div class="output-wrap" style="margin-top:1rem">
+        <div class="output-label">Output</div>
+        <div class="output-box" id="outputBox">Ready. Press "Run Code" to execute.</div>
+      </div>
+      <div class="feedback-box" id="feedbackBox">
+        <div class="feedback-verdict" id="feedbackVerdict"></div>
+        <div class="feedback-text" id="feedbackText"></div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('codeEditor').addEventListener('keydown', function(e) {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const s = this.selectionStart;
+      this.value = this.value.substring(0, s) + '    ' + this.value.substring(this.selectionEnd);
+      this.selectionStart = this.selectionEnd = s + 4;
+    }
+  });
+
+  if (scores[idx] !== null) {
+    const prev = scores[idx];
+    showFeedback(prev.level, prev.verdict, prev.msg);
+    document.getElementById('btnNext').style.display = 'inline-flex';
+  }
+}
+
+function updateDots(active) {
+  for (let i = 0; i < challenges.length; i++) {
+    const dot = document.getElementById('dot' + i);
+    if (i < active)        dot.className = 'step-dot done';
+    else if (i === active) dot.className = 'step-dot active';
+    else                   dot.className = 'step-dot';
+  }
+}
+
+async function runCode(idx) {
+  const code = document.getElementById('codeEditor').value;
+  const outBox = document.getElementById('outputBox');
+  const btnRun = document.getElementById('btnRun');
+  btnRun.disabled = true; btnRun.textContent = 'Running...';
+  outBox.className = 'output-box'; outBox.textContent = '';
+  let stdout = '', errorMsg = '';
+  try {
+    pyodideInstance.setStdout({ batched: t => { stdout += t + '\n'; } });
+    pyodideInstance.setStderr({ batched: t => { errorMsg += t + '\n'; } });
+    await pyodideInstance.runPythonAsync(code);
+  } catch(e) { errorMsg = e.message || String(e); }
+  btnRun.disabled = false; btnRun.textContent = '▶ Run Code';
+  if (errorMsg) { outBox.className = 'output-box error'; outBox.textContent = friendlyError(errorMsg); }
+  else if (stdout) { outBox.textContent = stdout; }
+  else { outBox.textContent = '(no output)'; }
+
+  const c = challenges[idx];
+  const result = c.grader(pyodideInstance, code, stdout, errorMsg || null);
+  scores[idx] = { pts: result.pts, level: result.level, msg: result.msg, verdict: result.level === 'pass' ? 'Correct' : result.level === 'partial' ? 'Partially Correct' : 'Not Quite', title: c.title, max: c.maxPoints };
+  showFeedback(result.level, scores[idx].verdict, result.msg);
+  updateScore();
+  document.getElementById('btnNext').style.display = 'inline-flex';
+  saveProgress();
+}
+
+function showFeedback(level, verdict, msg) {
+  const box = document.getElementById('feedbackBox');
+  box.className = 'feedback-box show ' + level;
+  document.getElementById('feedbackVerdict').textContent = verdict;
+  document.getElementById('feedbackText').innerHTML = msg;
+}
+
+function toggleHint() { document.getElementById('hintBox').classList.toggle('show'); }
+
+function updateScore() {
+  const total = scores.reduce((s, x) => s + (x ? x.pts : 0), 0);
+  document.getElementById('scoreDisplay').textContent = total + ' / 10 pts';
+}
+
+function nextChallenge() {
+  if (currentChallenge < challenges.length - 1) {
+    currentChallenge++;
+    renderChallenge(currentChallenge);
+    window.scrollTo(0, 0);
+  } else { showDebrief(); }
+}
+
+function showDebrief() {
+  document.getElementById('challengeArea').style.display = 'none';
+  document.getElementById('debriefScreen').style.display = 'flex';
+  const totalPts = scores.reduce((s, x) => s + (x ? x.pts : 0), 0);
+  const pct = Math.round((totalPts / 10) * 100);
+  document.getElementById('debriefScoreNum').textContent = totalPts;
+  let title, verdict, conceptMsg;
+  if (pct === 100) {
+    title = 'Full Marks - Roster Mastered';
+    verdict = '"You nailed it," Jonah says. "Lists are everywhere in data science. You just cleared the biggest conceptual hurdle."';
+    conceptMsg = '<strong>What you mastered:</strong> Python lists store ordered, mutable data. The key skills - creating, indexing (0-based!), slicing, append, len, and in - are used every single day in real data analysis and form the foundation of how pandas handles data columns.';
+  } else if (pct >= 70) {
+    title = 'Solid Progress';
+    verdict = '"Good work," Jonah says. "Go back and review the challenges you missed - especially indexing."';
+    conceptMsg = '<strong>Review focus:</strong> The trickiest part is usually 0-based indexing. Item 1 is at index 0, item 3 is at index 2. Slicing with <code>[start:end]</code> stops <em>before</em> the end index. These rules are consistent across all of Python.';
+  } else {
+    title = 'Keep Going';
+    verdict = '"Lists take a little practice," Jonah says. "Run through the challenges again. It\'s worth it."';
+    conceptMsg = '<strong>Core idea:</strong> A list is an ordered container: <code>items = ["a", "b", "c"]</code>. Access items by index: <code>items[0]</code> is "a". Get the count: <code>len(items)</code>. Add to the end: <code>items.append("d")</code>. Search: <code>"a" in items</code>.';
+  }
+  document.getElementById('debriefTitle').textContent = title;
+  document.getElementById('debriefVerdict').textContent = verdict;
+  document.getElementById('debriefConcept').innerHTML = conceptMsg;
+  document.getElementById('breakdownRows').innerHTML = scores.map((s, i) => {
+    const pts = s ? s.pts : 0; const max = challenges[i].maxPoints;
+    const notPerfect = pts < max;
+    return `<div class="breakdown-row ${notPerfect ? 'breakdown-row-link' : ''}" ${notPerfect ? `onclick="revisitChallenge(${i})" title="Click to fix this challenge"` : ''}>
+      <span>${challenges[i].title}</span>
+      <span style="display:flex;align-items:center;gap:8px">
+        ${notPerfect ? '<span class="revisit-hint">fix &rarr;</span>' : ''}
+        <span class="breakdown-pts ${pts===max?'pts-full':pts>0?'pts-part':'pts-none'}">${pts} / ${max}</span>
+      </span>
+    </div>`
+  }).join('');
+  completed = true;
+  saveProgress();
+  window.scrollTo(0, 0);
+}
+
+
+// ===== REVISIT FROM DEBRIEF =====
+function revisitChallenge(idx) {
+  document.getElementById('debriefScreen').style.display = 'none';
+  const area = document.getElementById('challengeArea');
+  area.style.display = 'flex';
+  currentChallenge = idx;
+  renderChallenge(idx);
+  const backBar = document.createElement('div');
+  backBar.id = 'backToResultsBar';
+  backBar.style.cssText = 'display:flex;justify-content:flex-end;';
+  backBar.innerHTML = `<button onclick="showDebrief()" style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;background:transparent;color:var(--text-muted);border:1px solid var(--border);border-radius:4px;padding:7px 14px;cursor:pointer;" onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--gray)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border)'">&larr; Back to Results</button>`;
+  area.insertBefore(backBar, area.firstChild);
+  window.scrollTo(0, 0);
+}
+
+function saveProgress() {
+  try {
+    const p = JSON.parse(localStorage.getItem('pft_progress') || '{}');
+    p.mod2 = { status: completed ? 'completed' : (scores.some(s => s !== null) ? 'in_progress' : 'open'), score: scores.reduce((s,x)=>s+(x?x.pts:0),0), scores };
+    localStorage.setItem('pft_progress', JSON.stringify(p));
+  } catch(e) {}
+}
+
+function loadProgress() {
+  try {
+    const p = JSON.parse(localStorage.getItem('pft_progress') || '{}');
+    if (p.mod2 && p.mod2.scores) {
+      scores = p.mod2.scores;
+      completed = p.mod2.status === 'completed';
+      const firstUnanswered = scores.findIndex(s => s === null);
+      currentChallenge = firstUnanswered === -1 ? challenges.length - 1 : firstUnanswered;
+      updateScore();
+      if (completed) { showApp(); showDebrief(); return; }
+    }
+  } catch(e) {}
+}
+
+loadProgress();
+initPyodide();
+</script>
+<footer style="max-width:900px;width:100%;margin:20px auto 0;padding:0 0 24px;text-align:center;font-size:12px;color:#646469;font-family:'IBM Plex Mono',monospace;">
+    This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.<br>&copy; Eastern University. All rights reserved.
+</footer>
+</body>
+</html>

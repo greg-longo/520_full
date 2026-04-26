@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DTSC 520 - Introduction to Data Science</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --maroon: #8B1C40;
+      --maroon-light: #a82050;
+      --blue: #2A7195;
+      --blue-light: #3388b0;
+      --gray: #646469;
+      --gray-light: #9a9aa0;
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --bg-card2: #211f1d;
+      --text: #e8e4de;
+      --text-dim: #a09a92;
+      --border: #2e2b28;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Zilla Slab', serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ---- NAV ---- */
+    nav {
+      background: var(--maroon);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .nav-logo {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-logo img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: 0.92;
+    }
+
+    .nav-title {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.25rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.875rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+    }
+
+    /* ---- HERO ---- */
+    .hero {
+      background: linear-gradient(135deg, #1a1815 0%, #12100f 60%, #0f0d0c 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--maroon), var(--blue), var(--maroon));
+    }
+
+    .hero-tag {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--blue-light);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    .hero h1 span {
+      color: var(--maroon-light);
+    }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--text-dim);
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.6;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 2rem;
+      font-weight: 500;
+      color: var(--maroon-light);
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+
+    /* ---- MAIN LAYOUT ---- */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3.5rem 2rem 4rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .section-header .section-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ---- MODULE GRID ---- */
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 4rem;
+    }
+
+    .module-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      border-top: 3px solid var(--gray);
+      padding: 1.5rem;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: border-color 0.15s, background 0.15s, transform 0.15s;
+      cursor: pointer;
+    }
+
+    .module-card:hover {
+      background: var(--bg-card2);
+      transform: translateY(-2px);
+    }
+
+    .module-card.mod0 { border-top-color: var(--gray); }
+    .module-card.mod1 { border-top-color: var(--blue); }
+    .module-card.mod2 { border-top-color: #7a5fb5; }
+    .module-card.mod3 { border-top-color: #4a9e6b; }
+    .module-card.mod4 { border-top-color: #c07b30; }
+    .module-card.mod5 { border-top-color: #3a8fa0; }
+    .module-card.mod6 { border-top-color: var(--maroon); }
+
+    .module-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .module-card h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .module-desc {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .module-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .module-tags {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+
+    .module-progress {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    .module-progress.done {
+      color: #4a9e6b;
+    }
+
+    /* ---- SIMS SECTION ---- */
+    .sims-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 4rem;
+    }
+
+    .sim-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: background 0.15s, transform 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sim-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent, var(--maroon));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.2s;
+    }
+
+    .sim-card:hover::after { transform: scaleX(1); }
+    .sim-card:hover { background: var(--bg-card2); transform: translateY(-2px); }
+
+    .sim-card.locked {
+      opacity: 0.45;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .sim-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sim-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .sim-badge.available { background: rgba(42,113,149,0.2); color: var(--blue-light); }
+    .sim-badge.coming { background: rgba(100,100,105,0.2); color: var(--gray-light); }
+    .sim-badge.score { background: rgba(74,158,107,0.2); color: #6bc98a; }
+
+    .sim-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .sim-desc {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .sim-module-tag {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+    }
+
+    /* ---- ABOUT STRIP ---- */
+    .about-strip {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      border-left: 4px solid var(--blue);
+      padding: 1.75rem 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .about-strip h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #fff;
+    }
+
+    .about-strip p {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+    }
+
+    .about-strip ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .about-strip ul li {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      padding-left: 1rem;
+      position: relative;
+      line-height: 1.4;
+    }
+
+    .about-strip ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--blue-light);
+      font-size: 0.75rem;
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 2rem; }
+      .nav-links { display: none; }
+      .about-strip { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-brand" href="index.html">
+      <div class="nav-logo"><img src="assets/eastern_shield.png" alt="Eastern University" /></div>
+      <span class="nav-title">DTSC 520</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#modules">Modules</a></li>
+      <li><a href="#sims">Simulations</a></li>
+      <li><a href="modules/module2/index.html">Python</a></li>
+      <li><a href="modules/module6/index.html">Git &amp; GitHub</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">Eastern University &nbsp;|&nbsp; School of Mathematics and Computational Sciences</div>
+    <h1>Introduction to<br /><span>Data Science</span></h1>
+    <p class="hero-sub">
+      A hands-on graduate course covering the full data science stack - from critical thinking and version control to Python, pandas, and real-world analytics.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">7</div>
+        <div class="hero-stat-label">Modules</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" id="simCount">2</div>
+        <div class="hero-stat-label">Simulations</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" id="quizCount">7</div>
+        <div class="hero-stat-label">Quizzes</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" id="progressPct">--</div>
+        <div class="hero-stat-label">Your Progress</div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- MODULES -->
+    <section id="modules">
+      <div class="section-header">
+        <h2>Course Modules</h2>
+        <span class="section-tag">7 modules</span>
+      </div>
+      <div class="module-grid">
+
+        <a class="module-card mod0" href="modules/module0/index.html">
+          <div class="module-num">Module 00</div>
+          <h3>Course Introduction</h3>
+          <p class="module-desc">Get oriented: syllabus, course resources, and inspiring examples of data science in action across sports, healthcare, and tech.</p>
+          <div class="module-footer">
+            <div class="module-tags">
+              <span class="tag">Syllabus</span>
+              <span class="tag">Resources</span>
+            </div>
+            <span class="module-progress" id="m0progress">-</span>
+          </div>
+        </a>
+
+        <a class="module-card mod1" href="modules/module1/index.html">
+          <div class="module-num">Module 01</div>
+          <h3>Introduction to Data Science &amp; Analytics</h3>
+          <p class="module-desc">What is data science? Explore careers, company types, key tools, the DS process, and why Python is the language of choice. Plus: critical thinking, pseudocode, and environment setup.</p>
+          <div class="module-footer">
+            <div class="module-tags">
+              <span class="tag">DS Process</span>
+              <span class="tag">Careers</span>
+              <span class="tag">Python</span>
+              <span class="tag">Pseudocode</span>
+            </div>
+            <span class="module-progress" id="m1progress">-</span>
+          </div>
+        </a>
+
+        <a class="module-card mod2" href="modules/module2/index.html">
+          <div class="module-num">Module 02</div>
+          <h3>Introduction to Python</h3>
+          <p class="module-desc">Learn Python from the ground up: variables, data types, strings, conditions, loops, data structures, and functions. Hands-on exercises throughout.</p>
+          <div class="module-footer">
+            <div class="module-tags">
+              <span class="tag">Variables</span>
+              <span class="tag">Loops</span>
+              <span class="tag">Functions</span>
+              <span class="tag">Data Structures</span>
+            </div>
+            <span class="module-progress" id="m2progress">-</span>
+          </div>
+        </a>
+
+        <a class="module-card mod3" href="modules/module3/index.html">
+          <div class="module-num">Module 03</div>
+          <h3>NumPy</h3>
+          <p class="module-desc">High-performance array computing. Learn vectorization, indexing, boolean masks, statistical methods, and why NumPy underpins nearly every data science library.</p>
+          <div class="module-footer">
+            <div class="module-tags">
+              <span class="tag">Arrays</span>
+              <span class="tag">Vectorization</span>
+              <span class="tag">Statistics</span>
+            </div>
+            <span class="module-progress" id="m3progress">-</span>
+          </div>
+        </a>
+
+        <a class="module-card mod4" href="modules/module4/index.html">
+          <div class="module-num">Module 04</div>
+          <h3>Pandas</h3>
+          <p class="module-desc">Tabular data manipulation with Series and DataFrames. Selection, filtering, cleaning, aggregation, and the essential functionality for real-world datasets.</p>
+          <div class="module-footer">
+            <div class="module-tags">
+              <span class="tag">DataFrame</span>
+              <span class="tag">Series</span>
+              <span class="tag">Data Cleaning</span>
+            </div>
+            <span class="module-progress" id="m4progress">-</span>
+          </div>
+        </a>
+
+        <a class="module-card mod5" href="modules/module5/index.html">
+          <div class="module-num">Module 05</div>
+          <h3>Matplotlib &amp; Seaborn</h3>
+          <p class="module-desc">Turn data into insight. Build charts that communicate clearly using Matplotlib and Seaborn - from basic line plots to heatmaps and distribution charts.</p>
+          <div class="module-footer">
+            <div class="module-tags">
+              <span class="tag">Matplotlib</span>
+              <span class="tag">Seaborn</span>
+              <span class="tag">Visualization</span>
+            </div>
+            <span class="module-progress" id="m5progress">-</span>
+          </div>
+        </a>
+
+        <a class="module-card mod6" href="modules/module6/index.html">
+          <div class="module-num">Module 06</div>
+          <h3>Git &amp; GitHub</h3>
+          <p class="module-desc">Master version control. Learn to branch, merge, resolve conflicts, and collaborate using GitHub - the professional workflow every data scientist needs.</p>
+          <div class="module-footer">
+            <div class="module-tags">
+              <span class="tag">Git</span>
+              <span class="tag">Branching</span>
+              <span class="tag">Pull Requests</span>
+            </div>
+            <span class="module-progress" id="m6progress">-</span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- SIMULATIONS -->
+    <section id="sims">
+      <div class="section-header">
+        <h2>Simulations</h2>
+        <span class="section-tag">Hands-on project stories</span>
+      </div>
+      <div class="sims-grid">
+
+        <a class="sim-card" href="sims/dirty_dataset_sim.html" style="--accent: #c07b30;">
+          <div class="sim-status">
+            <span class="sim-badge available">Available</span>
+          </div>
+          <h3>The Dirty Dataset</h3>
+          <p class="sim-desc">You're a junior analyst at StatDeck Analytics. Clean a messy player salary dataset before the Eagles' front office meeting.</p>
+          <div class="sim-module-tag">Module 04 - pandas / data cleaning</div>
+        </a>
+
+        <a class="sim-card" href="sims/python_sim/index.html" style="--accent: var(--blue);">
+          <div class="sim-status">
+            <span class="sim-badge available">Available</span>
+          </div>
+          <h3>Python Field Training</h3>
+          <p class="sim-desc">Run real Python in the browser. Work through variables, lists, and loops while scouting players for the St. Davids Eagles.</p>
+          <div class="sim-module-tag">Module 02 - Python fundamentals</div>
+        </a>
+
+        <a class="sim-card" href="modules/module6/branch_crisis_sim.html" style="--accent: var(--maroon);">
+          <div class="sim-status">
+            <span class="sim-badge available">Available</span>
+          </div>
+          <h3>The Branch Crisis</h3>
+          <p class="sim-desc">A bad merge just hit the StatDeck repo. Work through branching, conflicts, and pull requests to get the pipeline back online.</p>
+          <div class="sim-module-tag">Module 06 - Git &amp; GitHub</div>
+        </a>
+
+        <a class="sim-card" href="sims/debug-pipeline/index.html" style="--accent: #c07b30;">
+          <div class="sim-status">
+            <span class="sim-badge live">Play Now</span>
+          </div>
+          <h3>Debug the Pipeline</h3>
+          <p class="sim-desc">It's 6:47 AM and the Eagles' stat report failed overnight. Track down five bugs hiding in a pandas/NumPy pipeline before first pitch.</p>
+          <div class="sim-module-tag">Module 04 - pandas / NumPy</div>
+        </a>
+
+        <div class="sim-card locked" style="--accent: var(--gray);">
+          <div class="sim-status">
+            <span class="sim-badge coming">Coming Soon</span>
+          </div>
+          <h3>Pitch the Viz</h3>
+          <p class="sim-desc">Choose the right chart for the data. Make the case to the front office with a visualization that actually lands.</p>
+          <div class="sim-module-tag">Module 05 - Visualization</div>
+        </div>
+
+        <div class="sim-card locked" style="--accent: var(--gray);">
+          <div class="sim-status">
+            <span class="sim-badge coming">Coming Soon</span>
+          </div>
+          <h3>The Data Science Process</h3>
+          <p class="sim-desc">Walk the full DS lifecycle on a real-world case - from business question to model to recommendation.</p>
+          <div class="sim-module-tag">Module 01 - DS Process</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section>
+      <div class="about-strip">
+        <div>
+          <h3>About This Course</h3>
+          <p>
+            DTSC 520 is an introductory graduate course in data science at Eastern University. No prior programming experience is assumed. By the end of the semester you'll be able to wrangle real datasets, write Python programs, use version control professionally, and communicate findings to a non-technical audience.
+          </p>
+        </div>
+        <div>
+          <h3>What You'll Build</h3>
+          <ul>
+            <li>A personal GitHub portfolio with at least 3 data projects</li>
+            <li>Data cleaning and analysis scripts in Python and pandas</li>
+            <li>Visualizations that tell a clear story from messy data</li>
+            <li>A final capstone analysis presented to the class</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.<br>&copy; Eastern University. All rights reserved.
+  </footer>
+
+  <script>
+    // Read progress from localStorage and update hero + card indicators
+    function loadProgress() {
+      // Python sim progress
+      const pft = JSON.parse(localStorage.getItem('pft_progress') || '{}');
+      const pftDone = ['mod1','mod2','mod3','finale'].filter(k => pft[k]?.status === 'done').length;
+
+      // Module quiz progress (key: dtsc520_quiz_mN)
+      const quizDone = [0,1,2,3,4,5,6].filter(n => {
+        const q = JSON.parse(localStorage.getItem('dtsc520_quiz_m'+n) || '{}');
+        return q.completed === true;
+      }).length;
+
+      // Update module progress indicators
+      [0,1,2,3,4,5,6].forEach(n => {
+        const el = document.getElementById('m'+n+'progress');
+        if (!el) return;
+        const q = JSON.parse(localStorage.getItem('dtsc520_quiz_m'+n) || '{}');
+        if (q.completed) {
+          el.textContent = 'Quiz: ' + q.score + '%';
+          el.classList.add('done');
+        }
+      });
+
+      // Overall progress percentage (quizzes 0-6 + pft modules out of 11 total checkpoints)
+      const total = quizDone + pftDone;
+      const pct = Math.round((total / 11) * 100);
+      const el = document.getElementById('progressPct');
+      if (el) el.textContent = total > 0 ? pct + '%' : '--';
+    }
+
+    loadProgress();
+  </script>
+
+
+<a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
+<style>
+  #back-to-top {
+    position: fixed; top: 64px; left: 1rem; z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+    width: 2.1rem; height: 2.1rem;
+    background: rgba(20,18,16,0.85); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px; color: rgba(255,255,255,0.55);
+    font-size: 1.25rem; line-height: 1; text-decoration: none;
+    backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s, color 0.15s, border-color 0.15s;
+  }
+  #back-to-top.visible { opacity: 1; pointer-events: auto; }
+  #back-to-top:hover { color: #fff; border-color: rgba(255,255,255,0.35); }
+</style>
+<script>
+(function(){
+  var btn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function(){
+    btn.classList.toggle('visible', window.scrollY > 300);
+  }, {passive: true});
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+})();
+</script>
+</body>
+</html>

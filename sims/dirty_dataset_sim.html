@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Dirty Dataset - DTSC 520 Simulation</title>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── Eastern University brand palette ── */
+  :root {
+    --maroon:   #8B1C40;   /* Pantone 208C - primary */
+    --maroon-d: #6a1530;   /* darker maroon for hover states */
+    --maroon-l: rgba(139,28,64,0.12);
+    --blue:     #2A7195;   /* Eastern blue */
+    --blue-d:   #1f5570;
+    --blue-l:   rgba(42,113,149,0.12);
+    --gray:     #646469;   /* Cool Gray 10C */
+    --plum:     #562F41;
+    --sea:      #5E969C;
+    --autumn:   #913C4B;
+    --sunset:   #B05F45;
+
+    /* UI surfaces - warm-toned dark, distinct from the cool blue-black of flagged_for_review */
+    --bg:       #12100f;
+    --surface:  #1c1917;
+    --surface2: #252220;
+    --border:   #3a3530;
+    --border-l: #2a2520;
+
+    /* Semantic colors */
+    --green:    #3a9e6e;
+    --yellow:   #c4892a;
+    --red:      #b84455;
+
+    --text:     #ede8e3;
+    --text-dim: #c8c0b8;
+    --muted:    #8a837a;
+
+    --font:  'Zilla Slab', Georgia, serif;
+    --mono:  'IBM Plex Mono', 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 17px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  /* ══════════════════════════════════════════
+     LAYOUT - top banner + centered content
+     (no left sidebar during landing;
+      sticky top bar during simulation)
+  ══════════════════════════════════════════ */
+
+  /* Top status bar - hidden on landing, shown during sim */
+  #statusbar {
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--maroon);
+    border-bottom: 3px solid var(--maroon-d);
+    padding: 0 24px;
+  }
+  #statusbar.visible { display: block; }
+
+  .sb-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    height: 52px;
+  }
+  .sb-brand {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    display: flex;
+    align-items: center;
+    padding-right: 20px;
+    border-right: 1px solid rgba(255,255,255,0.2);
+    white-space: nowrap;
+  }
+  .sb-metrics {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+    overflow-x: auto;
+  }
+  .sb-metric {
+    display: flex;
+    flex-direction: column;
+    padding: 0 18px;
+    border-right: 1px solid rgba(255,255,255,0.15);
+    min-width: 90px;
+  }
+  .sb-metric-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .sb-metric-val {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    line-height: 1;
+  }
+  .sb-metric-val.good { color: #7ee8b0; }
+  .sb-metric-val.warn { color: #f5c76a; }
+  .sb-metric-val.bad  { color: #f08090; }
+  .sb-stage {
+    margin-left: auto;
+    padding-left: 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  /* Progress bar - full width below statusbar */
+  #progressbar {
+    display: none;
+    height: 4px;
+    background: var(--border);
+    position: sticky;
+    top: 52px;
+    z-index: 99;
+  }
+  #progressbar.visible { display: block; }
+  #progressfill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--maroon), var(--blue));
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  /* Decision steps strip */
+  #stepstrip {
+    display: none;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 56px;
+    z-index: 98;
+  }
+  #stepstrip.visible { display: block; }
+  .ss-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 0;
+    height: 36px;
+    overflow-x: auto;
+  }
+  .ss-step {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    padding: 0 14px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    border-right: 1px solid var(--border-l);
+  }
+  .ss-step:first-child { padding-left: 0; }
+  .ss-step.done   { color: var(--green); }
+  .ss-step.active { color: var(--text); font-weight: 500; }
+  .ss-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+  .ss-dot.done   { background: var(--green); }
+  .ss-dot.active { background: var(--blue); }
+
+  /* Main content area */
+  #main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* Sidebar is repurposed - no longer used as a column. Kept for JS compat. */
+  #sidebar { display: none !important; }
+
+  /* ══════════════════════════════════════════
+     LANDING PAGE
+  ══════════════════════════════════════════ */
+  .landing-masthead {
+    background: var(--maroon);
+    margin: -48px -24px 0;
+    padding: 48px 40px 44px;
+    position: relative;
+    overflow: hidden;
+  }
+  .landing-masthead::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--maroon-d), var(--blue));
+  }
+  .landing-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 16px;
+  }
+  .landing-title {
+    font-family: var(--font);
+    font-size: 48px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .landing-subtitle {
+    font-size: 18px;
+    color: rgba(255,255,255,0.72);
+    font-style: italic;
+    margin-bottom: 28px;
+  }
+  .landing-badge-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .landing-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 3px;
+    padding: 5px 12px;
+    color: rgba(255,255,255,0.8);
+    letter-spacing: 0.5px;
+  }
+
+  .landing-body { padding-top: 36px; }
+  .landing-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--blue);
+    border-radius: 4px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+  .landing-section h2 {
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+  .landing-section p { color: var(--text-dim); font-size: 16px; line-height: 1.75; margin-bottom: 12px; }
+  .landing-section p:last-child { margin-bottom: 0; }
+  .objectives-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+  .objective-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--maroon);
+    border-radius: 3px;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+  .objective-card strong { color: var(--text); display: block; margin-bottom: 4px; font-size: 14px; }
+
+  .landing-start-btn {
+    background: var(--maroon);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 16px 44px;
+    font-family: var(--font);
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    margin: 8px auto 0;
+    display: block;
+    width: fit-content;
+    letter-spacing: 0.3px;
+  }
+  .landing-start-btn:hover { background: var(--maroon-d); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139,28,64,0.35); }
+
+  /* ══════════════════════════════════════════
+     SCENE / NARRATIVE
+  ══════════════════════════════════════════ */
+  .screen-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .screen-title {
+    font-family: var(--font);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .screen-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .scene { margin-bottom: 28px; }
+  .timestamp {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--sea);
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .timestamp::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--sea);
+  }
+  .scene p { margin-bottom: 14px; color: var(--text-dim); }
+  .scene p:last-child { margin-bottom: 0; }
+
+  /* ══════════════════════════════════════════
+     ARTIFACTS (email, slack, notebook)
+  ══════════════════════════════════════════ */
+  .artifact {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .artifact-header {
+    background: var(--surface2);
+    padding: 9px 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.3px;
+  }
+  .artifact-icon { font-size: 13px; }
+  .artifact-body { padding: 18px 20px; font-size: 14.5px; color: var(--text-dim); line-height: 1.7; }
+  .artifact-body .sender { font-family: var(--mono); font-size: 11px; color: var(--blue); margin-bottom: 10px; letter-spacing: 0.3px; }
+  .artifact-body p { margin-bottom: 10px; }
+  .artifact-body p:last-child { margin-bottom: 0; }
+
+  /* ══════════════════════════════════════════
+     DATA TABLE
+  ══════════════════════════════════════════ */
+  .data-table-wrap { overflow-x: auto; margin-bottom: 28px; }
+  .table-caption {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .table-caption::before { content:''; display:inline-block; width:12px; height:1px; background:var(--muted); }
+  .data-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12.5px; }
+  .data-table th { background: var(--surface2); color: var(--muted); padding: 8px 12px; text-align: left; border-bottom: 2px solid var(--maroon); white-space: nowrap; font-weight: 500; letter-spacing: 0.3px; }
+  .data-table td { padding: 7px 12px; border-bottom: 1px solid var(--border-l); color: var(--text); white-space: nowrap; }
+  .data-table tr:hover td { background: var(--surface2); }
+  .data-table .bad-val  { color: #f08090; font-weight: bold; }
+  .data-table .warn-val { color: #f5c76a; }
+  .data-table .null-val { color: #4a4540; font-style: italic; }
+  .data-table .good-val { color: var(--green); }
+  .table-note { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 8px; background: var(--surface2); border-left: 3px solid var(--yellow); padding: 8px 12px; border-radius: 0 3px 3px 0; }
+
+  /* ══════════════════════════════════════════
+     CODE BLOCKS
+  ══════════════════════════════════════════ */
+  .code-block {
+    background: #0c0a09;
+    border: 1px solid #2a2520;
+    border-left: 3px solid var(--blue);
+    border-radius: 0 4px 4px 0;
+    padding: 16px 18px;
+    margin: 14px 0 0;
+    overflow-x: auto;
+  }
+  .code-block pre { font-family: var(--mono); font-size: 13px; color: #d8d0c8; line-height: 1.7; white-space: pre; }
+  .code-label { font-family: var(--mono); font-size: 10px; color: var(--blue); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; opacity: 0.8; }
+  .kw  { color: #b07abf; }
+  .fn  { color: #5e9ec8; }
+  .str { color: #5e969c; }
+  .cm  { color: #504840; font-style: italic; }
+  .num { color: #c4892a; }
+
+  /* ══════════════════════════════════════════
+     DECISION BLOCK
+  ══════════════════════════════════════════ */
+  .decision-block { margin-bottom: 10px; }
+  .decision-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--maroon);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .decision-label::after { content:''; flex:1; height:1px; background: var(--border); }
+  .decision-question { font-size: 19px; font-weight: 700; color: var(--text); margin-bottom: 24px; line-height: 1.4; }
+  .choices { display: flex; flex-direction: column; gap: 12px; }
+  .choice-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 17px 20px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s ease;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15.5px;
+    line-height: 1.6;
+  }
+  .choice-btn:hover {
+    background: var(--surface2);
+    border-color: var(--blue);
+    border-left: 3px solid var(--blue);
+    padding-left: 18px;
+  }
+  .choice-btn:active { opacity: 0.8; }
+  .choice-letter {
+    display: inline-block;
+    background: var(--maroon);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    width: 22px; height: 22px;
+    border-radius: 2px;
+    text-align: center;
+    line-height: 22px;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  .choice-sub { display: block; font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-top: 6px; margin-left: 32px; }
+
+  /* ══════════════════════════════════════════
+     OUTCOME CARD
+  ══════════════════════════════════════════ */
+  .outcome-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .outcome-card.good { border-top: 3px solid var(--green); }
+  .outcome-card.warn { border-top: 3px solid var(--yellow); }
+  .outcome-card.bad  { border-top: 3px solid var(--red); }
+  .outcome-title { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+  .outcome-title.good { color: var(--green); }
+  .outcome-title.warn { color: var(--yellow); }
+  .outcome-title.bad  { color: var(--red); }
+  .outcome-card p { font-size: 14.5px; color: var(--text-dim); line-height: 1.7; margin-bottom: 8px; }
+  .outcome-card p:last-child { margin-bottom: 0; }
+
+  /* ══════════════════════════════════════════
+     SCORE / DEBRIEF
+  ══════════════════════════════════════════ */
+  .score-badge { display: inline-block; font-family: var(--mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 6px 16px; border-radius: 2px; margin-bottom: 18px; }
+  .score-badge.green  { background: rgba(58,158,110,0.15); color: var(--green);  border: 1px solid var(--green); }
+  .score-badge.yellow { background: rgba(196,137,42,0.15); color: var(--yellow); border: 1px solid var(--yellow); }
+  .score-badge.red    { background: rgba(184,68,85,0.15);  color: var(--red);    border: 1px solid var(--red); }
+
+  .path-reveal { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 20px 24px; margin-bottom: 28px; }
+  .path-reveal h3 { font-family: var(--mono); font-size: 11px; color: var(--blue); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+  .path-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; font-size: 14px; }
+  .path-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+  .path-dot.good { background: var(--green); }
+  .path-dot.warn { background: var(--yellow); }
+  .path-dot.bad  { background: var(--red); }
+  .path-item-text { color: var(--text-dim); line-height: 1.5; }
+  .path-item-text strong { color: var(--text); }
+
+  /* ══════════════════════════════════════════
+     REFLECTION + DISCUSSION
+  ══════════════════════════════════════════ */
+  .reflection {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--maroon);
+    border-radius: 4px;
+    padding: 26px 30px;
+    margin-bottom: 24px;
+  }
+  .reflection h3 { font-family: var(--font); font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .reflection ol { padding-left: 22px; }
+  .reflection li { margin-bottom: 14px; color: var(--text-dim); font-size: 15px; line-height: 1.7; }
+
+  .discussion-prompt {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--blue);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin-bottom: 28px;
+  }
+  .discussion-prompt h3 { font-family: var(--mono); font-size: 11px; color: var(--blue); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; }
+  .discussion-prompt p  { color: var(--text-dim); font-size: 15px; line-height: 1.75; margin-bottom: 10px; }
+  .discussion-prompt p:last-child { margin-bottom: 0; }
+
+  /* ══════════════════════════════════════════
+     BUTTONS
+  ══════════════════════════════════════════ */
+  .continue-btn {
+    background: var(--maroon);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 13px 30px;
+    font-family: var(--font);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 10px;
+    letter-spacing: 0.2px;
+  }
+  .continue-btn:hover { background: var(--maroon-d); transform: translateY(-1px); }
+  .replay-btn {
+    background: transparent;
+    color: var(--blue);
+    border: 1px solid var(--blue);
+    border-radius: 4px;
+    padding: 11px 26px;
+    font-family: var(--font);
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 10px;
+    margin-left: 12px;
+  }
+  .replay-btn:hover { background: var(--blue); color: #fff; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+  /* ── Fade ── */
+  .fade-in { animation: fadeIn 0.35s ease forwards; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── Responsive ── */
+  @media (max-width: 680px) {
+    #main { padding: 32px 16px 60px; }
+    .objectives-grid { grid-template-columns: 1fr; }
+    .landing-title { font-size: 34px; }
+    .landing-masthead { padding: 36px 24px 32px; }
+    .sb-metric { min-width: 70px; padding: 0 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ COURSE NAV ═══════════════════ -->
+<div style="background:#0f0e0d;border-bottom:1px solid #2e2b28;padding:0 1.5rem;height:36px;display:flex;align-items:center;position:sticky;top:0;z-index:200;">
+  <a href="../index.html" style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:rgba(255,255,255,0.5);text-decoration:none;letter-spacing:0.06em;transition:color 0.15s;" onmouseover="this.style.color='rgba(255,255,255,0.9)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">← DTSC 520 Course Home</a>
+  <span style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:rgba(255,255,255,0.2);margin:0 0.6rem;">/</span>
+  <span style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:rgba(255,255,255,0.35);">The Dirty Dataset</span>
+</div>
+
+<!-- ═══════════════════ HIDDEN SIDEBAR (JS compat) ═══════════════════ -->
+<div id="sidebar" style="display:none!important;">
+  <span id="sd-score">—</span>
+  <span id="sd-score-bar"></span>
+  <span id="sd-resolved">0 / 5</span>
+  <span id="sd-rating">Unrated</span>
+  <li id="sl-1"><span class="stage-dot" id="dot-1"></span></li>
+  <li id="sl-2"><span class="stage-dot" id="dot-2"></span></li>
+  <li id="sl-3"><span class="stage-dot" id="dot-3"></span></li>
+  <li id="sl-4"><span class="stage-dot" id="dot-4"></span></li>
+  <li id="sl-5"><span class="stage-dot" id="dot-5"></span></li>
+</div>
+
+<!-- ═══════════════════ TOP STATUS BAR ═══════════════════ -->
+<div id="statusbar">
+  <div class="sb-inner">
+    <div class="sb-brand">⚾ StatDeck Analytics</div>
+    <div class="sb-metrics">
+      <div class="sb-metric">
+        <div class="sb-metric-label">Quality Score</div>
+        <div class="sb-metric-val" id="sb-score">—</div>
+      </div>
+      <div class="sb-metric">
+        <div class="sb-metric-label">Issues Resolved</div>
+        <div class="sb-metric-val" id="sb-resolved">0 / 5</div>
+      </div>
+      <div class="sb-metric">
+        <div class="sb-metric-label">Analyst Rating</div>
+        <div class="sb-metric-val" id="sb-rating">Unrated</div>
+      </div>
+      <div class="sb-metric" style="border-right:none;">
+        <div class="sb-metric-label">Client</div>
+        <div class="sb-metric-val" style="font-size:11px;">St. Davids Eagles</div>
+      </div>
+    </div>
+    <div class="sb-stage" id="sb-stage">Stage 1 of 6</div>
+  </div>
+</div>
+<div id="progressbar"><div id="progressfill"></div></div>
+<div id="stepstrip">
+  <div class="ss-inner">
+    <div class="ss-step" id="ss-1"><span class="ss-dot" id="ssdot-1"></span>Missing values</div>
+    <div class="ss-step" id="ss-2"><span class="ss-dot" id="ssdot-2"></span>Duplicates</div>
+    <div class="ss-step" id="ss-3"><span class="ss-dot" id="ssdot-3"></span>Data types</div>
+    <div class="ss-step" id="ss-4"><span class="ss-dot" id="ssdot-4"></span>Outliers</div>
+    <div class="ss-step" id="ss-5"><span class="ss-dot" id="ssdot-5"></span>Column names</div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<div id="layout"><div id="main">
+
+<!-- ══ SCREEN 0: LANDING ══ -->
+<div id="screen-0" class="fade-in">
+  <div class="landing-masthead">
+    <div class="landing-eyebrow">Eastern University · DTSC 520 · Interactive Simulation</div>
+    <div class="landing-title">The Dirty Dataset</div>
+    <div class="landing-subtitle">A data cleaning simulation</div>
+    <div class="landing-badge-row">
+      <span class="landing-badge">pandas</span>
+      <span class="landing-badge">NumPy</span>
+      <span class="landing-badge">data cleaning</span>
+      <span class="landing-badge">~45 min</span>
+    </div>
+  </div>
+
+  <div class="landing-body">
+  <div class="landing-section">
+    <h2>Your Assignment</h2>
+    <p>You just joined <strong>StatDeck Analytics</strong> as a junior data scientist. Your first client is the <strong>St. Davids Eagles</strong>, a minor league baseball organization trying to build a player performance model to guide roster decisions heading into next season.</p>
+    <p>The coaching staff emailed over their player database. It's a mess. Your job is to clean it up before the data can be used to train any model. Every decision you make has consequences - for the model, for the players, and for your reputation at the firm.</p>
+    <p>For each issue you find in the dataset, you'll choose how to handle it and then see the actual pandas code you'd write to do it.</p>
+  </div>
+
+  <div class="landing-section">
+    <h2>Learning Objectives</h2>
+    <div class="objectives-grid">
+      <div class="objective-card"><strong>Identify data quality issues</strong>Spot nulls, duplicates, wrong types, outliers, and naming problems in a real-world-style dataset.</div>
+      <div class="objective-card"><strong>Choose cleaning strategies</strong>Understand the tradeoffs between dropping, imputing, capping, and flagging data.</div>
+      <div class="objective-card"><strong>Write pandas code</strong>See and reason about actual <code style="font-family:var(--mono);font-size:12px;">df.dropna()</code>, <code style="font-family:var(--mono);font-size:12px;">.fillna()</code>, <code style="font-family:var(--mono);font-size:12px;">.astype()</code>, and related methods.</div>
+      <div class="objective-card"><strong>Think like a data scientist</strong>Understand that cleaning choices upstream directly affect model quality downstream.</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:10px;">
+    <button class="landing-start-btn" onclick="goTo(1)">Start Simulation →</button>
+  </div>
+  </div><!-- end landing-body -->
+</div>
+
+<!-- ══ SCREEN 1: THE BRIEF ══ -->
+<div id="screen-1" style="display:none;">
+  <div class="screen-header fade-in">
+    <div class="screen-title">The Brief</div>
+    <div class="screen-badge">Stage 1 of 6</div>
+  </div>
+
+  <div class="scene fade-in">
+    <div class="timestamp">Monday, 8:47 AM · Your inbox</div>
+    <p>You've been at StatDeck for two weeks. You know pandas, you've done a few tutorials, and today is your first real client assignment. Your manager drops by your desk before you've finished your coffee.</p>
+  </div>
+
+  <div class="artifact fade-in">
+    <div class="artifact-header"><span class="artifact-icon">📧</span> Email - from Jonah Reyes, StatDeck Senior Analyst</div>
+    <div class="artifact-body">
+      <div class="sender">jonah.reyes@statdeck.io → you</div>
+      <p>Hey - welcome to your first real project. Client is the St. Davids Eagles, a Single-A affiliate. They're trying to build a model that predicts which players are worth keeping on the 40-man roster heading into spring.</p>
+      <p>Their coaching staff emailed over a CSV of player stats. I opened it for about 30 seconds before deciding it needs a full cleaning pass before we can touch it. That's your job today.</p>
+      <p>Board presentation is Thursday. That's 3 days. Don't stress - but also, don't mess it up. The client is watching.</p>
+      <p style="font-style:italic;color:var(--muted);">P.S. I've loaded the data into a dataframe already. Go take a look.</p>
+    </div>
+  </div>
+
+  <div class="scene fade-in">
+    <p>You open your laptop, activate your virtual environment, and load the dataset into a Jupyter notebook.</p>
+  </div>
+
+  <div class="artifact fade-in">
+    <div class="artifact-header"><span class="artifact-icon">💻</span> notebook · players_raw.ipynb</div>
+    <div class="artifact-body" style="display:block;">
+      <div class="code-label">Your first look at the data</div>
+      <div class="code-block">
+        <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+df = pd.<span class="fn">read_csv</span>(<span class="str">'eagles_players.csv'</span>)
+<span class="fn">print</span>(df.<span class="fn">shape</span>)         <span class="cm"># (203, 9)</span>
+<span class="fn">print</span>(df.<span class="fn">dtypes</span>)
+df.<span class="fn">head</span>(<span class="num">10</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene fade-in">
+    <p>The dataframe loads. 203 rows, 9 columns. You scroll through the first few rows and immediately see problems. Let's take a look at what you're working with.</p>
+  </div>
+
+  <button class="continue-btn fade-in" onclick="goTo(2)">Inspect the Dataset →</button>
+</div>
+
+<!-- ══ SCREEN 2: DATASET INSPECTION ══ -->
+<div id="screen-2" style="display:none;">
+  <div class="screen-header fade-in">
+    <div class="screen-title">Dataset Inspection</div>
+    <div class="screen-badge">Stage 2 of 6</div>
+  </div>
+
+  <div class="scene fade-in">
+    <div class="timestamp">Monday, 9:02 AM · Jupyter notebook</div>
+    <p>You run <code style="font-family:var(--mono);font-size:14px;">df.head(10)</code> and <code style="font-family:var(--mono);font-size:14px;">df.info()</code>. Here's what you see:</p>
+  </div>
+
+  <div class="data-table-wrap fade-in">
+    <div class="table-caption">eagles_players.csv - first 10 rows (203 total)</div>
+    <table class="data-table">
+      <tr>
+        <th>#</th>
+        <th>player_id</th>
+        <th>name</th>
+        <th>position</th>
+        <th>age</th>
+        <th>batting avg</th>
+        <th>Home Runs</th>
+        <th>salary</th>
+        <th>games played</th>
+      </tr>
+      <tr><td>0</td><td>R-0041</td><td>Marcus Webb</td><td>OF</td><td>24</td><td>0.287</td><td>12</td><td class="warn-val">$17,600</td><td>142</td></tr>
+      <tr><td>1</td><td>R-0042</td><td>Devon Castillo</td><td>1B</td><td>27</td><td class="null-val">NaN</td><td>8</td><td class="warn-val">$18,200</td><td>138</td></tr>
+      <tr><td>2</td><td>R-0043</td><td>Tyler Nguyen</td><td>SS</td><td>22</td><td>0.311</td><td>4</td><td class="warn-val">$15,400</td><td>155</td></tr>
+      <tr><td>3</td><td>R-0041</td><td>Marcus Webb</td><td>OF</td><td>24</td><td>0.287</td><td>12</td><td class="warn-val">$17,600</td><td class="bad-val">142 ⟵ duplicate</td></tr>
+      <tr><td>4</td><td>R-0044</td><td>Jamal Foster</td><td>C</td><td class="null-val">NaN</td><td>0.241</td><td>6</td><td class="warn-val">$16,800</td><td>129</td></tr>
+      <tr><td>5</td><td>R-0045</td><td>Chris Park</td><td>2B</td><td>26</td><td>0.198</td><td class="bad-val">-3 ⟵ impossible</td><td class="warn-val">$14,400</td><td>101</td></tr>
+      <tr><td>6</td><td>R-0046</td><td>Eli Thornton</td><td>3B</td><td>29</td><td>0.252</td><td>19</td><td class="warn-val">$19,200</td><td class="null-val">NaN</td></tr>
+      <tr><td>7</td><td>R-0047</td><td>Samuel Price</td><td>P</td><td>23</td><td class="null-val">NaN</td><td class="null-val">NaN</td><td class="warn-val">$14,700</td><td>88</td></tr>
+      <tr><td>8</td><td>R-0048</td><td>Leo Garza</td><td>OF</td><td>31</td><td>0.274</td><td>7</td><td class="warn-val">$18,900</td><td>148</td></tr>
+      <tr><td>9</td><td>R-0049</td><td>Noah Kim</td><td>P</td><td>25</td><td>0.182</td><td>2</td><td class="bad-val">$760,000 ⟵ outlier?</td><td>112</td></tr>
+    </table>
+    <div class="table-note">⚠ salary column loaded as object (string) - should be float · age has 14 NaNs · batting avg has 22 NaNs · 11 exact duplicate rows detected · column names inconsistent (spaces, mixed case)</div>
+  </div>
+
+  <div class="artifact fade-in">
+    <div class="artifact-header"><span class="artifact-icon">💻</span> notebook - df.info() output</div>
+    <div class="artifact-body" style="display:block;">
+      <div class="code-block">
+        <pre>RangeIndex: 203 entries, 0 to 202
+Data columns (total 9 columns):
+ #   Column        Non-Null Count  Dtype
+---  ------        --------------  -----
+ 0   player_id     203 non-null    object
+ 1   name          203 non-null    object
+ 2   position      203 non-null    object
+ 3   age           189 non-null    <span class="bad-val">float64</span>   <span class="cm"># 14 missing</span>
+ 4   batting avg   181 non-null    <span class="bad-val">float64</span>   <span class="cm"># 22 missing</span>
+ 5   Home Runs     196 non-null    <span class="bad-val">float64</span>   <span class="cm"># 7 missing + negative value</span>
+ 6   salary        203 non-null    <span class="bad-val">object</span>    <span class="cm"># stored as string "$17,600"</span>
+ 7   games played  198 non-null    float64   <span class="cm"># 5 missing</span>
+dtypes: float64(5), object(3)
+<span class="cm"># df.duplicated().sum() → 11</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene fade-in">
+    <p>You count the problems: missing values in multiple columns, 11 duplicate rows, salary stored as a string with dollar signs, a negative home run value, a suspicious outlier, and column names that pandas will hate (spaces, mixed capitalization).</p>
+    <p>You open a fresh cell and decide to work through them one at a time. Where do you start?</p>
+  </div>
+
+  <button class="continue-btn fade-in" onclick="goTo(3)">Start Cleaning →</button>
+</div>
+
+<!-- ══ SCREEN 3: DECISION 1 - Missing Values ══ -->
+<div id="screen-3" style="display:none;">
+  <div class="screen-header fade-in">
+    <div class="screen-title">Missing Values</div>
+    <div class="screen-badge">Decision 1 of 5</div>
+  </div>
+
+  <div class="scene fade-in">
+    <div class="timestamp">Monday, 9:14 AM · The missing values problem</div>
+    <p>You have missing data in three key columns: <strong>batting_avg</strong> (22 nulls, ~11%), <strong>age</strong> (14 nulls, ~7%), and <strong>games_played</strong> (5 nulls, ~2%). The model will crash if it sees NaN values.</p>
+    <p>Jonah messages you on Slack:</p>
+  </div>
+
+  <div class="artifact fade-in">
+    <div class="artifact-header"><span class="artifact-icon">💬</span> Slack · #eagles-project</div>
+    <div class="artifact-body">
+      <div class="sender">jonah.reyes - 9:11 AM</div>
+      <p>How bad is it? Batting avg nulls are probably pitchers - they don't bat in Single-A most of the time. Age nulls might just be sloppy data entry from the front office. Don't delete rows unless you have a real reason to.</p>
+    </div>
+  </div>
+
+  <div class="decision-block fade-in">
+    <div class="decision-label">⟩ Decision 1</div>
+    <div class="decision-question">How do you handle the missing values in batting_avg, age, and games_played?</div>
+    <div class="choices">
+      <button class="choice-btn" onclick="decide(1,'A')">
+        <span class="choice-letter">A</span>
+        Drop any row that has <em>any</em> null value - keeps the dataset clean and simple.
+        <span class="choice-sub">Removes ~35–40 rows from a 203-row dataset</span>
+      </button>
+      <button class="choice-btn" onclick="decide(1,'B')">
+        <span class="choice-letter">B</span>
+        Impute missing values: fill <em>batting_avg</em> and <em>age</em> with their column medians; fill <em>games_played</em> with its median.
+        <span class="choice-sub">Preserves all rows; median is robust to outliers</span>
+      </button>
+      <button class="choice-btn" onclick="decide(1,'C')">
+        <span class="choice-letter">C</span>
+        Fill all nulls with zero - it's a number, so the model won't crash.
+        <span class="choice-sub">Fast, but 0 batting average means something very specific in baseball</span>
+      </button>
+      <button class="choice-btn" onclick="decide(1,'D')">
+        <span class="choice-letter">D</span>
+        Impute <em>age</em> and <em>games_played</em> with median, but leave <em>batting_avg</em> null - add a boolean flag column indicating it's missing.
+        <span class="choice-sub">Preserves information that the value is unknown; lets the model learn from missingness itself</span>
+      </button>
+    </div>
+  </div>
+  <div id="outcome-1" style="display:none;"></div>
+</div>
+
+<!-- ══ SCREEN 4: DECISION 2 - Duplicates ══ -->
+<div id="screen-4" style="display:none;">
+  <div class="screen-header fade-in">
+    <div class="screen-title">Duplicate Rows</div>
+    <div class="screen-badge">Decision 2 of 5</div>
+  </div>
+
+  <div class="scene fade-in">
+    <div class="timestamp">Monday, 9:31 AM · Duplicate rows</div>
+    <p>You run <code style="font-family:var(--mono);font-size:14px;">df.duplicated().sum()</code> and confirm 11 exact duplicate rows - same player_id, same stats, everything identical. Probably a data export glitch from their internal system.</p>
+    <p>If you leave them in, the model will see some players twice (or more) and weight them too heavily in training.</p>
+  </div>
+
+  <div class="decision-block fade-in">
+    <div class="decision-label">⟩ Decision 2</div>
+    <div class="decision-question">How do you handle the 11 duplicate rows?</div>
+    <div class="choices">
+      <button class="choice-btn" onclick="decide(2,'A')">
+        <span class="choice-letter">A</span>
+        Drop all duplicate rows using <code style="font-family:var(--mono);font-size:13px;">df.drop_duplicates()</code>, keeping the first occurrence.
+        <span class="choice-sub">Standard practice - keeps one copy of each player's record</span>
+      </button>
+      <button class="choice-btn" onclick="decide(2,'B')">
+        <span class="choice-btn-text"></span><span class="choice-letter">B</span>
+        Leave the duplicates - more data is always better for model training.
+        <span class="choice-sub">Each duplicate is still a valid data point</span>
+      </button>
+      <button class="choice-btn" onclick="decide(2,'C')">
+        <span class="choice-letter">C</span>
+        Average the values across duplicates and keep one row per player_id.
+        <span class="choice-sub">More conservative; treats duplicates as potentially different measurements</span>
+      </button>
+    </div>
+  </div>
+  <div id="outcome-2" style="display:none;"></div>
+</div>
+
+<!-- ══ SCREEN 5: DECISION 3 - Data Types ══ -->
+<div id="screen-5" style="display:none;">
+  <div class="screen-header fade-in">
+    <div class="screen-title">Data Types</div>
+    <div class="screen-badge">Decision 3 of 5</div>
+  </div>
+
+  <div class="scene fade-in">
+    <div class="timestamp">Monday, 10:05 AM · The salary column</div>
+    <p>You look more closely at the salary column. The values came in looking like this: <code style="font-family:var(--mono);font-size:14px;">"$17,600"</code>, <code style="font-family:var(--mono);font-size:14px;">"$760,000"</code>. Because of the dollar sign and comma, pandas read the whole column as <strong>strings (object dtype)</strong> instead of numbers. You can't do any math on it - and your model definitely can't use it.</p>
+  </div>
+
+  <div class="decision-block fade-in">
+    <div class="decision-label">⟩ Decision 3</div>
+    <div class="decision-question">The salary column is dtype <code style="font-family:var(--mono);">object</code> due to "$" and "," characters. How do you convert it to a usable numeric type?</div>
+    <div class="choices">
+      <button class="choice-btn" onclick="decide(3,'A')">
+        <span class="choice-letter">A</span>
+        Strip the "$" and "," using string methods, then cast to float with <code style="font-family:var(--mono);font-size:13px;">.astype(float)</code>.
+        <span class="choice-sub">The right approach - removes formatting, preserves the numeric value</span>
+      </button>
+      <button class="choice-btn" onclick="decide(3,'B')">
+        <span class="choice-letter">B</span>
+        Use <code style="font-family:var(--mono);font-size:13px;">pd.to_numeric(df['salary'], errors='coerce')</code> directly without stripping characters first.
+        <span class="choice-sub">Will coerce everything it can't parse to NaN - you'll lose the whole column</span>
+      </button>
+      <button class="choice-btn" onclick="decide(3,'C')">
+        <span class="choice-letter">C</span>
+        Drop the salary column entirely - salary isn't a performance stat anyway.
+        <span class="choice-sub">The model might still need it as a feature for roster budget analysis</span>
+      </button>
+    </div>
+  </div>
+  <div id="outcome-3" style="display:none;"></div>
+</div>
+
+<!-- ══ SCREEN 6: DECISION 4 - Outliers ══ -->
+<div id="screen-6" style="display:none;">
+  <div class="screen-header fade-in">
+    <div class="screen-title">Outliers &amp; Invalid Values</div>
+    <div class="screen-badge">Decision 4 of 5</div>
+  </div>
+
+  <div class="scene fade-in">
+    <div class="timestamp">Monday, 10:44 AM · Two flags on your list</div>
+    <p>You've got two related problems left in the stats columns.</p>
+    <p><strong>Problem A:</strong> One player (Chris Park, row 5) has <code style="font-family:var(--mono);font-size:14px;">Home Runs = -3</code>. Home runs cannot be negative. This is a data entry error.</p>
+    <p><strong>Problem B:</strong> Noah Kim (row 9) has a salary of <code style="font-family:var(--mono);font-size:14px;">$760,000</code>. Every other player is between $14K–$20K - the standard Single-A weekly rate over a 28-week season. You run a quick check and confirm: the median salary is $17,200, the mean is $18,100. Kim's value is ~44x the median.</p>
+    <p>Jonah sends another message:</p>
+  </div>
+
+  <div class="artifact fade-in">
+    <div class="artifact-header"><span class="artifact-icon">💬</span> Slack · #eagles-project</div>
+    <div class="artifact-body">
+      <div class="sender">jonah.reyes - 10:41 AM</div>
+      <p>Hey - I just heard back from the Eagles front office. Kim's salary is correct. He's on a rehab assignment from their MLB affiliate - his 40-man roster contract pays the MLB minimum ($760,000 in 2025), and that salary travels with him to Single-A. The rest of the guys are on standard Single-A deals, roughly $700/week during the season. The -3 home runs is definitely wrong though, that's a system bug on their end.</p>
+    </div>
+  </div>
+
+  <div class="decision-block fade-in">
+    <div class="decision-label">⟩ Decision 4</div>
+    <div class="decision-question">How do you handle the invalid home run value AND the legitimate salary outlier?</div>
+    <div class="choices">
+      <button class="choice-btn" onclick="decide(4,'A')">
+        <span class="choice-letter">A</span>
+        Set <em>home_runs = -3</em> to NaN (unknown), then impute with median. Keep Kim's salary as-is since it's confirmed accurate.
+        <span class="choice-sub">Correct for bad data; respects real data even when it's unusual</span>
+      </button>
+      <button class="choice-btn" onclick="decide(4,'B')">
+        <span class="choice-letter">B</span>
+        Drop both rows entirely - the -3 is clearly wrong and the outlier will skew the model.
+        <span class="choice-sub">Loses a valid player record (Kim) that your client cares about</span>
+      </button>
+      <button class="choice-btn" onclick="decide(4,'C')">
+        <span class="choice-letter">C</span>
+        Cap all salary outliers using IQR-based clipping. This handles both the -3 and Kim's salary in one pass.
+        <span class="choice-sub">Winsorization is a valid technique - but you'd be overriding confirmed accurate data</span>
+      </button>
+      <button class="choice-btn" onclick="decide(4,'D')">
+        <span class="choice-letter">D</span>
+        Set the -3 to NaN and impute. Log-transform the salary column so the outlier has less influence on the model.
+        <span class="choice-sub">Preserves all data; log scaling can handle skewed salary distributions well</span>
+      </button>
+    </div>
+  </div>
+  <div id="outcome-4" style="display:none;"></div>
+</div>
+
+<!-- ══ SCREEN 7: DECISION 5 - Column Names ══ -->
+<div id="screen-7" style="display:none;">
+  <div class="screen-header fade-in">
+    <div class="screen-title">Column Names</div>
+    <div class="screen-badge">Decision 5 of 5</div>
+  </div>
+
+  <div class="scene fade-in">
+    <div class="timestamp">Monday, 11:20 AM · The last thing</div>
+    <p>Almost done. You look at your column names one more time:</p>
+    <p><code style="font-family:var(--mono);font-size:14px;">['player_id', 'name', 'position', 'age', 'batting avg', 'Home Runs', 'salary', 'games played']</code></p>
+    <p>Mixed capitalization. Spaces in names. This will cause problems: <code style="font-family:var(--mono);font-size:14px;">df.Home Runs</code> won't work - you'd need bracket notation every time. Inconsistent naming conventions also make your code harder to read and maintain.</p>
+  </div>
+
+  <div class="decision-block fade-in">
+    <div class="decision-label">⟩ Decision 5</div>
+    <div class="decision-question">How do you standardize the column names?</div>
+    <div class="choices">
+      <button class="choice-btn" onclick="decide(5,'A')">
+        <span class="choice-letter">A</span>
+        Use <code style="font-family:var(--mono);font-size:13px;">df.columns = df.columns.str.lower().str.replace(' ', '_')</code> to make everything lowercase with underscores.
+        <span class="choice-sub">The pandas standard - enables dot notation, consistent, readable</span>
+      </button>
+      <button class="choice-btn" onclick="decide(5,'B')">
+        <span class="choice-letter">B</span>
+        Use <code style="font-family:var(--mono);font-size:13px;">df.rename()</code> to manually rename only the columns with spaces.
+        <span class="choice-sub">Works, but misses the capitalization issues and is more error-prone at scale</span>
+      </button>
+      <button class="choice-btn" onclick="decide(5,'C')">
+        <span class="choice-letter">C</span>
+        Leave them as-is - always use bracket notation like <code style="font-family:var(--mono);font-size:13px;">df['Home Runs']</code>.
+        <span class="choice-sub">Technically works, but is an unnecessary friction point for everyone on the team</span>
+      </button>
+    </div>
+  </div>
+  <div id="outcome-5" style="display:none;"></div>
+</div>
+
+<!-- ══ SCREEN 8: FINAL DEBRIEF ══ -->
+<div id="screen-8" style="display:none;">
+  <div class="screen-header fade-in">
+    <div class="screen-title">Debrief - Your Results</div>
+    <div class="screen-badge">Complete</div>
+  </div>
+
+  <div class="scene fade-in">
+    <div class="timestamp">Monday, 11:47 AM · You hand off the cleaned dataset</div>
+    <p>You export the cleaned dataframe, ping Jonah, and lean back in your chair. A few minutes later he replies: <em>"Good work. Let's see how it looks."</em></p>
+    <p>Here's how your decisions stack up against the senior analyst's recommendations:</p>
+  </div>
+
+  <div id="decisions-summary" class="path-reveal fade-in">
+    <h3>Your Decision Path</h3>
+    <div id="path-items"></div>
+  </div>
+
+  <div id="final-score-block" class="fade-in" style="text-align:center;margin-bottom:32px;">
+    <div id="final-badge" class="score-badge">—</div>
+    <div style="font-size:36px;font-weight:bold;color:var(--text);margin-bottom:8px;" id="final-score-num">—</div>
+    <div style="font-family:var(--mono);font-size:13px;color:var(--muted);">Data Quality Score</div>
+  </div>
+
+  <div id="final-message" class="fade-in"></div>
+
+  <div class="artifact fade-in">
+    <div class="artifact-header"><span class="artifact-icon">💻</span> The Full Clean Pipeline - What an Expert Would Write</div>
+    <div class="artifact-body" style="display:block;">
+      <div class="code-label">eagles_clean.py - complete cleaning script</div>
+      <div class="code-block">
+        <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+df = pd.<span class="fn">read_csv</span>(<span class="str">'eagles_players.csv'</span>)
+
+<span class="cm"># 1. Standardize column names first (makes everything below easier)</span>
+df.columns = df.columns.<span class="fn">str.lower</span>().<span class="fn">str.replace</span>(<span class="str">' '</span>, <span class="str">'_'</span>)
+
+<span class="cm"># 2. Drop exact duplicate rows</span>
+df = df.<span class="fn">drop_duplicates</span>()
+
+<span class="cm"># 3. Convert salary: strip "$" and "," then cast to float</span>
+df[<span class="str">'salary'</span>] = (
+    df[<span class="str">'salary'</span>]
+    .<span class="fn">str.replace</span>(<span class="str">'$'</span>, <span class="str">''</span>, regex=<span class="kw">False</span>)
+    .<span class="fn">str.replace</span>(<span class="str">','</span>, <span class="str">''</span>, regex=<span class="kw">False</span>)
+    .<span class="fn">astype</span>(<span class="fn">float</span>)
+)
+
+<span class="cm"># 4. Fix invalid home_runs value (-3 is impossible)</span>
+df.<span class="fn">loc</span>[df[<span class="str">'home_runs'</span>] &lt; <span class="num">0</span>, <span class="str">'home_runs'</span>] = np.<span class="fn">nan</span>
+
+<span class="cm"># 5. Impute missing numeric values with median</span>
+<span class="kw">for</span> col <span class="kw">in</span> [<span class="str">'age'</span>, <span class="str">'home_runs'</span>, <span class="str">'games_played'</span>]:
+    df[col].<span class="fn">fillna</span>(df[col].<span class="fn">median</span>(), inplace=<span class="kw">True</span>)
+
+<span class="cm"># 6. For batting_avg: impute + add missingness flag</span>
+df[<span class="str">'batting_avg_missing'</span>] = df[<span class="str">'batting_avg'</span>].<span class="fn">isna</span>().<span class="fn">astype</span>(<span class="fn">int</span>)
+df[<span class="str">'batting_avg'</span>].<span class="fn">fillna</span>(df[<span class="str">'batting_avg'</span>].<span class="fn">median</span>(), inplace=<span class="kw">True</span>)
+
+<span class="cm"># 7. Keep Kim's salary as-is (confirmed real data)</span>
+<span class="cm"># Optional: log-scale salary for model input</span>
+df[<span class="str">'log_salary'</span>] = np.<span class="fn">log1p</span>(df[<span class="str">'salary'</span>])
+
+<span class="fn">print</span>(f<span class="str">"Clean dataset: {df.shape[0]} rows, {df.shape[1]} columns"</span>)
+df.<span class="fn">to_csv</span>(<span class="str">'eagles_clean.csv'</span>, index=<span class="kw">False</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="reflection fade-in">
+    <h3>🧠 What This Simulation Covers</h3>
+    <ol>
+      <li><strong>Missing data strategy matters.</strong> Dropping rows loses information. Filling with zero introduces false signals. Median imputation is robust. Adding a missingness flag is an advanced technique that lets the model learn from the fact that the value was unknown.</li>
+      <li><strong>Duplicates silently bias models.</strong> If 11 rows are duplicated, those players are effectively oversampled - the model sees them more often and learns to weight their pattern more heavily. Always check for duplicates before training.</li>
+      <li><strong>Data types are not automatic.</strong> pandas reads what it sees. A "$" in a numeric column forces it to read the whole column as strings. Type conversion is a required, not optional, step.</li>
+      <li><strong>Not all outliers are errors.</strong> Kim's salary is real. Blindly clipping or dropping outliers removes valid signal. Always try to confirm with the source before modifying extreme values.</li>
+      <li><strong>Column naming conventions prevent bugs.</strong> Spaces in column names prevent dot notation and cause subtle errors in pipelines. Standardizing to lowercase underscore style is a best practice you should apply to every dataset before doing anything else.</li>
+    </ol>
+  </div>
+
+  <div class="discussion-prompt fade-in">
+    <h3>Discussion Prompts</h3>
+    <p>1. If you had imputed batting_avg with the mean instead of the median, how would Kim's $760K salary outlier (which massively inflates the mean of an otherwise $14K–$20K distribution) affect your imputation of an unrelated column?</p>
+    <p>2. You added a <code style="font-family:var(--mono);font-size:14px;">batting_avg_missing</code> flag column. What assumption does this make about the relationship between "being a pitcher" and "batting performance"? Is that assumption justified?</p>
+    <p>3. We applied cleaning steps in a certain order. Does the order matter? What would happen if you tried to clean missing values before converting the salary column from string to float?</p>
+  </div>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    <button class="continue-btn" onclick="window.print()">🖨️ Print / Export</button>
+    <button class="replay-btn" onclick="resetSim()">↺ Replay Simulation</button>
+  </div>
+</div>
+
+</div><!-- end #main -->
+</div></div><!-- end #layout -->
+
+<footer style="max-width:860px;margin:0 auto;padding:24px 24px 36px;text-align:center;font-size:11px;color:#504840;font-family:'IBM Plex Mono',monospace;border-top:1px solid #2a2520;">
+  Developed with AI assistance for Eastern University · DTSC 520 · Course content, learning objectives, and decisions designed by the instructor.
+</footer>
+
+<script>
+// ── State ──
+const state = {
+  decisions: {}, // { 1: 'A', 2: 'B', ... }
+  points: 0,
+  maxPoints: 10
+};
+
+// ── Decision configs ──
+const DECISIONS = {
+  1: {
+    label: 'Missing Values',
+    answers: {
+      A: { points: 1, quality: 'warn', tag: 'Risky',
+           title: '⚠ Aggressive - you lost ~18% of your data',
+           body: `Dropping any row with <em>any</em> null removes about 35–38 rows from a 203-row dataset - that's nearly 18% of your data gone. More importantly, Jonah already told you the batting avg nulls are probably pitchers, a meaningful subgroup. Dropping them would bias your model toward position players.`,
+           code: `<span class="cm"># What you'd write for option A</span>
+df_clean = df.<span class="fn">dropna</span>()
+<span class="cm"># Drops ALL rows with any NaN → loses ~18% of data</span>`
+         },
+      B: { points: 2, quality: 'good', tag: 'Good',
+           title: '✓ Solid - median imputation preserves your rows',
+           body: `Median imputation is a standard, defensible choice. Unlike the mean, the median isn't affected by outliers (like Kim's $760K MLB contract salary that sits alongside teammates making ~$17K). You keep all 203 rows. The downside is that imputed values aren't real observations - but for a small percentage of nulls, this is an acceptable trade.`,
+           code: `<span class="cm"># Impute with column medians</span>
+<span class="kw">for</span> col <span class="kw">in</span> [<span class="str">'batting_avg'</span>, <span class="str">'age'</span>, <span class="str">'games_played'</span>]:
+    df[col].<span class="fn">fillna</span>(df[col].<span class="fn">median</span>(), inplace=<span class="kw">True</span>)`
+         },
+      C: { points: 0, quality: 'bad', tag: 'Mistake',
+           title: '✗ Incorrect - zero is not "unknown"',
+           body: `Filling with 0 tells the model that a player has a batting average of .000 - which means they never got a hit. That's false information, not missing information. The model will treat those players as extraordinarily bad hitters. This is one of the most common mistakes beginners make.`,
+           code: `<span class="cm"># What you'd write for option C (don't do this)</span>
+df.<span class="fn">fillna</span>(<span class="num">0</span>, inplace=<span class="kw">True</span>)
+<span class="cm"># 0 batting_avg signals "never got a hit" - wrong!</span>`
+         },
+      D: { points: 3, quality: 'good', tag: 'Optimal',
+           title: '★ Excellent - you preserved information about missingness',
+           body: `This is the most sophisticated approach. Adding a <code style="font-family:var(--mono)">batting_avg_missing</code> boolean flag lets the model learn that certain players (likely pitchers) don't have batting stats - and that's a signal in itself. You impute to prevent errors, but the flag preserves the fact that those values were unknown. Jonah would be impressed.`,
+           code: `<span class="cm"># Add missingness flag before imputing</span>
+df[<span class="str">'batting_avg_missing'</span>] = df[<span class="str">'batting_avg'</span>].<span class="fn">isna</span>().<span class="fn">astype</span>(<span class="fn">int</span>)
+df[<span class="str">'batting_avg'</span>].<span class="fn">fillna</span>(df[<span class="str">'batting_avg'</span>].<span class="fn">median</span>(), inplace=<span class="kw">True</span>)
+<span class="cm"># Impute age and games_played normally</span>
+<span class="kw">for</span> col <span class="kw">in</span> [<span class="str">'age'</span>, <span class="str">'games_played'</span>]:
+    df[col].<span class="fn">fillna</span>(df[col].<span class="fn">median</span>(), inplace=<span class="kw">True</span>)`
+         }
+    }
+  },
+  2: {
+    label: 'Duplicate Rows',
+    answers: {
+      A: { points: 2, quality: 'good', tag: 'Correct',
+           title: '✓ Correct - this is the standard approach',
+           body: `<code style="font-family:var(--mono)">drop_duplicates()</code> is exactly the right call. It keeps the first occurrence of each duplicated row and removes the rest. With 11 duplicates, you'll go from 203 to 192 rows. The <code style="font-family:var(--mono)">subset</code> parameter lets you define what "duplicate" means if you only want to check certain columns.`,
+           code: `<span class="cm"># Standard duplicate removal</span>
+df = df.<span class="fn">drop_duplicates</span>()
+<span class="cm"># Or, duplicate by player_id only:</span>
+df = df.<span class="fn">drop_duplicates</span>(subset=[<span class="str">'player_id'</span>], keep=<span class="str">'first'</span>)`
+         },
+      B: { points: 0, quality: 'bad', tag: 'Mistake',
+           title: '✗ Incorrect - more duplicates ≠ more data',
+           body: `"More data is better" is only true if that data is <em>independent</em>. Duplicate rows are not new information - they're the same record counted twice. A model trained on duplicates will overfit to those specific players. It's like photocopying a page and calling it two sources.`,
+           code: `<span class="cm"># Checking for duplicates (always do this before deciding)</span>
+<span class="fn">print</span>(df.<span class="fn">duplicated</span>().<span class="fn">sum</span>())       <span class="cm"># → 11</span>
+<span class="fn">print</span>(df.<span class="fn">duplicated</span>(subset=[<span class="str">'player_id'</span>]).<span class="fn">sum</span>())`
+         },
+      C: { points: 1, quality: 'warn', tag: 'Overthinking',
+           title: '~ Unnecessary - averaging identical rows changes nothing',
+           body: `Since these are <em>exact</em> duplicates, averaging them produces the same number as either row. This approach would make sense if you had different measurements for the same player (e.g., two scouts recorded different stats). For exact duplicates, just drop them.`,
+           code: `<span class="cm"># Averaging makes sense when rows differ; for exact dupes, just drop:</span>
+df = df.<span class="fn">drop_duplicates</span>()
+<span class="cm"># If rows had variation, you could aggregate:</span>
+<span class="cm"># df = df.groupby('player_id').mean().reset_index()</span>`
+         }
+    }
+  },
+  3: {
+    label: 'Data Types',
+    answers: {
+      A: { points: 2, quality: 'good', tag: 'Correct',
+           title: '✓ Correct - strip, then cast',
+           body: `This is the right approach. You use string methods to strip the "$" and "," characters, then <code style="font-family:var(--mono)">.astype(float)</code> to convert the cleaned string to a number. The chained string operations are idiomatic pandas and work well at scale.`,
+           code: `<span class="cm"># Strip formatting characters, then cast</span>
+df[<span class="str">'salary'</span>] = (
+    df[<span class="str">'salary'</span>]
+    .<span class="fn">str.replace</span>(<span class="str">'$'</span>, <span class="str">''</span>, regex=<span class="kw">False</span>)
+    .<span class="fn">str.replace</span>(<span class="str">','</span>, <span class="str">''</span>, regex=<span class="kw">False</span>)
+    .<span class="fn">astype</span>(<span class="fn">float</span>)
+)`
+         },
+      B: { points: 0, quality: 'bad', tag: 'Mistake',
+           title: '✗ Incorrect - to_numeric will coerce everything to NaN',
+           body: `<code style="font-family:var(--mono)">pd.to_numeric(errors='coerce')</code> tries to parse each value as a number. Since all values contain "$" and ",", <em>none</em> of them parse successfully, and they all become NaN. You'll end up with a salary column full of nulls. You need to clean the strings first.`,
+           code: `<span class="cm"># This will fail - leaves entire column as NaN:</span>
+<span class="cm"># pd.to_numeric(df['salary'], errors='coerce')  ← don't do this</span>
+
+<span class="cm"># Correct: strip formatting first</span>
+df[<span class="str">'salary'</span>] = df[<span class="str">'salary'</span>].<span class="fn">str.replace</span>(<span class="str">'[$,]'</span>, <span class="str">''</span>, regex=<span class="kw">True</span>).<span class="fn">astype</span>(<span class="fn">float</span>)`
+         },
+      C: { points: 1, quality: 'warn', tag: 'Premature',
+           title: '~ Hasty - salary is a useful feature for roster decisions',
+           body: `Dropping the salary column is defensible if you've decided it's irrelevant to your model. But the Eagles care about budget - roster decisions aren't just about performance, they're about performance per dollar. A player earning $760K (MLB contract) versus $17K (Single-A rate) represents a very different cost-benefit calculation. Fix the column first, then decide whether to keep it.`,
+           code: `<span class="cm"># Check the column before dropping it</span>
+<span class="fn">print</span>(df[<span class="str">'salary'</span>].<span class="fn">describe</span>())
+<span class="cm"># If you really decide to drop:</span>
+df = df.<span class="fn">drop</span>(columns=[<span class="str">'salary'</span>])`
+         }
+    }
+  },
+  4: {
+    label: 'Outliers & Invalid Values',
+    answers: {
+      A: { points: 2, quality: 'good', tag: 'Good',
+           title: '✓ Good - you treated bad data and real data differently',
+           body: `This is correct. The -3 home runs is clearly impossible - you convert it to NaN and impute. Kim's $760K MLB contract salary is confirmed accurate - he's on a 40-man roster rehab assignment, so his major league deal travels with him to Single-A. Treating them differently demonstrates that outlier handling requires judgment, not a blanket rule.`,
+           code: `<span class="cm"># Fix impossible value: negative home runs → NaN</span>
+df.<span class="fn">loc</span>[df[<span class="str">'home_runs'</span>] &lt; <span class="num">0</span>, <span class="str">'home_runs'</span>] = np.<span class="fn">nan</span>
+df[<span class="str">'home_runs'</span>].<span class="fn">fillna</span>(df[<span class="str">'home_runs'</span>].<span class="fn">median</span>(), inplace=<span class="kw">True</span>)
+<span class="cm"># Kim's salary is real - no change needed</span>`
+         },
+      B: { points: 0, quality: 'bad', tag: 'Mistake',
+           title: '✗ Incorrect - you dropped a valid player on a hunch',
+           body: `Dropping Kim's row removes a legitimate player from a dataset your client specifically asked about. The coaching staff wants to make a roster decision about him. Dropping him because his salary looks unusual - when you have explicit confirmation it's correct - is the wrong call.`,
+           code: `<span class="cm"># Checking before dropping (always do this)</span>
+<span class="fn">print</span>(df[<span class="str">'salary'</span>].<span class="fn">describe</span>())
+<span class="fn">print</span>(df[df[<span class="str">'salary'</span>] &gt; <span class="num">500000</span>][[<span class="str">'name'</span>, <span class="str">'salary'</span>]])`
+         },
+      C: { points: 1, quality: 'warn', tag: 'Imprecise',
+           title: '~ Clipping overrides confirmed accurate data',
+           body: `IQR-based clipping (winsorization) is a legitimate technique, but it clips <em>all</em> outliers mechanically, including Kim's $760K MLB contract salary which you know is accurate. Clipping his value down to ~$20K would introduce false data and misrepresent his actual roster cost to the organization. Tools like winsorization are best applied when you can't verify outliers - when you can, use domain knowledge instead.`,
+           code: `<span class="cm"># IQR clipping - useful when you CAN'T verify outliers</span>
+Q1 = df[<span class="str">'salary'</span>].<span class="fn">quantile</span>(<span class="num">0.25</span>)
+Q3 = df[<span class="str">'salary'</span>].<span class="fn">quantile</span>(<span class="num">0.75</span>)
+IQR = Q3 - Q1
+df[<span class="str">'salary'</span>] = df[<span class="str">'salary'</span>].<span class="fn">clip</span>(Q1 - <span class="num">1.5</span>*IQR, Q3 + <span class="num">1.5</span>*IQR)
+<span class="cm"># ↑ Would wrongly cap Kim's real salary</span>`
+         },
+      D: { points: 3, quality: 'good', tag: 'Optimal',
+           title: '★ Excellent - log transform is smart for skewed salary data',
+           body: `This is the most sophisticated answer. You fix the invalid data (negative home runs), preserve Kim's legitimate $760K MLB contract value, and apply a log transform to handle the extreme right-skew of the salary distribution - where one player earns ~44x the median. <code style="font-family:var(--mono)">np.log1p()</code> (log of x+1) avoids issues with zeros. This is exactly what a senior data scientist would do.`,
+           code: `<span class="cm"># Fix the impossible value</span>
+df.<span class="fn">loc</span>[df[<span class="str">'home_runs'</span>] &lt; <span class="num">0</span>, <span class="str">'home_runs'</span>] = np.<span class="fn">nan</span>
+df[<span class="str">'home_runs'</span>].<span class="fn">fillna</span>(df[<span class="str">'home_runs'</span>].<span class="fn">median</span>(), inplace=<span class="kw">True</span>)
+<span class="cm"># Log-scale salary to reduce skew while preserving Kim's data</span>
+df[<span class="str">'log_salary'</span>] = np.<span class="fn">log1p</span>(df[<span class="str">'salary'</span>])`
+         }
+    }
+  },
+  5: {
+    label: 'Column Names',
+    answers: {
+      A: { points: 2, quality: 'good', tag: 'Correct',
+           title: '✓ Correct - this is the pandas standard',
+           body: `<code style="font-family:var(--mono)">.str.lower().str.replace(' ', '_')</code> is the canonical one-liner for column normalization in pandas. Applied to <code style="font-family:var(--mono)">df.columns</code>, it handles the whole dataframe at once. After this, <code style="font-family:var(--mono)">df.home_runs</code> and <code style="font-family:var(--mono)">df.batting_avg</code> both work with dot notation.`,
+           code: `<span class="cm"># Normalize all column names at once</span>
+df.columns = df.columns.<span class="fn">str.lower</span>().<span class="fn">str.replace</span>(<span class="str">' '</span>, <span class="str">'_'</span>)
+<span class="fn">print</span>(df.columns.tolist())
+<span class="cm"># → ['player_id', 'name', 'position', 'age',</span>
+<span class="cm">#    'batting_avg', 'home_runs', 'salary', 'games_played']</span>`
+         },
+      B: { points: 1, quality: 'warn', tag: 'Partial',
+           title: '~ Partial fix - spaces resolved, capitalization not',
+           body: `<code style="font-family:var(--mono)">df.rename()</code> is useful when you want to rename <em>specific</em> columns with custom names. For bulk normalization, it's verbose and error-prone - you have to type every column name twice. You'd also still have inconsistent capitalization. Option A does the same job in one line, for all columns.`,
+           code: `<span class="cm"># Rename works, but verbose:</span>
+df = df.<span class="fn">rename</span>(columns={
+    <span class="str">'batting avg'</span>: <span class="str">'batting_avg'</span>,
+    <span class="str">'Home Runs'</span>: <span class="str">'home_runs'</span>,
+    <span class="str">'games played'</span>: <span class="str">'games_played'</span>
+})
+<span class="cm"># Cleaner: df.columns.str.lower().str.replace(' ', '_')</span>`
+         },
+      C: { points: 0, quality: 'bad', tag: 'Avoid',
+           title: '✗ Bad practice - bracket notation everywhere is painful',
+           body: `Bracket notation works, but it's a tax on every line of code you and your teammates write for the rest of the project. You also can't use <code style="font-family:var(--mono)">df.query()</code>, method chaining is harder, and linters can't autocomplete. Fixing column names once at the top of your notebook is almost always worth it.`,
+           code: `<span class="cm"># What you're signing up for with option C:</span>
+df[<span class="str">'Home Runs'</span>].<span class="fn">mean</span>()
+df[df[<span class="str">'batting avg'</span>] > <span class="num">0.300</span>]
+df.<span class="fn">groupby</span>(<span class="str">'position'</span>)[<span class="str">'batting avg'</span>].<span class="fn">mean</span>()
+<span class="cm"># vs. with clean names:</span>
+df.<span class="fn">groupby</span>(<span class="str">'position'</span>).batting_avg.<span class="fn">mean</span>()`
+         }
+    }
+  }
+};
+
+
+// ── Decision handler ──
+function decide(decisionNum, choice) {
+  if (state.decisions[decisionNum]) return; // already answered
+
+  const cfg = DECISIONS[decisionNum];
+  const ans = cfg.answers[choice];
+  state.decisions[decisionNum] = { choice, points: ans.points, quality: ans.quality, label: cfg.label };
+  state.points += ans.points;
+
+  // Disable buttons
+  const screen = document.getElementById('screen-' + (decisionNum + 2));
+  screen.querySelectorAll('.choice-btn').forEach(btn => {
+    btn.style.opacity = '0.45';
+    btn.style.cursor = 'default';
+    btn.style.pointerEvents = 'none';
+  });
+
+  // Show outcome
+  const outcomeEl = document.getElementById('outcome-' + decisionNum);
+  const quality = ans.quality;
+  outcomeEl.innerHTML = `
+    <div class="outcome-card ${quality} fade-in" style="margin-top:24px;">
+      <div class="outcome-title ${quality}">${ans.title}</div>
+      <p>${ans.body}</p>
+      <div class="code-block" style="margin-top:12px;">
+        <div class="code-label">pandas code</div>
+        <pre>${ans.code}</pre>
+      </div>
+    </div>
+    <button class="continue-btn fade-in" style="margin-top:20px;" onclick="advanceFromDecision(${decisionNum})">${decisionNum < 5 ? 'Next Issue →' : 'See Your Results →'}</button>
+  `;
+  outcomeEl.style.display = 'block';
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+  // Update sidebar
+  updateSidebar(decisionNum, quality);
+}
+
+function advanceFromDecision(n) {
+  goTo(n + 3); // decisions are screens 3-7, next is 4-8
+}
+
+// ── Status bar + step strip updates ──
+function updateSidebar(decisionNum, quality) {
+  // Legacy hidden sidebar dots (JS compat)
+  const dot = document.getElementById('dot-' + decisionNum);
+  const li  = document.getElementById('sl-' + decisionNum);
+  if (dot) dot.className = 'stage-dot done';
+  if (li)  li.className  = 'done';
+
+  // Step strip
+  const ssStep = document.getElementById('ss-' + decisionNum);
+  const ssDot  = document.getElementById('ssdot-' + decisionNum);
+  if (ssStep) ssStep.className = 'ss-step done';
+  if (ssDot)  ssDot.className  = 'ss-dot done';
+
+  // Score
+  const maxPossible = Object.values(DECISIONS).reduce((sum, d) => {
+    return sum + Math.max(...Object.values(d.answers).map(a => a.points));
+  }, 0);
+  const pct = Math.round((state.points / maxPossible) * 100);
+
+  // Update status bar
+  const sbScore   = document.getElementById('sb-score');
+  const sbRating  = document.getElementById('sb-rating');
+  const sbResolved = document.getElementById('sb-resolved');
+  if (sbScore) sbScore.textContent = pct + '%';
+
+  const resolved = Object.keys(state.decisions).length;
+  if (sbResolved) sbResolved.textContent = resolved + ' / 5';
+
+  if (pct >= 75) {
+    if (sbScore)  sbScore.className  = 'sb-metric-val good';
+    if (sbRating) { sbRating.textContent = 'Senior-level'; sbRating.className = 'sb-metric-val good'; }
+  } else if (pct >= 50) {
+    if (sbScore)  sbScore.className  = 'sb-metric-val warn';
+    if (sbRating) { sbRating.textContent = 'On track'; sbRating.className = 'sb-metric-val warn'; }
+  } else {
+    if (sbScore)  sbScore.className  = 'sb-metric-val bad';
+    if (sbRating) { sbRating.textContent = 'Needs work'; sbRating.className = 'sb-metric-val bad'; }
+  }
+
+  // Legacy hidden sidebar (kept for JS compat)
+  const scoreEl = document.getElementById('sd-score');
+  const barEl   = document.getElementById('sd-score-bar');
+  if (scoreEl) scoreEl.textContent = pct + '%';
+  const sdResolved = document.getElementById('sd-resolved');
+  if (sdResolved) sdResolved.textContent = resolved + ' / 5';
+}
+
+// ── Navigation (single canonical definition) ──
+function goTo(n) {
+  document.querySelectorAll('[id^="screen-"]').forEach(s => s.style.display = 'none');
+  const screen = document.getElementById('screen-' + n);
+  if (!screen) return;
+  screen.style.display = 'block';
+  screen.classList.remove('fade-in');
+  void screen.offsetWidth; // force reflow for re-animation
+  screen.classList.add('fade-in');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Show/hide chrome
+  const showChrome = n >= 1;
+  document.getElementById('statusbar').classList.toggle('visible', showChrome);
+  document.getElementById('progressbar').classList.toggle('visible', showChrome);
+  document.getElementById('stepstrip').classList.toggle('visible', showChrome);
+
+  // Progress fill - screens 1-8, decisions start at screen 3
+  const progressMap = { 0:0, 1:0, 2:16, 3:32, 4:48, 5:64, 6:80, 7:88, 8:100 };
+  document.getElementById('progressfill').style.width = (progressMap[n] || 0) + '%';
+
+  // Status bar stage label
+  const stageLabels = {
+    1:'Stage 1 of 6', 2:'Stage 2 of 6',
+    3:'Decision 1 of 5', 4:'Decision 2 of 5', 5:'Decision 3 of 5',
+    6:'Decision 4 of 5', 7:'Decision 5 of 5', 8:'Complete'
+  };
+  const stageEl = document.getElementById('sb-stage');
+  if (stageEl && stageLabels[n]) stageEl.textContent = stageLabels[n];
+
+  // Mark active step in strip (decisions only: screens 3-7)
+  [1,2,3,4,5].forEach(i => {
+    const step = document.getElementById('ss-' + i);
+    const dot  = document.getElementById('ssdot-' + i);
+    if (!step) return;
+    const isResolved = !!state.decisions[i];
+    const isActive = (n === i + 2) && !isResolved;
+    if (isResolved) { step.className = 'ss-step done'; dot.className = 'ss-dot done'; }
+    else if (isActive) { step.className = 'ss-step active'; dot.className = 'ss-dot active'; }
+    else { step.className = 'ss-step'; dot.className = 'ss-dot'; }
+  });
+
+  if (n === 8) buildFinalScreen();
+}
+
+function buildFinalScreen() {
+  // Path items
+  const pathContainer = document.getElementById('path-items');
+  pathContainer.innerHTML = '';
+  const qualityMap = { good: 'good', warn: 'warn', bad: 'bad' };
+  const labelMap   = { good: '✓ Good call', warn: '~ Acceptable', bad: '✗ Needs rethinking' };
+
+  Object.entries(state.decisions).forEach(([num, d]) => {
+    const div = document.createElement('div');
+    div.className = 'path-item';
+    div.innerHTML = `
+      <div class="path-dot ${qualityMap[d.quality]}"></div>
+      <div class="path-item-text"><strong>${d.label}:</strong> Choice ${d.choice} - ${labelMap[d.quality]} (${d.points} pt${d.points !== 1 ? 's' : ''})</div>
+    `;
+    pathContainer.appendChild(div);
+  });
+
+  // Score
+  const maxPossible = Object.values(DECISIONS).reduce((sum, d) => {
+    return sum + Math.max(...Object.values(d.answers).map(a => a.points));
+  }, 0);
+  const pct = Math.round((state.points / maxPossible) * 100);
+  const scoreNum = document.getElementById('final-score-num');
+  const badge    = document.getElementById('final-badge');
+  scoreNum.textContent = pct + '%';
+
+  // Scoring breakdown: D1 max=3, D2 max=2, D3 max=2, D4 max=3, D5 max=2 = 12 total
+  // Picking all "correct" non-log-transform answers: 3+2+2+2+2 = 11 = 92%
+  // 100% requires the log-transform answer (D) on Decision 4
+  let badgeClass, badgeText, message;
+  if (pct === 100) {
+    badgeClass = 'green'; badgeText = 'Principal Analyst';
+    message = `<div class="outcome-card good"><div class="outcome-title good">Jonah's verdict: "You're already thinking like a senior."</div><p>Perfect score. You caught the log-transform opportunity on the salary outlier, added the missingness flag for batting_avg, and made every call correctly. That's not beginner thinking - that's how a senior data scientist approaches a messy dataset from day one.</p></div>`;
+  } else if (pct >= 80) {
+    badgeClass = 'green'; badgeText = 'Senior Analyst';
+    message = `<div class="outcome-card good"><div class="outcome-title good">Jonah's verdict: "You've done this before."</div><p>Strong work - all your decisions were correct or near-optimal. If you scored 92%, you likely picked the "Good" answer on Decision 4 (fix the invalid value, keep Kim's salary as-is) rather than the "Optimal" one (also log-scale the salary column to reduce its skew). Both are defensible choices; the log transform is just a level up. Look for any decisions marked with a star to see what the extra step looks like in code.</p></div>`;
+  } else if (pct >= 55) {
+    badgeClass = 'yellow'; badgeText = 'Junior Analyst';
+    message = `<div class="outcome-card warn"><div class="outcome-title warn">Jonah's verdict: "Solid start - a few things to revisit."</div><p>You got most of it right. A couple of your choices were conservative but defensible - the kind of thing you learn to sharpen with experience. Review the decisions you lost points on and think about <em>why</em> the alternative was better. The key is always: what does this decision tell the model?</p></div>`;
+  } else {
+    badgeClass = 'red'; badgeText = 'Needs More Practice';
+    message = `<div class="outcome-card bad"><div class="outcome-title bad">Jonah's verdict: "Let's walk through this together."</div><p>Some of your cleaning decisions introduced new problems into the dataset - a model trained on this data would have systematic errors. Review each decision carefully. The code reveals below each question show exactly what a senior analyst would write and why. This is how you learn.</p></div>`;
+  }
+
+  badge.className = 'score-badge ' + badgeClass;
+  badge.textContent = badgeText;
+  document.getElementById('final-message').innerHTML = message;
+}
+
+// ── Reset ──
+function resetSim() {
+  state.decisions = {};
+  state.points = 0;
+  // Reset status bar
+  const sbScore = document.getElementById('sb-score');
+  const sbRating = document.getElementById('sb-rating');
+  const sbResolved = document.getElementById('sb-resolved');
+  if (sbScore)    { sbScore.textContent = '—'; sbScore.className = 'sb-metric-val'; }
+  if (sbRating)   { sbRating.textContent = 'Unrated'; sbRating.className = 'sb-metric-val'; }
+  if (sbResolved) { sbResolved.textContent = '0 / 5'; }
+  // Reset hidden sidebar (compat)
+  const sdScore = document.getElementById('sd-score');
+  const sdBar   = document.getElementById('sd-score-bar');
+  const sdResolved = document.getElementById('sd-resolved');
+  const sdRating = document.getElementById('sd-rating');
+  if (sdScore)    { sdScore.textContent = '—'; sdScore.className = 'sidebar-metric-val'; }
+  if (sdBar)      sdBar.style.width = '0%';
+  if (sdResolved) sdResolved.textContent = '0 / 5';
+  if (sdRating)   { sdRating.textContent = 'Unrated'; sdRating.className = 'sidebar-metric-val'; }
+  [1,2,3,4,5].forEach(n => {
+    document.getElementById('dot-'+n).className = 'stage-dot';
+    document.getElementById('sl-'+n).className = '';
+    const out = document.getElementById('outcome-'+n);
+    if (out) { out.style.display='none'; out.innerHTML=''; }
+    const screen = document.getElementById('screen-'+(n+2));
+    if (screen) screen.querySelectorAll('.choice-btn').forEach(b => {
+      b.style.opacity=''; b.style.cursor=''; b.style.pointerEvents='';
+    });
+  });
+  goTo(0);
+}
+
+// Initial state
+document.getElementById('screen-0').style.display = 'block';
+</script>
+<footer style="max-width:900px;width:100%;margin:20px auto 0;padding:0 0 24px;text-align:center;font-size:12px;color:#646469;font-family:'IBM Plex Mono',monospace;">
+    This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.<br>&copy; Eastern University. All rights reserved.
+</footer>
+</body>
+</html>

@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Challenge: Scouting Report - StatDeck Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+<style>
+  :root {
+    --maroon: #8B1C40; --maroon-light: #a82050;
+    --blue: #2A7195; --blue-light: #3590b8;
+    --gray: #646469;
+    --green: #4a9e6b; --green-dim: rgba(74,158,107,0.15);
+    --amber: #c8963a; --amber-dim: rgba(200,150,58,0.12);
+    --red: #c04a4a; --red-dim: rgba(192,74,74,0.12);
+    --gold: #d4a820; --gold-dim: rgba(212,168,32,0.12);
+    --bg: #0f0e0d; --surface: #1a1816; --surface2: #221f1d; --surface3: #2d2926;
+    --text: #f0ece6; --text-dim: #b8b0a6; --text-muted: #7a7268; --border: #38322d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Zilla Slab', serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 3px solid transparent;
+    border-image: linear-gradient(90deg, var(--maroon), var(--blue)) 1;
+    padding: 0 1.5rem;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 1rem; }
+  .back-link { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .back-link:hover { color: var(--text-dim); }
+  .topbar-divider { width: 1px; height: 20px; background: var(--border); }
+  .topbar-module { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: var(--text); }
+  .topbar-module span { color: var(--gold); }
+  .topbar-right { display: flex; align-items: center; gap: 1.25rem; }
+  .score-display { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: var(--gold); background: var(--gold-dim); border: 1px solid rgba(212,168,32,0.3); border-radius: 4px; padding: 4px 10px; }
+
+  .step-strip { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 10px 1.5rem; display: flex; gap: 6px; }
+  .step-dot { width: 28px; height: 6px; border-radius: 4px; background: var(--border); transition: background 0.3s; }
+  .step-dot.active { background: var(--gold); }
+  .step-dot.done   { background: var(--green); }
+
+  #loadingScreen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.25rem; padding: 3rem; }
+  .loading-logo { font-family: 'IBM Plex Mono', monospace; font-size: 1.8rem; font-weight: 600; color: var(--gold); }
+  .loading-text { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--text-muted); }
+  .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #appScreen { display: none; flex: 1; flex-direction: column; }
+
+  .challenge-area { flex: 1; max-width: 900px; margin: 0 auto; width: 100%; padding: 2rem 1.5rem 4rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .intro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .intro-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--maroon), var(--gold), var(--blue));
+  }
+
+  .challenge-card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--gold); border-radius: 4px; overflow: hidden; }
+  .challenge-header { padding: 1.25rem 1.5rem 1rem; border-bottom: 1px solid var(--border); }
+  .challenge-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 0.5rem; }
+  .challenge-title { font-size: 1.25rem; font-weight: 700; color: var(--text); margin-bottom: 0.6rem; }
+  .challenge-desc { font-size: 0.95rem; color: var(--text-dim); line-height: 1.6; }
+  .challenge-desc code { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; background: var(--surface3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; color: var(--blue-light); }
+
+  .data-panel {
+    margin: 0 1.5rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .data-panel-header {
+    background: var(--surface3);
+    padding: 8px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  .data-table td { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-dim); padding: 7px 12px; border-bottom: 1px solid rgba(56,50,45,0.5); }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table td:first-child { color: var(--text); font-weight: 500; }
+
+  .editor-wrap { margin: 0 1.5rem; }
+  .editor-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .editor-label span { font-weight: 400; }
+  textarea.code-editor { width: 100%; min-height: 200px; background: #0a0908; border: 1px solid var(--border); border-radius: 4px; padding: 1rem; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--text); resize: vertical; outline: none; line-height: 1.6; tab-size: 4; transition: border-color 0.2s; }
+  textarea.code-editor:focus { border-color: var(--gold); }
+
+  .editor-actions { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.75rem; flex-wrap: wrap; }
+  .btn-run { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: var(--gold); color: #0f0e0d; border: none; border-radius: 4px; padding: 9px 20px; cursor: pointer; transition: background 0.2s; }
+  .btn-run:hover { background: #e8b824; }
+  .btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-hint { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: 4px; padding: 8px 16px; cursor: pointer; transition: color 0.2s, border-color 0.2s; }
+  .btn-hint:hover { color: var(--text-dim); border-color: var(--gray); }
+  .btn-next { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: var(--maroon); color: #fff; border: none; border-radius: 4px; padding: 9px 20px; cursor: pointer; transition: background 0.2s; display: none; }
+  .btn-next:hover { background: var(--maroon-light); }
+
+  .output-wrap { margin: 0 1.5rem; }
+  .output-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 6px; }
+  .output-box { background: #070605; border: 1px solid var(--border); border-radius: 4px; padding: 1rem; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--text-dim); min-height: 60px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+  .output-box.error { color: var(--red); }
+
+  .feedback-box { margin: 0 1.5rem 1.5rem; border-radius: 4px; padding: 1rem 1.25rem; display: none; }
+  .feedback-box.show { display: block; }
+  .feedback-box.pass    { background: var(--green-dim); border: 1px solid rgba(74,158,107,0.35); border-left: 3px solid var(--green); }
+  .feedback-box.partial { background: var(--amber-dim); border: 1px solid rgba(200,150,58,0.35); border-left: 3px solid var(--amber); }
+  .feedback-box.fail    { background: var(--red-dim); border: 1px solid rgba(192,74,74,0.35); border-left: 3px solid var(--red); }
+  .feedback-verdict { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+  .feedback-box.pass    .feedback-verdict { color: var(--green); }
+  .feedback-box.partial .feedback-verdict { color: var(--amber); }
+  .feedback-box.fail    .feedback-verdict { color: var(--red); }
+  .feedback-text { font-size: 0.9rem; color: var(--text-dim); line-height: 1.55; }
+  .feedback-text code { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; background: var(--surface3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; color: var(--blue-light); }
+
+  .hint-box { margin: 0 1.5rem; background: rgba(212,168,32,0.06); border: 1px solid rgba(212,168,32,0.2); border-radius: 4px; padding: 0.9rem 1.1rem; display: none; }
+  .hint-box.show { display: block; }
+  .hint-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); margin-bottom: 0.4rem; }
+  .hint-text { font-size: 0.9rem; color: var(--text-dim); line-height: 1.55; }
+  .hint-text code { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; background: var(--surface3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; color: var(--blue-light); }
+
+  /* DEBRIEF */
+  #debriefScreen { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: flex-start; padding: 3rem 1.5rem 4rem; }
+
+  .debrief-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    max-width: 660px; width: 100%;
+    padding: 2.5rem 2rem;
+    display: flex; flex-direction: column; gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .debrief-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--maroon), var(--gold), var(--blue));
+  }
+
+  .credential-badge {
+    background: var(--gold-dim);
+    border: 1px solid rgba(212,168,32,0.4);
+    border-radius: 4px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  .credential-icon {
+    width: 52px; height: 52px;
+    background: rgba(212,168,32,0.15);
+    border: 2px solid var(--gold);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.4rem;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .credential-text {}
+  .credential-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 4px; }
+  .credential-name { font-size: 1.15rem; font-weight: 700; color: var(--text); }
+
+  .debrief-headline { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); }
+  .debrief-title { font-size: 1.8rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+  .debrief-score-row { display: flex; align-items: baseline; gap: 0.75rem; }
+  .debrief-score-num { font-family: 'IBM Plex Mono', monospace; font-size: 3rem; font-weight: 700; color: var(--gold); line-height: 1; }
+  .debrief-score-denom { font-family: 'IBM Plex Mono', monospace; font-size: 1.1rem; color: var(--text-muted); }
+  .debrief-verdict { font-size: 1.05rem; color: var(--text-dim); line-height: 1.6; }
+  .debrief-breakdown { border-top: 1px solid var(--border); padding-top: 1.25rem; }
+  .breakdown-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.75rem; }
+  .breakdown-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; color: var(--text-dim); }
+  .breakdown-row:last-child { border-bottom: none; }
+  .breakdown-pts { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; }
+  .pts-full { color: var(--green); } .pts-part { color: var(--amber); } .pts-none { color: var(--red); }
+  .debrief-concept { background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--blue); border-radius: 4px; padding: 1rem 1.25rem; font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; }
+  .debrief-concept strong { color: var(--text); font-weight: 600; }
+  .debrief-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-home { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: 4px; padding: 9px 20px; cursor: pointer; text-decoration: none; transition: color 0.2s, border-color 0.2s; }
+  .btn-home:hover { color: var(--text); border-color: var(--gray); }
+
+  .page-footer { border-top: 1px solid var(--border); padding: 1rem 1.5rem; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); }
+
+  /* Intro card padding */
+  .intro-pad { padding: 1.75rem 1.5rem 1.5rem; }
+  .intro-headline { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 0.6rem; }
+  .intro-title { font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem; line-height: 1.25; }
+  .intro-body { font-size: 0.95rem; color: var(--text-dim); line-height: 1.65; }
+  .intro-body strong { color: var(--text); }
+
+  .breakdown-row-link {
+    cursor: pointer;
+    transition: background 0.15s;
+    border-radius: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    margin-left: -6px;
+    margin-right: -6px;
+  }
+  .breakdown-row-link:hover { background: var(--surface3); }
+
+  .revisit-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--blue);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .breakdown-row-link:hover .revisit-hint { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <a href="index.html" class="back-link">&larr; Hub</a>
+    <div class="topbar-divider"></div>
+    <div class="topbar-module"><span>Final Challenge</span> - Scouting Report</div>
+  </div>
+  <div class="topbar-right">
+    <span class="score-display" id="scoreDisplay">0 / 12 pts</span>
+  </div>
+</header>
+
+<div class="step-strip">
+  <div class="step-dot active" id="dot0"></div>
+  <div class="step-dot" id="dot1"></div>
+  <div class="step-dot" id="dot2"></div>
+</div>
+
+<div id="loadingScreen">
+  <div class="loading-logo">Scouting Report</div>
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Loading Python environment...</div>
+</div>
+
+<div id="appScreen">
+  <div class="challenge-area" id="challengeArea"></div>
+  <div id="debriefScreen">
+    <div class="debrief-card">
+      <div class="credential-badge" id="credentialBadge" style="display:none">
+        <div class="credential-icon">&#9733;</div>
+        <div class="credential-text">
+          <div class="credential-title">Credential Earned</div>
+          <div class="credential-name">StatDeck Certified Analyst - Python Foundations</div>
+        </div>
+      </div>
+      <div>
+        <div class="debrief-headline">Final Challenge - Scouting Report</div>
+        <div class="debrief-title" id="debriefTitle">Challenge Complete</div>
+      </div>
+      <div class="debrief-score-row">
+        <div class="debrief-score-num" id="debriefScoreNum">0</div>
+        <div class="debrief-score-denom">/ 12 pts</div>
+      </div>
+      <div class="debrief-verdict" id="debriefVerdict"></div>
+      <div class="debrief-breakdown">
+        <div class="breakdown-label">Challenge Breakdown</div>
+        <div id="breakdownRows"></div>
+      </div>
+      <div class="debrief-concept" id="debriefConcept"></div>
+      <div class="debrief-actions">
+        <a href="index.html" class="btn-home">&larr; Back to Hub</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="page-footer">
+  DTSC 520 - Introduction to Data Science &nbsp;&bull;&nbsp; Eastern University &nbsp;&bull;&nbsp; StatDeck Analytics Training Sim
+</footer>
+
+<script>
+const challenges = [
+  {
+    isIntro: true,
+    title: "The Setup",
+    subtitle: "The Scouting Report Brief",
+    body: `It's 9 PM. Game 1 of the series is tomorrow morning. Jonah drops a USB drive on your desk and a sticky note: <strong>"Five players. Need their report by 8 AM. Use Python."</strong><br><br>
+The drive has the data. Your job: write the code. Use variables, lists, and loops to build the Eagles a scouting report on tomorrow's opposing lineup.`,
+    challenge: null
+  },
+  {
+    title: "Build the Scouting Dataset",
+    tag: "Variables + Lists",
+    desc: `You have data on five opposing players. Store it as two lists: <code>scout_names</code> with names in order, and <code>scout_avgs</code> with their batting averages. Names: "Alvarez", "Dominguez", "Park", "Mbeki", "Larsson". Averages: 0.312, 0.258, 0.289, 0.271, 0.334. Print both lists.`,
+    tableData: {
+      headers: ['Player', 'Avg', 'Notes'],
+      rows: [
+        ['Alvarez', '.312', 'Cleanup hitter, pull tendency'],
+        ['Dominguez', '.258', 'Contact hitter, good bunter'],
+        ['Park', '.289', 'Switch hitter'],
+        ['Mbeki', '.271', 'Long swing, high K rate'],
+        ['Larsson', '.334', 'Best hitter on the team'],
+      ]
+    },
+    starterCode: `# Create two lists: player names and their batting averages
+scout_names = ["Alvarez",
+
+scout_avgs = [0.312,
+
+print(scout_names)
+print(scout_avgs)`,
+    hint: `Complete each list with all five values: <code>scout_names = ["Alvarez", "Dominguez", "Park", "Mbeki", "Larsson"]</code>`,
+    maxPoints: 4,
+    grader(pyodide, code, stdout, error) {
+      if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
+      const names = ['Alvarez','Dominguez','Park','Mbeki','Larsson'];
+      const avgs  = ['0.312','0.258','0.289','0.271','0.334'];
+      const namesOk = names.every(n => code.includes(`"${n}"`) || code.includes(`'${n}'`));
+      const avgsOk  = avgs.every(a => code.includes(a));
+      const printed = stdout.includes('Alvarez') && stdout.includes('Larsson');
+      if (namesOk && avgsOk && printed) return { pts: 4, level: 'pass', msg: `Both lists built correctly. In a real pipeline this data would come from a CSV loaded with pandas - but the list structure is identical. You're thinking about data the right way.` };
+      if ((namesOk || avgsOk) && printed) return { pts: 2, level: 'partial', msg: `One list looks complete but check both. Make sure you have all 5 names and all 5 averages in separate lists.` };
+      return { pts: 0, level: 'fail', msg: `Complete both lists with all 5 names and 5 averages. Use comma-separated values inside the brackets.` };
+    }
+  },
+  {
+    title: "Generate the Report",
+    tag: "Lists + Loops + Conditionals",
+    desc: `Loop through the scouting data and print a report line for each player. If their average is <strong>above .290</strong>, label them <code>"THREAT"</code>. If between .265 and .290 (inclusive), label them <code>"WATCH"</code>. Below .265, label them <code>"NEUTRAL"</code>. Format: <em>"1. Alvarez (.312) - THREAT"</em>`,
+    starterCode: `scout_names = ["Alvarez", "Dominguez", "Park", "Mbeki", "Larsson"]
+scout_avgs  = [0.312, 0.258, 0.289, 0.271, 0.334]
+
+print("--- SCOUTING REPORT ---")
+print("Eagles vs. Riverside Comets")
+print()
+
+for i in range(len(scout_names)):
+    name = scout_names[i]
+    avg  = scout_avgs[i]
+
+    if avg > 0.290:
+        label =
+    elif avg >= 0.265:
+        label =
+    else:
+        label =
+
+    print(str(i+1) + ". " + name + " (." + str(round(avg*1000)) + ") - " + label)`,
+    hint: `Fill in the three label strings: <code>"THREAT"</code>, <code>"WATCH"</code>, and <code>"NEUTRAL"</code>`,
+    maxPoints: 8,
+    grader(pyodide, code, stdout, error) {
+      if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
+      const hasThreat  = stdout.includes('THREAT');
+      const hasWatch   = stdout.includes('WATCH');
+      const hasNeutral = stdout.includes('NEUTRAL');
+      const hasAlvarez = stdout.includes('Alvarez');
+      const hasLarsson = stdout.includes('Larsson');
+      // Expected: Alvarez THREAT, Dominguez NEUTRAL, Park WATCH, Mbeki WATCH, Larsson THREAT
+      const alvarezThreat  = /Alvarez[^]*THREAT|THREAT[^]*Alvarez/.test(stdout);
+      const larssonThreat  = /Larsson[^]*THREAT|THREAT[^]*Larsson/.test(stdout);
+      const domNeutral     = /Dominguez[^]*NEUTRAL|NEUTRAL[^]*Dominguez/.test(stdout);
+      const parkWatch      = /Park[^]*WATCH|WATCH[^]*Park/.test(stdout);
+      const mbWatched      = /Mbeki[^]*WATCH|WATCH[^]*Mbeki/.test(stdout);
+      const allCorrect = alvarezThreat && larssonThreat && domNeutral && parkWatch && mbWatched;
+      const someCorrect = (alvarezThreat ? 1 : 0) + (larssonThreat ? 1 : 0) + (domNeutral ? 1 : 0) + (parkWatch ? 1 : 0) + (mbWatched ? 1 : 0);
+      if (allCorrect) return { pts: 8, level: 'pass', msg: `Perfect scouting report. Alvarez and Larsson are THREAT, Park and Mbeki are WATCH, Dominguez is NEUTRAL. You just wrote a real data pipeline: load data, iterate, classify, report. That's the job.` };
+      if (someCorrect >= 3 && hasThreat && hasWatch && hasNeutral) return { pts: 5, level: 'partial', msg: `Good structure - all three labels are appearing. Check the thresholds: above .290 is THREAT, .265 to .290 is WATCH, below .265 is NEUTRAL. Dominguez (.258) should be NEUTRAL.` };
+      if (hasAlvarez && hasLarsson && (hasThreat || hasWatch)) return { pts: 3, level: 'partial', msg: `Loop is running and labels are showing. Check all three conditions - make sure <code>elif avg >= 0.265:</code> catches the WATCH range correctly.` };
+      return { pts: 0, level: 'fail', msg: `Fill in the three label strings: <code>"THREAT"</code> for avg > .290, <code>"WATCH"</code> for .265-.290, and <code>"NEUTRAL"</code> below .265.` };
+    }
+  }
+];
+
+let pyodideInstance = null;
+let currentChallenge = 0;
+let scores = [null, null]; // only 2 graded challenges (idx 1 and 2)
+let completed = false;
+
+
+// ===== FRIENDLY ERROR TRANSLATOR =====
+function friendlyError(raw) {
+  if (!raw) return raw;
+  const r = raw;
+
+  // SyntaxError: EOL while scanning string literal
+  if (/EOL while scanning string literal|unterminated string/i.test(r))
+    return `Syntax error: You opened a quote but didn't close it.\nExample fix: player_name = "Marcus Rivera"  (needs a closing quote)`;
+
+  // SyntaxError: invalid syntax - likely missing value after =
+  if (/SyntaxError.*invalid syntax/i.test(r)) {
+    if (/line \d+/.test(r)) {
+      const line = r.match(/line (\d+)/)?.[1];
+      return `Syntax error on line ${line}: Python can't read this line.\nCommon causes: missing value after =, unclosed bracket, or a typo.`;
+    }
+    return `Syntax error: Python can't read your code. Check for missing values, unclosed quotes or brackets, or typos.`;
+  }
+
+  // NameError
+  if (/NameError.*name '(\w+)' is not defined/i.test(r)) {
+    const name = r.match(/name '(\w+)' is not defined/i)?.[1];
+    return `Name error: Python doesn't recognize "${name}".\nDid you mean to put quotes around it (to make it a string)?\nOr did you forget to assign it first?  Example: ${name} = "some value"`;
+  }
+
+  // TypeError
+  if (/TypeError.*can only concatenate str.*not/i.test(r))
+    return `Type error: You tried to join a string and a number with +.\nTip: Use a comma instead: print("Value:", my_number)\nOr convert the number: print("Value: " + str(my_number))`;
+  if (/TypeError/i.test(r))
+    return `Type error: You used a value in a way Python didn't expect.\nCheck that you're using the right type (string vs number vs True/False).`;
+
+  // IndentationError
+  if (/IndentationError/i.test(r))
+    return `Indentation error: A line is indented when it shouldn't be, or it's missing indentation.\nIn Python, the body of a loop or if-statement must be indented with 4 spaces.`;
+
+  // ValueError
+  if (/ValueError/i.test(r))
+    return `Value error: A value was the wrong kind for what you were trying to do.\n` + r.split('\n').slice(-2).join(' ');
+
+  // AttributeError
+  if (/AttributeError/i.test(r)) {
+    const attr = r.match(/has no attribute '(\w+)'/i)?.[1];
+    return attr
+      ? `Attribute error: The value you have doesn't support ".${attr}".\nCheck that you're calling this method on the right type of variable.`
+      : `Attribute error: ` + r.split('\n').slice(-1)[0];
+  }
+
+  // Generic - show just the last meaningful line, not the full traceback
+  const lines = r.split('\n').filter(l => l.trim());
+  const lastLine = lines[lines.length - 1] || r;
+  return lastLine;
+}
+
+async function initPyodide() {
+  document.getElementById('loadingText').textContent = 'Loading Python environment... (first load ~10s)';
+  try {
+    pyodideInstance = await loadPyodide();
+    setTimeout(showApp, 400);
+  } catch(e) {
+    document.getElementById('loadingText').textContent = 'Failed to load Python. Check connection and refresh.';
+  }
+}
+
+function showApp() {
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'flex';
+  renderChallenge(currentChallenge);
+}
+
+function renderChallenge(idx) {
+  const c = challenges[idx];
+  updateDots(idx);
+  const area = document.getElementById('challengeArea');
+
+  if (c.isIntro) {
+    area.innerHTML = `
+      <div class="intro-card">
+        <div class="intro-pad">
+          <div class="intro-headline">Final Challenge</div>
+          <div class="intro-title">${c.subtitle}</div>
+          <div class="intro-body">${c.body}</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <button class="btn-run" style="background:var(--maroon);color:#fff;" onclick="nextChallenge()">Start the Report &rarr;</button>
+      </div>
+    `;
+    return;
+  }
+
+  // Build table HTML if present
+  let tableHTML = '';
+  if (c.tableData) {
+    const rows = c.tableData.rows.map(r => `<tr>${r.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
+    const headers = c.tableData.headers.map(h => `<th>${h}</th>`).join('');
+    tableHTML = `<div class="data-panel" style="margin-top:1.25rem">
+      <div class="data-panel-header">Scout Data - Riverside Comets Lineup</div>
+      <table class="data-table"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>
+    </div>`;
+  }
+
+  const scoreIdx = idx - 1;
+  const prevScore = scores[scoreIdx];
+  const isFinal = idx === challenges.length - 1;
+
+  area.innerHTML = `
+    <div class="challenge-card">
+      <div class="challenge-header">
+        <div class="challenge-tag">${c.tag}</div>
+        <div class="challenge-title">${c.title}</div>
+        <div class="challenge-desc">${c.desc}</div>
+      </div>
+      ${tableHTML}
+      <div class="editor-wrap" style="margin-top:1.25rem">
+        <div class="editor-label">Your Code <span>Tab = 4 spaces</span></div>
+        <textarea class="code-editor" id="codeEditor" spellcheck="false">${c.starterCode}</textarea>
+        <div class="editor-actions">
+          <button class="btn-run" id="btnRun" onclick="runCode(${idx})">&#9654; Run Code</button>
+          <button class="btn-hint" onclick="toggleHint()">Hint</button>
+          <button class="btn-next" id="btnNext" onclick="nextChallenge()" style="display:none">
+            ${isFinal ? 'See Final Results &rarr;' : 'Next Challenge &rarr;'}
+          </button>
+        </div>
+      </div>
+      <div class="hint-box" id="hintBox">
+        <div class="hint-label">Hint</div>
+        <div class="hint-text">${c.hint}</div>
+      </div>
+      <div class="output-wrap" style="margin-top:1rem">
+        <div class="output-label">Output</div>
+        <div class="output-box" id="outputBox">Ready. Press "Run Code" to execute.</div>
+      </div>
+      <div class="feedback-box" id="feedbackBox">
+        <div class="feedback-verdict" id="feedbackVerdict"></div>
+        <div class="feedback-text" id="feedbackText"></div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('codeEditor').addEventListener('keydown', function(e) {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const s = this.selectionStart;
+      this.value = this.value.substring(0, s) + '    ' + this.value.substring(this.selectionEnd);
+      this.selectionStart = this.selectionEnd = s + 4;
+    }
+  });
+
+  if (prevScore !== null) {
+    showFeedback(prevScore.level, prevScore.verdict, prevScore.msg);
+    document.getElementById('btnNext').style.display = 'inline-flex';
+  }
+  updateScore();
+}
+
+function updateDots(active) {
+  for (let i = 0; i < 3; i++) {
+    const dot = document.getElementById('dot' + i);
+    if (!dot) continue;
+    if (i < active)        dot.className = 'step-dot done';
+    else if (i === active) dot.className = 'step-dot active';
+    else                   dot.className = 'step-dot';
+  }
+}
+
+async function runCode(idx) {
+  const code = document.getElementById('codeEditor').value;
+  const outBox = document.getElementById('outputBox');
+  const btnRun = document.getElementById('btnRun');
+  btnRun.disabled = true; btnRun.textContent = 'Running...';
+  outBox.className = 'output-box'; outBox.textContent = '';
+  let stdout = '', errorMsg = '';
+  try {
+    pyodideInstance.setStdout({ batched: t => { stdout += t + '\n'; } });
+    pyodideInstance.setStderr({ batched: t => { errorMsg += t + '\n'; } });
+    await pyodideInstance.runPythonAsync(code);
+  } catch(e) { errorMsg = e.message || String(e); }
+  btnRun.disabled = false; btnRun.textContent = '▶ Run Code';
+  if (errorMsg) { outBox.className = 'output-box error'; outBox.textContent = friendlyError(errorMsg); }
+  else if (stdout) { outBox.textContent = stdout; }
+  else { outBox.textContent = '(no output)'; }
+
+  const c = challenges[idx];
+  const result = c.grader(pyodideInstance, code, stdout, errorMsg || null);
+  const scoreIdx = idx - 1;
+  scores[scoreIdx] = { pts: result.pts, level: result.level, msg: result.msg, verdict: result.level === 'pass' ? 'Correct' : result.level === 'partial' ? 'Partially Correct' : 'Not Quite', title: c.title, max: c.maxPoints };
+  showFeedback(result.level, scores[scoreIdx].verdict, result.msg);
+  updateScore();
+  document.getElementById('btnNext').style.display = 'inline-flex';
+  saveProgress();
+}
+
+function showFeedback(level, verdict, msg) {
+  const box = document.getElementById('feedbackBox');
+  box.className = 'feedback-box show ' + level;
+  document.getElementById('feedbackVerdict').textContent = verdict;
+  document.getElementById('feedbackText').innerHTML = msg;
+}
+
+function toggleHint() { document.getElementById('hintBox').classList.toggle('show'); }
+
+function updateScore() {
+  const total = scores.reduce((s, x) => s + (x ? x.pts : 0), 0);
+  document.getElementById('scoreDisplay').textContent = total + ' / 12 pts';
+}
+
+function nextChallenge() {
+  if (currentChallenge < challenges.length - 1) {
+    currentChallenge++; renderChallenge(currentChallenge); window.scrollTo(0, 0);
+  } else { showDebrief(); }
+}
+
+function showDebrief() {
+  document.getElementById('challengeArea').style.display = 'none';
+  document.getElementById('debriefScreen').style.display = 'flex';
+  const totalPts = scores.reduce((s, x) => s + (x ? x.pts : 0), 0);
+  const pct = Math.round((totalPts / 12) * 100);
+  document.getElementById('debriefScoreNum').textContent = totalPts;
+
+  if (pct >= 90) {
+    document.getElementById('credentialBadge').style.display = 'flex';
+  }
+
+  let title, verdict, conceptMsg;
+  if (pct === 100) {
+    title = 'Perfect Score - Credentialed Analyst';
+    verdict = '"You nailed it," Jonah says. He signs your onboarding form and stamps "CLEARED FOR PIPELINE ACCESS" across it. "Welcome to StatDeck. Game 1 starts at 10. Your scouting report just helped us set the defensive alignment."';
+    conceptMsg = '<strong>What you just built:</strong> A real data pipeline. You loaded structured data into lists, iterated over every record with a loop, applied conditional logic to classify each one, and produced formatted output. The only difference between what you wrote and a pandas pipeline is scale - the logic is identical. You\'re ready for the next step.';
+  } else if (pct >= 70) {
+    title = 'Strong Effort - Nearly Credentialed';
+    verdict = '"Good work," Jonah says. "You\'re close. Go back, review what you missed, and you\'ll have this locked down." He taps the desk. "The Eagles need this right."';
+    conceptMsg = '<strong>Review focus:</strong> Part 1 is about building lists correctly - every value matters. Part 2 is about the elif chain: the order of conditions matters, and the threshold boundaries need to be exact.';
+  } else {
+    title = 'Keep Practicing - Not Yet Cleared';
+    verdict = '"You\'re not quite there yet," Jonah says with a patient look. "Go back through the modules and try this again. The concepts are the same - you just need more reps."';
+    conceptMsg = '<strong>What to review:</strong> This challenge combines all three modules. If lists felt hard, review Module 2. If the loop/conditional logic felt hard, review Module 3. Then come back - you\'ll see it differently the second time.';
+  }
+
+  document.getElementById('debriefTitle').textContent = title;
+  document.getElementById('debriefVerdict').textContent = verdict;
+  document.getElementById('debriefConcept').innerHTML = conceptMsg;
+  document.getElementById('breakdownRows').innerHTML = challenges.slice(1).map((c, i) => {
+    const s = scores[i];
+    const pts = s ? s.pts : 0;
+    const notPerfect = pts < c.maxPoints;
+    return `<div class="breakdown-row ${notPerfect ? 'breakdown-row-link' : ''}" ${notPerfect ? `onclick="revisitChallenge(${i})" title="Click to fix this challenge"` : ''}>
+      <span>${c.title}</span>
+      <span style="display:flex;align-items:center;gap:8px">
+        ${notPerfect ? '<span class="revisit-hint">fix &rarr;</span>' : ''}
+        <span class="breakdown-pts ${pts===c.maxPoints?'pts-full':pts>0?'pts-part':'pts-none'}">${pts} / ${c.maxPoints}</span>
+      </span>
+    </div>`
+  }).join('');
+
+  completed = true; saveProgress(); window.scrollTo(0, 0);
+}
+
+
+// ===== REVISIT FROM DEBRIEF =====
+function revisitChallenge(idx) {
+  document.getElementById('debriefScreen').style.display = 'none';
+  const area = document.getElementById('challengeArea');
+  area.style.display = 'flex';
+  currentChallenge = idx;
+  renderChallenge(idx);
+  const backBar = document.createElement('div');
+  backBar.id = 'backToResultsBar';
+  backBar.style.cssText = 'display:flex;justify-content:flex-end;';
+  backBar.innerHTML = `<button onclick="showDebrief()" style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;background:transparent;color:var(--text-muted);border:1px solid var(--border);border-radius:4px;padding:7px 14px;cursor:pointer;" onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--gray)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border)'">&larr; Back to Results</button>`;
+  area.insertBefore(backBar, area.firstChild);
+  window.scrollTo(0, 0);
+}
+
+function saveProgress() {
+  try {
+    const p = JSON.parse(localStorage.getItem('pft_progress') || '{}');
+    p.finale = { status: completed ? 'completed' : 'in_progress', score: scores.reduce((s,x)=>s+(x?x.pts:0),0), scores };
+    localStorage.setItem('pft_progress', JSON.stringify(p));
+  } catch(e) {}
+}
+
+function loadProgress() {
+  try {
+    const p = JSON.parse(localStorage.getItem('pft_progress') || '{}');
+    if (p.finale && p.finale.scores) {
+      scores = p.finale.scores; completed = p.finale.status === 'completed';
+      if (completed) { currentChallenge = 0; }
+      else { const firstUnanswered = scores.findIndex(s => s === null); currentChallenge = firstUnanswered === -1 ? 2 : firstUnanswered + 1; }
+      updateScore();
+      if (completed) { showApp(); showDebrief(); return; }
+    }
+  } catch(e) {}
+}
+
+loadProgress();
+initPyodide();
+</script>
+<footer style="max-width:900px;width:100%;margin:20px auto 0;padding:0 0 24px;text-align:center;font-size:12px;color:#646469;font-family:'IBM Plex Mono',monospace;">
+    This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.<br>&copy; Eastern University. All rights reserved.
+</footer>
+</body>
+</html>

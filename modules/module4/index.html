@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 4: Pandas - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --maroon: #8B1C40;
+      --accent: #c07b30;
+      --accent-light: #d9913e;
+      --accent-dim: rgba(192,123,48,0.15);
+      --blue: #2A7195;
+      --gray: #646469;
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --bg-card2: #211f1d;
+      --bg-code: #0d0c0b;
+      --text: #e8e4de;
+      --text-dim: #a09a92;
+      --text-bright: #f5f2ee;
+      --border: #2e2b28;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Zilla Slab', serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+
+    nav {
+      background: #141210; border-bottom: 3px solid var(--accent);
+      padding: 0 2rem; display: flex; align-items: center;
+      justify-content: space-between; height: 52px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-left { display: flex; align-items: center; gap: 0.5rem; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.875rem; }
+    .nav-home { color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.15s; }
+    .nav-home:hover { color: #fff; }
+    .nav-sep { color: rgba(255,255,255,0.2); margin: 0 0.1rem; }
+    .nav-current { color: var(--accent-light); font-weight: 500; }
+    .nav-right { display: flex; gap: 0.5rem; }
+    .nav-right a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: rgba(255,255,255,0.45);
+      text-decoration: none; padding: 0.25rem 0.6rem; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 3px; letter-spacing: 0.04em; transition: all 0.15s;
+    }
+    .nav-right a:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+    .mod-banner {
+      background: linear-gradient(135deg, #1a1510 0%, #110e0d 100%);
+      border-bottom: 1px solid var(--border); padding: 3rem 2rem 2.5rem;
+      position: relative; overflow: hidden;
+    }
+    .mod-banner::after {
+      content: 'Pandas'; position: absolute; right: 2rem; top: 50%;
+      transform: translateY(-50%); font-family: 'IBM Plex Mono', monospace;
+      font-size: 5.5rem; font-weight: 500; color: rgba(192,123,48,0.06);
+      line-height: 1; pointer-events: none; user-select: none;
+    }
+    .banner-inner { max-width: 960px; margin: 0 auto; }
+    .banner-eyebrow {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent-light); margin-bottom: 0.75rem;
+    }
+    .mod-banner h1 { font-size: 2.1rem; font-weight: 700; color: var(--text-bright); line-height: 1.2; margin-bottom: 0.65rem; }
+    .mod-banner p { font-size: 0.95rem; color: var(--text-dim); max-width: 580px; line-height: 1.6; margin-bottom: 1.25rem; }
+    .banner-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .pill {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; padding: 0.25rem 0.6rem;
+      border-radius: 3px; background: rgba(192,123,48,0.12); color: var(--accent-light);
+      border: 1px solid rgba(192,123,48,0.25); letter-spacing: 0.04em;
+    }
+
+    .section-tabs {
+      background: var(--bg-card); border-bottom: 1px solid var(--border);
+      padding: 0 2rem; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none;
+    }
+    .section-tabs::-webkit-scrollbar { display: none; }
+    .tab-link {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.05em;
+      color: var(--text-dim); text-decoration: none; padding: 0.75rem 1rem;
+      border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-link:hover { color: var(--text); border-bottom-color: var(--accent); }
+
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem;
+      display: grid; grid-template-columns: 1fr 240px; gap: 2.5rem; align-items: start;
+    }
+
+    .content-col section { margin-bottom: 3.5rem; }
+    .content-col h2 {
+      font-size: 1.5rem; font-weight: 700; color: var(--text-bright);
+      margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+    }
+    .content-col h3 { font-size: 1.1rem; font-weight: 600; color: var(--accent-light); margin: 1.5rem 0 0.6rem; }
+    .content-col p { margin-bottom: 0.9rem; font-size: 0.96rem; color: var(--text); }
+    .content-col ul, .content-col ol { margin: 0.5rem 0 1rem 1.5rem; font-size: 0.95rem; }
+    .content-col li { margin-bottom: 0.35rem; }
+
+    pre {
+      background: var(--bg-code); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); border-radius: 4px;
+      padding: 1rem 1.25rem; overflow-x: auto; margin: 1rem 0 1.5rem;
+      font-size: 0.83rem; line-height: 1.7;
+    }
+    code { font-family: 'IBM Plex Mono', monospace; color: #e8c98a; }
+    pre code { color: var(--text); }
+    .cm { color: #6a6460; font-style: italic; }
+    .kw { color: #c07b30; }
+    .fn { color: #6baacc; }
+    .st { color: #85b87d; }
+    .nm { color: #b58fd0; }
+
+    /* rendered output blocks */
+    .output-block {
+      background: #0a0908; border: 1px solid #1e1c1a;
+      border-left: 3px solid #3a3530; border-radius: 4px;
+      margin: -0.75rem 0 1.5rem; padding: 0.75rem 1.25rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.81rem;
+      color: #c8c4be; line-height: 1.6; overflow-x: auto;
+    }
+    .output-block-label {
+      font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #4a4642; margin-bottom: 0.5rem;
+    }
+    .output-block .out-num { color: #b58fd0; }
+    .output-block .out-str { color: #85b87d; }
+    .output-block .out-idx { color: #6a6460; }
+    .output-block .out-hdr { color: var(--accent-light); font-weight: 500; }
+    .df-wrap { overflow-x: auto; }
+    .df-table { border-collapse: collapse; font-size: 0.8rem;
+      font-family: 'IBM Plex Mono', monospace; min-width: 100%; }
+    .df-table th { color: var(--accent-light); text-align: right; padding: 0.3rem 0.9rem 0.3rem 0.4rem;
+      border-bottom: 1px solid #3a3530; font-weight: 500; }
+    .df-table th.idx-col { color: #4a4642; text-align: left; }
+    .df-table td { padding: 0.25rem 0.9rem 0.25rem 0.4rem; text-align: right;
+      border-bottom: 1px solid #1e1c1a; color: #c8c4be; }
+    .df-table td.idx-col { color: #6a6460; text-align: left; }
+    .df-table tr:last-child td { border-bottom: none; }
+    .df-table .out-nan { color: #b04040; }
+
+    .callout {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); border-radius: 4px;
+      padding: 1rem 1.25rem; margin: 1.25rem 0; font-size: 0.92rem;
+    }
+    .callout-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent-light); margin-bottom: 0.4rem;
+    }
+    .callout-warn { border-left-color: #b04040; }
+    .callout-warn .callout-label { color: #d06060; }
+
+    .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+    .concept-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.1rem; }
+    .concept-card h4 {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--accent-light); margin-bottom: 0.6rem;
+    }
+    .concept-card p { font-size: 0.88rem; color: var(--text-dim); margin-bottom: 0.4rem; }
+
+    .data-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0 1.75rem; font-size: 0.88rem; }
+    .data-table th {
+      background: var(--bg-card2); color: var(--text-bright);
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 0.6rem 0.9rem; text-align: left; border-bottom: 2px solid var(--accent);
+    }
+    .data-table td { padding: 0.55rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .mono { font-family: 'IBM Plex Mono', monospace; color: #e8c98a; font-size: 0.83rem; }
+
+    #quiz-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 2rem; }
+    #quiz-section h2 { border-bottom: none; margin-bottom: 0.4rem; }
+    .quiz-intro { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1.5rem; }
+    .q-block { margin-bottom: 1.75rem; padding-bottom: 1.75rem; border-bottom: 1px solid var(--border); }
+    .q-block:last-of-type { border-bottom: none; }
+    .q-text { font-size: 0.97rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.75rem; line-height: 1.5; }
+    .q-num { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; display: block; margin-bottom: 0.35rem; }
+    .options { display: flex; flex-direction: column; gap: 0.45rem; }
+    .opt-label {
+      display: flex; align-items: flex-start; gap: 0.65rem;
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.65rem 0.9rem; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s; font-size: 0.92rem;
+    }
+    .opt-label:hover { border-color: var(--accent); background: rgba(192,123,48,0.06); }
+    .opt-label input { margin-top: 0.2rem; accent-color: var(--accent); flex-shrink: 0; }
+    .opt-correct { border-color: #4a9e6b !important; background: rgba(74,158,107,0.1) !important; }
+    .opt-wrong   { border-color: #b04040 !important; background: rgba(176,64,64,0.1) !important; }
+    .q-feedback { margin-top: 0.6rem; font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: 3px; display: none; }
+    .q-feedback.show { display: block; }
+    .q-feedback.correct { background: rgba(74,158,107,0.15); color: #7ecfa0; border-left: 3px solid #4a9e6b; }
+    .q-feedback.wrong   { background: rgba(176,64,64,0.12); color: #e08080; border-left: 3px solid #b04040; }
+    .quiz-submit {
+      background: var(--accent); color: #fff; border: none;
+      padding: 0.75rem 2rem; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase;
+      border-radius: 4px; cursor: pointer; transition: background 0.15s; margin-top: 1rem;
+    }
+    .quiz-submit:hover { background: var(--accent-light); }
+    .quiz-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+    .quiz-result {
+      margin-top: 1.25rem; padding: 1rem 1.25rem; background: var(--bg-card2);
+      border: 1px solid var(--border); border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem; display: none;
+    }
+    .quiz-result.show { display: block; }
+    .score-big { font-size: 2rem; font-weight: 700; color: var(--accent-light); }
+    .grade-label { color: var(--text-dim); margin-top: 0.35rem; font-size: 0.82rem; }
+
+    .sidebar { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 70px; max-height: calc(100vh - 80px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
+    .sidebar-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1.1rem; }
+    .sidebar-card h4 {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.75rem;
+    }
+    .score-display { font-family: 'IBM Plex Mono', monospace; font-size: 1.6rem; color: var(--accent-light); font-weight: 700; }
+    .score-sub { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.2rem; }
+    .sim-cta {
+      background: linear-gradient(135deg, #1f1a14 0%, #17130e 100%);
+      border: 1px solid rgba(192,123,48,0.25); border-radius: 4px; padding: 1.1rem;
+    }
+    .sim-cta h4 {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem;
+    }
+    .sim-cta p { font-size: 0.83rem; color: var(--text-dim); margin-bottom: 0.85rem; line-height: 1.5; }
+    .sim-cta-btn {
+      display: block; background: var(--accent); color: #fff; text-decoration: none;
+      text-align: center; padding: 0.55rem 1rem; border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.05em; text-transform: uppercase; transition: background 0.15s;
+    }
+    .sim-cta-btn:hover { background: var(--accent-light); }
+    .toc-links { display: flex; flex-direction: column; gap: 0.3rem; }
+    .toc-links a { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; color: var(--text-dim); text-decoration: none; padding: 0.2rem 0; transition: color 0.15s; }
+    .toc-links a:hover { color: var(--accent-light); }
+    .quiz-cta-btn {
+      display: block; border: 1px solid var(--accent); color: var(--accent-light);
+      text-decoration: none; text-align: center; padding: 0.55rem 1rem; border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.05em; text-transform: uppercase; transition: all 0.15s; margin-top: 0.5rem;
+    }
+    .quiz-cta-btn:hover { background: rgba(192,123,48,0.1); }
+
+    footer {
+      background: #0c0b0a; border-top: 1px solid var(--border); padding: 1.25rem 2rem;
+      text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--text-dim);
+    }
+    footer a { color: var(--text-dim); }
+    @media (max-width: 768px) {
+      .page-wrap { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .concept-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+  <!-- CodeMirror 5 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/theme/material-darker.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/closebrackets.min.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <a href="../../index.html" class="nav-home">DTSC 520</a>
+    <span class="nav-sep">/</span>
+    <span class="nav-current">Module 4: Pandas</span>
+  </div>
+  <div class="nav-right">
+    <a href="../../index.html">Course Home</a>
+    <a href="#quiz">Take Quiz</a>
+  </div>
+</nav>
+
+<div class="mod-banner">
+  <div class="banner-inner">
+    <div class="banner-eyebrow">Module 04 - Data Wrangling</div>
+    <h1>Pandas: DataFrames for Data Science</h1>
+    <p>Master the pandas library for structured data manipulation. Load, inspect, select, filter, clean, and aggregate tabular data - the everyday workflow of a working data scientist.</p>
+    <div class="banner-pills">
+      <span class="pill">Series</span>
+      <span class="pill">DataFrames</span>
+      <span class="pill">Selection &amp; Filtering</span>
+      <span class="pill">Data Cleaning</span>
+      <span class="pill">Aggregation</span>
+      <span class="pill">GroupBy</span>
+    </div>
+  </div>
+</div>
+
+<nav class="section-tabs">
+  <a href="#series" class="tab-link">Series</a>
+  <a href="#dataframes" class="tab-link">DataFrames</a>
+  <a href="#selection" class="tab-link">Selection</a>
+  <a href="#filtering" class="tab-link">Filtering</a>
+  <a href="#cleaning" class="tab-link">Data Cleaning</a>
+  <a href="#aggregation" class="tab-link">Aggregation</a>
+  <a href="#groupby" class="tab-link">GroupBy</a>
+  <a href="#quiz" class="tab-link">Quiz</a>
+</nav>
+
+<div class="page-wrap">
+  <div class="content-col">
+
+    <!-- SERIES -->
+    <section id="series">
+      <h2>Series: The 1D Building Block</h2>
+      <p>A <strong>Series</strong> is pandas' one-dimensional labeled array. Think of it as a single column from a spreadsheet - every value has an index label alongside it. Series are the atoms from which DataFrames are built.</p>
+      <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Create a Series from a list</span>
+batting_avgs = pd.<span class="fn">Series</span>([<span class="nm">.312</span>, <span class="nm">.287</span>, <span class="nm">.301</span>, <span class="nm">.268</span>],
+                         index=[<span class="st">'Rivera'</span>, <span class="st">'Chen'</span>, <span class="st">'Walker'</span>, <span class="st">'Kim'</span>])
+
+<span class="cm"># Access by label</span>
+<span class="fn">print</span>(batting_avgs[<span class="st">'Rivera'</span>])   <span class="cm"># 0.312</span>
+
+<span class="cm"># Vectorized math - no loop needed</span>
+slugging = batting_avgs * <span class="nm">1.4</span></code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; batting_avgs Series</div>
+<span class="out-idx">Rivera    </span><span class="out-num">0.312</span>
+<span class="out-idx">Chen      </span><span class="out-num">0.287</span>
+<span class="out-idx">Walker    </span><span class="out-num">0.301</span>
+<span class="out-idx">Kim       </span><span class="out-num">0.268</span>
+<span class="out-idx">dtype: float64</span>
+      </div>
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; slugging = batting_avgs * 1.4</div>
+<span class="out-idx">Rivera    </span><span class="out-num">0.4368</span>
+<span class="out-idx">Chen      </span><span class="out-num">0.4018</span>
+<span class="out-idx">Walker    </span><span class="out-num">0.4214</span>
+<span class="out-idx">Kim       </span><span class="out-num">0.3752</span>
+<span class="out-idx">dtype: float64</span>
+      </div>
+
+      <h3>Key Series attributes</h3>
+      <table class="data-table">
+        <thead><tr><th>Attribute / Method</th><th>What it gives you</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">.values</td><td>NumPy array of the data</td></tr>
+          <tr><td class="mono">.index</td><td>The index labels</td></tr>
+          <tr><td class="mono">.dtype</td><td>Data type (int64, float64, object, etc.)</td></tr>
+          <tr><td class="mono">.describe()</td><td>Summary stats: count, mean, std, min, max, quartiles</td></tr>
+          <tr><td class="mono">.value_counts()</td><td>Frequency of each unique value</td></tr>
+          <tr><td class="mono">.isna()</td><td>Boolean mask of missing values</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- DATAFRAMES -->
+    <section id="dataframes">
+      <h2>DataFrames: Tabular Data</h2>
+      <p>A <strong>DataFrame</strong> is a 2-dimensional labeled table - rows and columns, like a spreadsheet or SQL table. Each column is a Series, all sharing the same index. This is the central data structure for nearly all pandas work.</p>
+      <pre><code><span class="cm"># Create a DataFrame from a dict</span>
+data = {
+    <span class="st">'player'</span>: [<span class="st">'Rivera'</span>, <span class="st">'Chen'</span>, <span class="st">'Walker'</span>, <span class="st">'Kim'</span>],
+    <span class="st">'avg'</span>:    [<span class="nm">.312</span>, <span class="nm">.287</span>, <span class="nm">.301</span>, <span class="nm">.268</span>],
+    <span class="st">'hr'</span>:     [<span class="nm">4</span>, <span class="nm">2</span>, <span class="nm">7</span>, <span class="nm">1</span>],
+    <span class="st">'salary'</span>: [<span class="nm">16800</span>, <span class="nm">14400</span>, <span class="nm">19200</span>, <span class="nm">760000</span>]  <span class="cm"># Kim on MLB rehab</span>
+}
+roster = pd.<span class="fn">DataFrame</span>(data)
+
+<span class="cm"># Quick inspection</span>
+roster.<span class="fn">head</span>()          <span class="cm"># first 5 rows</span>
+roster.<span class="fn">info</span>()          <span class="cm"># column types + null count</span>
+roster.<span class="fn">describe</span>()      <span class="cm"># numeric summary stats</span>
+roster.shape           <span class="cm"># (4, 4)</span>
+roster.columns         <span class="cm"># Index(['player','avg','hr','salary'])</span></code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; roster.head()</div>
+        <div class="df-wrap"><table class="df-table">
+          <thead><tr>
+            <th class="idx-col"></th>
+            <th>player</th><th>avg</th><th>hr</th><th>salary</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="idx-col">0</td><td style="text-align:left"><span class="out-str">Rivera</span></td><td><span class="out-num">0.312</span></td><td><span class="out-num">4</span></td><td><span class="out-num">16800</span></td></tr>
+            <tr><td class="idx-col">1</td><td style="text-align:left"><span class="out-str">Chen</span></td><td><span class="out-num">0.287</span></td><td><span class="out-num">2</span></td><td><span class="out-num">14400</span></td></tr>
+            <tr><td class="idx-col">2</td><td style="text-align:left"><span class="out-str">Walker</span></td><td><span class="out-num">0.301</span></td><td><span class="out-num">7</span></td><td><span class="out-num">19200</span></td></tr>
+            <tr><td class="idx-col">3</td><td style="text-align:left"><span class="out-str">Kim</span></td><td><span class="out-num">0.268</span></td><td><span class="out-num">1</span></td><td><span class="out-num">760000</span></td></tr>
+          </tbody>
+        </table></div>
+        <div style="margin-top:0.6rem"><span class="out-idx">shape: (4, 4) &nbsp;&nbsp; dtypes: object(1), float64(1), int64(2)</span></div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Real-world loading</div>
+        Most of the time you won't build DataFrames manually - you'll load them from files. The two most common entry points are <code>pd.read_csv('file.csv')</code> and <code>pd.read_excel('file.xlsx')</code>. Both return a DataFrame ready to work with.
+      </div>
+      <pre><code><span class="cm"># Load CSV with common options</span>
+roster = pd.<span class="fn">read_csv</span>(
+    <span class="st">'eagles_roster.csv'</span>,
+    index_col=<span class="st">'player_id'</span>,  <span class="cm"># use this column as row index</span>
+    parse_dates=[<span class="st">'dob'</span>],     <span class="cm"># convert string dates</span>
+    na_values=[<span class="st">'N/A'</span>, <span class="st">'-'</span>]  <span class="cm"># treat these as missing</span>
+)</code></pre>
+    </section>
+
+    <!-- SELECTION -->
+    <section id="selection">
+      <h2>Selection: Accessing Your Data</h2>
+      <p>Pandas gives you multiple ways to pull out rows, columns, or individual cells. The two main tools are <code>.loc[]</code> (label-based) and <code>.iloc[]</code> (integer position-based). Getting these right is one of the most important pandas fundamentals.</p>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h4>.loc[ ] - Label-based</h4>
+          <p>Uses actual index labels and column names. Inclusive on both ends of slices.</p>
+          <p><code>df.loc[0, 'avg']</code> - single cell</p>
+          <p><code>df.loc[:, 'avg']</code> - entire column</p>
+          <p><code>df.loc[0:2, 'avg':'hr']</code> - slice of rows and cols</p>
+        </div>
+        <div class="concept-card">
+          <h4>.iloc[ ] - Position-based</h4>
+          <p>Uses integer positions (0-indexed). Exclusive on the end of slices, like Python lists.</p>
+          <p><code>df.iloc[0, 1]</code> - row 0, column 1</p>
+          <p><code>df.iloc[:, 2]</code> - entire 3rd column</p>
+          <p><code>df.iloc[0:2, 1:3]</code> - rows 0-1, cols 1-2</p>
+        </div>
+      </div>
+      <pre><code><span class="cm"># Single column - returns a Series</span>
+roster[<span class="st">'avg'</span>]
+
+<span class="cm"># Multiple columns - returns a DataFrame</span>
+roster[[<span class="st">'player'</span>, <span class="st">'avg'</span>, <span class="st">'hr'</span>]]
+
+<span class="cm"># loc: label-based</span>
+roster.<span class="fn">loc</span>[<span class="nm">0</span>, <span class="st">'avg'</span>]              <span class="cm"># single value: 0.312</span>
+roster.<span class="fn">loc</span>[<span class="nm">0</span>:<span class="nm">2</span>, [<span class="st">'player'</span>, <span class="st">'avg'</span>]] <span class="cm"># rows 0-2, two columns</span>
+
+<span class="cm"># iloc: integer position</span>
+roster.<span class="fn">iloc</span>[<span class="nm">0</span>, <span class="nm">1</span>]    <span class="cm"># row 0, col 1</span>
+roster.<span class="fn">iloc</span>[:<span class="nm">2</span>]     <span class="cm"># first two rows</span></code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; roster[['player','avg','hr']]</div>
+        <div class="df-wrap"><table class="df-table">
+          <thead><tr><th class="idx-col"></th><th>player</th><th>avg</th><th>hr</th></tr></thead>
+          <tbody>
+            <tr><td class="idx-col">0</td><td style="text-align:left"><span class="out-str">Rivera</span></td><td><span class="out-num">0.312</span></td><td><span class="out-num">4</span></td></tr>
+            <tr><td class="idx-col">1</td><td style="text-align:left"><span class="out-str">Chen</span></td><td><span class="out-num">0.287</span></td><td><span class="out-num">2</span></td></tr>
+            <tr><td class="idx-col">2</td><td style="text-align:left"><span class="out-str">Walker</span></td><td><span class="out-num">0.301</span></td><td><span class="out-num">7</span></td></tr>
+            <tr><td class="idx-col">3</td><td style="text-align:left"><span class="out-str">Kim</span></td><td><span class="out-num">0.268</span></td><td><span class="out-num">1</span></td></tr>
+          </tbody>
+        </table></div>
+        <div style="margin-top:0.5rem"><span class="out-idx">roster.loc[0, 'avg']  &rarr;  </span><span class="out-num">0.312</span></div>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-label">Common mistake</div>
+        Chaining selections like <code>df['col'][0]</code> can cause a <code>SettingWithCopyWarning</code> and unpredictable behavior when assigning values. Always use <code>.loc[]</code> or <code>.iloc[]</code> for assignment: <code>df.loc[0, 'col'] = value</code>.
+      </div>
+    </section>
+
+    <!-- FILTERING -->
+    <section id="filtering">
+      <h2>Filtering: Selecting Rows by Condition</h2>
+      <p>Filtering uses a <strong>boolean mask</strong> - a Series of True/False values aligned to the DataFrame's index. Rows where the mask is True are kept; rows where it's False are dropped.</p>
+      <pre><code><span class="cm"># Boolean comparison creates the mask</span>
+roster[roster[<span class="st">'avg'</span>] &gt; <span class="nm">.300</span>]
+
+<span class="cm"># Combine conditions with & (and), | (or), ~ (not)</span>
+<span class="cm"># IMPORTANT: wrap each condition in parentheses</span>
+roster[(roster[<span class="st">'avg'</span>] &gt; <span class="nm">.280</span>) &amp; (roster[<span class="st">'hr'</span>] &gt;= <span class="nm">4</span>)]
+
+<span class="cm"># Filter using a list of values</span>
+roster[roster[<span class="st">'player'</span>].<span class="fn">isin</span>([<span class="st">'Rivera'</span>, <span class="st">'Walker'</span>])]
+
+<span class="cm"># .query() - readable string syntax</span>
+roster.<span class="fn">query</span>(<span class="st">"avg &gt; .290 and hr &gt; 2"</span>)</code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; roster[roster['avg'] &gt; .300]</div>
+        <div class="df-wrap"><table class="df-table">
+          <thead><tr><th class="idx-col"></th><th>player</th><th>avg</th><th>hr</th><th>salary</th></tr></thead>
+          <tbody>
+            <tr><td class="idx-col">0</td><td style="text-align:left"><span class="out-str">Rivera</span></td><td><span class="out-num">0.312</span></td><td><span class="out-num">4</span></td><td><span class="out-num">16800</span></td></tr>
+            <tr><td class="idx-col">2</td><td style="text-align:left"><span class="out-str">Walker</span></td><td><span class="out-num">0.301</span></td><td><span class="out-num">7</span></td><td><span class="out-num">19200</span></td></tr>
+          </tbody>
+        </table></div>
+        <div style="margin-top:0.5rem"><span class="out-idx"># .query("avg &gt; .290 and hr &gt; 2")  &rarr;</span></div>
+        <div class="df-wrap"><table class="df-table">
+          <thead><tr><th class="idx-col"></th><th>player</th><th>avg</th><th>hr</th><th>salary</th></tr></thead>
+          <tbody>
+            <tr><td class="idx-col">0</td><td style="text-align:left"><span class="out-str">Rivera</span></td><td><span class="out-num">0.312</span></td><td><span class="out-num">4</span></td><td><span class="out-num">16800</span></td></tr>
+            <tr><td class="idx-col">2</td><td style="text-align:left"><span class="out-str">Walker</span></td><td><span class="out-num">0.301</span></td><td><span class="out-num">7</span></td><td><span class="out-num">19200</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <h3>Filtering missing values</h3>
+      <pre><code><span class="cm"># Keep rows where 'avg' is NOT missing</span>
+roster[roster[<span class="st">'avg'</span>].<span class="fn">notna</span>()]
+
+<span class="cm"># Drop rows with any missing value</span>
+roster.<span class="fn">dropna</span>()
+
+<span class="cm"># Drop only when specific columns are missing</span>
+roster.<span class="fn">dropna</span>(subset=[<span class="st">'avg'</span>, <span class="st">'hr'</span>])</code></pre>
+    </section>
+
+    <!-- DATA CLEANING -->
+    <section id="cleaning">
+      <h2>Data Cleaning</h2>
+      <p>Real datasets are messy. Missing values, wrong types, duplicates, and inconsistent strings are the norm. Pandas has a rich toolkit for identifying and fixing these issues before analysis.</p>
+      <h3>Handling missing values</h3>
+      <pre><code><span class="cm"># Detect missing values</span>
+roster.<span class="fn">isna</span>().<span class="fn">sum</span>()   <span class="cm"># count per column</span>
+
+<span class="cm"># Fill missing with a constant</span>
+roster[<span class="st">'hr'</span>].<span class="fn">fillna</span>(<span class="nm">0</span>)
+
+<span class="cm"># Fill with column mean (imputation)</span>
+roster[<span class="st">'avg'</span>].<span class="fn">fillna</span>(roster[<span class="st">'avg'</span>].<span class="fn">mean</span>())
+
+<span class="cm"># Drop rows with missing values in key columns</span>
+roster_clean = roster.<span class="fn">dropna</span>(subset=[<span class="st">'avg'</span>, <span class="st">'salary'</span>])</code></pre>
+      <h3>Fixing data types</h3>
+      <pre><code><span class="cm"># Column came in as string, should be numeric</span>
+roster[<span class="st">'salary'</span>] = (
+    roster[<span class="st">'salary'</span>]
+    .<span class="fn">str</span>.<span class="fn">replace</span>(<span class="st">'$'</span>, <span class="st">''</span>, regex=<span class="kw">False</span>)
+    .<span class="fn">str</span>.<span class="fn">replace</span>(<span class="st">','</span>, <span class="st">''</span>, regex=<span class="kw">False</span>)
+    .<span class="fn">astype</span>(float)
+)
+
+<span class="cm"># Convert to datetime</span>
+roster[<span class="st">'signed_date'</span>] = pd.<span class="fn">to_datetime</span>(roster[<span class="st">'signed_date'</span>])</code></pre>
+      <h3>Removing duplicates and cleaning strings</h3>
+      <pre><code><span class="cm"># Find and remove duplicate rows</span>
+roster.<span class="fn">drop_duplicates</span>(subset=[<span class="st">'player'</span>])
+
+<span class="cm"># String cleaning</span>
+roster[<span class="st">'player'</span>].<span class="fn">str</span>.<span class="fn">strip</span>()   <span class="cm"># remove leading/trailing whitespace</span>
+roster[<span class="st">'player'</span>].<span class="fn">str</span>.<span class="fn">lower</span>()   <span class="cm"># normalize to lowercase</span>
+
+<span class="cm"># Rename columns</span>
+roster.<span class="fn">rename</span>(columns={<span class="st">'avg'</span>: <span class="st">'batting_avg'</span>, <span class="st">'hr'</span>: <span class="st">'home_runs'</span>})</code></pre>
+      <div class="callout">
+        <div class="callout-label">In-place vs. returning new objects</div>
+        Most pandas cleaning methods return a new DataFrame by default rather than modifying the original. To make changes permanent, either reassign (<code>df = df.dropna()</code>) or use <code>inplace=True</code>. Reassignment is generally preferred as it is clearer and easier to debug.
+      </div>
+    </section>
+
+    <!-- AGGREGATION -->
+    <section id="aggregation">
+      <h2>Aggregation: Summarizing Data</h2>
+      <p>Aggregation collapses many rows into summary statistics. Pandas provides both column-level methods and the flexible <code>.agg()</code> interface for computing multiple statistics at once.</p>
+      <pre><code><span class="cm"># Single-column aggregations</span>
+roster[<span class="st">'salary'</span>].<span class="fn">mean</span>()    <span class="cm"># average salary</span>
+roster[<span class="st">'salary'</span>].<span class="fn">median</span>()  <span class="cm"># median (outlier-resistant)</span>
+roster[<span class="st">'salary'</span>].<span class="fn">max</span>()     <span class="cm"># 760000 (Kim)</span>
+roster[<span class="st">'salary'</span>].<span class="fn">sum</span>()     <span class="cm"># total payroll</span>
+
+<span class="cm"># Multiple stats at once with .agg()</span>
+roster[<span class="st">'salary'</span>].<span class="fn">agg</span>([<span class="st">'mean'</span>, <span class="st">'median'</span>, <span class="st">'std'</span>, <span class="st">'max'</span>])
+
+<span class="cm"># Different stats per column</span>
+roster.<span class="fn">agg</span>({
+    <span class="st">'salary'</span>: [<span class="st">'mean'</span>, <span class="st">'max'</span>],
+    <span class="st">'avg'</span>:    [<span class="st">'mean'</span>, <span class="st">'min'</span>, <span class="st">'max'</span>],
+    <span class="st">'hr'</span>:     <span class="st">'sum'</span>
+})</code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; roster['salary'].agg(['mean','median','std','max'])</div>
+<span class="out-idx">mean      </span><span class="out-num">202,600.00</span>
+<span class="out-idx">median    </span><span class="out-num"> 18,000.00</span>
+<span class="out-idx">std       </span><span class="out-num">372,284.17</span>
+<span class="out-idx">max       </span><span class="out-num">760,000.00</span>
+<span class="out-idx">Name: salary, dtype: float64</span>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Why median matters for salary data</div>
+        The Eagles roster has salaries ranging from $14,400 to $760,000. The mean salary (~$202,600) is misleading - it is inflated by Kim's MLB rehab assignment. The median (~$18,000) better represents what a typical player earns. Whenever you have potential outliers, always compare mean vs. median before reporting a "typical" value.
+      </div>
+    </section>
+
+    <!-- GROUPBY -->
+    <section id="groupby">
+      <h2>GroupBy: Split-Apply-Combine</h2>
+      <p>GroupBy divides your data into groups, applies a function to each group, and combines the results. This "split-apply-combine" pattern is one of the most powerful tools for exploratory analysis.</p>
+      <pre><code><span class="cm"># Add a position column for demonstration</span>
+roster[<span class="st">'position'</span>] = [<span class="st">'OF'</span>, <span class="st">'IF'</span>, <span class="st">'OF'</span>, <span class="st">'IF'</span>]
+
+<span class="cm"># Mean batting avg by position</span>
+roster.<span class="fn">groupby</span>(<span class="st">'position'</span>)[<span class="st">'avg'</span>].<span class="fn">mean</span>()
+
+<span class="cm"># Multiple aggregations per group</span>
+roster.<span class="fn">groupby</span>(<span class="st">'position'</span>).<span class="fn">agg</span>({
+    <span class="st">'avg'</span>:    [<span class="st">'mean'</span>, <span class="st">'max'</span>],
+    <span class="st">'salary'</span>: <span class="st">'mean'</span>,
+    <span class="st">'hr'</span>:     <span class="st">'sum'</span>
+})
+
+<span class="cm"># Custom function per group</span>
+<span class="kw">def</span> <span class="fn">above_avg_pct</span>(series):
+    <span class="kw">return</span> (series &gt; series.<span class="fn">mean</span>()).<span class="fn">mean</span>() * <span class="nm">100</span>
+
+roster.<span class="fn">groupby</span>(<span class="st">'position'</span>)[<span class="st">'avg'</span>].<span class="fn">apply</span>(above_avg_pct)</code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; groupby('position').agg({'avg':['mean','max'], 'salary':'mean', 'hr':'sum'})</div>
+        <div class="df-wrap"><table class="df-table">
+          <thead><tr>
+            <th class="idx-col">position</th>
+            <th>avg<br><span style="font-weight:400;color:#6a6460">mean</span></th>
+            <th>avg<br><span style="font-weight:400;color:#6a6460">max</span></th>
+            <th>salary<br><span style="font-weight:400;color:#6a6460">mean</span></th>
+            <th>hr<br><span style="font-weight:400;color:#6a6460">sum</span></th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="idx-col">IF</td><td><span class="out-num">0.2775</span></td><td><span class="out-num">0.287</span></td><td><span class="out-num">387,200.0</span></td><td><span class="out-num">3</span></td></tr>
+            <tr><td class="idx-col">OF</td><td><span class="out-num">0.3065</span></td><td><span class="out-num">0.312</span></td><td><span class="out-num">18,000.0</span></td><td><span class="out-num">11</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <h3>Sorting and ranking</h3>
+      <pre><code><span class="cm"># Sort by batting average, descending</span>
+roster.<span class="fn">sort_values</span>(<span class="st">'avg'</span>, ascending=<span class="kw">False</span>)
+
+<span class="cm"># Get top 2 by avg</span>
+roster.<span class="fn">nlargest</span>(<span class="nm">2</span>, <span class="st">'avg'</span>)
+
+<span class="cm"># Add a rank column</span>
+roster[<span class="st">'avg_rank'</span>] = roster[<span class="st">'avg'</span>].<span class="fn">rank</span>(ascending=<span class="kw">False</span>)</code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; sort_values('avg', ascending=False) with rank column</div>
+        <div class="df-wrap"><table class="df-table">
+          <thead><tr><th class="idx-col"></th><th>player</th><th>avg</th><th>hr</th><th>salary</th><th>position</th><th>avg_rank</th></tr></thead>
+          <tbody>
+            <tr><td class="idx-col">0</td><td style="text-align:left"><span class="out-str">Rivera</span></td><td><span class="out-num">0.312</span></td><td><span class="out-num">4</span></td><td><span class="out-num">16800</span></td><td style="text-align:left"><span class="out-str">OF</span></td><td><span class="out-num">1.0</span></td></tr>
+            <tr><td class="idx-col">2</td><td style="text-align:left"><span class="out-str">Walker</span></td><td><span class="out-num">0.301</span></td><td><span class="out-num">7</span></td><td><span class="out-num">19200</span></td><td style="text-align:left"><span class="out-str">OF</span></td><td><span class="out-num">2.0</span></td></tr>
+            <tr><td class="idx-col">1</td><td style="text-align:left"><span class="out-str">Chen</span></td><td><span class="out-num">0.287</span></td><td><span class="out-num">2</span></td><td><span class="out-num">14400</span></td><td style="text-align:left"><span class="out-str">IF</span></td><td><span class="out-num">3.0</span></td></tr>
+            <tr><td class="idx-col">3</td><td style="text-align:left"><span class="out-str">Kim</span></td><td><span class="out-num">0.268</span></td><td><span class="out-num">1</span></td><td><span class="out-num">760000</span></td><td style="text-align:left"><span class="out-str">IF</span></td><td><span class="out-num">4.0</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Merging DataFrames</div>
+        When data is split across multiple tables (like player stats and contracts), use <code>pd.merge()</code> to join them - similar to SQL JOIN. The most common form: <code>pd.merge(df1, df2, on='player_id', how='left')</code>. The <code>how</code> parameter accepts <code>'inner'</code>, <code>'left'</code>, <code>'right'</code>, and <code>'outer'</code>, matching SQL join types.
+      </div>
+    </section>
+
+    <!-- INDEX OBJECTS -->
+    <section id="content">
+      <h2>Index Objects</h2>
+      <p>Every pandas Series and DataFrame has an <strong>Index</strong> - the row labels. The Index is an immutable array-like object that enables fast lookup, alignment, and slicing. Understanding it helps explain pandas behavior that might otherwise seem surprising.</p>
+
+      <pre><code>import pandas as pd
+
+players = pd.<span class="fn">Series</span>([<span class="nm">.312</span>, <span class="nm">.287</span>, <span class="nm">.301</span>],
+                   index=[<span class="st">'Rivera'</span>, <span class="st">'Chen'</span>, <span class="st">'Walker'</span>])
+
+<span class="cm"># Access index information</span>
+players.index           <span class="cm"># Index(['Rivera', 'Chen', 'Walker'])</span>
+players.index.<span class="fn">tolist</span>() <span class="cm"># ['Rivera', 'Chen', 'Walker']</span>
+<span class="st">'Rivera'</span> in players.index  <span class="cm"># True</span>
+
+<span class="cm"># Reindexing: conform data to a new set of labels</span>
+<span class="cm"># Missing labels become NaN by default</span>
+full_roster = [<span class="st">'Rivera'</span>, <span class="st">'Chen'</span>, <span class="st">'Walker'</span>, <span class="st">'Kim'</span>]
+players.<span class="fn">reindex</span>(full_roster)
+<span class="cm"># Kim gets NaN since she wasn't in the original</span>
+
+<span class="cm"># Fill missing values when reindexing</span>
+players.<span class="fn">reindex</span>(full_roster, fill_value=<span class="nm">0.000</span>)</code></pre>
+
+      <pre><code><span class="cm"># Reset index on a DataFrame (after filtering, the original</span>
+<span class="cm"># row numbers are preserved - reset gives you 0, 1, 2, ...)</span>
+starters = roster[roster[<span class="st">'ab'</span>] > <span class="nm">300</span>].<span class="fn">reset_index</span>(drop=<span class="kw">True</span>)
+
+<span class="cm"># Set a column as the index</span>
+roster = roster.<span class="fn">set_index</span>(<span class="st">'player_id'</span>)
+roster.<span class="fn">loc</span>[<span class="st">'P042'</span>]  <span class="cm"># look up by player ID directly</span></code></pre>
+    </section>
+
+    <!-- ARITHMETIC AND DATA ALIGNMENT -->
+    <section id="content">
+      <h2>Arithmetic and Data Alignment</h2>
+      <p>When you perform arithmetic between two pandas objects, pandas automatically <strong>aligns on the index</strong> before computing. This prevents silent errors when data comes from different sources with different row orders - but it also introduces NaN when labels don't match.</p>
+
+      <pre><code>week1 = pd.<span class="fn">Series</span>([<span class="nm">200</span>, <span class="nm">150</span>, <span class="nm">300</span>], index=[<span class="st">'Mon'</span>, <span class="st">'Tue'</span>, <span class="st">'Wed'</span>])
+week2 = pd.<span class="fn">Series</span>([<span class="nm">180</span>, <span class="nm">210</span>, <span class="nm">275</span>], index=[<span class="st">'Mon'</span>, <span class="st">'Tue'</span>, <span class="st">'Thu'</span>])
+
+<span class="cm"># Wed and Thu only appear in one series - they become NaN</span>
+week1 + week2
+<span class="cm"># Mon  380.0, Tue  360.0, Wed  NaN, Thu  NaN</span>
+
+<span class="cm"># Use fill_value to treat missing as 0 instead</span>
+week1.<span class="fn">add</span>(week2, fill_value=<span class="nm">0</span>)
+<span class="cm"># Mon  380, Tue  360, Wed  300, Thu  210</span></code></pre>
+
+      <pre><code><span class="cm"># Arithmetic between a DataFrame and a Series</span>
+<span class="cm"># The Series index aligns with the DataFrame COLUMNS by default</span>
+df - df.<span class="fn">mean</span>()   <span class="cm"># subtract each column's mean from every row</span>
+
+<span class="cm"># Sort a DataFrame by index label</span>
+roster.<span class="fn">sort_index</span>()             <span class="cm"># ascending alphabetical</span>
+roster.<span class="fn">sort_index</span>(ascending=<span class="kw">False</span>)  <span class="cm"># descending</span></code></pre>
+
+      <div class="callout">
+        <div class="callout-label">Why alignment matters</div>
+        Imagine you have two DataFrames from different data pulls - same players but in different row orders. Without index alignment, a naive NumPy subtraction would compare wrong rows. Pandas fixes this by aligning on the index first, so you always get a meaningful result (or an explicit NaN warning you something didn't match).
+      </div>
+    </section>
+
+    <!-- DESCRIPTIVE STATISTICS -->
+    <section id="content">
+      <h2>Summarizing and Descriptive Statistics</h2>
+      <p>Pandas provides reduction methods that compute a summary statistic across rows or columns. These are essential for getting a quick feel for your data.</p>
+
+      <pre><code><span class="cm"># .describe() gives a full statistical summary at once</span>
+roster.<span class="fn">describe</span>()
+<span class="cm"># count, mean, std, min, 25%, 50%, 75%, max for every numeric column</span>
+
+<span class="cm"># Individual statistics</span>
+roster[<span class="st">'avg'</span>].<span class="fn">mean</span>()    <span class="cm"># mean batting average</span>
+roster[<span class="st">'avg'</span>].<span class="fn">median</span>()  <span class="cm"># median</span>
+roster[<span class="st">'avg'</span>].<span class="fn">std</span>()     <span class="cm"># standard deviation</span>
+roster[<span class="st">'hr'</span>].<span class="fn">sum</span>()      <span class="cm"># total home runs</span>
+roster[<span class="st">'hr'</span>].<span class="fn">max</span>()      <span class="cm"># max home runs</span>
+roster[<span class="st">'hr'</span>].<span class="fn">idxmax</span>()  <span class="cm"># INDEX of the row with max home runs</span>
+
+<span class="cm"># Apply across rows or columns with the axis argument</span>
+<span class="cm"># axis=0 (default): compute down each column</span>
+<span class="cm"># axis=1: compute across each row</span>
+roster[[<span class="st">'hr'</span>, <span class="st">'rbi'</span>]].<span class="fn">sum</span>(axis=<span class="nm">1</span>)  <span class="cm"># total production per player</span></code></pre>
+    </section>
+
+    <!-- UNIQUE VALUES, VALUE COUNTS, MEMBERSHIP -->
+    <section id="content">
+      <h2>Unique Values, Value Counts, and Membership</h2>
+      <p>These methods are building blocks for exploratory data analysis - quickly understanding the range and distribution of categorical and discrete data.</p>
+
+      <pre><code><span class="cm"># unique(): what distinct values exist?</span>
+roster[<span class="st">'position'</span>].<span class="fn">unique</span>()
+<span class="cm"># array(['OF', 'IF', 'C', 'P'], dtype=object)</span>
+
+<span class="cm"># value_counts(): how often does each value appear?</span>
+roster[<span class="st">'position'</span>].<span class="fn">value_counts</span>()
+<span class="cm"># OF    8</span>
+<span class="cm"># IF    7</span>
+<span class="cm"># P     5</span>
+<span class="cm"># C     2</span>
+
+<span class="cm"># Normalize to get proportions instead of counts</span>
+roster[<span class="st">'position'</span>].<span class="fn">value_counts</span>(normalize=<span class="kw">True</span>)
+
+<span class="cm"># isin(): filter rows where a column's value is in a list</span>
+corner_inf = roster[roster[<span class="st">'position'</span>].<span class="fn">isin</span>([<span class="st">'1B'</span>, <span class="st">'3B'</span>])]
+
+<span class="cm"># Useful for exclusion too (using ~)</span>
+non_pitchers = roster[~roster[<span class="st">'position'</span>].<span class="fn">isin</span>([<span class="st">'P'</span>, <span class="st">'RP'</span>])]</code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; roster['position'].value_counts()</div>
+<span class="out-idx">OF    </span><span class="out-num">2</span>
+<span class="out-idx">IF    </span><span class="out-num">2</span>
+<span class="out-idx">Name: position, dtype: int64</span>
+        <div style="margin-top:0.5rem"><span class="out-idx"># .value_counts(normalize=True)</span></div>
+<span class="out-idx">OF    </span><span class="out-num">0.50</span>
+<span class="out-idx">IF    </span><span class="out-num">0.50</span>
+<span class="out-idx">Name: position, dtype: float64</span>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Checking for unexpected categories</div>
+        <code>value_counts()</code> is often the first thing to run on a categorical column after loading data. It reveals typos ('Outfield' vs 'OF'), encoding inconsistencies ('M' vs 'Male'), and unexpected values that would break downstream analysis.
+      </div>
+    </section>
+
+    <!-- MULTIINDEX -->
+    <section id="content">
+      <h2>MultiIndex: Hierarchical Indexing</h2>
+      <p>A <strong>MultiIndex</strong> (also called a hierarchical index) lets you work with data that has multiple levels of grouping - for example, performance stats organized by both team and player, or sales data by year and quarter.</p>
+
+      <pre><code>arrays = [
+    [<span class="st">'Eagles'</span>, <span class="st">'Eagles'</span>, <span class="st">'Falcons'</span>, <span class="st">'Falcons'</span>],
+    [<span class="st">'Rivera'</span>, <span class="st">'Chen'</span>,   <span class="st">'Lopez'</span>,   <span class="st">'Smith'</span>]
+]
+index = pd.<span class="fn">MultiIndex</span>.<span class="fn">from_arrays</span>(arrays,
+                                    names=[<span class="st">'team'</span>, <span class="st">'player'</span>])
+stats = pd.<span class="fn">DataFrame</span>({<span class="st">'avg'</span>: [<span class="nm">.312</span>, <span class="nm">.287</span>, <span class="nm">.301</span>, <span class="nm">.265</span>]},
+                     index=index)
+
+<span class="cm"># Select all Eagles</span>
+stats.<span class="fn">loc</span>[<span class="st">'Eagles'</span>]
+
+<span class="cm"># Select a specific player</span>
+stats.<span class="fn">loc</span>[(<span class="st">'Eagles'</span>, <span class="st">'Rivera'</span>)]
+
+<span class="cm"># Flatten back to a regular index</span>
+stats.<span class="fn">reset_index</span>()</code></pre>
+
+      <div class="callout">
+        <div class="callout-label">When to use MultiIndex</div>
+        MultiIndex shines when data is naturally hierarchical and you need to slice at different levels (all data for a team, then drill down to a player). For simpler analysis, <code>groupby()</code> is often easier. You'll encounter MultiIndex in output from groupby operations, so knowing how to navigate it is important even if you rarely create it manually.
+      </div>
+    </section>
+
+    <!-- COMBINING DATA -->
+    <section id="content">
+      <h2>Combining Data: concat, join, and merge</h2>
+      <p>Real data pipelines assemble information from multiple sources. Pandas offers three main tools - each suited to a different combining pattern.</p>
+
+      <h3>concat - stacking DataFrames</h3>
+      <p>Use <code>pd.concat()</code> when you have the <em>same columns</em> across multiple DataFrames and want to stack them vertically (add rows), or the same rows with different columns (add columns).</p>
+      <pre><code>fall_enrollment = pd.<span class="fn">DataFrame</span>({<span class="st">'student'</span>: [<span class="st">'Ana'</span>, <span class="st">'Bo'</span>], <span class="st">'course'</span>: [<span class="st">'DTSC-520'</span>, <span class="st">'DTSC-560'</span>]})
+spring_enrollment = pd.<span class="fn">DataFrame</span>({<span class="st">'student'</span>: [<span class="st">'Cal'</span>, <span class="st">'Dev'</span>], <span class="st">'course'</span>: [<span class="st">'DTSC-520'</span>, <span class="st">'DTSC-575'</span>]})
+
+all_enrollment = pd.<span class="fn">concat</span>([fall_enrollment, spring_enrollment],
+                            ignore_index=<span class="kw">True</span>)</code></pre>
+
+      <h3>merge - SQL-style joins</h3>
+      <p>Use <code>pd.merge()</code> when two DataFrames share a <em>key column</em> and you want to combine their columns - equivalent to a SQL JOIN.</p>
+      <pre><code>students = pd.<span class="fn">DataFrame</span>({<span class="st">'student_id'</span>: [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>],
+                          <span class="st">'name'</span>: [<span class="st">'Ana'</span>, <span class="st">'Bo'</span>, <span class="st">'Cal'</span>]})
+gpa = pd.<span class="fn">DataFrame</span>({<span class="st">'student_id'</span>: [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">4</span>],
+                     <span class="st">'gpa'</span>: [<span class="nm">3.8</span>, <span class="nm">3.5</span>, <span class="nm">3.9</span>]})
+
+<span class="cm"># inner join: only students in both DataFrames</span>
+pd.<span class="fn">merge</span>(students, gpa, on=<span class="st">'student_id'</span>, how=<span class="st">'inner'</span>)
+
+<span class="cm"># left join: all students, NaN gpa if not in gpa df</span>
+pd.<span class="fn">merge</span>(students, gpa, on=<span class="st">'student_id'</span>, how=<span class="st">'left'</span>)</code></pre>
+
+      <h3>join - index-based combining</h3>
+      <p><code>df.join()</code> is a shorthand for merging on the <em>index</em> rather than a column.</p>
+      <pre><code>program_info = pd.<span class="fn">DataFrame</span>({<span class="st">'program'</span>: [<span class="st">'MSDS'</span>, <span class="st">'MBA'</span>]},
+                             index=[<span class="nm">1</span>, <span class="nm">2</span>])
+students.<span class="fn">set_index</span>(<span class="st">'student_id'</span>).<span class="fn">join</span>(program_info)</code></pre>
+
+      <div class="callout">
+        <div class="callout-label">concat vs merge</div>
+        Use <code>concat</code> when tables have the same structure and you're stacking them (more rows or more columns). Use <code>merge</code> when tables have different columns linked by a shared key (like a student ID). When in doubt, merge is the more powerful and flexible tool.
+      </div>
+    </section>
+
+    <!-- PIVOT TABLES -->
+    <section id="content">
+      <h2>Pivot Tables</h2>
+      <p>A <strong>pivot table</strong> reorganizes data by grouping on one or more columns and applying an aggregation - think of it as a more flexible, readable alternative to <code>groupby()</code> for multi-dimensional summaries.</p>
+
+      <pre><code><span class="cm"># Sample sales data</span>
+sales = pd.<span class="fn">DataFrame</span>({
+    <span class="st">'region'</span>: [<span class="st">'East'</span>, <span class="st">'West'</span>, <span class="st">'East'</span>, <span class="st">'West'</span>],
+    <span class="st">'product'</span>: [<span class="st">'Laptop'</span>, <span class="st">'Laptop'</span>, <span class="st">'Phone'</span>, <span class="st">'Phone'</span>],
+    <span class="st">'revenue'</span>: [<span class="nm">50000</span>, <span class="nm">45000</span>, <span class="nm">30000</span>, <span class="nm">35000</span>]
+})
+
+<span class="cm"># Create a pivot table: rows=region, columns=product, values=revenue</span>
+pd.<span class="fn">pivot_table</span>(sales,
+               values=<span class="st">'revenue'</span>,
+               index=<span class="st">'region'</span>,
+               columns=<span class="st">'product'</span>,
+               aggfunc=<span class="st">'sum'</span>)
+
+<span class="cm"># Output:</span>
+<span class="cm"># product   Laptop   Phone</span>
+<span class="cm"># region</span>
+<span class="cm"># East       50000   30000</span>
+<span class="cm"># West       45000   35000</span>
+
+<span class="cm"># Multiple aggregations at once</span>
+pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'</span>, index=<span class="st">'region'</span>,
+               aggfunc=[<span class="st">'sum'</span>, <span class="st">'mean'</span>, <span class="st">'count'</span>])</code></pre>
+
+      <div class="output-block">
+        <div class="output-block-label">output &mdash; pivot_table(values='revenue', index='region', columns='product', aggfunc='sum')</div>
+        <div class="df-wrap"><table class="df-table">
+          <thead>
+            <tr><th class="idx-col" rowspan="2">region</th><th colspan="2" style="text-align:center;border-bottom:1px solid #3a3530">product</th></tr>
+            <tr><th>Laptop</th><th>Phone</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="idx-col">East</td><td><span class="out-num">50000</span></td><td><span class="out-num">30000</span></td></tr>
+            <tr><td class="idx-col">West</td><td><span class="out-num">45000</span></td><td><span class="out-num">35000</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">groupby vs pivot_table</div>
+        Both do split-apply-combine, but <code>pivot_table</code> produces a 2D grid that's easier to read when you have two grouping dimensions. For a single grouping column, <code>groupby()</code> is simpler. When you need to cross-tabulate two categorical columns (region x product, month x category), reach for <code>pivot_table</code>.
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz">
+      <div id="quiz-section">
+        <h2>Module 4 Quiz</h2>
+        <p class="quiz-intro">Ten questions covering Series, DataFrames, selection, filtering, cleaning, and aggregation. Select one answer per question, then submit.</p>
+
+        <div class="q-block" data-correct="b">
+          <span class="q-num">Question 01</span>
+          <p class="q-text">What is the key difference between a pandas Series and a DataFrame?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q1" value="a"> A Series can only hold strings; a DataFrame can hold any type.</label>
+            <label class="opt-label"><input type="radio" name="q1" value="b"> A Series is 1-dimensional with a single index; a DataFrame is 2-dimensional with both a row index and column labels.</label>
+            <label class="opt-label"><input type="radio" name="q1" value="c"> A DataFrame is faster than a Series for all operations.</label>
+            <label class="opt-label"><input type="radio" name="q1" value="d"> A Series always has an integer index; a DataFrame can have string labels.</label>
+          </div>
+          <div class="q-feedback" id="fb1"></div>
+        </div>
+
+        <div class="q-block" data-correct="c">
+          <span class="q-num">Question 02</span>
+          <p class="q-text">You want to inspect the data types of every column in <code>df</code>. Which command is correct?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q2" value="a"> <code>df.types()</code></label>
+            <label class="opt-label"><input type="radio" name="q2" value="b"> <code>df.info(types=True)</code></label>
+            <label class="opt-label"><input type="radio" name="q2" value="c"> <code>df.dtypes</code></label>
+            <label class="opt-label"><input type="radio" name="q2" value="d"> <code>df.schema()</code></label>
+          </div>
+          <div class="q-feedback" id="fb2"></div>
+        </div>
+
+        <div class="q-block" data-correct="a">
+          <span class="q-num">Question 03</span>
+          <p class="q-text">What does <code>df.loc[2, 'avg']</code> return?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q3" value="a"> The value in the row with label 2 and the column named 'avg'.</label>
+            <label class="opt-label"><input type="radio" name="q3" value="b"> The value in the 2nd column and the row named 'avg'.</label>
+            <label class="opt-label"><input type="radio" name="q3" value="c"> The 2nd element of 'avg' regardless of index.</label>
+            <label class="opt-label"><input type="radio" name="q3" value="d"> A new DataFrame with 2 rows from 'avg'.</label>
+          </div>
+          <div class="q-feedback" id="fb3"></div>
+        </div>
+
+        <div class="q-block" data-correct="d">
+          <span class="q-num">Question 04</span>
+          <p class="q-text">You want all rows where <code>salary &gt; 50000</code> AND <code>avg &gt; .300</code>. Which expression is correct?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q4" value="a"> <code>df[df['salary'] > 50000 and df['avg'] > .300]</code></label>
+            <label class="opt-label"><input type="radio" name="q4" value="b"> <code>df[df['salary'] > 50000 &amp;&amp; df['avg'] > .300]</code></label>
+            <label class="opt-label"><input type="radio" name="q4" value="c"> <code>df.filter(salary > 50000, avg > .300)</code></label>
+            <label class="opt-label"><input type="radio" name="q4" value="d"> <code>df[(df['salary'] > 50000) &amp; (df['avg'] > .300)]</code></label>
+          </div>
+          <div class="q-feedback" id="fb4"></div>
+        </div>
+
+        <div class="q-block" data-correct="b">
+          <span class="q-num">Question 05</span>
+          <p class="q-text">A salary column contains the string "N/A" in some rows and loads as object dtype. What is the correct approach to use it for numeric analysis?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q5" value="a"> Use <code>df['salary'].to_numeric()</code>.</label>
+            <label class="opt-label"><input type="radio" name="q5" value="b"> Replace the "N/A" strings with NaN, then cast: <code>df['salary'].replace('N/A', pd.NA).astype(float)</code>.</label>
+            <label class="opt-label"><input type="radio" name="q5" value="c"> Drop the column because it cannot be converted.</label>
+            <label class="opt-label"><input type="radio" name="q5" value="d"> Use <code>df['salary'].astype(int)</code> - pandas handles strings automatically.</label>
+          </div>
+          <div class="q-feedback" id="fb5"></div>
+        </div>
+
+        <div class="q-block" data-correct="c">
+          <span class="q-num">Question 06</span>
+          <p class="q-text">What does <code>df.isna().sum()</code> compute?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q6" value="a"> The total number of rows in the DataFrame.</label>
+            <label class="opt-label"><input type="radio" name="q6" value="b"> Whether any column has at least one missing value (True/False per column).</label>
+            <label class="opt-label"><input type="radio" name="q6" value="c"> The count of missing values in each column.</label>
+            <label class="opt-label"><input type="radio" name="q6" value="d"> The sum of all numeric columns after removing NaNs.</label>
+          </div>
+          <div class="q-feedback" id="fb6"></div>
+        </div>
+
+        <div class="q-block" data-correct="a">
+          <span class="q-num">Question 07</span>
+          <p class="q-text">You call <code>df.dropna()</code>. What happens to the original DataFrame?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q7" value="a"> Nothing - dropna() returns a new DataFrame. The original is unchanged unless you reassign.</label>
+            <label class="opt-label"><input type="radio" name="q7" value="b"> The original is modified in place and the missing rows are permanently removed.</label>
+            <label class="opt-label"><input type="radio" name="q7" value="c"> Missing values are filled with 0 in the original.</label>
+            <label class="opt-label"><input type="radio" name="q7" value="d"> An error is raised unless you pass inplace=True.</label>
+          </div>
+          <div class="q-feedback" id="fb7"></div>
+        </div>
+
+        <div class="q-block" data-correct="d">
+          <span class="q-num">Question 08</span>
+          <p class="q-text">The Eagles roster has one player (Kim) on MLB rehab earning $760,000 while others earn $14,400-$19,200. You need to report a "typical" salary. Which measure is more appropriate and why?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q8" value="a"> Mean, because it uses all data points and is always more accurate.</label>
+            <label class="opt-label"><input type="radio" name="q8" value="b"> Mean, because standard deviation normalizes for outliers.</label>
+            <label class="opt-label"><input type="radio" name="q8" value="c"> Median and mean are identical when the data has one outlier.</label>
+            <label class="opt-label"><input type="radio" name="q8" value="d"> Median, because it is resistant to outliers and better represents what a typical player earns.</label>
+          </div>
+          <div class="q-feedback" id="fb8"></div>
+        </div>
+
+        <div class="q-block" data-correct="b">
+          <span class="q-num">Question 09</span>
+          <p class="q-text">What does <code>roster.groupby('position')['avg'].mean()</code> produce?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q9" value="a"> The mean batting average of every player in the roster.</label>
+            <label class="opt-label"><input type="radio" name="q9" value="b"> A Series with one mean batting average per unique position value.</label>
+            <label class="opt-label"><input type="radio" name="q9" value="c"> A DataFrame grouped by position with all columns averaged.</label>
+            <label class="opt-label"><input type="radio" name="q9" value="d"> An error - you must call .agg('mean') instead of .mean() after groupby.</label>
+          </div>
+          <div class="q-feedback" id="fb9"></div>
+        </div>
+
+        <div class="q-block" data-correct="c">
+          <span class="q-num">Question 10</span>
+          <p class="q-text">Which of the following is the safest way to assign a value to a specific cell in a DataFrame?</p>
+          <div class="options">
+            <label class="opt-label"><input type="radio" name="q10" value="a"> <code>df['salary'][3] = 20000</code></label>
+            <label class="opt-label"><input type="radio" name="q10" value="b"> <code>df.salary[3] = 20000</code></label>
+            <label class="opt-label"><input type="radio" name="q10" value="c"> <code>df.loc[3, 'salary'] = 20000</code></label>
+            <label class="opt-label"><input type="radio" name="q10" value="d"> <code>df.assign(salary=20000)</code></label>
+          </div>
+          <div class="q-feedback" id="fb10"></div>
+        </div>
+
+        <button class="quiz-submit" id="quizSubmit" onclick="submitQuiz()">Submit Quiz</button>
+        <div class="quiz-result" id="quizResult">
+          <div class="score-big" id="scoreDisplay"></div>
+          <div class="grade-label" id="gradeDisplay"></div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /content-col -->
+
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h4>Quiz Score</h4>
+      <div class="score-display" id="sidebarScore">--</div>
+      <div class="score-sub">Module 4 - 10 questions</div>
+      <a href="#quiz" class="quiz-cta-btn">Take the Quiz</a>
+    </div>
+    <div class="sim-cta">
+      <h4>Simulation</h4>
+      <p>Put your pandas skills to work cleaning a real messy dataset - missing values, outliers, and type errors included.</p>
+      <a href="../../../dirty_dataset_sim.html" class="sim-cta-btn">Launch: The Dirty Dataset</a>
+    </div>
+    <div class="sidebar-card">
+      <h4>On This Page</h4>
+      <div class="toc-links">
+        <a href="#series">Series</a>
+        <a href="#dataframes">DataFrames</a>
+        <a href="#selection">Selection</a>
+        <a href="#filtering">Filtering</a>
+        <a href="#cleaning">Data Cleaning</a>
+        <a href="#aggregation">Aggregation</a>
+        <a href="#groupby">GroupBy</a>
+        <a href="#quiz">Quiz</a>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<footer>
+  Built for DTSC 520 - Eastern University &bull; <a href="../../index.html">Course Home</a><br>&copy; Eastern University. All rights reserved.
+</footer>
+
+<script>
+const STORAGE_KEY = 'dtsc520_quiz_m4';
+
+const ANSWERS = {
+  q1: { correct: 'b', feedback: {
+    a: 'Incorrect. Both Series and DataFrames can hold any data type.',
+    b: 'Correct! A Series is 1D - one column of values with an index. A DataFrame is 2D - rows and columns. Every column in a DataFrame is a Series.',
+    c: 'Incorrect. Speed depends on the operation, not the structure.',
+    d: 'Incorrect. Both Series and DataFrames support string (or other) index labels.'
+  }},
+  q2: { correct: 'c', feedback: {
+    a: 'Incorrect. There is no .types() method.',
+    b: 'Incorrect. df.info() exists but has no types= parameter.',
+    c: 'Correct! df.dtypes is an attribute (not a method call) that returns the dtype of each column.',
+    d: 'Incorrect. Pandas has no .schema() method.'
+  }},
+  q3: { correct: 'a', feedback: {
+    a: 'Correct! .loc[] is label-based. df.loc[2, "avg"] finds the row whose index label is 2 and returns the value in the "avg" column.',
+    b: 'Incorrect. .loc[] is row-first, then column.',
+    c: 'Incorrect. That describes .iloc[], not .loc[]. The distinction matters when the index is not the default integer range.',
+    d: 'Incorrect. .loc[2, "avg"] returns a scalar, not a DataFrame.'
+  }},
+  q4: { correct: 'd', feedback: {
+    a: "Incorrect. Python's 'and' keyword does not work element-wise on Series. It raises a ValueError.",
+    b: 'Incorrect. && is not valid Python syntax.',
+    c: 'Incorrect. There is no df.filter() method with this signature for row filtering.',
+    d: 'Correct! The & operator works element-wise on boolean Series. Each condition must be in parentheses because & has higher precedence than comparison operators.'
+  }},
+  q5: { correct: 'b', feedback: {
+    a: 'Incorrect. There is no .to_numeric() method on a Series - the function is pd.to_numeric(df["salary"]).',
+    b: 'Correct! You need to handle the string "N/A" before casting. Replacing it with pd.NA then calling .astype(float) is the right sequence.',
+    c: 'Incorrect. The column can be salvaged - dropping it would lose real data.',
+    d: 'Incorrect. .astype(int) will raise an error on string values.'
+  }},
+  q6: { correct: 'c', feedback: {
+    a: 'Incorrect. Use df.shape[0] for row count.',
+    b: 'Incorrect. That describes df.isna().any() - which returns True/False per column.',
+    c: 'Correct! df.isna() returns a boolean DataFrame. Calling .sum() sums the True values per column, giving the count of missing values in each column.',
+    d: 'Incorrect. .sum() here counts True values from the boolean mask, not numeric values.'
+  }},
+  q7: { correct: 'a', feedback: {
+    a: 'Correct! Pandas methods generally return new objects by default. To persist the change, reassign: df = df.dropna().',
+    b: 'Incorrect. Only if you pass inplace=True does the original change.',
+    c: 'Incorrect. dropna() removes rows - it does not fill values.',
+    d: 'Incorrect. dropna() works fine without inplace=True; it just returns a new DataFrame.'
+  }},
+  q8: { correct: 'd', feedback: {
+    a: 'Incorrect. Mean uses all data, but that makes it sensitive to outliers.',
+    b: 'Incorrect. Standard deviation measures spread; it does not adjust the mean.',
+    c: 'Incorrect. With a single large outlier like Kim, mean and median diverge significantly.',
+    d: 'Correct! The median is not affected by extreme values. With Kim earning ~44x a typical player, the mean is pulled far above what most players earn. Median accurately describes the typical player.'
+  }},
+  q9: { correct: 'b', feedback: {
+    a: 'Incorrect. Without groupby you would use roster["avg"].mean(). The groupby splits first.',
+    b: 'Correct! groupby() splits the DataFrame into groups. Selecting a column and calling .mean() gives one mean per group - a Series indexed by position.',
+    c: 'Incorrect. Because we selected only ["avg"], the result is a Series, not a DataFrame.',
+    d: 'Incorrect. Both .mean() and .agg("mean") work after groupby.'
+  }},
+  q10: { correct: 'c', feedback: {
+    a: 'Incorrect. Chained indexing df["col"][row] can cause SettingWithCopyWarning and may silently fail.',
+    b: 'Incorrect. Same issue as (a) - dot notation chained with integer access is also chained indexing.',
+    c: 'Correct! df.loc[row_label, column_name] = value is the safe, explicit, pandas-recommended way to set a value.',
+    d: 'Incorrect. df.assign() creates a new column with a constant value across all rows - not a targeted cell update.'
+  }}
+};
+
+function submitQuiz() {
+  let score = 0;
+  const total = 10;
+  const answers = {};
+
+  for (let i = 1; i <= total; i++) {
+    const name = 'q' + i;
+    const sel = document.querySelector('input[name="' + name + '"]:checked');
+    const fb = document.getElementById('fb' + i);
+    const opts = document.querySelectorAll('input[name="' + name + '"]');
+    const info = ANSWERS[name];
+
+    if (!sel) {
+      fb.className = 'q-feedback show wrong';
+      fb.textContent = 'Please select an answer.';
+      continue;
+    }
+
+    const chosen = sel.value;
+    answers[name] = chosen;
+
+    opts.forEach(function(opt) {
+      const lbl = opt.closest('.opt-label');
+      if (opt.value === info.correct) lbl.classList.add('opt-correct');
+      else if (opt.value === chosen && chosen !== info.correct) lbl.classList.add('opt-wrong');
+      opt.disabled = true;
+    });
+
+    if (chosen === info.correct) {
+      score++;
+      fb.className = 'q-feedback show correct';
+      fb.textContent = info.feedback[chosen];
+    } else {
+      fb.className = 'q-feedback show wrong';
+      fb.textContent = info.feedback[chosen];
+    }
+  }
+
+  const pct = Math.round((score / total) * 100);
+  let grade = pct === 100 ? 'Perfect score - Pandas expert!' :
+              pct >= 80  ? 'Strong work - keep building!' :
+              pct >= 60  ? 'Decent start - review sections where you missed.' :
+                           'Review the module content and try again.';
+
+  document.getElementById('scoreDisplay').textContent = score + ' / ' + total;
+  document.getElementById('gradeDisplay').textContent = pct + '% - ' + grade;
+  document.getElementById('quizResult').className = 'quiz-result show';
+  document.getElementById('quizSubmit').disabled = true;
+  document.getElementById('sidebarScore').textContent = score + '/10';
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ score: score, total: total, pct: pct, answers: answers, ts: Date.now() }));
+  } catch(e) {}
+}
+
+(function() {
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved && saved.score !== undefined) {
+      document.getElementById('sidebarScore').textContent = saved.score + '/10';
+    }
+  } catch(e) {}
+})();
+</script>
+
+<a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
+<style>
+  #back-to-top {
+    position: fixed; top: 64px; left: 1rem; z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+    width: 2.1rem; height: 2.1rem;
+    background: rgba(20,18,16,0.85); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px; color: rgba(255,255,255,0.55);
+    font-size: 1.25rem; line-height: 1; text-decoration: none;
+    backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s, color 0.15s, border-color 0.15s;
+  }
+  #back-to-top.visible { opacity: 1; pointer-events: auto; }
+  #back-to-top:hover { color: #fff; border-color: rgba(255,255,255,0.35); }
+</style>
+<script>
+(function(){
+  var btn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function(){
+    btn.classList.toggle('visible', window.scrollY > 300);
+  }, {passive: true});
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+})();
+</script>
+<!-- ── Python Sandbox ── -->
+
+<!-- Floating trigger button -->
+<button id="sandbox-btn" title="Python Sandbox" aria-label="Open Python Sandbox">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+  <span>Python</span>
+</button>
+
+<!-- Sandbox modal -->
+<div id="sandbox-modal" role="dialog" aria-modal="true" aria-label="Python Sandbox">
+  <div class="sb-box">
+    <div class="sb-header">
+      <div class="sb-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        Python Sandbox
+        <span class="sb-status" id="sb-status">ready</span>
+      </div>
+      <div class="sb-header-actions">
+        <button class="sb-action-btn" id="sb-clear-btn" title="Clear editor">Clear</button>
+        <button class="sb-action-btn" id="sb-reset-btn" title="Reset output">Reset output</button>
+        <button class="sb-close" id="sb-close" aria-label="Close sandbox">&times;</button>
+      </div>
+    </div>
+    <div class="sb-body">
+      <div class="sb-editor-pane">
+        <div class="sb-pane-label">
+          Code
+          <button class="sb-run-btn" id="sb-run">&#9654; Run</button>
+        </div>
+        <div id="sb-editor-wrap"></div>
+      </div>
+      <div class="sb-output-pane">
+        <div class="sb-pane-label">Output</div>
+        <div id="sb-output"><span class="sb-placeholder">Output will appear here after you run code.</span></div>
+      </div>
+    </div>
+    <div class="sb-footer">
+      Session resets when you leave this page &bull; Code is saved automatically
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Floating button */
+  #sandbox-btn {
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 998;
+    display: flex; align-items: center; gap: 0.45rem;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 5px; cursor: pointer;
+    padding: 0.55rem 1rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.45);
+    transition: background 0.15s, transform 0.1s;
+  }
+  #sandbox-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
+  #sandbox-btn:active { transform: translateY(0); }
+
+  /* Modal overlay */
+  #sandbox-modal {
+    display: none; position: fixed; inset: 0; z-index: 2100;
+    background: rgba(0,0,0,0.75);
+    align-items: center; justify-content: center;
+    padding: 1.25rem;
+  }
+  #sandbox-modal.open { display: flex; }
+
+  /* Modal box */
+  .sb-box {
+    background: #161412;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    border-radius: 6px;
+    width: 100%; max-width: 920px;
+    height: 80vh; max-height: 680px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+  }
+
+  /* Header */
+  .sb-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.6rem 1rem; border-bottom: 1px solid var(--border);
+    flex-shrink: 0; gap: 0.75rem;
+  }
+  .sb-title {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-light);
+  }
+  .sb-status {
+    font-size: 0.62rem; letter-spacing: 0.06em; padding: 0.15rem 0.5rem;
+    border-radius: 3px; background: rgba(122,95,181,0.15);
+    color: var(--accent-light); text-transform: uppercase;
+    transition: background 0.2s, color 0.2s;
+  }
+  .sb-status.loading { background: rgba(192,123,48,0.2); color: #d9913e; }
+  .sb-status.running { background: rgba(74,143,107,0.2); color: #6abf8a; }
+  .sb-status.error   { background: rgba(180,60,60,0.2);  color: #e07070; }
+
+  .sb-header-actions { display: flex; align-items: center; gap: 0.5rem; }
+  .sb-action-btn {
+    background: none; border: 1px solid var(--border); color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 0.25rem 0.6rem; border-radius: 3px; cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .sb-action-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+  .sb-close {
+    background: none; border: none; color: rgba(255,255,255,0.45);
+    font-size: 1.3rem; line-height: 1; cursor: pointer; padding: 0 0.2rem;
+    transition: color 0.15s;
+  }
+  .sb-close:hover { color: #fff; }
+
+  /* Body */
+  .sb-body {
+    display: grid; grid-template-columns: 1fr 1fr;
+    flex: 1; min-height: 0; overflow: hidden;
+  }
+  .sb-pane-label {
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim);
+    padding: 0.45rem 1rem; border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  /* Editor pane */
+  .sb-editor-pane {
+    display: flex; flex-direction: column;
+    border-right: 1px solid var(--border); overflow: hidden;
+  }
+
+  /* CodeMirror overrides */
+  #sb-editor-wrap { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+  #sb-editor-wrap .CodeMirror {
+    flex: 1; height: 100%; min-height: 0;
+    background: #0d0c0b;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.84rem; line-height: 1.6;
+    border: none;
+  }
+  #sb-editor-wrap .CodeMirror-scroll { min-height: 0; }
+  #sb-editor-wrap .CodeMirror-gutters { background: #0d0c0b; border-right: 1px solid #2e2b28; }
+  #sb-editor-wrap .CodeMirror-linenumber { color: #4a4540; }
+  #sb-editor-wrap .CodeMirror-cursor { border-left-color: #9878d4; }
+  #sb-editor-wrap .CodeMirror-selected { background: rgba(122,95,181,0.2) !important; }
+  #sb-editor-wrap .CodeMirror-focused .CodeMirror-selected { background: rgba(122,95,181,0.25) !important; }
+  #sb-editor-wrap .CodeMirror-matchingbracket { color: #9878d4 !important; font-weight: bold; outline: 1px solid rgba(122,95,181,0.5); }
+
+  /* Run button */
+  .sb-run-btn {
+    background: var(--accent); color: #fff; border: none;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 0.25rem 0.75rem; border-radius: 3px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .sb-run-btn:hover { background: var(--accent-light); }
+  .sb-run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Output pane */
+  .sb-output-pane { display: flex; flex-direction: column; overflow: hidden; }
+  #sb-output {
+    flex: 1; min-height: 0; overflow-y: auto;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; line-height: 1.6;
+    padding: 0.85rem 1rem; white-space: pre-wrap; word-break: break-word;
+    color: #e8e4de;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
+  .sb-placeholder { color: #4a4540; font-style: italic; }
+  .sb-output-block { margin-bottom: 0.75rem; }
+  .sb-output-block + .sb-output-block { border-top: 1px solid var(--border); padding-top: 0.75rem; }
+  .sb-out-text  { color: #e8e4de; }
+  .sb-out-error { color: #e07070; }
+  .sb-out-run-label {
+    font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 0.35rem;
+  }
+
+  /* Footer */
+  .sb-footer {
+    border-top: 1px solid var(--border); padding: 0.4rem 1rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+    color: #7a7470; letter-spacing: 0.04em; flex-shrink: 0; text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .sb-body { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+    .sb-editor-pane { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'dtsc520_sandbox_m4';
+  let pyodide = null;
+  let pyodideReady = false;
+  let pyodideLoading = false;
+  let runCount = 0;
+  let cm = null; // CodeMirror instance
+
+  const modal   = document.getElementById('sandbox-modal');
+  const btn     = document.getElementById('sandbox-btn');
+  const closeBtn= document.getElementById('sb-close');
+  const output  = document.getElementById('sb-output');
+  const runBtn  = document.getElementById('sb-run');
+  const status  = document.getElementById('sb-status');
+  const clearBtn= document.getElementById('sb-clear-btn');
+  const resetBtn= document.getElementById('sb-reset-btn');
+
+  // ── Init CodeMirror (once DOM is ready) ──
+  function initCM() {
+    if (cm) return;
+    const wrap = document.getElementById('sb-editor-wrap');
+    cm = CodeMirror(wrap, {
+      value: '',
+      mode: 'python',
+      theme: 'material-darker',
+      lineNumbers: true,
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      indentUnit: 4,
+      tabSize: 4,
+      indentWithTabs: false,
+      lineWrapping: false,
+      extraKeys: {
+        'Tab': function(cm) {
+          if (cm.somethingSelected()) { cm.indentSelection('add'); }
+          else { cm.replaceSelection('    ', 'end'); }
+        },
+        'Ctrl-Enter': runCode,
+        'Cmd-Enter':  runCode
+      }
+    });
+
+    // Restore saved code
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) cm.setValue(saved);
+      else cm.setValue('# Type your Python here and click Run\n# Variables persist while this page is open\n\nprint("Hello, world!")');
+    } catch(e) {
+      cm.setValue('# Type your Python here and click Run\n# Variables persist while this page is open\n\nprint("Hello, world!")');
+    }
+
+    // Auto-save on change
+    cm.on('change', function() {
+      try { localStorage.setItem(STORAGE_KEY, cm.getValue()); } catch(e) {}
+    });
+  }
+
+  // ── Open modal ──
+  function openSandbox() {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Init CM on first open, then refresh layout
+    initCM();
+    setTimeout(function() { cm.refresh(); cm.focus(); }, 50);
+    if (!pyodideReady && !pyodideLoading) loadPyodide();
+  }
+
+  // ── Close modal (keep Pyodide alive) ──
+  function closeSandbox() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', openSandbox);
+  closeBtn.addEventListener('click', closeSandbox);
+  modal.addEventListener('click', function(e) { if (e.target === modal) closeSandbox(); });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeSandbox();
+  });
+
+  clearBtn.addEventListener('click', function() {
+    if (cm) { cm.setValue(''); cm.focus(); }
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  });
+
+  resetBtn.addEventListener('click', function() {
+    output.innerHTML = '<span class="sb-placeholder">Output will appear here after you run code.</span>';
+    runCount = 0;
+  });
+
+  // ── Load Pyodide ──
+  async function loadPyodide() {
+    pyodideLoading = true;
+    setStatus('loading', 'loading...');
+    runBtn.disabled = true;
+    try {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js';
+        s.onload = resolve;
+        s.onerror = () => reject(new Error('Failed to load Pyodide script'));
+        document.head.appendChild(s);
+      });
+      pyodide = await window.loadPyodide({
+        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/'
+      });
+      pyodide.runPython('import sys, io\nclass _Capture(io.StringIO): pass\nsys.stdout = _Capture()\nsys.stderr = _Capture()');
+      // Load scientific packages
+      setStatus('loading', 'loading packages...');
+      await pyodide.loadPackage(['numpy', 'pandas']);
+      pyodideReady = true;
+      pyodideLoading = false;
+      setStatus('ready', 'ready');
+      runBtn.disabled = false;
+    } catch(err) {
+      pyodideLoading = false;
+      setStatus('error', 'load failed');
+      appendOutput('error', 'Could not load Python runtime. ' + err.message);
+      runBtn.disabled = false;
+    }
+  }
+
+  // ── Run code ──
+  runBtn.addEventListener('click', runCode);
+
+  async function runCode() {
+    const code = cm ? cm.getValue().trim() : '';
+    if (!code) return;
+    if (!pyodideReady) {
+      if (!pyodideLoading) loadPyodide();
+      appendOutput('error', 'Python is still loading - please wait a moment and try again.');
+      return;
+    }
+    setStatus('running', 'running...');
+    runBtn.disabled = true;
+    runCount++;
+    try {
+      pyodide.runPython('sys.stdout.truncate(0); sys.stdout.seek(0)\nsys.stderr.truncate(0); sys.stderr.seek(0)');
+      await pyodide.runPythonAsync(code);
+      const stdout = pyodide.runPython('sys.stdout.getvalue()');
+      const stderr = pyodide.runPython('sys.stderr.getvalue()');
+      const outText = (stdout || '').trimEnd();
+      const errText = (stderr || '').trimEnd();
+      if (!outText && !errText) { appendOutput('text', '(no output)'); }
+      else {
+        if (outText) appendOutput('text',  outText);
+        if (errText) appendOutput('error', errText);
+      }
+      setStatus('ready', 'ready');
+    } catch(err) {
+      const lines = (err.message || String(err)).split('\n');
+      const short = lines.filter(function(l){ return l.trim(); }).slice(-4).join('\n');
+      appendOutput('error', short || String(err));
+      setStatus('error', 'error');
+      setTimeout(function(){ setStatus('ready', 'ready'); }, 2500);
+    }
+    runBtn.disabled = false;
+  }
+
+  function setStatus(cls, text) {
+    status.className = 'sb-status ' + cls;
+    status.textContent = text;
+  }
+
+  function appendOutput(type, text) {
+    const placeholder = output.querySelector('.sb-placeholder');
+    if (placeholder) placeholder.remove();
+    const block = document.createElement('div');
+    block.className = 'sb-output-block';
+    const label = document.createElement('div');
+    label.className = 'sb-out-run-label';
+    label.textContent = 'run ' + runCount;
+    block.appendChild(label);
+    const content = document.createElement('div');
+    content.className = type === 'error' ? 'sb-out-error' : 'sb-out-text';
+    content.textContent = text;
+    block.appendChild(content);
+    output.appendChild(block);
+    output.scrollTop = output.scrollHeight;
+  }
+
+})();
+</script>
+
+</body>
+</html>

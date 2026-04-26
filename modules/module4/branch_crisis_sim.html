@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Branch Crisis - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --maroon: #8B1C40;
+      --maroon-light: #a82050;
+      --blue: #2A7195;
+      --blue-light: #3a95c0;
+      --green: #3e8a58;
+      --green-light: #5aaf78;
+      --orange: #c07830;
+      --orange-light: #e09040;
+      --red: #9e3a3a;
+      --red-light: #c05050;
+      --gray: #646469;
+      --gray-light: #9a9aa0;
+      --bg: #0c0b0a;
+      --bg-panel: #141210;
+      --bg-card: #1c1a18;
+      --bg-card2: #222018;
+      --text: #e0dbd4;
+      --text-dim: #9a9490;
+      --text-bright: #f0ece6;
+      --border: #2a2825;
+      --term-bg: #0a0908;
+      --term-green: #4ec978;
+      --term-blue: #5ab8e0;
+      --term-yellow: #d4b86a;
+      --term-red: #d47a7a;
+      --term-gray: #7a7570;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- TOP BAR ---- */
+    .topbar {
+      background: #111009;
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .topbar-icon {
+      width: 28px; height: 28px;
+      background: var(--maroon);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .topbar-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .topbar-sub {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-left: 0.25rem;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .step-indicator {
+      display: flex;
+      gap: 0.3rem;
+      align-items: center;
+    }
+
+    .step-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+
+    .step-dot.active { background: var(--maroon-light); }
+    .step-dot.done   { background: var(--green); }
+
+    .score-display {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .score-display span {
+      color: var(--term-yellow);
+      font-weight: 500;
+    }
+
+    /* ---- MAIN LAYOUT ---- */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      flex: 1;
+      overflow: hidden;
+      min-height: calc(100vh - 50px);
+    }
+
+    /* ---- LEFT PANEL: GIT GRAPH ---- */
+    .git-panel {
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      background: #111009;
+      border-bottom: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .panel-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+
+    .panel-dot.red    { background: #c05050; }
+    .panel-dot.yellow { background: #c0a030; }
+    .panel-dot.green  { background: #3a9050; }
+
+    .git-graph {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem 1rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem;
+    }
+
+    .branch-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    .branch-label.main    { background: rgba(139,28,64,0.25); color: #d46080; border: 1px solid rgba(139,28,64,0.4); }
+    .branch-label.feature { background: rgba(42,113,149,0.25); color: #5ab8e0; border: 1px solid rgba(42,113,149,0.4); }
+    .branch-label.hotfix  { background: rgba(192,120,48,0.25); color: #e09040; border: 1px solid rgba(192,120,48,0.4); }
+    .branch-label.head    { background: rgba(74,158,107,0.25); color: #5aaf78; border: 1px solid rgba(74,158,107,0.4); }
+
+    .commit-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      margin-bottom: 0.6rem;
+      opacity: 0.4;
+      transition: opacity 0.4s;
+    }
+
+    .commit-row.visible { opacity: 1; }
+
+    .commit-graph-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 20px;
+      flex-shrink: 0;
+    }
+
+    .commit-node {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      border: 2px solid;
+      flex-shrink: 0;
+    }
+
+    .commit-node.main-node    { border-color: #d46080; background: rgba(212,96,128,0.2); }
+    .commit-node.feature-node { border-color: #5ab8e0; background: rgba(90,184,224,0.2); }
+    .commit-node.hotfix-node  { border-color: #e09040; background: rgba(224,144,64,0.2); }
+    .commit-node.merge-node   { border-color: var(--green-light); background: rgba(90,175,120,0.2); width: 12px; height: 12px; }
+
+    .commit-line {
+      width: 2px;
+      background: var(--border);
+      flex: 1;
+      min-height: 8px;
+    }
+
+    .commit-line.main-line    { background: rgba(212,96,128,0.3); }
+    .commit-line.feature-line { background: rgba(90,184,224,0.3); }
+
+    .commit-info { flex: 1; }
+
+    .commit-hash {
+      color: var(--term-yellow);
+      font-size: 0.7rem;
+      margin-bottom: 0.1rem;
+    }
+
+    .commit-msg {
+      color: var(--text);
+      font-size: 0.75rem;
+      line-height: 1.35;
+      margin-bottom: 0.2rem;
+    }
+
+    .commit-meta {
+      color: var(--text-dim);
+      font-size: 0.65rem;
+    }
+
+    .commit-badges {
+      display: flex;
+      gap: 0.3rem;
+      margin-top: 0.3rem;
+      flex-wrap: wrap;
+    }
+
+    /* ---- RIGHT PANEL: SCENARIO ---- */
+    .scenario-panel {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* INTRO SCREEN */
+    .screen {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .screen.active { display: flex; }
+
+    /* Intro */
+    .intro-screen {
+      justify-content: center;
+      align-items: center;
+      padding: 3rem 2.5rem;
+    }
+
+    .intro-inner {
+      max-width: 560px;
+      width: 100%;
+    }
+
+    .scenario-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--maroon-light);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .intro-inner h1 {
+      font-family: 'Zilla Slab', serif;
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .slack-message {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.1rem 1.25rem;
+      margin: 1.25rem 0;
+      position: relative;
+    }
+
+    .slack-message::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--blue);
+      border-radius: 4px 0 0 4px;
+    }
+
+    .slack-sender {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--blue-light);
+      margin-bottom: 0.3rem;
+    }
+
+    .slack-sender span {
+      font-weight: 400;
+      color: var(--text-dim);
+      font-size: 0.72rem;
+      margin-left: 0.5rem;
+    }
+
+    .slack-message p {
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .slack-message p + p { margin-top: 0.5rem; }
+
+    .intro-inner > p {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+      margin-bottom: 0.75rem;
+    }
+
+    .start-btn {
+      background: var(--maroon);
+      color: #fff;
+      border: none;
+      padding: 0.8rem 2rem;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 1.25rem;
+      transition: background 0.15s;
+      display: inline-block;
+    }
+
+    .start-btn:hover { background: var(--maroon-light); }
+
+    /* CHALLENGE SCREENS */
+    .challenge-screen {
+      padding: 2rem 2.5rem;
+      flex: 1;
+    }
+
+    .challenge-header {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .challenge-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .challenge-header h2 {
+      font-family: 'Zilla Slab', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+    }
+
+    .challenge-header p {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* Terminal block */
+    .terminal {
+      background: var(--term-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin: 1.25rem 0;
+      overflow: hidden;
+    }
+
+    .term-bar {
+      background: #141210;
+      padding: 0.4rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .term-dot { width: 9px; height: 9px; border-radius: 50%; }
+    .term-dot:nth-child(1) { background: #c05050; }
+    .term-dot:nth-child(2) { background: #b09030; }
+    .term-dot:nth-child(3) { background: #3a9050; }
+    .term-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: var(--text-dim); margin-left: 0.5rem; }
+
+    .term-body {
+      padding: 1rem 1.25rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: var(--text-dim);
+    }
+
+    .term-body .prompt { color: var(--term-green); }
+    .term-body .cmd    { color: var(--text-bright); }
+    .term-body .out    { color: var(--text-dim); }
+    .term-body .err    { color: var(--term-red); }
+    .term-body .info   { color: var(--term-blue); }
+    .term-body .warn   { color: var(--term-yellow); }
+    .term-body .good   { color: var(--term-green); }
+
+    /* Choices */
+    .choices-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .choice-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.9rem 1.1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s, transform 0.1s;
+      color: var(--text);
+      font-family: 'IBM Plex Sans', sans-serif;
+      width: 100%;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .choice-btn:hover:not(:disabled) {
+      background: var(--bg-card2);
+      border-color: var(--gray);
+      transform: translateX(2px);
+    }
+
+    .choice-btn:disabled { cursor: default; }
+    .choice-btn.chosen-correct { background: rgba(62,138,88,0.15); border-color: var(--green); }
+    .choice-btn.chosen-wrong   { background: rgba(158,58,58,0.15);  border-color: var(--red); }
+    .choice-btn.reveal-correct { border-color: var(--green-light); background: rgba(62,138,88,0.08); }
+
+    .choice-key {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      background: rgba(255,255,255,0.06);
+      border-radius: 3px;
+      padding: 0.1rem 0.4rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .choice-btn.chosen-correct .choice-key { background: rgba(62,138,88,0.3); color: var(--green-light); }
+    .choice-btn.chosen-wrong   .choice-key { background: rgba(158,58,58,0.3);  color: var(--red-light); }
+    .choice-btn.reveal-correct .choice-key { background: rgba(62,138,88,0.2); color: var(--green-light); }
+
+    .choice-text { font-size: 0.875rem; line-height: 1.45; }
+
+    .choice-sub {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-top: 0.2rem;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    /* Feedback */
+    .feedback-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.1rem 1.25rem;
+      margin-top: 1.25rem;
+      display: none;
+    }
+
+    .feedback-box.show { display: block; }
+    .feedback-box.correct-fb { border-left: 3px solid var(--green); }
+    .feedback-box.wrong-fb   { border-left: 3px solid var(--red-light); }
+
+    .fb-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .correct-fb .fb-title { color: var(--green-light); }
+    .wrong-fb   .fb-title { color: var(--red-light); }
+
+    .feedback-box p {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .feedback-box code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82em;
+      background: rgba(255,255,255,0.07);
+      padding: 0.1em 0.3em;
+      border-radius: 3px;
+      color: var(--text);
+    }
+
+    .next-btn {
+      background: var(--maroon);
+      color: #fff;
+      border: none;
+      padding: 0.65rem 1.5rem;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background 0.15s;
+      display: none;
+    }
+
+    .next-btn.show { display: inline-block; }
+    .next-btn:hover { background: var(--maroon-light); }
+
+    /* DEBRIEF */
+    .debrief-screen {
+      padding: 2.5rem 2.5rem;
+      overflow-y: auto;
+    }
+
+    .debrief-screen h2 {
+      font-family: 'Zilla Slab', serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 0.5rem;
+    }
+
+    .debrief-score-row {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin: 1.5rem 0;
+      padding: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+
+    .big-score {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 3rem;
+      font-weight: 500;
+      color: var(--maroon-light);
+      line-height: 1;
+    }
+
+    .score-detail .verdict {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 0.3rem;
+      font-family: 'Zilla Slab', serif;
+    }
+
+    .score-detail .verdict-sub {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .breakdown-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.875rem;
+    }
+
+    .breakdown-table th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+
+    .breakdown-table td {
+      padding: 0.7rem 0.75rem;
+      border-bottom: 1px solid rgba(42,40,37,0.5);
+      color: var(--text-dim);
+      vertical-align: top;
+    }
+
+    .breakdown-table tr:last-child td { border-bottom: none; }
+
+    .breakdown-table td.pts {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .pts.full  { color: var(--green-light); }
+    .pts.part  { color: var(--term-yellow); }
+    .pts.zero  { color: var(--term-red); }
+
+    .badge-row {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--term-yellow);
+      border-radius: 4px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.5rem;
+      text-align: center;
+      display: none;
+    }
+
+    .badge-row.show { display: block; }
+    .badge-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--term-yellow);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .badge-name {
+      font-family: 'Zilla Slab', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+
+    .badge-sub {
+      font-size: 0.825rem;
+      color: var(--text-dim);
+      margin-top: 0.3rem;
+    }
+
+    .retry-btn {
+      background: var(--bg-card);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.4rem;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.875rem;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .retry-btn:hover { background: var(--bg-card2); color: var(--text); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 740px) {
+      .main-layout { grid-template-columns: 1fr; }
+      .git-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-icon">GIT</div>
+      <span class="topbar-title">The Branch Crisis</span>
+      <span class="topbar-sub">statdeck / analytics-pipeline</span>
+    </div>
+    <div class="topbar-right">
+      <div class="step-indicator" id="stepDots"></div>
+      <div class="score-display">Score: <span id="topScore">0</span>/20</div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+
+    <!-- LEFT: GIT GRAPH -->
+    <div class="git-panel">
+      <div class="panel-header">
+        <div class="panel-dot red"></div>
+        <div class="panel-dot yellow"></div>
+        <div class="panel-dot green"></div>
+        <span style="margin-left:0.5rem;">REPOSITORY STATE</span>
+      </div>
+      <div class="git-graph" id="gitGraph">
+        <!-- commits injected by JS -->
+      </div>
+    </div>
+
+    <!-- RIGHT: SCENARIO -->
+    <div class="scenario-panel">
+
+      <!-- INTRO -->
+      <div class="screen intro-screen active" id="screen-intro">
+        <div class="intro-inner">
+          <div class="scenario-tag">Module 04 Simulation - Git &amp; GitHub</div>
+          <h1>The Branch Crisis</h1>
+
+          <div class="slack-message">
+            <div class="slack-sender">Jonah Reyes <span>today at 9:14 AM - #analytics-team</span></div>
+            <p>Morning everyone. We have a situation. Someone pushed directly to <code>main</code> this morning with a broken import - the whole pipeline is throwing errors and the front office dashboard went down at 8am.</p>
+            <p>I need someone to take point on this. We need to get the repo cleaned up, get the fix on a proper branch, and get a PR open before the 11am standup. Can you handle it?</p>
+          </div>
+
+          <p>You're a data analyst at StatDeck Analytics. The Eagles' front office relies on the pipeline you maintain to pull scouting reports every morning. The dashboard is down and it's your job to fix it.</p>
+
+          <p>You'll work through 5 decisions that cover the core Git workflow: diagnosing the problem, creating branches, making commits, handling a merge conflict, and opening a pull request. Each decision scores up to 4 points.</p>
+
+          <button class="start-btn" onclick="startSim()">Take Point &rarr;</button>
+        </div>
+      </div>
+
+      <!-- CHALLENGES (rendered by JS) -->
+      <div id="challengeContainer"></div>
+
+      <!-- DEBRIEF -->
+      <div class="screen debrief-screen" id="screen-debrief">
+        <h2 id="debriefTitle">Debrief</h2>
+        <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:1rem;" id="debriefTagline"></p>
+
+        <div class="debrief-score-row">
+          <div class="big-score" id="finalScoreDisplay">--</div>
+          <div class="score-detail">
+            <div class="verdict" id="verdictLabel"></div>
+            <div class="verdict-sub" id="verdictSub"></div>
+          </div>
+        </div>
+
+        <table class="breakdown-table">
+          <thead>
+            <tr>
+              <th>Situation</th>
+              <th>Your Choice</th>
+              <th style="text-align:right;">Points</th>
+            </tr>
+          </thead>
+          <tbody id="breakdownBody"></tbody>
+        </table>
+
+        <div class="badge-row" id="badgeRow">
+          <div class="badge-title">Credential Earned</div>
+          <div class="badge-name">Git Crisis Responder</div>
+          <div class="badge-sub">Demonstrated professional-level Git workflow under pressure.</div>
+        </div>
+
+        <button class="retry-btn" onclick="resetSim()">Start Over</button>
+      </div>
+
+    </div><!-- /scenario-panel -->
+  </div>
+
+  <footer>
+    This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.
+  </footer>
+
+  <script>
+  // ============================================================
+  //  DATA
+  // ============================================================
+
+  const CHALLENGES = [
+    {
+      id: 0,
+      num: 'Situation 01 / 05',
+      title: 'Assess the Damage',
+      intro: 'You pull down the latest code and run it. The terminal immediately spits out an error.',
+      terminal: [
+        { type: 'prompt', text: '~/statdeck/analytics-pipeline' },
+        { type: 'cmd',    text: 'git pull origin main' },
+        { type: 'good',   text: 'Already up to date.' },
+        { type: 'cmd',    text: 'python pipeline.py' },
+        { type: 'err',    text: 'Traceback (most recent call last):' },
+        { type: 'err',    text: '  File "pipeline.py", line 4, in <module>' },
+        { type: 'err',    text: '    from utils import score_player, fetch_roster' },
+        { type: 'err',    text: 'ImportError: cannot import name "fetch_roster" from "utils"' },
+        { type: 'blank',  text: '' },
+        { type: 'cmd',    text: 'git log --oneline -5' },
+        { type: 'out',    text: 'a3f9d21 (HEAD -> main, origin/main) WIP refactor utils module' },
+        { type: 'out',    text: '88bc4d0 Add batting average normalization' },
+        { type: 'out',    text: '3c1e2a8 Fix null handling in score_player' },
+      ],
+      question: 'What should your first move be to understand the scope of the problem?',
+      maxPts: 4,
+      choices: [
+        { key: 'A', text: 'Immediately rewrite the fetch_roster function from memory', sub: 'Skip diagnosis, go straight to fixing', pts: 1 },
+        { key: 'B', text: 'Email the team asking who broke it', sub: 'Diagnose socially, not technically', pts: 1 },
+        { key: 'C', text: 'Run git diff HEAD~1 HEAD to see exactly what changed in the last commit', sub: 'git diff HEAD~1 HEAD', pts: 4, correct: true },
+        { key: 'D', text: 'Delete the utils.py file and start fresh', sub: 'Nuclear option', pts: 0 },
+      ],
+      feedback: {
+        correct: 'Correct. Before writing any code, you need to understand what actually changed. <code>git diff HEAD~1 HEAD</code> shows you exactly which lines were added or removed in the last commit - making the <code>fetch_roster</code> removal immediately obvious.',
+        wrong: 'The first step is always diagnosis. <code>git diff HEAD~1 HEAD</code> shows exactly what changed in the breaking commit. Skipping this step leads to guesswork and more mistakes.',
+      },
+      graphState: 0,
+    },
+    {
+      id: 1,
+      num: 'Situation 02 / 05',
+      title: 'Make a Safe Workspace',
+      intro: 'The diff confirms it: the WIP commit deleted <code>fetch_roster</code> by accident during a refactor. You need to restore it - but you don\'t want to touch the broken main branch directly.',
+      terminal: [
+        { type: 'prompt', text: '~/statdeck/analytics-pipeline' },
+        { type: 'cmd',    text: 'git diff HEAD~1 HEAD -- utils.py' },
+        { type: 'err',    text: '-def fetch_roster(team_id, season):' },
+        { type: 'err',    text: '-    """Pull current roster from the stats API"""' },
+        { type: 'err',    text: '-    return api.get(f"/roster/{team_id}/{season}")' },
+        { type: 'out',    text: ' def score_player(stats):' },
+        { type: 'out',    text: '     """..."""' },
+      ],
+      question: 'What\'s the right way to set up your workspace before making the fix?',
+      maxPts: 4,
+      choices: [
+        { key: 'A', text: 'Edit utils.py directly on main and commit immediately', sub: 'Push fix straight to main', pts: 1 },
+        { key: 'B', text: 'Create a new branch called hotfix/restore-fetch-roster and work there', sub: 'git checkout -b hotfix/restore-fetch-roster', pts: 4, correct: true },
+        { key: 'C', text: 'Fork the entire repository to make your own copy', sub: 'Create a fork on GitHub', pts: 0 },
+        { key: 'D', text: 'Stash your working directory and create the branch later', sub: 'git stash', pts: 2 },
+      ],
+      feedback: {
+        correct: 'Exactly right. Creating a <code>hotfix/</code> branch isolates your fix from main. Even in an emergency, working directly on main is poor practice - it makes it impossible for a teammate to review your change before it ships.',
+        wrong: 'The correct move is to create a hotfix branch: <code>git checkout -b hotfix/restore-fetch-roster</code>. This keeps main stable while you work, and creates a clean PR for review. Working directly on main - especially during an incident - bypasses all the review safeguards.',
+      },
+      graphState: 1,
+    },
+    {
+      id: 2,
+      num: 'Situation 03 / 05',
+      title: 'Commit the Fix',
+      intro: 'You\'re on the hotfix branch. You\'ve restored the <code>fetch_roster</code> function and tested it locally - the pipeline runs clean. Now you need to commit.',
+      terminal: [
+        { type: 'prompt', text: '(hotfix/restore-fetch-roster)' },
+        { type: 'cmd',    text: 'python pipeline.py' },
+        { type: 'good',   text: 'Pipeline complete. 25 players processed.' },
+        { type: 'cmd',    text: 'git status' },
+        { type: 'out',    text: 'On branch hotfix/restore-fetch-roster' },
+        { type: 'out',    text: 'Changes not staged for commit:' },
+        { type: 'out',    text: '    modified:   utils.py' },
+      ],
+      question: 'How should you stage and commit the fix?',
+      maxPts: 4,
+      choices: [
+        { key: 'A', text: 'git add . then git commit -m "fix"', sub: 'Stage everything, vague message', pts: 2 },
+        { key: 'B', text: 'git push origin hotfix/restore-fetch-roster without committing first', sub: 'Try to push without committing', pts: 0 },
+        { key: 'C', text: 'git commit -am "fixed the broken thing"', sub: '-a stages all tracked files automatically', pts: 2 },
+        { key: 'D', text: 'git add utils.py then git commit -m "Restore fetch_roster deleted in WIP refactor"', sub: 'Stage the specific file, write a descriptive message', pts: 4, correct: true },
+      ],
+      feedback: {
+        correct: 'Perfect. Staging only the file you changed is precise and intentional. The commit message is specific enough that anyone reading the log three months from now will understand exactly what happened and why - no detective work required.',
+        wrong: 'The best practice is <code>git add utils.py</code> (stage only what you changed) and a descriptive commit message. Vague messages like "fix" make the git log useless for future debugging. You can\'t push without committing first.',
+      },
+      graphState: 2,
+    },
+    {
+      id: 3,
+      num: 'Situation 04 / 05',
+      title: 'Merge Conflict',
+      intro: 'While you were working on the hotfix, a teammate pushed a separate fix to main that also touched <code>utils.py</code>. Now when you try to merge, you hit a conflict.',
+      terminal: [
+        { type: 'prompt', text: '(hotfix/restore-fetch-roster)' },
+        { type: 'cmd',    text: 'git checkout main && git pull origin main' },
+        { type: 'cmd',    text: 'git merge hotfix/restore-fetch-roster' },
+        { type: 'err',    text: 'Auto-merging utils.py' },
+        { type: 'err',    text: 'CONFLICT (content): Merge conflict in utils.py' },
+        { type: 'err',    text: 'Automatic merge failed; fix conflicts and then commit the result.' },
+        { type: 'warn',   text: '<<<<<<< HEAD (main)' },
+        { type: 'warn',   text: 'def score_player(stats, weights=None):  # updated signature' },
+        { type: 'warn',   text: '=======' },
+        { type: 'warn',   text: 'def fetch_roster(team_id, season):' },
+        { type: 'warn',   text: '    return api.get(f"/roster/{team_id}/{season}")' },
+        { type: 'warn',   text: 'def score_player(stats):' },
+        { type: 'warn',   text: '>>>>>>> hotfix/restore-fetch-roster' },
+      ],
+      question: 'How do you resolve this conflict correctly?',
+      maxPts: 4,
+      choices: [
+        { key: 'A', text: 'Accept "theirs" entirely - keep your hotfix version and discard the teammate\'s change', sub: 'git checkout --theirs utils.py', pts: 1 },
+        { key: 'B', text: 'Abandon the merge and start over from scratch', sub: 'git merge --abort', pts: 1 },
+        { key: 'C', text: 'Edit utils.py to keep BOTH changes: the updated score_player signature AND the restored fetch_roster function', sub: 'Manually merge the best of both versions', pts: 4, correct: true },
+        { key: 'D', text: 'Accept "ours" entirely - keep main\'s version and discard the hotfix', sub: 'git checkout --ours utils.py', pts: 0 },
+      ],
+      feedback: {
+        correct: 'Correct. A merge conflict isn\'t about choosing a winner - it\'s about combining the valid work from both branches. Your teammate\'s updated function signature is valid. Your restored <code>fetch_roster</code> is valid. Both belong in the final file. Edit the file to include both, then <code>git add utils.py</code> and commit.',
+        wrong: 'The right move is to manually edit <code>utils.py</code> to keep both changes: your restored <code>fetch_roster</code> AND your teammate\'s updated <code>score_player</code> signature. Conflicts require human judgment - you need to read both sides and decide what the correct combined version looks like.',
+      },
+      graphState: 3,
+    },
+    {
+      id: 4,
+      num: 'Situation 05 / 05',
+      title: 'Open the Pull Request',
+      intro: 'The conflict is resolved and committed. You\'ve pushed the hotfix branch to GitHub. Now you need to get the fix into main through a proper Pull Request before the 11am standup.',
+      terminal: [
+        { type: 'prompt', text: '(hotfix/restore-fetch-roster)' },
+        { type: 'cmd',    text: 'git push origin hotfix/restore-fetch-roster' },
+        { type: 'good',   text: 'Branch \'hotfix/restore-fetch-roster\' set up to track \'origin/hotfix/restore-fetch-roster\'.' },
+        { type: 'good',   text: 'To https://github.com/statdeck/analytics-pipeline.git' },
+        { type: 'good',   text: ' * [new branch]  hotfix/restore-fetch-roster -> hotfix/restore-fetch-roster' },
+      ],
+      question: 'What\'s the best way to write your Pull Request title and description?',
+      maxPts: 4,
+      choices: [
+        { key: 'A', text: 'Title: "Fix" | Description: "Fixed the bug"', sub: 'Minimal, vague PR', pts: 0 },
+        { key: 'B', text: 'Title: "Hotfix: Restore fetch_roster deleted in WIP refactor" | Description: explains the root cause, what was changed, and that you verified the pipeline runs', sub: 'Specific title + full context in description', pts: 4, correct: true },
+        { key: 'C', text: 'Skip the PR - merge directly into main from the command line since it\'s urgent', sub: 'git merge hotfix/restore-fetch-roster directly', pts: 1 },
+        { key: 'D', text: 'Title: "Hotfix" | Description: just paste the error traceback', sub: 'Half-specific title, raw error dump', pts: 2 },
+      ],
+      feedback: {
+        correct: 'Excellent. A great PR has a specific title that makes the log readable, and a description that gives reviewers everything they need: what broke, what you changed, and how you verified the fix. Even in an emergency, a one-minute description saves your reviewer five minutes of archaeology.',
+        wrong: 'The best PR title is specific and scannable in the git log. The description should give context: what broke, what you changed, and that you tested the fix. Vague PRs and bypassing review are the habits that created this crisis in the first place.',
+      },
+      graphState: 4,
+    },
+  ];
+
+  // Git graph states
+  const GRAPH_COMMITS = [
+    // State 0: initial broken state
+    [
+      { hash: 'a3f9d21', msg: 'WIP refactor utils module', branch: 'main', node: 'main-node', line: 'main-line', badges: ['main', 'head'], author: 'D. Chen', time: '9:02am' },
+      { hash: '88bc4d0', msg: 'Add batting average normalization', branch: 'main', node: 'main-node', line: 'main-line', badges: [], author: 'you', time: 'yesterday' },
+      { hash: '3c1e2a8', msg: 'Fix null handling in score_player', branch: 'main', node: 'main-node', line: 'main-line', badges: [], author: 'you', time: 'Mon' },
+      { hash: 'f1a0c44', msg: 'Initial pipeline setup', branch: 'main', node: 'main-node', line: null, badges: [], author: 'Jonah', time: 'last week' },
+    ],
+    // State 1: hotfix branch created
+    [
+      { hash: 'a3f9d21', msg: 'WIP refactor utils module', branch: 'main', node: 'main-node', line: 'main-line', badges: ['main'], author: 'D. Chen', time: '9:02am' },
+      { hash: '(new)',   msg: 'hotfix/restore-fetch-roster', branch: 'feature', node: 'feature-node', line: 'feature-line', badges: ['feature', 'head'], author: 'you', time: 'just now' },
+      { hash: '88bc4d0', msg: 'Add batting average normalization', branch: 'main', node: 'main-node', line: 'main-line', badges: [], author: 'you', time: 'yesterday' },
+      { hash: '3c1e2a8', msg: 'Fix null handling in score_player', branch: 'main', node: 'main-node', line: null, badges: [], author: 'you', time: 'Mon' },
+    ],
+    // State 2: fix committed on hotfix branch
+    [
+      { hash: 'b7d2e91', msg: 'Restore fetch_roster deleted in WIP refactor', branch: 'feature', node: 'feature-node', line: 'feature-line', badges: ['feature', 'head'], author: 'you', time: 'just now' },
+      { hash: 'a3f9d21', msg: 'WIP refactor utils module', branch: 'main', node: 'main-node', line: 'main-line', badges: ['main'], author: 'D. Chen', time: '9:02am' },
+      { hash: '88bc4d0', msg: 'Add batting average normalization', branch: 'main', node: 'main-node', line: 'main-line', badges: [], author: 'you', time: 'yesterday' },
+      { hash: '3c1e2a8', msg: 'Fix null handling in score_player', branch: 'main', node: 'main-node', line: null, badges: [], author: 'you', time: 'Mon' },
+    ],
+    // State 3: merge conflict on main
+    [
+      { hash: 'c9f3a10', msg: '[CONFLICT] Merging hotfix - resolving utils.py', branch: 'main', node: 'hotfix-node', line: 'main-line', badges: ['main', 'head'], author: 'you', time: 'just now' },
+      { hash: 'e4b1c88', msg: 'Update score_player signature (weights param)', branch: 'main', node: 'main-node', line: 'main-line', badges: [], author: 'M. Park', time: '9:45am' },
+      { hash: 'b7d2e91', msg: 'Restore fetch_roster deleted in WIP refactor', branch: 'feature', node: 'feature-node', line: 'feature-line', badges: ['feature'], author: 'you', time: '9:30am' },
+      { hash: 'a3f9d21', msg: 'WIP refactor utils module', branch: 'main', node: 'main-node', line: null, badges: [], author: 'D. Chen', time: '9:02am' },
+    ],
+    // State 4: pushed, PR ready
+    [
+      { hash: 'c9f3a10', msg: 'Resolve merge: restore fetch_roster + weights param', branch: 'main', node: 'merge-node', line: 'main-line', badges: ['main', 'head'], author: 'you', time: 'just now' },
+      { hash: 'e4b1c88', msg: 'Update score_player signature (weights param)', branch: 'main', node: 'main-node', line: 'main-line', badges: [], author: 'M. Park', time: '9:45am' },
+      { hash: 'b7d2e91', msg: 'Restore fetch_roster deleted in WIP refactor', branch: 'feature', node: 'feature-node', line: 'feature-line', badges: ['feature'], author: 'you', time: '9:30am' },
+      { hash: 'a3f9d21', msg: 'WIP refactor utils module', branch: 'main', node: 'main-node', line: null, badges: [], author: 'D. Chen', time: '9:02am' },
+    ],
+  ];
+
+  // ============================================================
+  //  STATE
+  // ============================================================
+  let currentChallenge = -1;
+  let scores = [];
+  let chosenLabels = [];
+  let totalScore = 0;
+
+  // ============================================================
+  //  INIT
+  // ============================================================
+  function buildStepDots() {
+    const el = document.getElementById('stepDots');
+    el.innerHTML = '';
+    for (let i = 0; i < CHALLENGES.length; i++) {
+      const d = document.createElement('div');
+      d.className = 'step-dot';
+      d.id = 'dot-' + i;
+      el.appendChild(d);
+    }
+  }
+
+  function renderGraph(stateIdx) {
+    const el = document.getElementById('gitGraph');
+    const commits = GRAPH_COMMITS[stateIdx] || GRAPH_COMMITS[0];
+    el.innerHTML = '';
+
+    commits.forEach((c, i) => {
+      const row = document.createElement('div');
+      row.className = 'commit-row';
+      setTimeout(() => row.classList.add('visible'), i * 80);
+
+      const graphCol = document.createElement('div');
+      graphCol.className = 'commit-graph-col';
+
+      const node = document.createElement('div');
+      node.className = 'commit-node ' + c.node;
+      graphCol.appendChild(node);
+
+      if (c.line && i < commits.length - 1) {
+        const line = document.createElement('div');
+        line.className = 'commit-line ' + c.line;
+        graphCol.appendChild(line);
+      }
+
+      const info = document.createElement('div');
+      info.className = 'commit-info';
+
+      const hash = document.createElement('div');
+      hash.className = 'commit-hash';
+      hash.textContent = c.hash;
+
+      const msg = document.createElement('div');
+      msg.className = 'commit-msg';
+      msg.textContent = c.msg;
+
+      const meta = document.createElement('div');
+      meta.className = 'commit-meta';
+      meta.textContent = c.author + ' - ' + c.time;
+
+      const badges = document.createElement('div');
+      badges.className = 'commit-badges';
+      c.badges.forEach(b => {
+        const span = document.createElement('span');
+        span.className = 'branch-label ' + b;
+        span.textContent = b === 'head' ? 'HEAD' : b === 'feature' ? 'hotfix/restore-fetch-roster' : b;
+        badges.appendChild(span);
+      });
+
+      info.appendChild(hash);
+      info.appendChild(msg);
+      info.appendChild(meta);
+      if (c.badges.length) info.appendChild(badges);
+
+      row.appendChild(graphCol);
+      row.appendChild(info);
+      el.appendChild(row);
+    });
+  }
+
+  // ============================================================
+  //  CHALLENGE RENDERING
+  // ============================================================
+  function renderChallenge(idx) {
+    const c = CHALLENGES[idx];
+    const container = document.getElementById('challengeContainer');
+
+    // Build screen HTML
+    const screen = document.createElement('div');
+    screen.className = 'screen challenge-screen';
+    screen.id = 'screen-challenge-' + idx;
+
+    // Terminal HTML
+    const termLines = c.terminal.map(l => {
+      if (l.type === 'blank') return '';
+      if (l.type === 'prompt') return `<div><span class="prompt">~/statdeck $</span></div>`;
+      if (l.type === 'cmd')    return `<div><span class="prompt">$ </span><span class="cmd">${l.text}</span></div>`;
+      return `<div class="${l.type}">${l.text}</div>`;
+    }).join('');
+
+    // Choices HTML
+    const choicesHTML = c.choices.map(ch => `
+      <button class="choice-btn" data-val="${ch.pts}" data-key="${ch.key}" data-correct="${ch.correct || false}"
+              onclick="selectChoice(${idx}, this, ${ch.pts}, '${ch.key}', '${escHTML(ch.text)}')">
+        <span class="choice-key">${ch.key}</span>
+        <div>
+          <div class="choice-text">${ch.text}</div>
+          <div class="choice-sub"><code>${ch.sub}</code></div>
+        </div>
+      </button>
+    `).join('');
+
+    screen.innerHTML = `
+      <div class="challenge-header">
+        <div class="challenge-num">${c.num}</div>
+        <h2>${c.title}</h2>
+        <p>${c.intro}</p>
+      </div>
+      <div class="terminal">
+        <div class="term-bar">
+          <div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div>
+          <span class="term-label">bash - analytics-pipeline</span>
+        </div>
+        <div class="term-body">${termLines}</div>
+      </div>
+      <div class="choices-label">What do you do?</div>
+      <div class="choices">${choicesHTML}</div>
+      <div class="feedback-box" id="fb-${idx}"></div>
+      <button class="next-btn" id="next-${idx}" onclick="advanceChallenge(${idx})">${idx < CHALLENGES.length - 1 ? 'Next Situation &rarr;' : 'See Results &rarr;'}</button>
+    `;
+
+    container.appendChild(screen);
+  }
+
+  function escHTML(str) {
+    return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  }
+
+  // ============================================================
+  //  INTERACTIONS
+  // ============================================================
+  function startSim() {
+    hideAllScreens();
+    currentChallenge = 0;
+    showChallenge(0);
+  }
+
+  function showChallenge(idx) {
+    document.getElementById('screen-challenge-' + idx).classList.add('active');
+    renderGraph(CHALLENGES[idx].graphState);
+    updateDots(idx);
+  }
+
+  function selectChoice(idx, btn, pts, key, label) {
+    const c = CHALLENGES[idx];
+
+    // Disable all buttons
+    const allBtns = btn.closest('.choices').querySelectorAll('.choice-btn');
+    allBtns.forEach(b => {
+      b.disabled = true;
+      if (b.dataset.correct === 'true') b.classList.add('reveal-correct');
+    });
+
+    const isCorrect = btn.dataset.correct === 'true';
+    btn.classList.add(isCorrect ? 'chosen-correct' : 'chosen-wrong');
+
+    // Feedback
+    const fb = document.getElementById('fb-' + idx);
+    fb.innerHTML = `<div class="fb-title">${isCorrect ? 'Good call' : 'Not the best move'}</div><p>${isCorrect ? c.feedback.correct : c.feedback.wrong}</p>`;
+    fb.className = 'feedback-box show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+
+    // Score
+    scores[idx] = pts;
+    chosenLabels[idx] = label;
+    totalScore = scores.reduce((a, b) => (a || 0) + (b || 0), 0);
+    document.getElementById('topScore').textContent = totalScore;
+
+    // Show next button
+    document.getElementById('next-' + idx).classList.add('show');
+  }
+
+  function advanceChallenge(idx) {
+    hideAllScreens();
+    if (idx < CHALLENGES.length - 1) {
+      currentChallenge = idx + 1;
+      showChallenge(currentChallenge);
+    } else {
+      showDebrief();
+    }
+  }
+
+  function hideAllScreens() {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  }
+
+  function updateDots(activeIdx) {
+    CHALLENGES.forEach((_, i) => {
+      const dot = document.getElementById('dot-' + i);
+      if (!dot) return;
+      dot.className = 'step-dot';
+      if (i < activeIdx) dot.classList.add('done');
+      else if (i === activeIdx) dot.classList.add('active');
+    });
+  }
+
+  // ============================================================
+  //  DEBRIEF
+  // ============================================================
+  function showDebrief() {
+    hideAllScreens();
+    document.getElementById('screen-debrief').classList.add('active');
+
+    const pct = Math.round((totalScore / 20) * 100);
+    document.getElementById('finalScoreDisplay').textContent = pct + '%';
+
+    let title, tagline, verdict, sub;
+    if (pct === 100) {
+      title = 'Pipeline Restored';
+      tagline = 'The dashboard came back online at 10:47am. Jonah gave you a thumbs up in Slack.';
+      verdict = 'Senior Data Scientist Workflow';
+      sub = '20/20 - Textbook incident response. You diagnosed methodically, isolated your work, wrote clear commits, resolved the conflict correctly, and documented your PR properly.';
+    } else if (pct >= 75) {
+      title = 'Pipeline Mostly Restored';
+      tagline = 'You got the dashboard back up, though some decisions slowed the response.';
+      verdict = 'Solid Git Fundamentals';
+      sub = totalScore + '/20 - Good core workflow. Review the highlighted decisions to see where a more precise approach would have helped.';
+    } else if (pct >= 50) {
+      title = 'Partial Recovery';
+      tagline = 'The pipeline is running, but the repo is messier than it needed to be.';
+      verdict = 'Developing Git Skills';
+      sub = totalScore + '/20 - Some solid choices, some risky ones. Revisit the branching and conflict sections in Module 4 before the next incident.';
+    } else {
+      title = 'Crisis Escalated';
+      tagline = 'Jonah had to step in and sort it out. He was understanding - but suggested more Git practice.';
+      verdict = 'Keep Practicing';
+      sub = totalScore + '/20 - A few missteps created more problems than they solved. Re-read Module 4 and try again - this workflow clicks with practice.';
+    }
+
+    document.getElementById('debriefTitle').textContent = title;
+    document.getElementById('debriefTagline').textContent = tagline;
+    document.getElementById('verdictLabel').textContent = verdict;
+    document.getElementById('verdictSub').textContent = sub;
+
+    // Breakdown table
+    const tbody = document.getElementById('breakdownBody');
+    tbody.innerHTML = '';
+    CHALLENGES.forEach((c, i) => {
+      const pts = scores[i] || 0;
+      const max = c.maxPts;
+      const ptsClass = pts === max ? 'full' : pts > 0 ? 'part' : 'zero';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="color:var(--text)">${c.title}</td>
+        <td style="font-size:0.82rem;">${chosenLabels[i] || '-'}</td>
+        <td class="pts ${ptsClass}">${pts}/${max}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    if (pct >= 85) {
+      document.getElementById('badgeRow').classList.add('show');
+    }
+
+    // Save to localStorage
+    localStorage.setItem('dtsc520_branchcrisis', JSON.stringify({ completed: true, score: pct, total: totalScore }));
+
+    // Dots all done
+    CHALLENGES.forEach((_, i) => {
+      const dot = document.getElementById('dot-' + i);
+      if (dot) dot.className = 'step-dot done';
+    });
+
+    renderGraph(4);
+  }
+
+  function resetSim() {
+    scores = [];
+    chosenLabels = [];
+    totalScore = 0;
+    currentChallenge = -1;
+    document.getElementById('topScore').textContent = '0';
+    document.getElementById('challengeContainer').innerHTML = '';
+    CHALLENGES.forEach((_, i) => {
+      const dot = document.getElementById('dot-' + i);
+      if (dot) dot.className = 'step-dot';
+    });
+    CHALLENGES.forEach((_, i) => renderChallenge(i));
+    hideAllScreens();
+    document.getElementById('screen-intro').classList.add('active');
+    renderGraph(0);
+  }
+
+  // ============================================================
+  //  BOOT
+  // ============================================================
+  buildStepDots();
+  CHALLENGES.forEach((_, i) => renderChallenge(i));
+  renderGraph(0);
+  </script>
+
+</body>
+</html>

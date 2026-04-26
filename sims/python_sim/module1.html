@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 1: Player Profiles - StatDeck Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+<style>
+  :root {
+    --maroon: #8B1C40;
+    --maroon-light: #a82050;
+    --blue: #2A7195;
+    --blue-light: #3590b8;
+    --gray: #646469;
+    --gray-light: #8a8a90;
+    --bg: #0f0e0d;
+    --surface: #1a1816;
+    --surface2: #221f1d;
+    --surface3: #2d2926;
+    --text: #f0ece6;
+    --text-dim: #b8b0a6;
+    --text-muted: #7a7268;
+    --border: #38322d;
+    --green: #4a9e6b;
+    --green-dim: rgba(74,158,107,0.15);
+    --amber: #c8963a;
+    --amber-dim: rgba(200,150,58,0.12);
+    --red: #c04a4a;
+    --red-dim: rgba(192,74,74,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Zilla Slab', serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- TOPBAR ---- */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 3px solid var(--maroon);
+    padding: 0 1.5rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .back-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover { color: var(--text-dim); }
+
+  .topbar-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--border);
+  }
+
+  .topbar-module {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .topbar-module span {
+    color: var(--maroon-light);
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .challenge-counter {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .challenge-counter strong {
+    color: var(--text);
+  }
+
+  .score-display {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green);
+    background: var(--green-dim);
+    border: 1px solid rgba(74,158,107,0.3);
+    border-radius: 4px;
+    padding: 4px 10px;
+  }
+
+  /* ---- STEP DOTS ---- */
+  .step-strip {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .step-dot {
+    width: 28px;
+    height: 6px;
+    border-radius: 4px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+
+  .step-dot.active   { background: var(--maroon); }
+  .step-dot.done     { background: var(--green); }
+
+  /* ---- LOADING ---- */
+  #loadingScreen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    padding: 3rem;
+  }
+
+  .loading-logo {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--maroon-light);
+  }
+
+  .loading-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--maroon);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---- MAIN LAYOUT ---- */
+  #appScreen {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  .challenge-area {
+    flex: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 2rem 1.5rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* ---- CHALLENGE CARD ---- */
+  .challenge-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--maroon);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .challenge-header {
+    padding: 1.25rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .challenge-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--maroon-light);
+    margin-bottom: 0.5rem;
+  }
+
+  .challenge-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+  }
+
+  .challenge-desc {
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .challenge-desc code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85em;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    color: var(--blue-light);
+  }
+
+  /* ---- INFO BOX ---- */
+  .info-box {
+    margin: 0 1.5rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+  }
+
+  .info-box-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--blue);
+    margin-bottom: 0.5rem;
+  }
+
+  .info-box p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+    margin-bottom: 0.5rem;
+  }
+
+  .info-box p:last-child { margin-bottom: 0; }
+
+  .info-box code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85em;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    color: var(--blue-light);
+  }
+
+  .code-example {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-top: 0.5rem;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .code-example .kw  { color: #c792ea; }
+  .code-example .str { color: #c3e88d; }
+  .code-example .num { color: #f78c6c; }
+  .code-example .cmt { color: var(--text-muted); font-style: italic; }
+  .code-example .fn  { color: #82aaff; }
+
+  /* ---- EDITOR ---- */
+  .editor-wrap {
+    margin: 0 1.5rem;
+  }
+
+  .editor-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .editor-label span {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  textarea.code-editor {
+    width: 100%;
+    min-height: 140px;
+    background: #0a0908;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    resize: vertical;
+    outline: none;
+    line-height: 1.6;
+    tab-size: 4;
+    transition: border-color 0.2s;
+  }
+
+  textarea.code-editor:focus {
+    border-color: var(--blue);
+  }
+
+  .editor-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-run {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: var(--maroon);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-run:hover { background: var(--maroon-light); }
+  .btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btn-hint:hover {
+    color: var(--text-dim);
+    border-color: var(--gray);
+  }
+
+  .btn-next {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: none;
+  }
+
+  .btn-next:hover { background: var(--blue-light); }
+  .btn-next.show { display: inline-flex; align-items: center; gap: 8px; }
+
+  /* ---- OUTPUT ---- */
+  .output-wrap {
+    margin: 0 1.5rem;
+  }
+
+  .output-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .output-box {
+    background: #070605;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    color: var(--text-dim);
+    min-height: 60px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .output-box.error { color: var(--red); }
+  .output-box.success { color: #a8d8a8; }
+
+  /* ---- FEEDBACK ---- */
+  .feedback-box {
+    margin: 0 1.5rem 1.5rem;
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    display: none;
+  }
+
+  .feedback-box.show { display: block; }
+
+  .feedback-box.pass {
+    background: var(--green-dim);
+    border: 1px solid rgba(74,158,107,0.35);
+    border-left: 3px solid var(--green);
+  }
+
+  .feedback-box.partial {
+    background: var(--amber-dim);
+    border: 1px solid rgba(200,150,58,0.35);
+    border-left: 3px solid var(--amber);
+  }
+
+  .feedback-box.fail {
+    background: var(--red-dim);
+    border: 1px solid rgba(192,74,74,0.35);
+    border-left: 3px solid var(--red);
+  }
+
+  .feedback-verdict {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.4rem;
+  }
+
+  .feedback-box.pass     .feedback-verdict { color: var(--green); }
+  .feedback-box.partial  .feedback-verdict { color: var(--amber); }
+  .feedback-box.fail     .feedback-verdict { color: var(--red); }
+
+  .feedback-text {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .feedback-text code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85em;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    color: var(--blue-light);
+  }
+
+  /* ---- HINT ---- */
+  .hint-box {
+    margin: 0 1.5rem;
+    background: rgba(139,28,64,0.08);
+    border: 1px solid rgba(139,28,64,0.25);
+    border-radius: 4px;
+    padding: 0.9rem 1.1rem;
+    display: none;
+  }
+
+  .hint-box.show { display: block; }
+
+  .hint-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--maroon-light);
+    margin-bottom: 0.4rem;
+  }
+
+  .hint-text {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .hint-text code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85em;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    color: var(--blue-light);
+  }
+
+  /* ---- DEBRIEF SCREEN ---- */
+  #debriefScreen {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 3rem 1.5rem 4rem;
+  }
+
+  .debrief-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--maroon);
+    border-radius: 4px;
+    max-width: 640px;
+    width: 100%;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .debrief-headline {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--maroon-light);
+  }
+
+  .debrief-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .debrief-score-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .debrief-score-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--green);
+    line-height: 1;
+  }
+
+  .debrief-score-denom {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--text-muted);
+  }
+
+  .debrief-verdict {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .debrief-breakdown {
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+  }
+
+  .breakdown-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+
+  .breakdown-row:last-child { border-bottom: none; }
+
+  .breakdown-row-link {
+    cursor: pointer;
+    transition: background 0.15s;
+    border-radius: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    margin-left: -6px;
+    margin-right: -6px;
+  }
+  .breakdown-row-link:hover { background: var(--surface3); }
+
+  .revisit-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--blue);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .breakdown-row-link:hover .revisit-hint { opacity: 1; }
+
+  .breakdown-pts {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .pts-full  { color: var(--green); }
+  .pts-part  { color: var(--amber); }
+  .pts-none  { color: var(--red); }
+
+  .debrief-concept {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .debrief-concept strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .debrief-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-home {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 9px 20px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btn-home:hover { color: var(--text); border-color: var(--gray); }
+
+  .btn-next-module {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: var(--maroon);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 9px 20px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+
+  .btn-next-module:hover { background: var(--maroon-light); }
+
+  /* ---- FOOTER ---- */
+  .page-footer {
+    border-top: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <a href="index.html" class="back-link">&larr; Hub</a>
+    <div class="topbar-divider"></div>
+    <div class="topbar-module"><span>Module 01</span> - Player Profiles</div>
+  </div>
+  <div class="topbar-right">
+    <span class="challenge-counter">Challenge <strong id="challengeNum">1</strong> of <strong>5</strong></span>
+    <span class="score-display" id="scoreDisplay">0 / 10 pts</span>
+  </div>
+</header>
+
+<!-- STEP DOTS -->
+<div class="step-strip" id="stepStrip">
+  <div class="step-dot active" id="dot0"></div>
+  <div class="step-dot" id="dot1"></div>
+  <div class="step-dot" id="dot2"></div>
+  <div class="step-dot" id="dot3"></div>
+  <div class="step-dot" id="dot4"></div>
+</div>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+  <div class="loading-logo">{ }</div>
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Loading Python environment...</div>
+</div>
+
+<!-- APP (hidden until Pyodide ready) -->
+<div id="appScreen">
+
+  <!-- CHALLENGE AREA (shown during challenges) -->
+  <div class="challenge-area" id="challengeArea">
+
+    <!-- challenge content injected here -->
+
+  </div>
+
+  <!-- DEBRIEF (shown at end) -->
+  <div id="debriefScreen">
+    <div class="debrief-card">
+      <div>
+        <div class="debrief-headline">Module 01 - Player Profiles</div>
+        <div class="debrief-title" id="debriefTitle">Module Complete</div>
+      </div>
+      <div class="debrief-score-row">
+        <div class="debrief-score-num" id="debriefScoreNum">0</div>
+        <div class="debrief-score-denom" id="debriefScoreDenom">/ 10 pts</div>
+      </div>
+      <div class="debrief-verdict" id="debriefVerdict"></div>
+      <div class="debrief-breakdown">
+        <div class="breakdown-label">Challenge Breakdown</div>
+        <div id="breakdownRows"></div>
+      </div>
+      <div class="debrief-concept" id="debriefConcept"></div>
+      <div class="debrief-actions">
+        <a href="index.html" class="btn-home">&larr; Back to Hub</a>
+        <a href="module2.html" class="btn-next-module">Next Module &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="page-footer">
+  DTSC 520 - Introduction to Data Science &nbsp;&bull;&nbsp; Eastern University &nbsp;&bull;&nbsp; StatDeck Analytics Training Sim
+</footer>
+
+<script>
+// ===== CHALLENGE DEFINITIONS =====
+// Each challenge: title, tag, desc, infoHTML, starterCode, hint, maxPoints, grader(pyodide, code, stdout) -> {pts, level:'pass'|'partial'|'fail', msg}
+
+const challenges = [
+  {
+    title: "Store a Player's Jersey Number",
+    tag: "Variables - Integers",
+    desc: `Jonah hands you the roster sheet. Your first task: store the jersey number of Eagles shortstop <strong>Marcus Rivera</strong> (jersey #14) in a variable named <code>jersey_number</code>, then print it.`,
+    info: {
+      label: "Concept: Variables",
+      html: `<p>A <code>variable</code> is a named container for a value. To create one, write the name, an equals sign, and the value:</p>
+<div class="code-example"><span class="cmt"># This creates a variable named "player_age" holding the number 23</span>
+<span class="kw">player_age</span> = <span class="num">23</span>
+<span class="fn">print</span>(<span class="kw">player_age</span>)   <span class="cmt"># prints: 23</span></div>
+<p style="margin-top:0.5rem">Variable names are case-sensitive and can contain letters, numbers, and underscores (but can't start with a number).</p>`
+    },
+    starterCode: `# Store Marcus Rivera's jersey number (14) in a variable
+# then print it
+
+jersey_number =
+print(jersey_number)`,
+    hint: `Fill in the number after the equals sign: <code>jersey_number = 14</code>`,
+    maxPoints: 2,
+    grader: function(pyodide, code, stdout, error) {
+      if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
+      let ns = {};
+      try { ns = pyodide.globals.toJs(); } catch(e) {}
+      const hasVar = code.includes('jersey_number');
+      const hasAssign = /jersey_number\s*=\s*14/.test(code);
+      const hasPrint = stdout.trim().includes('14');
+      if (hasAssign && hasPrint) return { pts: 2, level: 'pass', msg: `Perfect. <code>jersey_number = 14</code> assigns the integer 14 to the variable, and <code>print(jersey_number)</code> displays it. This is the foundation of every Python program you'll write.` };
+      if (hasVar && hasPrint) return { pts: 1, level: 'partial', msg: `You got the print working but check your assignment. Make sure it's exactly <code>jersey_number = 14</code>.` };
+      return { pts: 0, level: 'fail', msg: `Try assigning the value 14 to a variable named <code>jersey_number</code>, then use <code>print()</code> to display it.` };
+    }
+  },
+  {
+    title: "Record a Batting Average",
+    tag: "Variables - Floats",
+    desc: `Rivera's batting average last season was <strong>.287</strong>. Store it in a variable named <code>batting_avg</code>, then print it. Batting averages are decimal numbers (called <em>floats</em> in Python).`,
+    info: {
+      label: "Concept: Float vs Int",
+      html: `<p>Python has two numeric types you'll use constantly:</p>
+<div class="code-example"><span class="cmt"># int - whole numbers</span>
+<span class="kw">home_runs</span> = <span class="num">12</span>
+
+<span class="cmt"># float - numbers with decimals</span>
+<span class="kw">batting_avg</span> = <span class="num">0.287</span>
+
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="kw">home_runs</span>))   <span class="cmt"># &lt;class 'int'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="kw">batting_avg</span>))  <span class="cmt"># &lt;class 'float'&gt;</span></div>`
+    },
+    starterCode: `# Store Rivera's batting average (.287) as a float
+# then print it
+
+batting_avg =
+print(batting_avg)`,
+    hint: `Batting averages are written as decimals: <code>batting_avg = 0.287</code>`,
+    maxPoints: 2,
+    grader: function(pyodide, code, stdout, error) {
+      if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
+      const hasAssign = /batting_avg\s*=\s*0?\.287/.test(code);
+      const hasPrint = stdout.trim().includes('0.287') || stdout.trim().includes('.287');
+      if (hasAssign && hasPrint) return { pts: 2, level: 'pass', msg: `Exactly right. <code>0.287</code> is a float. Python distinguishes between <code>12</code> (int) and <code>12.0</code> (float) - the decimal point makes the difference. This matters later when you do math on stats.` };
+      if (hasPrint) return { pts: 1, level: 'partial', msg: `Output looks right, but name the variable exactly <code>batting_avg</code> so the rest of the pipeline can find it.` };
+      return { pts: 0, level: 'fail', msg: `Assign <code>0.287</code> to <code>batting_avg</code> and print it. Don't forget the decimal point.` };
+    }
+  },
+  {
+    title: "Build a Player's Name String",
+    tag: "Variables - Strings",
+    desc: `Store the player's full name <strong>"Marcus Rivera"</strong> in a variable called <code>player_name</code> and print it. Text values in Python are called <em>strings</em> and use quotes.`,
+    info: {
+      label: "Concept: Strings",
+      html: `<p>A <code>string</code> is any text wrapped in single or double quotes:</p>
+<div class="code-example"><span class="kw">team_name</span> = <span class="str">"St. Davids Eagles"</span>
+<span class="kw">position</span> = <span class="str">'Shortstop'</span>
+
+<span class="fn">print</span>(<span class="kw">team_name</span>)   <span class="cmt"># St. Davids Eagles</span></div>
+<p style="margin-top:0.5rem">You can join strings with <code>+</code>:</p>
+<div class="code-example"><span class="kw">greeting</span> = <span class="str">"Hello, "</span> + <span class="kw">team_name</span>
+<span class="fn">print</span>(<span class="kw">greeting</span>)    <span class="cmt"># Hello, St. Davids Eagles</span></div>`
+    },
+    starterCode: `# Store the player's full name as a string
+# Use double or single quotes around the text
+
+player_name =
+print(player_name)`,
+    hint: `Wrap the name in quotes: <code>player_name = "Marcus Rivera"</code>`,
+    maxPoints: 2,
+    grader: function(pyodide, code, stdout, error) {
+      if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
+      const hasAssign = /player_name\s*=\s*["']Marcus Rivera["']/.test(code);
+      const hasPrint = stdout.toLowerCase().includes('marcus rivera');
+      if (hasAssign && hasPrint) return { pts: 2, level: 'pass', msg: `Correct. Strings hold text data - names, positions, team names - anything that isn't a number you'd do math on. Notice how <code>type(player_name)</code> would show <code>&lt;class 'str'&gt;</code>.` };
+      if (hasPrint) return { pts: 1, level: 'partial', msg: `Good output, but name the variable exactly <code>player_name</code> so the system can check it.` };
+      return { pts: 0, level: 'fail', msg: `Assign the string <code>"Marcus Rivera"</code> to a variable named <code>player_name</code>. Don't forget the quotes around the text.` };
+    }
+  },
+  {
+    title: "Check a Player's Eligibility Flag",
+    tag: "Variables - Booleans",
+    desc: `Rivera is cleared to play this week. Store that fact as a variable named <code>is_eligible</code> with the value <code>True</code>, then print it. True/False values are called <em>booleans</em>.`,
+    info: {
+      label: "Concept: Booleans",
+      html: `<p>A <code>boolean</code> is either <code>True</code> or <code>False</code> (capital first letter - this matters!):</p>
+<div class="code-example"><span class="kw">is_injured</span> = <span class="kw">False</span>
+<span class="kw">is_roster_active</span> = <span class="kw">True</span>
+
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="kw">is_injured</span>))   <span class="cmt"># &lt;class 'bool'&gt;</span></div>
+<p style="margin-top:0.5rem">Booleans are used constantly in conditions: <em>"if player is eligible, include in lineup."</em></p>`
+    },
+    starterCode: `# Rivera is cleared to play - store that as a boolean
+# Booleans in Python are True or False (capital T and F!)
+
+is_eligible =
+print(is_eligible)`,
+    hint: `<code>is_eligible = True</code> - capital T, no quotes around it`,
+    maxPoints: 2,
+    grader: function(pyodide, code, stdout, error) {
+      if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
+      const hasAssign = /is_eligible\s*=\s*True/.test(code);
+      const hasPrint = stdout.trim().includes('True');
+      const quoteWrapped = /is_eligible\s*=\s*["']True["']/.test(code);
+      if (quoteWrapped) return { pts: 1, level: 'partial', msg: `Close - but <code>"True"</code> (with quotes) is a string, not a boolean. Remove the quotes: <code>is_eligible = True</code>.` };
+      if (hasAssign && hasPrint) return { pts: 2, level: 'pass', msg: `Correct. <code>True</code> and <code>False</code> are booleans - Python's way of representing yes/no, on/off, eligible/not. They're capitalized and never wrapped in quotes.` };
+      return { pts: 0, level: 'fail', msg: `Assign the boolean <code>True</code> (capital T, no quotes) to <code>is_eligible</code>.` };
+    }
+  },
+  {
+    title: "Build a Mini Player Card",
+    tag: "Putting It Together",
+    desc: `Combine everything. Create four variables for Rivera: <code>player_name</code> ("Marcus Rivera"), <code>jersey_number</code> (14), <code>batting_avg</code> (0.287), <code>is_eligible</code> (True). Then use <code>print()</code> to display all four, one per line.`,
+    info: {
+      label: "Concept: Putting It Together",
+      html: `<p>You now have all four basic data types. Here's how they look together for a different player:</p>
+<div class="code-example"><span class="kw">player_name</span>   = <span class="str">"Jordan Wells"</span>
+<span class="kw">jersey_number</span> = <span class="num">7</span>
+<span class="kw">batting_avg</span>   = <span class="num">0.301</span>
+<span class="kw">is_eligible</span>   = <span class="kw">True</span>
+
+<span class="fn">print</span>(<span class="kw">player_name</span>)
+<span class="fn">print</span>(<span class="kw">jersey_number</span>)
+<span class="fn">print</span>(<span class="kw">batting_avg</span>)
+<span class="fn">print</span>(<span class="kw">is_eligible</span>)</div>
+<p style="margin-top:0.5rem">You can print a label with each value using a comma: <code>print("Name:", player_name)</code></p>`
+    },
+    starterCode: `# Create all four variables for Rivera, then print each one
+
+player_name =
+jersey_number =
+batting_avg =
+is_eligible =
+
+# Print all four values
+`,
+    hint: `Add the four values, then four print() calls. Try <code>print("Name:", player_name)</code> for labeled output.`,
+    maxPoints: 2,
+    grader: function(pyodide, code, stdout, error) {
+      if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
+      const hasName = /player_name\s*=\s*["']Marcus Rivera["']/.test(code);
+      const hasNum  = /jersey_number\s*=\s*14/.test(code);
+      const hasAvg  = /batting_avg\s*=\s*0?\.287/.test(code);
+      const hasElig = /is_eligible\s*=\s*True/.test(code);
+      const outLines = stdout.trim().split('\n').filter(l => l.trim()).length;
+      const allVars = hasName && hasNum && hasAvg && hasElig;
+      const hasPrints = outLines >= 4;
+      if (allVars && hasPrints) return { pts: 2, level: 'pass', msg: `Excellent work. You've used all four core data types: str, int, float, and bool. Every data record you'll ever process is built from combinations of these. Rivera's player profile is ready for the pipeline.` };
+      if (allVars && outLines >= 2) return { pts: 1, level: 'partial', msg: `Variables look right - make sure you print all four values, one per line.` };
+      if (outLines >= 4) return { pts: 1, level: 'partial', msg: `Printing four lines is great, but double-check your variable names and values match exactly.` };
+      return { pts: 0, level: 'fail', msg: `Define all four variables with the right values and types, then print each one.` };
+    }
+  }
+];
+
+// ===== STATE =====
+let pyodideInstance = null;
+let currentChallenge = 0;
+let scores = new Array(challenges.length).fill(null);
+let completed = false;
+
+// ===== FRIENDLY ERROR TRANSLATOR =====
+function friendlyError(raw) {
+  if (!raw) return raw;
+  const r = raw;
+
+  // SyntaxError: EOL while scanning string literal
+  if (/EOL while scanning string literal|unterminated string/i.test(r))
+    return `Syntax error: You opened a quote but didn't close it.\nExample fix: player_name = "Marcus Rivera"  (needs a closing quote)`;
+
+  // SyntaxError: invalid syntax - likely missing value after =
+  if (/SyntaxError.*invalid syntax/i.test(r)) {
+    if (/line \d+/.test(r)) {
+      const line = r.match(/line (\d+)/)?.[1];
+      return `Syntax error on line ${line}: Python can't read this line.\nCommon causes: missing value after =, unclosed bracket, or a typo.`;
+    }
+    return `Syntax error: Python can't read your code. Check for missing values, unclosed quotes or brackets, or typos.`;
+  }
+
+  // NameError
+  if (/NameError.*name '(\w+)' is not defined/i.test(r)) {
+    const name = r.match(/name '(\w+)' is not defined/i)?.[1];
+    return `Name error: Python doesn't recognize "${name}".\nDid you mean to put quotes around it (to make it a string)?\nOr did you forget to assign it first?  Example: ${name} = "some value"`;
+  }
+
+  // TypeError
+  if (/TypeError.*can only concatenate str.*not/i.test(r))
+    return `Type error: You tried to join a string and a number with +.\nTip: Use a comma instead: print("Value:", my_number)\nOr convert the number: print("Value: " + str(my_number))`;
+  if (/TypeError/i.test(r))
+    return `Type error: You used a value in a way Python didn't expect.\nCheck that you're using the right type (string vs number vs True/False).`;
+
+  // IndentationError
+  if (/IndentationError/i.test(r))
+    return `Indentation error: A line is indented when it shouldn't be, or it's missing indentation.\nIn Python, the body of a loop or if-statement must be indented with 4 spaces.`;
+
+  // ValueError
+  if (/ValueError/i.test(r))
+    return `Value error: A value was the wrong kind for what you were trying to do.\n` + r.split('\n').slice(-2).join(' ');
+
+  // AttributeError
+  if (/AttributeError/i.test(r)) {
+    const attr = r.match(/has no attribute '(\w+)'/i)?.[1];
+    return attr
+      ? `Attribute error: The value you have doesn't support ".${attr}".\nCheck that you're calling this method on the right type of variable.`
+      : `Attribute error: ` + r.split('\n').slice(-1)[0];
+  }
+
+  // Generic - show just the last meaningful line, not the full traceback
+  const lines = r.split('\n').filter(l => l.trim());
+  const lastLine = lines[lines.length - 1] || r;
+  return lastLine;
+}
+
+// ===== PYODIDE INIT =====
+async function initPyodide() {
+  document.getElementById('loadingText').textContent = 'Loading Python environment... (first load takes ~10s)';
+  try {
+    pyodideInstance = await loadPyodide();
+    document.getElementById('loadingText').textContent = 'Python ready!';
+    setTimeout(showApp, 400);
+  } catch(e) {
+    document.getElementById('loadingText').textContent = 'Failed to load Python. Check your internet connection and refresh.';
+  }
+}
+
+function showApp() {
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'flex';
+  renderChallenge(currentChallenge);
+}
+
+// ===== RENDER =====
+function renderChallenge(idx) {
+  const c = challenges[idx];
+  const area = document.getElementById('challengeArea');
+
+  document.getElementById('challengeNum').textContent = idx + 1;
+  updateDots(idx);
+
+  area.innerHTML = `
+    <div class="challenge-card">
+      <div class="challenge-header">
+        <div class="challenge-tag">${c.tag}</div>
+        <div class="challenge-title">${c.title}</div>
+        <div class="challenge-desc">${c.desc}</div>
+      </div>
+
+      <div class="info-box" style="margin-top:1.25rem">
+        <div class="info-box-label">${c.info.label}</div>
+        ${c.info.html}
+      </div>
+
+      <div class="editor-wrap" style="margin-top:1.25rem">
+        <div class="editor-label">
+          Your Code
+          <span>Tab key inserts 4 spaces</span>
+        </div>
+        <textarea class="code-editor" id="codeEditor" spellcheck="false">${c.starterCode}</textarea>
+        <div class="editor-actions">
+          <button class="btn-run" id="btnRun" onclick="runCode(${idx})">
+            &#9654; Run Code
+          </button>
+          <button class="btn-hint" onclick="toggleHint()">Hint</button>
+          <button class="btn-next show" id="btnNext" onclick="nextChallenge()" style="display:none">
+            ${idx < challenges.length - 1 ? 'Next Challenge &rarr;' : 'See Results &rarr;'}
+          </button>
+        </div>
+      </div>
+
+      <div class="hint-box" id="hintBox">
+        <div class="hint-label">Hint</div>
+        <div class="hint-text">${c.hint}</div>
+      </div>
+
+      <div class="output-wrap" style="margin-top:1rem">
+        <div class="output-label">Output</div>
+        <div class="output-box" id="outputBox">Ready. Press "Run Code" to execute.</div>
+      </div>
+
+      <div class="feedback-box" id="feedbackBox">
+        <div class="feedback-verdict" id="feedbackVerdict"></div>
+        <div class="feedback-text" id="feedbackText"></div>
+      </div>
+
+    </div>
+  `;
+
+  // Tab key in editor
+  document.getElementById('codeEditor').addEventListener('keydown', function(e) {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const s = this.selectionStart;
+      const end = this.selectionEnd;
+      this.value = this.value.substring(0, s) + '    ' + this.value.substring(end);
+      this.selectionStart = this.selectionEnd = s + 4;
+    }
+  });
+
+  // If already scored this challenge, show result
+  if (scores[idx] !== null) {
+    const prev = scores[idx];
+    showFeedback(prev.level, prev.verdict, prev.msg);
+    document.getElementById('btnNext').style.display = 'inline-flex';
+  }
+}
+
+function updateDots(active) {
+  for (let i = 0; i < challenges.length; i++) {
+    const dot = document.getElementById('dot' + i);
+    if (i < active)       { dot.className = 'step-dot done'; }
+    else if (i === active) { dot.className = 'step-dot active'; }
+    else                   { dot.className = 'step-dot'; }
+  }
+}
+
+// ===== RUN CODE =====
+async function runCode(idx) {
+  const code = document.getElementById('codeEditor').value;
+  const outBox = document.getElementById('outputBox');
+  const btnRun = document.getElementById('btnRun');
+
+  btnRun.disabled = true;
+  btnRun.textContent = 'Running...';
+  outBox.className = 'output-box';
+  outBox.textContent = '';
+
+  // Capture stdout
+  let stdout = '';
+  let errorMsg = '';
+
+  try {
+    pyodideInstance.setStdout({ batched: (text) => { stdout += text + '\n'; } });
+    pyodideInstance.setStderr({ batched: (text) => { errorMsg += text + '\n'; } });
+    await pyodideInstance.runPythonAsync(code);
+  } catch(e) {
+    errorMsg = e.message || String(e);
+  }
+
+  btnRun.disabled = false;
+  btnRun.textContent = '▶ Run Code';
+
+  if (errorMsg) {
+    outBox.className = 'output-box error';
+    outBox.textContent = friendlyError(errorMsg);
+    // still grade even with error (grader handles it)
+  } else if (stdout) {
+    outBox.className = 'output-box';
+    outBox.textContent = stdout;
+  } else {
+    outBox.className = 'output-box';
+    outBox.textContent = '(no output)';
+  }
+
+  // Grade
+  const c = challenges[idx];
+  const result = c.grader(pyodideInstance, code, stdout, errorMsg || null);
+  scores[idx] = { pts: result.pts, level: result.level, msg: result.msg, verdict: result.level === 'pass' ? 'Correct' : result.level === 'partial' ? 'Partially Correct' : 'Not Quite', title: c.title, max: c.maxPoints };
+
+  showFeedback(result.level, scores[idx].verdict, result.msg);
+  updateScore();
+
+  document.getElementById('btnNext').style.display = 'inline-flex';
+  saveProgress();
+}
+
+function showFeedback(level, verdict, msg) {
+  const box = document.getElementById('feedbackBox');
+  const verd = document.getElementById('feedbackVerdict');
+  const text = document.getElementById('feedbackText');
+  box.className = 'feedback-box show ' + level;
+  verd.textContent = verdict;
+  text.innerHTML = msg;
+}
+
+function toggleHint() {
+  const hintBox = document.getElementById('hintBox');
+  hintBox.classList.toggle('show');
+}
+
+function updateScore() {
+  const total = scores.reduce((sum, s) => sum + (s ? s.pts : 0), 0);
+  const max = challenges.reduce((sum, c) => sum + c.maxPoints, 0);
+  document.getElementById('scoreDisplay').textContent = total + ' / ' + max + ' pts';
+}
+
+function nextChallenge() {
+  if (currentChallenge < challenges.length - 1) {
+    currentChallenge++;
+    renderChallenge(currentChallenge);
+    window.scrollTo(0, 0);
+  } else {
+    showDebrief();
+  }
+}
+
+// ===== DEBRIEF =====
+function showDebrief() {
+  const bar = document.getElementById('backToResultsBar');
+  if (bar) bar.remove();
+  document.getElementById('challengeArea').style.display = 'none';
+  const debriefScreen = document.getElementById('debriefScreen');
+  debriefScreen.style.display = 'flex';
+
+  const totalPts = scores.reduce((sum, s) => sum + (s ? s.pts : 0), 0);
+  const maxPts = challenges.reduce((sum, c) => sum + c.maxPoints, 0);
+  const pct = Math.round((totalPts / maxPts) * 100);
+
+  document.getElementById('debriefScoreNum').textContent = totalPts;
+  document.getElementById('debriefScoreDenom').textContent = '/ ' + maxPts + ' pts';
+
+  let title, verdict, conceptMsg;
+  if (pct === 100) {
+    title = 'Full Marks - Analyst Ready';
+    verdict = 'Jonah nods approvingly. "Perfect score. You clearly get the fundamentals. Welcome to the team."';
+    conceptMsg = '<strong>What you mastered:</strong> Python\'s four basic data types - int, float, str, and bool - are the building blocks of all data science. Every dataset you load will contain columns of these types, and knowing how to create, store, and identify them is the foundation everything else is built on.';
+  } else if (pct >= 70) {
+    title = 'Solid Work - Almost There';
+    verdict = '"Good effort," Jonah says. "You\'ve got the core ideas. Review the challenges you missed and try again."';
+    conceptMsg = '<strong>Key takeaway:</strong> The four data types (int, float, str, bool) each serve a different purpose. Make sure you know how to assign each one and recognize the difference between <code>14</code> (int), <code>0.287</code> (float), <code>"Marcus Rivera"</code> (str), and <code>True</code> (bool).';
+  } else {
+    title = 'Keep Practicing';
+    verdict = '"Don\'t get discouraged," Jonah says. "These concepts trip up a lot of new analysts. Review the hints and try again - it\'ll click."';
+    conceptMsg = '<strong>Focus on:</strong> Every variable assignment follows the same pattern: <code>name = value</code>. The value determines the type. Numbers without decimals are ints, numbers with decimals are floats, text in quotes is a string, and <code>True</code>/<code>False</code> (no quotes) are booleans.';
+  }
+
+  document.getElementById('debriefTitle').textContent = title;
+  document.getElementById('debriefVerdict').textContent = verdict;
+  document.getElementById('debriefConcept').innerHTML = conceptMsg;
+
+  // Breakdown rows - clickable to revisit
+  const breakdownEl = document.getElementById('breakdownRows');
+  breakdownEl.innerHTML = scores.map((s, i) => {
+    const pts = s ? s.pts : 0;
+    const max = challenges[i].maxPoints;
+    const cls = pts === max ? 'pts-full' : pts > 0 ? 'pts-part' : 'pts-none';
+    const notPerfect = pts < max;
+    return `<div class="breakdown-row ${notPerfect ? 'breakdown-row-link' : ''}" ${notPerfect ? `onclick="revisitChallenge(${i})" title="Click to fix this challenge"` : ''}>
+      <span>${challenges[i].title}</span>
+      <span style="display:flex;align-items:center;gap:8px">
+        ${notPerfect ? '<span class="revisit-hint">fix &rarr;</span>' : ''}
+        <span class="breakdown-pts ${cls}">${pts} / ${max}</span>
+      </span>
+    </div>`;
+  }).join('');
+
+  // Save completed
+  completed = true;
+  saveProgress();
+  window.scrollTo(0, 0);
+}
+
+// ===== REVISIT FROM DEBRIEF =====
+function revisitChallenge(idx) {
+  document.getElementById('debriefScreen').style.display = 'none';
+  const area = document.getElementById('challengeArea');
+  area.style.display = 'flex';
+  currentChallenge = idx;
+  renderChallenge(idx);
+  // Add a "back to results" button to the challenge area
+  const backBar = document.createElement('div');
+  backBar.id = 'backToResultsBar';
+  backBar.style.cssText = 'display:flex;justify-content:flex-end;';
+  backBar.innerHTML = `<button onclick="showDebrief()" style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;background:transparent;color:var(--text-muted);border:1px solid var(--border);border-radius:4px;padding:7px 14px;cursor:pointer;" onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--gray)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border)'">&larr; Back to Results</button>`;
+  area.insertBefore(backBar, area.firstChild);
+  window.scrollTo(0, 0);
+}
+
+// ===== PROGRESS PERSISTENCE =====
+function saveProgress() {
+  try {
+    const p = JSON.parse(localStorage.getItem('pft_progress') || '{}');
+    const totalPts = scores.reduce((sum, s) => sum + (s ? s.pts : 0), 0);
+    p.mod1 = {
+      status: completed ? 'completed' : (scores.some(s => s !== null) ? 'in_progress' : 'open'),
+      score: totalPts,
+      scores: scores
+    };
+    localStorage.setItem('pft_progress', JSON.stringify(p));
+  } catch(e) {}
+}
+
+function loadProgress() {
+  try {
+    const p = JSON.parse(localStorage.getItem('pft_progress') || '{}');
+    if (p.mod1 && p.mod1.scores) {
+      scores = p.mod1.scores;
+      completed = p.mod1.status === 'completed';
+      // Find first unanswered challenge
+      const firstUnanswered = scores.findIndex(s => s === null);
+      currentChallenge = firstUnanswered === -1 ? challenges.length - 1 : firstUnanswered;
+      updateScore();
+      if (completed) {
+        showApp();
+        showDebrief();
+        return;
+      }
+    }
+  } catch(e) {}
+}
+
+// ===== BOOT =====
+loadProgress();
+initPyodide();
+</script>
+<footer style="max-width:900px;width:100%;margin:20px auto 0;padding:0 0 24px;text-align:center;font-size:12px;color:#646469;font-family:'IBM Plex Mono',monospace;">
+    This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.<br>&copy; Eastern University. All rights reserved.
+</footer>
+</body>
+</html>

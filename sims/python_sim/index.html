@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Field Training - StatDeck Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --maroon: #8B1C40;
+    --maroon-light: #a82050;
+    --blue: #2A7195;
+    --blue-light: #3590b8;
+    --gray: #646469;
+    --gray-light: #8a8a90;
+    --bg: #0f0e0d;
+    --surface: #1a1816;
+    --surface2: #221f1d;
+    --surface3: #2d2926;
+    --text: #f0ece6;
+    --text-dim: #b8b0a6;
+    --text-muted: #7a7268;
+    --border: #38322d;
+    --green: #4a9e6b;
+    --amber: #c8963a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Zilla Slab', serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ---- TOP HEADER ---- */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 3px solid var(--maroon);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .brand-logo {
+    width: 36px;
+    height: 36px;
+    background: var(--maroon);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+    letter-spacing: -1px;
+  }
+
+  .brand-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .brand-name span {
+    color: var(--maroon-light);
+  }
+
+  .header-right {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ---- HERO ---- */
+  .hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 3.5rem 2rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--maroon) 0%, var(--blue) 100%);
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--blue);
+    background: rgba(42,113,149,0.12);
+    border: 1px solid rgba(42,113,149,0.3);
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero h1 {
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--maroon-light);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 520px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+  }
+
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-meta-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hero-meta-item::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--gray);
+    border-radius: 50%;
+  }
+
+  /* ---- PROGRESS BAR ---- */
+  .progress-section {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 2rem 0;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+
+  .progress-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  .progress-pct {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue);
+  }
+
+  .progress-track {
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--maroon), var(--blue));
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+
+  /* ---- MODULE GRID ---- */
+  .modules-section {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 2rem 4rem;
+  }
+
+  .section-heading {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .module-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: border-color 0.2s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .module-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .module-card.mod-1::before { background: var(--maroon); }
+  .module-card.mod-2::before { background: var(--blue); }
+  .module-card.mod-3::before { background: var(--green); }
+  .module-card.finale::before { background: linear-gradient(90deg, var(--maroon), var(--blue)); }
+
+  .module-card:hover:not(.locked) {
+    border-color: var(--gray);
+    transform: translateY(-2px);
+  }
+
+  .module-card.locked {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .module-card.completed {
+    border-color: rgba(74,158,107,0.4);
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .module-number {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  .status-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .badge-locked   { color: var(--text-muted); border-color: var(--border); background: transparent; }
+  .badge-open     { color: var(--blue); border-color: rgba(42,113,149,0.4); background: rgba(42,113,149,0.08); }
+  .badge-progress { color: var(--amber); border-color: rgba(200,150,58,0.4); background: rgba(200,150,58,0.08); }
+  .badge-done     { color: var(--green); border-color: rgba(74,158,107,0.4); background: rgba(74,158,107,0.08); }
+
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.25;
+  }
+
+  .card-desc {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .card-concepts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .concept-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 8px;
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .card-time {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .card-score {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green);
+  }
+
+  .card-cta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--blue);
+  }
+
+  /* ---- SCENARIO PANEL ---- */
+  .scenario-panel {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 2rem 2.5rem;
+  }
+
+  .scenario-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    border-top: 3px solid var(--maroon);
+    padding: 1.5rem 1.75rem;
+  }
+
+  .scenario-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--maroon-light);
+    margin-bottom: 0.6rem;
+  }
+
+  .scenario-text {
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+
+  .scenario-text strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ---- RESET BUTTON ---- */
+  .reset-row {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 2rem 3rem;
+    text-align: right;
+  }
+
+  .btn-reset {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btn-reset:hover {
+    color: var(--text);
+    border-color: var(--gray);
+  }
+
+  /* ---- FOOTER ---- */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="brand">
+    <div class="brand-logo">SD</div>
+    <div class="brand-name"><span>StatDeck</span> Analytics</div>
+  </div>
+  <div class="header-right" style="display:flex;align-items:center;gap:1.25rem;">
+    <span>Python Field Training - Analyst Onboarding</span>
+    <a href="../../index.html" style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:rgba(255,255,255,0.45);text-decoration:none;letter-spacing:0.05em;border:1px solid rgba(255,255,255,0.15);padding:0.2rem 0.6rem;border-radius:3px;transition:all 0.15s;" onmouseover="this.style.color='rgba(255,255,255,0.85)';this.style.borderColor='rgba(255,255,255,0.35)'" onmouseout="this.style.color='rgba(255,255,255,0.45)';this.style.borderColor='rgba(255,255,255,0.15)'">← Course Home</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">Onboarding Track - Cohort 1</div>
+  <h1>Learn Python by <em>Doing the Job</em></h1>
+  <p class="hero-sub">
+    You've just been hired as a junior data analyst at StatDeck Analytics, supporting
+    the St. Davids Eagles. Complete each training module to earn your analyst credentials.
+    No Python experience required - just follow the prompts and run the code.
+  </p>
+  <div class="hero-meta">
+    <span class="hero-meta-item">3 modules + final challenge</span>
+    <span class="hero-meta-item">Real Python, in the browser</span>
+    <span class="hero-meta-item">~60 minutes total</span>
+    <span class="hero-meta-item">Progress saves automatically</span>
+  </div>
+</section>
+
+<!-- SCENARIO CONTEXT -->
+<div class="scenario-panel">
+  <div class="scenario-box">
+    <div class="scenario-label">Your Situation</div>
+    <p class="scenario-text">
+      It's the first day of spring training. <strong>Jonah Reyes</strong>, senior analyst at StatDeck, has handed you a laptop and a task list.
+      "Before you touch our actual data pipeline," he said, "you need to prove you can write Python.
+      Complete these training modules. Each one covers something you'll use every single day."
+      He dropped a sticky note on your keyboard: <strong>"Variables. Lists. Loops. Master those three and you can do anything."</strong>
+    </p>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-section">
+  <div class="progress-header">
+    <span class="progress-label">Overall Progress</span>
+    <span class="progress-pct" id="pctLabel">0% complete</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+  </div>
+</div>
+
+<!-- MODULES -->
+<div class="modules-section">
+  <div class="section-heading">Training Modules</div>
+  <div class="module-grid" id="moduleGrid">
+
+    <!-- Module 1 -->
+    <a href="module1.html" class="module-card mod-1" id="card-1">
+      <div class="card-top">
+        <span class="module-number">Module 01</span>
+        <span class="status-badge badge-open" id="badge-1">Open</span>
+      </div>
+      <div class="card-title">Player Profiles</div>
+      <div class="card-desc">
+        Use variables and data types to store and display athlete stats.
+        You'll assign values, check types, and do basic math with real numbers.
+      </div>
+      <div class="card-concepts">
+        <span class="concept-tag">variables</span>
+        <span class="concept-tag">int / float</span>
+        <span class="concept-tag">str</span>
+        <span class="concept-tag">print()</span>
+        <span class="concept-tag">type()</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-time">~15 min</span>
+        <span class="card-cta" id="cta-1">Start -&gt;</span>
+      </div>
+    </a>
+
+    <!-- Module 2 -->
+    <a href="module2.html" class="module-card mod-2 locked" id="card-2">
+      <div class="card-top">
+        <span class="module-number">Module 02</span>
+        <span class="status-badge badge-locked" id="badge-2">Locked</span>
+      </div>
+      <div class="card-title">The Roster</div>
+      <div class="card-desc">
+        Work with the full Eagles roster as a Python list.
+        Slice it, index into it, and answer questions about the team using list operations.
+      </div>
+      <div class="card-concepts">
+        <span class="concept-tag">lists</span>
+        <span class="concept-tag">indexing</span>
+        <span class="concept-tag">slicing</span>
+        <span class="concept-tag">len()</span>
+        <span class="concept-tag">append()</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-time">~20 min</span>
+        <span class="card-cta" id="cta-2">Complete Module 1 first</span>
+      </div>
+    </a>
+
+    <!-- Module 3 -->
+    <a href="module3.html" class="module-card mod-3 locked" id="card-3">
+      <div class="card-top">
+        <span class="module-number">Module 03</span>
+        <span class="status-badge badge-locked" id="badge-3">Locked</span>
+      </div>
+      <div class="card-title">Game Day</div>
+      <div class="card-desc">
+        Process a full game's worth of play-by-play data using loops and conditionals.
+        Flag events, count outcomes, and surface the numbers that matter.
+      </div>
+      <div class="card-concepts">
+        <span class="concept-tag">for loops</span>
+        <span class="concept-tag">if / elif / else</span>
+        <span class="concept-tag">range()</span>
+        <span class="concept-tag">counters</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-time">~25 min</span>
+        <span class="card-cta" id="cta-3">Complete Module 2 first</span>
+      </div>
+    </a>
+
+    <!-- Finale -->
+    <a href="finale.html" class="module-card finale locked" id="card-finale">
+      <div class="card-top">
+        <span class="module-number">Final Challenge</span>
+        <span class="status-badge badge-locked" id="badge-finale">Locked</span>
+      </div>
+      <div class="card-title">Scouting Report</div>
+      <div class="card-desc">
+        Jonah has a real question that needs answering before tomorrow's game.
+        You'll combine everything - variables, lists, and loops - to produce a genuine scouting report.
+      </div>
+      <div class="card-concepts">
+        <span class="concept-tag">all concepts</span>
+        <span class="concept-tag">open-ended</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-time">~20 min</span>
+        <span class="card-cta" id="cta-finale">Complete all modules first</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<div class="reset-row">
+  <button class="btn-reset" onclick="resetProgress()">Reset All Progress</button>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  DTSC 520 - Introduction to Data Science &nbsp;&bull;&nbsp; Eastern University &nbsp;&bull;&nbsp; StatDeck Analytics Training Sim
+</footer>
+
+<script>
+  const MODULE_KEYS = ['mod1', 'mod2', 'mod3', 'finale'];
+  const TOTAL_MODULES = 4;
+
+  function getProgress() {
+    try {
+      return JSON.parse(localStorage.getItem('pft_progress') || '{}');
+    } catch(e) { return {}; }
+  }
+
+  function saveProgress(p) {
+    localStorage.setItem('pft_progress', JSON.stringify(p));
+  }
+
+  function resetProgress() {
+    if (confirm('Reset all progress? This cannot be undone.')) {
+      localStorage.removeItem('pft_progress');
+      renderHub();
+    }
+  }
+
+  function renderHub() {
+    const p = getProgress();
+    const completed = MODULE_KEYS.filter(k => p[k] && p[k].status === 'completed').length;
+    const pct = Math.round((completed / TOTAL_MODULES) * 100);
+
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('pctLabel').textContent = pct + '% complete';
+
+    // Module 1 - always open
+    setCard('1', 'mod1', p, true);
+    // Module 2 - open if mod1 done
+    setCard('2', 'mod2', p, p.mod1 && p.mod1.status === 'completed');
+    // Module 3 - open if mod2 done
+    setCard('3', 'mod3', p, p.mod2 && p.mod2.status === 'completed');
+    // Finale - open if all 3 done
+    const allDone = ['mod1','mod2','mod3'].every(k => p[k] && p[k].status === 'completed');
+    setCardFinale(p, allDone);
+  }
+
+  function setCard(num, key, p, unlocked) {
+    const card = document.getElementById('card-' + num);
+    const badge = document.getElementById('badge-' + num);
+    const cta = document.getElementById('cta-' + num);
+    const data = p[key] || {};
+
+    if (!unlocked) {
+      card.classList.add('locked');
+      card.style.pointerEvents = 'none';
+      badge.className = 'status-badge badge-locked';
+      badge.textContent = 'Locked';
+      return;
+    }
+
+    card.classList.remove('locked');
+    card.style.pointerEvents = '';
+
+    if (data.status === 'completed') {
+      card.classList.add('completed');
+      badge.className = 'status-badge badge-done';
+      badge.textContent = 'Done';
+      cta.textContent = 'Review ->';
+      const scoreEl = card.querySelector('.card-score');
+      if (!scoreEl) {
+        const footer = card.querySelector('.card-footer');
+        const sc = document.createElement('span');
+        sc.className = 'card-score';
+        sc.textContent = data.score !== undefined ? data.score + ' pts' : '';
+        footer.insertBefore(sc, cta);
+      }
+    } else if (data.status === 'in_progress') {
+      badge.className = 'status-badge badge-progress';
+      badge.textContent = 'In Progress';
+      cta.textContent = 'Continue ->';
+    } else {
+      badge.className = 'status-badge badge-open';
+      badge.textContent = 'Open';
+      cta.textContent = 'Start ->';
+    }
+  }
+
+  function setCardFinale(p, unlocked) {
+    const card = document.getElementById('card-finale');
+    const badge = document.getElementById('badge-finale');
+    const cta = document.getElementById('cta-finale');
+    const data = p.finale || {};
+
+    if (!unlocked) {
+      card.classList.add('locked');
+      card.style.pointerEvents = 'none';
+      badge.className = 'status-badge badge-locked';
+      badge.textContent = 'Locked';
+      return;
+    }
+
+    card.classList.remove('locked');
+    card.style.pointerEvents = '';
+
+    if (data.status === 'completed') {
+      card.classList.add('completed');
+      badge.className = 'status-badge badge-done';
+      badge.textContent = 'Done';
+      cta.textContent = 'Review ->';
+    } else if (data.status === 'in_progress') {
+      badge.className = 'status-badge badge-progress';
+      badge.textContent = 'In Progress';
+      cta.textContent = 'Continue ->';
+    } else {
+      badge.className = 'status-badge badge-open';
+      badge.textContent = 'Open';
+      cta.textContent = 'Start ->';
+    }
+  }
+
+  renderHub();
+</script>
+<footer style="max-width:900px;width:100%;margin:20px auto 0;padding:0 0 24px;text-align:center;font-size:12px;color:#646469;font-family:'IBM Plex Mono',monospace;">
+    This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.<br>&copy; Eastern University. All rights reserved.
+</footer>
+</body>
+</html>
