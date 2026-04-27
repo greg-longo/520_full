@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pitch the Viz - DTSC 520 Simulation</title>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --teal:     #2a9490;
+    --teal-d:   #1f6f6c;
+    --teal-l:   rgba(42,148,144,0.14);
+    --gold:     #c49a2a;
+    --gold-l:   rgba(196,154,42,0.12);
+    --green:    #3a9e6e;
+    --red:      #b84455;
+    --maroon:   #8B1C40;
+
+    --bg:       #0d0f0f;
+    --surface:  #161a1a;
+    --surface2: #1e2424;
+    --border:   #2a3030;
+    --border-l: #1a2020;
+
+    --text:     #e8e8e4;
+    --text-dim: #9aa0a0;
+    --muted:    #586060;
+
+    --font: 'Zilla Slab', Georgia, serif;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+    --r: 4px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 17px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ---- NAV ---- */
+  #topnav {
+    background: #0a0d0d;
+    border-bottom: 3px solid var(--teal);
+    padding: 0 1.5rem;
+    height: 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 300;
+  }
+  .nav-left { display: flex; align-items: center; gap: 0.5rem; font-family: var(--sans); font-size: 0.8rem; }
+  .nav-back { color: var(--text-dim); text-decoration: none; transition: color 0.15s; }
+  .nav-back:hover { color: var(--text); }
+  .nav-sep { color: var(--muted); }
+  .nav-title { color: var(--teal); font-weight: 600; font-size: 0.82rem; }
+  .nav-right { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); letter-spacing: 0.06em; }
+
+  /* ---- SLIDE STRIP ---- */
+  #slide-strip {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.55rem 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .strip-label {
+    font-family: var(--mono); font-size: 0.63rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); white-space: nowrap; min-width: 52px;
+  }
+  .strip-slides { display: flex; gap: 0.35rem; align-items: center; }
+  .strip-slide {
+    font-family: var(--mono); font-size: 0.62rem;
+    width: 26px; height: 26px; border-radius: var(--r);
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; flex-shrink: 0;
+  }
+  .strip-slide.done { background: var(--teal-d); border-color: var(--teal); color: rgba(255,255,255,0.7); }
+  .strip-slide.active { background: var(--teal); border-color: #3dbdb8; color: #fff; box-shadow: 0 0 0 3px rgba(42,148,144,0.25); }
+  .strip-connector { width: 20px; height: 1px; background: var(--border); flex-shrink: 0; }
+  .strip-fill { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-left: 0.5rem; }
+  .strip-fill-bar { height: 100%; background: var(--teal); border-radius: 2px; transition: width 0.5s ease; width: 0%; }
+
+  /* ---- MAIN ---- */
+  #main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ---- LANDING ---- */
+  #screen-landing { padding: 2rem 0; }
+  .landing-masthead {
+    background: linear-gradient(135deg, #0d1414 0%, #0a1010 100%);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--teal);
+    border-radius: var(--r);
+    padding: 2.5rem 2.5rem 2rem;
+    margin-bottom: 1.5rem;
+    position: relative; overflow: hidden;
+  }
+  .landing-masthead::before {
+    content: 'VOLTA';
+    position: absolute; right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--mono); font-size: 5rem; font-weight: 700;
+    color: rgba(42,148,144,0.05);
+    pointer-events: none; user-select: none;
+  }
+  .masthead-badge {
+    font-family: var(--mono); font-size: 0.63rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 0.6rem;
+  }
+  .masthead-title { font-size: 2.6rem; font-weight: 700; line-height: 1.1; margin-bottom: 0.4rem; }
+  .masthead-sub { font-size: 1rem; color: var(--text-dim); max-width: 500px; line-height: 1.55; font-family: var(--sans); }
+  .masthead-meta { display: flex; gap: 0.75rem; margin-top: 1.25rem; flex-wrap: wrap; }
+  .meta-tag {
+    font-family: var(--mono); font-size: 0.65rem;
+    padding: 0.22rem 0.65rem; border-radius: var(--r);
+    border: 1px solid rgba(42,148,144,0.35);
+    background: rgba(42,148,144,0.08);
+    color: rgba(255,255,255,0.65);
+  }
+
+  .landing-setup {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--r);
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.25rem;
+    font-family: var(--sans); font-size: 0.93rem;
+    color: var(--text-dim); line-height: 1.65;
+  }
+  .landing-setup strong { color: var(--text); }
+
+  /* email artifact */
+  .email-artifact {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  .email-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 1.25rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .email-icon { font-size: 0.9rem; }
+  .email-meta { font-family: var(--sans); font-size: 0.78rem; color: var(--text-dim); }
+  .email-meta strong { color: var(--text); }
+  .email-body { padding: 1.1rem 1.25rem; font-family: var(--sans); font-size: 0.9rem; color: var(--text-dim); line-height: 1.65; }
+  .email-body p { margin-bottom: 0.6rem; }
+  .email-body p:last-child { margin-bottom: 0; }
+
+  /* objectives */
+  .obj-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 0.65rem; margin-bottom: 1.75rem;
+  }
+  @media (max-width: 600px) { .obj-grid { grid-template-columns: 1fr 1fr; } }
+  .obj-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 0.85rem 1rem;
+  }
+  .obj-num {
+    font-family: var(--mono); font-size: 0.6rem;
+    color: var(--teal); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 0.3rem;
+  }
+  .obj-text { font-family: var(--sans); font-size: 0.82rem; color: var(--text-dim); line-height: 1.45; }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--teal);
+    color: #fff;
+    font-family: var(--sans); font-size: 0.95rem; font-weight: 600;
+    padding: 0.75rem 2.5rem;
+    border-radius: var(--r); border: none; cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-primary:hover { background: #33b0ab; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ---- ROOM LAYOUT ---- */
+  #screen-room.active {
+    display: grid !important;
+    grid-template-columns: 1fr 300px;
+    gap: 1.25rem;
+    align-items: start;
+  }
+  @media (max-width: 700px) {
+    #screen-room.active { grid-template-columns: 1fr !important; }
+  }
+
+  /* stage panel */
+  .stage-panel {}
+
+  .slide-context {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--teal);
+    border-radius: var(--r);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .slide-eyebrow {
+    font-family: var(--mono); font-size: 0.62rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 0.4rem;
+  }
+  .slide-question { font-size: 1.15rem; font-weight: 600; color: var(--text); line-height: 1.35; margin-bottom: 0.6rem; }
+  .slide-task { font-family: var(--sans); font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; }
+
+  /* data table */
+  .data-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+  .data-block-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    font-family: var(--mono); font-size: 0.63rem;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .data-table {
+    width: 100%; border-collapse: collapse;
+    font-family: var(--mono); font-size: 0.75rem;
+  }
+  .data-table th {
+    text-align: left; padding: 0.4rem 1rem;
+    color: var(--text-dim); font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .data-table td {
+    padding: 0.35rem 1rem;
+    border-bottom: 1px solid var(--border-l);
+    color: var(--text);
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table td.num { color: var(--teal); }
+  .data-table td.hi { color: var(--gold); font-weight: 500; }
+
+  /* chart options */
+  .chart-options { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+  .chart-option {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--r);
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .chart-option:hover { border-color: var(--teal); background: rgba(42,148,144,0.06); }
+  .chart-option.selected { border-color: var(--teal); background: rgba(42,148,144,0.1); }
+  .chart-option.locked { pointer-events: none; }
+  .chart-option-label {
+    font-family: var(--sans); font-size: 0.8rem; font-weight: 600;
+    color: var(--text); margin-bottom: 0.35rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .chart-option-label .opt-letter {
+    font-family: var(--mono); font-size: 0.62rem;
+    width: 18px; height: 18px; border-radius: 3px;
+    background: rgba(42,148,144,0.15); border: 1px solid rgba(42,148,144,0.3);
+    color: var(--teal); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.15s;
+  }
+  .chart-option.selected .opt-letter { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .chart-preview { width: 100%; height: 110px; position: relative; }
+  .chart-preview canvas { width: 100% !important; height: 100% !important; }
+
+  .btn-lock {
+    width: 100%; background: var(--teal); color: #fff;
+    font-family: var(--sans); font-size: 0.88rem; font-weight: 600;
+    padding: 0.65rem; border-radius: var(--r); border: none;
+    cursor: pointer; transition: background 0.15s;
+    opacity: 0.4; pointer-events: none;
+    margin-bottom: 1rem;
+  }
+  .btn-lock.enabled { opacity: 1; pointer-events: all; }
+  .btn-lock.enabled:hover { background: #33b0ab; }
+
+  /* room panel - right sidebar */
+  .room-panel {
+    position: sticky; top: 64px;
+    display: flex; flex-direction: column; gap: 0.75rem;
+  }
+
+  /* character cards */
+  .char-presence {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+  }
+  .char-presence-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 0.85rem;
+    font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .char-list { display: flex; flex-direction: column; }
+  .char-row {
+    display: flex; align-items: center; gap: 0.65rem;
+    padding: 0.65rem 0.85rem;
+    border-bottom: 1px solid var(--border-l);
+    transition: background 0.2s;
+  }
+  .char-row:last-child { border-bottom: none; }
+  .char-row.speaking { background: rgba(42,148,144,0.07); }
+  .char-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--sans); font-size: 0.75rem; font-weight: 700;
+    color: #fff; flex-shrink: 0;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .char-row.speaking .char-avatar { border-color: rgba(255,255,255,0.3); }
+  .char-info { flex: 1; min-width: 0; }
+  .char-name { font-family: var(--sans); font-size: 0.78rem; font-weight: 600; color: var(--text); }
+  .char-role { font-family: var(--mono); font-size: 0.6rem; color: var(--text-dim); }
+  .char-status {
+    font-family: var(--mono); font-size: 0.58rem;
+    color: var(--muted); white-space: nowrap;
+  }
+  .char-status.watching { color: var(--teal); }
+
+  /* speech bubble */
+  .speech-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    min-height: 80px;
+  }
+  .speech-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 0.45rem 0.85rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .speech-avatar {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--sans); font-size: 0.55rem; font-weight: 700;
+    color: #fff; flex-shrink: 0;
+  }
+  .speech-name { font-family: var(--sans); font-size: 0.72rem; font-weight: 600; color: var(--text); }
+  .speech-body {
+    padding: 0.75rem 0.85rem;
+    font-family: var(--sans); font-size: 0.83rem;
+    color: var(--text-dim); line-height: 1.55;
+    min-height: 60px;
+  }
+  .speech-cursor {
+    display: inline-block; width: 2px; height: 0.9em;
+    background: var(--teal); vertical-align: text-bottom;
+    animation: blink 0.8s step-end infinite;
+    margin-left: 1px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* outcome card */
+  .outcome-card {
+    border-radius: var(--r); padding: 0.85rem 1rem;
+    border: 1px solid; margin-bottom: 0.75rem;
+    font-family: var(--sans); font-size: 0.85rem; line-height: 1.55;
+    display: none;
+  }
+  .outcome-card.good { background: rgba(58,158,110,0.1); border-color: rgba(58,158,110,0.35); color: #7dd4a8; }
+  .outcome-card.warn { background: rgba(196,154,42,0.1); border-color: rgba(196,154,42,0.35); color: #d4b84a; }
+  .outcome-card.bad  { background: rgba(184,68,85,0.1); border-color: rgba(184,68,85,0.35); color: #d47d88; }
+  .outcome-card-label {
+    font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 0.35rem; opacity: 0.8;
+  }
+  .outcome-card.visible { display: block; }
+
+  .btn-next-slide {
+    width: 100%; background: transparent;
+    border: 1px solid var(--teal); color: var(--teal);
+    font-family: var(--sans); font-size: 0.85rem; font-weight: 600;
+    padding: 0.6rem; border-radius: var(--r); cursor: pointer;
+    transition: all 0.15s; display: none;
+  }
+  .btn-next-slide.visible { display: block; }
+  .btn-next-slide:hover { background: var(--teal); color: #fff; }
+
+  /* score pip row */
+  .score-pips {
+    display: flex; gap: 0.35rem; align-items: center;
+    padding: 0.5rem 0.85rem;
+    background: var(--surface2);
+    border-top: 1px solid var(--border);
+  }
+  .score-pip {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--border); border: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+  .score-pip.earned { background: var(--teal); border-color: var(--teal); }
+  .score-pip.partial { background: var(--gold); border-color: var(--gold); }
+  .score-pip-label { font-family: var(--mono); font-size: 0.6rem; color: var(--muted); margin-left: auto; }
+
+  /* ---- DEBRIEF ---- */
+  #screen-debrief { padding-top: 0.5rem; }
+
+  .vote-section { margin-bottom: 2rem; }
+  .vote-header {
+    font-family: var(--mono); font-size: 0.65rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 1rem;
+    padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+  }
+  .vote-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 1.5rem; }
+  @media (max-width: 600px) { .vote-cards { grid-template-columns: 1fr; } }
+  .vote-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.1rem 1rem;
+    text-align: center;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .vote-card.revealed { opacity: 1; transform: translateY(0); }
+  .vote-card-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    margin: 0 auto 0.6rem;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--sans); font-size: 1.1rem; font-weight: 700; color: #fff;
+    border: 2px solid rgba(255,255,255,0.1);
+  }
+  .vote-card-name { font-family: var(--sans); font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 0.2rem; }
+  .vote-card-role { font-family: var(--mono); font-size: 0.6rem; color: var(--text-dim); margin-bottom: 0.75rem; }
+  .vote-card-reaction { font-family: var(--sans); font-size: 0.8rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 0.75rem; font-style: italic; }
+  .vote-badge {
+    display: inline-block; font-family: var(--mono); font-size: 0.65rem;
+    padding: 0.25rem 0.75rem; border-radius: 99px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .vote-badge.yes { background: rgba(58,158,110,0.2); border: 1px solid rgba(58,158,110,0.4); color: #7dd4a8; }
+  .vote-badge.no  { background: rgba(184,68,85,0.15); border: 1px solid rgba(184,68,85,0.35); color: #d47d88; }
+  .vote-badge.abstain { background: rgba(196,154,42,0.15); border: 1px solid rgba(196,154,42,0.35); color: #d4b84a; }
+
+  .outcome-banner {
+    background: linear-gradient(135deg, #0d1414 0%, #0a1010 100%);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--teal);
+    border-radius: var(--r);
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .outcome-eyebrow { font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.4rem; }
+  .outcome-verdict { font-size: 1.9rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; line-height: 1.2; }
+  .outcome-score { font-family: var(--mono); font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.75rem; }
+  .outcome-body { font-family: var(--sans); font-size: 0.92rem; color: var(--text-dim); line-height: 1.65; max-width: 580px; }
+
+  .debrief-breakdown {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+  .breakdown-header {
+    background: var(--surface2); border-bottom: 1px solid var(--border);
+    padding: 0.6rem 1.1rem;
+    font-family: var(--mono); font-size: 0.63rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim);
+  }
+  .breakdown-rows { display: flex; flex-direction: column; }
+  .breakdown-row {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 0.75rem 1.1rem;
+    border-bottom: 1px solid var(--border-l);
+  }
+  .breakdown-row:last-child { border-bottom: none; }
+  .br-slide { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); width: 55px; flex-shrink: 0; }
+  .br-topic { font-family: var(--sans); font-size: 0.85rem; color: var(--text-dim); flex: 1; }
+  .br-picked { font-family: var(--mono); font-size: 0.7rem; color: var(--text); }
+  .br-pts {
+    font-family: var(--mono); font-size: 0.72rem;
+    padding: 0.15rem 0.5rem; border-radius: 3px; flex-shrink: 0;
+  }
+  .br-pts.full { background: rgba(58,158,110,0.15); color: #7dd4a8; }
+  .br-pts.partial { background: rgba(196,154,42,0.15); color: #d4b84a; }
+  .br-pts.zero { background: rgba(184,68,85,0.1); color: #d47d88; }
+
+  .reflection-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--r);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .reflection-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; }
+  .reflection-questions { display: flex; flex-direction: column; gap: 0.65rem; }
+  .reflection-q { font-family: var(--sans); font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; padding-left: 1rem; border-left: 2px solid var(--border); }
+
+  .debrief-actions { display: flex; gap: 0.75rem; margin-top: 2rem; flex-wrap: wrap; }
+  .btn-secondary {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-dim); font-family: var(--sans); font-size: 0.85rem; font-weight: 500;
+    padding: 0.6rem 1.25rem; border-radius: var(--r); cursor: pointer; transition: all 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--teal); color: var(--text); }
+
+  /* ---- FOOTER ---- */
+  #sim-footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 1.5rem; text-align: center;
+    font-family: var(--sans); font-size: 0.75rem; color: var(--muted);
+    max-width: 900px; margin: 0 auto;
+  }
+
+  .fade-in { animation: fadeUp 0.35s ease forwards; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<nav id="topnav">
+  <div class="nav-left">
+    <a class="nav-back" href="../../index.html">← DTSC 520</a>
+    <span class="nav-sep">/</span>
+    <span class="nav-title">Pitch the Viz</span>
+  </div>
+  <div class="nav-right">MOD 05 - VISUALIZATION</div>
+</nav>
+
+<div id="slide-strip">
+  <span class="strip-label">SLIDE</span>
+  <div class="strip-slides" id="stripSlides"></div>
+  <div class="strip-fill"><div class="strip-fill-bar" id="stripFill"></div></div>
+</div>
+
+<div id="main">
+
+  <!-- LANDING -->
+  <div id="screen-landing" class="screen active">
+    <div class="landing-masthead">
+      <div class="masthead-badge">Module 05 - Visualization</div>
+      <h1 class="masthead-title">Pitch the Viz</h1>
+      <p class="masthead-sub">You're live in the Volta Records committee room. Four slides. One artist. Make the data land before the vote.</p>
+      <div class="masthead-meta">
+        <span class="meta-tag">4 slides</span>
+        <span class="meta-tag">live reactions</span>
+        <span class="meta-tag">committee vote</span>
+        <span class="meta-tag">~12 min</span>
+      </div>
+    </div>
+
+    <div class="landing-setup">
+      You're a junior data analyst at <strong>Volta Records</strong>, an independent label. A&R director <strong>Nadia Okafor</strong> has been fighting to sign <strong>Luz</strong>, a singer-songwriter whose debut single "Drift" went viral six months ago. Today Nadia pitches to the investment committee - and she needs your data brief to make the case. You built four slides. They're on the screen. The committee is already in the room.
+    </div>
+
+    <div class="email-artifact">
+      <div class="email-header">
+        <span class="email-icon">📧</span>
+        <div class="email-meta"><strong>Nadia Okafor</strong> → you &middot; 8:54 AM &middot; "Re: Luz deck - quick note"</div>
+      </div>
+      <div class="email-body">
+        <p>Just heads up - Rosa already asked me why slide 1 "doesn't show the full picture." I told her you'd walk through each one. They're watching the data closely on this one.</p>
+        <p>Ben seems engaged which is good. Just don't lose Rosa in the first two minutes or we're done. She respects good analysis. She has no patience for bad charts.</p>
+        <p>See you in there. - N</p>
+      </div>
+    </div>
+
+    <div class="obj-grid">
+      <div class="obj-card"><div class="obj-num">01</div><div class="obj-text">Choose chart types by data structure, not aesthetics</div></div>
+      <div class="obj-card"><div class="obj-num">02</div><div class="obj-text">Recognize when a chart misleads vs. clarifies</div></div>
+      <div class="obj-card"><div class="obj-num">03</div><div class="obj-text">Match the visual to the audience's question</div></div>
+      <div class="obj-card"><div class="obj-num">04</div><div class="obj-text">Spot truncated axes and other distortion traps</div></div>
+      <div class="obj-card"><div class="obj-num">05</div><div class="obj-text">Use scatter plots to show correlation between variables</div></div>
+      <div class="obj-card"><div class="obj-num">06</div><div class="obj-text">Use histograms to reveal distribution shape</div></div>
+    </div>
+
+    <button class="btn-primary" onclick="startSim()">Enter the Room</button>
+  </div>
+
+  <!-- ROOM -->
+  <div id="screen-room" class="screen">
+
+    <div class="stage-panel" id="stagePanel">
+      <!-- injected per slide -->
+    </div>
+
+    <div class="room-panel">
+      <!-- who's in the room -->
+      <div class="char-presence">
+        <div class="char-presence-header">In the Room</div>
+        <div class="char-list">
+          <div class="char-row" id="charNadia">
+            <div class="char-avatar" style="background:#2a9490;" id="avNadia">NO</div>
+            <div class="char-info">
+              <div class="char-name">Nadia Okafor</div>
+              <div class="char-role">A&R Director</div>
+            </div>
+            <div class="char-status watching" id="stNadia">watching</div>
+          </div>
+          <div class="char-row" id="charRosa">
+            <div class="char-avatar" style="background:#7a4a8a;" id="avRosa">RT</div>
+            <div class="char-info">
+              <div class="char-name">Rosa Telles</div>
+              <div class="char-role">CFO</div>
+            </div>
+            <div class="char-status" id="stRosa">quiet</div>
+          </div>
+          <div class="char-row" id="charBen">
+            <div class="char-avatar" style="background:#b87a2a;" id="avBen">BH</div>
+            <div class="char-info">
+              <div class="char-name">Ben Hartley</div>
+              <div class="char-role">Founder</div>
+            </div>
+            <div class="char-status" id="stBen">quiet</div>
+          </div>
+        </div>
+        <div class="score-pips" id="scorePips">
+          <div class="score-pip" id="pip0"></div>
+          <div class="score-pip" id="pip1"></div>
+          <div class="score-pip" id="pip2"></div>
+          <div class="score-pip" id="pip3"></div>
+          <div class="score-pip" id="pip4"></div>
+          <div class="score-pip" id="pip5"></div>
+          <div class="score-pip" id="pip6"></div>
+          <div class="score-pip" id="pip7"></div>
+          <div class="score-pip" id="pip8"></div>
+          <div class="score-pip" id="pip9"></div>
+          <div class="score-pip" id="pip10"></div>
+          <div class="score-pip" id="pip11"></div>
+          <span class="score-pip-label" id="scoreLabel">0 / 12</span>
+        </div>
+      </div>
+
+      <!-- live speech -->
+      <div class="speech-block" id="speechBlock">
+        <div class="speech-header">
+          <div class="speech-avatar" id="speechAvatar" style="background:#2a9490;">NO</div>
+          <div class="speech-name" id="speechName">Nadia Okafor</div>
+        </div>
+        <div class="speech-body" id="speechBody">
+          <span style="color:var(--muted);font-style:italic;font-family:var(--sans);font-size:0.82rem;">Waiting for your chart choice...</span>
+        </div>
+      </div>
+
+      <!-- outcome -->
+      <div class="outcome-card good" id="outcomeGood">
+        <div class="outcome-card-label">Room reads it</div>
+        <span id="outcomeGoodText"></span>
+      </div>
+      <div class="outcome-card warn" id="outcomeWarn">
+        <div class="outcome-card-label">Mixed read</div>
+        <span id="outcomeWarnText"></span>
+      </div>
+      <div class="outcome-card bad" id="outcomeBad">
+        <div class="outcome-card-label">Room loses the thread</div>
+        <span id="outcomeBadText"></span>
+      </div>
+
+      <button class="btn-next-slide" id="btnNextSlide" onclick="nextSlide()">Next Slide &rarr;</button>
+    </div>
+
+  </div>
+
+  <!-- DEBRIEF -->
+  <div id="screen-debrief" class="screen">
+    <!-- injected dynamically -->
+  </div>
+
+</div>
+
+<div id="sim-footer">
+  DTSC 520 &mdash; School of Mathematics and Computational Sciences, Eastern University.
+  Site designed by Eastern University faculty and staff with the assistance of Claude (Anthropic).
+  &copy; Eastern University. All rights reserved.
+</div>
+
+<script>
+// =====================================================================
+// CHART DRAW FUNCTIONS (must be defined before SLIDES array)
+// =====================================================================
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const STREAM_DATA = [1.2,1.4,1.6,1.9,2.1,8.4,6.1,4.3,3.8,3.5,3.6,4.1];
+const TC = { teal:'#2a9490', gold:'#c49a2a', muted:'rgba(90,110,110,0.5)', border:'#2a3030',
+              text:'#9aa0a0', gridLine:'rgba(42,48,48,0.8)' };
+const CHART_DEFAULTS = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { display: false }, tooltip: { enabled: false } },
+  scales: {
+    x: { grid: { color: TC.gridLine }, ticks: { color: TC.text, font: { size: 8, family: 'IBM Plex Mono' } } },
+    y: { grid: { color: TC.gridLine }, ticks: { color: TC.text, font: { size: 8, family: 'IBM Plex Mono' } } }
+  },
+  animation: { duration: 600 }
+};
+
+function mergeDeep(target, source) {
+  for (const key in source) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      if (!target[key]) target[key] = {};
+      mergeDeep(target[key], source[key]);
+    } else {
+      target[key] = source[key];
+    }
+  }
+  return target;
+}
+
+function baseConfig(overrides) {
+  return mergeDeep(JSON.parse(JSON.stringify(CHART_DEFAULTS)), overrides || {});
+}
+
+function drawSlide1A(canvas) {
+  return new Chart(canvas, baseConfig({ type:'line', data: {
+    labels: MONTHS,
+    datasets: [{ data: STREAM_DATA, borderColor: TC.teal, backgroundColor:'rgba(42,148,144,0.08)',
+      borderWidth:2, pointRadius:2, pointBackgroundColor: TC.teal, tension:0.35, fill:true }]
+  }, options: { scales: { y: { min:0, max:9, ticks: { callback: v=>v+'M', color: TC.text, font:{size:8,family:'IBM Plex Mono'} } } } } }));
+}
+
+function drawSlide1B(canvas) {
+  return new Chart(canvas, baseConfig({ type:'bar', data: {
+    labels: MONTHS,
+    datasets: [{ data: STREAM_DATA, backgroundColor: STREAM_DATA.map((_,i)=> i===5?TC.teal:'rgba(42,148,144,0.45)'), borderWidth:0 }]
+  }, options: { scales: { y: { min:3, ticks: { callback: v=>v+'M', color: TC.text, font:{size:8,family:'IBM Plex Mono'} } } } } }));
+}
+
+function drawSlide1C(canvas) {
+  return new Chart(canvas, baseConfig({ type:'pie', data: {
+    labels: MONTHS,
+    datasets: [{ data: STREAM_DATA, backgroundColor:['#2a9490','#c49a2a','#7a4a8a','#b87a2a','#3a9e6e','#b84455','#2a7195','#8B1C40','#3a8f9e','#6a5a3a','#4a7a5a','#9a6a4a'], borderWidth:0 }]
+  }, options: { plugins: { legend: { display:false } }, scales: { x:{display:false}, y:{display:false} } } }));
+}
+
+function drawSlide1D(canvas) {
+  return new Chart(canvas, baseConfig({ type:'bar', data: {
+    labels: MONTHS,
+    datasets: [{ data: STREAM_DATA, backgroundColor: STREAM_DATA.map((_,i)=> i===5?TC.teal:'rgba(42,148,144,0.45)'), borderWidth:0 }]
+  }, options: { scales: { y: { min:0, max:9, ticks: { callback: v=>v+'M', color: TC.text, font:{size:8,family:'IBM Plex Mono'} } } } } }));
+}
+
+function drawSlide2A(canvas) {
+  const w=['Wk 1','Wk 4','Wk 12'];
+  return new Chart(canvas, baseConfig({ type:'bar', data: {
+    labels: w,
+    datasets: [
+      { label:'Luz', data:[12400,9800,8100], backgroundColor:TC.teal, borderWidth:0 },
+      { label:'Maren V.', data:[9200,5400,3200], backgroundColor:'rgba(122,74,138,0.7)', borderWidth:0 },
+      { label:'Theo Blank', data:[14100,8900,6600], backgroundColor:TC.gold, borderWidth:0 }
+    ]
+  }, options: { plugins:{ legend:{display:true, labels:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},boxWidth:10}} },
+    scales: { x:{stacked:false, ticks:{color:TC.text,font:{size:8,family:'IBM Plex Mono'}}}, y:{stacked:false, ticks:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}} } } }));
+}
+
+function drawSlide2B(canvas) {
+  const w=['Wk 1','Wk 4','Wk 12'];
+  return new Chart(canvas, baseConfig({ type:'bar', data: {
+    labels: w,
+    datasets: [
+      { label:'Luz', data:[12400,9800,8100], backgroundColor:TC.teal, borderWidth:0 },
+      { label:'Maren V.', data:[9200,5400,3200], backgroundColor:'rgba(122,74,138,0.7)', borderWidth:0 },
+      { label:'Theo Blank', data:[14100,8900,6600], backgroundColor:TC.gold, borderWidth:0 }
+    ]
+  }, options: { plugins:{ legend:{display:true, labels:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},boxWidth:10}} },
+    scales: { x:{stacked:true, ticks:{color:TC.text,font:{size:8,family:'IBM Plex Mono'}}}, y:{stacked:true, ticks:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}} } } }));
+}
+
+function drawSlide2C(canvas) {
+  const w=['Wk 1','Wk 4','Wk 12'];
+  return new Chart(canvas, baseConfig({ type:'line', data: {
+    labels: w,
+    datasets: [
+      { label:'Luz', data:[12400,9800,8100], borderColor:TC.teal, backgroundColor:'transparent', borderWidth:2, pointRadius:3, tension:0.2 },
+      { label:'Maren V.', data:[9200,5400,3200], borderColor:'rgba(122,74,138,0.9)', backgroundColor:'transparent', borderWidth:2, pointRadius:3, tension:0.2 },
+      { label:'Theo Blank', data:[14100,8900,6600], borderColor:TC.gold, backgroundColor:'transparent', borderWidth:2, pointRadius:3, tension:0.2 }
+    ]
+  }, options: { plugins:{ legend:{display:true, labels:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},boxWidth:10}} },
+    scales: { x:{ticks:{color:TC.text,font:{size:8,family:'IBM Plex Mono'}}}, y:{ticks:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}} } } }));
+}
+
+function drawSlide2D(canvas) {
+  return new Chart(canvas, baseConfig({ type:'pie', data: {
+    labels: ['Luz','Maren V.','Theo Blank'],
+    datasets: [{ data:[12400,9200,14100], backgroundColor:[TC.teal,'rgba(122,74,138,0.8)',TC.gold], borderWidth:0 }]
+  }, options: { plugins:{ legend:{display:true, labels:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},boxWidth:10}} }, scales:{x:{display:false},y:{display:false}} } }));
+}
+
+function drawSlide3A(canvas) {
+  const artists = [{x:42,y:4100},{x:55,y:4800},{x:67,y:5800},{x:78,y:6200},{x:88,y:7100},
+    {x:95,y:8200},{x:104,y:8800},{x:110,y:9400},{x:118,y:10200},{x:125,y:11400},
+    {x:128,y:12400},{x:135,y:11900},{x:142,y:13100},{x:150,y:13800},{x:158,y:14200},
+    {x:165,y:14800},{x:172,y:15100},{x:180,y:15400},{x:190,y:16200},{x:198,y:16800}];
+  const luz = {x:128,y:12400};
+  return new Chart(canvas, baseConfig({ type:'scatter', data: {
+    datasets: [
+      { label:'Artists', data: artists.filter(p=>!(p.x===luz.x&&p.y===luz.y)),
+        backgroundColor:'rgba(42,148,144,0.45)', pointRadius:4, pointHoverRadius:5 },
+      { label:'Luz', data:[luz], backgroundColor:'#c49a2a', pointRadius:7,
+        pointStyle:'star', pointHoverRadius:8 }
+    ]
+  }, options: { plugins:{ legend:{display:true, labels:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},boxWidth:8}} },
+    scales: { x:{title:{display:true,text:'Followers (K)',color:TC.text,font:{size:7,family:'IBM Plex Mono'}},
+      ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'}}},
+      y:{title:{display:true,text:'Wk 1 Sales',color:TC.text,font:{size:7,family:'IBM Plex Mono'}},
+        ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}} } } }));
+}
+
+function drawSlide3B(canvas) {
+  const sales=[4100,4800,5800,6200,7100,8200,8800,9400,10200,11400,12400,11900,13100,13800,14200,14800,15100,15400,16200,16800].sort((a,b)=>a-b);
+  const colors = sales.map(v=>v===12400?TC.gold:'rgba(42,148,144,0.4)');
+  return new Chart(canvas, baseConfig({ type:'bar', data: {
+    labels: sales.map((_,i)=>i===sales.indexOf(12400)?'Luz':''),
+    datasets: [{ data:sales, backgroundColor:colors, borderWidth:0 }]
+  }, options: { scales: { x:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'}}}, y:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}} } } }));
+}
+
+function drawSlide3C(canvas) {
+  const pts=[{x:42,y:4100},{x:55,y:4800},{x:67,y:5800},{x:78,y:6200},{x:88,y:7100},
+    {x:95,y:8200},{x:104,y:8800},{x:110,y:9400},{x:118,y:10200},{x:125,y:11400},
+    {x:128,y:12400},{x:135,y:11900},{x:142,y:13100},{x:150,y:13800},{x:158,y:14200},
+    {x:165,y:14800},{x:172,y:15100},{x:180,y:15400},{x:190,y:16200},{x:198,y:16800}].sort((a,b)=>a.x-b.x);
+  return new Chart(canvas, baseConfig({ type:'line', data: {
+    labels: pts.map(p=>p.x+'K'),
+    datasets: [{ data:pts.map(p=>p.y), borderColor:TC.teal, backgroundColor:'rgba(42,148,144,0.08)',
+      borderWidth:2, pointRadius:2, tension:0.3, fill:true }]
+  }, options: { scales: {
+    x:{title:{display:true,text:'Followers (K)',color:TC.text,font:{size:7}},ticks:{color:TC.text,font:{size:6,family:'IBM Plex Mono'},maxTicksLimit:6}},
+    y:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}} } } }));
+}
+
+function drawSlide3D(canvas) {
+  const followers=[42,55,67,78,88,95,104,110,118,125,128,135,142,150,158,165,172,180,190,198];
+  return new Chart(canvas, baseConfig({ type:'bar', data: {
+    labels: followers.map((v,i)=>i===10?'Luz':''),
+    datasets: [{ data:followers, backgroundColor:followers.map((v,i)=>i===10?TC.gold:'rgba(42,148,144,0.4)'), borderWidth:0 }]
+  }, options: { scales: { x:{ticks:{color:TC.text,font:{size:6}}}, y:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'}}} } } }));
+}
+
+function drawSlide4A(canvas) {
+  const bins=['0-2K','2-4K','4-6K','6-8K','8-10K','10-12K','12-14K','14K+'];
+  const counts=[8,10,9,6,4,2,1,0];
+  const colors=counts.map((_,i)=>i===6?TC.gold:'rgba(42,148,144,0.5)');
+  return new Chart(canvas, baseConfig({ type:'bar', data: {
+    labels:bins,
+    datasets:[{data:counts,backgroundColor:colors,borderWidth:0,borderRadius:2,barPercentage:0.95,categoryPercentage:0.95}]
+  }, options:{ scales:{
+    x:{grid:{display:false},ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'}}},
+    y:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},stepSize:2}} } } }));
+}
+
+function drawSlide4B(canvas) {
+  const allSales=[1200,1800,2100,2400,2600,2800,3000,3100,2200,2500,2900,3200,3400,3500,3600,3800,4000,4100,4200,4400,4500,4600,4800,5000,5200,5400,5600,5800,6000,6200,6500,6800,7200,8000,8500,9000,9500,10200,11400,12400];
+  return new Chart(canvas, baseConfig({ type:'bar', data: {
+    labels:allSales.map((_,i)=>''),
+    datasets:[{data:allSales, backgroundColor:allSales.map(v=>v===12400?TC.gold:'rgba(42,148,144,0.35)'), borderWidth:0}]
+  }, options:{scales:{x:{grid:{display:false},ticks:{display:false}},y:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}}}} }));
+}
+
+function drawSlide4C(canvas) {
+  return new Chart(canvas, baseConfig({ type:'bar', data: {
+    labels:['All Releases'],
+    datasets:[
+      {data:[[1.2,3.1]], backgroundColor:'transparent', borderColor:TC.teal, borderWidth:1, borderSkipped:false},
+      {data:[[3.1,5.1]], backgroundColor:'rgba(42,148,144,0.3)', borderColor:TC.teal, borderWidth:1, borderSkipped:false},
+      {data:[[5.1,8.2]], backgroundColor:'rgba(42,148,144,0.5)', borderColor:TC.teal, borderWidth:1, borderSkipped:false},
+      {data:[[8.2,12.4]], backgroundColor:'transparent', borderColor:TC.teal, borderWidth:1, borderSkipped:false},
+      {type:'scatter', data:[{x:0,y:12.4}], backgroundColor:TC.gold, pointRadius:6, pointStyle:'star'}
+    ]
+  }, options:{indexAxis:'y', scales:{x:{min:0,max:14,ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},callback:v=>v+'K'}},y:{display:false}},
+    plugins:{legend:{display:false}}} }));
+}
+
+function drawSlide4D(canvas) {
+  const allSales=[1200,1800,2100,2400,2600,2800,3000,3100,2200,2500,2900,3200,3400,3500,3600,3800,4000,4100,4200,4400,4500,4600,4800,5000,5200,5400,5600,5800,6000,6200,6500,6800,7200,8000,8500,9000,9500,10200,11400,12400].sort((a,b)=>a-b);
+  return new Chart(canvas, baseConfig({ type:'line', data: {
+    labels:allSales.map((_,i)=>i+1),
+    datasets:[{data:allSales, borderColor:TC.teal, backgroundColor:'rgba(42,148,144,0.08)',
+      borderWidth:2, pointRadius:allSales.map(v=>v===12400?5:1),
+      pointBackgroundColor:allSales.map(v=>v===12400?TC.gold:TC.teal), fill:true, tension:0.2}]
+  }, options:{scales:{
+    x:{title:{display:true,text:'Rank',color:TC.text,font:{size:7}},ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},maxTicksLimit:5}},
+    y:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}}}} }));
+}
+
+// =====================================================================
+// DATA
+// =====================================================================
+
+const SLIDES = [
+  // ---- SLIDE 1: Time series - monthly streams ----
+  {
+    eyebrow: 'Slide 01 of 04 - Trend Over Time',
+    question: '"Show me what Luz\'s streaming numbers look like over the past year."',
+    task: 'You need to show monthly stream counts for Luz over 12 months. The story matters: there\'s a spike after "Drift" dropped, a post-viral decline, and a recent plateau with an uptick. Pick the chart that tells that story honestly.',
+    tableHeader: ['Month', 'Streams (M)'],
+    tableRows: [
+      ['Jan','1.2'],['Feb','1.4'],['Mar','1.6'],['Apr','1.9'],
+      ['May','2.1'],['Jun','8.4'],['Jul','6.1'],['Aug','4.3'],
+      ['Sep','3.8'],['Oct','3.5'],['Nov','3.6'],['Dec','4.1']
+    ],
+    tableNote: '"Drift" released June. Streams in millions.',
+    options: [
+      {
+        letter:'A', label:'Line chart (full y-axis, 0-9M)',
+        type:'line', pts:3,
+        chartFn: drawSlide1A,
+        reaction: {
+          speaker:'nadia', tone:'good',
+          text:'That\'s the honest read. You can see the spike, the plateau, and the uptick in December. Rosa - that stabilization is actually a good sign. Post-viral artists who plateau are building a real base.'
+        },
+        outcome:'good',
+        outcomeText:'The room follows the arc. Rosa nods at the December uptick. The honest y-axis prevents the decline from looking like a cliff.'
+      },
+      {
+        letter:'B', label:'Bar chart (y-axis starts at 3M)',
+        type:'bar-truncated', pts:0,
+        chartFn: drawSlide1B,
+        reaction: {
+          speaker:'rosa', tone:'bad',
+          text:'Why does this axis start at 3 million? June looks like it\'s twenty times bigger than December. That\'s not what the data says. I need the full picture.'
+        },
+        outcome:'bad',
+        outcomeText:'Rosa flags the truncated axis immediately. The room\'s trust in your analysis drops before the pitch has started.'
+      },
+      {
+        letter:'C', label:'Pie chart (each month = one slice)',
+        type:'pie', pts:0,
+        chartFn: drawSlide1C,
+        reaction: {
+          speaker:'ben', tone:'bad',
+          text:'I... what am I looking at? There are twelve slices here. I can\'t tell which direction this is going. Is this going up or down?'
+        },
+        outcome:'bad',
+        outcomeText:'Pie charts can\'t show change over time. The room has no idea whether Luz is trending up or down.'
+      },
+      {
+        letter:'D', label:'Bar chart (full y-axis, 0-9M)',
+        type:'bar-full', pts:2,
+        chartFn: drawSlide1D,
+        reaction: {
+          speaker:'nadia', tone:'warn',
+          text:'Good - the axis is honest at least. But bars make every month look like a separate event. The trend is harder to see. Rosa, you can still see the stabilization in Q4 though.'
+        },
+        outcome:'warn',
+        outcomeText:'Honest but not optimal. Bars work for categorical comparisons - for a continuous time series, the line would have shown the trend more clearly.'
+      }
+    ]
+  },
+
+  // ---- SLIDE 2: Categorical comparison - artist sales ----
+  {
+    eyebrow: 'Slide 02 of 04 - Comparing Artists',
+    question: '"How does Luz compare to similar artists at the same career stage?"',
+    task: 'First-week album sales for Luz and two comparable artists the label signed in the past three years. You want the committee to see where Luz stands. Pick the chart that makes the comparison clearest.',
+    tableHeader: ['Artist', 'Week 1 Sales', 'Week 4 Sales', 'Week 12 Sales'],
+    tableRows: [
+      ['Luz','12,400','9,800','8,100'],
+      ['Maren V.','9,200','5,400','3,200'],
+      ['Theo Blank','14,100','8,900','6,600']
+    ],
+    tableNote: 'Physical + digital combined. Label comps at same career stage.',
+    options: [
+      {
+        letter:'A', label:'Grouped bar chart',
+        type:'grouped-bar', pts:3,
+        chartFn: drawSlide2A,
+        reaction: {
+          speaker:'rosa', tone:'good',
+          text:'Now that I can read. Luz is between Maren and Theo at week one, but look at week four and twelve - her retention curve is better than both. That\'s what matters for a long-term signing.'
+        },
+        outcome:'good',
+        outcomeText:'Rosa finds the insight herself. The grouped bar lets the committee compare across both artists and weeks simultaneously. That\'s the job.'
+      },
+      {
+        letter:'B', label:'Stacked bar chart',
+        type:'stacked-bar', pts:1,
+        chartFn: drawSlide2B,
+        reaction: {
+          speaker:'rosa', tone:'warn',
+          text:'I can see the totals but I can\'t compare the artists week-to-week. What\'s Luz\'s week four number versus Theo\'s? I can\'t read that off a stacked bar.'
+        },
+        outcome:'warn',
+        outcomeText:'Stacked bars show totals well but hide within-group comparisons. Rosa wants to compare trajectories, not totals.'
+      },
+      {
+        letter:'C', label:'Line chart (weeks on x-axis)',
+        type:'line-comp', pts:2,
+        chartFn: drawSlide2C,
+        reaction: {
+          speaker:'ben', tone:'warn',
+          text:'I like this one - you can see Luz\'s line is flatter, meaning she holds better. Though weeks 1, 4, and 12 aren\'t really continuous time. The bars might have been cleaner for this.'
+        },
+        outcome:'warn',
+        outcomeText:'Lines imply continuous change between plotted points - but weeks 1, 4, and 12 are discrete checkpoints. A grouped bar is more honest about the data structure.'
+      },
+      {
+        letter:'D', label:'Pie chart (Week 1 market share)',
+        type:'pie-comp', pts:0,
+        chartFn: drawSlide2D,
+        reaction: {
+          speaker:'rosa', tone:'bad',
+          text:'This only shows week one, and it frames it as market share between three artists - that\'s not what this is. These artists aren\'t competing against each other. And where are weeks four and twelve?'
+        },
+        outcome:'bad',
+        outcomeText:'Pie chart misframes the data as competition and discards the retention story entirely. Rosa is visibly frustrated.'
+      }
+    ]
+  },
+
+  // ---- SLIDE 3: Relationship - followers vs. sales ----
+  {
+    eyebrow: 'Slide 03 of 04 - Finding the Signal',
+    question: '"Is Luz\'s social following actually predictive of sales? Or is it just vanity metrics?"',
+    task: 'You pulled first-week sales and social follower counts for 20 artists across the label\'s catalog. Rosa will ask whether Luz\'s social growth means anything. Pick the chart that answers her question.',
+    tableHeader: ['Sample', 'Followers (K)', 'Week 1 Sales'],
+    tableRows: [
+      ['Artist 1','42','4,100'],['Artist 2','67','5,800'],['Artist 3','95','8,200'],
+      ['Artist 4','110','9,400'],['Luz','128','12,400'],['Artist 6','155','13,100'],
+      ['Artist 7','180','15,400'],['...','...','...']
+    ],
+    tableNote: '20 artists total. Luz highlighted. Full dataset used for chart.',
+    options: [
+      {
+        letter:'A', label:'Scatter plot (followers vs. sales)',
+        type:'scatter', pts:3,
+        chartFn: drawSlide3A,
+        reaction: {
+          speaker:'rosa', tone:'good',
+          text:'Okay. That\'s a real correlation. And Luz is sitting right on the trend line - she\'s not an outlier, she\'s tracking exactly where you\'d expect given her following. That actually makes me more confident, not less.'
+        },
+        outcome:'good',
+        outcomeText:'Rosa finds the answer herself in the pattern. The scatter plot does exactly what it\'s built for: reveal the relationship between two continuous variables.'
+      },
+      {
+        letter:'B', label:'Bar chart (sales by artist, sorted)',
+        type:'bar-ranked', pts:1,
+        chartFn: drawSlide3B,
+        reaction: {
+          speaker:'ben', tone:'warn',
+          text:'So Luz is in the middle of the pack on sales. But this doesn\'t answer the followers question at all. Is her following size unusual for her sales level?'
+        },
+        outcome:'warn',
+        outcomeText:'A ranked bar shows sales levels but can\'t show the relationship between followers and sales. Ben\'s question remains unanswered.'
+      },
+      {
+        letter:'C', label:'Line chart (sales over follower growth)',
+        type:'line-followers', pts:1,
+        chartFn: drawSlide3C,
+        reaction: {
+          speaker:'rosa', tone:'warn',
+          text:'These are 20 different artists - connecting them with a line implies they\'re one thing changing over time. They\'re not. I\'m not sure what this is telling me.'
+        },
+        outcome:'warn',
+        outcomeText:'Line charts imply sequence or continuity. These are independent artists - connecting them with a line is misleading about the data structure.'
+      },
+      {
+        letter:'D', label:'Two separate bar charts side by side',
+        type:'bar-side', pts:1,
+        chartFn: drawSlide3D,
+        reaction: {
+          speaker:'rosa', tone:'warn',
+          text:'I can see the followers chart and the sales chart separately, but I still can\'t tell if they\'re related. Does a higher follower count actually mean higher sales? Two bars can\'t answer that.'
+        },
+        outcome:'warn',
+        outcomeText:'Two separate charts show each variable in isolation but can\'t reveal correlation. The scatter plot is the right tool for this question.'
+      }
+    ]
+  },
+
+  // ---- SLIDE 4: Distribution - where does Luz sit? ----
+  {
+    eyebrow: 'Slide 04 of 04 - The Full Picture',
+    question: '"Where does Luz\'s week-one number sit relative to everything the label has released this year?"',
+    task: 'You have first-week sales for all 40 releases on the label this year. The committee wants to know if 12,400 is good, average, or exceptional. Pick the chart that best shows the distribution and where Luz lands in it.',
+    tableHeader: ['Range', 'Count of Releases'],
+    tableRows: [
+      ['0 - 2,000','8'],['2,001 - 4,000','10'],['4,001 - 6,000','9'],
+      ['6,001 - 8,000','6'],['8,001 - 10,000','4'],['10,001 - 12,000','2'],
+      ['12,001 - 14,000','1 (Luz)'],['14,001+','0']
+    ],
+    tableNote: '40 releases total. Luz: 12,400 units.',
+    options: [
+      {
+        letter:'A', label:'Histogram with Luz annotated',
+        type:'histogram', pts:3,
+        chartFn: drawSlide4A,
+        reaction: {
+          speaker:'ben', tone:'good',
+          text:'Oh, she\'s way out here. Most releases are clustered under 6K and she\'s - what is that, top five percent? That\'s a strong debut number. I didn\'t realize she was that far out on the distribution.'
+        },
+        outcome:'good',
+        outcomeText:'Ben finds the insight immediately. The histogram shows the full shape of the distribution and makes Luz\'s position in it unmistakable.'
+      },
+      {
+        letter:'B', label:'Bar chart (each of 40 releases)',
+        type:'bar-40', pts:0,
+        chartFn: drawSlide4B,
+        reaction: {
+          speaker:'rosa', tone:'bad',
+          text:'There are forty bars here. I can\'t find Luz and I can\'t see what the typical number is. This is just noise.'
+        },
+        outcome:'bad',
+        outcomeText:'40 individual bars is unreadable. The distribution shape is completely lost. Rosa is right - it\'s noise.'
+      },
+      {
+        letter:'C', label:'Box plot (all 40 releases)',
+        type:'boxplot', pts:2,
+        chartFn: drawSlide4C,
+        reaction: {
+          speaker:'rosa', tone:'warn',
+          text:'I can see Luz is an outlier above the upper fence. Box plots are compact but Ben had to ask me what the whiskers meant. For a non-technical room, a histogram might have landed faster.'
+        },
+        outcome:'warn',
+        outcomeText:'Box plot is statistically valid - Luz shows as a clear outlier. But the committee needs a quick read, and the histogram would have been more immediately interpretable for this audience.'
+      },
+      {
+        letter:'D', label:'Line chart (40 releases by rank)',
+        type:'line-rank', pts:1,
+        chartFn: drawSlide4D,
+        reaction: {
+          speaker:'ben', tone:'warn',
+          text:'I can see Luz is high on the curve but the x-axis says "rank" not "number of releases." I\'m not sure what the shape of this curve is telling me about how common her number is versus how rare.'
+        },
+        outcome:'warn',
+        outcomeText:'Ranking the releases and connecting them with a line shows Luz\'s relative position but obscures the shape of the distribution - which is the actual question.'
+      }
+    ]
+  }
+];
+
+// =====================================================================
+// CHARACTERS
+// =====================================================================
+const CHARS = {
+  nadia: { name:'Nadia Okafor', initials:'NO', color:'#2a9490' },
+  rosa:  { name:'Rosa Telles',  initials:'RT', color:'#7a4a8a' },
+  ben:   { name:'Ben Hartley',  initials:'BH', color:'#b87a2a' }
+};
+
+// =====================================================================
+// STATE
+// =====================================================================
+let currentSlide = 0;
+let selectedOption = null;
+let locked = false;
+let totalScore = 0;
+let slideResults = [];
+let activeCharts = [];
+let typewriterTimer = null;
+
+// =====================================================================
+// INIT
+// =====================================================================
+function buildStrip() {
+  const container = document.getElementById('stripSlides');
+  container.innerHTML = '';
+  SLIDES.forEach((_, i) => {
+    if (i > 0) {
+      const conn = document.createElement('div');
+      conn.className = 'strip-connector';
+      container.appendChild(conn);
+    }
+    const dot = document.createElement('div');
+    dot.className = 'strip-slide';
+    dot.id = `stripDot${i}`;
+    dot.textContent = i + 1;
+    container.appendChild(dot);
+  });
+  updateStrip(0);
+}
+
+function updateStrip(idx) {
+  for (let i = 0; i < SLIDES.length; i++) {
+    const dot = document.getElementById(`stripDot${i}`);
+    if (!dot) continue;
+    dot.className = 'strip-slide';
+    if (i < idx) dot.classList.add('done');
+    else if (i === idx) dot.classList.add('active');
+  }
+  document.getElementById('stripFill').style.width = (idx / SLIDES.length * 100) + '%';
+}
+
+function startSim() {
+  buildStrip();
+  currentSlide = 0;
+  totalScore = 0;
+  slideResults = [];
+  showScreen('screen-room');
+  renderSlide(0);
+}
+
+// =====================================================================
+// SLIDE RENDER
+// =====================================================================
+function renderSlide(idx) {
+  const s = SLIDES[idx];
+  locked = false;
+  selectedOption = null;
+
+  // destroy old charts
+  activeCharts.forEach(c => c.destroy());
+  activeCharts = [];
+
+  // reset right panel
+  clearSpeech();
+  hideAllOutcomes();
+  document.getElementById('btnNextSlide').classList.remove('visible');
+  updateStrip(idx);
+  updateCharStatus(null);
+
+  // build stage HTML
+  let tableHTML = `<table class="data-table"><thead><tr>${s.tableHeader.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
+  s.tableRows.forEach(row => {
+    tableHTML += `<tr>${row.map((cell,ci)=>`<td class="${ci>0?'num':''} ${cell==='12,400'||cell==='Luz'?'hi':''}">${cell}</td>`).join('')}</tr>`;
+  });
+  tableHTML += `</tbody></table>`;
+
+  let optionsHTML = `<div class="chart-options">`;
+  s.options.forEach((opt, oi) => {
+    optionsHTML += `
+      <div class="chart-option" id="opt${oi}" onclick="selectOption(${oi})">
+        <div class="chart-option-label">
+          <span class="opt-letter">${opt.letter}</span>${opt.label}
+        </div>
+        <div class="chart-preview"><canvas id="chartCanvas${oi}"></canvas></div>
+      </div>`;
+  });
+  optionsHTML += `</div>`;
+
+  document.getElementById('stagePanel').innerHTML = `
+    <div class="slide-context fade-in">
+      <div class="slide-eyebrow">${s.eyebrow}</div>
+      <div class="slide-question">${s.question}</div>
+      <div class="slide-task">${s.task}</div>
+    </div>
+    <div class="data-block fade-in">
+      <div class="data-block-header">&#128202; Data - ${s.tableNote}</div>
+      ${tableHTML}
+    </div>
+    ${optionsHTML}
+    <button class="btn-lock" id="btnLock" onclick="lockChoice()">Lock In Chart &rarr;</button>
+  `;
+
+  // draw preview charts
+  requestAnimationFrame(() => {
+    s.options.forEach((opt, oi) => {
+      const canvas = document.getElementById(`chartCanvas${oi}`);
+      if (canvas) {
+        const chart = opt.chartFn(canvas);
+        activeCharts.push(chart);
+      }
+    });
+  });
+}
+
+function selectOption(idx) {
+  if (locked) return;
+  selectedOption = idx;
+  document.querySelectorAll('.chart-option').forEach((el, i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+  document.getElementById('btnLock').classList.add('enabled');
+}
+
+// =====================================================================
+// LOCK IN
+// =====================================================================
+function lockChoice() {
+  if (selectedOption === null || locked) return;
+  locked = true;
+
+  const s = SLIDES[currentSlide];
+  const opt = s.options[selectedOption];
+
+  // freeze options
+  document.querySelectorAll('.chart-option').forEach(el => el.classList.add('locked'));
+  document.getElementById('btnLock').style.display = 'none';
+
+  // record result
+  totalScore += opt.pts;
+  slideResults.push({ slide: currentSlide, optIdx: selectedOption, pts: opt.pts, label: opt.label });
+  updateScorePips();
+
+  // char status
+  updateCharStatus(opt.reaction.speaker);
+
+  // typewrite reaction
+  const char = CHARS[opt.reaction.speaker];
+  typeSpeech(char, opt.reaction.text, () => {
+    // after speech finishes, show outcome
+    setTimeout(() => {
+      showOutcome(opt.outcome, opt.outcomeText);
+      document.getElementById('btnNextSlide').classList.add('visible');
+    }, 300);
+  });
+}
+
+// =====================================================================
+// TYPEWRITER
+// =====================================================================
+function typeSpeech(char, text, onComplete) {
+  if (typewriterTimer) clearTimeout(typewriterTimer);
+
+  const avatar = document.getElementById('speechAvatar');
+  const name = document.getElementById('speechName');
+  const body = document.getElementById('speechBody');
+
+  avatar.style.background = char.color;
+  avatar.textContent = char.initials;
+  name.textContent = char.name;
+  body.innerHTML = '<span id="typeTarget"></span><span class="speech-cursor"></span>';
+
+  const target = document.getElementById('typeTarget');
+  let i = 0;
+
+  function tick() {
+    if (i < text.length) {
+      target.textContent += text[i];
+      i++;
+      const delay = (text[i-1] === '.' || text[i-1] === ',' || text[i-1] === '?') ? 120 : 22;
+      typewriterTimer = setTimeout(tick, delay);
+    } else {
+      // remove cursor blink, add static cursor
+      const cursor = body.querySelector('.speech-cursor');
+      if (cursor) cursor.remove();
+      if (onComplete) onComplete();
+    }
+  }
+  tick();
+}
+
+function clearSpeech() {
+  if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
+  document.getElementById('speechAvatar').style.background = '#2a9490';
+  document.getElementById('speechAvatar').textContent = 'NO';
+  document.getElementById('speechName').textContent = 'Nadia Okafor';
+  document.getElementById('speechBody').innerHTML = '<span style="color:var(--muted);font-style:italic;font-family:var(--sans);font-size:0.82rem;">Waiting for your chart choice...</span>';
+}
+
+// =====================================================================
+// HELPERS
+// =====================================================================
+function updateCharStatus(speakerId) {
+  ['nadia','rosa','ben'].forEach(id => {
+    const row = document.getElementById(`char${id.charAt(0).toUpperCase()+id.slice(1)}`);
+    const st = document.getElementById(`st${id.charAt(0).toUpperCase()+id.slice(1)}`);
+    if (id === speakerId) {
+      row.classList.add('speaking');
+      st.textContent = 'speaking';
+      st.className = 'char-status watching';
+    } else {
+      row.classList.remove('speaking');
+      st.textContent = speakerId ? 'listening' : 'quiet';
+      st.className = 'char-status';
+    }
+  });
+}
+
+function showOutcome(type, text) {
+  hideAllOutcomes();
+  const card = document.getElementById('outcome' + type.charAt(0).toUpperCase() + type.slice(1));
+  if (card) {
+    document.getElementById(`outcome${type.charAt(0).toUpperCase()+type.slice(1)}Text`).textContent = text;
+    card.classList.add('visible');
+  }
+}
+
+function hideAllOutcomes() {
+  ['Good','Warn','Bad'].forEach(t => {
+    const el = document.getElementById('outcome'+t);
+    if (el) el.classList.remove('visible');
+  });
+}
+
+function updateScorePips() {
+  let earned = 0;
+  slideResults.forEach(r => { earned += r.pts; });
+  for (let i = 0; i < 12; i++) {
+    const pip = document.getElementById(`pip${i}`);
+    if (!pip) continue;
+    pip.className = 'score-pip' + (i < earned ? ' earned' : '');
+  }
+  document.getElementById('scoreLabel').textContent = earned + ' / 12';
+}
+
+function nextSlide() {
+  if (currentSlide < SLIDES.length - 1) {
+    currentSlide++;
+    renderSlide(currentSlide);
+    window.scrollTo(0, 0);
+  } else {
+    showDebrief();
+  }
+}
+
+// =====================================================================
+// DEBRIEF
+// =====================================================================
+function showDebrief() {
+  activeCharts.forEach(c => c.destroy());
+  activeCharts = [];
+
+  document.getElementById('stripFill').style.width = '100%';
+  for (let i = 0; i < SLIDES.length; i++) {
+    const dot = document.getElementById(`stripDot${i}`);
+    if (dot) { dot.className = 'strip-slide done'; }
+  }
+
+  const pct = Math.round((totalScore / 12) * 100);
+
+  let verdict, verdictBody;
+  if (pct === 100) {
+    verdict = 'Luz gets signed.';
+    verdictBody = 'Every chart was the right tool for the question. Rosa read the data, Ben felt the potential, and Nadia had the room. The committee voted to move forward. You gave them four clean windows into the same story - and the story held up.';
+  } else if (pct >= 75) {
+    verdict = 'Conditional approval.';
+    verdictBody = 'Most of your charts landed. Rosa had a few pointed questions but the overall picture was coherent. The committee approved the deal with a six-month review clause. One or two chart choices muddied the water - review the slides you lost points on.';
+  } else if (pct >= 50) {
+    verdict = 'The vote is split.';
+    verdictBody = 'Ben was on your side but Rosa wasn\'t convinced. Some of your charts forced the committee to work harder than they should have to find the insight. Nadia called a follow-up meeting for next week. The deal isn\'t dead, but it\'s not done either.';
+  } else {
+    verdict = 'Luz doesn\'t get signed today.';
+    verdictBody = 'Rosa flagged too many visualization problems to feel confident in the underlying analysis. "If the charts are this hard to read, what else am I missing?" The data was good. The presentation let it down.';
+  }
+
+  // vote outcomes based on score
+  const nadiaVote = pct >= 50 ? 'yes' : 'yes'; // Nadia always votes yes - she believes in Luz
+  const rosaVote  = pct >= 75 ? 'yes' : pct >= 50 ? 'abstain' : 'no';
+  const benVote   = pct >= 50 ? 'yes' : 'abstain';
+
+  const nadiaReaction = pct >= 75
+    ? '"The data told a clear story. That\'s all I needed."'
+    : pct >= 50
+    ? '"I still believe in Luz. The numbers back it up even if the charts were rough."'
+    : '"I know the data is there. We just didn\'t show it right."';
+
+  const rosaReaction = pct === 100
+    ? '"The retention curve on slide two alone sold me. That\'s a real artist."'
+    : pct >= 75
+    ? '"Some of these charts made me work harder than I should have. But the fundamentals are solid."'
+    : pct >= 50
+    ? '"I\'m not comfortable making a decision based on this presentation. Come back with cleaner charts."'
+    : '"I can\'t vote yes on an analysis I can\'t read. Fix the visualization and resubmit."';
+
+  const benReaction = pct >= 75
+    ? '"She\'s building something real. The social trajectory makes me optimistic."'
+    : pct >= 50
+    ? '"I\'m in, but Rosa\'s reservations are fair. The data story needs work."'
+    : '"I liked the artist but I couldn\'t get past the charts. Hard to commit without clarity."';
+
+  // breakdown rows
+  const breakdownHTML = slideResults.map(r => {
+    const s = SLIDES[r.slide];
+    const ptsClass = r.pts === 3 ? 'full' : r.pts > 0 ? 'partial' : 'zero';
+    return `<div class="breakdown-row">
+      <div class="br-slide">Slide ${r.slide+1}</div>
+      <div class="br-topic">${s.eyebrow.split(' - ')[1]}</div>
+      <div class="br-picked">${s.options[r.optIdx].label}</div>
+      <div class="br-pts ${ptsClass}">${r.pts}/3</div>
+    </div>`;
+  }).join('');
+
+  const voteLabel = v => v === 'yes' ? '<span class="vote-badge yes">Yes</span>' : v === 'no' ? '<span class="vote-badge no">No</span>' : '<span class="vote-badge abstain">Abstain</span>';
+
+  document.getElementById('screen-debrief').innerHTML = `
+    <div class="outcome-banner fade-in">
+      <div class="outcome-eyebrow">Committee Decision</div>
+      <div class="outcome-verdict">${verdict}</div>
+      <div class="outcome-score">${totalScore} / 12 pts &middot; ${pct}%</div>
+      <div class="outcome-body">${verdictBody}</div>
+    </div>
+
+    <div class="vote-section">
+      <div class="vote-header">How the room voted</div>
+      <div class="vote-cards">
+        <div class="vote-card" id="vcard0">
+          <div class="vote-card-avatar" style="background:#2a9490;">NO</div>
+          <div class="vote-card-name">Nadia Okafor</div>
+          <div class="vote-card-role">A&R Director</div>
+          <div class="vote-card-reaction">${nadiaReaction}</div>
+          ${voteLabel(nadiaVote)}
+        </div>
+        <div class="vote-card" id="vcard1">
+          <div class="vote-card-avatar" style="background:#7a4a8a;">RT</div>
+          <div class="vote-card-name">Rosa Telles</div>
+          <div class="vote-card-role">CFO</div>
+          <div class="vote-card-reaction">${rosaReaction}</div>
+          ${voteLabel(rosaVote)}
+        </div>
+        <div class="vote-card" id="vcard2">
+          <div class="vote-card-avatar" style="background:#b87a2a;">BH</div>
+          <div class="vote-card-name">Ben Hartley</div>
+          <div class="vote-card-role">Founder</div>
+          <div class="vote-card-reaction">${benReaction}</div>
+          ${voteLabel(benVote)}
+        </div>
+      </div>
+    </div>
+
+    <div class="debrief-breakdown">
+      <div class="breakdown-header">Slide Breakdown</div>
+      <div class="breakdown-rows">${breakdownHTML}</div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-label">Reflect</div>
+      <div class="reflection-questions">
+        <div class="reflection-q">On slide 1, a truncated y-axis bar chart would have made the post-viral decline look catastrophic. How does axis choice change the story a chart tells?</div>
+        <div class="reflection-q">Slide 3 asks whether social following predicts sales. Why is a scatter plot the right tool for that question, and what would a bar chart fail to show?</div>
+        <div class="reflection-q">Rosa said "I can\'t vote yes on an analysis I can\'t read." What responsibility does the analyst have for the reader\'s ability to interpret a chart?</div>
+        <div class="reflection-q">If you had to redo one slide, which would it be and why?</div>
+      </div>
+    </div>
+
+    <div class="debrief-actions">
+      <button class="btn-primary" onclick="window.location.href='../../index.html'">Back to Course Home</button>
+      <button class="btn-secondary" onclick="restartSim()">Retake Simulation</button>
+    </div>
+  `;
+
+  showScreen('screen-debrief');
+  window.scrollTo(0, 0);
+
+  // animate vote cards in sequence
+  setTimeout(() => { document.getElementById('vcard0').classList.add('revealed'); }, 400);
+  setTimeout(() => { document.getElementById('vcard1').classList.add('revealed'); }, 900);
+  setTimeout(() => { document.getElementById('vcard2').classList.add('revealed'); }, 1400);
+}
+
+// =====================================================================
+// UTILS
+// =====================================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function restartSim() {
+  totalScore = 0;
+  slideResults = [];
+  currentSlide = 0;
+  selectedOption = null;
+  locked = false;
+  showScreen('screen-landing');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

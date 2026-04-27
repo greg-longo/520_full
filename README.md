@@ -17,6 +17,7 @@ This site provides students with module content, quizzes, interactive Python san
 - **Python Field Training** - Hands-on Python fundamentals with real in-browser code execution (Module 2)
 - **The Dirty Dataset** - Data cleaning role-play set in a sports analytics context (Module 4)
 - **Debug the Pipeline** - Diagnose a broken pandas pipeline from live DataFrame output (Module 4)
+- **Pitch the Viz** - Live committee room chart-selection sim set in a music label (Module 5)
 - **The Branch Crisis** - Git branching and merge conflict scenario (Module 6)
 
 ---
