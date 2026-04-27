@@ -12,10 +12,12 @@ This site provides students with module content, quizzes, interactive Python san
 
 ### Simulations
 
-- **The Dirty Dataset** - Data cleaning role-play set in a sports analytics context (Module 4)
+- **The Morning Brief** - DS lifecycle role-play set in a healthcare analytics context (Module 1)
+- **Find Your Path** - Career assessment quiz mapping instincts to one of 6 data roles (Module 1)
 - **Python Field Training** - Hands-on Python fundamentals with real in-browser code execution (Module 2)
-- **The Branch Crisis** - Git branching and merge conflict scenario (Module 6)
+- **The Dirty Dataset** - Data cleaning role-play set in a sports analytics context (Module 4)
 - **Debug the Pipeline** - Diagnose a broken pandas pipeline from live DataFrame output (Module 4)
+- **The Branch Crisis** - Git branching and merge conflict scenario (Module 6)
 
 ---
 
