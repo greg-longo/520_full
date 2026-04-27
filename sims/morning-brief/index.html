@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Morning Brief - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue: #2A7195;
+      --blue-light: #3d8fb5;
+      --blue-dim: rgba(42,113,149,0.12);
+      --blue-border: rgba(42,113,149,0.3);
+      --maroon: #8B1C40;
+      --green: #3e8f5e;
+      --green-light: #52b87a;
+      --red: #a03030;
+      --red-light: #c04848;
+      --amber: #b07830;
+      --amber-light: #d4983e;
+      --bg: #0e0d0b;
+      --bg-panel: #131210;
+      --bg-card: #1a1815;
+      --bg-card2: #201e1c;
+      --bg-input: #0f0e0c;
+      --text: #ddd8d0;
+      --text-dim: #948e86;
+      --text-bright: #f0ece6;
+      --border: #2a2825;
+      --border-l: #1e1c1a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+
+    /* ---- TOPBAR ---- */
+    .topbar {
+      background: var(--bg-panel); border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem; height: 50px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; position: sticky; top: 0; z-index: 200;
+    }
+    .tb-left { display: flex; align-items: center; gap: 1rem; }
+    .tb-back {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      color: var(--text-dim); text-decoration: none; letter-spacing: 0.05em;
+      border: 1px solid var(--border); padding: 0.2rem 0.6rem; border-radius: 3px;
+      transition: all 0.15s;
+    }
+    .tb-back:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+    .tb-title {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      color: var(--text-dim); letter-spacing: 0.06em;
+    }
+    .tb-title span { color: var(--blue-light); }
+    .tb-right { display: flex; align-items: center; gap: 1rem; }
+    .tb-score {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--text-dim); letter-spacing: 0.04em;
+    }
+    .tb-score strong { color: var(--text-bright); }
+    .tb-time {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      color: var(--amber-light); letter-spacing: 0.05em;
+      background: rgba(176,120,48,0.1); border: 1px solid rgba(176,120,48,0.2);
+      padding: 0.2rem 0.6rem; border-radius: 3px;
+    }
+
+    /* ---- LANDING ---- */
+    #landing {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+    .landing-card {
+      max-width: 680px; width: 100%;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-top: 3px solid var(--blue); border-radius: 4px;
+      padding: 2.5rem;
+    }
+    .landing-eyebrow {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--blue-light); margin-bottom: 1rem;
+    }
+    .landing-card h1 {
+      font-family: 'Zilla Slab', serif; font-size: 2rem; font-weight: 700;
+      color: var(--text-bright); margin-bottom: 0.5rem; line-height: 1.2;
+    }
+    .landing-card .lc-sub {
+      font-size: 0.92rem; color: var(--text-dim); margin-bottom: 1.5rem; line-height: 1.6;
+    }
+    .brief-box {
+      background: var(--bg-input); border: 1px solid var(--border);
+      border-left: 3px solid var(--amber); border-radius: 4px;
+      padding: 1.25rem 1.5rem; margin-bottom: 1.75rem;
+    }
+    .brief-box .bb-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber-light);
+      margin-bottom: 0.6rem;
+    }
+    .brief-box p { font-size: 0.9rem; line-height: 1.6; color: var(--text); }
+    .brief-box p + p { margin-top: 0.5rem; }
+    .lc-meta {
+      display: flex; gap: 2rem; margin-bottom: 1.75rem; flex-wrap: wrap;
+    }
+    .lc-meta-item { display: flex; flex-direction: column; gap: 0.2rem; }
+    .lc-meta-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim);
+    }
+    .lc-meta-val { font-size: 0.88rem; color: var(--text-bright); font-weight: 500; }
+    .start-btn {
+      background: var(--blue); color: #fff; border: none;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem;
+      letter-spacing: 0.06em; padding: 0.75rem 2rem; border-radius: 4px;
+      cursor: pointer; transition: background 0.15s; width: 100%;
+    }
+    .start-btn:hover { background: var(--blue-light); }
+
+    /* ---- SIM LAYOUT ---- */
+    #sim { flex: 1; display: none; flex-direction: column; }
+
+    /* Stage progress rail */
+    .stage-rail {
+      background: var(--bg-panel); border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem; display: flex; align-items: center; gap: 0; overflow-x: auto;
+      scrollbar-width: none; flex-shrink: 0;
+    }
+    .stage-rail::-webkit-scrollbar { display: none; }
+    .rail-stage {
+      display: flex; align-items: center; gap: 0; flex-shrink: 0;
+    }
+    .rail-step {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1rem; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem; letter-spacing: 0.05em; color: var(--text-dim);
+      border-bottom: 2px solid transparent; white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .rail-step.active { color: var(--blue-light); border-bottom-color: var(--blue); }
+    .rail-step.done { color: var(--green-light); border-bottom-color: var(--green); }
+    .rail-step.done .rs-num { background: var(--green); color: #fff; }
+    .rail-step.active .rs-num { background: var(--blue); color: #fff; }
+    .rs-num {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); display: flex; align-items: center;
+      justify-content: center; font-size: 0.6rem; font-weight: 700;
+      flex-shrink: 0; transition: all 0.2s;
+    }
+    .rail-arrow {
+      color: var(--border); font-size: 0.7rem; padding: 0 0.1rem;
+      flex-shrink: 0;
+    }
+
+    /* Main sim area */
+    .sim-body {
+      flex: 1; display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 0; align-items: start;
+      overflow: hidden;
+    }
+
+    /* Left: scenario */
+    .scenario-col {
+      padding: 2rem 2rem 2rem 2rem;
+      border-right: 1px solid var(--border);
+      overflow-y: auto; height: calc(100vh - 100px);
+    }
+    .scenario-header {
+      display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;
+    }
+    .stage-badge {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      background: var(--blue-dim); color: var(--blue-light);
+      border: 1px solid var(--blue-border); padding: 0.2rem 0.6rem; border-radius: 3px;
+    }
+    .stage-name {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--text-dim); letter-spacing: 0.04em;
+    }
+
+    .scenario-col h2 {
+      font-family: 'Zilla Slab', serif; font-size: 1.5rem; font-weight: 700;
+      color: var(--text-bright); margin-bottom: 0.75rem; line-height: 1.3;
+    }
+
+    /* Message/email blocks */
+    .msg-block {
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 4px; padding: 1rem 1.25rem; margin-bottom: 1rem;
+    }
+    .msg-header {
+      display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem;
+    }
+    .msg-avatar {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--blue); display: flex; align-items: center;
+      justify-content: center; font-size: 0.7rem; font-weight: 700;
+      color: #fff; flex-shrink: 0; font-family: 'IBM Plex Sans', sans-serif;
+    }
+    .msg-avatar.red { background: var(--maroon); }
+    .msg-avatar.amber { background: var(--amber); }
+    .msg-meta { display: flex; flex-direction: column; gap: 0.1rem; }
+    .msg-from { font-size: 0.82rem; font-weight: 600; color: var(--text-bright); }
+    .msg-time { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; color: var(--text-dim); }
+    .msg-body { font-size: 0.88rem; line-height: 1.6; color: var(--text); }
+    .msg-body strong { color: var(--text-bright); }
+
+    .data-preview {
+      background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: 4px; overflow: hidden; margin-bottom: 1rem;
+    }
+    .dp-header {
+      background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border);
+      padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .dp-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim);
+    }
+    .dp-rows { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; color: var(--blue-light); margin-left: auto; }
+    .dp-table { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; }
+    .dp-table th { padding: 0.4rem 0.75rem; text-align: left; color: var(--text-dim); border-bottom: 1px solid var(--border); font-weight: 500; font-size: 0.68rem; letter-spacing: 0.04em; }
+    .dp-table td { padding: 0.35rem 0.75rem; color: var(--text); border-bottom: 1px solid var(--border-l); }
+    .dp-table tr:last-child td { border-bottom: none; }
+    .dp-table td.v-num { color: #7ab8d4; }
+    .dp-table td.v-str { color: #d4a87a; }
+    .dp-table td.v-nan { color: var(--red-light); font-style: italic; }
+    .dp-table td.v-flag { color: var(--amber-light); }
+
+    .narrative-p {
+      font-size: 0.92rem; line-height: 1.65; color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+    .narrative-p strong { color: var(--text-bright); }
+
+    .callout-warn {
+      background: rgba(176,120,48,0.08); border: 1px solid rgba(176,120,48,0.2);
+      border-left: 3px solid var(--amber); border-radius: 4px;
+      padding: 0.85rem 1rem; margin-bottom: 1rem;
+      font-size: 0.86rem; line-height: 1.55; color: var(--text);
+    }
+    .callout-warn .cw-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--amber-light);
+      margin-bottom: 0.35rem;
+    }
+
+    /* Right: decision panel */
+    .decision-col {
+      padding: 1.5rem; overflow-y: auto;
+      height: calc(100vh - 100px); background: var(--bg-panel);
+    }
+    .decision-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim);
+      margin-bottom: 0.75rem;
+    }
+    .decision-q {
+      font-family: 'Zilla Slab', serif; font-size: 1rem; font-weight: 600;
+      color: var(--text-bright); line-height: 1.4; margin-bottom: 1.25rem;
+    }
+
+    .choice-btn {
+      width: 100%; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.9rem 1rem; margin-bottom: 0.6rem;
+      text-align: left; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: flex-start; gap: 0.65rem;
+    }
+    .choice-btn:hover:not(:disabled) { border-color: var(--blue); background: var(--blue-dim); }
+    .choice-btn:disabled { cursor: default; }
+    .choice-btn.selected-correct { border-color: var(--green); background: rgba(62,143,94,0.1); }
+    .choice-btn.selected-wrong { border-color: var(--red-light); background: rgba(160,48,48,0.1); }
+    .choice-btn.reveal-correct { border-color: var(--green); background: rgba(62,143,94,0.07); }
+    .choice-letter {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; font-weight: 700;
+      width: 20px; height: 20px; border-radius: 3px;
+      background: rgba(255,255,255,0.07); color: var(--text-dim);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      margin-top: 1px; transition: all 0.15s;
+    }
+    .selected-correct .choice-letter { background: var(--green); color: #fff; }
+    .selected-wrong .choice-letter { background: var(--red-light); color: #fff; }
+    .reveal-correct .choice-letter { background: var(--green); color: #fff; }
+    .choice-text { font-size: 0.85rem; line-height: 1.5; color: var(--text); }
+    .choice-btn.selected-correct .choice-text { color: var(--text-bright); }
+
+    .feedback-block {
+      display: none; background: var(--bg-card);
+      border: 1px solid var(--border); border-radius: 4px;
+      padding: 1rem; margin-top: 0.5rem; margin-bottom: 1rem;
+    }
+    .feedback-block.show { display: block; }
+    .fb-verdict {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+    .fb-verdict.correct { color: var(--green-light); }
+    .fb-verdict.wrong { color: var(--red-light); }
+    .fb-verdict.partial { color: var(--amber-light); }
+    .fb-text { font-size: 0.83rem; line-height: 1.55; color: var(--text); }
+    .fb-text strong { color: var(--text-bright); }
+
+    .next-btn {
+      width: 100%; background: var(--blue); color: #fff; border: none;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      letter-spacing: 0.06em; padding: 0.7rem; border-radius: 4px;
+      cursor: pointer; transition: background 0.15s; display: none;
+      margin-top: 0.5rem;
+    }
+    .next-btn:hover { background: var(--blue-light); }
+    .next-btn.show { display: block; }
+
+    /* Consequence strip - shows after wrong answer */
+    .consequence {
+      display: none; background: rgba(160,48,48,0.08);
+      border: 1px solid rgba(160,48,48,0.25); border-left: 3px solid var(--red-light);
+      border-radius: 4px; padding: 0.75rem 1rem; margin-top: 0.5rem;
+      font-size: 0.82rem; line-height: 1.5; color: var(--text);
+    }
+    .consequence.show { display: block; }
+    .consequence .cq-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--red-light); margin-bottom: 0.3rem;
+    }
+
+    /* ---- RESULTS ---- */
+    #results { flex: 1; display: none; padding: 3rem 1.5rem; overflow-y: auto; }
+    .results-inner { max-width: 700px; margin: 0 auto; }
+    .results-header {
+      text-align: center; margin-bottom: 2.5rem;
+      padding-bottom: 2rem; border-bottom: 1px solid var(--border);
+    }
+    .results-eyebrow {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.14em; color: var(--blue-light);
+      margin-bottom: 0.75rem;
+    }
+    .results-header h2 {
+      font-family: 'Zilla Slab', serif; font-size: 2rem; font-weight: 700;
+      color: var(--text-bright); margin-bottom: 0.5rem;
+    }
+    .results-rank {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem;
+      color: var(--blue-light); letter-spacing: 0.06em; margin-bottom: 0.5rem;
+    }
+    .results-score-big {
+      font-family: 'IBM Plex Mono', monospace; font-size: 3rem;
+      font-weight: 500; color: var(--text-bright); line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+    .results-score-big span { font-size: 1.5rem; color: var(--text-dim); }
+    .results-summary { font-size: 0.92rem; color: var(--text-dim); line-height: 1.6; max-width: 480px; margin: 0 auto; }
+
+    .breakdown-table {
+      width: 100%; border-collapse: collapse; margin-bottom: 2rem;
+    }
+    .breakdown-table th {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim);
+      padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); text-align: left;
+    }
+    .breakdown-table td {
+      padding: 0.75rem; font-size: 0.86rem; border-bottom: 1px solid var(--border-l);
+      vertical-align: top;
+    }
+    .breakdown-table td.bt-stage {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--blue-light); white-space: nowrap;
+    }
+    .breakdown-table td.bt-pts { font-weight: 600; color: var(--text-bright); text-align: center; }
+    .breakdown-table td.bt-pts.full { color: var(--green-light); }
+    .breakdown-table td.bt-pts.zero { color: var(--red-light); }
+    .breakdown-table td.bt-pts.partial { color: var(--amber-light); }
+
+    .results-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; }
+    .ra-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; letter-spacing: 0.05em;
+      padding: 0.65rem 1.5rem; border-radius: 4px; cursor: pointer; transition: all 0.15s;
+      text-decoration: none; border: 1px solid var(--border); color: var(--text-dim);
+      background: transparent;
+    }
+    .ra-btn:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+    .ra-btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .ra-btn.primary:hover { background: var(--blue-light); }
+
+    @media (max-width: 760px) {
+      .sim-body { grid-template-columns: 1fr; }
+      .decision-col { height: auto; border-top: 1px solid var(--border); }
+      .scenario-col { height: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-left">
+      <a class="tb-back" href="../../index.html">- Course Home</a>
+      <span class="tb-title">MODULE 01 &nbsp;/&nbsp; <span>The Morning Brief</span></span>
+    </div>
+    <div class="tb-right">
+      <span class="tb-score">Score: <strong id="scoreDisplay">0 / 18</strong></span>
+      <span class="tb-time" id="clockDisplay">8:00 AM</span>
+    </div>
+  </div>
+
+  <!-- LANDING -->
+  <div id="landing">
+    <div class="landing-card">
+      <div class="landing-eyebrow">Module 01 - Simulation</div>
+      <h1>The Morning Brief</h1>
+      <p class="lc-sub">You're a junior data scientist at Meridian Health Consulting. An urgent request just came in. Walk the full data science lifecycle - from defining the question to communicating findings - before the client meeting at noon.</p>
+
+      <div class="brief-box">
+        <div class="bb-label">Incoming - 8:02 AM</div>
+        <p><strong>From:</strong> Dr. Priya Nair, VP of Analytics</p>
+        <p>"We just got an urgent ask from Riverside Community Hospital. They've seen a spike in 30-day readmissions this quarter and the board wants answers by noon. I need you to lead the analysis. Six stages - do not skip any of them. The last team that skipped question definition spent three days answering the wrong question."</p>
+      </div>
+
+      <div class="lc-meta">
+        <div class="lc-meta-item">
+          <span class="lc-meta-label">Stages</span>
+          <span class="lc-meta-val">6</span>
+        </div>
+        <div class="lc-meta-item">
+          <span class="lc-meta-label">Max Score</span>
+          <span class="lc-meta-val">18 pts</span>
+        </div>
+        <div class="lc-meta-item">
+          <span class="lc-meta-label">Deadline</span>
+          <span class="lc-meta-val">Noon</span>
+        </div>
+        <div class="lc-meta-item">
+          <span class="lc-meta-label">Module</span>
+          <span class="lc-meta-val">DS Lifecycle + 6-Step Framework</span>
+        </div>
+      </div>
+
+      <button class="start-btn" onclick="startSim()">Begin Analysis</button>
+    </div>
+  </div>
+
+  <!-- SIM -->
+  <div id="sim">
+
+    <!-- Stage progress rail -->
+    <div class="stage-rail" id="stageRail"></div>
+
+    <!-- Main body -->
+    <div class="sim-body">
+
+      <!-- Left: scenario -->
+      <div class="scenario-col" id="scenarioCol"></div>
+
+      <!-- Right: decision -->
+      <div class="decision-col" id="decisionCol"></div>
+
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results"></div>
+
+  <script>
+    // ---- DATA ----
+    const STAGES = [
+      { label: 'ASK', name: 'Define the Question' },
+      { label: 'ACQUIRE', name: 'Get the Data' },
+      { label: 'CLEAN', name: 'Prepare the Data' },
+      { label: 'EXPLORE', name: 'Understand the Data' },
+      { label: 'MODEL', name: 'Analyze & Interpret' },
+      { label: 'COMMUNICATE', name: 'Present Findings' },
+    ];
+
+    const QUESTIONS = [
+
+      // ---- STAGE 1: ASK ----
+      {
+        stage: 0,
+        scenario: `
+          <div class="scenario-header">
+            <span class="stage-badge">Stage 1</span>
+            <span class="stage-name">Define the Question</span>
+          </div>
+          <h2>What are we actually trying to answer?</h2>
+          <div class="msg-block">
+            <div class="msg-header">
+              <div class="msg-avatar red">PN</div>
+              <div class="msg-meta">
+                <span class="msg-from">Dr. Priya Nair</span>
+                <span class="msg-time">8:06 AM</span>
+              </div>
+            </div>
+            <div class="msg-body">
+              "Riverside wants to know why readmissions are up. Before you touch the data, I need you to define the question precisely. The board will ask what decision this analysis is meant to inform. Make sure your question is answerable and specific."
+            </div>
+          </div>
+          <p class="narrative-p">The hospital has shared that their 30-day readmission rate jumped from 12% to 17% this quarter. The board meets at noon and wants to act on your findings. Before opening any dataset, you need to frame the right question.</p>
+          <div class="callout-warn">
+            <div class="cw-label">Reminder from Dr. Nair's onboarding doc</div>
+            "What decision will this analysis inform, and what would a good answer look like? If you can't answer those two questions first, stop and ask."
+          </div>
+        `,
+        question: 'Which question should frame your analysis?',
+        choices: [
+          { letter: 'A', text: 'Why are readmissions going up at Riverside this quarter?' },
+          { letter: 'B', text: 'Which patient groups admitted in Q3 have the highest 30-day readmission rate, and what discharge factors are associated with those readmissions?' },
+          { letter: 'C', text: 'How do Riverside\'s readmission rates compare to national benchmarks?' },
+          { letter: 'D', text: 'What is the average length of stay for readmitted patients?' },
+        ],
+        correct: 1,
+        maxPts: 3,
+        feedback: {
+          correct: { verdict: 'correct', text: '<strong>Exactly right.</strong> This question is specific (Q3 patients), identifies a measurable outcome (30-day readmission rate), and asks about actionable factors (discharge conditions). The board can act on this answer. It passes the "what decision does this inform?" test.' },
+          wrong: [
+            { verdict: 'wrong', text: '<strong>"Why are readmissions going up?"</strong> is not specific enough to be answerable with data. "Why" questions are exploratory starting points, not analysis questions. You need to specify: which patients, which time period, and what factors you\'re examining.' },
+            { verdict: 'partial', text: '<strong>Benchmarking is useful context,</strong> but it doesn\'t answer the board\'s question. They want to understand their own patients - not where they rank nationally. This would make a good supporting slide, not the core analysis.' },
+            { verdict: 'wrong', text: '<strong>Length of stay is a metric,</strong> not the question the board is asking. Knowing the average LOS of readmitted patients doesn\'t tell you why readmissions happened or who is at risk - which is what the hospital needs to act.' },
+          ]
+        },
+        consequence: {
+          A: 'You spend 45 minutes pulling data before Dr. Nair flags that "why" can\'t be answered with the datasets available. You restart with a narrower question - losing time before the noon meeting.',
+          C: 'You prepare a benchmarking slide. The board says "that\'s interesting, but we already know we\'re above average - what do we do about it?" The core question is still unanswered.',
+          D: 'You produce a clean LOS analysis. The board asks: "Who is most likely to be readmitted, and why?" Back to square one.',
+        }
+      },
+
+      // ---- STAGE 2: ACQUIRE ----
+      {
+        stage: 1,
+        scenario: `
+          <div class="scenario-header">
+            <span class="stage-badge">Stage 2</span>
+            <span class="stage-name">Get the Data</span>
+          </div>
+          <h2>What data do you actually need?</h2>
+          <div class="msg-block">
+            <div class="msg-header">
+              <div class="msg-avatar amber">KL</div>
+              <div class="msg-meta">
+                <span class="msg-from">Kenji Lora, Data Engineer</span>
+                <span class="msg-time">8:31 AM</span>
+              </div>
+            </div>
+            <div class="msg-body">
+              "Hey - I have access to several Riverside datasets. Tell me exactly what to pull so I don't waste time running queries on the wrong tables. What do you need to answer your question about Q3 readmissions and discharge factors?"
+            </div>
+          </div>
+          <p class="narrative-p">You have access to four datasets. Your question is: <strong>Which Q3 patients have the highest 30-day readmission rate, and what discharge factors are associated with those readmissions?</strong></p>
+          <div class="data-preview">
+            <div class="dp-header">
+              <span class="dp-label">Available Datasets</span>
+            </div>
+            <table class="dp-table">
+              <thead><tr><th>Dataset</th><th>Contents</th><th>Size</th></tr></thead>
+              <tbody>
+                <tr><td class="v-str">admissions_q3.csv</td><td class="v-str">Patient ID, admit date, diagnosis, ward, LOS</td><td class="v-num">4,200 rows</td></tr>
+                <tr><td class="v-str">discharge_notes.csv</td><td class="v-str">Patient ID, discharge date, follow-up scheduled, discharge condition score</td><td class="v-num">4,180 rows</td></tr>
+                <tr><td class="v-str">readmissions_all.csv</td><td class="v-str">Patient ID, readmit date, days since discharge (all years)</td><td class="v-num">38,000 rows</td></tr>
+                <tr><td class="v-str">staff_schedules.csv</td><td class="v-str">Shift times, ward assignments, staff-to-patient ratios</td><td class="v-num">900 rows</td></tr>
+              </tbody>
+            </table>
+          </div>
+        `,
+        question: 'Which datasets should you request from Kenji?',
+        choices: [
+          { letter: 'A', text: 'All four - more data is always better, and you can filter later.' },
+          { letter: 'B', text: 'admissions_q3.csv and discharge_notes.csv only - you need admission context and discharge factors but no readmission data yet.' },
+          { letter: 'C', text: 'admissions_q3.csv, discharge_notes.csv, and readmissions_all.csv - you need to link Q3 admissions to their discharge factors and whether they were readmitted within 30 days.' },
+          { letter: 'D', text: 'readmissions_all.csv only - the readmissions file has everything you need.' },
+        ],
+        correct: 2,
+        maxPts: 3,
+        feedback: {
+          correct: { verdict: 'correct', text: '<strong>Good data scoping.</strong> You need admissions to identify Q3 patients, discharge notes for the factors you\'re testing, and readmissions to determine who came back within 30 days. Staff schedules are interesting but not part of the question you defined - pulling them now adds noise and query time.' },
+          wrong: [
+            { verdict: 'partial', text: '<strong>"More data is always better"</strong> is a common trap. Pulling staff schedules means Kenji runs unnecessary queries and you have irrelevant columns to ignore. Focused data requests show you understand your own question.' },
+            { verdict: 'wrong', text: '<strong>You\'re missing the outcome variable.</strong> Without readmissions_all.csv (filtered to 30-day windows), you can\'t determine which patients were actually readmitted. You\'d have admission and discharge data but no way to link it to the outcome you\'re studying.' },
+            { verdict: 'wrong', text: '<strong>The readmissions file has no discharge factors.</strong> It only contains patient ID, readmit date, and days since discharge. You can\'t answer "what discharge factors are associated with readmissions" without the discharge_notes.csv.' },
+          ]
+        },
+        consequence: {
+          A: 'Kenji pulls all four tables. You spend 30 minutes figuring out that staff schedules aren\'t relevant - and Dr. Nair notes in the debrief that unfocused data requests are a junior-level mistake.',
+          B: 'Your analysis has admission context and discharge factors, but you can\'t identify which patients were readmitted. The core outcome variable is missing.',
+          D: 'You can identify readmissions, but have no discharge factors to correlate them with. The board\'s question - what factors predict readmission - is unanswerable.',
+        }
+      },
+
+      // ---- STAGE 3: CLEAN ----
+      {
+        stage: 2,
+        scenario: `
+          <div class="scenario-header">
+            <span class="stage-badge">Stage 3</span>
+            <span class="stage-name">Prepare the Data</span>
+          </div>
+          <h2>The data arrived. It needs work.</h2>
+          <div class="msg-block">
+            <div class="msg-header">
+              <div class="msg-avatar amber">KL</div>
+              <div class="msg-meta">
+                <span class="msg-from">Kenji Lora</span>
+                <span class="msg-time">9:04 AM</span>
+              </div>
+            </div>
+            <div class="msg-body">"Files are in the shared folder. Heads up - discharge_condition_score has a lot of blanks, and there are 20 patient IDs in admissions_q3 that don't appear in discharge_notes at all. Probably patients who left AMA (against medical advice)."</div>
+          </div>
+          <div class="data-preview">
+            <div class="dp-header">
+              <span class="dp-label">discharge_notes.csv - sample (first 6 rows)</span>
+              <span class="dp-rows">4,180 rows total</span>
+            </div>
+            <table class="dp-table">
+              <thead><tr><th>patient_id</th><th>discharge_date</th><th>followup_scheduled</th><th>discharge_condition_score</th></tr></thead>
+              <tbody>
+                <tr><td class="v-str">PT-1041</td><td class="v-str">2024-07-03</td><td class="v-str">Yes</td><td class="v-num">7.2</td></tr>
+                <tr><td class="v-str">PT-1042</td><td class="v-str">2024-07-03</td><td class="v-str">No</td><td class="v-nan">NaN</td></tr>
+                <tr><td class="v-str">PT-1043</td><td class="v-str">2024-07-04</td><td class="v-str">Yes</td><td class="v-num">6.8</td></tr>
+                <tr><td class="v-str">PT-1044</td><td class="v-str">2024-07-04</td><td class="v-str">Yes</td><td class="v-nan">NaN</td></tr>
+                <tr><td class="v-str">PT-1045</td><td class="v-str">2024-07-05</td><td class="v-str">No</td><td class="v-num">4.1</td></tr>
+                <tr><td class="v-str">PT-1046</td><td class="v-str">2024-07-06</td><td class="v-str">Yes</td><td class="v-nan">NaN</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="narrative-p">You run <code>df.isnull().sum()</code> and find that <strong>discharge_condition_score is missing for 31% of rows</strong>. The 20 AMA patients have no discharge record at all.</p>
+        `,
+        question: 'How do you handle the missing discharge_condition_score values?',
+        choices: [
+          { letter: 'A', text: 'Drop all rows where discharge_condition_score is NaN - missing data is unreliable.' },
+          { letter: 'B', text: 'Fill all NaN values with the column mean - this preserves row count and is a standard imputation technique.' },
+          { letter: 'C', text: 'Keep the NaN rows but flag them. Use followup_scheduled (which is complete) as the primary factor, and note the missingness as a limitation. Separately, exclude the 20 AMA patients with a documented reason.' },
+          { letter: 'D', text: 'Fill NaN values with 0 - missing score likely means the condition was not recorded, which implies normal.' },
+        ],
+        correct: 2,
+        maxPts: 3,
+        feedback: {
+          correct: { verdict: 'correct', text: '<strong>Methodologically sound.</strong> Dropping 31% of rows introduces selection bias - the missing scores are not random (they may cluster in certain wards or diagnoses). Flagging them and relying on the complete variable preserves your sample while being honest about the limitation. Excluding AMA patients with documentation is correct - they are structurally different from standard discharges.' },
+          wrong: [
+            { verdict: 'wrong', text: '<strong>Dropping 31% of rows is a serious problem.</strong> If the missing scores are not randomly distributed - for example, if they cluster in the ICU or in night-shift discharges - your remaining sample is biased. You would be analyzing a systematically different group of patients.' },
+            { verdict: 'partial', text: '<strong>Mean imputation inflates the apparent precision of your data.</strong> A 31% imputation rate is very high. The mean-filled values will compress the variance of the score variable and may hide real patterns. This approach should be disclosed as a significant limitation.' },
+            { verdict: 'wrong', text: '<strong>Filling with 0 is the worst option.</strong> You are inventing data. A missing score does not imply "normal" - it most likely means the field was not completed. Filling with 0 would make those patients look like they were discharged in the worst possible condition, which is the opposite of your assumption.' },
+          ]
+        },
+        consequence: {
+          A: 'Your analysis runs cleanly on the remaining 69% of data. But when Dr. Nair reviews it, she flags that the patients with missing scores are disproportionately from one ward - your results are biased toward a specific patient population.',
+          B: 'Mean imputation works. But a peer reviewer later notes that the discharge_condition_score shows unusually low variance - a sign that imputed values flattened the distribution. The finding is published with a methodological caveat.',
+          D: 'The 0-filled scores make a large group of patients appear to have been discharged in critical condition. Your readmission model flags them as high-risk - but follow-up shows their actual outcomes were average.',
+        }
+      },
+
+      // ---- STAGE 4: EXPLORE ----
+      {
+        stage: 3,
+        scenario: `
+          <div class="scenario-header">
+            <span class="stage-badge">Stage 4</span>
+            <span class="stage-name">Understand the Data</span>
+          </div>
+          <h2>What patterns show up in exploration?</h2>
+          <p class="narrative-p">You've merged the three datasets on patient_id and computed a <strong>readmitted_30d</strong> flag (1 = readmitted within 30 days, 0 = not). You run initial summaries and spot something in the follow-up data.</p>
+          <div class="data-preview">
+            <div class="dp-header">
+              <span class="dp-label">30-day readmission rate by followup_scheduled</span>
+            </div>
+            <table class="dp-table">
+              <thead><tr><th>followup_scheduled</th><th>n_patients</th><th>readmitted_30d_rate</th></tr></thead>
+              <tbody>
+                <tr><td class="v-str">Yes</td><td class="v-num">2,940</td><td class="v-num">11.2%</td></tr>
+                <tr><td class="v-str">No</td><td class="v-num">1,220</td><td class="v-num">28.7%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="data-preview">
+            <div class="dp-header">
+              <span class="dp-label">Readmission rate by diagnosis group (top 5)</span>
+            </div>
+            <table class="dp-table">
+              <thead><tr><th>diagnosis_group</th><th>n_patients</th><th>readmitted_30d_rate</th></tr></thead>
+              <tbody>
+                <tr><td class="v-str">Heart failure</td><td class="v-num">312</td><td class="v-num">34.6%</td></tr>
+                <tr><td class="v-str">COPD</td><td class="v-num">188</td><td class="v-num">29.1%</td></tr>
+                <tr><td class="v-str">Pneumonia</td><td class="v-num">241</td><td class="v-num">18.4%</td></tr>
+                <tr><td class="v-str">Hip replacement</td><td class="v-num">156</td><td class="v-num">9.2%</td></tr>
+                <tr><td class="v-str">Appendectomy</td><td class="v-num">94</td><td class="v-num">4.1%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="narrative-p">You also notice that patients without scheduled follow-ups are <strong>disproportionately from two wards</strong> - 3B and 4A - which happen to be the busiest units in Q3.</p>
+        `,
+        question: 'A colleague sees the follow-up data and says "Scheduling follow-ups clearly reduces readmissions - we should mandate follow-ups for all patients immediately." How do you respond?',
+        choices: [
+          { letter: 'A', text: 'Agree - the data is clear. A 28.7% vs. 11.2% rate is a strong signal and the hospital should act now.' },
+          { letter: 'B', text: 'Disagree - this is a correlation, not causation. Sicker patients may be less likely to have follow-ups scheduled and more likely to be readmitted regardless. The ward concentration adds further confounding. More analysis is needed before recommending a policy change.' },
+          { letter: 'C', text: 'Partially agree - present the finding to the board but frame it as a hypothesis to test, not a conclusion. Recommend a controlled pilot before a hospital-wide mandate.' },
+          { letter: 'D', text: 'Ignore the follow-up finding entirely - focus only on the diagnosis groups since those are more clinically meaningful.' },
+        ],
+        correct: 1,
+        maxPts: 3,
+        feedback: {
+          correct: { verdict: 'correct', text: '<strong>Correct critical thinking.</strong> This is a textbook confounding problem. Sicker patients (heart failure, COPD) are both harder to schedule follow-ups for and more likely to be readmitted. The ward concentration points to a systemic factor - staff capacity in 3B and 4A - that could explain both the missing follow-ups and the higher readmissions. The 6-step framework says to understand before you model. This pattern needs deeper investigation, not an immediate policy recommendation.' },
+          wrong: [
+            { verdict: 'wrong', text: '<strong>Acting on a correlation without checking for confounders is a critical thinking failure.</strong> The module covers this directly: "Whenever you find a relationship in data, ask: what third variable could explain this?" Here, patient severity and ward capacity are two strong candidates.' },
+            null,
+            { verdict: 'wrong', text: '<strong>Ignoring a strong signal is also a mistake.</strong> The follow-up finding is exactly the kind of pattern that deserves investigation - especially since it links to the wards you already flagged. Diagnosis groups and discharge factors are not mutually exclusive; a good analysis examines both.' },
+          ]
+        },
+        consequence: {
+          A: 'The board mandates follow-up scheduling for all patients. Six months later, a follow-up study shows readmission rates unchanged - the policy addressed a symptom of high-acuity wards, not the cause.',
+          D: 'Your analysis focuses on diagnosis groups and misses the most actionable finding in the dataset. The board asks why discharge process wasn\'t examined.',
+        }
+      },
+
+      // ---- STAGE 5: MODEL / ANALYZE ----
+      {
+        stage: 4,
+        scenario: `
+          <div class="scenario-header">
+            <span class="stage-badge">Stage 5</span>
+            <span class="stage-name">Analyze and Interpret</span>
+          </div>
+          <h2>What does the analysis actually show?</h2>
+          <p class="narrative-p">After deeper investigation, you've controlled for diagnosis severity and ward. The follow-up finding persists even after controlling for patient acuity - though the effect is smaller. You've also calculated readmission rates by diagnosis group controlling for discharge condition score.</p>
+          <div class="data-preview">
+            <div class="dp-header">
+              <span class="dp-label">Key finding: adjusted readmission risk factors</span>
+            </div>
+            <table class="dp-table">
+              <thead><tr><th>Factor</th><th>Readmission rate (low risk)</th><th>Readmission rate (high risk)</th><th>Confidence</th></tr></thead>
+              <tbody>
+                <tr><td class="v-str">No follow-up scheduled</td><td class="v-num">11.2%</td><td class="v-num">21.4%</td><td class="v-flag">95% CI</td></tr>
+                <tr><td class="v-str">Heart failure diagnosis</td><td class="v-num">9.8%</td><td class="v-num">34.6%</td><td class="v-flag">95% CI</td></tr>
+                <tr><td class="v-str">Discharge score below 5.0</td><td class="v-num">10.1%</td><td class="v-num">24.8%</td><td class="v-flag">90% CI</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="msg-block">
+            <div class="msg-header">
+              <div class="msg-avatar red">PN</div>
+              <div class="msg-meta">
+                <span class="msg-from">Dr. Priya Nair</span>
+                <span class="msg-time">10:48 AM</span>
+              </div>
+            </div>
+            <div class="msg-body">"Good work. How confident are we in these numbers? The board will ask whether this is definitive or preliminary. Don't overstate it - and don't undersell it either."</div>
+          </div>
+        `,
+        question: 'How do you characterize the strength of your findings to Dr. Nair?',
+        choices: [
+          { letter: 'A', text: 'These are definitive findings. Three independent risk factors have been identified and the analysis is complete.' },
+          { letter: 'B', text: 'These are statistically significant associations - two at 95% confidence, one at 90% - in Q3 data. They identify high-risk groups and are actionable for intervention planning, but they are observational. Causation has not been established and the 31% missingness on discharge_condition_score is a real limitation.' },
+          { letter: 'C', text: 'The findings are too preliminary to present. There are too many limitations to bring to the board today.' },
+          { letter: 'D', text: 'Present only the heart failure finding - it\'s the strongest and clearest result. Leave out the confidence intervals to avoid confusing the board.' },
+        ],
+        correct: 1,
+        maxPts: 3,
+        feedback: {
+          correct: { verdict: 'correct', text: '<strong>Exactly the right calibration.</strong> This answer does three things the module emphasizes: it quantifies uncertainty (confidence levels), communicates what the data can and cannot establish (associations vs. causation), and is honest about limitations (missingness). The module states: "Saying we are 80% confident that X outperforms Y is more honest and more useful than saying X is better than Y." This is the professional standard.' },
+          wrong: [
+            { verdict: 'wrong', text: '<strong>Observational data cannot establish definitive findings.</strong> You haven\'t run a controlled experiment. The associations are real and meaningful, but a board acting on "definitive findings" may over-commit to interventions that haven\'t been validated.' },
+            { verdict: 'wrong', text: '<strong>Withholding actionable findings is also a mistake.</strong> The module is clear: "Uncertainty is not failure." Two findings at 95% confidence from a 4,000-patient dataset are meaningful. The board needs this information to make decisions - delivered with appropriate caveats.' },
+            { verdict: 'wrong', text: '<strong>Hiding uncertainty misleads decision-makers.</strong> Omitting confidence intervals removes the information the board needs to calibrate how much to invest in an intervention. A finding with a wide confidence interval should be treated differently than a narrow one.' },
+          ]
+        },
+        consequence: {
+          A: 'The board treats the findings as conclusive and immediately reallocates resources to heart failure patients only. Six months later, the COPD readmission rate - also elevated - hasn\'t been addressed.',
+          C: 'Dr. Nair presents the board with a "no findings" report. They hire an outside firm to re-run the analysis. The outside firm presents your same findings two weeks later.',
+          D: 'The board approves a major program based on the heart failure finding. A board member later asks for the confidence intervals - they weren\'t in the slide deck. This becomes a trust issue.',
+        }
+      },
+
+      // ---- STAGE 6: COMMUNICATE ----
+      {
+        stage: 5,
+        scenario: `
+          <div class="scenario-header">
+            <span class="stage-badge">Stage 6</span>
+            <span class="stage-name">Present Findings</span>
+          </div>
+          <h2>The board meeting is in 20 minutes.</h2>
+          <div class="msg-block">
+            <div class="msg-header">
+              <div class="msg-avatar red">PN</div>
+              <div class="msg-meta">
+                <span class="msg-from">Dr. Priya Nair</span>
+                <span class="msg-time">11:38 AM</span>
+              </div>
+            </div>
+            <div class="msg-body">"Great work this morning. Last question before you walk in: how do we structure the communication? The board includes clinicians, an operations director, and two trustees with no data background. Keep it tight."</div>
+          </div>
+          <p class="narrative-p">Your findings: three risk factors identified, two at 95% confidence. The strongest single recommendation is a targeted discharge follow-up program for heart failure and COPD patients in wards 3B and 4A. You have 10 minutes on the agenda.</p>
+        `,
+        question: 'How do you structure the board presentation?',
+        choices: [
+          { letter: 'A', text: 'Walk through the full analysis chronologically - data acquisition, cleaning decisions, exploratory tables, then findings. Show your process so the board understands the rigor.' },
+          { letter: 'B', text: 'Lead with the business question and the headline finding, then support it with one clear visual per risk factor. State confidence levels in plain language. End with one specific, scoped recommendation and next steps.' },
+          { letter: 'C', text: 'Present only the statistical output - the confidence intervals and adjusted rates. Let the clinicians interpret the clinical significance.' },
+          { letter: 'D', text: 'Present a single slide with the recommendation only. Decision-makers don\'t need the underlying analysis.' },
+        ],
+        correct: 1,
+        maxPts: 3,
+        feedback: {
+          correct: { verdict: 'correct', text: '<strong>This is how you communicate findings to a non-technical audience.</strong> Lead with the question and answer (not the methodology), use visuals not tables, translate statistics into plain language, and end with a clear action. The board can\'t act on a p-value - they can act on "patients discharged from wards 3B and 4A without a follow-up appointment are twice as likely to return within 30 days."' },
+          wrong: [
+            { verdict: 'wrong', text: '<strong>Chronological walkthroughs lose non-technical audiences fast.</strong> The board doesn\'t need to re-live your data cleaning decisions. They need the question, the answer, and what to do. Save the methodology for the appendix or a follow-up technical memo.' },
+            { verdict: 'wrong', text: '<strong>Raw statistical output is inaccessible to non-statisticians.</strong> A 95% CI means nothing to a hospital trustee unless you translate it. Your job as a data scientist is to bridge the gap between the analysis and the decision.' },
+            { verdict: 'wrong', text: '<strong>Hiding the evidence undermines trust and decision quality.</strong> A recommendation without supporting evidence can\'t be evaluated or challenged - which means it also can\'t be refined. The board needs enough evidence to make an informed decision, not just a directive.' },
+          ]
+        },
+        consequence: {
+          A: 'You present for 12 minutes on methodology before reaching the findings. The operations director checks her phone. The board approves further study rather than action.',
+          C: 'The clinicians appreciate the rigor but the trustees are lost. The operations director tables the decision pending a plain-language summary.',
+          D: 'The board approves the recommendation but a trustee asks "what\'s the evidence?" You don\'t have it on the slide. Dr. Nair has to step in with context.',
+        }
+      },
+
+    ];
+
+    // ---- STATE ----
+    let currentQ = 0;
+    let totalScore = 0;
+    let answers = []; // {chosen, correct, pts, maxPts}
+    let clockMin = 0;
+    let clockInterval = null;
+
+    const CLOCK_START = 8 * 60 + 2; // 8:02 AM in minutes
+    const CLOCK_END = 12 * 60; // noon
+
+    // ---- CLOCK ----
+    function startClock() {
+      clockMin = CLOCK_START;
+      updateClock();
+      clockInterval = setInterval(() => {
+        clockMin += 3;
+        if (clockMin >= CLOCK_END) { clockMin = CLOCK_END; clearInterval(clockInterval); }
+        updateClock();
+      }, 4000);
+    }
+
+    function updateClock() {
+      const h = Math.floor(clockMin / 60);
+      const m = clockMin % 60;
+      const ampm = h < 12 ? 'AM' : 'PM';
+      const h12 = h % 12 || 12;
+      const mStr = m.toString().padStart(2, '0');
+      const el = document.getElementById('clockDisplay');
+      if (el) {
+        el.textContent = h12 + ':' + mStr + ' ' + ampm;
+        if (clockMin >= 11 * 60 + 30) el.style.color = '#c04848';
+        else if (clockMin >= 11 * 60) el.style.color = '#d4983e';
+      }
+    }
+
+    // ---- RAIL ----
+    function buildRail(activeStage) {
+      const rail = document.getElementById('stageRail');
+      rail.innerHTML = '';
+      STAGES.forEach((s, i) => {
+        if (i > 0) {
+          const arrow = document.createElement('div');
+          arrow.className = 'rail-arrow'; arrow.textContent = '>';
+          rail.appendChild(arrow);
+        }
+        const step = document.createElement('div');
+        const stageIdx = QUESTIONS[currentQ]?.stage ?? 0;
+        if (i < activeStage) step.className = 'rail-step done';
+        else if (i === activeStage) step.className = 'rail-step active';
+        else step.className = 'rail-step';
+        step.innerHTML = '<div class="rs-num">' + (i + 1) + '</div>' + s.label;
+        rail.appendChild(step);
+      });
+    }
+
+    // ---- RENDER QUESTION ----
+    function renderQuestion(idx) {
+      const q = QUESTIONS[idx];
+      buildRail(q.stage);
+      updateScore();
+
+      // Scenario
+      document.getElementById('scenarioCol').innerHTML = q.scenario;
+
+      // Decision panel
+      const dc = document.getElementById('decisionCol');
+      let choicesHTML = q.choices.map((c, i) =>
+        `<button class="choice-btn" onclick="choose(${i})" id="choice-${i}">
+          <span class="choice-letter">${c.letter}</span>
+          <span class="choice-text">${c.text}</span>
+        </button>`
+      ).join('');
+
+      dc.innerHTML = `
+        <div class="decision-label">Your Decision</div>
+        <div class="decision-q">${q.question}</div>
+        ${choicesHTML}
+        <div class="feedback-block" id="feedbackBlock">
+          <div class="fb-verdict" id="fbVerdict"></div>
+          <div class="fb-text" id="fbText"></div>
+        </div>
+        <div class="consequence" id="consequenceBlock">
+          <div class="cq-label">What happened next</div>
+          <div id="consequenceText"></div>
+        </div>
+        <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+          ${idx < QUESTIONS.length - 1 ? 'Next Stage ->' : 'See Results'}
+        </button>
+      `;
+    }
+
+    // ---- CHOOSE ----
+    function choose(choiceIdx) {
+      const q = QUESTIONS[currentQ];
+      const buttons = document.querySelectorAll('.choice-btn');
+      buttons.forEach(b => b.disabled = true);
+
+      const isCorrect = choiceIdx === q.correct;
+      const pts = isCorrect ? q.maxPts : (choiceIdx === q.correct ? q.maxPts : 0);
+      const scored = isCorrect ? q.maxPts : 0;
+      totalScore += scored;
+
+      answers.push({ chosen: choiceIdx, correct: q.correct, pts: scored, maxPts: q.maxPts });
+
+      // Highlight choices
+      buttons[choiceIdx].classList.add(isCorrect ? 'selected-correct' : 'selected-wrong');
+      if (!isCorrect) buttons[q.correct].classList.add('reveal-correct');
+
+      // Feedback
+      const fb = document.getElementById('feedbackBlock');
+      const verdict = document.getElementById('fbVerdict');
+      const fbText = document.getElementById('fbText');
+      fb.classList.add('show');
+
+      let feedbackData;
+      if (isCorrect) {
+        feedbackData = q.feedback.correct;
+      } else {
+        feedbackData = q.feedback.wrong[choiceIdx];
+        if (!feedbackData) feedbackData = { verdict: 'wrong', text: 'That\'s not the strongest approach here. See the correct answer highlighted above.' };
+      }
+
+      verdict.className = 'fb-verdict ' + feedbackData.verdict;
+      verdict.textContent = feedbackData.verdict === 'correct' ? 'Correct - ' + q.maxPts + ' pts' :
+        feedbackData.verdict === 'partial' ? 'Partially right - 0 pts' : 'Incorrect - 0 pts';
+      fbText.innerHTML = feedbackData.text;
+
+      // Consequence for wrong answers
+      if (!isCorrect) {
+        const letterKey = q.choices[choiceIdx].letter;
+        const cq = q.consequence?.[letterKey];
+        if (cq) {
+          document.getElementById('consequenceBlock').classList.add('show');
+          document.getElementById('consequenceText').textContent = cq;
+        }
+      }
+
+      updateScore();
+      document.getElementById('nextBtn').classList.add('show');
+    }
+
+    // ---- NEXT ----
+    function nextQuestion() {
+      currentQ++;
+      if (currentQ >= QUESTIONS.length) {
+        showResults();
+      } else {
+        renderQuestion(currentQ);
+        document.getElementById('scenarioCol').scrollTop = 0;
+        document.getElementById('decisionCol').scrollTop = 0;
+      }
+    }
+
+    // ---- SCORE ----
+    function updateScore() {
+      const maxSoFar = answers.reduce((s, a) => s + a.maxPts, 0) + (answers.length < QUESTIONS.length ? 0 : 0);
+      document.getElementById('scoreDisplay').textContent = totalScore + ' / 18';
+    }
+
+    // ---- RESULTS ----
+    function showResults() {
+      clearInterval(clockInterval);
+      document.getElementById('sim').style.display = 'none';
+      const resultsEl = document.getElementById('results');
+      resultsEl.style.display = 'block';
+
+      const pct = Math.round((totalScore / 18) * 100);
+      let rank, rankDesc;
+      if (pct === 100) {
+        rank = 'Lead Analyst';
+        rankDesc = 'Perfect execution. Every stage handled correctly - precise question definition, focused data acquisition, sound cleaning rationale, skeptical exploration, calibrated uncertainty, and audience-appropriate communication. This is the full DS lifecycle done right.';
+      } else if (pct >= 78) {
+        rank = 'Senior Analyst';
+        rankDesc = 'Strong work. You navigated most of the lifecycle correctly. Review the stages where you lost points - the missed pts often come from a single critical thinking gap (correlation vs. causation, data provenance, or overstating certainty).';
+      } else if (pct >= 56) {
+        rank = 'Analyst';
+        rankDesc = 'Solid foundation. You made reasonable choices in most stages, but some key pitfalls caught you - particularly around question definition, confounding, or communication. Re-read the Module 1 sections on critical thinking and the DS workflow.';
+      } else {
+        rank = 'Junior Analyst';
+        rankDesc = 'You\'re building your instincts. Several stages revealed common early-career traps: over-collecting data, acting on correlations, or presenting raw statistics to non-technical audiences. Go back to Module 1 before tackling real client work.';
+      }
+
+      const breakdownRows = answers.map((a, i) => {
+        const q = QUESTIONS[i];
+        const ptsClass = a.pts === a.maxPts ? 'full' : a.pts === 0 ? 'zero' : 'partial';
+        return `<tr>
+          <td class="bt-stage">${STAGES[q.stage].label}</td>
+          <td>${STAGES[q.stage].name}</td>
+          <td class="bt-pts ${ptsClass}">${a.pts} / ${a.maxPts}</td>
+        </tr>`;
+      }).join('');
+
+      resultsEl.innerHTML = `
+        <div class="results-inner">
+          <div class="results-header">
+            <div class="results-eyebrow">Analysis Complete</div>
+            <h2>The Morning Brief</h2>
+            <div class="results-rank">${rank}</div>
+            <div class="results-score-big">${totalScore}<span> / 18</span></div>
+            <p class="results-summary">${rankDesc}</p>
+          </div>
+
+          <table class="breakdown-table">
+            <thead><tr><th>Stage</th><th>Skill</th><th>Score</th></tr></thead>
+            <tbody>${breakdownRows}</tbody>
+          </table>
+
+          <div class="results-actions">
+            <a class="ra-btn" href="../../index.html">- Course Home</a>
+            <button class="ra-btn primary" onclick="restartSim()">Try Again</button>
+          </div>
+
+          <p style="text-align:center; font-size:0.75rem; color:var(--text-dim); margin-top:2.5rem; font-family:'IBM Plex Mono',monospace;">
+            This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by Eastern University faculty and staff.<br>&copy; Eastern University. All rights reserved.
+          </p>
+        </div>
+      `;
+    }
+
+    // ---- START / RESTART ----
+    function startSim() {
+      document.getElementById('landing').style.display = 'none';
+      const simEl = document.getElementById('sim');
+      simEl.style.display = 'flex';
+      simEl.style.flexDirection = 'column';
+      renderQuestion(0);
+      startClock();
+    }
+
+    function restartSim() {
+      currentQ = 0; totalScore = 0; answers = [];
+      document.getElementById('results').style.display = 'none';
+      const simEl = document.getElementById('sim');
+      simEl.style.display = 'flex';
+      simEl.style.flexDirection = 'column';
+      renderQuestion(0);
+      startClock();
+    }
+
+  </script>
+
+</body>
+</html>
