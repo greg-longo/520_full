@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 3 Quiz - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Zilla+Slab:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --bg-card2: #2a2824;
+      --accent: #4a8f6b;
+      --accent-light: #5cad84;
+      --text-primary: #f5f5f5;
+      --text-secondary: #b8b8b8;
+      --correct-bg: #4a9e6b;
+      --correct-text: #7ecfa0;
+      --wrong-bg: #b04040;
+      --wrong-text: #e08080;
+      --border: #3a3835;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Zilla Slab', serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* NAVIGATION */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .nav-breadcrumb {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .nav-breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .nav-breadcrumb a:hover {
+      color: var(--accent-light);
+    }
+
+    .nav-back {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .nav-back:hover {
+      color: var(--accent-light);
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    /* LANDING SCREEN */
+    #screen-landing {
+      text-align: center;
+    }
+
+    .module-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .quiz-description {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+
+    .quiz-note {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      padding: 16px;
+      margin-bottom: 32px;
+      text-align: left;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    button {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      background-color: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 12px 24px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--accent-light);
+    }
+
+    /* QUESTION SCREEN */
+    #screen-question {
+      display: none;
+    }
+
+    .progress-container {
+      margin-bottom: 32px;
+    }
+
+    .progress-bar {
+      background-color: var(--bg-card);
+      height: 4px;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      background-color: var(--accent);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-align: right;
+    }
+
+    .question-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 32px;
+      border-radius: 6px;
+    }
+
+    .question-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .option-btn {
+      background-color: var(--bg-card2);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 16px;
+      text-align: left;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      font-family: 'Zilla Slab', serif;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background-color: rgba(74, 143, 107, 0.1);
+    }
+
+    .option-btn:disabled {
+      cursor: not-allowed;
+    }
+
+    .option-btn.correct {
+      background-color: rgba(74, 158, 107, 0.15);
+      border-color: var(--correct-bg);
+    }
+
+    .option-btn.wrong {
+      background-color: rgba(176, 64, 64, 0.15);
+      border-color: var(--wrong-bg);
+    }
+
+    .feedback {
+      font-size: 14px;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.correct {
+      background-color: rgba(74, 158, 107, 0.1);
+      border: 1px solid var(--correct-bg);
+      color: var(--correct-text);
+    }
+
+    .feedback.wrong {
+      background-color: rgba(176, 64, 64, 0.1);
+      border: 1px solid var(--wrong-bg);
+      color: var(--wrong-text);
+    }
+
+    .next-btn-container {
+      display: none;
+      text-align: right;
+      margin-top: 24px;
+    }
+
+    .next-btn-container.show {
+      display: block;
+    }
+
+    /* RESULTS SCREEN */
+    #screen-results {
+      display: none;
+      text-align: center;
+    }
+
+    .score-number {
+      font-size: 80px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .score-details {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    .results-breakdown {
+      text-align: left;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 24px;
+      border-radius: 6px;
+      margin-bottom: 32px;
+    }
+
+    .breakdown-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .breakdown-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .breakdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .breakdown-item-icon {
+      flex-shrink: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .breakdown-item-icon.correct {
+      color: var(--correct-text);
+    }
+
+    .breakdown-item-icon.wrong {
+      color: var(--wrong-text);
+    }
+
+    .breakdown-item-text {
+      flex: 1;
+    }
+
+    .breakdown-item-number {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .results-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .results-back-link {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: 12px;
+    }
+
+    .results-back-link:hover {
+      color: var(--accent-light);
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-breadcrumb">
+      <a href="index.html">Course Home</a> > <a href="#">Module 3</a> > Quiz
+    </div>
+    <a href="index.html" class="nav-back">← Back to Module</a>
+  </nav>
+
+  <main>
+    <!-- LANDING SCREEN -->
+    <div id="screen-landing">
+      <div class="module-badge">Module 03 - NumPy</div>
+      <h1>Module 3 Quiz</h1>
+      <p class="quiz-description">Ten questions covering NumPy arrays, indexing, vectorization, statistical methods, and boolean indexing.</p>
+      <div class="quiz-note">
+        <strong>Note:</strong> Questions appear one at a time. You cannot go back to previous questions once answered.
+      </div>
+      <button onclick="beginQuiz()">Begin Quiz</button>
+    </div>
+
+    <!-- QUESTION SCREEN -->
+    <div id="screen-question">
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText"></div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-eyebrow" id="questionNumber"></div>
+        <div class="question-text" id="questionText"></div>
+        <div class="options-container" id="optionsContainer"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="next-btn-container" id="nextBtnContainer">
+          <button id="nextBtn" onclick="nextQuestion()">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div id="screen-results">
+      <div class="score-number" id="scoreNumber"></div>
+      <div class="score-details" id="scoreDetails"></div>
+      <div class="results-breakdown" id="resultsBreakdown"></div>
+      <div class="results-actions">
+        <button onclick="retake()">Retake Quiz</button>
+        <a href="index.html" class="results-back-link">← Back to Module</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        text: "What does np.array([.312, .287, .301]).dtype return?",
+        options: ["float32", "int64", "float64", "object"],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. Python float literals default to 64-bit floats. NumPy preserves that precision with dtype float64.",
+        feedbackWrong: "Not quite. NumPy defaults to float64 for Python float literals. float32 must be explicitly requested. int64 is for integers. object is for Python objects like strings."
+      },
+      {
+        text: "Given a = np.array([10, 20, 30, 40, 50]), what does a[1:4] return?",
+        options: ["[10, 20, 30, 40]", "[20, 30, 40]", "[20, 30, 40, 50]", "[10, 20, 30]"],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. Slicing is start-inclusive and stop-exclusive. a[1:4] gives indices 1, 2, 3 - the values 20, 30, 40.",
+        feedbackWrong: "Not quite. a[1:4] starts at index 1 and stops before index 4, giving values at indices 1, 2, 3 - that is 20, 30, 40."
+      },
+      {
+        text: "You have a 2D array stats with shape (4, 3). What does stats[:, 0] return?",
+        options: [
+          "A 1D array of the first column - all 4 rows, column 0.",
+          "The first row of the array.",
+          "A 4x1 2D array (different from a 1D array).",
+          "An error because you cannot slice a 2D array this way."
+        ],
+        correctIndex: 0,
+        feedbackCorrect: "Correct. In a 2D array, the first index is rows and the second is columns. stats[:, 0] means all rows, column 0 - the entire first column as a 1D array.",
+        feedbackWrong: "Not quite. stats[:, 0] is valid syntax meaning all rows, column 0. This returns the first column as a 1D array of shape (4,)."
+      },
+      {
+        text: "What is the main reason NumPy vectorized operations are faster than Python loops?",
+        options: [
+          "NumPy uses parallel processing across multiple CPU cores by default.",
+          "NumPy skips bounds checking, which makes it less safe but faster.",
+          "NumPy compresses the data before operating on it.",
+          "NumPy stores data in a contiguous memory block and loops run in compiled C code, eliminating Python interpreter overhead per element."
+        ],
+        correctIndex: 3,
+        feedbackCorrect: "Correct. NumPy stores homogeneous data in contiguous memory blocks. Operations run in compiled C code with no per-element Python overhead.",
+        feedbackWrong: "Not quite. The speed advantage comes from contiguous memory layout and compiled C execution. There is no per-element Python interpreter overhead in a NumPy operation."
+      },
+      {
+        text: "Given a = np.array([1, 2, 3, 4]) and b = np.array([10, 20, 30, 40]), what does a * b produce?",
+        options: [
+          "A scalar: the dot product (300)",
+          "A single number: sum of all products",
+          "An array: [10, 40, 90, 160] - element-wise multiplication",
+          "An error because * is not defined for arrays"
+        ],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. The * operator on NumPy arrays is element-wise multiplication. [1*10, 2*20, 3*30, 4*40] = [10, 40, 90, 160].",
+        feedbackWrong: "Not quite. * on NumPy arrays is element-wise. Each position is multiplied independently. For a dot product use np.dot(a, b) or a @ b."
+      },
+      {
+        text: "The Eagles roster has salaries [16800, 14400, 19200, 760000]. np.mean(salaries) returns about 202,600. Which function gives the more representative typical salary?",
+        options: [
+          "np.std(salaries)",
+          "np.median(salaries)",
+          "np.var(salaries)",
+          "np.sum(salaries) / np.max(salaries)"
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. The median is resistant to outliers. Kim's $760,000 salary inflates the mean to about $202,600, while the median (~$18,000) accurately reflects what a typical player earns.",
+        feedbackWrong: "Not quite. np.median() is the answer. The median is not affected by extreme values. Kim's $760,000 pulls the mean far above what most players earn. np.std and np.var measure spread, not center."
+      },
+      {
+        text: "What is the key difference between a NumPy slice (a[1:3]) and fancy indexing (a[[1, 3]]) in terms of memory?",
+        options: [
+          "A slice returns a view (no copy made); fancy indexing always returns a copy.",
+          "A slice returns a copy; fancy indexing returns a view.",
+          "Both always return copies.",
+          "Both always return views."
+        ],
+        correctIndex: 0,
+        feedbackCorrect: "Correct. Slices return views - they share memory with the original array. Fancy indexing (passing an array of integers) always returns a new copy. This matters when you modify the result.",
+        feedbackWrong: "Not quite. Slices return views (shared memory, no copy). Fancy indexing returns a copy. If you modify a slice, you modify the original. If you modify a fancy-indexed result, the original is unchanged."
+      },
+      {
+        text: "Given avgs = np.array([.312, .287, .301, .268]), what does avgs[avgs > .295] return?",
+        options: [
+          "[True, False, True, False]",
+          "The indices where avgs > .295: [0, 2]",
+          "The count of values above .295: 2",
+          "[.312, .301] - the values themselves where the condition is True"
+        ],
+        correctIndex: 3,
+        feedbackCorrect: "Correct. Boolean indexing uses the boolean mask to select elements. avgs[avgs > .295] returns the actual values where the condition is True: [.312, .301].",
+        feedbackWrong: "Not quite. avgs > .295 alone returns the boolean mask [True, False, True, False]. But avgs[avgs > .295] uses that mask to select values, returning [.312, .301]."
+      },
+      {
+        text: "You have a stats array with shape (4, 3). What does stats.mean(axis=0) return?",
+        options: [
+          "A single number: the mean of all 12 elements.",
+          "An array of shape (4,): the mean of each row.",
+          "An array of shape (3,): the mean of each column.",
+          "An error because axis=0 is not valid for 2D arrays."
+        ],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. axis=0 collapses along the row dimension. For a (4, 3) array, this produces shape (3,) - one mean per column.",
+        feedbackWrong: "Not quite. axis=0 collapses rows, giving one value per column. For a (4,3) array, the result has shape (3,). axis=1 would give one value per row with shape (4,)."
+      },
+      {
+        text: "What does np.argmax(avgs) return?",
+        options: [
+          "The maximum value in the array.",
+          "The index (position) of the maximum value.",
+          "A boolean array where the maximum occurs.",
+          "The number of elements equal to the maximum."
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. np.argmax() returns the integer index of the maximum value. You can then use that index to look up the corresponding player name or other aligned array.",
+        feedbackWrong: "Not quite. np.max(avgs) returns the value. np.argmax(avgs) returns the position (index) of that maximum value."
+      }
+    ];
+
+    let currentQ = 0;
+    let results = [];
+
+    function beginQuiz() {
+      document.getElementById('screen-landing').style.display = 'none';
+      document.getElementById('screen-question').style.display = 'block';
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = questions[currentQ];
+      const total = questions.length;
+      const progressPercent = (currentQ / total) * 100;
+
+      document.getElementById('progressFill').style.width = progressPercent + '%';
+      document.getElementById('progressText').textContent = `Question ${currentQ + 1} of ${total}`;
+      document.getElementById('questionNumber').textContent = `Question ${currentQ + 1}`;
+      document.getElementById('questionText').textContent = q.text;
+
+      const optionsContainer = document.getElementById('optionsContainer');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((option, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(idx);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById('feedback').innerHTML = '';
+      document.getElementById('feedback').className = 'feedback';
+      document.getElementById('nextBtnContainer').classList.remove('show');
+    }
+
+    function selectAnswer(optionIndex) {
+      const q = questions[currentQ];
+      const isCorrect = optionIndex === q.correctIndex;
+      results[currentQ] = { correct: isCorrect };
+
+      // Disable all buttons
+      document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+
+      // Highlight correct and selected options
+      document.querySelectorAll('.option-btn').forEach((btn, idx) => {
+        if (idx === q.correctIndex) {
+          btn.classList.add('correct');
+        }
+        if (idx === optionIndex && !isCorrect) {
+          btn.classList.add('wrong');
+        }
+      });
+
+      // Show feedback
+      const feedbackEl = document.getElementById('feedback');
+      feedbackEl.textContent = isCorrect ? q.feedbackCorrect : q.feedbackWrong;
+      feedbackEl.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+
+      // Show next button
+      document.getElementById('nextBtnContainer').classList.add('show');
+      const nextBtn = document.getElementById('nextBtn');
+      if (currentQ === questions.length - 1) {
+        nextBtn.textContent = 'See Results →';
+      } else {
+        nextBtn.textContent = 'Next →';
+      }
+    }
+
+    function nextQuestion() {
+      currentQ++;
+      if (currentQ >= questions.length) {
+        showResults();
+      } else {
+        renderQuestion();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('screen-question').style.display = 'none';
+      document.getElementById('screen-results').style.display = 'block';
+
+      const score = results.filter(r => r.correct).length;
+      const total = results.length;
+      const percent = Math.round((score / total) * 100);
+      let grade = 'F';
+      if (percent >= 90) grade = 'A';
+      else if (percent >= 80) grade = 'B';
+      else if (percent >= 70) grade = 'C';
+      else if (percent >= 60) grade = 'D';
+
+      document.getElementById('scoreNumber').textContent = score + ' / ' + total;
+      document.getElementById('scoreDetails').textContent = percent + '% - Grade: ' + grade;
+
+      let breakdownHTML = '<div class="breakdown-title">Question Breakdown</div>';
+      results.forEach((result, idx) => {
+        const icon = result.correct ? '✓' : '✗';
+        const iconClass = result.correct ? 'correct' : 'wrong';
+        const correctAnswer = questions[idx].options[questions[idx].correctIndex];
+        breakdownHTML += `
+          <div class="breakdown-item">
+            <div class="breakdown-item-icon ${iconClass}">${icon}</div>
+            <div class="breakdown-item-text">
+              <strong>Q${idx + 1}:</strong> ${correctAnswer}
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('resultsBreakdown').innerHTML = breakdownHTML;
+
+      // Save score to localStorage
+      localStorage.setItem('dtsc520_quiz_m3', JSON.stringify({ score, total, percent, grade, completedAt: new Date().toISOString() }));
+    }
+
+    function retake() {
+      currentQ = 0;
+      results = [];
+      document.getElementById('screen-results').style.display = 'none';
+      document.getElementById('screen-landing').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

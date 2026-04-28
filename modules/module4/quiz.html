@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 4 Quiz - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Zilla+Slab:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --bg-card2: #2a2824;
+      --accent: #b07030;
+      --accent-light: #c88840;
+      --text-primary: #f5f5f5;
+      --text-secondary: #b8b8b8;
+      --correct-bg: #4a9e6b;
+      --correct-text: #7ecfa0;
+      --wrong-bg: #b04040;
+      --wrong-text: #e08080;
+      --border: #3a3835;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Zilla Slab', serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* NAVIGATION */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .nav-breadcrumb {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .nav-breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .nav-breadcrumb a:hover {
+      color: var(--accent-light);
+    }
+
+    .nav-back {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .nav-back:hover {
+      color: var(--accent-light);
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    /* LANDING SCREEN */
+    #screen-landing {
+      text-align: center;
+    }
+
+    .module-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .quiz-description {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+
+    .quiz-note {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      padding: 16px;
+      margin-bottom: 32px;
+      text-align: left;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    button {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      background-color: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 12px 24px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--accent-light);
+    }
+
+    /* QUESTION SCREEN */
+    #screen-question {
+      display: none;
+    }
+
+    .progress-container {
+      margin-bottom: 32px;
+    }
+
+    .progress-bar {
+      background-color: var(--bg-card);
+      height: 4px;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      background-color: var(--accent);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-align: right;
+    }
+
+    .question-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 32px;
+      border-radius: 6px;
+    }
+
+    .question-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .option-btn {
+      background-color: var(--bg-card2);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 16px;
+      text-align: left;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      font-family: 'Zilla Slab', serif;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background-color: rgba(176, 112, 48, 0.1);
+    }
+
+    .option-btn:disabled {
+      cursor: not-allowed;
+    }
+
+    .option-btn.correct {
+      background-color: rgba(74, 158, 107, 0.15);
+      border-color: var(--correct-bg);
+    }
+
+    .option-btn.wrong {
+      background-color: rgba(176, 64, 64, 0.15);
+      border-color: var(--wrong-bg);
+    }
+
+    .feedback {
+      font-size: 14px;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.correct {
+      background-color: rgba(74, 158, 107, 0.1);
+      border: 1px solid var(--correct-bg);
+      color: var(--correct-text);
+    }
+
+    .feedback.wrong {
+      background-color: rgba(176, 64, 64, 0.1);
+      border: 1px solid var(--wrong-bg);
+      color: var(--wrong-text);
+    }
+
+    .next-btn-container {
+      display: none;
+      text-align: right;
+      margin-top: 24px;
+    }
+
+    .next-btn-container.show {
+      display: block;
+    }
+
+    /* RESULTS SCREEN */
+    #screen-results {
+      display: none;
+      text-align: center;
+    }
+
+    .score-number {
+      font-size: 80px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .score-details {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    .results-breakdown {
+      text-align: left;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 24px;
+      border-radius: 6px;
+      margin-bottom: 32px;
+    }
+
+    .breakdown-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .breakdown-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .breakdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .breakdown-item-icon {
+      flex-shrink: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .breakdown-item-icon.correct {
+      color: var(--correct-text);
+    }
+
+    .breakdown-item-icon.wrong {
+      color: var(--wrong-text);
+    }
+
+    .breakdown-item-text {
+      flex: 1;
+    }
+
+    .breakdown-item-number {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .results-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .results-back-link {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: 12px;
+    }
+
+    .results-back-link:hover {
+      color: var(--accent-light);
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-breadcrumb">
+      <a href="index.html">Course Home</a> > <a href="#">Module 4</a> > Quiz
+    </div>
+    <a href="index.html" class="nav-back">← Back to Module</a>
+  </nav>
+
+  <main>
+    <!-- LANDING SCREEN -->
+    <div id="screen-landing">
+      <div class="module-badge">Module 04 - Pandas</div>
+      <h1>Module 4 Quiz</h1>
+      <p class="quiz-description">Ten questions covering pandas Series, DataFrames, selection, filtering, cleaning, and aggregation.</p>
+      <div class="quiz-note">
+        <strong>Note:</strong> Questions appear one at a time. You cannot go back to previous questions once answered.
+      </div>
+      <button onclick="beginQuiz()">Begin Quiz</button>
+    </div>
+
+    <!-- QUESTION SCREEN -->
+    <div id="screen-question">
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText"></div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-eyebrow" id="questionNumber"></div>
+        <div class="question-text" id="questionText"></div>
+        <div class="options-container" id="optionsContainer"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="next-btn-container" id="nextBtnContainer">
+          <button id="nextBtn" onclick="nextQuestion()">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div id="screen-results">
+      <div class="score-number" id="scoreNumber"></div>
+      <div class="score-details" id="scoreDetails"></div>
+      <div class="results-breakdown" id="resultsBreakdown"></div>
+      <div class="results-actions">
+        <button onclick="retake()">Retake Quiz</button>
+        <a href="index.html" class="results-back-link">← Back to Module</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        text: "What is the key difference between a pandas Series and a DataFrame?",
+        options: [
+          "A Series can only hold strings; a DataFrame can hold any type.",
+          "A Series is 1-dimensional with a single index; a DataFrame is 2-dimensional with both a row index and column labels.",
+          "A DataFrame is faster than a Series for all operations.",
+          "A Series always has an integer index; a DataFrame can have string labels."
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. A Series is 1D - one column of values with an index. A DataFrame is 2D - rows and columns. Every column in a DataFrame is a Series.",
+        feedbackWrong: "Not quite. The key distinction is dimensions. A Series is 1D (one column with an index). A DataFrame is 2D (rows and columns). Every DataFrame column is a Series."
+      },
+      {
+        text: "You want to inspect the data types of every column in df. Which command is correct?",
+        options: ["df.types()", "df.info(types=True)", "df.dtypes", "df.schema()"],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. df.dtypes is an attribute (not a method call) that returns the dtype of each column.",
+        feedbackWrong: "Not quite. df.dtypes is the correct attribute. df.types() and df.schema() do not exist. df.info() prints a summary but dtypes is the direct attribute."
+      },
+      {
+        text: "What does df.loc[2, 'avg'] return?",
+        options: [
+          "The value in the row with label 2 and the column named 'avg'.",
+          "The value in the 2nd column and the row named 'avg'.",
+          "The 2nd element of 'avg' regardless of index.",
+          "A new DataFrame with 2 rows from 'avg'."
+        ],
+        correctIndex: 0,
+        feedbackCorrect: "Correct. .loc[] is label-based. df.loc[2, 'avg'] finds the row whose index label is 2 and returns the value in the 'avg' column.",
+        feedbackWrong: "Not quite. .loc[] uses labels, not positions. df.loc[2, 'avg'] means: row with label 2, column named 'avg'. For position-based access use .iloc[]."
+      },
+      {
+        text: "You want all rows where salary > 50000 AND avg > .300. Which expression is correct?",
+        options: [
+          "df[df['salary'] > 50000 and df['avg'] > .300]",
+          "df[df['salary'] > 50000 && df['avg'] > .300]",
+          "df.filter(salary > 50000, avg > .300)",
+          "df[(df['salary'] > 50000) & (df['avg'] > .300)]"
+        ],
+        correctIndex: 3,
+        feedbackCorrect: "Correct. The & operator works element-wise on boolean Series. Each condition must be in parentheses because & has higher precedence than comparison operators.",
+        feedbackWrong: "Not quite. For combining conditions in pandas: use & (not 'and'), wrap each condition in parentheses, and use bracket filtering. df[(cond1) & (cond2)] is the correct pattern."
+      },
+      {
+        text: "A salary column contains the string 'N/A' in some rows and loads as object dtype. What is the correct approach to use it for numeric analysis?",
+        options: [
+          "Use df['salary'].to_numeric().",
+          "Replace the 'N/A' strings with NaN, then cast: df['salary'].replace('N/A', pd.NA).astype(float).",
+          "Drop the column because it cannot be converted.",
+          "Use df['salary'].astype(int) - pandas handles strings automatically."
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. You need to handle the string 'N/A' before casting. Replacing it with pd.NA then calling .astype(float) is the right sequence.",
+        feedbackWrong: "Not quite. .to_numeric() is a function (pd.to_numeric()), not a method. .astype(int) will raise an error on string values. The correct approach is to replace the string first, then cast."
+      },
+      {
+        text: "What does df.isna().sum() compute?",
+        options: [
+          "The total number of rows in the DataFrame.",
+          "Whether any column has at least one missing value (True/False per column).",
+          "The count of missing values in each column.",
+          "The sum of all numeric columns after removing NaNs."
+        ],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. df.isna() returns a boolean DataFrame. Calling .sum() sums the True values per column, giving the count of missing values in each column.",
+        feedbackWrong: "Not quite. df.isna() creates a boolean mask. .sum() on a boolean column counts the True values, giving missing value counts per column. For any() use df.isna().any()."
+      },
+      {
+        text: "You call df.dropna(). What happens to the original DataFrame?",
+        options: [
+          "Nothing - dropna() returns a new DataFrame. The original is unchanged unless you reassign.",
+          "The original is modified in place and the missing rows are permanently removed.",
+          "Missing values are filled with 0 in the original.",
+          "An error is raised unless you pass inplace=True."
+        ],
+        correctIndex: 0,
+        feedbackCorrect: "Correct. Pandas methods generally return new objects by default. To persist the change, reassign: df = df.dropna().",
+        feedbackWrong: "Not quite. dropna() returns a new DataFrame without modifying the original. To make the change permanent, reassign: df = df.dropna(). Pass inplace=True to modify in place."
+      },
+      {
+        text: "The Eagles roster has one player (Kim) on MLB rehab earning $760,000 while others earn $14,400-$19,200. You need to report a typical salary. Which measure is more appropriate and why?",
+        options: [
+          "Mean, because it uses all data points and is always more accurate.",
+          "Mean, because standard deviation normalizes for outliers.",
+          "Median and mean are identical when the data has one outlier.",
+          "Median, because it is resistant to outliers and better represents what a typical player earns."
+        ],
+        correctIndex: 3,
+        feedbackCorrect: "Correct. The median is not affected by extreme values. With Kim earning roughly 44x a typical player, the mean is pulled far above what most players earn. Median accurately describes the typical player.",
+        feedbackWrong: "Not quite. The median is the right answer. It is not affected by outliers. Kim's $760,000 pulls the mean to about $202,000, far above what any active player earns. The median stays near $18,000."
+      },
+      {
+        text: "What does roster.groupby('position')['avg'].mean() produce?",
+        options: [
+          "The mean batting average of every player in the roster.",
+          "A Series with one mean batting average per unique position value.",
+          "A DataFrame grouped by position with all columns averaged.",
+          "An error - you must call .agg('mean') instead of .mean() after groupby."
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. groupby() splits the DataFrame into groups. Selecting a column and calling .mean() gives one mean per group - a Series indexed by position.",
+        feedbackWrong: "Not quite. groupby('position') splits the data into groups. ['avg'] selects one column. .mean() computes one mean per group. The result is a Series indexed by the position values."
+      },
+      {
+        text: "Which of the following is the safest way to assign a value to a specific cell in a DataFrame?",
+        options: [
+          "df['salary'][3] = 20000",
+          "df.salary[3] = 20000",
+          "df.loc[3, 'salary'] = 20000",
+          "df.assign(salary=20000)"
+        ],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. df.loc[row_label, column_name] = value is the safe, explicit, pandas-recommended way to set a value.",
+        feedbackWrong: "Not quite. df.loc[3, 'salary'] = 20000 is the correct approach. Chained indexing (df['col'][row] or df.col[row]) can trigger SettingWithCopyWarning and may silently fail. df.assign() sets a whole column, not a single cell."
+      }
+    ];
+
+    let currentQ = 0;
+    let results = [];
+
+    function beginQuiz() {
+      document.getElementById('screen-landing').style.display = 'none';
+      document.getElementById('screen-question').style.display = 'block';
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = questions[currentQ];
+      const total = questions.length;
+      const progressPercent = (currentQ / total) * 100;
+
+      document.getElementById('progressFill').style.width = progressPercent + '%';
+      document.getElementById('progressText').textContent = `Question ${currentQ + 1} of ${total}`;
+      document.getElementById('questionNumber').textContent = `Question ${currentQ + 1}`;
+      document.getElementById('questionText').textContent = q.text;
+
+      const optionsContainer = document.getElementById('optionsContainer');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((option, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(idx);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById('feedback').innerHTML = '';
+      document.getElementById('feedback').className = 'feedback';
+      document.getElementById('nextBtnContainer').classList.remove('show');
+    }
+
+    function selectAnswer(optionIndex) {
+      const q = questions[currentQ];
+      const isCorrect = optionIndex === q.correctIndex;
+      results[currentQ] = { correct: isCorrect };
+
+      // Disable all buttons
+      document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+
+      // Highlight correct and selected options
+      document.querySelectorAll('.option-btn').forEach((btn, idx) => {
+        if (idx === q.correctIndex) {
+          btn.classList.add('correct');
+        }
+        if (idx === optionIndex && !isCorrect) {
+          btn.classList.add('wrong');
+        }
+      });
+
+      // Show feedback
+      const feedbackEl = document.getElementById('feedback');
+      feedbackEl.textContent = isCorrect ? q.feedbackCorrect : q.feedbackWrong;
+      feedbackEl.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+
+      // Show next button
+      document.getElementById('nextBtnContainer').classList.add('show');
+      const nextBtn = document.getElementById('nextBtn');
+      if (currentQ === questions.length - 1) {
+        nextBtn.textContent = 'See Results →';
+      } else {
+        nextBtn.textContent = 'Next →';
+      }
+    }
+
+    function nextQuestion() {
+      currentQ++;
+      if (currentQ >= questions.length) {
+        showResults();
+      } else {
+        renderQuestion();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('screen-question').style.display = 'none';
+      document.getElementById('screen-results').style.display = 'block';
+
+      const score = results.filter(r => r.correct).length;
+      const total = results.length;
+      const percent = Math.round((score / total) * 100);
+      let grade = 'F';
+      if (percent >= 90) grade = 'A';
+      else if (percent >= 80) grade = 'B';
+      else if (percent >= 70) grade = 'C';
+      else if (percent >= 60) grade = 'D';
+
+      document.getElementById('scoreNumber').textContent = score + ' / ' + total;
+      document.getElementById('scoreDetails').textContent = percent + '% - Grade: ' + grade;
+
+      let breakdownHTML = '<div class="breakdown-title">Question Breakdown</div>';
+      results.forEach((result, idx) => {
+        const icon = result.correct ? '✓' : '✗';
+        const iconClass = result.correct ? 'correct' : 'wrong';
+        const correctAnswer = questions[idx].options[questions[idx].correctIndex];
+        breakdownHTML += `
+          <div class="breakdown-item">
+            <div class="breakdown-item-icon ${iconClass}">${icon}</div>
+            <div class="breakdown-item-text">
+              <strong>Q${idx + 1}:</strong> ${correctAnswer}
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('resultsBreakdown').innerHTML = breakdownHTML;
+
+      // Save score to localStorage
+      localStorage.setItem('dtsc520_quiz_m4', JSON.stringify({ score, total, percent, grade, completedAt: new Date().toISOString() }));
+    }
+
+    function retake() {
+      currentQ = 0;
+      results = [];
+      document.getElementById('screen-results').style.display = 'none';
+      document.getElementById('screen-landing').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

@@ -202,9 +202,22 @@
 
   .hint-box { margin: 0 1.5rem; background: rgba(42,113,149,0.08); border: 1px solid rgba(42,113,149,0.25); border-radius: 4px; padding: 0.9rem 1.1rem; display: none; }
   .hint-box.show { display: block; }
+  .hint-box.reveal-box { background: var(--amber-dim); border-color: rgba(200,150,58,0.35); }
+  .hint-box.reveal-box .hint-label { color: var(--amber); }
   .hint-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue-light); margin-bottom: 0.4rem; }
   .hint-text { font-size: 0.9rem; color: var(--text-dim); line-height: 1.55; }
   .hint-text code { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; background: var(--surface3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; color: var(--blue-light); }
+
+  .btn-prev { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: 4px; padding: 8px 16px; cursor: pointer; transition: color 0.2s, border-color 0.2s; display: none; }
+  .btn-prev.show { display: inline-flex; }
+  .btn-prev:hover { color: var(--text-dim); border-color: var(--gray); }
+
+  .btn-reveal { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: transparent; color: var(--amber); border: 1px solid var(--amber); border-radius: 4px; padding: 8px 16px; cursor: pointer; transition: opacity 0.2s; display: none; opacity: 0.7; }
+  .btn-reveal.show { display: inline-flex; }
+  .btn-reveal:hover { opacity: 1; }
+
+  .step-dot.done { cursor: pointer; }
+  .step-dot.done:hover { background: var(--blue-light); }
 
   #debriefScreen { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: flex-start; padding: 3rem 1.5rem 4rem; }
   .debrief-card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--blue); border-radius: 4px; max-width: 640px; width: 100%; padding: 2.5rem 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
@@ -334,7 +347,11 @@ const challenges = [
 
 roster = ["Rivera",
 `,
-    hint: `Continue the list: <code>roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]</code>`,
+    hints: [
+      `A list uses square brackets and commas: <code>roster = ["Rivera", "Okafor", ...]</code>. You've started it — keep adding the remaining three names.`,
+      `Complete the list: <code>roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]</code>. Don't forget the closing bracket and then <code>print(roster)</code>.`
+    ],
+    answer: `<code>roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]</code><br>Then <code>print(roster)</code> to display it.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -365,7 +382,11 @@ roster = ["Rivera",
 
 # Print the player at batting position 3 (index 2)
 print(roster[  ])`,
-    hint: `Chen is at index 2: <code>print(roster[2])</code>`,
+    hints: [
+      `Python counts from 0: the first item is index 0, the second is index 1, so the <em>third</em> item is index...`,
+      `Chen is the third player, so its index is 2: <code>print(roster[2])</code>. You can also use <code>roster[-3]</code> (counting from the end).`
+    ],
+    answer: `<code>print(roster[2])</code> — index 2 is the third item because Python counts from zero.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -400,7 +421,11 @@ roster.append(    )
 
 # Print the last three players using a slice
 print(roster[   ])`,
-    hint: `<code>roster.append("Patel")</code> then <code>roster[3:]</code> or <code>roster[-3:]</code> to get the last three.`,
+    hints: [
+      `Two steps: first add Patel with <code>roster.append("Patel")</code>, then use a slice to grab the last three items.`,
+      `<code>roster.append("Patel")</code> adds him to the end. Then <code>print(roster[-3:])</code> — the <code>-3:</code> means "start 3 from the end and go to the finish."`
+    ],
+    answer: `<code>roster.append("Patel")</code> then <code>print(roster[-3:])</code> (or <code>roster[3:]</code>) to get Williams, Torres, Patel.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -437,7 +462,11 @@ count =
 
 # Print: "The Eagles have X players on the active roster."
 print("The Eagles have", count, "players on the active roster.")`,
-    hint: `<code>count = len(roster)</code> gives you 6. The print statement above already uses commas to join the pieces.`,
+    hints: [
+      `<code>len()</code> counts the items in a list. Pass your list into it: <code>len(roster)</code>. Store the result in <code>count</code>.`,
+      `<code>count = len(roster)</code> gives you 6. The print statement is already written — just fill in the <code>count =</code> line.`
+    ],
+    answer: `<code>count = len(roster)</code> — <code>len()</code> returns the number of items. With Patel appended, the roster has 6 players.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -473,7 +502,11 @@ print("Torres bats at position:", torres_pos + 1)  # +1 to convert to 1-based
 
 # Check if Rivera is in the roster
 print("Rivera on roster:", "Rivera"    roster)`,
-    hint: `<code>roster.index("Torres")</code> gives 4. For the second: <code>"Rivera" in roster</code>`,
+    hints: [
+      `Two methods: <code>.index()</code> finds a value's position, and the <code>in</code> keyword checks whether a value exists. Fill in the missing parts of each line.`,
+      `<code>roster.index("Torres")</code> returns 4 (0-based). The second line needs the word <code>in</code>: <code>"Rivera" in roster</code> returns True.`
+    ],
+    answer: `<code>torres_pos = roster.index("Torres")</code> → 4 (index). Second line: <code>"Rivera" in roster</code> → True.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -493,6 +526,7 @@ let pyodideInstance = null;
 let currentChallenge = 0;
 let scores = new Array(challenges.length).fill(null);
 let completed = false;
+let hintIndex = -1;
 
 
 // ===== FRIENDLY ERROR TRANSLATOR =====
@@ -564,6 +598,7 @@ function showApp() {
 }
 
 function renderChallenge(idx) {
+  hintIndex = -1;
   const c = challenges[idx];
   document.getElementById('challengeNum').textContent = idx + 1;
   updateDots(idx);
@@ -583,16 +618,18 @@ function renderChallenge(idx) {
         <div class="editor-label">Your Code <span>Tab key inserts 4 spaces</span></div>
         <textarea class="code-editor" id="codeEditor" spellcheck="false">${c.starterCode}</textarea>
         <div class="editor-actions">
+          <button class="btn-prev${idx > 0 ? ' show' : ''}" id="btnPrev" onclick="prevChallenge()">&larr; Prev</button>
           <button class="btn-run" id="btnRun" onclick="runCode(${idx})">&#9654; Run Code</button>
-          <button class="btn-hint" onclick="toggleHint()">Hint</button>
-          <button class="btn-next" id="btnNext" onclick="nextChallenge()" style="display:none">
+          <button class="btn-hint" id="btnHint" onclick="showNextHint(${idx})">Hint 1 of ${c.hints.length}</button>
+          <button class="btn-reveal" id="btnReveal" onclick="revealAnswer(${idx})">Reveal Answer</button>
+          <button class="btn-next" id="btnNext" onclick="nextChallenge()">
             ${idx < challenges.length - 1 ? 'Next Challenge &rarr;' : 'See Results &rarr;'}
           </button>
         </div>
       </div>
       <div class="hint-box" id="hintBox">
-        <div class="hint-label">Hint</div>
-        <div class="hint-text">${c.hint}</div>
+        <div class="hint-label" id="hintLabel">Hint</div>
+        <div class="hint-text" id="hintText"></div>
       </div>
       <div class="output-wrap" style="margin-top:1rem">
         <div class="output-label">Output</div>
@@ -617,16 +654,28 @@ function renderChallenge(idx) {
   if (scores[idx] !== null) {
     const prev = scores[idx];
     showFeedback(prev.level, prev.verdict, prev.msg);
-    document.getElementById('btnNext').style.display = 'inline-flex';
+    if (prev.level !== 'fail') {
+      document.getElementById('btnNext').style.display = 'inline-flex';
+    }
   }
 }
 
 function updateDots(active) {
   for (let i = 0; i < challenges.length; i++) {
     const dot = document.getElementById('dot' + i);
-    if (i < active)        dot.className = 'step-dot done';
-    else if (i === active) dot.className = 'step-dot active';
-    else                   dot.className = 'step-dot';
+    if (i < active) {
+      dot.className = 'step-dot done';
+      dot.title = 'Go back to challenge ' + (i + 1);
+      dot.onclick = (function(idx) { return function() { goToChallenge(idx); }; })(i);
+    } else if (i === active) {
+      dot.className = 'step-dot active';
+      dot.title = '';
+      dot.onclick = null;
+    } else {
+      dot.className = 'step-dot';
+      dot.title = '';
+      dot.onclick = null;
+    }
   }
 }
 
@@ -652,7 +701,14 @@ async function runCode(idx) {
   scores[idx] = { pts: result.pts, level: result.level, msg: result.msg, verdict: result.level === 'pass' ? 'Correct' : result.level === 'partial' ? 'Partially Correct' : 'Not Quite', title: c.title, max: c.maxPoints };
   showFeedback(result.level, scores[idx].verdict, result.msg);
   updateScore();
-  document.getElementById('btnNext').style.display = 'inline-flex';
+  if (result.level === 'pass' || result.level === 'partial') {
+    document.getElementById('btnNext').style.display = 'inline-flex';
+  }
+  // Show reveal button after first failed attempt
+  if (result.level === 'fail') {
+    const revealBtn = document.getElementById('btnReveal');
+    if (revealBtn) revealBtn.classList.add('show');
+  }
   saveProgress();
 }
 
@@ -663,7 +719,57 @@ function showFeedback(level, verdict, msg) {
   document.getElementById('feedbackText').innerHTML = msg;
 }
 
-function toggleHint() { document.getElementById('hintBox').classList.toggle('show'); }
+function showNextHint(idx) {
+  const c = challenges[idx];
+  hintIndex = Math.min(hintIndex + 1, c.hints.length - 1);
+  const box = document.getElementById('hintBox');
+  const label = document.getElementById('hintLabel');
+  const text = document.getElementById('hintText');
+  box.classList.remove('reveal-box');
+  box.classList.add('show');
+  label.textContent = 'Hint ' + (hintIndex + 1) + ' of ' + c.hints.length;
+  text.innerHTML = c.hints[hintIndex];
+  const btn = document.getElementById('btnHint');
+  if (hintIndex >= c.hints.length - 1) {
+    btn.textContent = 'Hint ' + c.hints.length + ' of ' + c.hints.length;
+    btn.style.opacity = '0.45';
+    btn.style.cursor = 'default';
+  } else {
+    btn.textContent = 'Hint ' + (hintIndex + 2) + ' of ' + c.hints.length;
+  }
+}
+
+function revealAnswer(idx) {
+  const c = challenges[idx];
+  const box = document.getElementById('hintBox');
+  const label = document.getElementById('hintLabel');
+  const text = document.getElementById('hintText');
+  box.classList.add('show', 'reveal-box');
+  label.textContent = 'Answer';
+  text.innerHTML = c.answer;
+  // Grant 0pts and unlock Next so student can continue
+  if (!scores[idx] || scores[idx].level === 'fail') {
+    scores[idx] = { pts: 0, level: 'partial', msg: 'Answer revealed — review the solution above before moving on.', verdict: 'Answer Revealed', title: c.title, max: c.maxPoints };
+    showFeedback('partial', 'Answer Revealed', 'Answer revealed — review the solution above before moving on.');
+    updateScore();
+    document.getElementById('btnNext').style.display = 'inline-flex';
+    saveProgress();
+  }
+}
+
+function prevChallenge() {
+  if (currentChallenge > 0) {
+    currentChallenge--;
+    renderChallenge(currentChallenge);
+    window.scrollTo(0, 0);
+  }
+}
+
+function goToChallenge(idx) {
+  currentChallenge = idx;
+  renderChallenge(idx);
+  window.scrollTo(0, 0);
+}
 
 function updateScore() {
   const total = scores.reduce((s, x) => s + (x ? x.pts : 0), 0);

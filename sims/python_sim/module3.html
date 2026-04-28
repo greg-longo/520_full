@@ -102,9 +102,22 @@
 
   .hint-box { margin: 0 1.5rem; background: rgba(74,158,107,0.06); border: 1px solid rgba(74,158,107,0.2); border-radius: 4px; padding: 0.9rem 1.1rem; display: none; }
   .hint-box.show { display: block; }
+  .hint-box.reveal-box { background: var(--amber-dim); border-color: rgba(200,150,58,0.35); }
+  .hint-box.reveal-box .hint-label { color: var(--amber); }
   .hint-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--green); margin-bottom: 0.4rem; }
   .hint-text { font-size: 0.9rem; color: var(--text-dim); line-height: 1.55; }
   .hint-text code { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; background: var(--surface3); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; color: var(--blue-light); }
+
+  .btn-prev { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: 4px; padding: 8px 16px; cursor: pointer; transition: color 0.2s, border-color 0.2s; display: none; }
+  .btn-prev.show { display: inline-flex; }
+  .btn-prev:hover { color: var(--text-dim); border-color: var(--gray); }
+
+  .btn-reveal { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: transparent; color: var(--amber); border: 1px solid var(--amber); border-radius: 4px; padding: 8px 16px; cursor: pointer; transition: opacity 0.2s; display: none; opacity: 0.7; }
+  .btn-reveal.show { display: inline-flex; }
+  .btn-reveal:hover { opacity: 1; }
+
+  .step-dot.done { cursor: pointer; }
+  .step-dot.done:hover { background: var(--green); filter: brightness(1.3); }
 
   #debriefScreen { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: flex-start; padding: 3rem 1.5rem 4rem; }
   .debrief-card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--green); border-radius: 4px; max-width: 640px; width: 100%; padding: 2.5rem 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
@@ -232,7 +245,11 @@ const challenges = [
 # Loop through the roster and print each name
 for player in roster:
     `,
-    hint: `Add <code>print(player)</code> indented inside the loop body.`,
+    hints: [
+      `The loop is already written: <code>for player in roster:</code>. What goes inside the indented body to display each name?`,
+      `Add <code>print(player)</code> indented with 4 spaces inside the loop body. The variable <code>player</code> holds the current name on each iteration.`
+    ],
+    answer: `<code>for player in roster:</code> then indented: <code>print(player)</code>. The loop runs once per item, printing each name in turn.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}. Check your indentation - the print() must be indented inside the for loop.` };
@@ -263,7 +280,11 @@ for player in roster:
 # Print numbered lineup: "1. Rivera", "2. Okafor", etc.
 for i in range(len(roster)):
     print(   )`,
-    hint: `Inside the loop: <code>print(str(i+1) + ". " + roster[i])</code> or use <code>print(i+1, roster[i])</code>`,
+    hints: [
+      `<code>range(len(roster))</code> gives you 0, 1, 2, 3, 4. Inside the loop, <code>i</code> is the index and <code>roster[i]</code> is the player. How do you print the batting number (1-based)?`,
+      `Use <code>print(i+1, roster[i])</code> inside the loop — <code>i+1</code> converts from 0-based to 1-based. Or: <code>print(str(i+1) + ". " + roster[i])</code> for "1. Rivera" format.`
+    ],
+    answer: `Inside the loop: <code>print(i+1, roster[i])</code> prints "1 Rivera", "2 Okafor", etc. Add <code>". "</code> for "1. Rivera" style.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -301,7 +322,11 @@ for i in range(len(players)):
         print(name,    )
     else:
         print(name,    )`,
-    hint: `Fill in the quoted strings: <code>print(name, "HOT")</code> and <code>print(name, "COLD")</code>`,
+    hints: [
+      `The if/else structure is already there — you just need to fill in what to print. What two quoted strings go in the blanks after <code>name,</code>?`,
+      `Fill in the quoted strings: <code>print(name, "HOT")</code> for averages above .280, and <code>print(name, "COLD")</code> for everyone else.`
+    ],
+    answer: `<code>print(name, "HOT")</code> in the if branch, <code>print(name, "COLD")</code> in the else. Rivera (.287), Chen (.305), Torres (.293) are HOT; Okafor and Williams are COLD.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -348,7 +373,11 @@ for result in at_bats:
         xbh_count += 1
 
 print("Extra-base hits:", xbh_count)`,
-    hint: `Fill in: first blank is <code>1</code>, second is <code>"3B"</code>, third is <code>"HR"</code>. The answer should be 4.`,
+    hints: [
+      `There are three blanks to fill. The first is the increment after <code>+= </code>. The second and third are the string values for triple and home run in Python.`,
+      `First blank: <code>1</code> (you're incrementing by 1). Second blank: <code>"3B"</code>. Third blank: <code>"HR"</code>. The list has 1 double, 1 triple, and 2 home runs = 4 extra-base hits.`
+    ],
+    answer: `Fill in: <code>+= 1</code>, <code>elif result == "3B":</code>, <code>elif result == "HR":</code>. Total XBH = 4 (one 2B, one 3B, two HRs).`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -400,7 +429,11 @@ for result in at_bats:
 print("Hits:", hits)
 print("Strikeouts:", strikeouts)
 print("Walks:", walks)`,
-    hint: `Fill in: <code>1</code>, <code>"K"</code>, and <code>"BB"</code>. Answers: 6 hits, 3 strikeouts, 1 walk.`,
+    hints: [
+      `Three blanks: the first is after <code>hits +=</code>, the second is the string value for strikeouts, and the third is for walks. Look at the at_bats list to count what you expect.`,
+      `First blank: <code>1</code>. Second blank: <code>"K"</code>. Third blank: <code>"BB"</code>. Expected totals: 6 hits (1B+2B+3B+HR), 3 strikeouts (K), 1 walk (BB).`
+    ],
+    answer: `Fill in: <code>hits += 1</code>, <code>elif result == "K":</code>, <code>elif result == "BB":</code>. Results: 6 hits, 3 strikeouts, 1 walk.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -422,6 +455,7 @@ let pyodideInstance = null;
 let currentChallenge = 0;
 let scores = new Array(challenges.length).fill(null);
 let completed = false;
+let hintIndex = -1;
 
 
 // ===== FRIENDLY ERROR TRANSLATOR =====
@@ -493,6 +527,7 @@ function showApp() {
 }
 
 function renderChallenge(idx) {
+  hintIndex = -1;
   const c = challenges[idx];
   document.getElementById('challengeNum').textContent = idx + 1;
   updateDots(idx);
@@ -511,16 +546,18 @@ function renderChallenge(idx) {
         <div class="editor-label">Your Code <span>Tab key = 4 spaces</span></div>
         <textarea class="code-editor" id="codeEditor" spellcheck="false">${c.starterCode}</textarea>
         <div class="editor-actions">
+          <button class="btn-prev${idx > 0 ? ' show' : ''}" id="btnPrev" onclick="prevChallenge()">&larr; Prev</button>
           <button class="btn-run" id="btnRun" onclick="runCode(${idx})">&#9654; Run Code</button>
-          <button class="btn-hint" onclick="toggleHint()">Hint</button>
-          <button class="btn-next" id="btnNext" onclick="nextChallenge()" style="display:none">
+          <button class="btn-hint" id="btnHint" onclick="showNextHint(${idx})">Hint 1 of ${c.hints.length}</button>
+          <button class="btn-reveal" id="btnReveal" onclick="revealAnswer(${idx})">Reveal Answer</button>
+          <button class="btn-next" id="btnNext" onclick="nextChallenge()">
             ${idx < challenges.length - 1 ? 'Next Challenge &rarr;' : 'See Results &rarr;'}
           </button>
         </div>
       </div>
       <div class="hint-box" id="hintBox">
-        <div class="hint-label">Hint</div>
-        <div class="hint-text">${c.hint}</div>
+        <div class="hint-label" id="hintLabel">Hint</div>
+        <div class="hint-text" id="hintText"></div>
       </div>
       <div class="output-wrap" style="margin-top:1rem">
         <div class="output-label">Output</div>
@@ -542,16 +579,28 @@ function renderChallenge(idx) {
   });
   if (scores[idx] !== null) {
     showFeedback(scores[idx].level, scores[idx].verdict, scores[idx].msg);
-    document.getElementById('btnNext').style.display = 'inline-flex';
+    if (scores[idx].level !== 'fail') {
+      document.getElementById('btnNext').style.display = 'inline-flex';
+    }
   }
 }
 
 function updateDots(active) {
   for (let i = 0; i < challenges.length; i++) {
     const dot = document.getElementById('dot' + i);
-    if (i < active)        dot.className = 'step-dot done';
-    else if (i === active) dot.className = 'step-dot active';
-    else                   dot.className = 'step-dot';
+    if (i < active) {
+      dot.className = 'step-dot done';
+      dot.title = 'Go back to challenge ' + (i + 1);
+      dot.onclick = (function(idx) { return function() { goToChallenge(idx); }; })(i);
+    } else if (i === active) {
+      dot.className = 'step-dot active';
+      dot.title = '';
+      dot.onclick = null;
+    } else {
+      dot.className = 'step-dot';
+      dot.title = '';
+      dot.onclick = null;
+    }
   }
 }
 
@@ -576,7 +625,13 @@ async function runCode(idx) {
   scores[idx] = { pts: result.pts, level: result.level, msg: result.msg, verdict: result.level === 'pass' ? 'Correct' : result.level === 'partial' ? 'Partially Correct' : 'Not Quite', title: c.title, max: c.maxPoints };
   showFeedback(result.level, scores[idx].verdict, result.msg);
   updateScore();
-  document.getElementById('btnNext').style.display = 'inline-flex';
+  if (result.level === 'pass' || result.level === 'partial') {
+    document.getElementById('btnNext').style.display = 'inline-flex';
+  }
+  if (result.level === 'fail') {
+    const revealBtn = document.getElementById('btnReveal');
+    if (revealBtn) revealBtn.classList.add('show');
+  }
   saveProgress();
 }
 
@@ -587,7 +642,56 @@ function showFeedback(level, verdict, msg) {
   document.getElementById('feedbackText').innerHTML = msg;
 }
 
-function toggleHint() { document.getElementById('hintBox').classList.toggle('show'); }
+function showNextHint(idx) {
+  const c = challenges[idx];
+  hintIndex = Math.min(hintIndex + 1, c.hints.length - 1);
+  const box = document.getElementById('hintBox');
+  const label = document.getElementById('hintLabel');
+  const text = document.getElementById('hintText');
+  box.classList.remove('reveal-box');
+  box.classList.add('show');
+  label.textContent = 'Hint ' + (hintIndex + 1) + ' of ' + c.hints.length;
+  text.innerHTML = c.hints[hintIndex];
+  const btn = document.getElementById('btnHint');
+  if (hintIndex >= c.hints.length - 1) {
+    btn.textContent = 'Hint ' + c.hints.length + ' of ' + c.hints.length;
+    btn.style.opacity = '0.45';
+    btn.style.cursor = 'default';
+  } else {
+    btn.textContent = 'Hint ' + (hintIndex + 2) + ' of ' + c.hints.length;
+  }
+}
+
+function revealAnswer(idx) {
+  const c = challenges[idx];
+  const box = document.getElementById('hintBox');
+  const label = document.getElementById('hintLabel');
+  const text = document.getElementById('hintText');
+  box.classList.add('show', 'reveal-box');
+  label.textContent = 'Answer';
+  text.innerHTML = c.answer;
+  if (!scores[idx] || scores[idx].level === 'fail') {
+    scores[idx] = { pts: 0, level: 'partial', msg: 'Answer revealed — review the solution above before moving on.', verdict: 'Answer Revealed', title: c.title, max: c.maxPoints };
+    showFeedback('partial', 'Answer Revealed', 'Answer revealed — review the solution above before moving on.');
+    updateScore();
+    document.getElementById('btnNext').style.display = 'inline-flex';
+    saveProgress();
+  }
+}
+
+function prevChallenge() {
+  if (currentChallenge > 0) {
+    currentChallenge--;
+    renderChallenge(currentChallenge);
+    window.scrollTo(0, 0);
+  }
+}
+
+function goToChallenge(idx) {
+  currentChallenge = idx;
+  renderChallenge(idx);
+  window.scrollTo(0, 0);
+}
 
 function updateScore() {
   const total = scores.reduce((s, x) => s + (x ? x.pts : 0), 0);

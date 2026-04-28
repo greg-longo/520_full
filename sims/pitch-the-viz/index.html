@@ -5,29 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pitch the Viz - DTSC 520 Simulation</title>
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
-    --teal:     #2a9490;
-    --teal-d:   #1f6f6c;
-    --teal-l:   rgba(42,148,144,0.14);
+    /* Pitch the Viz — boardroom palette */
+    --accent:   #c49a2a;
+    --accent-d: #9a7818;
+    --accent-l: rgba(196,154,42,0.12);
     --gold:     #c49a2a;
     --gold-l:   rgba(196,154,42,0.12);
     --green:    #3a9e6e;
     --red:      #b84455;
     --maroon:   #8B1C40;
 
-    --bg:       #0d0f0f;
-    --surface:  #161a1a;
-    --surface2: #1e2424;
-    --border:   #2a3030;
-    --border-l: #1a2020;
+    /* teal kept as alias so existing chart/char code doesn't break */
+    --teal:     #3a8a86;
+    --teal-d:   #2a6a66;
+    --teal-l:   rgba(58,138,134,0.14);
 
-    --text:     #e8e8e4;
-    --text-dim: #9aa0a0;
-    --muted:    #586060;
+    --bg:       #08090f;
+    --surface:  #0d1018;
+    --surface2: #111620;
+    --border:   #1e2535;
+    --border-l: #131b28;
 
-    --font: 'Zilla Slab', Georgia, serif;
+    --text:     #e8e4dc;
+    --text-dim: #6a7a8a;
+    --muted:    #3a4555;
+
+    --font: Georgia, 'Zilla Slab', serif;
     --mono: 'IBM Plex Mono', monospace;
     --sans: 'IBM Plex Sans', sans-serif;
     --r: 4px;
@@ -45,8 +50,8 @@
 
   /* ---- NAV ---- */
   #topnav {
-    background: #0a0d0d;
-    border-bottom: 3px solid var(--teal);
+    background: #06070d;
+    border-bottom: 3px solid var(--accent);
     padding: 0 1.5rem;
     height: 48px;
     display: flex; align-items: center; justify-content: space-between;
@@ -56,7 +61,7 @@
   .nav-back { color: var(--text-dim); text-decoration: none; transition: color 0.15s; }
   .nav-back:hover { color: var(--text); }
   .nav-sep { color: var(--muted); }
-  .nav-title { color: var(--teal); font-weight: 600; font-size: 0.82rem; }
+  .nav-title { color: var(--accent); font-weight: 600; font-size: 0.82rem; }
   .nav-right { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); letter-spacing: 0.06em; }
 
   /* ---- SLIDE STRIP ---- */
@@ -81,14 +86,22 @@
     display: flex; align-items: center; justify-content: center;
     transition: all 0.2s; flex-shrink: 0;
   }
-  .strip-slide.done { background: var(--teal-d); border-color: var(--teal); color: rgba(255,255,255,0.7); }
-  .strip-slide.active { background: var(--teal); border-color: #3dbdb8; color: #fff; box-shadow: 0 0 0 3px rgba(42,148,144,0.25); }
+  .strip-slide.done { background: rgba(196,154,42,0.18); border-color: rgba(196,154,42,0.5); color: rgba(196,154,42,0.75); }
+  .strip-slide.active { background: var(--accent); border-color: #d4b84a; color: #0a0800; box-shadow: 0 0 0 3px rgba(196,154,42,0.2); }
   .strip-connector { width: 20px; height: 1px; background: var(--border); flex-shrink: 0; }
   .strip-fill { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-left: 0.5rem; }
-  .strip-fill-bar { height: 100%; background: var(--teal); border-radius: 2px; transition: width 0.5s ease; width: 0%; }
+  .strip-fill-bar { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.5s ease; width: 0%; }
 
   /* ---- MAIN ---- */
   #main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+
+  /* prep screen gets extra width — break out of 900px constraint */
+  #screen-prep.active {
+    display: block;
+    margin-left: calc(50% - 50vw + 1.25rem);
+    margin-right: calc(50% - 50vw + 1.25rem);
+    max-width: calc(100vw - 2.5rem);
+  }
 
   .screen { display: none; }
   .screen.active { display: block; }
@@ -96,9 +109,9 @@
   /* ---- LANDING ---- */
   #screen-landing { padding: 2rem 0; }
   .landing-masthead {
-    background: linear-gradient(135deg, #0d1414 0%, #0a1010 100%);
+    background: linear-gradient(135deg, #0c0e18 0%, #0a0c15 100%);
     border: 1px solid var(--border);
-    border-top: 4px solid var(--teal);
+    border-top: 4px solid var(--accent);
     border-radius: var(--r);
     padding: 2.5rem 2.5rem 2rem;
     margin-bottom: 1.5rem;
@@ -109,13 +122,13 @@
     position: absolute; right: 1.5rem; top: 50%;
     transform: translateY(-50%);
     font-family: var(--mono); font-size: 5rem; font-weight: 700;
-    color: rgba(42,148,144,0.05);
+    color: rgba(196,154,42,0.05);
     pointer-events: none; user-select: none;
   }
   .masthead-badge {
     font-family: var(--mono); font-size: 0.63rem;
     letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--teal); margin-bottom: 0.6rem;
+    color: var(--accent); margin-bottom: 0.6rem;
   }
   .masthead-title { font-size: 2.6rem; font-weight: 700; line-height: 1.1; margin-bottom: 0.4rem; }
   .masthead-sub { font-size: 1rem; color: var(--text-dim); max-width: 500px; line-height: 1.55; font-family: var(--sans); }
@@ -123,9 +136,9 @@
   .meta-tag {
     font-family: var(--mono); font-size: 0.65rem;
     padding: 0.22rem 0.65rem; border-radius: var(--r);
-    border: 1px solid rgba(42,148,144,0.35);
-    background: rgba(42,148,144,0.08);
-    color: rgba(255,255,255,0.65);
+    border: 1px solid rgba(196,154,42,0.3);
+    background: rgba(196,154,42,0.07);
+    color: rgba(232,228,220,0.6);
   }
 
   .landing-setup {
@@ -175,21 +188,21 @@
   }
   .obj-num {
     font-family: var(--mono); font-size: 0.6rem;
-    color: var(--teal); letter-spacing: 0.1em;
+    color: var(--accent); letter-spacing: 0.1em;
     text-transform: uppercase; margin-bottom: 0.3rem;
   }
   .obj-text { font-family: var(--sans); font-size: 0.82rem; color: var(--text-dim); line-height: 1.45; }
 
   .btn-primary {
     display: inline-block;
-    background: var(--teal);
-    color: #fff;
+    background: var(--accent);
+    color: #0a0800;
     font-family: var(--sans); font-size: 0.95rem; font-weight: 600;
     padding: 0.75rem 2.5rem;
     border-radius: var(--r); border: none; cursor: pointer;
     transition: background 0.15s, transform 0.1s;
   }
-  .btn-primary:hover { background: #33b0ab; transform: translateY(-1px); }
+  .btn-primary:hover { background: #d4aa3a; transform: translateY(-1px); }
   .btn-primary:active { transform: translateY(0); }
 
   /* ---- ROOM LAYOUT ---- */
@@ -209,7 +222,7 @@
   .slide-context {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-top: 3px solid var(--teal);
+    border-top: 3px solid var(--accent);
     border-radius: var(--r);
     padding: 1.1rem 1.25rem;
     margin-bottom: 1rem;
@@ -217,7 +230,7 @@
   .slide-eyebrow {
     font-family: var(--mono); font-size: 0.62rem;
     letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--teal); margin-bottom: 0.4rem;
+    color: var(--accent); margin-bottom: 0.4rem;
   }
   .slide-question { font-size: 1.15rem; font-weight: 600; color: var(--text); line-height: 1.35; margin-bottom: 0.6rem; }
   .slide-task { font-family: var(--sans); font-size: 0.88rem; color: var(--text-dim); line-height: 1.55; }
@@ -254,7 +267,7 @@
     color: var(--text);
   }
   .data-table tr:last-child td { border-bottom: none; }
-  .data-table td.num { color: var(--teal); }
+  .data-table td.num { color: var(--accent); }
   .data-table td.hi { color: var(--gold); font-weight: 500; }
 
   /* chart options */
@@ -268,8 +281,8 @@
     transition: all 0.15s;
     position: relative;
   }
-  .chart-option:hover { border-color: var(--teal); background: rgba(42,148,144,0.06); }
-  .chart-option.selected { border-color: var(--teal); background: rgba(42,148,144,0.1); }
+  .chart-option:hover { border-color: var(--accent); background: rgba(196,154,42,0.06); }
+  .chart-option.selected { border-color: var(--accent); background: rgba(196,154,42,0.1); }
   .chart-option.locked { pointer-events: none; }
   .chart-option-label {
     font-family: var(--sans); font-size: 0.8rem; font-weight: 600;
@@ -279,24 +292,24 @@
   .chart-option-label .opt-letter {
     font-family: var(--mono); font-size: 0.62rem;
     width: 18px; height: 18px; border-radius: 3px;
-    background: rgba(42,148,144,0.15); border: 1px solid rgba(42,148,144,0.3);
-    color: var(--teal); display: flex; align-items: center; justify-content: center;
+    background: rgba(196,154,42,0.12); border: 1px solid rgba(196,154,42,0.3);
+    color: var(--accent); display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; transition: all 0.15s;
   }
-  .chart-option.selected .opt-letter { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .chart-option.selected .opt-letter { background: var(--accent); color: #0a0800; border-color: var(--accent); }
   .chart-preview { width: 100%; height: 110px; position: relative; }
   .chart-preview canvas { width: 100% !important; height: 100% !important; }
 
   .btn-lock {
-    width: 100%; background: var(--teal); color: #fff;
+    width: 100%; background: transparent; color: var(--accent);
     font-family: var(--sans); font-size: 0.88rem; font-weight: 600;
-    padding: 0.65rem; border-radius: var(--r); border: none;
-    cursor: pointer; transition: background 0.15s;
-    opacity: 0.4; pointer-events: none;
+    padding: 0.65rem; border-radius: var(--r); border: 1px solid var(--accent);
+    cursor: pointer; transition: all 0.15s;
+    opacity: 0.35; pointer-events: none;
     margin-bottom: 1rem;
   }
-  .btn-lock.enabled { opacity: 1; pointer-events: all; }
-  .btn-lock.enabled:hover { background: #33b0ab; }
+  .btn-lock.enabled { opacity: 1; pointer-events: all; background: var(--accent); color: #0a0800; }
+  .btn-lock.enabled:hover { background: #d4aa3a; }
 
   /* room panel - right sidebar */
   .room-panel {
@@ -327,7 +340,7 @@
     transition: background 0.2s;
   }
   .char-row:last-child { border-bottom: none; }
-  .char-row.speaking { background: rgba(42,148,144,0.07); }
+  .char-row.speaking { background: rgba(196,154,42,0.06); }
   .char-avatar {
     width: 32px; height: 32px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
@@ -344,7 +357,7 @@
     font-family: var(--mono); font-size: 0.58rem;
     color: var(--muted); white-space: nowrap;
   }
-  .char-status.watching { color: var(--teal); }
+  .char-status.watching { color: var(--accent); }
 
   /* speech bubble */
   .speech-block {
@@ -375,7 +388,7 @@
   }
   .speech-cursor {
     display: inline-block; width: 2px; height: 0.9em;
-    background: var(--teal); vertical-align: text-bottom;
+    background: var(--accent); vertical-align: text-bottom;
     animation: blink 0.8s step-end infinite;
     margin-left: 1px;
   }
@@ -400,13 +413,243 @@
 
   .btn-next-slide {
     width: 100%; background: transparent;
-    border: 1px solid var(--teal); color: var(--teal);
+    border: 1px solid var(--accent); color: var(--accent);
     font-family: var(--sans); font-size: 0.85rem; font-weight: 600;
     padding: 0.6rem; border-radius: var(--r); cursor: pointer;
     transition: all 0.15s; display: none;
   }
   .btn-next-slide.visible { display: block; }
-  .btn-next-slide:hover { background: var(--teal); color: #fff; }
+  .btn-next-slide:hover { background: var(--accent); color: #0a0800; }
+
+  /* ---- PREP SCREEN ---- */
+  #screen-prep.active { display: block; }
+
+  .prep-header {
+    background: linear-gradient(135deg, #0c0e18 0%, #0a0c15 100%);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--accent);
+    border-radius: var(--r);
+    padding: 1.5rem 1.75rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .prep-eyebrow {
+    font-family: var(--mono); font-size: 0.62rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.35rem;
+  }
+  .prep-title { font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; line-height: 1.2; }
+  .prep-subtitle { font-family: var(--sans); font-size: 0.9rem; color: var(--text-dim); line-height: 1.55; max-width: 580px; }
+
+  /* step tracker */
+  .prep-stepper {
+    display: flex; align-items: center; gap: 0; margin-bottom: 1.25rem;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden;
+  }
+  .prep-step {
+    flex: 1; padding: 0.6rem 0.5rem; text-align: center;
+    font-family: var(--mono); font-size: 0.65rem; color: var(--muted);
+    border-right: 1px solid var(--border); transition: all 0.25s;
+    line-height: 1.3;
+  }
+  .prep-step:last-child { border-right: none; }
+  .prep-step.done { color: rgba(196,154,42,0.7); background: rgba(196,154,42,0.06); }
+  .prep-step.active { color: var(--gold); background: rgba(196,154,42,0.08); font-weight: 600; }
+  .prep-step-num { font-size: 0.58rem; opacity: 0.6; display: block; margin-bottom: 1px; }
+
+  /* main prep work area */
+  .prep-work {
+    display: grid;
+    grid-template-columns: minmax(380px, 2fr) 3fr;
+    gap: 1.25rem;
+    align-items: start;
+    margin-bottom: 1rem;
+  }
+  @media (max-width: 860px) { .prep-work { grid-template-columns: 1fr; } }
+
+  /* left: df panel */
+  .prep-df-panel {
+    background: #06070d;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    position: sticky; top: 64px;
+  }
+  .prep-df-header {
+    background: #0a0c14;
+    border-bottom: 1px solid var(--border);
+    padding: 0.45rem 0.9rem;
+    font-family: var(--mono); font-size: 0.63rem;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--text-dim);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .prep-df-badge {
+    font-size: 0.57rem; padding: 1px 7px; border-radius: 3px;
+    letter-spacing: 0.05em; font-weight: 600;
+  }
+  .prep-df-badge.issues { background: rgba(184,68,85,0.18); border: 1px solid rgba(184,68,85,0.3); color: #d47d88; }
+  .prep-df-badge.clean  { background: rgba(58,158,110,0.18); border: 1px solid rgba(58,158,110,0.3); color: #7dd4a8; }
+  .prep-df-badge.warn   { background: rgba(196,154,42,0.18); border: 1px solid rgba(196,154,42,0.3); color: #d4b84a; }
+
+  .prep-df-scroll { overflow-x: auto; max-height: 400px; overflow-y: auto; }
+  .prep-df-tbl {
+    border-collapse: collapse;
+    font-family: var(--mono); font-size: 0.72rem;
+    width: 100%;
+  }
+  .prep-df-tbl th {
+    color: var(--accent); font-weight: 600;
+    padding: 0.28rem 0.6rem;
+    text-align: left; border-bottom: 1px solid var(--border);
+    background: #0a0c14; position: sticky; top: 0;
+    white-space: nowrap;
+  }
+  .prep-df-tbl td {
+    padding: 0.2rem 0.6rem;
+    color: var(--text); border-bottom: 1px solid var(--border-l);
+    white-space: nowrap;
+  }
+  .prep-df-tbl tr:last-child td { border-bottom: none; }
+  .prep-df-tbl td.bad   { color: #b84455; font-weight: 600; }
+  .prep-df-tbl td.warn  { color: var(--gold); }
+  .prep-df-tbl td.good  { color: #7dd4a8; }
+  .prep-df-tbl tr.dup   { background: rgba(184,68,85,0.07); }
+  .prep-df-tbl tr.fixed { background: rgba(58,158,110,0.06); }
+
+  .prep-info-block {
+    padding: 0.55rem 0.9rem;
+    border-top: 1px solid var(--border-l);
+    font-family: var(--mono); font-size: 0.68rem;
+    color: var(--text-dim); line-height: 1.7;
+  }
+  .prep-info-block .info-row { display: flex; gap: 0.5rem; }
+  .prep-info-block .info-label { color: var(--muted); min-width: 88px; }
+  .prep-info-block .info-val { color: var(--text); }
+  .prep-info-block .info-val.bad { color: #b84455; }
+  .prep-info-block .info-val.ok  { color: #7dd4a8; }
+
+  /* right: task + options */
+  .prep-task-panel {}
+  .prep-task-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold);
+    border-radius: var(--r);
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 0.65rem;
+  }
+  .prep-task-label {
+    font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.3rem;
+  }
+  .prep-task-q { font-size: 1rem; font-weight: 600; color: var(--text); line-height: 1.35; margin-bottom: 0.4rem; }
+  .prep-task-body { font-family: var(--sans); font-size: 0.85rem; color: var(--text-dim); line-height: 1.55; }
+
+  .prep-options { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 0.85rem; }
+  .prep-option {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--r);
+    padding: 0.45rem 0.65rem 0.5rem;
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: flex-start; gap: 0.6rem;
+  }
+  .prep-option:hover  { border-color: var(--gold); background: rgba(196,154,42,0.05); }
+  .prep-option.selected { border-color: var(--gold); background: rgba(196,154,42,0.09); }
+  .prep-option.locked { pointer-events: none; }
+  .prep-option.correct { border-color: #3a9e6e !important; background: rgba(58,158,110,0.09) !important; }
+  .prep-option.incorrect { border-color: #b84455 !important; background: rgba(184,68,85,0.07) !important; opacity: 0.7; }
+  .prep-opt-letter {
+    font-family: var(--mono); font-size: 0.6rem;
+    width: 18px; height: 18px; border-radius: 3px; flex-shrink: 0; margin-top: 3px;
+    background: rgba(196,154,42,0.12); border: 1px solid rgba(196,154,42,0.3);
+    color: var(--gold); display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+  }
+  .prep-option.selected .prep-opt-letter { background: var(--gold); color: #1a1000; border-color: var(--gold); }
+  .prep-option.correct  .prep-opt-letter { background: #3a9e6e; color: #fff; border-color: #3a9e6e; }
+  .prep-option.incorrect .prep-opt-letter { background: #b84455; color: #fff; border-color: #b84455; }
+  .prep-opt-body { flex: 1; min-width: 0; }
+  .prep-opt-label {
+    font-family: var(--sans); font-size: 0.78rem; font-weight: 600;
+    color: var(--text-dim); margin-bottom: 0.2rem;
+    display: inline; margin-right: 0.5rem;
+  }
+
+  .prep-code {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    font-family: var(--mono); font-size: 0.72rem;
+    color: #cdd8d8; line-height: 1.55;
+    white-space: pre-wrap; overflow-x: auto;
+    display: block;
+  }
+  .prep-code .kw  { color: #7eb8d4; }
+  .prep-code .fn  { color: #a8c8a0; }
+  .prep-code .str { color: #c4a05a; }
+  .prep-code .num { color: #c49a2a; }
+  .prep-code .cmt { color: #506060; font-style: italic; }
+  .prep-code .op  { color: #8a9898; }
+  .prep-code .li  { color: #c49a2a; }
+
+  /* result card (shown after lock) */
+  .prep-result {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.85rem;
+    display: none;
+    font-family: var(--sans); font-size: 0.85rem;
+    line-height: 1.55;
+  }
+  .prep-result.visible { display: block; }
+  .prep-result.good { border-left: 3px solid #3a9e6e; }
+  .prep-result.warn { border-left: 3px solid var(--gold); }
+  .prep-result.bad  { border-left: 3px solid #b84455; }
+  .prep-result-label {
+    font-family: var(--mono); font-size: 0.58rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.4rem;
+  }
+  .prep-result-text { color: var(--text-dim); }
+  .prep-result-text strong { color: var(--text); }
+
+  .btn-prep-next {
+    width: 100%; background: var(--accent); color: #0a0800;
+    font-family: var(--sans); font-size: 0.88rem; font-weight: 600;
+    padding: 0.65rem; border-radius: var(--r); border: none;
+    cursor: pointer; transition: background 0.15s;
+    display: none;
+  }
+  .btn-prep-next.visible { display: block; }
+  .btn-prep-next:hover { background: #d4aa3a; }
+  .btn-prep-next.final { background: var(--accent); color: #0a0800; border: none; }
+  .btn-prep-next.final:hover { background: #d4aa3a; }
+  .btn-prep-next.final.visible { display: block; }
+
+  /* prep score summary */
+  .prep-summary {
+    background: linear-gradient(135deg, #0d1410 0%, #0a0f0d 100%);
+    border: 1px solid var(--border); border-top: 4px solid var(--gold);
+    border-radius: var(--r); padding: 1.5rem 1.75rem; margin-bottom: 1.25rem;
+    text-align: center;
+  }
+  .prep-summary-label { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+  .prep-summary-score { font-size: 2.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.35rem; }
+  .prep-summary-sub { font-family: var(--sans); font-size: 0.9rem; color: var(--text-dim); line-height: 1.55; max-width: 520px; margin: 0 auto 1.25rem; }
+  .prep-step-recap { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; max-width: 520px; margin-left: auto; margin-right: auto; }
+  .prep-recap-row {
+    display: flex; align-items: center; gap: 0.75rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r); padding: 0.55rem 0.85rem;
+    font-family: var(--sans); font-size: 0.82rem;
+  }
+  .prep-recap-icon { font-size: 0.9rem; flex-shrink: 0; }
+  .prep-recap-label { flex: 1; color: var(--text-dim); }
+  .prep-recap-pts { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
 
   /* score pip row */
   .score-pips {
@@ -420,7 +663,7 @@
     background: var(--border); border: 1px solid var(--border);
     transition: all 0.3s;
   }
-  .score-pip.earned { background: var(--teal); border-color: var(--teal); }
+  .score-pip.earned { background: var(--accent); border-color: var(--accent); }
   .score-pip.partial { background: var(--gold); border-color: var(--gold); }
   .score-pip-label { font-family: var(--mono); font-size: 0.6rem; color: var(--muted); margin-left: auto; }
 
@@ -431,7 +674,7 @@
   .vote-header {
     font-family: var(--mono); font-size: 0.65rem;
     letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--teal); margin-bottom: 1rem;
+    color: var(--accent); margin-bottom: 1rem;
     padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
   }
   .vote-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 1.5rem; }
@@ -466,14 +709,14 @@
   .vote-badge.abstain { background: rgba(196,154,42,0.15); border: 1px solid rgba(196,154,42,0.35); color: #d4b84a; }
 
   .outcome-banner {
-    background: linear-gradient(135deg, #0d1414 0%, #0a1010 100%);
+    background: linear-gradient(135deg, #0c0e18 0%, #0a0c15 100%);
     border: 1px solid var(--border);
-    border-top: 4px solid var(--teal);
+    border-top: 4px solid var(--accent);
     border-radius: var(--r);
     padding: 1.75rem 2rem;
     margin-bottom: 1.5rem;
   }
-  .outcome-eyebrow { font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.4rem; }
+  .outcome-eyebrow { font-family: var(--mono); font-size: 0.63rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; }
   .outcome-verdict { font-size: 1.9rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; line-height: 1.2; }
   .outcome-score { font-family: var(--mono); font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.75rem; }
   .outcome-body { font-family: var(--sans); font-size: 0.92rem; color: var(--text-dim); line-height: 1.65; max-width: 580px; }
@@ -527,7 +770,7 @@
     color: var(--text-dim); font-family: var(--sans); font-size: 0.85rem; font-weight: 500;
     padding: 0.6rem 1.25rem; border-radius: var(--r); cursor: pointer; transition: all 0.15s;
   }
-  .btn-secondary:hover { border-color: var(--teal); color: var(--text); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--text); }
 
   /* ---- FOOTER ---- */
   #sim-footer {
@@ -570,7 +813,7 @@
         <span class="meta-tag">4 slides</span>
         <span class="meta-tag">live reactions</span>
         <span class="meta-tag">committee vote</span>
-        <span class="meta-tag">~12 min</span>
+        <span class="meta-tag">~15 min</span>
       </div>
     </div>
 
@@ -599,7 +842,12 @@
       <div class="obj-card"><div class="obj-num">06</div><div class="obj-text">Use histograms to reveal distribution shape</div></div>
     </div>
 
-    <button class="btn-primary" onclick="startSim()">Enter the Room</button>
+    <button class="btn-primary" onclick="startPrep()">Begin Data Prep &rarr;</button>
+  </div>
+
+  <!-- PREP -->
+  <div id="screen-prep" class="screen">
+    <!-- injected by prepEngine -->
   </div>
 
   <!-- ROOM -->
@@ -701,209 +949,437 @@
 
 <script>
 // =====================================================================
-// CHART DRAW FUNCTIONS (must be defined before SLIDES array)
+// SVG CHART DRAW FUNCTIONS (must be defined before SLIDES array)
 // =====================================================================
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const STREAM_DATA = [1.2,1.4,1.6,1.9,2.1,8.4,6.1,4.3,3.8,3.5,3.6,4.1];
-const TC = { teal:'#2a9490', gold:'#c49a2a', muted:'rgba(90,110,110,0.5)', border:'#2a3030',
-              text:'#9aa0a0', gridLine:'rgba(42,48,48,0.8)' };
-const CHART_DEFAULTS = {
-  responsive: true, maintainAspectRatio: false,
-  plugins: { legend: { display: false }, tooltip: { enabled: false } },
-  scales: {
-    x: { grid: { color: TC.gridLine }, ticks: { color: TC.text, font: { size: 8, family: 'IBM Plex Mono' } } },
-    y: { grid: { color: TC.gridLine }, ticks: { color: TC.text, font: { size: 8, family: 'IBM Plex Mono' } } }
-  },
-  animation: { duration: 600 }
+
+// Shared SVG helpers
+function svgWrap(content, w, h) {
+  return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;overflow:visible">${content}</svg>`;
+}
+const SC = {
+  teal:'#2a9490', gold:'#c49a2a', purple:'#7a4a8a',
+  tealFill:'rgba(42,148,144,0.18)', tealDim:'rgba(42,148,144,0.45)',
+  grid:'rgba(60,80,80,0.5)', text:'#8aa0a0', bg:'#161a1a',
+  purpleDim:'rgba(122,74,138,0.65)', goldDim:'rgba(196,154,42,0.6)'
 };
+const FONT = `font-family="IBM Plex Mono, monospace"`;
 
-function mergeDeep(target, source) {
-  for (const key in source) {
-    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-      if (!target[key]) target[key] = {};
-      mergeDeep(target[key], source[key]);
-    } else {
-      target[key] = source[key];
-    }
+function gridLines(x0,y0,x1,y1, nx, ny) {
+  let s='';
+  for(let i=0;i<=ny;i++){
+    const y=y0+(y1-y0)*i/ny;
+    s+=`<line x1="${x0}" y1="${y.toFixed(1)}" x2="${x1}" y2="${y.toFixed(1)}" stroke="${SC.grid}" stroke-width="0.6"/>`;
   }
-  return target;
+  for(let i=0;i<=nx;i++){
+    const x=x0+(x1-x0)*i/nx;
+    s+=`<line x1="${x.toFixed(1)}" y1="${y0}" x2="${x.toFixed(1)}" y2="${y1}" stroke="${SC.grid}" stroke-width="0.6"/>`;
+  }
+  return s;
 }
 
-function baseConfig(overrides) {
-  return mergeDeep(JSON.parse(JSON.stringify(CHART_DEFAULTS)), overrides || {});
+function yLabels(x0,y0,y1, vals, fmt, anchor='end') {
+  const n=vals.length-1;
+  return vals.map((v,i)=>{
+    const y=y0+(y1-y0)*i/n;
+    return `<text x="${x0}" y="${(y+3.5).toFixed(1)}" text-anchor="${anchor}" fill="${SC.text}" font-size="8" ${FONT}>${fmt(v)}</text>`;
+  }).join('');
 }
 
-function drawSlide1A(canvas) {
-  return new Chart(canvas, baseConfig({ type:'line', data: {
-    labels: MONTHS,
-    datasets: [{ data: STREAM_DATA, borderColor: TC.teal, backgroundColor:'rgba(42,148,144,0.08)',
-      borderWidth:2, pointRadius:2, pointBackgroundColor: TC.teal, tension:0.35, fill:true }]
-  }, options: { scales: { y: { min:0, max:9, ticks: { callback: v=>v+'M', color: TC.text, font:{size:8,family:'IBM Plex Mono'} } } } } }));
+function xLabels(y, xs, labels) {
+  return xs.map((x,i)=>`<text x="${x.toFixed(1)}" y="${y}" text-anchor="middle" fill="${SC.text}" font-size="8" ${FONT}>${labels[i]}</text>`).join('');
 }
 
-function drawSlide1B(canvas) {
-  return new Chart(canvas, baseConfig({ type:'bar', data: {
-    labels: MONTHS,
-    datasets: [{ data: STREAM_DATA, backgroundColor: STREAM_DATA.map((_,i)=> i===5?TC.teal:'rgba(42,148,144,0.45)'), borderWidth:0 }]
-  }, options: { scales: { y: { min:3, ticks: { callback: v=>v+'M', color: TC.text, font:{size:8,family:'IBM Plex Mono'} } } } } }));
+// Smooth cubic spline through points
+function smoothPath(pts, fill) {
+  if(pts.length<2) return '';
+  let d=`M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+  for(let i=1;i<pts.length;i++){
+    const p0=pts[i-1], p1=pts[i];
+    const cp1x=(p0.x+(p1.x-p0.x)*0.4).toFixed(1);
+    const cp2x=(p1.x-(p1.x-p0.x)*0.4).toFixed(1);
+    d+=` C${cp1x},${p0.y.toFixed(1)} ${cp2x},${p1.y.toFixed(1)} ${p1.x.toFixed(1)},${p1.y.toFixed(1)}`;
+  }
+  if(fill){
+    d+=` L${pts[pts.length-1].x.toFixed(1)},${fill} L${pts[0].x.toFixed(1)},${fill} Z`;
+  }
+  return d;
 }
 
-function drawSlide1C(canvas) {
-  return new Chart(canvas, baseConfig({ type:'pie', data: {
-    labels: MONTHS,
-    datasets: [{ data: STREAM_DATA, backgroundColor:['#2a9490','#c49a2a','#7a4a8a','#b87a2a','#3a9e6e','#b84455','#2a7195','#8B1C40','#3a8f9e','#6a5a3a','#4a7a5a','#9a6a4a'], borderWidth:0 }]
-  }, options: { plugins: { legend: { display:false } }, scales: { x:{display:false}, y:{display:false} } } }));
+function legendItem(x, y, color, label) {
+  return `<rect x="${x}" y="${y-5}" width="8" height="8" fill="${color}" rx="1"/>
+          <text x="${x+11}" y="${y+3}" fill="${SC.text}" font-size="8" ${FONT}>${label}</text>`;
 }
 
-function drawSlide1D(canvas) {
-  return new Chart(canvas, baseConfig({ type:'bar', data: {
-    labels: MONTHS,
-    datasets: [{ data: STREAM_DATA, backgroundColor: STREAM_DATA.map((_,i)=> i===5?TC.teal:'rgba(42,148,144,0.45)'), borderWidth:0 }]
-  }, options: { scales: { y: { min:0, max:9, ticks: { callback: v=>v+'M', color: TC.text, font:{size:8,family:'IBM Plex Mono'} } } } } }));
+// ---- SLIDE 1 ----
+// 1A: Line chart (honest 0–9M y-axis)
+function drawSlide1A(el) {
+  const W=320,H=120, px=38,py=10,pw=W-px-8,ph=H-py-22;
+  const data=[1.2,1.4,1.6,1.9,2.1,8.4,6.1,4.3,3.8,3.5,3.6,4.1];
+  const months=['J','F','M','A','M','J','J','A','S','O','N','D'];
+  const maxV=9, xs=data.map((_,i)=>px+pw*i/(data.length-1));
+  const ys=data.map(v=>py+ph*(1-v/maxV));
+  const pts=xs.map((x,i)=>({x,y:ys[i]}));
+  const line=smoothPath(pts,false);
+  const area=smoothPath(pts,py+ph);
+  const yVals=[9,6,3,0];
+  el.innerHTML = svgWrap(`
+    ${gridLines(px,py,px+pw,py+ph,11,3)}
+    ${yLabels(px-4,py,py+ph,yVals,v=>v+'M')}
+    ${xLabels(py+ph+12,xs,months)}
+    <defs><linearGradient id="g1a" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${SC.teal}" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="${SC.teal}" stop-opacity="0.02"/>
+    </linearGradient></defs>
+    <path d="${area}" fill="url(#g1a)"/>
+    <path d="${line}" fill="none" stroke="${SC.teal}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    ${pts.map((p,i)=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${i===5?4:2}" fill="${i===5?SC.gold:SC.teal}"/>`).join('')}
+  `, W, H);
 }
 
-function drawSlide2A(canvas) {
-  const w=['Wk 1','Wk 4','Wk 12'];
-  return new Chart(canvas, baseConfig({ type:'bar', data: {
-    labels: w,
-    datasets: [
-      { label:'Luz', data:[12400,9800,8100], backgroundColor:TC.teal, borderWidth:0 },
-      { label:'Maren V.', data:[9200,5400,3200], backgroundColor:'rgba(122,74,138,0.7)', borderWidth:0 },
-      { label:'Theo Blank', data:[14100,8900,6600], backgroundColor:TC.gold, borderWidth:0 }
-    ]
-  }, options: { plugins:{ legend:{display:true, labels:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},boxWidth:10}} },
-    scales: { x:{stacked:false, ticks:{color:TC.text,font:{size:8,family:'IBM Plex Mono'}}}, y:{stacked:false, ticks:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}} } } }));
+// 1B: Bar chart (y-axis starts at 3M — truncated!)
+function drawSlide1B(el) {
+  const W=320,H=120, px=38,py=10,pw=W-px-8,ph=H-py-22;
+  const data=[1.2,1.4,1.6,1.9,2.1,8.4,6.1,4.3,3.8,3.5,3.6,4.1];
+  const months=['J','F','M','A','M','J','J','A','S','O','N','D'];
+  const minV=3, maxV=9, bw=pw/data.length*0.7;
+  const xs=data.map((_,i)=>px+pw*(i+0.5)/data.length);
+  const yVals=[9,6,3];
+  el.innerHTML = svgWrap(`
+    ${gridLines(px,py,px+pw,py+ph,11,2)}
+    ${yLabels(px-4,py,py+ph,yVals,v=>v+'M')}
+    ${xLabels(py+ph+12,xs,months)}
+    <text x="${px+pw/2}" y="${py-2}" text-anchor="middle" fill="#b84455" font-size="7" ${FONT}>⚠ y-axis starts at 3M</text>
+    ${data.map((v,i)=>{
+      const clipped=Math.max(v,minV);
+      const barH=ph*(clipped-minV)/(maxV-minV);
+      const x=(xs[i]-bw/2).toFixed(1);
+      const y=(py+ph-barH).toFixed(1);
+      return `<rect x="${x}" y="${y}" width="${bw.toFixed(1)}" height="${barH.toFixed(1)}" fill="${i===5?SC.teal:SC.tealDim}" rx="1"/>`;
+    }).join('')}
+  `, W, H);
 }
 
-function drawSlide2B(canvas) {
-  const w=['Wk 1','Wk 4','Wk 12'];
-  return new Chart(canvas, baseConfig({ type:'bar', data: {
-    labels: w,
-    datasets: [
-      { label:'Luz', data:[12400,9800,8100], backgroundColor:TC.teal, borderWidth:0 },
-      { label:'Maren V.', data:[9200,5400,3200], backgroundColor:'rgba(122,74,138,0.7)', borderWidth:0 },
-      { label:'Theo Blank', data:[14100,8900,6600], backgroundColor:TC.gold, borderWidth:0 }
-    ]
-  }, options: { plugins:{ legend:{display:true, labels:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},boxWidth:10}} },
-    scales: { x:{stacked:true, ticks:{color:TC.text,font:{size:8,family:'IBM Plex Mono'}}}, y:{stacked:true, ticks:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}} } } }));
+// 1C: Pie chart (12 slices)
+function drawSlide1C(el) {
+  const W=320,H=120, cx=W/2,cy=H/2,r=46;
+  const data=[1.2,1.4,1.6,1.9,2.1,8.4,6.1,4.3,3.8,3.5,3.6,4.1];
+  const colors=['#2a9490','#c49a2a','#7a4a8a','#b87a2a','#3a9e6e','#b84455','#2a7195','#8B1C40','#3a8f9e','#6a5a3a','#4a7a5a','#9a6a4a'];
+  const total=data.reduce((a,b)=>a+b,0);
+  let angle=-Math.PI/2, slices='';
+  data.forEach((v,i)=>{
+    const sweep=2*Math.PI*v/total;
+    const x1=cx+r*Math.cos(angle), y1=cy+r*Math.sin(angle);
+    const x2=cx+r*Math.cos(angle+sweep), y2=cy+r*Math.sin(angle+sweep);
+    slices+=`<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${sweep>Math.PI?1:0},1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${colors[i]}" stroke="#0d0f0f" stroke-width="0.8"/>`;
+    angle+=sweep;
+  });
+  el.innerHTML = svgWrap(`
+    ${slices}
+    <text x="${cx}" y="${cy+r+14}" text-anchor="middle" fill="${SC.text}" font-size="7.5" ${FONT}>12 equal-looking slices — no time axis</text>
+  `, W, H);
 }
 
-function drawSlide2C(canvas) {
-  const w=['Wk 1','Wk 4','Wk 12'];
-  return new Chart(canvas, baseConfig({ type:'line', data: {
-    labels: w,
-    datasets: [
-      { label:'Luz', data:[12400,9800,8100], borderColor:TC.teal, backgroundColor:'transparent', borderWidth:2, pointRadius:3, tension:0.2 },
-      { label:'Maren V.', data:[9200,5400,3200], borderColor:'rgba(122,74,138,0.9)', backgroundColor:'transparent', borderWidth:2, pointRadius:3, tension:0.2 },
-      { label:'Theo Blank', data:[14100,8900,6600], borderColor:TC.gold, backgroundColor:'transparent', borderWidth:2, pointRadius:3, tension:0.2 }
-    ]
-  }, options: { plugins:{ legend:{display:true, labels:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},boxWidth:10}} },
-    scales: { x:{ticks:{color:TC.text,font:{size:8,family:'IBM Plex Mono'}}}, y:{ticks:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}} } } }));
+// 1D: Bar chart (honest 0-9M)
+function drawSlide1D(el) {
+  const W=320,H=120, px=38,py=10,pw=W-px-8,ph=H-py-22;
+  const data=[1.2,1.4,1.6,1.9,2.1,8.4,6.1,4.3,3.8,3.5,3.6,4.1];
+  const months=['J','F','M','A','M','J','J','A','S','O','N','D'];
+  const maxV=9, bw=pw/data.length*0.72;
+  const xs=data.map((_,i)=>px+pw*(i+0.5)/data.length);
+  const yVals=[9,6,3,0];
+  el.innerHTML = svgWrap(`
+    ${gridLines(px,py,px+pw,py+ph,11,3)}
+    ${yLabels(px-4,py,py+ph,yVals,v=>v+'M')}
+    ${xLabels(py+ph+12,xs,months)}
+    ${data.map((v,i)=>{
+      const barH=ph*v/maxV;
+      return `<rect x="${(xs[i]-bw/2).toFixed(1)}" y="${(py+ph-barH).toFixed(1)}" width="${bw.toFixed(1)}" height="${barH.toFixed(1)}" fill="${i===5?SC.teal:SC.tealDim}" rx="1"/>`;
+    }).join('')}
+  `, W, H);
 }
 
-function drawSlide2D(canvas) {
-  return new Chart(canvas, baseConfig({ type:'pie', data: {
-    labels: ['Luz','Maren V.','Theo Blank'],
-    datasets: [{ data:[12400,9200,14100], backgroundColor:[TC.teal,'rgba(122,74,138,0.8)',TC.gold], borderWidth:0 }]
-  }, options: { plugins:{ legend:{display:true, labels:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},boxWidth:10}} }, scales:{x:{display:false},y:{display:false}} } }));
+// ---- SLIDE 2 ----
+const S2_LUZ=[12400,9800,8100], S2_MAR=[9200,5400,3200], S2_THEO=[14100,8900,6600];
+const S2_WEEKS=['Wk 1','Wk 4','Wk 12'];
+
+// 2A: Grouped bar
+function drawSlide2A(el) {
+  const W=320,H=130, px=38,py=18,pw=W-px-8,ph=H-py-22;
+  const maxV=16000, groups=3, bars=3, gap=4, bw=(pw/groups-gap*2)/bars;
+  const gxs=[0,1,2].map(i=>px+pw*(i+0.5)/groups);
+  const yVals=[0,4,8,12,16].map(v=>v*1000);
+  el.innerHTML = svgWrap(`
+    ${gridLines(px,py,px+pw,py+ph,2,4)}
+    ${yLabels(px-3,py,py+ph,yVals.slice().reverse(),v=>(v/1000)+'K')}
+    ${xLabels(py+ph+12,gxs,S2_WEEKS)}
+    ${[S2_LUZ,S2_MAR,S2_THEO].map((series,si)=>{
+      const colors=[SC.teal,SC.purpleDim,SC.goldDim];
+      return series.map((v,gi)=>{
+        const barH=ph*v/maxV;
+        const offset=(si-1)*(bw+2);
+        const x=(gxs[gi]+offset-bw/2).toFixed(1);
+        return `<rect x="${x}" y="${(py+ph-barH).toFixed(1)}" width="${bw.toFixed(1)}" height="${barH.toFixed(1)}" fill="${colors[si]}" rx="1"/>`;
+      }).join('');
+    }).join('')}
+    ${legendItem(px,py-8,SC.teal,'Luz')}
+    ${legendItem(px+42,py-8,SC.purpleDim,'Maren V.')}
+    ${legendItem(px+102,py-8,SC.goldDim,'Theo')}
+  `, W, H);
 }
 
-function drawSlide3A(canvas) {
-  const artists = [{x:42,y:4100},{x:55,y:4800},{x:67,y:5800},{x:78,y:6200},{x:88,y:7100},
-    {x:95,y:8200},{x:104,y:8800},{x:110,y:9400},{x:118,y:10200},{x:125,y:11400},
-    {x:128,y:12400},{x:135,y:11900},{x:142,y:13100},{x:150,y:13800},{x:158,y:14200},
-    {x:165,y:14800},{x:172,y:15100},{x:180,y:15400},{x:190,y:16200},{x:198,y:16800}];
-  const luz = {x:128,y:12400};
-  return new Chart(canvas, baseConfig({ type:'scatter', data: {
-    datasets: [
-      { label:'Artists', data: artists.filter(p=>!(p.x===luz.x&&p.y===luz.y)),
-        backgroundColor:'rgba(42,148,144,0.45)', pointRadius:4, pointHoverRadius:5 },
-      { label:'Luz', data:[luz], backgroundColor:'#c49a2a', pointRadius:7,
-        pointStyle:'star', pointHoverRadius:8 }
-    ]
-  }, options: { plugins:{ legend:{display:true, labels:{color:TC.text,font:{size:8,family:'IBM Plex Mono'},boxWidth:8}} },
-    scales: { x:{title:{display:true,text:'Followers (K)',color:TC.text,font:{size:7,family:'IBM Plex Mono'}},
-      ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'}}},
-      y:{title:{display:true,text:'Wk 1 Sales',color:TC.text,font:{size:7,family:'IBM Plex Mono'}},
-        ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}} } } }));
+// 2B: Stacked bar
+function drawSlide2B(el) {
+  const W=320,H=130, px=38,py=18,pw=W-px-8,ph=H-py-22;
+  const maxV=36000, bw=pw/3*0.55;
+  const gxs=[0,1,2].map(i=>px+pw*(i+0.5)/3);
+  const yVals=[0,10,20,30].map(v=>v*1000);
+  const colors=[SC.teal,SC.purpleDim,SC.goldDim];
+  const all=[S2_LUZ,S2_MAR,S2_THEO];
+  el.innerHTML = svgWrap(`
+    ${gridLines(px,py,px+pw,py+ph,2,3)}
+    ${yLabels(px-3,py,py+ph,yVals.slice().reverse(),v=>(v/1000)+'K')}
+    ${xLabels(py+ph+12,gxs,S2_WEEKS)}
+    ${[0,1,2].map(gi=>{
+      let base=0;
+      return all.map((series,si)=>{
+        const v=series[gi], barH=ph*v/maxV;
+        const y=(py+ph-ph*base/maxV-barH).toFixed(1);
+        base+=v;
+        return `<rect x="${(gxs[gi]-bw/2).toFixed(1)}" y="${y}" width="${bw.toFixed(1)}" height="${barH.toFixed(1)}" fill="${colors[si]}" rx="1"/>`;
+      }).join('');
+    }).join('')}
+    ${legendItem(px,py-8,SC.teal,'Luz')}
+    ${legendItem(px+42,py-8,SC.purpleDim,'Maren V.')}
+    ${legendItem(px+102,py-8,SC.goldDim,'Theo')}
+  `, W, H);
 }
 
-function drawSlide3B(canvas) {
-  const sales=[4100,4800,5800,6200,7100,8200,8800,9400,10200,11400,12400,11900,13100,13800,14200,14800,15100,15400,16200,16800].sort((a,b)=>a-b);
-  const colors = sales.map(v=>v===12400?TC.gold:'rgba(42,148,144,0.4)');
-  return new Chart(canvas, baseConfig({ type:'bar', data: {
-    labels: sales.map((_,i)=>i===sales.indexOf(12400)?'Luz':''),
-    datasets: [{ data:sales, backgroundColor:colors, borderWidth:0 }]
-  }, options: { scales: { x:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'}}}, y:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}} } } }));
+// 2C: Multi-line
+function drawSlide2C(el) {
+  const W=320,H=130, px=38,py=18,pw=W-px-8,ph=H-py-22;
+  const maxV=16000;
+  const xPos=[0,1,2].map(i=>px+pw*i/2);
+  const colors=[SC.teal,SC.purple,SC.gold];
+  const all=[S2_LUZ,S2_MAR,S2_THEO];
+  const labels=['Luz','Maren V.','Theo'];
+  const yVals=[0,4,8,12,16].map(v=>v*1000);
+  el.innerHTML = svgWrap(`
+    ${gridLines(px,py,px+pw,py+ph,2,4)}
+    ${yLabels(px-3,py,py+ph,yVals.slice().reverse(),v=>(v/1000)+'K')}
+    ${xLabels(py+ph+12,xPos,S2_WEEKS)}
+    ${all.map((series,si)=>{
+      const pts=series.map((v,i)=>({x:xPos[i],y:py+ph*(1-v/maxV)}));
+      const path=smoothPath(pts,false);
+      return `<path d="${path}" fill="none" stroke="${colors[si]}" stroke-width="1.8" stroke-linecap="round"/>
+        ${pts.map(p=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="${colors[si]}"/>`).join('')}`;
+    }).join('')}
+    ${labels.map((l,i)=>legendItem(px+i*60,py-8,colors[i],l)).join('')}
+  `, W, H);
 }
 
-function drawSlide3C(canvas) {
-  const pts=[{x:42,y:4100},{x:55,y:4800},{x:67,y:5800},{x:78,y:6200},{x:88,y:7100},
-    {x:95,y:8200},{x:104,y:8800},{x:110,y:9400},{x:118,y:10200},{x:125,y:11400},
-    {x:128,y:12400},{x:135,y:11900},{x:142,y:13100},{x:150,y:13800},{x:158,y:14200},
-    {x:165,y:14800},{x:172,y:15100},{x:180,y:15400},{x:190,y:16200},{x:198,y:16800}].sort((a,b)=>a.x-b.x);
-  return new Chart(canvas, baseConfig({ type:'line', data: {
-    labels: pts.map(p=>p.x+'K'),
-    datasets: [{ data:pts.map(p=>p.y), borderColor:TC.teal, backgroundColor:'rgba(42,148,144,0.08)',
-      borderWidth:2, pointRadius:2, tension:0.3, fill:true }]
-  }, options: { scales: {
-    x:{title:{display:true,text:'Followers (K)',color:TC.text,font:{size:7}},ticks:{color:TC.text,font:{size:6,family:'IBM Plex Mono'},maxTicksLimit:6}},
-    y:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}} } } }));
+// 2D: Pie (week 1 only)
+function drawSlide2D(el) {
+  const W=320,H=120, cx=W/2,cy=H/2-4,r=42;
+  const data=[12400,9200,14100], labels=['Luz','Maren V.','Theo'], colors=[SC.teal,SC.purpleDim,SC.gold];
+  const total=data.reduce((a,b)=>a+b,0);
+  let angle=-Math.PI/2, slices='', legendY=cy+r+12;
+  data.forEach((v,i)=>{
+    const sweep=2*Math.PI*v/total;
+    const x1=cx+r*Math.cos(angle), y1=cy+r*Math.sin(angle);
+    const x2=cx+r*Math.cos(angle+sweep), y2=cy+r*Math.sin(angle+sweep);
+    slices+=`<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${sweep>Math.PI?1:0},1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${colors[i]}" stroke="#0d0f0f" stroke-width="1"/>`;
+    angle+=sweep;
+  });
+  el.innerHTML = svgWrap(`
+    ${slices}
+    ${labels.map((l,i)=>legendItem(px_=W/2-70+i*50,legendY,colors[i],l)).join('')}
+    <text x="${cx}" y="${cy-r-6}" text-anchor="middle" fill="${SC.text}" font-size="7.5" ${FONT}>Week 1 only — no retention data</text>
+  `, W, H);
 }
 
-function drawSlide3D(canvas) {
-  const followers=[42,55,67,78,88,95,104,110,118,125,128,135,142,150,158,165,172,180,190,198];
-  return new Chart(canvas, baseConfig({ type:'bar', data: {
-    labels: followers.map((v,i)=>i===10?'Luz':''),
-    datasets: [{ data:followers, backgroundColor:followers.map((v,i)=>i===10?TC.gold:'rgba(42,148,144,0.4)'), borderWidth:0 }]
-  }, options: { scales: { x:{ticks:{color:TC.text,font:{size:6}}}, y:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'}}} } } }));
+// ---- SLIDE 3 ----
+const S3_PTS=[{x:42,y:4100},{x:55,y:4800},{x:67,y:5800},{x:78,y:6200},{x:88,y:7100},
+  {x:95,y:8200},{x:104,y:8800},{x:110,y:9400},{x:118,y:10200},{x:125,y:11400},
+  {x:128,y:12400},{x:135,y:11900},{x:142,y:13100},{x:150,y:13800},{x:158,y:14200},
+  {x:165,y:14800},{x:172,y:15100},{x:180,y:15400},{x:190,y:16200},{x:198,y:16800}];
+
+// 3A: Scatter plot
+function drawSlide3A(el) {
+  const W=320,H=130, px=40,py=10,pw=W-px-10,ph=H-py-24;
+  const minX=40,maxX=200,minY=4000,maxY=17000;
+  const toX=v=>px+pw*(v-minX)/(maxX-minX);
+  const toY=v=>py+ph*(1-(v-minY)/(maxY-minY));
+  const yVals=[4,8,12,16].map(v=>v*1000);
+  el.innerHTML = svgWrap(`
+    ${gridLines(px,py,px+pw,py+ph,4,3)}
+    ${yLabels(px-3,py,py+ph,[16000,12000,8000,4000],v=>(v/1000)+'K')}
+    <text x="${px+pw/2}" y="${py+ph+22}" text-anchor="middle" fill="${SC.text}" font-size="7.5" ${FONT}>Followers (K)</text>
+    ${S3_PTS.filter(p=>!(p.x===128&&p.y===12400)).map(p=>`<circle cx="${toX(p.x).toFixed(1)}" cy="${toY(p.y).toFixed(1)}" r="3.5" fill="${SC.tealDim}"/>`).join('')}
+    <circle cx="${toX(128).toFixed(1)}" cy="${toY(12400).toFixed(1)}" r="5.5" fill="${SC.gold}" stroke="#0d0f0f" stroke-width="1"/>
+    <text x="${(toX(128)+7).toFixed(1)}" y="${(toY(12400)+4).toFixed(1)}" fill="${SC.gold}" font-size="8" font-weight="600" ${FONT}>Luz</text>
+  `, W, H);
 }
 
-function drawSlide4A(canvas) {
+// 3B: Bar chart (sales sorted, Luz highlighted)
+function drawSlide3B(el) {
+  const W=320,H=120, px=38,py=10,pw=W-px-8,ph=H-py-16;
+  const sales=S3_PTS.map(p=>p.y).sort((a,b)=>a-b);
+  const maxV=17000, bw=pw/sales.length*0.82;
+  const yVals=[0,5000,10000,15000];
+  el.innerHTML = svgWrap(`
+    ${gridLines(px,py,px+pw,py+ph,4,3)}
+    ${yLabels(px-3,py,py+ph,[15000,10000,5000,0],v=>(v/1000)+'K')}
+    ${sales.map((v,i)=>{
+      const barH=ph*v/maxV;
+      const x=(px+pw*(i+0.5)/sales.length-bw/2).toFixed(1);
+      const isLuz=(v===12400);
+      return `<rect x="${x}" y="${(py+ph-barH).toFixed(1)}" width="${bw.toFixed(1)}" height="${barH.toFixed(1)}" fill="${isLuz?SC.gold:'rgba(42,148,144,0.4)'}" rx="1"/>
+        ${isLuz?`<text x="${(px+pw*(i+0.5)/sales.length).toFixed(1)}" y="${(py+ph-barH-3).toFixed(1)}" text-anchor="middle" fill="${SC.gold}" font-size="7" ${FONT}>Luz</text>`:''}`;
+    }).join('')}
+  `, W, H);
+}
+
+// 3C: Line chart (followers as x, misleading)
+function drawSlide3C(el) {
+  const W=320,H=130, px=40,py=10,pw=W-px-10,ph=H-py-24;
+  const sorted=S3_PTS.slice().sort((a,b)=>a.x-b.x);
+  const minX=40,maxX=200,maxY=17000;
+  const toX=v=>px+pw*(v-minX)/(maxX-minX);
+  const toY=v=>py+ph*(1-v/maxY);
+  const pts=sorted.map(p=>({x:toX(p.x),y:toY(p.y)}));
+  const line=smoothPath(pts,false);
+  const area=smoothPath(pts,py+ph);
+  el.innerHTML = svgWrap(`
+    ${gridLines(px,py,px+pw,py+ph,4,3)}
+    ${yLabels(px-3,py,py+ph,[17000,12750,8500,4250,0],v=>(v/1000).toFixed(0)+'K')}
+    <text x="${px+pw/2}" y="${py+ph+22}" text-anchor="middle" fill="${SC.text}" font-size="7.5" ${FONT}>Followers (K) — 20 separate artists</text>
+    <defs><linearGradient id="g3c" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${SC.teal}" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="${SC.teal}" stop-opacity="0.02"/>
+    </linearGradient></defs>
+    <path d="${area}" fill="url(#g3c)"/>
+    <path d="${line}" fill="none" stroke="${SC.teal}" stroke-width="2" stroke-linecap="round"/>
+    <text x="${px+2}" y="${py+14}" fill="#b84455" font-size="7" ${FONT}>line implies sequence...</text>
+  `, W, H);
+}
+
+// 3D: Two bar charts side by side (followers only shown)
+function drawSlide3D(el) {
+  const W=320,H=130, px=10,py=18,pw=W/2-px-6,ph=H-py-22;
+  const followers=S3_PTS.map(p=>p.x).sort((a,b)=>a-b);
+  const sales=S3_PTS.map(p=>p.y).sort((a,b)=>a-b);
+  const maxF=200, maxS=17000, n=20;
+  const bw=pw/n*0.8;
+  el.innerHTML = svgWrap(`
+    <text x="${px+pw/2}" y="${py-6}" text-anchor="middle" fill="${SC.text}" font-size="7.5" ${FONT}>Followers (K)</text>
+    ${gridLines(px,py,px+pw,py+ph,4,3)}
+    ${followers.map((v,i)=>{
+      const barH=ph*v/maxF;
+      const x=(px+pw*(i+0.5)/n-bw/2).toFixed(1);
+      const isLuz=(i===10);
+      return `<rect x="${x}" y="${(py+ph-barH).toFixed(1)}" width="${bw.toFixed(1)}" height="${barH.toFixed(1)}" fill="${isLuz?SC.gold:SC.tealDim}" rx="1"/>`;
+    }).join('')}
+    <text x="${W/2+4+pw/2}" y="${py-6}" text-anchor="middle" fill="${SC.text}" font-size="7.5" ${FONT}>Wk 1 Sales</text>
+    ${gridLines(W/2+4,py,W/2+4+pw,py+ph,4,3)}
+    ${sales.map((v,i)=>{
+      const barH=ph*v/maxS;
+      const x=(W/2+4+pw*(i+0.5)/n-bw/2).toFixed(1);
+      const isLuz=(v===12400);
+      return `<rect x="${x}" y="${(py+ph-barH).toFixed(1)}" width="${bw.toFixed(1)}" height="${barH.toFixed(1)}" fill="${isLuz?SC.gold:SC.tealDim}" rx="1"/>`;
+    }).join('')}
+    <text x="${W/2}" y="${H/2+4}" text-anchor="middle" fill="${SC.muted||'#586060'}" font-size="9">vs</text>
+  `, W, H);
+}
+
+// ---- SLIDE 4 ----
+// 4A: Histogram
+function drawSlide4A(el) {
+  const W=320,H=120, px=30,py=10,pw=W-px-10,ph=H-py-22;
   const bins=['0-2K','2-4K','4-6K','6-8K','8-10K','10-12K','12-14K','14K+'];
   const counts=[8,10,9,6,4,2,1,0];
-  const colors=counts.map((_,i)=>i===6?TC.gold:'rgba(42,148,144,0.5)');
-  return new Chart(canvas, baseConfig({ type:'bar', data: {
-    labels:bins,
-    datasets:[{data:counts,backgroundColor:colors,borderWidth:0,borderRadius:2,barPercentage:0.95,categoryPercentage:0.95}]
-  }, options:{ scales:{
-    x:{grid:{display:false},ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'}}},
-    y:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},stepSize:2}} } } }));
+  const maxV=11, bw=pw/bins.length;
+  const xs=bins.map((_,i)=>px+bw*(i+0.5));
+  el.innerHTML = svgWrap(`
+    ${gridLines(px,py,px+pw,py+ph,7,4)}
+    ${yLabels(px-3,py,py+ph,[10,8,6,4,2,0].reverse(),v=>v)}
+    ${xLabels(py+ph+12,xs,bins.map(b=>b.replace('K','')))}
+    <text x="${px+pw/2}" y="${py+ph+22}" text-anchor="middle" fill="${SC.text}" font-size="7" ${FONT}>First-week sales (K)</text>
+    ${counts.map((v,i)=>{
+      if(v===0) return '';
+      const barH=ph*v/maxV;
+      const isLuz=(i===6);
+      return `<rect x="${(px+bw*i+1).toFixed(1)}" y="${(py+ph-barH).toFixed(1)}" width="${(bw-2).toFixed(1)}" height="${barH.toFixed(1)}" fill="${isLuz?SC.gold:'rgba(42,148,144,0.55)'}" rx="1.5"/>
+        ${isLuz?`<text x="${(px+bw*i+bw/2).toFixed(1)}" y="${(py+ph-barH-4).toFixed(1)}" text-anchor="middle" fill="${SC.gold}" font-size="7" font-weight="600" ${FONT}>Luz</text>`:''}`;
+    }).join('')}
+  `, W, H);
 }
 
-function drawSlide4B(canvas) {
-  const allSales=[1200,1800,2100,2400,2600,2800,3000,3100,2200,2500,2900,3200,3400,3500,3600,3800,4000,4100,4200,4400,4500,4600,4800,5000,5200,5400,5600,5800,6000,6200,6500,6800,7200,8000,8500,9000,9500,10200,11400,12400];
-  return new Chart(canvas, baseConfig({ type:'bar', data: {
-    labels:allSales.map((_,i)=>''),
-    datasets:[{data:allSales, backgroundColor:allSales.map(v=>v===12400?TC.gold:'rgba(42,148,144,0.35)'), borderWidth:0}]
-  }, options:{scales:{x:{grid:{display:false},ticks:{display:false}},y:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}}}} }));
-}
-
-function drawSlide4C(canvas) {
-  return new Chart(canvas, baseConfig({ type:'bar', data: {
-    labels:['All Releases'],
-    datasets:[
-      {data:[[1.2,3.1]], backgroundColor:'transparent', borderColor:TC.teal, borderWidth:1, borderSkipped:false},
-      {data:[[3.1,5.1]], backgroundColor:'rgba(42,148,144,0.3)', borderColor:TC.teal, borderWidth:1, borderSkipped:false},
-      {data:[[5.1,8.2]], backgroundColor:'rgba(42,148,144,0.5)', borderColor:TC.teal, borderWidth:1, borderSkipped:false},
-      {data:[[8.2,12.4]], backgroundColor:'transparent', borderColor:TC.teal, borderWidth:1, borderSkipped:false},
-      {type:'scatter', data:[{x:0,y:12.4}], backgroundColor:TC.gold, pointRadius:6, pointStyle:'star'}
-    ]
-  }, options:{indexAxis:'y', scales:{x:{min:0,max:14,ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},callback:v=>v+'K'}},y:{display:false}},
-    plugins:{legend:{display:false}}} }));
-}
-
-function drawSlide4D(canvas) {
+// 4B: 40 individual bars (too many!)
+function drawSlide4B(el) {
+  const W=320,H=120, px=38,py=10,pw=W-px-8,ph=H-py-16;
   const allSales=[1200,1800,2100,2400,2600,2800,3000,3100,2200,2500,2900,3200,3400,3500,3600,3800,4000,4100,4200,4400,4500,4600,4800,5000,5200,5400,5600,5800,6000,6200,6500,6800,7200,8000,8500,9000,9500,10200,11400,12400].sort((a,b)=>a-b);
-  return new Chart(canvas, baseConfig({ type:'line', data: {
-    labels:allSales.map((_,i)=>i+1),
-    datasets:[{data:allSales, borderColor:TC.teal, backgroundColor:'rgba(42,148,144,0.08)',
-      borderWidth:2, pointRadius:allSales.map(v=>v===12400?5:1),
-      pointBackgroundColor:allSales.map(v=>v===12400?TC.gold:TC.teal), fill:true, tension:0.2}]
-  }, options:{scales:{
-    x:{title:{display:true,text:'Rank',color:TC.text,font:{size:7}},ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},maxTicksLimit:5}},
-    y:{ticks:{color:TC.text,font:{size:7,family:'IBM Plex Mono'},callback:v=>(v/1000)+'K'}}}} }));
+  const maxV=13000, bw=pw/allSales.length*0.8;
+  const yVals=[12000,8000,4000,0];
+  el.innerHTML = svgWrap(`
+    ${gridLines(px,py,px+pw,py+ph,8,3)}
+    ${yLabels(px-3,py,py+ph,[12000,8000,4000,0].reverse(),v=>(v/1000)+'K')}
+    ${allSales.map((v,i)=>{
+      const barH=ph*v/maxV;
+      const x=(px+pw*(i+0.5)/allSales.length-bw/2).toFixed(1);
+      return `<rect x="${x}" y="${(py+ph-barH).toFixed(1)}" width="${(bw).toFixed(1)}" height="${barH.toFixed(1)}" fill="${v===12400?SC.gold:'rgba(42,148,144,0.35)'}" rx="0.5"/>`;
+    }).join('')}
+    <text x="${px+pw-2}" y="${py+10}" text-anchor="end" fill="${SC.text}" font-size="7" ${FONT}>40 bars</text>
+  `, W, H);
 }
+
+// 4C: Box plot
+function drawSlide4C(el) {
+  const W=320,H=120, cx=W/2,py=16,ph=H-py-28;
+  const toX=v=>50+v/14000*(W-100);
+  const q1=toX(2200),median=toX(4800),q3=toX(7200),fence=toX(11000),luz=toX(12400);
+  const boxY=py+ph*0.25, boxH=ph*0.5;
+  const midY=py+ph/2;
+  el.innerHTML = svgWrap(`
+    <line x1="${toX(800).toFixed(1)}" y1="${midY}" x2="${fence.toFixed(1)}" y2="${midY}" stroke="${SC.teal}" stroke-width="1.5"/>
+    <rect x="${q1.toFixed(1)}" y="${boxY}" width="${(q3-q1).toFixed(1)}" height="${boxH}" fill="rgba(42,148,144,0.25)" stroke="${SC.teal}" stroke-width="1.5"/>
+    <line x1="${median.toFixed(1)}" y1="${boxY}" x2="${median.toFixed(1)}" y2="${boxY+boxH}" stroke="${SC.teal}" stroke-width="2"/>
+    <line x1="${toX(800).toFixed(1)}" y1="${(midY-8)}" x2="${toX(800).toFixed(1)}" y2="${(midY+8)}" stroke="${SC.teal}" stroke-width="1.5"/>
+    <line x1="${fence.toFixed(1)}" y1="${(midY-8)}" x2="${fence.toFixed(1)}" y2="${(midY+8)}" stroke="${SC.teal}" stroke-width="1.5"/>
+    <circle cx="${luz.toFixed(1)}" cy="${midY}" r="5" fill="${SC.gold}" stroke="#0d0f0f" stroke-width="1"/>
+    <text x="${luz.toFixed(1)}" y="${midY-9}" text-anchor="middle" fill="${SC.gold}" font-size="8" font-weight="600" ${FONT}>Luz</text>
+    <text x="50" y="${py+ph+20}" fill="${SC.text}" font-size="7.5" ${FONT}>0</text>
+    <text x="${toX(3500).toFixed(1)}" y="${py+ph+20}" text-anchor="middle" fill="${SC.text}" font-size="7.5" ${FONT}>3.5K</text>
+    <text x="${toX(7000).toFixed(1)}" y="${py+ph+20}" text-anchor="middle" fill="${SC.text}" font-size="7.5" ${FONT}>7K</text>
+    <text x="${toX(10500).toFixed(1)}" y="${py+ph+20}" text-anchor="middle" fill="${SC.text}" font-size="7.5" ${FONT}>10.5K</text>
+    <text x="${toX(14000).toFixed(1)}" y="${py+ph+20}" text-anchor="middle" fill="${SC.text}" font-size="7.5" ${FONT}>14K</text>
+    <text x="${W/2}" y="${py-4}" text-anchor="middle" fill="${SC.text}" font-size="7.5" ${FONT}>First-week sales — all 40 releases</text>
+  `, W, H);
+}
+
+// 4D: Ranked line (CDF-style)
+function drawSlide4D(el) {
+  const W=320,H=120, px=38,py=10,pw=W-px-8,ph=H-py-22;
+  const allSales=[1200,1800,2100,2400,2600,2800,3000,3100,2200,2500,2900,3200,3400,3500,3600,3800,4000,4100,4200,4400,4500,4600,4800,5000,5200,5400,5600,5800,6000,6200,6500,6800,7200,8000,8500,9000,9500,10200,11400,12400].sort((a,b)=>a-b);
+  const maxV=13000, n=allSales.length;
+  const pts=allSales.map((v,i)=>({x:px+pw*i/(n-1),y:py+ph*(1-v/maxV)}));
+  const line=smoothPath(pts,false);
+  const area=smoothPath(pts,py+ph);
+  const luzPt=pts[pts.length-1];
+  el.innerHTML = svgWrap(`
+    ${gridLines(px,py,px+pw,py+ph,4,3)}
+    ${yLabels(px-3,py,py+ph,[12000,8000,4000,0].reverse(),v=>(v/1000)+'K')}
+    <text x="${px+pw/2}" y="${py+ph+14}" text-anchor="middle" fill="${SC.text}" font-size="7.5" ${FONT}>Rank (1–40)</text>
+    <defs><linearGradient id="g4d" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${SC.teal}" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="${SC.teal}" stop-opacity="0.02"/>
+    </linearGradient></defs>
+    <path d="${area}" fill="url(#g4d)"/>
+    <path d="${line}" fill="none" stroke="${SC.teal}" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="${luzPt.x.toFixed(1)}" cy="${luzPt.y.toFixed(1)}" r="4.5" fill="${SC.gold}" stroke="#0d0f0f" stroke-width="1"/>
+    <text x="${(luzPt.x-6).toFixed(1)}" y="${(luzPt.y-8).toFixed(1)}" text-anchor="middle" fill="${SC.gold}" font-size="8" font-weight="600" ${FONT}>Luz</text>
+  `, W, H);
+}
+
 
 // =====================================================================
 // DATA
@@ -1152,6 +1628,446 @@ const SLIDES = [
 ];
 
 // =====================================================================
+// PREP ENGINE — data cleaning exercise before the meeting
+// =====================================================================
+
+// The raw dataset Nadia sends over the night before the committee meeting.
+// 15 rows, 5 columns, 4 distinct problems to find and fix.
+const RAW_DF = [
+  { idx:0,  artist:'Luz',          streams_m:'1.2',  platform:'Spotify',    followers_k:128,  weeks_since_drop:1  },
+  { idx:1,  artist:'Maren V.',     streams_m:'0.9',  platform:'Apple',      followers_k:94,   weeks_since_drop:4  },
+  { idx:2,  artist:'Theo Blank',   streams_m:'1.4',  platform:'Spotify',    followers_k:155,  weeks_since_drop:1  },
+  { idx:3,  artist:'Luz',          streams_m:'6.1',  platform:'Spotify',    followers_k:128,  weeks_since_drop:8  },
+  { idx:4,  artist:'Maren V.',     streams_m:'0.4',  platform:'Apple',      followers_k:94,   weeks_since_drop:12 },
+  { idx:5,  artist:'Luz',          streams_m:'8.4',  platform:'Spotify',    followers_k:128,  weeks_since_drop:4  },
+  { idx:6,  artist:'Theo Blank',   streams_m:'N/A',  platform:'Tidal',      followers_k:155,  weeks_since_drop:4  },
+  { idx:7,  artist:'Zara Cole',     streams_m:'2.1',  platform:'Spotify',    followers_k:210,  weeks_since_drop:1  },
+  { idx:8,  artist:'Luz',          streams_m:'4.3',  platform:'Spotify',    followers_k:128,  weeks_since_drop:12 },
+  { idx:9,  artist:'Zara Cole',     streams_m:'999.9',platform:'Spotify',    followers_k:210,  weeks_since_drop:8  },
+  { idx:10, artist:'Theo Blank',   streams_m:'0.8',  platform:'Spotify',    followers_k:155,  weeks_since_drop:12 },
+  { idx:11, artist:'Maren V.',     streams_m:'0.6',  platform:'Apple',      followers_k:94,   weeks_since_drop:8  },
+  { idx:12, artist:'Luz',          streams_m:'3.5',  platform:'Spotify',    followers_k:128,  weeks_since_drop:16 },
+  { idx:13, artist:'Zara Cole',     streams_m:'1.8',  platform:'Tidal',      followers_k:210,  weeks_since_drop:4  },
+  { idx:14, artist:'Zara Cole',     streams_m:'2.1',  platform:'Spotify',    followers_k:210,  weeks_since_drop:1  },
+];
+// Row 14 is a duplicate of row 7. Row 6 has 'N/A' string. Row 9 has 999.9 outlier.
+// After fix: cast streams_m to numeric (coerces row 6 → NaN), drop duplicate (row 14),
+// drop NaN (row 6), filter outlier (row 9). Clean df = 11 rows.
+
+const PREP_STEPS = [
+  // ─── STEP 1: Inspect ───────────────────────────────────────────────────
+  {
+    id: 'inspect',
+    title: 'Step 1 of 4 — Inspect the Data',
+    question: 'You\'ve run the standard inspection suite on the raw export. How many distinct data quality issues did you find?',
+    body: 'Nadia just emailed you the CSV. You\'ve loaded it and run the three commands below. Scan the output, look at the data — how many distinct issues are there?',
+    dfState: 'raw',
+    correctIdx: 3,
+    options: [
+      {
+        letter:'A', label:'1 issue',
+        code: `# You only checked duplicates\nprint(df.duplicated().sum())\n# → 1\n\n# Stopped here — missed dtype,\n# null row, and outlier`,
+        explanation: 'Look more carefully. There\'s more than one problem hiding in this dataset. <code>duplicated().sum()</code> found one issue, but <code>df.info()</code> would have shown a suspicious dtype, and <code>df.describe()</code> would have flagged a 999.9 max value.',
+        outcome: 'bad', pts: 0
+      },
+      {
+        letter:'B', label:'2 issues',
+        code: `# You ran info() and spotted the dtype\ndf.info()\n# streams_m   object  ← wrong type\n# + duplicated().sum() → 1\n\n# Missed: the N/A → NaN null,\n# and the 999.9 outlier in describe()`,
+        explanation: 'Getting warmer — dtype and duplicate are real issues. But <code>df.describe()</code> shows a <code>streams_m</code> max of 999.9 (a clear outlier), and once you coerce the dtype, row 6\'s "N/A" becomes a NaN that also needs handling.',
+        outcome: 'bad', pts: 0
+      },
+      {
+        letter:'C', label:'3 issues',
+        code: `df.info()\n# streams_m   object  ← wrong type\ndf.describe()\n# streams_m max: 999.9  ← outlier\nprint(df.duplicated().sum())\n# → 1  ← duplicate row\n\n# Missed: coercing the dtype\n# also produces a NaN (row 6)`,
+        explanation: 'Close — dtype, outlier, and duplicate are all real. But when you coerce <code>streams_m</code> to numeric in Step 2, the "N/A" string in row 6 becomes <code>NaN</code>. That\'s a fourth issue that needs its own fix.',
+        outcome: 'warn', pts: 1
+      },
+      {
+        letter:'D', label:'4 issues',
+        code: `df.info()\n# streams_m   object  ← (1) wrong dtype\n#             1 non-null "N/A" ← (2) null after coerce\ndf.describe()\n# streams_m   max: 999.9  ← (3) outlier\nprint(df.duplicated().sum())\n# → 1  ← (4) duplicate row`,
+        explanation: 'Correct. There are exactly 4 issues: (1) <code>streams_m</code> is dtype <code>object</code> — it should be <code>float64</code>; (2) row 6 has "N/A" which becomes <code>NaN</code> after coercion; (3) <code>df.describe()</code> shows a max of 999.9 — a clear outlier; (4) <code>duplicated().sum()</code> returns 1 — row 14 is an exact copy of row 7. Four problems, four steps to fix them.',
+        outcome: 'good', pts: 2
+      }
+    ]
+  },
+
+  // ─── STEP 2: Fix dtype ────────────────────────────────────────────────
+  {
+    id: 'dtype',
+    title: 'Step 2 of 4 — Fix the Column Type',
+    question: 'df.info() confirms it: <code>streams_m</code> is dtype <code>object</code>. Row 6 has the string "N/A" instead of a number, so pandas read the whole column as text. How do you convert it to numeric safely?',
+    body: 'You need <code>streams_m</code> as floats. But a hard cast will crash on the "N/A" string. Pick the approach that handles it gracefully.',
+    dfState: 'raw',
+    correctIdx: 1,
+    options: [
+      {
+        letter:'A', label:'Cast with astype(float)',
+        code: `df['streams_m'] = df['streams_m'].astype(float)`,
+        explanation: '<strong>ValueError.</strong> <code>astype(float)</code> raises an error the moment it hits the "N/A" string. It has no way to handle non-numeric values gracefully.',
+        outcome: 'bad', pts: 0
+      },
+      {
+        letter:'B', label:'Use pd.to_numeric with errors="coerce"',
+        code: `df['streams_m'] = pd.to_numeric(\n    df['streams_m'], errors='coerce'\n)`,
+        explanation: 'Correct. <strong>errors=\'coerce\'</strong> converts anything that can\'t be parsed as a number into <code>NaN</code> instead of crashing. Row 6\'s "N/A" becomes <code>NaN</code>, and the rest of the column becomes proper floats. You\'ll handle the NaN in the next step.',
+        outcome: 'good', pts: 2
+      },
+      {
+        letter:'C', label:'Replace "N/A" string first, then cast',
+        code: `df['streams_m'] = df['streams_m'].replace('N/A', 0)\ndf['streams_m'] = df['streams_m'].astype(float)`,
+        explanation: 'This works, but replacing with <code>0</code> is a bad choice — zero streams would skew your mean and min stats. You\'d need to replace with <code>NaN</code> (or use <code>np.nan</code>), then decide separately how to handle it. <code>pd.to_numeric(errors=\'coerce\')</code> does this more cleanly in one step.',
+        outcome: 'warn', pts: 1
+      },
+      {
+        letter:'D', label:'Drop the row before casting',
+        code: `df = df[df['streams_m'] != 'N/A']\ndf['streams_m'] = df['streams_m'].astype(float)`,
+        explanation: 'This technically works, but you\'re conflating two separate operations — filtering and type conversion. The cleaner pattern is to coerce first, then make an explicit decision about the resulting NaN. It also assumes you know the exact string that\'s causing the problem, which may not always be the case.',
+        outcome: 'warn', pts: 1
+      }
+    ]
+  },
+
+  // ─── STEP 3: Drop duplicate ───────────────────────────────────────────
+  {
+    id: 'duplicates',
+    title: 'Step 3 of 4 — Remove the Duplicate',
+    question: 'df.duplicated().sum() returned 1. There\'s an exact duplicate row in the dataset — the same artist, same streams, same platform, same week. How do you remove it?',
+    body: 'You need exactly one copy of every observation. Pick the right approach.',
+    dfState: 'typed',
+    correctIdx: 0,
+    options: [
+      {
+        letter:'A', label:'drop_duplicates() — keep first',
+        code: `df = df.drop_duplicates()`,
+        explanation: 'Correct. <strong>drop_duplicates()</strong> scans for rows that are identical across all columns and keeps the first occurrence by default. The duplicate (row 14, identical to row 7) is removed. df now has 14 rows.',
+        outcome: 'good', pts: 2
+      },
+      {
+        letter:'B', label:'drop_duplicates() on a single column',
+        code: `df = df.drop_duplicates(subset=['artist'])`,
+        explanation: 'This removes any row where the artist name appeared before — which would drop all but the first row for Luz, Maren V., Theo, and Zara. You\'d lose 9 legitimate rows. Subset deduplication is for when you only care about uniqueness in specific fields, not full-row duplicates.',
+        outcome: 'bad', pts: 0
+      },
+      {
+        letter:'C', label:'Hard-code the duplicate\'s index',
+        code: `df = df.drop(index=14)`,
+        explanation: 'Works this time, but only because you know the index. If the data is re-exported or re-sorted, index 14 might not be the duplicate anymore. Use drop_duplicates() — it finds the problem programmatically.',
+        outcome: 'warn', pts: 1
+      },
+      {
+        letter:'D', label:'Reset the index',
+        code: `df = df.reset_index(drop=True)`,
+        explanation: 'reset_index() renumbers the row index — it doesn\'t remove any rows at all. The duplicate is still in your DataFrame.',
+        outcome: 'bad', pts: 0
+      }
+    ]
+  },
+
+  // ─── STEP 4: NaN + outlier ────────────────────────────────────────────
+  {
+    id: 'clean',
+    title: 'Step 4 of 4 — Handle the NaN and the Outlier',
+    question: 'Two problems remain: the NaN in row 6 (from the "N/A" string you coerced), and row 9\'s 999.9 — clearly a data entry error for a mid-tier artist. One operation should handle both.',
+    body: 'You need a clean numeric column with no nulls and no impossible values. Pick the filter that handles both issues correctly.',
+    dfState: 'deduped',
+    correctIdx: 2,
+    options: [
+      {
+        letter:'A', label:'Drop NaN rows only',
+        code: `df = df.dropna(subset=['streams_m'])`,
+        explanation: 'This removes the NaN row (row 6), but the 999.9 outlier in row 9 is still there. Your mean, chart scales, and any aggregate statistics will be wildly wrong.',
+        outcome: 'warn', pts: 1
+      },
+      {
+        letter:'B', label:'Fill NaN with column mean, keep all rows',
+        code: `df['streams_m'] = df['streams_m'].fillna(\n    df['streams_m'].mean()\n)`,
+        explanation: 'The mean is currently distorted by the 999.9 value — so you\'d be filling the NaN with a nonsense number. And the outlier is still in the data. You need to remove the outlier before you can make any sensible imputation decisions.',
+        outcome: 'bad', pts: 0
+      },
+      {
+        letter:'C', label:'Filter to valid range — drops both',
+        code: `df = df[\n    (df['streams_m'] > 0) &\n    (df['streams_m'] < 50)\n]`,
+        explanation: 'Correct. NaN fails any comparison — <code>NaN > 0</code> is <code>False</code> — so it\'s excluded automatically. The 999.9 value is above 50 and also excluded. You end up with 11 clean rows, all valid stream counts. This one filter handles both issues in one readable condition.',
+        outcome: 'good', pts: 2
+      },
+      {
+        letter:'D', label:'Drop NaN, then cap outliers at the 95th percentile',
+        code: `df = df.dropna(subset=['streams_m'])\ncap = df['streams_m'].quantile(0.95)\ndf['streams_m'] = df['streams_m'].clip(upper=cap)`,
+        explanation: 'Capping at the 95th percentile is a valid outlier strategy for large datasets where you don\'t want to lose data. But with only 14 rows, clipping distorts the values more than it helps — and 999.9 is clearly a data entry error, not a real extreme observation. Dropping it is cleaner here.',
+        outcome: 'warn', pts: 1
+      }
+    ]
+  }
+];
+
+// Prep state
+let prepStep = 0;
+let prepResults = [];
+let prepScore = 0;
+let prepLocked = false;
+let prepSelected = null;
+
+// Df state labels per step
+const DF_STATES = {
+  raw:     { label: 'df  (raw export)', badge: '', badgeText: '' },
+  typed:   { label: 'df  (streams_m cast to float)', badge: '', badgeText: '' },
+  deduped: { label: 'df  (duplicate removed)', badge: '', badgeText: '' },
+  clean:   { label: 'df  (clean ✓)', badge: 'clean', badgeText: 'CLEAN' }
+};
+
+function tokenize(code) {
+  // Keywords — deliberately exclude 'class' to avoid clobbering injected span attributes
+  const KW = ['import','from','as','if','else','elif','for','in','not','and','or','True','False','None','return','def'];
+  const FN = ['info','describe','duplicated','sum','plot','dropna','drop_duplicates','drop','reset_index','astype','replace','to_numeric','fillna','quantile','clip','print'];
+  // Step 1: escape HTML special chars in the raw code only
+  let s = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // Step 2: wrap tokens using placeholder-safe replacements (spans won't be re-processed)
+  // Comments first (greedy to end of line)
+  s = s.replace(/(#[^\n]*)/g, '\x00cmt\x01$1\x02');
+  // Strings
+  s = s.replace(/('[^']*'|"[^"]*")/g, '\x00str\x01$1\x02');
+  // Numbers (not inside already-marked regions)
+  s = s.replace(/\b(\d+\.?\d*)\b/g, '\x00num\x01$1\x02');
+  // Keywords
+  s = s.replace(new RegExp(`\\b(${KW.join('|')})\\b`, 'g'), '\x00kw\x01$1\x02');
+  // Functions
+  s = s.replace(new RegExp(`\\b(${FN.join('|')})\\b`, 'g'), '\x00fn\x01$1\x02');
+  // Replace placeholders with real spans
+  return s
+    .replace(/\x00(\w+)\x01([\s\S]*?)\x02/g, (_, cls, val) => `<span class="${cls}">${val}</span>`)
+    .replace(/\n/g, '<br>');
+}
+
+function buildDfTable(state) {
+  // Show the df in its current state — no highlighting, students find issues themselves
+  const cols = ['#','artist','streams_m','platform','followers_k','weeks_since_drop'];
+  let rows = RAW_DF.map(r => ({...r}));
+
+  let isNAStr = r => r.streams_m === 'N/A';
+  let isOutlier = r => parseFloat(r.streams_m) === 999.9;
+  let isDup = r => r.idx === 14;
+
+  let html = `<table class="prep-df-tbl"><thead><tr>`;
+  cols.forEach(c => { html += `<th>${c}</th>`; });
+  html += `</tr></thead><tbody>`;
+
+  rows.forEach(r => {
+    // Apply state-based row filtering (rows that have been cleaned out don't appear)
+    if (state === 'deduped' && isDup(r)) return;
+    if (state === 'clean' && (isDup(r) || isNAStr(r) || isOutlier(r))) return;
+
+    // Show NaN for coerced rows in typed/deduped/clean states
+    let displayStreams = r.streams_m;
+    if (state !== 'raw' && isNAStr(r)) displayStreams = 'NaN';
+
+    html += `<tr>`;
+    html += `<td>${r.idx}</td>`;
+    html += `<td>${r.artist}</td>`;
+    html += `<td>${displayStreams}</td>`;
+    html += `<td>${r.platform}</td>`;
+    html += `<td>${r.followers_k}</td>`;
+    html += `<td>${r.weeks_since_drop}</td>`;
+    html += `</tr>`;
+  });
+
+  html += `</tbody></table>`;
+  return html;
+}
+
+function buildInfoBlock(state) {
+  const issues = {
+    raw:     [
+      { label:'dtype streams_m', val:'object (should be float64)', cls:'bad' },
+      { label:'null values',     val:'1 (row 6: "N/A" string)',    cls:'bad' },
+      { label:'duplicates',      val:'1 (row 14 = row 7)',         cls:'bad' },
+      { label:'outlier',         val:'row 9: streams_m = 999.9',   cls:'bad' },
+    ],
+    typed:   [
+      { label:'dtype streams_m', val:'float64 ✓',                  cls:'ok'  },
+      { label:'null values',     val:'1 (row 6 coerced to NaN)',   cls:'bad' },
+      { label:'duplicates',      val:'1 (row 14 = row 7)',         cls:'bad' },
+      { label:'outlier',         val:'row 9: streams_m = 999.9',   cls:'bad' },
+    ],
+    deduped: [
+      { label:'dtype streams_m', val:'float64 ✓',                  cls:'ok'  },
+      { label:'null values',     val:'1 (row 6: NaN)',             cls:'bad' },
+      { label:'duplicates',      val:'none ✓',                     cls:'ok'  },
+      { label:'outlier',         val:'row 9: streams_m = 999.9',   cls:'bad' },
+    ],
+    clean:   [
+      { label:'dtype streams_m', val:'float64 ✓',                  cls:'ok'  },
+      { label:'null values',     val:'none ✓',                     cls:'ok'  },
+      { label:'duplicates',      val:'none ✓',                     cls:'ok'  },
+      { label:'outlier',         val:'none ✓',                     cls:'ok'  },
+    ]
+  };
+  return issues[state].map(row =>
+    `<div class="info-row"><span class="info-label">${row.label}</span><span class="info-val ${row.cls}">${row.val}</span></div>`
+  ).join('');
+}
+
+function renderPrepStep(stepIdx) {
+  const step = PREP_STEPS[stepIdx];
+  prepLocked = false;
+  prepSelected = null;
+  window.scrollTo(0, 0);
+
+  const stateKeys = ['raw','raw','typed','deduped'];
+  const dfState = stateKeys[stepIdx];
+  const dfMeta = DF_STATES[dfState];
+
+  // stepper
+  let stepperHTML = PREP_STEPS.map((s, i) => {
+    const cls = i < stepIdx ? 'done' : i === stepIdx ? 'active' : '';
+    return `<div class="prep-step ${cls}"><span class="prep-step-num">Step ${i+1}</span>${s.id.charAt(0).toUpperCase()+s.id.slice(1)}</div>`;
+  }).join('');
+
+  // options
+  let optsHTML = `<div class="prep-options">`;
+  step.options.forEach((opt, oi) => {
+    optsHTML += `
+      <div class="prep-option" id="popt${oi}" onclick="selectPrepOption(${oi})">
+        <div class="prep-opt-letter">${opt.letter}</div>
+        <div class="prep-opt-body">
+          <div class="prep-opt-label">${opt.label}</div>
+          <div class="prep-code">${tokenize(opt.code)}</div>
+        </div>
+      </div>`;
+  });
+  optsHTML += `</div>`;
+
+  const isLast = stepIdx === PREP_STEPS.length - 1;
+
+  document.getElementById('screen-prep').innerHTML = `
+    <div class="prep-header">
+      <div class="prep-eyebrow">&#128203; Pre-Meeting Data Prep</div>
+      <div class="prep-title">Clean Before You Present</div>
+      <div class="prep-subtitle">Nadia sent the raw export last night. The meeting is in two hours. The data needs cleaning before any chart will tell an honest story.</div>
+    </div>
+    <div class="prep-stepper">${stepperHTML}</div>
+    <div class="prep-work">
+      <div class="prep-df-panel">
+        <div class="prep-df-header">
+          <span>${dfMeta.label}</span>
+          ${dfMeta.badgeText ? `<span class="prep-df-badge ${dfMeta.badge}">${dfMeta.badgeText}</span>` : ''}
+        </div>
+        <div class="prep-df-scroll">${buildDfTable(dfState)}</div>
+      </div>
+      <div class="prep-task-panel">
+        <div class="prep-task-box">
+          <div class="prep-task-label">&#127381; ${step.title}</div>
+          <div class="prep-task-q">${step.question}</div>
+          <div class="prep-task-body">${step.body}</div>
+        </div>
+        ${optsHTML}
+        <div class="prep-result" id="prepResult"></div>
+        <button class="btn-prep-next${isLast?' final':''}" id="btnPrepNext" onclick="${isLast?'finishPrep()':'advancePrepStep()'}">
+          ${isLast ? 'Data is clean — Enter the Room &#8594;' : 'Next Step &#8594;'}
+        </button>
+        <button class="btn-lock" id="btnPrepLock" onclick="lockPrepChoice()">Lock In &rarr;</button>
+      </div>
+    </div>
+  `;
+}
+
+function selectPrepOption(idx) {
+  if (prepLocked) return;
+  prepSelected = idx;
+  document.querySelectorAll('.prep-option').forEach((el, i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+  document.getElementById('btnPrepLock').classList.add('enabled');
+}
+
+function lockPrepChoice() {
+  if (prepSelected === null || prepLocked) return;
+  prepLocked = true;
+  const step = PREP_STEPS[prepStep];
+  const opt = step.options[prepSelected];
+
+  // mark correct / incorrect
+  document.querySelectorAll('.prep-option').forEach((el, i) => {
+    el.classList.add('locked');
+    if (i === step.correctIdx) el.classList.add('correct');
+    else if (i === prepSelected && prepSelected !== step.correctIdx) el.classList.add('incorrect');
+  });
+
+  document.getElementById('btnPrepLock').style.display = 'none';
+
+  // result card
+  const result = document.getElementById('prepResult');
+  result.className = `prep-result visible ${opt.outcome}`;
+  result.innerHTML = `<div class="prep-result-label">${opt.outcome === 'good' ? '✓ Correct' : opt.outcome === 'warn' ? '~ Partial' : '✗ Incorrect'}</div>
+    <div class="prep-result-text">${opt.explanation}</div>`;
+
+  prepScore += opt.pts;
+  prepResults.push({ stepIdx: prepStep, optIdx: prepSelected, pts: opt.pts, label: opt.label });
+
+  document.getElementById('btnPrepNext').classList.add('visible');
+}
+
+function advancePrepStep() {
+  prepStep++;
+  renderPrepStep(prepStep);
+}
+
+function finishPrep() {
+  // show clean df + score summary, then gate to the room
+  const pct = Math.round(prepScore / 8 * 100);
+  const grade = pct === 100 ? '🟢 Spotless' : pct >= 75 ? '🟡 Mostly clean' : pct >= 50 ? '🟠 Some issues missed' : '🔴 Several issues missed';
+
+  const recapHTML = prepResults.map((r, i) => {
+    const s = PREP_STEPS[r.stepIdx];
+    const maxPts = 2;
+    const icon = r.pts === maxPts ? '✓' : r.pts > 0 ? '~' : '✗';
+    const iconColor = r.pts === maxPts ? '#7dd4a8' : r.pts > 0 ? '#d4b84a' : '#d47d88';
+    return `<div class="prep-recap-row">
+      <span class="prep-recap-icon" style="color:${iconColor}">${icon}</span>
+      <span class="prep-recap-label"><strong>${s.title.split('—')[1].trim()}</strong> — ${r.label}</span>
+      <span class="prep-recap-pts">${r.pts}/${maxPts}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('screen-prep').innerHTML = `
+    <div class="prep-header">
+      <div class="prep-eyebrow">&#128203; Data Prep Complete</div>
+      <div class="prep-title">${grade}</div>
+      <div class="prep-subtitle">You've worked through all four issues. Here's how the data looks now — and how your decisions stacked up.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:minmax(380px,2fr) 3fr;gap:1.25rem;margin-bottom:1.25rem;align-items:start;">
+      <div class="prep-df-panel">
+        <div class="prep-df-header">
+          <span>df  (final — 11 rows)</span>
+          <span class="prep-df-badge clean">CLEAN</span>
+        </div>
+        <div class="prep-df-scroll">${buildDfTable('clean')}</div>
+        <div class="prep-info-block">${buildInfoBlock('clean')}</div>
+      </div>
+      <div>
+        <div class="prep-summary" style="text-align:left;padding:1rem 1.1rem;">
+          <div class="prep-summary-label">Prep Score</div>
+          <div class="prep-summary-score">${prepScore} / 8</div>
+          <div class="prep-summary-sub" style="margin:0 0 1rem;">Review each decision below, then head into the meeting.</div>
+        </div>
+        <div class="prep-step-recap">${recapHTML}</div>
+        <button class="btn-primary" style="width:100%;" onclick="startSim()">Enter the Meeting Room &rarr;</button>
+      </div>
+    </div>
+  `;
+  window.scrollTo(0, 0);
+}
+
+function startPrep() {
+  prepStep = 0;
+  prepResults = [];
+  prepScore = 0;
+  prepLocked = false;
+  prepSelected = null;
+  showScreen('screen-prep');
+  renderPrepStep(0);
+}
+
+// =====================================================================
 // CHARACTERS
 // =====================================================================
 const CHARS = {
@@ -1168,7 +2084,6 @@ let selectedOption = null;
 let locked = false;
 let totalScore = 0;
 let slideResults = [];
-let activeCharts = [];
 let typewriterTimer = null;
 
 // =====================================================================
@@ -1220,10 +2135,6 @@ function renderSlide(idx) {
   locked = false;
   selectedOption = null;
 
-  // destroy old charts
-  activeCharts.forEach(c => c.destroy());
-  activeCharts = [];
-
   // reset right panel
   clearSpeech();
   hideAllOutcomes();
@@ -1231,7 +2142,11 @@ function renderSlide(idx) {
   updateStrip(idx);
   updateCharStatus(null);
 
-  // build stage HTML
+  renderChartSlide(s);
+}
+
+function renderChartSlide(s) {
+  // build data table
   let tableHTML = `<table class="data-table"><thead><tr>${s.tableHeader.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
   s.tableRows.forEach(row => {
     tableHTML += `<tr>${row.map((cell,ci)=>`<td class="${ci>0?'num':''} ${cell==='12,400'||cell==='Luz'?'hi':''}">${cell}</td>`).join('')}</tr>`;
@@ -1245,7 +2160,7 @@ function renderSlide(idx) {
         <div class="chart-option-label">
           <span class="opt-letter">${opt.letter}</span>${opt.label}
         </div>
-        <div class="chart-preview"><canvas id="chartCanvas${oi}"></canvas></div>
+        <div class="chart-preview" id="chartPreview${oi}"></div>
       </div>`;
   });
   optionsHTML += `</div>`;
@@ -1256,22 +2171,22 @@ function renderSlide(idx) {
       <div class="slide-question">${s.question}</div>
       <div class="slide-task">${s.task}</div>
     </div>
-    <div class="data-block fade-in">
-      <div class="data-block-header">&#128202; Data - ${s.tableNote}</div>
-      ${tableHTML}
-    </div>
     ${optionsHTML}
     <button class="btn-lock" id="btnLock" onclick="lockChoice()">Lock In Chart &rarr;</button>
+    <details class="data-block fade-in" style="margin-top:0.75rem;">
+      <summary class="data-block-header" style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;">
+        <span>&#128202; Data — ${s.tableNote}</span>
+        <span style="font-size:0.7rem;opacity:0.6;">▼ show data</span>
+      </summary>
+      ${tableHTML}
+    </details>
   `;
 
   // draw preview charts
   requestAnimationFrame(() => {
     s.options.forEach((opt, oi) => {
-      const canvas = document.getElementById(`chartCanvas${oi}`);
-      if (canvas) {
-        const chart = opt.chartFn(canvas);
-        activeCharts.push(chart);
-      }
+      const el = document.getElementById(`chartPreview${oi}`);
+      if (el) opt.chartFn(el);
     });
   });
 }
@@ -1420,9 +2335,6 @@ function nextSlide() {
 // DEBRIEF
 // =====================================================================
 function showDebrief() {
-  activeCharts.forEach(c => c.destroy());
-  activeCharts = [];
-
   document.getElementById('stripFill').style.width = '100%';
   for (let i = 0; i < SLIDES.length; i++) {
     const dot = document.getElementById(`stripDot${i}`);
@@ -1476,8 +2388,8 @@ function showDebrief() {
     const s = SLIDES[r.slide];
     const ptsClass = r.pts === 3 ? 'full' : r.pts > 0 ? 'partial' : 'zero';
     return `<div class="breakdown-row">
-      <div class="br-slide">Slide ${r.slide+1}</div>
-      <div class="br-topic">${s.eyebrow.split(' - ')[1]}</div>
+      <div class="br-slide">Slide ${r.slide + 1}</div>
+      <div class="br-topic">${s.eyebrow.split(' - ')[1] || s.eyebrow}</div>
       <div class="br-picked">${s.options[r.optIdx].label}</div>
       <div class="br-pts ${ptsClass}">${r.pts}/3</div>
     </div>`;
@@ -1556,6 +2468,7 @@ function showDebrief() {
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
 }
 
 function restartSim() {

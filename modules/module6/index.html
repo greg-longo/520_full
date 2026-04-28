@@ -593,6 +593,44 @@
       .mod-progress-box { display: none; }
       .concept-grid { grid-template-columns: 1fr; }
     }
+
+    /* quiz link card */
+    .quiz-link-card {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.75rem 2rem;
+    }
+    .quiz-link-icon {
+      font-size: 2rem;
+      color: var(--accent-light);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .quiz-link-body { flex: 1; min-width: 0; }
+    .quiz-link-body h2 { border-bottom: none; margin-bottom: 0.4rem; font-size: 1.2rem; }
+    .quiz-link-body p { color: var(--text-dim); font-size: 0.9rem; margin: 0; }
+    .quiz-link-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.65rem 1.25rem;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .quiz-link-btn:hover { background: var(--accent-light); color: #fff; }
+    @media (max-width: 600px) {
+      .quiz-link-card { flex-direction: column; align-items: flex-start; }
+    }
   </style>
 </head>
 <body>
@@ -624,8 +662,7 @@
         </div>
       </div>
       <div class="mod-progress-box">
-        <div class="pct" id="quizScore">--</div>
-        <div class="pct-label">Quiz Score</div>
+        <a href="quiz.html" style="color:var(--accent-light);font-size:0.9rem;text-decoration:none;">Take the Quiz &rarr;</a>
       </div>
     </div>
   </div>
@@ -793,135 +830,17 @@
         <p>Always <code>git pull</code> before you start new work. Write clear commit messages. Use branches for every new feature or fix. Review your own PR before asking someone else to. Delete merged branches.</p>
       </div>
 
-      <!-- QUIZ -->
-      <div class="quiz-section" id="quiz">
-        <div class="quiz-header">
-          <h2>Module 6 Quiz</h2>
-          <span class="quiz-tag">10 questions</span>
+      <!-- QUIZ LINK -->
+      <section id="quiz">
+        <div class="quiz-link-card">
+          <div class="quiz-link-icon">&#9998;</div>
+          <div class="quiz-link-body">
+            <h2>Module 6 Quiz</h2>
+            <p>Ten questions covering Git, version control, branching, merging, and GitHub workflows. Each question comes up one at a time -- no going back, but you can retake when done.</p>
+          </div>
+          <a href="quiz.html" class="quiz-link-btn">Take the Quiz &rarr;</a>
         </div>
-
-        <div id="quizForm">
-
-          <div class="quiz-question" data-idx="0" data-correct="1">
-            <div class="q-text">1. What does <code>git add .</code> do?</div>
-            <div class="q-options">
-              <button class="q-option" data-val="0"><div class="q-radio"></div>Creates a new branch called "add"</button>
-              <button class="q-option" data-val="1"><div class="q-radio"></div>Stages all modified files in the current directory for the next commit</button>
-              <button class="q-option" data-val="2"><div class="q-radio"></div>Pushes all local commits to GitHub</button>
-              <button class="q-option" data-val="3"><div class="q-radio"></div>Adds a new remote repository called "origin"</button>
-            </div>
-            <div class="q-feedback"></div>
-          </div>
-
-          <div class="quiz-question" data-idx="1" data-correct="2">
-            <div class="q-text">2. Which of the following best describes the <em>staging area</em>?</div>
-            <div class="q-options">
-              <button class="q-option" data-val="0"><div class="q-radio"></div>The remote GitHub repository where your team collaborates</button>
-              <button class="q-option" data-val="1"><div class="q-radio"></div>Your working directory where files are edited</button>
-              <button class="q-option" data-val="2"><div class="q-radio"></div>A holding area where you decide which changes will be included in the next commit</button>
-              <button class="q-option" data-val="3"><div class="q-radio"></div>A temporary backup of deleted files</button>
-            </div>
-            <div class="q-feedback"></div>
-          </div>
-
-          <div class="quiz-question" data-idx="2" data-correct="0">
-            <div class="q-text">3. You run <code>git commit -m "Add player age column"</code>. Where does this commit initially exist?</div>
-            <div class="q-options">
-              <button class="q-option" data-val="0"><div class="q-radio"></div>Only in your local repository</button>
-              <button class="q-option" data-val="1"><div class="q-radio"></div>Only on GitHub</button>
-              <button class="q-option" data-val="2"><div class="q-radio"></div>Both locally and on GitHub simultaneously</button>
-              <button class="q-option" data-val="3"><div class="q-radio"></div>In the staging area, waiting for a push</button>
-            </div>
-            <div class="q-feedback"></div>
-          </div>
-
-          <div class="quiz-question" data-idx="3" data-correct="3">
-            <div class="q-text">4. What is the purpose of creating a branch before starting new work?</div>
-            <div class="q-options">
-              <button class="q-option" data-val="0"><div class="q-radio"></div>To make your commits upload faster to GitHub</button>
-              <button class="q-option" data-val="1"><div class="q-radio"></div>Branches are required by GitHub - you cannot commit without one</button>
-              <button class="q-option" data-val="2"><div class="q-radio"></div>To create a backup copy of the repository on a second server</button>
-              <button class="q-option" data-val="3"><div class="q-radio"></div>To isolate your work so changes don't affect the main codebase until they're ready</button>
-            </div>
-            <div class="q-feedback"></div>
-          </div>
-
-          <div class="quiz-question" data-idx="4" data-correct="1">
-            <div class="q-text">5. A merge conflict occurs when...</div>
-            <div class="q-options">
-              <button class="q-option" data-val="0"><div class="q-radio"></div>You try to push without a commit message</button>
-              <button class="q-option" data-val="1"><div class="q-radio"></div>Two branches have made changes to the same lines in the same file</button>
-              <button class="q-option" data-val="2"><div class="q-radio"></div>Your internet connection drops during a <code>git push</code></button>
-              <button class="q-option" data-val="3"><div class="q-radio"></div>A branch name already exists in the remote repository</button>
-            </div>
-            <div class="q-feedback"></div>
-          </div>
-
-          <div class="quiz-question" data-idx="5" data-correct="2">
-            <div class="q-text">6. What does <code>git pull origin main</code> do?</div>
-            <div class="q-options">
-              <button class="q-option" data-val="0"><div class="q-radio"></div>Uploads your local main branch to GitHub</button>
-              <button class="q-option" data-val="1"><div class="q-radio"></div>Creates a new branch called "origin" from main</button>
-              <button class="q-option" data-val="2"><div class="q-radio"></div>Downloads commits from the remote main branch and merges them into your local branch</button>
-              <button class="q-option" data-val="3"><div class="q-radio"></div>Deletes the main branch from the remote</button>
-            </div>
-            <div class="q-feedback"></div>
-          </div>
-
-          <div class="quiz-question" data-idx="6" data-correct="0">
-            <div class="q-text">7. What is a Pull Request on GitHub?</div>
-            <div class="q-options">
-              <button class="q-option" data-val="0"><div class="q-radio"></div>A proposal to merge one branch into another, with a thread for code review and discussion</button>
-              <button class="q-option" data-val="1"><div class="q-radio"></div>A request to pull someone else's repository to your machine</button>
-              <button class="q-option" data-val="2"><div class="q-radio"></div>An automated script that pulls new commits every hour</button>
-              <button class="q-option" data-val="3"><div class="q-radio"></div>A way to request read access to a private repository</button>
-            </div>
-            <div class="q-feedback"></div>
-          </div>
-
-          <div class="quiz-question" data-idx="7" data-correct="3">
-            <div class="q-text">8. Which command creates a new branch called <code>feature/clean-data</code> AND switches to it in one step?</div>
-            <div class="q-options">
-              <button class="q-option" data-val="0"><div class="q-radio"></div><code>git branch feature/clean-data</code></button>
-              <button class="q-option" data-val="1"><div class="q-radio"></div><code>git switch feature/clean-data</code></button>
-              <button class="q-option" data-val="2"><div class="q-radio"></div><code>git merge feature/clean-data</code></button>
-              <button class="q-option" data-val="3"><div class="q-radio"></div><code>git checkout -b feature/clean-data</code></button>
-            </div>
-            <div class="q-feedback"></div>
-          </div>
-
-          <div class="quiz-question" data-idx="8" data-correct="1">
-            <div class="q-text">9. What is <strong>forking</strong> a repository on GitHub?</div>
-            <div class="q-options">
-              <button class="q-option" data-val="0"><div class="q-radio"></div>Splitting a repository into two separate projects permanently</button>
-              <button class="q-option" data-val="1"><div class="q-radio"></div>Creating your own copy of someone else's repository under your GitHub account</button>
-              <button class="q-option" data-val="2"><div class="q-radio"></div>Creating a branch on the remote repository</button>
-              <button class="q-option" data-val="3"><div class="q-radio"></div>Downloading the repository without version history</button>
-            </div>
-            <div class="q-feedback"></div>
-          </div>
-
-          <div class="quiz-question" data-idx="9" data-correct="2">
-            <div class="q-text">10. After resolving a merge conflict, what do you need to do before the merge is complete?</div>
-            <div class="q-options">
-              <button class="q-option" data-val="0"><div class="q-radio"></div>Run <code>git conflict --resolve</code></button>
-              <button class="q-option" data-val="1"><div class="q-radio"></div>Delete the branch that caused the conflict</button>
-              <button class="q-option" data-val="2"><div class="q-radio"></div>Stage the resolved file with <code>git add</code> and then commit</button>
-              <button class="q-option" data-val="3"><div class="q-radio"></div>Push the conflicted file to GitHub so a teammate can fix it</button>
-            </div>
-            <div class="q-feedback"></div>
-          </div>
-
-          <button class="quiz-submit" id="submitBtn" onclick="submitQuiz()">Submit Quiz</button>
-
-          <div class="quiz-result" id="quizResult">
-            <div class="result-score" id="resultScore"></div>
-            <div class="result-label" id="resultLabel"></div>
-            <div class="result-sub" id="resultSub"></div>
-          </div>
-
-        </div>
-      </div>
+      </section>
 
     </div><!-- /content -->
 
@@ -929,7 +848,7 @@
     <aside class="sidebar">
 
       <div class="sidebar-card">
-        <h4>On this page</h4>
+        <h4>On This Page</h4>
         <ul class="toc-list">
           <li><a href="#version-control">What is Version Control?</a></li>
           <li><a href="#three-states">The Three States</a></li>
@@ -938,7 +857,7 @@
           <li><a href="#branching">Branching</a></li>
           <li><a href="#merging">Merging &amp; Conflicts</a></li>
           <li><a href="#pull-requests">Pull Requests</a></li>
-          <li><a href="#quiz">Quiz</a></li>
+          <li><a href="quiz.html">Quiz</a></li>
         </ul>
       </div>
 
@@ -947,6 +866,12 @@
         <h4>The Branch Crisis</h4>
         <p>A bad merge just hit the StatDeck repo. Work through the fallout - branching, conflicts, and pull requests under pressure.</p>
       </a>
+
+      <div class="sidebar-card">
+        <h4>Quiz</h4>
+        <p style="font-size:0.85rem; color:var(--text-dim); margin:0 0 0.75rem;">Test your knowledge with 10 questions, one at a time.</p>
+        <a href="quiz.html" class="quiz-cta-btn">Take the Quiz</a>
+      </div>
 
       <div class="sidebar-card">
         <h4>Key Commands</h4>
@@ -966,103 +891,6 @@
   <footer>
     This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by Eastern University faculty and staff.<br>&copy; Eastern University. All rights reserved.
   </footer>
-
-  <script>
-    const feedbackTexts = [
-      { correct: "Correct. <code>git add .</code> stages all changes in the current directory, preparing them for the next commit.", wrong: "Not quite. <code>git add .</code> stages changes - it doesn't branch, push, or configure remotes." },
-      { correct: "Right. The staging area is where you curate exactly what goes into a commit before writing it to history.", wrong: "Not quite. The staging area sits between your working directory and the repository - it's where you decide what to commit." },
-      { correct: "Correct. Commits are local first. They don't reach GitHub until you run <code>git push</code>.", wrong: "Not quite. <code>git commit</code> writes to your local repository only. A <code>git push</code> is needed to send it to GitHub." },
-      { correct: "Exactly. Branches let you develop in isolation so your experiments and in-progress work never break the main codebase.", wrong: "Not quite. The purpose of branching is isolation - keeping your work separate from main until it's ready to merge." },
-      { correct: "Correct. Conflicts happen when the same lines in the same file were changed on two different branches.", wrong: "Not quite. A merge conflict is specifically about two branches modifying the same lines - Git can't decide which is correct without you." },
-      { correct: "Correct. <code>git pull</code> is a two-step operation: fetch (download) + merge, bringing your local branch up to date.", wrong: "Not quite. <code>git pull</code> downloads changes from the remote and merges them into your current branch." },
-      { correct: "Right. A Pull Request is a GitHub feature that lets you propose, review, and discuss a branch merge before it happens.", wrong: "Not quite. A Pull Request is a proposal to merge your branch into another (usually main), with a code review thread attached." },
-      { correct: "Correct. <code>git checkout -b branchname</code> creates the branch and switches to it in one command.", wrong: "Not quite. <code>git branch name</code> creates but doesn't switch. <code>git checkout -b name</code> does both in one step." },
-      { correct: "Correct. Forking creates a copy of the repository under your own GitHub account so you can freely make changes without affecting the original.", wrong: "Not quite. Forking means creating your own GitHub copy of someone else's repo. It's different from branching or cloning." },
-      { correct: "Correct. After editing the conflicted file, you stage it with <code>git add</code> and then commit to complete the merge.", wrong: "Not quite. To finish resolving a conflict: edit the file, then <code>git add</code> it, then <code>git commit</code>." }
-    ];
-
-    const answers = {};
-
-    document.querySelectorAll('.quiz-question').forEach(qEl => {
-      const idx = parseInt(qEl.dataset.idx);
-      qEl.querySelectorAll('.q-option').forEach(btn => {
-        btn.addEventListener('click', () => {
-          if (answers[idx] !== undefined) return; // locked after submit
-          qEl.querySelectorAll('.q-option').forEach(b => b.classList.remove('selected'));
-          btn.classList.add('selected');
-          answers[idx] = parseInt(btn.dataset.val);
-        });
-      });
-    });
-
-    function submitQuiz() {
-      const questions = document.querySelectorAll('.quiz-question');
-      if (Object.keys(answers).length < questions.length) {
-        alert('Please answer all 10 questions before submitting.');
-        return;
-      }
-
-      let correct = 0;
-      questions.forEach(qEl => {
-        const idx = parseInt(qEl.dataset.idx);
-        const correctVal = parseInt(qEl.dataset.correct);
-        const chosen = answers[idx];
-        const fb = qEl.querySelector('.q-feedback');
-
-        qEl.querySelectorAll('.q-option').forEach(btn => {
-          btn.disabled = true;
-          const v = parseInt(btn.dataset.val);
-          if (v === correctVal) btn.classList.add('correct');
-          else if (v === chosen) btn.classList.add('wrong');
-        });
-
-        if (chosen === correctVal) {
-          correct++;
-          fb.innerHTML = feedbackTexts[idx].correct;
-          fb.className = 'q-feedback show correct-fb';
-        } else {
-          fb.innerHTML = feedbackTexts[idx].wrong;
-          fb.className = 'q-feedback show wrong-fb';
-        }
-      });
-
-      const pct = Math.round((correct / questions.length) * 100);
-      document.getElementById('submitBtn').disabled = true;
-
-      const resultEl = document.getElementById('quizResult');
-      document.getElementById('resultScore').textContent = pct + '%';
-
-      let label, sub;
-      if (pct >= 90) {
-        label = 'Excellent - ready for the simulation';
-        sub = correct + '/10 correct. Strong command of Git concepts. Head to the Branch Crisis sim to apply them under pressure.';
-      } else if (pct >= 70) {
-        label = 'Solid understanding';
-        sub = correct + '/10 correct. Review the sections where you missed answers, then try the Branch Crisis sim.';
-      } else {
-        label = 'Keep reviewing';
-        sub = correct + '/10 correct. Re-read the sections above, especially on branching and the core workflow. You can retake this quiz anytime.';
-      }
-
-      document.getElementById('resultLabel').textContent = label;
-      document.getElementById('resultSub').textContent = sub;
-      resultEl.classList.add('show');
-
-      // Save to localStorage
-      localStorage.setItem('dtsc520_quiz_m6', JSON.stringify({ completed: true, score: pct, correct, total: 10 }));
-      document.getElementById('quizScore').textContent = pct + '%';
-
-      resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    // Load saved score on page load
-    const saved = JSON.parse(localStorage.getItem('dtsc520_quiz_m6') || '{}');
-    if (saved.score !== undefined) {
-      document.getElementById('quizScore').textContent = saved.score + '%';
-    }
-  </script>
-
-
 <a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
 <style>
   #back-to-top {

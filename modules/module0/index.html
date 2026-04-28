@@ -161,45 +161,6 @@
     .install-steps li div { font-size: 0.93rem; }
     .install-steps li strong { color: var(--text-bright); }
 
-    /* quiz */
-    #quiz-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 2rem; }
-    #quiz-section h2 { border-bottom: none; margin-bottom: 0.4rem; }
-    .quiz-intro { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1.5rem; }
-    .q-block { margin-bottom: 1.75rem; padding-bottom: 1.75rem; border-bottom: 1px solid var(--border); }
-    .q-block:last-of-type { border-bottom: none; }
-    .q-text { font-size: 0.97rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.75rem; line-height: 1.5; }
-    .q-num { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; display: block; margin-bottom: 0.35rem; }
-    .options { display: flex; flex-direction: column; gap: 0.45rem; }
-    .opt-label {
-      display: flex; align-items: flex-start; gap: 0.65rem;
-      background: var(--bg-card2); border: 1px solid var(--border);
-      border-radius: 4px; padding: 0.65rem 0.9rem; cursor: pointer;
-      transition: border-color 0.15s, background 0.15s; font-size: 0.92rem;
-    }
-    .opt-label:hover { border-color: var(--accent); background: rgba(122,122,128,0.06); }
-    .opt-label input { margin-top: 0.2rem; accent-color: var(--accent); flex-shrink: 0; }
-    .opt-correct { border-color: #4a9e6b !important; background: rgba(74,158,107,0.1) !important; }
-    .opt-wrong   { border-color: #b04040 !important; background: rgba(176,64,64,0.1) !important; }
-    .q-feedback { margin-top: 0.6rem; font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: 3px; display: none; }
-    .q-feedback.show { display: block; }
-    .q-feedback.correct { background: rgba(74,158,107,0.15); color: #7ecfa0; border-left: 3px solid #4a9e6b; }
-    .q-feedback.wrong   { background: rgba(176,64,64,0.12); color: #e08080; border-left: 3px solid #b04040; }
-    .quiz-submit {
-      background: var(--accent); color: #fff; border: none;
-      padding: 0.75rem 2rem; font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase;
-      border-radius: 4px; cursor: pointer; transition: background 0.15s; margin-top: 1rem;
-    }
-    .quiz-submit:hover { background: var(--accent-light); }
-    .quiz-submit:disabled { opacity: 0.45; cursor: not-allowed; }
-    .quiz-result {
-      margin-top: 1.25rem; padding: 1rem 1.25rem; background: var(--bg-card2);
-      border: 1px solid var(--border); border-radius: 4px;
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem; display: none;
-    }
-    .quiz-result.show { display: block; }
-    .score-big { font-size: 2rem; font-weight: 700; color: var(--accent-light); }
-    .grade-label { color: var(--text-dim); margin-top: 0.35rem; font-size: 0.82rem; }
 
     .sidebar { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 70px; max-height: calc(100vh - 80px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
     .sidebar-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1.1rem; }
@@ -241,6 +202,43 @@
       text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--text-dim);
     }
     footer a { color: var(--text-dim); }
+    /* quiz link card */
+    .quiz-link-card {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.75rem 2rem;
+    }
+    .quiz-link-icon {
+      font-size: 2rem;
+      color: var(--accent-light);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .quiz-link-body { flex: 1; min-width: 0; }
+    .quiz-link-body h2 { border-bottom: none; margin-bottom: 0.4rem; font-size: 1.2rem; }
+    .quiz-link-body p { color: var(--text-dim); font-size: 0.9rem; margin: 0; }
+    .quiz-link-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.65rem 1.25rem;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .quiz-link-btn:hover { background: var(--accent-light); color: #fff; }
+    @media (max-width: 600px) {
+      .quiz-link-card { flex-direction: column; align-items: flex-start; }
+    }
     @media (max-width: 768px) {
       .page-wrap { grid-template-columns: 1fr; }
       .sidebar { position: static; }
@@ -258,7 +256,7 @@
   </div>
   <div class="nav-right">
     <a href="../../index.html">Course Home</a>
-    <a href="#quiz">Take Quiz</a>
+    <a href="quiz.html">Take Quiz</a>
   </div>
 </nav>
 
@@ -283,7 +281,7 @@
   <a href="#ds-in-action" class="tab-link">DS in Action</a>
   <a href="#setup" class="tab-link">Software Setup</a>
   <a href="#resources" class="tab-link">Resources</a>
-  <a href="#quiz" class="tab-link">Quiz</a>
+  <a href="quiz.html" class="tab-link quiz-tab-link">Quiz</a>
 </nav>
 
 <div class="page-wrap">
@@ -497,155 +495,23 @@ git --version
       </div>
     </section>
 
-    <!-- QUIZ -->
+    <!-- QUIZ LINK -->
     <section id="quiz">
-      <div id="quiz-section">
-        <h2>Module 0 Quiz</h2>
-        <p class="quiz-intro">Ten questions covering the course structure, setup, and the basics of working in a Python data science environment. Select one answer per question, then submit.</p>
-
-        <div class="q-block" data-correct="c">
-          <span class="q-num">Question 01</span>
-          <p class="q-text">Which module in DTSC 520 covers the pandas library for tabular data manipulation?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q1" value="a"> Module 2</label>
-            <label class="opt-label"><input type="radio" name="q1" value="b"> Module 3</label>
-            <label class="opt-label"><input type="radio" name="q1" value="c"> Module 4</label>
-            <label class="opt-label"><input type="radio" name="q1" value="d"> Module 5</label>
-          </div>
-          <div class="q-feedback" id="fb1"></div>
+      <div class="quiz-link-card">
+        <div class="quiz-link-icon">&#9998;</div>
+        <div class="quiz-link-body">
+          <h2>Module 0 Quiz</h2>
+          <p>Ten questions covering the course structure, setup, and the basics of working in a Python data science environment. Each question comes up one at a time — no going back, but you can retake when done.</p>
         </div>
-
-        <div class="q-block" data-correct="a">
-          <span class="q-num">Question 02</span>
-          <p class="q-text">What is the recommended way to verify your Python data science environment is correctly installed?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q2" value="a"> Open a Jupyter notebook and run <code>import numpy as np; import pandas as pd; print(np.__version__)</code> - if it prints a version number without errors, the install is working.</label>
-            <label class="opt-label"><input type="radio" name="q2" value="b"> Check if Python.exe is in your Program Files folder.</label>
-            <label class="opt-label"><input type="radio" name="q2" value="c"> Run <code>pip check</code> from the terminal.</label>
-            <label class="opt-label"><input type="radio" name="q2" value="d"> Restart your computer and open the Anaconda website.</label>
-          </div>
-          <div class="q-feedback" id="fb2"></div>
-        </div>
-
-        <div class="q-block" data-correct="d">
-          <span class="q-num">Question 03</span>
-          <p class="q-text">In Python, when you get a traceback (error message), where should you look first to understand the error?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q3" value="a"> The very first line of the traceback.</label>
-            <label class="opt-label"><input type="radio" name="q3" value="b"> The middle of the traceback where the longest lines are.</label>
-            <label class="opt-label"><input type="radio" name="q3" value="c"> The line numbers shown in the traceback.</label>
-            <label class="opt-label"><input type="radio" name="q3" value="d"> The last line of the traceback, which contains the error type and message.</label>
-          </div>
-          <div class="q-feedback" id="fb3"></div>
-        </div>
-
-        <div class="q-block" data-correct="b">
-          <span class="q-num">Question 04</span>
-          <p class="q-text">What does Anaconda provide that a plain Python install does not?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q4" value="a"> Faster Python execution speed.</label>
-            <label class="opt-label"><input type="radio" name="q4" value="b"> A bundled distribution that includes Python, Jupyter, and major data science libraries (NumPy, pandas, Matplotlib) in a single installer.</label>
-            <label class="opt-label"><input type="radio" name="q4" value="c"> Access to the internet from within Python scripts.</label>
-            <label class="opt-label"><input type="radio" name="q4" value="d"> A graphical interface for writing Python code.</label>
-          </div>
-          <div class="q-feedback" id="fb4"></div>
-        </div>
-
-        <div class="q-block" data-correct="c">
-          <span class="q-num">Question 05</span>
-          <p class="q-text">Amazon's recommendation engine ("Customers who bought X also bought Y") is an application of data science that primarily relies on which foundational skill covered in this course?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q5" value="a"> Git version control</label>
-            <label class="opt-label"><input type="radio" name="q5" value="b"> Matplotlib visualization</label>
-            <label class="opt-label"><input type="radio" name="q5" value="c"> NumPy array operations - collaborative filtering is built on matrix math</label>
-            <label class="opt-label"><input type="radio" name="q5" value="d"> Python string formatting</label>
-          </div>
-          <div class="q-feedback" id="fb5"></div>
-        </div>
-
-        <div class="q-block" data-correct="a">
-          <span class="q-num">Question 06</span>
-          <p class="q-text">What is Jupyter Lab primarily used for in a data science workflow?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q6" value="a"> An interactive notebook environment where you can write and run Python code in cells, see output immediately, and mix code with narrative text and visualizations.</label>
-            <label class="opt-label"><input type="radio" name="q6" value="b"> A version control system for tracking changes to notebooks.</label>
-            <label class="opt-label"><input type="radio" name="q6" value="c"> A database for storing large datasets.</label>
-            <label class="opt-label"><input type="radio" name="q6" value="d"> A deployment platform for serving machine learning models.</label>
-          </div>
-          <div class="q-feedback" id="fb6"></div>
-        </div>
-
-        <div class="q-block" data-correct="d">
-          <span class="q-num">Question 07</span>
-          <p class="q-text">A student cannot install software on their computer. What alternative does this course support?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q7" value="a"> The course cannot be completed without a local Python installation.</label>
-            <label class="opt-label"><input type="radio" name="q7" value="b"> Students must use R instead of Python.</label>
-            <label class="opt-label"><input type="radio" name="q7" value="c"> Students can only read the content but not run code.</label>
-            <label class="opt-label"><input type="radio" name="q7" value="d"> Google Colab - a browser-based Jupyter notebook environment with all major libraries pre-installed, requiring only a Google account.</label>
-          </div>
-          <div class="q-feedback" id="fb7"></div>
-        </div>
-
-        <div class="q-block" data-correct="b">
-          <span class="q-num">Question 08</span>
-          <p class="q-text">Which module in this course directly addresses how to work with branching, merging, and pull requests?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q8" value="a"> Module 4</label>
-            <label class="opt-label"><input type="radio" name="q8" value="b"> Module 6</label>
-            <label class="opt-label"><input type="radio" name="q8" value="c"> Module 2</label>
-            <label class="opt-label"><input type="radio" name="q8" value="d"> Module 1</label>
-          </div>
-          <div class="q-feedback" id="fb8"></div>
-        </div>
-
-        <div class="q-block" data-correct="c">
-          <span class="q-num">Question 09</span>
-          <p class="q-text">The "Moneyball" revolution in baseball analytics (Oakland A's, 2002) demonstrated which broader principle that data scientists apply today?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q9" value="a"> Sports data is always more accurate than business data.</label>
-            <label class="opt-label"><input type="radio" name="q9" value="b"> Machine learning can replace all human scouts.</label>
-            <label class="opt-label"><input type="radio" name="q9" value="c"> Data analysis can identify market inefficiencies and inform decisions that conventional wisdom misses.</label>
-            <label class="opt-label"><input type="radio" name="q9" value="d"> Batting average is the most important statistic in baseball.</label>
-          </div>
-          <div class="q-feedback" id="fb9"></div>
-        </div>
-
-        <div class="q-block" data-correct="a">
-          <span class="q-num">Question 10</span>
-          <p class="q-text">This course covers 7 modules numbered 0-6. What is the correct sequence for the core Python/data stack modules?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q10" value="a"> Python (Module 2) &rarr; NumPy (Module 3) &rarr; pandas (Module 4) &rarr; Matplotlib/Seaborn (Module 5)</label>
-            <label class="opt-label"><input type="radio" name="q10" value="b"> pandas (Module 2) &rarr; NumPy (Module 3) &rarr; Python (Module 4) &rarr; Matplotlib/Seaborn (Module 5)</label>
-            <label class="opt-label"><input type="radio" name="q10" value="c"> NumPy (Module 2) &rarr; Python (Module 3) &rarr; pandas (Module 4) &rarr; Git (Module 5)</label>
-            <label class="opt-label"><input type="radio" name="q10" value="d"> Python (Module 1) &rarr; pandas (Module 2) &rarr; NumPy (Module 3) &rarr; Git (Module 4)</label>
-          </div>
-          <div class="q-feedback" id="fb10"></div>
-        </div>
-
-        <button class="quiz-submit" id="quizSubmit" onclick="submitQuiz()">Submit Quiz</button>
-        <div class="quiz-result" id="quizResult">
-          <div class="score-big" id="scoreDisplay"></div>
-          <div class="grade-label" id="gradeDisplay"></div>
-        </div>
+        <a href="quiz.html" class="quiz-link-btn">Take the Quiz &rarr;</a>
       </div>
     </section>
 
   </div><!-- /content-col -->
 
   <aside class="sidebar">
-    <div class="sidebar-card">
-      <h4>Quiz Score</h4>
-      <div class="score-display" id="sidebarScore">--</div>
-      <div class="score-sub">Module 0 - 10 questions</div>
-      <a href="#quiz" class="quiz-cta-btn">Take the Quiz</a>
-    </div>
-    <div class="next-mod">
-      <h4>Next Module</h4>
-      <p>Set up? Head to Module 1 to build your mental model of the data science landscape.</p>
-      <a href="../module1/index.html" class="next-mod-btn">Module 1: Intro to DS &rarr;</a>
-    </div>
-    <div class="sidebar-card">
+
+<div class="sidebar-card">
       <h4>On This Page</h4>
       <div class="toc-links">
         <a href="#overview">Course Overview</a>
@@ -653,9 +519,30 @@ git --version
         <a href="#ds-in-action">DS in Action</a>
         <a href="#setup">Software Setup</a>
         <a href="#resources">Resources</a>
-        <a href="#quiz">Quiz</a>
+        <a href="quiz.html">Quiz</a>
       </div>
     </div>
+
+
+    <a class="sim-cta" href="../../sims/morning-brief/index.html">
+      <div class="sim-cta-label">Simulation</div>
+      <h4>The Morning Brief</h4>
+      <p>Step through a full data science workflow: ingest, clean, analyze, and present a real dataset.</p>
+    </a>
+
+
+    <div class="sidebar-card">
+      <h4>Quiz</h4>
+      <p style="font-size:0.85rem; color:var(--text-dim); margin:0 0 0.75rem;">Test your knowledge with 10 questions, one at a time.</p>
+      <a href="quiz.html" class="quiz-cta-btn">Take the Quiz</a>
+    </div>
+
+    <div class="next-mod">
+      <h4>Next Module</h4>
+      <p>Set up? Head to Module 1 to build your mental model of the data science landscape.</p>
+      <a href="../module1/index.html" class="next-mod-btn">Module 1: Intro to DS &rarr;</a>
+    </div>
+
   </aside>
 
 </div>
@@ -664,136 +551,6 @@ git --version
   Built for DTSC 520 - Eastern University &bull; <a href="../../index.html">Course Home</a><br>&copy; Eastern University. All rights reserved.
 </footer>
 
-<script>
-const STORAGE_KEY = 'dtsc520_quiz_m0';
-
-const ANSWERS = {
-  q1: { correct: 'c', feedback: {
-    a: 'Incorrect. Module 2 covers Python fundamentals - variables, loops, functions.',
-    b: 'Incorrect. Module 3 covers NumPy for numerical array computing.',
-    c: 'Correct! Module 4 is dedicated to pandas - the primary library for loading, cleaning, filtering, and aggregating tabular data in Python.',
-    d: 'Incorrect. Module 5 covers Matplotlib and Seaborn for visualization.'
-  }},
-  q2: { correct: 'a', feedback: {
-    a: 'Correct! The simplest verification is to import the libraries in a Jupyter cell and check that they load without errors. Printing the version number confirms which version is installed.',
-    b: 'Incorrect. Finding Python.exe tells you Python is installed but does not confirm the data science libraries are available.',
-    c: 'Incorrect. pip check verifies package dependencies but is not the standard verification step for this setup.',
-    d: 'Incorrect. Restarting and visiting the website does nothing to verify your local installation.'
-  }},
-  q3: { correct: 'd', feedback: {
-    a: 'Incorrect. The first line of a traceback shows where the error chain started, but the type and message are at the bottom.',
-    b: 'Incorrect. Line length is not meaningful in tracebacks.',
-    c: 'Incorrect. Line numbers help you find where the error occurred in your code, but the error itself is described at the bottom.',
-    d: 'Correct! Python tracebacks should be read from the bottom up. The last line is always the error type and message (e.g., KeyError: "avg"). Once you understand the error, you can trace upward to find where it was triggered.'
-  }},
-  q4: { correct: 'b', feedback: {
-    a: 'Incorrect. Anaconda does not change Python execution speed.',
-    b: 'Correct! Anaconda is a Python distribution - a packaging of Python plus the most commonly used data science libraries. Instead of installing each library separately with pip, Anaconda installs them all together in a compatible, tested configuration.',
-    c: 'Incorrect. Network access is a Python feature, not something Anaconda adds.',
-    d: 'Incorrect. Anaconda does include Jupyter Lab (a graphical interface), but that is one feature among many, not the primary value.'
-  }},
-  q5: { correct: 'c', feedback: {
-    a: 'Incorrect. Git manages code versions - it has no role in recommendation algorithms.',
-    b: 'Incorrect. Matplotlib creates charts - it is used to visualize results, not to compute recommendations.',
-    c: 'Correct! Collaborative filtering - the technique behind "customers also bought" - works by representing user-item interactions as a matrix and finding similarity between rows or columns. This is fundamentally NumPy array math (dot products, matrix decomposition).',
-    d: 'Incorrect. String formatting is a basic Python skill with no direct role in recommendation systems.'
-  }},
-  q6: { correct: 'a', feedback: {
-    a: 'Correct! Jupyter Lab is an interactive development environment designed for data science. You write code in cells, execute them one at a time, see output (including charts) inline, and can write markdown text between cells. This makes it ideal for exploratory analysis.',
-    b: 'Incorrect. Git handles version control, not Jupyter.',
-    c: 'Incorrect. Jupyter is a compute environment, not a database.',
-    d: 'Incorrect. Model deployment is handled by dedicated platforms (Flask, FastAPI, cloud services).'
-  }},
-  q7: { correct: 'd', feedback: {
-    a: 'Incorrect. Google Colab provides a full alternative to local installation.',
-    b: 'Incorrect. The course uses Python, not R.',
-    c: 'Incorrect. Colab lets you run full Python code - you are not limited to reading.',
-    d: 'Correct! Google Colab runs Jupyter notebooks in your browser and has NumPy, pandas, Matplotlib, and Seaborn pre-installed. All you need is a Google account. Your notebooks save to Google Drive.'
-  }},
-  q8: { correct: 'b', feedback: {
-    a: 'Incorrect. Module 4 covers pandas - DataFrames, filtering, and data cleaning.',
-    b: 'Correct! Module 6 is Git and GitHub, which covers version control fundamentals: branching, merging, conflict resolution, and pull requests. The Branch Crisis simulation in Module 6 puts you through a realistic Git crisis scenario.',
-    c: 'Incorrect. Module 2 covers Python fundamentals.',
-    d: 'Incorrect. Module 1 covers the data science landscape - not Git.'
-  }},
-  q9: { correct: 'c', feedback: {
-    a: 'Incorrect. The lesson of Moneyball is not about data quality between industries.',
-    b: 'Incorrect. Moneyball was about augmenting human judgment with data, not replacing scouts entirely.',
-    c: 'Correct! The Oakland A\'s front office used on-base percentage and other undervalued stats to find players that conventional wisdom (and other teams) overlooked. This is the core data science principle: rigorous analysis of data reveals truths that intuition and tradition miss.',
-    d: 'Incorrect. The insight was that batting average was overvalued relative to on-base percentage - almost the opposite.'
-  }},
-  q10: { correct: 'a', feedback: {
-    a: 'Correct! The sequence is intentional. Python first (you need the language before the libraries), then NumPy (the numerical engine), then pandas (which builds on NumPy), then visualization (which uses all three). Git is Module 6 because it is a workflow skill that applies to everything.',
-    b: 'Incorrect. You need Python before pandas - pandas is a Python library.',
-    c: 'Incorrect. Python comes before NumPy - NumPy is a Python library.',
-    d: 'Incorrect. The modules start at 0, and Python is Module 2 (not Module 1).'
-  }}
-};
-
-function submitQuiz() {
-  let score = 0;
-  const total = 10;
-  const answers = {};
-
-  for (let i = 1; i <= total; i++) {
-    const name = 'q' + i;
-    const sel = document.querySelector('input[name="' + name + '"]:checked');
-    const fb = document.getElementById('fb' + i);
-    const opts = document.querySelectorAll('input[name="' + name + '"]');
-    const info = ANSWERS[name];
-
-    if (!sel) {
-      fb.className = 'q-feedback show wrong';
-      fb.textContent = 'Please select an answer.';
-      continue;
-    }
-
-    const chosen = sel.value;
-    answers[name] = chosen;
-
-    opts.forEach(function(opt) {
-      const lbl = opt.closest('.opt-label');
-      if (opt.value === info.correct) lbl.classList.add('opt-correct');
-      else if (opt.value === chosen && chosen !== info.correct) lbl.classList.add('opt-wrong');
-      opt.disabled = true;
-    });
-
-    if (chosen === info.correct) {
-      score++;
-      fb.className = 'q-feedback show correct';
-      fb.textContent = info.feedback[chosen];
-    } else {
-      fb.className = 'q-feedback show wrong';
-      fb.textContent = info.feedback[chosen];
-    }
-  }
-
-  const pct = Math.round((score / total) * 100);
-  let grade = pct === 100 ? 'Perfect score - great start!' :
-              pct >= 80  ? 'Strong work - you are ready to dive in.' :
-              pct >= 60  ? 'Good start - review the sections you missed.' :
-                           'Review the module content and try again.';
-
-  document.getElementById('scoreDisplay').textContent = score + ' / ' + total;
-  document.getElementById('gradeDisplay').textContent = pct + '% - ' + grade;
-  document.getElementById('quizResult').className = 'quiz-result show';
-  document.getElementById('quizSubmit').disabled = true;
-  document.getElementById('sidebarScore').textContent = score + '/10';
-
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ score: score, total: total, pct: pct, answers: answers, ts: Date.now() }));
-  } catch(e) {}
-}
-
-(function() {
-  try {
-    var saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved && saved.score !== undefined) {
-      document.getElementById('sidebarScore').textContent = saved.score + '/10';
-    }
-  } catch(e) {}
-})();
-</script>
 
 <a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
 <style>

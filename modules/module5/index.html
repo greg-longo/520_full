@@ -333,6 +333,44 @@
       .sidebar { position: static; }
       .chart-grid { grid-template-columns: 1fr; }
     }
+
+    /* quiz link card */
+    .quiz-link-card {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.75rem 2rem;
+    }
+    .quiz-link-icon {
+      font-size: 2rem;
+      color: var(--accent-light);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .quiz-link-body { flex: 1; min-width: 0; }
+    .quiz-link-body h2 { border-bottom: none; margin-bottom: 0.4rem; font-size: 1.2rem; }
+    .quiz-link-body p { color: var(--text-dim); font-size: 0.9rem; margin: 0; }
+    .quiz-link-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.65rem 1.25rem;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .quiz-link-btn:hover { background: var(--accent-light); color: #fff; }
+    @media (max-width: 600px) {
+      .quiz-link-card { flex-direction: column; align-items: flex-start; }
+    }
   </style>
 </head>
 <body>
@@ -345,7 +383,7 @@
   </div>
   <div class="nav-right">
     <a href="../../index.html">Course Home</a>
-    <a href="#quiz">Take Quiz</a>
+    <a href="quiz.html">Take Quiz</a>
   </div>
 </nav>
 
@@ -372,7 +410,7 @@
   <a href="#subplots" class="tab-link">Subplots</a>
   <a href="#styling" class="tab-link">Styling</a>
   <a href="#best-practices" class="tab-link">Best Practices</a>
-  <a href="#quiz" class="tab-link">Quiz</a>
+  <a href="quiz.html" class="tab-link quiz-tab-link">Quiz</a>
 </nav>
 
 <div class="page-wrap">
@@ -774,155 +812,23 @@ plt.<span class="fn">show</span>()</code></pre>
       </div>
     </section>
 
-    <!-- QUIZ -->
+    <!-- QUIZ LINK -->
     <section id="quiz">
-      <div id="quiz-section">
-        <h2>Module 5 Quiz</h2>
-        <p class="quiz-intro">Ten questions covering chart selection, Matplotlib, Seaborn, and visualization best practices. Select one answer per question, then submit.</p>
-
-        <div class="q-block" data-correct="b">
-          <span class="q-num">Question 01</span>
-          <p class="q-text">You want to show how batting averages for 5 players changed week-by-week over a season. Which chart type is most appropriate?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q1" value="a"> Bar chart - one bar per player per week.</label>
-            <label class="opt-label"><input type="radio" name="q1" value="b"> Line chart - one line per player, x-axis = week.</label>
-            <label class="opt-label"><input type="radio" name="q1" value="c"> Histogram - to show the distribution of averages.</label>
-            <label class="opt-label"><input type="radio" name="q1" value="d"> Pie chart - to show each player's share of total batting.</label>
-          </div>
-          <div class="q-feedback" id="fb1"></div>
+      <div class="quiz-link-card">
+        <div class="quiz-link-icon">&#9998;</div>
+        <div class="quiz-link-body">
+          <h2>Module 5 Quiz</h2>
+          <p>Ten questions covering chart selection, Matplotlib, Seaborn, and visualization best practices. Each question comes up one at a time — no going back, but you can retake when done.</p>
         </div>
-
-        <div class="q-block" data-correct="c">
-          <span class="q-num">Question 02</span>
-          <p class="q-text">In Matplotlib's object-oriented interface, what is the difference between a <strong>Figure</strong> and an <strong>Axes</strong>?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q2" value="a"> Figure is used for line charts; Axes is used for bar charts.</label>
-            <label class="opt-label"><input type="radio" name="q2" value="b"> They are the same object with different names.</label>
-            <label class="opt-label"><input type="radio" name="q2" value="c"> A Figure is the entire canvas; an Axes is one individual plot within that canvas.</label>
-            <label class="opt-label"><input type="radio" name="q2" value="d"> An Axes is the overall canvas; a Figure is one subplot.</label>
-          </div>
-          <div class="q-feedback" id="fb2"></div>
-        </div>
-
-        <div class="q-block" data-correct="a">
-          <span class="q-num">Question 03</span>
-          <p class="q-text">You want to see whether batting average and home runs are related across the roster. Which chart is best?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q3" value="a"> Scatter plot - one point per player, avg on x-axis, hr on y-axis.</label>
-            <label class="opt-label"><input type="radio" name="q3" value="b"> Histogram of batting averages.</label>
-            <label class="opt-label"><input type="radio" name="q3" value="c"> Line chart over time.</label>
-            <label class="opt-label"><input type="radio" name="q3" value="d"> Pie chart of home run shares.</label>
-          </div>
-          <div class="q-feedback" id="fb3"></div>
-        </div>
-
-        <div class="q-block" data-correct="d">
-          <span class="q-num">Question 04</span>
-          <p class="q-text">Which code creates a 1-row, 2-column subplot layout and returns handles for both Axes?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q4" value="a"> <code>fig = plt.figure(1, 2)</code></label>
-            <label class="opt-label"><input type="radio" name="q4" value="b"> <code>ax1, ax2 = plt.axes(1, 2)</code></label>
-            <label class="opt-label"><input type="radio" name="q4" value="c"> <code>fig, ax = plt.subplots()</code></label>
-            <label class="opt-label"><input type="radio" name="q4" value="d"> <code>fig, (ax1, ax2) = plt.subplots(1, 2)</code></label>
-          </div>
-          <div class="q-feedback" id="fb4"></div>
-        </div>
-
-        <div class="q-block" data-correct="b">
-          <span class="q-num">Question 05</span>
-          <p class="q-text">What is the main advantage of Seaborn over plain Matplotlib for a data scientist?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q5" value="a"> Seaborn can create interactive charts; Matplotlib cannot.</label>
-            <label class="opt-label"><input type="radio" name="q5" value="b"> Seaborn integrates with pandas DataFrames and produces statistical plots with less code, including automatic grouping, error bars, and attractive defaults.</label>
-            <label class="opt-label"><input type="radio" name="q5" value="c"> Seaborn replaces Matplotlib completely and is always preferred.</label>
-            <label class="opt-label"><input type="radio" name="q5" value="d"> Seaborn charts render faster than Matplotlib charts.</label>
-          </div>
-          <div class="q-feedback" id="fb5"></div>
-        </div>
-
-        <div class="q-block" data-correct="c">
-          <span class="q-num">Question 06</span>
-          <p class="q-text">A bar chart showing player home run counts has its y-axis starting at 0.5 instead of 0. Rivera has 4 HRs and Walker has 7. How does this affect the reader's perception?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q6" value="a"> It has no effect - the numbers are labeled on the bars.</label>
-            <label class="opt-label"><input type="radio" name="q6" value="b"> It makes the chart easier to read by zooming in.</label>
-            <label class="opt-label"><input type="radio" name="q6" value="c"> It exaggerates the difference between players, making Walker appear to have far more than 1.75x Rivera's HRs.</label>
-            <label class="opt-label"><input type="radio" name="q6" value="d"> It has no effect because bar heights are still proportional to the data.</label>
-          </div>
-          <div class="q-feedback" id="fb6"></div>
-        </div>
-
-        <div class="q-block" data-correct="a">
-          <span class="q-num">Question 07</span>
-          <p class="q-text">You want to compare the distribution of batting averages between outfielders and infielders on the roster. Which chart is most informative?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q7" value="a"> Box plot with position on the x-axis and batting average on the y-axis.</label>
-            <label class="opt-label"><input type="radio" name="q7" value="b"> A single histogram of all batting averages.</label>
-            <label class="opt-label"><input type="radio" name="q7" value="c"> A pie chart showing each player's share of the total batting average.</label>
-            <label class="opt-label"><input type="radio" name="q7" value="d"> A line chart of batting average over games played.</label>
-          </div>
-          <div class="q-feedback" id="fb7"></div>
-        </div>
-
-        <div class="q-block" data-correct="d">
-          <span class="q-num">Question 08</span>
-          <p class="q-text">What does <code>plt.tight_layout()</code> do?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q8" value="a"> Compresses the figure to a smaller file size.</label>
-            <label class="opt-label"><input type="radio" name="q8" value="b"> Locks the axis limits so they cannot be changed.</label>
-            <label class="opt-label"><input type="radio" name="q8" value="c"> Removes all whitespace from the figure.</label>
-            <label class="opt-label"><input type="radio" name="q8" value="d"> Automatically adjusts subplot spacing to prevent labels and titles from overlapping.</label>
-          </div>
-          <div class="q-feedback" id="fb8"></div>
-        </div>
-
-        <div class="q-block" data-correct="c">
-          <span class="q-num">Question 09</span>
-          <p class="q-text">Which Seaborn function produces a matrix of scatter plots for every pair of numeric variables in a DataFrame?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q9" value="a"> <code>sns.heatmap()</code></label>
-            <label class="opt-label"><input type="radio" name="q9" value="b"> <code>sns.scatterplot()</code></label>
-            <label class="opt-label"><input type="radio" name="q9" value="c"> <code>sns.pairplot()</code></label>
-            <label class="opt-label"><input type="radio" name="q9" value="d"> <code>sns.jointplot()</code></label>
-          </div>
-          <div class="q-feedback" id="fb9"></div>
-        </div>
-
-        <div class="q-block" data-correct="b">
-          <span class="q-num">Question 10</span>
-          <p class="q-text">According to visualization best practices, which of these is the better chart title?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q10" value="a"> "Batting Average Data"</label>
-            <label class="opt-label"><input type="radio" name="q10" value="b"> "Outfielders Batted .308 on Average - 21 Points Above Infielders"</label>
-            <label class="opt-label"><input type="radio" name="q10" value="c"> "Chart 1: Statistics"</label>
-            <label class="opt-label"><input type="radio" name="q10" value="d"> "Eagles"</label>
-          </div>
-          <div class="q-feedback" id="fb10"></div>
-        </div>
-
-        <button class="quiz-submit" id="quizSubmit" onclick="submitQuiz()">Submit Quiz</button>
-        <div class="quiz-result" id="quizResult">
-          <div class="score-big" id="scoreDisplay"></div>
-          <div class="grade-label" id="gradeDisplay"></div>
-        </div>
+        <a href="quiz.html" class="quiz-link-btn">Take the Quiz &rarr;</a>
       </div>
     </section>
 
   </div><!-- /content-col -->
 
   <aside class="sidebar">
-    <div class="sidebar-card">
-      <h4>Quiz Score</h4>
-      <div class="score-display" id="sidebarScore">--</div>
-      <div class="score-sub">Module 5 - 10 questions</div>
-      <a href="#quiz" class="quiz-cta-btn">Take the Quiz</a>
-    </div>
-    <div class="next-mod">
-      <h4>Next Module</h4>
-      <p>Learn Git version control - branching, merging, and pull requests in Module 6.</p>
-      <a href="../module6/index.html" class="next-mod-btn">Module 6: Git &amp; GitHub &rarr;</a>
-    </div>
-    <div class="sidebar-card">
+
+<div class="sidebar-card">
       <h4>On This Page</h4>
       <div class="toc-links">
         <a href="#chart-types">Chart Types</a>
@@ -931,9 +837,30 @@ plt.<span class="fn">show</span>()</code></pre>
         <a href="#subplots">Subplots</a>
         <a href="#styling">Styling</a>
         <a href="#best-practices">Best Practices</a>
-        <a href="#quiz">Quiz</a>
+        <a href="quiz.html">Quiz</a>
       </div>
     </div>
+
+
+    <a class="sim-cta" href="../../sims/pitch-the-viz/index.html">
+      <div class="sim-cta-label">Simulation</div>
+      <h4>Pitch the Viz</h4>
+      <p>You're live in the Volta Records committee room. Four chart decisions. One artist to sign. Make the data land.</p>
+    </a>
+
+
+    <div class="sidebar-card">
+      <h4>Quiz</h4>
+      <p style="font-size:0.85rem; color:var(--text-dim); margin:0 0 0.75rem;">Test your knowledge with 10 questions, one at a time.</p>
+      <a href="quiz.html" class="quiz-cta-btn">Take the Quiz</a>
+    </div>
+
+    <div class="next-mod">
+      <h4>Next Module</h4>
+      <p>Learn Git version control - branching, merging, and pull requests in Module 6.</p>
+      <a href="../module6/index.html" class="next-mod-btn">Module 6: Git &amp; GitHub &rarr;</a>
+    </div>
+
   </aside>
 
 </div>
@@ -951,648 +878,6 @@ plt.<span class="fn">show</span>()</code></pre>
 </footer>
 
 <script>
-const STORAGE_KEY = 'dtsc520_quiz_m5';
-
-const ANSWERS = {
-  q1: { correct: 'b', feedback: {
-    a: 'Incorrect. A grouped bar chart per week would be cluttered with 5 players x many weeks. A line chart is far clearer for showing change over time.',
-    b: 'Correct! Line charts are the standard for time series. Each player gets a line, the x-axis shows time (week), and the eye naturally follows trends.',
-    c: 'Incorrect. A histogram shows distribution of a single variable - not change over time across multiple players.',
-    d: 'Incorrect. Pie charts show proportions of a whole at one point in time. They cannot show trends.'
-  }},
-  q2: { correct: 'c', feedback: {
-    a: 'Incorrect. Both Figure and Axes can hold any chart type.',
-    b: 'Incorrect. They are distinct objects with different roles.',
-    c: 'Correct! The Figure is the top-level container - the whole canvas. An Axes is one individual plot within that Figure. A Figure can have many Axes (via subplots). Most plot commands go on the Axes object.',
-    d: 'Incorrect. You have Figure and Axes reversed.'
-  }},
-  q3: { correct: 'a', feedback: {
-    a: 'Correct! A scatter plot is designed to show the relationship between two continuous variables. Each point represents one player, and the pattern of points reveals whether a correlation exists.',
-    b: 'Incorrect. A histogram shows the distribution of one variable, not the relationship between two.',
-    c: 'Incorrect. A line chart shows change over time. There is no time dimension here.',
-    d: 'Incorrect. A pie chart shows proportions of a whole - not relationships between variables.'
-  }},
-  q4: { correct: 'd', feedback: {
-    a: 'Incorrect. plt.figure() creates a Figure, not Axes, and does not take rows/cols arguments this way.',
-    b: 'Incorrect. plt.axes() creates a single Axes and does not accept row/col arguments.',
-    c: 'Incorrect. plt.subplots() with no arguments creates 1 row and 1 column - just one Axes.',
-    d: 'Correct! plt.subplots(1, 2) creates 1 row, 2 columns. The tuple unpacking (ax1, ax2) gives you direct handles to each Axes object.'
-  }},
-  q5: { correct: 'b', feedback: {
-    a: 'Incorrect. Seaborn produces static charts just like Matplotlib. For interactivity, you would use Plotly or Bokeh.',
-    b: 'Correct! Seaborn is designed around pandas DataFrames. You pass a DataFrame and column names, and it handles grouping, statistical summaries, and error bars automatically. A Seaborn box plot grouped by category is one line; the equivalent Matplotlib code would be much longer.',
-    c: 'Incorrect. Seaborn is built on top of Matplotlib and complements it rather than replacing it.',
-    d: 'Incorrect. Rendering speed is not a meaningful difference between the two.'
-  }},
-  q6: { correct: 'c', feedback: {
-    a: 'Incorrect. Even with labels, the visual impression of bar height is what the reader perceives first - and truncated axes distort that impression.',
-    b: 'Incorrect. Zooming in for a line chart can be legitimate. For bar charts, the height represents the full quantity, so the axis must start at zero.',
-    c: 'Correct! When the y-axis starts at 0.5 instead of 0, a bar of height 4 looks visually much shorter relative to a bar of height 7 than the actual 4:7 ratio. This visually inflates the perceived difference. Always start bar charts at zero.',
-    d: 'Incorrect. Bar heights are only proportional to the data when the axis starts at zero.'
-  }},
-  q7: { correct: 'a', feedback: {
-    a: 'Correct! A box plot compactly shows median, interquartile range, and outliers for each group side by side. It is the standard tool for comparing distributions across categories.',
-    b: 'Incorrect. A single histogram mixes all positions together and does not let you compare groups.',
-    c: 'Incorrect. A pie chart shows proportions of a whole, not distributions.',
-    d: 'Incorrect. A line chart requires a meaningful continuous x-axis (like time). Position is a category.'
-  }},
-  q8: { correct: 'd', feedback: {
-    a: 'Incorrect. tight_layout does not affect file size.',
-    b: 'Incorrect. tight_layout does not lock axis limits.',
-    c: 'Incorrect. tight_layout adjusts spacing between subplots, it does not remove whitespace globally.',
-    d: 'Correct! plt.tight_layout() adjusts padding between subplots and between plot elements so that titles, labels, and tick marks do not overlap each other or get clipped at the figure edge.'
-  }},
-  q9: { correct: 'c', feedback: {
-    a: 'Incorrect. sns.heatmap() visualizes a matrix as colored cells - typically used for correlation matrices.',
-    b: 'Incorrect. sns.scatterplot() draws one scatter plot for two variables.',
-    c: 'Correct! sns.pairplot() creates a grid of scatter plots for every pair of numeric columns, with distribution plots on the diagonal. It gives you an instant overview of all pairwise relationships.',
-    d: 'Incorrect. sns.jointplot() shows one pair of variables with marginal distributions - it is a single chart, not a matrix.'
-  }},
-  q10: { correct: 'b', feedback: {
-    a: 'Incorrect. "Batting Average Data" describes the topic but tells the reader nothing about the finding.',
-    b: 'Correct! A good title communicates the takeaway, not just the topic. "Outfielders Batted .308 on Average - 21 Points Above Infielders" tells the reader what to look for and why it matters.',
-    c: 'Incorrect. "Chart 1: Statistics" is a label, not a title. It provides zero information.',
-    d: 'Incorrect. "Eagles" identifies the subject but conveys no finding.'
-  }}
-};
-
-function submitQuiz() {
-  let score = 0;
-  const total = 10;
-  const answers = {};
-
-  for (let i = 1; i <= total; i++) {
-    const name = 'q' + i;
-    const sel = document.querySelector('input[name="' + name + '"]:checked');
-    const fb = document.getElementById('fb' + i);
-    const opts = document.querySelectorAll('input[name="' + name + '"]');
-    const info = ANSWERS[name];
-
-    if (!sel) {
-      fb.className = 'q-feedback show wrong';
-      fb.textContent = 'Please select an answer.';
-      continue;
-    }
-
-    const chosen = sel.value;
-    answers[name] = chosen;
-
-    opts.forEach(function(opt) {
-      const lbl = opt.closest('.opt-label');
-      if (opt.value === info.correct) lbl.classList.add('opt-correct');
-      else if (opt.value === chosen && chosen !== info.correct) lbl.classList.add('opt-wrong');
-      opt.disabled = true;
-    });
-
-    if (chosen === info.correct) {
-      score++;
-      fb.className = 'q-feedback show correct';
-      fb.textContent = info.feedback[chosen];
-    } else {
-      fb.className = 'q-feedback show wrong';
-      fb.textContent = info.feedback[chosen];
-    }
-  }
-
-  const pct = Math.round((score / total) * 100);
-  let grade = pct === 100 ? 'Perfect score - data viz expert!' :
-              pct >= 80  ? 'Strong work - charts will be clear!' :
-              pct >= 60  ? 'Good start - review chart selection and best practices.' :
-                           'Review the module content and try again.';
-
-  document.getElementById('scoreDisplay').textContent = score + ' / ' + total;
-  document.getElementById('gradeDisplay').textContent = pct + '% - ' + grade;
-  document.getElementById('quizResult').className = 'quiz-result show';
-  document.getElementById('quizSubmit').disabled = true;
-  document.getElementById('sidebarScore').textContent = score + '/10';
-
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ score: score, total: total, pct: pct, answers: answers, ts: Date.now() }));
-  } catch(e) {}
-}
-
-(function() {
-  try {
-    var saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved && saved.score !== undefined) {
-      document.getElementById('sidebarScore').textContent = saved.score + '/10';
-    }
-  } catch(e) {}
-})();
-</script>
-
-<script>
-// ── Chart.js defaults for dark theme ──
-Chart.defaults.color = '#a09a92';
-Chart.defaults.borderColor = '#2e2b28';
-Chart.defaults.font.family = 'IBM Plex Mono, monospace';
-Chart.defaults.font.size = 11;
-
-const PINK   = '#3a8fa0';
-const PINK_A = 'rgba(58,143,160,0.75)';
-const BLUE   = '#6baacc';
-const BLUE_A = 'rgba(107,170,204,0.75)';
-const GRID   = 'rgba(255,255,255,0.06)';
-
-// ── 1. Line chart: Batting Average by Week ──
-new Chart(document.getElementById('chartLine'), {
-  type: 'line',
-  data: {
-    labels: [1,2,3,4,5,6,7,8,9,10],
-    datasets: [
-      { label: 'Rivera', data: [.290,.295,.300,.305,.308,.310,.309,.311,.312,.314],
-        borderColor: '#cc5595', backgroundColor: 'transparent', tension: 0.3, pointRadius: 3 },
-      { label: 'Walker', data: [.275,.280,.288,.291,.295,.299,.300,.301,.301,.303],
-        borderColor: BLUE, backgroundColor: 'transparent', tension: 0.3, pointRadius: 3 }
-    ]
-  },
-  options: {
-    plugins: { legend: { position: 'top' } },
-    scales: {
-      x: { title: { display: true, text: 'Week' }, grid: { color: GRID } },
-      y: { title: { display: true, text: 'Batting Average' }, min: 0.26, max: 0.33, grid: { color: GRID } }
-    }
-  }
-});
-
-// ── 2. Bar chart: Home Runs ──
-new Chart(document.getElementById('chartBar'), {
-  type: 'bar',
-  data: {
-    labels: ['Rivera','Chen','Walker','Kim'],
-    datasets: [{ label: 'Home Runs', data: [4,2,7,1],
-      backgroundColor: PINK_A, borderColor: PINK, borderWidth: 1 }]
-  },
-  options: {
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { grid: { color: GRID } },
-      y: { beginAtZero: true, title: { display: true, text: 'Home Runs' }, grid: { color: GRID } }
-    }
-  }
-});
-
-// ── 3. Scatter: Batting Avg vs Salary ──
-new Chart(document.getElementById('chartScatter'), {
-  type: 'scatter',
-  data: {
-    datasets: [{
-      label: 'Players',
-      data: [
-        {x:.312, y:16800}, {x:.287, y:14400},
-        {x:.301, y:19200}, {x:.268, y:760000}
-      ],
-      backgroundColor: PINK_A, pointRadius: 7
-    }]
-  },
-  options: {
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: ctx => `avg: ${ctx.raw.x}  salary: $${ctx.raw.y.toLocaleString()}` } }
-    },
-    scales: {
-      x: { title: { display: true, text: 'Batting Avg' }, grid: { color: GRID } },
-      y: { title: { display: true, text: 'Salary (USD)' }, grid: { color: GRID } }
-    }
-  }
-});
-
-// ── 4. Histogram: Simulated batting averages ──
-(function(){
-  // Simulate ~200 values from normal(.290, .020) then bin them
-  const rng = () => { let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); };
-  const vals = Array.from({length:200}, () => 0.290 + 0.020*rng());
-  const bins = 15, minV=0.22, maxV=0.36, width=(maxV-minV)/bins;
-  const counts = new Array(bins).fill(0);
-  vals.forEach(v => { const i=Math.floor((v-minV)/width); if(i>=0&&i<bins) counts[i]++; });
-  const labels = Array.from({length:bins}, (_,i) => (minV+i*width).toFixed(3));
-  new Chart(document.getElementById('chartHist'), {
-    type: 'bar',
-    data: { labels, datasets: [{ label: 'Count', data: counts, backgroundColor: PINK_A, borderColor: PINK, borderWidth: 1 }] },
-    options: {
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { title: { display: true, text: 'Batting Avg' }, grid: { color: GRID } },
-        y: { title: { display: true, text: 'Frequency' }, beginAtZero: true, grid: { color: GRID } }
-      },
-      barPercentage: 1.0, categoryPercentage: 1.0
-    }
-  });
-})();
-
-// ── 5. Horizontal bar ──
-new Chart(document.getElementById('chartBarH'), {
-  type: 'bar',
-  data: {
-    labels: ['Rivera','Chen','Walker','Kim'],
-    datasets: [{ label: 'Home Runs', data: [4,2,7,1],
-      backgroundColor: PINK_A, borderColor: PINK, borderWidth: 1 }]
-  },
-  options: {
-    indexAxis: 'y',
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { beginAtZero: true, title: { display: true, text: 'Home Runs' }, grid: { color: GRID } },
-      y: { grid: { color: GRID } }
-    }
-  }
-});
-
-// ── 6. Seaborn scatter (hue by position) ──
-new Chart(document.getElementById('chartSnsScatter'), {
-  type: 'scatter',
-  data: {
-    datasets: [
-      { label: 'OF', data: [{x:.312,y:4},{x:.301,y:7},{x:.295,y:3}], backgroundColor:'rgba(58,143,160,0.8)', pointRadius:8 },
-      { label: 'IF', data: [{x:.287,y:2},{x:.268,y:1},{x:.310,y:5}], backgroundColor:'rgba(107,170,204,0.8)', pointRadius:8 }
-    ]
-  },
-  options: {
-    plugins: { legend: { position: 'top' } },
-    scales: {
-      x: { title: { display: true, text: 'Batting Avg' }, grid: { color: GRID } },
-      y: { title: { display: true, text: 'Home Runs' }, beginAtZero: true, grid: { color: GRID } }
-    }
-  }
-});
-
-// ── 7. Seaborn histplot + KDE (approximated) ──
-(function(){
-  const rng = () => { let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); };
-  const vals = [.312,.287,.301,.268,.295,.310, ...Array.from({length:50}, () => 0.293+0.016*rng())];
-  const bins=10, minV=0.25, maxV=0.33, width=(maxV-minV)/bins;
-  const counts=new Array(bins).fill(0);
-  vals.forEach(v=>{const i=Math.floor((v-minV)/width);if(i>=0&&i<bins)counts[i]++;});
-  const labels=Array.from({length:bins},(_,i)=>(minV+i*width).toFixed(3));
-  // KDE approx: smooth the counts
-  const kde = counts.map((_,i) => {
-    const w=[0.25,0.5,0.25]; let s=0;
-    for(let j=-1;j<=1;j++){const idx=i+j;if(idx>=0&&idx<bins)s+=w[j+1]*counts[idx];}
-    return +s.toFixed(2);
-  });
-  new Chart(document.getElementById('chartSnsHist'), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        { type:'bar', label:'Count', data:counts, backgroundColor:PINK_A, borderColor:PINK, borderWidth:1, yAxisID:'y' },
-        { type:'line', label:'KDE', data:kde, borderColor:BLUE, borderWidth:2, pointRadius:0, tension:0.4, fill:false, yAxisID:'y' }
-      ]
-    },
-    options: {
-      plugins: { legend: { position:'top' } },
-      scales: {
-        x: { title:{display:true,text:'Batting Avg'}, grid:{color:GRID} },
-        y: { title:{display:true,text:'Count'}, beginAtZero:true, grid:{color:GRID} }
-      },
-      barPercentage:1.0, categoryPercentage:1.0
-    }
-  });
-})();
-
-// ── 8. Subplots 2x2 (single Chart.js - line only, labeled) ──
-// We'll render the 1x2 subplot version since Chart.js doesn't do grid subplots natively
-new Chart(document.getElementById('chartSubplots'), {
-  type: 'bar',
-  data: {
-    labels: ['Rivera','Chen','Walker','Kim','Jones','Patel'],
-    datasets: [
-      { label: 'Batting Avg', data: [.312,.287,.301,.268,.295,.310],
-        backgroundColor:'rgba(58,143,160,0.7)', borderColor:PINK, borderWidth:1, yAxisID:'y' },
-      { label: 'Home Runs', data: [4,2,7,1,3,5],
-        backgroundColor:'rgba(107,170,204,0.7)', borderColor:BLUE, borderWidth:1, yAxisID:'y2' }
-    ]
-  },
-  options: {
-    plugins: { legend: { position:'top' }, title:{ display:true, text:'Eagles Roster - Key Stats (Dual Axis)' } },
-    scales: {
-      x: { grid:{color:GRID} },
-      y: { title:{display:true,text:'Batting Avg'}, min:0, max:0.4, position:'left', grid:{color:GRID} },
-      y2: { title:{display:true,text:'Home Runs'}, beginAtZero:true, position:'right', grid:{display:false} }
-    }
-  }
-});
-
-// ── 9. df.plot bar: Revenue vs Expenses ──
-new Chart(document.getElementById('chartPandasBar'), {
-  type: 'bar',
-  data: {
-    labels: ['Q1','Q2','Q3','Q4'],
-    datasets: [
-      { label:'Revenue', data:[45000,52000,48000,61000], backgroundColor:'rgba(58,143,160,0.75)', borderColor:PINK, borderWidth:1 },
-      { label:'Expenses', data:[38000,41000,39000,44000], backgroundColor:'rgba(107,170,204,0.75)', borderColor:BLUE, borderWidth:1 }
-    ]
-  },
-  options: {
-    plugins: { legend: { position:'top' } },
-    scales: {
-      x: { grid:{color:GRID} },
-      y: { title:{display:true,text:'USD'}, beginAtZero:true, grid:{color:GRID} }
-    }
-  }
-});
-
-// ── 10. df.plot area ──
-new Chart(document.getElementById('chartPandasArea'), {
-  type: 'line',
-  data: {
-    labels: ['Q1','Q2','Q3','Q4'],
-    datasets: [
-      { label:'Revenue', data:[45000,52000,48000,61000],
-        backgroundColor:'rgba(58,143,160,0.35)', borderColor:PINK, fill:true, tension:0.3 },
-      { label:'Expenses', data:[38000,41000,39000,44000],
-        backgroundColor:'rgba(107,170,204,0.35)', borderColor:BLUE, fill:true, tension:0.3 }
-    ]
-  },
-  options: {
-    plugins: { legend: { position:'top' } },
-    scales: {
-      x: { grid:{color:GRID} },
-      y: { title:{display:true,text:'USD'}, beginAtZero:true, grid:{color:GRID} }
-    }
-  }
-});
-
-// ── 11. Annotated bar chart with reference line ──
-(function(){
-  const ctx = document.getElementById('chartAnnotate');
-  const avgs = [.312, .287, .301];
-  const labels = ['Rivera','Chen','Walker'];
-  const leagueAvg = 0.285;
-
-  const chart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        { label: 'Batting Avg', data: avgs,
-          backgroundColor: avgs.map(v => v >= leagueAvg ? PINK_A : 'rgba(100,100,105,0.6)'),
-          borderColor: avgs.map(v => v >= leagueAvg ? PINK : '#646469'),
-          borderWidth: 1 }
-      ]
-    },
-    options: {
-      plugins: {
-        legend: { display: false },
-        annotation: { annotations: {} }  // placeholder
-      },
-      scales: {
-        x: { grid:{color:GRID} },
-        y: { min:0, max:0.36, title:{display:true,text:'Batting Average'}, grid:{color:GRID} }
-      }
-    },
-    plugins: [{
-      id: 'refline',
-      afterDraw(chart) {
-        const {ctx, chartArea: {left,right,top}, scales: {y}} = chart;
-        const yPixel = y.getPixelForValue(leagueAvg);
-        ctx.save();
-        ctx.setLineDash([6,4]);
-        ctx.strokeStyle = 'rgba(160,154,146,0.7)';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.moveTo(left, yPixel); ctx.lineTo(right, yPixel); ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.fillStyle = '#a09a92';
-        ctx.font = '10px IBM Plex Mono, monospace';
-        ctx.fillText('League avg (.285)', left + 4, yPixel - 5);
-        // "Team best" label on Rivera bar
-        const meta = chart.getDatasetMeta(0);
-        const bar = meta.data[0];
-        ctx.fillStyle = '#f5f2ee';
-        ctx.font = 'bold 10px IBM Plex Mono, monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('Team best', bar.x, bar.y - 8);
-        ctx.restore();
-      }
-    }]
-  });
-})();
-</script>
-
-<!-- Code + Visual Modal -->
-<div id="codeModal" role="dialog" aria-modal="true" aria-label="Code and visual">
-  <div class="cm-box">
-    <div class="cm-header">
-      <span class="cm-title" id="cmTitle">Code &amp; Visual</span>
-      <button class="cm-close" id="cmClose" aria-label="Close modal">&times;</button>
-    </div>
-    <div class="cm-body">
-      <div class="cm-code-pane">
-        <pre><code id="cmCode"></code></pre>
-      </div>
-      <div class="cm-chart-pane" id="cmChartPane"></div>
-    </div>
-  </div>
-</div>
-
-<script>
-// ── Code + Visual Modal System ──
-(function(){
-
-  // Chart config registry - maps canvas ID -> Chart.js config factory
-  // Each factory returns a fresh config object so we can init a new canvas in the modal
-  const PINK   = '#3a8fa0';
-  const PINK_A = 'rgba(58,143,160,0.75)';
-  const BLUE   = '#6baacc';
-  const BLUE_A = 'rgba(107,170,204,0.75)';
-  const GRID   = 'rgba(255,255,255,0.06)';
-
-  function rng() { let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
-
-  const CHART_CONFIGS = {
-    chartLine: () => ({
-      type: 'line',
-      data: {
-        labels: [1,2,3,4,5,6,7,8,9,10],
-        datasets: [
-          { label:'Rivera', data:[.290,.295,.300,.305,.308,.310,.309,.311,.312,.314], borderColor:'#cc5595', backgroundColor:'transparent', tension:0.3, pointRadius:3 },
-          { label:'Walker', data:[.275,.280,.288,.291,.295,.299,.300,.301,.301,.303], borderColor:BLUE, backgroundColor:'transparent', tension:0.3, pointRadius:3 }
-        ]
-      },
-      options: { plugins:{legend:{position:'top'}}, scales:{ x:{title:{display:true,text:'Week'},grid:{color:GRID}}, y:{title:{display:true,text:'Batting Average'},min:0.26,max:0.33,grid:{color:GRID}} } }
-    }),
-    chartBar: () => ({
-      type: 'bar',
-      data: { labels:['Rivera','Chen','Walker','Kim'], datasets:[{label:'Home Runs',data:[4,2,7,1],backgroundColor:PINK_A,borderColor:PINK,borderWidth:1}] },
-      options: { plugins:{legend:{display:false}}, scales:{ x:{grid:{color:GRID}}, y:{beginAtZero:true,title:{display:true,text:'Home Runs'},grid:{color:GRID}} } }
-    }),
-    chartScatter: () => ({
-      type: 'scatter',
-      data: { datasets:[{label:'Players',data:[{x:.312,y:16800},{x:.287,y:14400},{x:.301,y:19200},{x:.268,y:760000}],backgroundColor:PINK_A,pointRadius:7}] },
-      options: { plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`avg: ${ctx.raw.x}  salary: $${ctx.raw.y.toLocaleString()}`}}}, scales:{ x:{title:{display:true,text:'Batting Avg'},grid:{color:GRID}}, y:{title:{display:true,text:'Salary (USD)'},grid:{color:GRID}} } }
-    }),
-    chartHist: () => {
-      const vals = Array.from({length:200}, () => 0.290 + 0.020*rng());
-      const bins=15, minV=0.22, maxV=0.36, width=(maxV-minV)/bins;
-      const counts=new Array(bins).fill(0);
-      vals.forEach(v=>{const i=Math.floor((v-minV)/width);if(i>=0&&i<bins)counts[i]++;});
-      const labels=Array.from({length:bins},(_,i)=>(minV+i*width).toFixed(3));
-      return { type:'bar', data:{labels,datasets:[{label:'Count',data:counts,backgroundColor:PINK_A,borderColor:PINK,borderWidth:1}]}, options:{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Batting Avg'},grid:{color:GRID}},y:{title:{display:true,text:'Frequency'},beginAtZero:true,grid:{color:GRID}}},barPercentage:1.0,categoryPercentage:1.0} };
-    },
-    chartBarH: () => ({
-      type: 'bar',
-      data: { labels:['Rivera','Chen','Walker','Kim'], datasets:[{label:'Home Runs',data:[4,2,7,1],backgroundColor:PINK_A,borderColor:PINK,borderWidth:1}] },
-      options: { indexAxis:'y', plugins:{legend:{display:false}}, scales:{ x:{beginAtZero:true,title:{display:true,text:'Home Runs'},grid:{color:GRID}}, y:{grid:{color:GRID}} } }
-    }),
-    chartSnsScatter: () => ({
-      type: 'scatter',
-      data: { datasets:[
-        {label:'OF',data:[{x:.312,y:4},{x:.301,y:7},{x:.295,y:3}],backgroundColor:'rgba(58,143,160,0.8)',pointRadius:8},
-        {label:'IF',data:[{x:.287,y:2},{x:.268,y:1},{x:.310,y:5}],backgroundColor:'rgba(107,170,204,0.8)',pointRadius:8}
-      ]},
-      options: { plugins:{legend:{position:'top'}}, scales:{ x:{title:{display:true,text:'Batting Avg'},grid:{color:GRID}}, y:{title:{display:true,text:'Home Runs'},beginAtZero:true,grid:{color:GRID}} } }
-    }),
-    chartSnsHist: () => {
-      const vals = [.312,.287,.301,.268,.295,.310,...Array.from({length:50},()=>0.293+0.016*rng())];
-      const bins=10, minV=0.25, maxV=0.33, width=(maxV-minV)/bins;
-      const counts=new Array(bins).fill(0);
-      vals.forEach(v=>{const i=Math.floor((v-minV)/width);if(i>=0&&i<bins)counts[i]++;});
-      const labels=Array.from({length:bins},(_,i)=>(minV+i*width).toFixed(3));
-      const kde=counts.map((_,i)=>{const w=[0.25,0.5,0.25];let s=0;for(let j=-1;j<=1;j++){const idx=i+j;if(idx>=0&&idx<bins)s+=w[j+1]*counts[idx];}return +s.toFixed(2);});
-      return { type:'bar', data:{labels,datasets:[{type:'bar',label:'Count',data:counts,backgroundColor:PINK_A,borderColor:PINK,borderWidth:1,yAxisID:'y'},{type:'line',label:'KDE',data:kde,borderColor:BLUE,borderWidth:2,pointRadius:0,tension:0.4,fill:false,yAxisID:'y'}]}, options:{plugins:{legend:{position:'top'}},scales:{x:{title:{display:true,text:'Batting Avg'},grid:{color:GRID}},y:{title:{display:true,text:'Count'},beginAtZero:true,grid:{color:GRID}}},barPercentage:1.0,categoryPercentage:1.0} };
-    },
-    chartSubplots: () => ({
-      type: 'bar',
-      data: { labels:['Rivera','Chen','Walker','Kim','Jones','Patel'], datasets:[
-        {label:'Batting Avg',data:[.312,.287,.301,.268,.295,.310],backgroundColor:'rgba(58,143,160,0.7)',borderColor:PINK,borderWidth:1,yAxisID:'y'},
-        {label:'Home Runs',data:[4,2,7,1,3,5],backgroundColor:'rgba(107,170,204,0.7)',borderColor:BLUE,borderWidth:1,yAxisID:'y2'}
-      ]},
-      options: { plugins:{legend:{position:'top'},title:{display:true,text:'Eagles Roster - Key Stats (Dual Axis)'}}, scales:{ x:{grid:{color:GRID}}, y:{title:{display:true,text:'Batting Avg'},min:0,max:0.4,position:'left',grid:{color:GRID}}, y2:{title:{display:true,text:'Home Runs'},beginAtZero:true,position:'right',grid:{display:false}} } }
-    }),
-    chartPandasBar: () => ({
-      type: 'bar',
-      data: { labels:['Q1','Q2','Q3','Q4'], datasets:[
-        {label:'Revenue',data:[45000,52000,48000,61000],backgroundColor:'rgba(58,143,160,0.75)',borderColor:PINK,borderWidth:1},
-        {label:'Expenses',data:[38000,41000,39000,44000],backgroundColor:'rgba(107,170,204,0.75)',borderColor:BLUE,borderWidth:1}
-      ]},
-      options: { plugins:{legend:{position:'top'}}, scales:{ x:{grid:{color:GRID}}, y:{title:{display:true,text:'USD'},beginAtZero:true,grid:{color:GRID}} } }
-    }),
-    chartPandasArea: () => ({
-      type: 'line',
-      data: { labels:['Q1','Q2','Q3','Q4'], datasets:[
-        {label:'Revenue',data:[45000,52000,48000,61000],backgroundColor:'rgba(58,143,160,0.35)',borderColor:PINK,fill:true,tension:0.3},
-        {label:'Expenses',data:[38000,41000,39000,44000],backgroundColor:'rgba(107,170,204,0.35)',borderColor:BLUE,fill:true,tension:0.3}
-      ]},
-      options: { plugins:{legend:{position:'top'}}, scales:{ x:{grid:{color:GRID}}, y:{title:{display:true,text:'USD'},beginAtZero:true,grid:{color:GRID}} } }
-    }),
-    chartAnnotate: () => {
-      const avgs=[.312,.287,.301], labels=['Rivera','Chen','Walker'], leagueAvg=0.285;
-      return {
-        type:'bar',
-        data:{labels,datasets:[{label:'Batting Avg',data:avgs,backgroundColor:avgs.map(v=>v>=leagueAvg?PINK_A:'rgba(100,100,105,0.6)'),borderColor:avgs.map(v=>v>=leagueAvg?PINK:'#646469'),borderWidth:1}]},
-        options:{plugins:{legend:{display:false}},scales:{x:{grid:{color:GRID}},y:{min:0,max:0.36,title:{display:true,text:'Batting Average'},grid:{color:GRID}}}},
-        plugins:[{id:'refline',afterDraw(chart){
-          const {ctx,chartArea:{left,right},scales:{y}}=chart;
-          const yPx=y.getPixelForValue(leagueAvg);
-          ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle='rgba(160,154,146,0.7)';ctx.lineWidth=1.5;
-          ctx.beginPath();ctx.moveTo(left,yPx);ctx.lineTo(right,yPx);ctx.stroke();
-          ctx.setLineDash([]);ctx.fillStyle='#a09a92';ctx.font='10px IBM Plex Mono,monospace';
-          ctx.fillText('League avg (.285)',left+4,yPx-5);
-          const meta=chart.getDatasetMeta(0);const bar=meta.data[0];
-          ctx.fillStyle='#f5f2ee';ctx.font='bold 10px IBM Plex Mono,monospace';ctx.textAlign='center';
-          ctx.fillText('Team best',bar.x,bar.y-8);ctx.restore();
-        }}]
-      };
-    }
-  };
-
-  // Chart label map for modal display
-  const CHART_LABELS = {
-    chartLine:        'Line Chart — Batting Avg by Week',
-    chartBar:         'Bar Chart — Home Runs by Player',
-    chartScatter:     'Scatter Plot — Batting Avg vs. Salary',
-    chartHist:        'Histogram — Simulated Batting Averages',
-    chartBarH:        'Horizontal Bar — Home Runs',
-    chartSnsScatter:  'Seaborn Scatter — Avg vs HR by Position',
-    chartSnsHist:     'Seaborn Histogram + KDE',
-    chartSubplots:    'Subplots — Eagles Roster Stats (Dual Axis)',
-    chartPandasBar:   "df.plot(kind='bar') — Revenue vs Expenses",
-    chartPandasArea:  "df.plot(kind='area') — Stacked Area",
-    chartAnnotate:    'Annotated Bar Chart with Reference Line'
-  };
-
-  // Active modal charts (so we can destroy them on close)
-  let modalCharts = [];
-
-  window.openCodeModal = function(btn, title, chartIdsStr) {
-    // Find the <pre><code> that immediately follows this button
-    const pre = btn.nextElementSibling;
-    const codeEl = pre ? pre.querySelector('code') : null;
-
-    // Set title
-    document.getElementById('cmTitle').textContent = title;
-
-    // Copy code (innerText gives plain text without HTML tags)
-    const cmCode = document.getElementById('cmCode');
-    cmCode.innerHTML = codeEl ? codeEl.innerHTML : '';
-
-    // Build chart pane
-    const pane = document.getElementById('cmChartPane');
-    pane.innerHTML = '';
-
-    // Destroy old charts
-    modalCharts.forEach(c => c.destroy());
-    modalCharts = [];
-
-    const ids = chartIdsStr.split(',').map(s => s.trim()).filter(Boolean);
-    ids.forEach(id => {
-      const configFn = CHART_CONFIGS[id];
-      if (!configFn) return;
-
-      const wrap = document.createElement('div');
-      wrap.className = 'cm-chart-wrap';
-
-      const lbl = document.createElement('div');
-      lbl.className = 'cm-chart-label';
-      lbl.textContent = CHART_LABELS[id] || id;
-      wrap.appendChild(lbl);
-
-      const canvas = document.createElement('canvas');
-      canvas.style.maxHeight = ids.length > 2 ? '180px' : '260px';
-      wrap.appendChild(canvas);
-      pane.appendChild(wrap);
-
-      // Small delay to ensure canvas is in DOM before Chart.js measures it
-      requestAnimationFrame(() => {
-        const config = configFn();
-        // Apply defaults
-        Chart.defaults.color = '#a09a92';
-        Chart.defaults.borderColor = '#2e2b28';
-        Chart.defaults.font.family = 'IBM Plex Mono, monospace';
-        Chart.defaults.font.size = 11;
-        const chart = new Chart(canvas, config);
-        modalCharts.push(chart);
-      });
-    });
-
-    // Open modal
-    const modal = document.getElementById('codeModal');
-    modal.classList.add('open');
-    document.body.style.overflow = 'hidden';
-
-    // Focus close button for a11y
-    requestAnimationFrame(() => document.getElementById('cmClose').focus());
-  };
-
-  function closeModal() {
-    document.getElementById('codeModal').classList.remove('open');
-    document.body.style.overflow = '';
-    modalCharts.forEach(c => c.destroy());
-    modalCharts = [];
-  }
-
-  document.getElementById('cmClose').addEventListener('click', closeModal);
-
-  document.getElementById('codeModal').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
-  });
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeModal();
-  });
-
-})();
-</script>
 
 <a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
 <style>

@@ -684,7 +684,7 @@
     </div>
     <div class="nav-right">
       <a href="../../index.html#modules">All Modules</a>
-      <a href="#quiz">Quiz</a>
+      <a href="quiz.html">Quiz</a>
     </div>
   </nav>
 
@@ -716,7 +716,7 @@
     <a class="tab-link" href="#loops">Loops</a>
     <a class="tab-link" href="#data-structures">Data Structures</a>
     <a class="tab-link" href="#functions">Functions</a>
-    <a class="tab-link" href="#quiz">Quiz</a>
+    <a class="tab-link quiz-tab-link" href="quiz.html">Quiz</a>
   </div>
 
   <div class="page-wrap">
@@ -1202,134 +1202,19 @@ result = <span class="fn">calc_ops</span>(<span class="num">400</span>, <span cl
         </div>
       </section>
 
-      <!-- QUIZ -->
-      <div class="quiz-section" id="quiz">
-        <div class="quiz-title-row">
-          <h2>Module 2 Quiz</h2>
-          <span class="quiz-tag">10 questions</span>
+      <!-- QUIZ LINK -->
+      <section id="quiz">
+        <div class="quiz-link-card">
+          <div class="quiz-link-icon">&#9998;</div>
+          <div class="quiz-link-body">
+            <h2>Module 2 Quiz</h2>
+            <p>Ten questions covering Python fundamentals — variables, data types, functions, and control flow. Each question comes up one at a time — no going back, but you can retake when done.</p>
+          </div>
+          <a href="quiz.html" class="quiz-link-btn">Take the Quiz &rarr;</a>
         </div>
+      </section>
 
-        <div id="quizForm">
-
-          <div class="quiz-q" data-idx="0" data-correct="2">
-            <div class="q-text">1. What does <code>print(10 / 3)</code> output in Python?</div>
-            <div class="q-opts">
-              <button class="q-opt" data-val="0"><div class="q-radio"></div>3</button>
-              <button class="q-opt" data-val="1"><div class="q-radio"></div>3.0</button>
-              <button class="q-opt" data-val="2"><div class="q-radio"></div>3.3333333333333335</button>
-              <button class="q-opt" data-val="3"><div class="q-radio"></div>Error - cannot divide integers</button>
-            </div>
-            <div class="q-fb"></div>
-          </div>
-
-          <div class="quiz-q" data-idx="1" data-correct="1">
-            <div class="q-text">2. Which of these is a valid Python variable name?</div>
-            <div class="q-opts">
-              <button class="q-opt" data-val="0"><div class="q-radio"></div><code>2nd_base</code></button>
-              <button class="q-opt" data-val="1"><div class="q-radio"></div><code>batting_avg</code></button>
-              <button class="q-opt" data-val="2"><div class="q-radio"></div><code>batting-avg</code></button>
-              <button class="q-opt" data-val="3"><div class="q-radio"></div><code>batting avg</code></button>
-            </div>
-            <div class="q-fb"></div>
-          </div>
-
-          <div class="quiz-q" data-idx="2" data-correct="0">
-            <div class="q-text">3. What is the output of <code>print("Eagles"[0])</code>?</div>
-            <div class="q-opts">
-              <button class="q-opt" data-val="0"><div class="q-radio"></div>E</button>
-              <button class="q-opt" data-val="1"><div class="q-radio"></div>Ea</button>
-              <button class="q-opt" data-val="2"><div class="q-radio"></div>s</button>
-              <button class="q-opt" data-val="3"><div class="q-radio"></div>Error - strings are not indexable</button>
-            </div>
-            <div class="q-fb"></div>
-          </div>
-
-          <div class="quiz-q" data-idx="3" data-correct="3">
-            <div class="q-text">4. What prints when <code>avg = 0.287</code> and you run <code>print(avg >= 0.300)</code>?</div>
-            <div class="q-opts">
-              <button class="q-opt" data-val="0"><div class="q-radio"></div>0.287</button>
-              <button class="q-opt" data-val="1"><div class="q-radio"></div>0.300</button>
-              <button class="q-opt" data-val="2"><div class="q-radio"></div>True</button>
-              <button class="q-opt" data-val="3"><div class="q-radio"></div>False</button>
-            </div>
-            <div class="q-fb"></div>
-          </div>
-
-          <div class="quiz-q" data-idx="4" data-correct="2">
-            <div class="q-text">5. How do you add "Patel" to the end of <code>roster = ["Rivera", "Chen"]</code>?</div>
-            <div class="q-opts">
-              <button class="q-opt" data-val="0"><div class="q-radio"></div><code>roster.add("Patel")</code></button>
-              <button class="q-opt" data-val="1"><div class="q-radio"></div><code>roster + "Patel"</code></button>
-              <button class="q-opt" data-val="2"><div class="q-radio"></div><code>roster.append("Patel")</code></button>
-              <button class="q-opt" data-val="3"><div class="q-radio"></div><code>roster.insert("Patel")</code></button>
-            </div>
-            <div class="q-fb"></div>
-          </div>
-
-          <div class="quiz-q" data-idx="5" data-correct="1">
-            <div class="q-text">6. What does <code>range(4)</code> produce?</div>
-            <div class="q-opts">
-              <button class="q-opt" data-val="0"><div class="q-radio"></div>1, 2, 3, 4</button>
-              <button class="q-opt" data-val="1"><div class="q-radio"></div>0, 1, 2, 3</button>
-              <button class="q-opt" data-val="2"><div class="q-radio"></div>0, 1, 2, 3, 4</button>
-              <button class="q-opt" data-val="3"><div class="q-radio"></div>A list <code>[0, 1, 2, 3]</code></button>
-            </div>
-            <div class="q-fb"></div>
-          </div>
-
-          <div class="quiz-q" data-idx="6" data-correct="0">
-            <div class="q-text">7. In a dictionary <code>player = {"name": "Rivera", "avg": 0.287}</code>, how do you access the average?</div>
-            <div class="q-opts">
-              <button class="q-opt" data-val="0"><div class="q-radio"></div><code>player["avg"]</code></button>
-              <button class="q-opt" data-val="1"><div class="q-radio"></div><code>player[1]</code></button>
-              <button class="q-opt" data-val="2"><div class="q-radio"></div><code>player.avg</code></button>
-              <button class="q-opt" data-val="3"><div class="q-radio"></div><code>player.get(0.287)</code></button>
-            </div>
-            <div class="q-fb"></div>
-          </div>
-
-          <div class="quiz-q" data-idx="7" data-correct="2">
-            <div class="q-text">8. What is the difference between <code>return</code> and <code>print()</code> inside a function?</div>
-            <div class="q-opts">
-              <button class="q-opt" data-val="0"><div class="q-radio"></div>There is no difference - both produce the same result</button>
-              <button class="q-opt" data-val="1"><div class="q-radio"></div><code>return</code> only works inside loops; <code>print()</code> works anywhere</button>
-              <button class="q-opt" data-val="2"><div class="q-radio"></div><code>return</code> sends a value back to the caller so it can be used; <code>print()</code> just displays it</button>
-              <button class="q-opt" data-val="3"><div class="q-radio"></div><code>print()</code> is faster than <code>return</code> for large datasets</button>
-            </div>
-            <div class="q-fb"></div>
-          </div>
-
-          <div class="quiz-q" data-idx="8" data-correct="3">
-            <div class="q-text">9. Which error would this cause: <code>name = "Rivera"; print(name + 14)</code>?</div>
-            <div class="q-opts">
-              <button class="q-opt" data-val="0"><div class="q-radio"></div>SyntaxError</button>
-              <button class="q-opt" data-val="1"><div class="q-radio"></div>NameError</button>
-              <button class="q-opt" data-val="2"><div class="q-radio"></div>ValueError</button>
-              <button class="q-opt" data-val="3"><div class="q-radio"></div>TypeError</button>
-            </div>
-            <div class="q-fb"></div>
-          </div>
-
-          <div class="quiz-q" data-idx="9" data-correct="1">
-            <div class="q-text">10. What does <code>f"Player: {name}"</code> do?</div>
-            <div class="q-opts">
-              <button class="q-opt" data-val="0"><div class="q-radio"></div>Creates a function called <code>f</code> with parameter <code>name</code></button>
-              <button class="q-opt" data-val="1"><div class="q-radio"></div>Creates a formatted string with the value of <code>name</code> embedded in it</button>
-              <button class="q-opt" data-val="2"><div class="q-radio"></div>Filters a list using the variable <code>name</code></button>
-              <button class="q-opt" data-val="3"><div class="q-radio"></div>Converts <code>name</code> to a float</button>
-            </div>
-            <div class="q-fb"></div>
-          </div>
-
-          <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">Submit Quiz</button>
-
-          <div class="quiz-result" id="quizResult">
-            <div class="result-pct" id="resultPct"></div>
-            <div class="result-label" id="resultLabel"></div>
-            <div class="result-sub" id="resultSub"></div>
-          </div>
-        </div>
-      </div>
+      <!-- REMOVED: Inline quiz questions and form -->
 
     </div><!-- /content -->
 
@@ -1337,9 +1222,17 @@ result = <span class="fn">calc_ops</span>(<span class="num">400</span>, <span cl
     <aside class="sidebar">
 
       <div class="sidebar-card">
-        <div class="sidebar-label">Quiz Score</div>
-        <div class="score-display" id="quizScore">--</div>
-        <div style="font-family:'IBM Plex Sans',sans-serif;font-size:0.72rem;color:var(--text-dim);">Module 2</div>
+        <div class="sidebar-label">On This Page</div>
+        <ul class="toc-list">
+          <li><a href="#getting-started">Getting Started</a></li>
+          <li><a href="#variables">Variables &amp; Types</a></li>
+          <li><a href="#strings">Strings</a></li>
+          <li><a href="#lists">Lists</a></li>
+          <li><a href="#dicts">Dictionaries</a></li>
+          <li><a href="#functions">Functions</a></li>
+          <li><a href="#control">Control Flow</a></li>
+          <li><a href="quiz.html">Quiz</a></li>
+        </ul>
       </div>
 
       <a class="sim-cta" href="../../sims/python_sim/index.html">
@@ -1349,22 +1242,9 @@ result = <span class="fn">calc_ops</span>(<span class="num">400</span>, <span cl
       </a>
 
       <div class="sidebar-card">
-        <div class="sidebar-label">On This Page</div>
-        <ul class="toc-list">
-          <li><a href="#getting-started">Getting Started</a></li>
-          <li><a href="#variables" class="sub">Variables &amp; Types</a></li>
-          <li><a href="#strings" class="sub">Strings</a></li>
-          <li><a href="#conditions" class="sub">Conditions</a></li>
-          <li><a href="#loops" class="sub">Loops</a></li>
-          <li><a href="#data-structures" class="sub">Data Structures</a></li>
-          <li><a href="#functions" class="sub">Functions</a></li>
-          <li><a href="#quiz">Quiz</a></li>
-        </ul>
-      </div>
-
-      <div class="quiz-cta">
-        <p>Ready to test your knowledge?</p>
-        <a class="quiz-btn" href="#quiz">Take the Quiz</a>
+        <div class="sidebar-label">Quiz</div>
+        <p style="font-size:0.85rem; color:var(--text-dim); margin:0 0 0.75rem;">Test your knowledge with 10 questions, one at a time.</p>
+        <a href="quiz.html" class="quiz-btn">Take the Quiz</a>
       </div>
 
     </aside>
@@ -1388,82 +1268,6 @@ result = <span class="fn">calc_ops</span>(<span class="num">400</span>, <span cl
       { ok: "Correct. You can't concatenate a string and an integer directly - Python raises a TypeError because the types are incompatible.", bad: "Not quite. This raises a TypeError because <code>+</code> can't combine a string and an integer. You'd need <code>str(14)</code> first." },
       { ok: "Correct. f-strings (formatted string literals) embed expressions inside <code>{}</code> directly in the string.", bad: "Not quite. The <code>f</code> prefix creates an f-string - a formatted string where anything inside <code>{}</code> is evaluated as Python code and inserted into the text." }
     ];
-
-    const answers = {};
-
-    document.querySelectorAll('.quiz-q').forEach(qEl => {
-      const idx = parseInt(qEl.dataset.idx);
-      qEl.querySelectorAll('.q-opt').forEach(btn => {
-        btn.addEventListener('click', () => {
-          if (answers[idx] !== undefined) return;
-          qEl.querySelectorAll('.q-opt').forEach(b => b.classList.remove('selected'));
-          btn.classList.add('selected');
-          answers[idx] = parseInt(btn.dataset.val);
-        });
-      });
-    });
-
-    function submitQuiz() {
-      const qs = document.querySelectorAll('.quiz-q');
-      if (Object.keys(answers).length < qs.length) {
-        alert('Please answer all 10 questions before submitting.');
-        return;
-      }
-
-      let correct = 0;
-      qs.forEach(qEl => {
-        const idx = parseInt(qEl.dataset.idx);
-        const cv = parseInt(qEl.dataset.correct);
-        const chosen = answers[idx];
-        const fb = qEl.querySelector('.q-fb');
-
-        qEl.querySelectorAll('.q-opt').forEach(btn => {
-          btn.disabled = true;
-          const v = parseInt(btn.dataset.val);
-          if (v === cv) btn.classList.add('reveal-correct');
-          else if (v === chosen) btn.classList.add('wrong');
-        });
-
-        if (chosen === cv) {
-          correct++;
-          fb.innerHTML = FB[idx].ok;
-          fb.className = 'q-fb show ok';
-        } else {
-          fb.innerHTML = FB[idx].bad;
-          fb.className = 'q-fb show bad';
-        }
-      });
-
-      const pct = Math.round((correct / qs.length) * 100);
-      document.getElementById('submitBtn').disabled = true;
-
-      let label, sub;
-      if (pct >= 90) {
-        label = 'Strong grasp of Python fundamentals';
-        sub = correct + '/10 correct. Head to Python Field Training to apply this in code.';
-      } else if (pct >= 70) {
-        label = 'Solid foundation';
-        sub = correct + '/10 correct. Review the sections where you missed, then try the sim.';
-      } else {
-        label = 'Keep reviewing';
-        sub = correct + '/10 correct. Re-read the sections above before moving on.';
-      }
-
-      document.getElementById('resultPct').textContent = pct + '%';
-      document.getElementById('resultLabel').textContent = label;
-      document.getElementById('resultSub').textContent = sub;
-      document.getElementById('quizResult').classList.add('show');
-      document.getElementById('quizScore').textContent = pct + '%';
-
-      localStorage.setItem('dtsc520_quiz_m2', JSON.stringify({ completed: true, score: pct, correct, total: 10 }));
-      document.getElementById('quizResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    const saved = JSON.parse(localStorage.getItem('dtsc520_quiz_m2') || '{}');
-    if (saved.score !== undefined) document.getElementById('quizScore').textContent = saved.score + '%';
-  </script>
-
-
 <a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
 <style>
   #back-to-top {

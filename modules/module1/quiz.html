@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 1 Quiz - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Zilla+Slab:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --bg-card2: #2a2824;
+      --accent: #2A7195;
+      --accent-light: #3a8ab0;
+      --text-primary: #f5f5f5;
+      --text-secondary: #b8b8b8;
+      --correct-bg: #4a9e6b;
+      --correct-text: #7ecfa0;
+      --wrong-bg: #b04040;
+      --wrong-text: #e08080;
+      --border: #3a3835;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Zilla Slab', serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* NAVIGATION */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .nav-breadcrumb {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .nav-breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .nav-breadcrumb a:hover {
+      color: var(--accent-light);
+    }
+
+    .nav-back {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .nav-back:hover {
+      color: var(--accent-light);
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    /* LANDING SCREEN */
+    #screen-landing {
+      text-align: center;
+    }
+
+    .module-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .quiz-description {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+
+    .quiz-note {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      padding: 16px;
+      margin-bottom: 32px;
+      text-align: left;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    button {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      background-color: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 12px 24px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--accent-light);
+    }
+
+    /* QUESTION SCREEN */
+    #screen-question {
+      display: none;
+    }
+
+    .progress-container {
+      margin-bottom: 32px;
+    }
+
+    .progress-bar {
+      background-color: var(--bg-card);
+      height: 4px;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      background-color: var(--accent);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-align: right;
+    }
+
+    .question-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 32px;
+      border-radius: 6px;
+    }
+
+    .question-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .option-btn {
+      background-color: var(--bg-card2);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 16px;
+      text-align: left;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      font-family: 'Zilla Slab', serif;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background-color: rgba(42, 113, 149, 0.1);
+    }
+
+    .option-btn:disabled {
+      cursor: not-allowed;
+    }
+
+    .option-btn.correct {
+      background-color: rgba(74, 158, 107, 0.15);
+      border-color: var(--correct-bg);
+    }
+
+    .option-btn.wrong {
+      background-color: rgba(176, 64, 64, 0.15);
+      border-color: var(--wrong-bg);
+    }
+
+    .feedback {
+      font-size: 14px;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.correct {
+      background-color: rgba(74, 158, 107, 0.1);
+      border: 1px solid var(--correct-bg);
+      color: var(--correct-text);
+    }
+
+    .feedback.wrong {
+      background-color: rgba(176, 64, 64, 0.1);
+      border: 1px solid var(--wrong-bg);
+      color: var(--wrong-text);
+    }
+
+    .next-btn-container {
+      display: none;
+      text-align: right;
+      margin-top: 24px;
+    }
+
+    .next-btn-container.show {
+      display: block;
+    }
+
+    /* RESULTS SCREEN */
+    #screen-results {
+      display: none;
+      text-align: center;
+    }
+
+    .score-number {
+      font-size: 80px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .score-details {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    .results-breakdown {
+      text-align: left;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 24px;
+      border-radius: 6px;
+      margin-bottom: 32px;
+    }
+
+    .breakdown-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .breakdown-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .breakdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .breakdown-item-icon {
+      flex-shrink: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .breakdown-item-icon.correct {
+      color: var(--correct-text);
+    }
+
+    .breakdown-item-icon.wrong {
+      color: var(--wrong-text);
+    }
+
+    .breakdown-item-text {
+      flex: 1;
+    }
+
+    .breakdown-item-number {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .results-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .results-back-link {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: 12px;
+    }
+
+    .results-back-link:hover {
+      color: var(--accent-light);
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-breadcrumb">
+      <a href="index.html">Course Home</a> > <a href="#">Module 1</a> > Quiz
+    </div>
+    <a href="index.html" class="nav-back">← Back to Module</a>
+  </nav>
+
+  <main>
+    <!-- LANDING SCREEN -->
+    <div id="screen-landing">
+      <div class="module-badge">Module 01 - Introduction to Data Science</div>
+      <h1>Module 1 Quiz</h1>
+      <p class="quiz-description">Ten questions covering the data science landscape, roles, tools, Python's place in the field, critical thinking, and pseudocode.</p>
+      <div class="quiz-note">
+        <strong>Note:</strong> Questions appear one at a time. You cannot go back to previous questions once answered.
+      </div>
+      <button onclick="beginQuiz()">Begin Quiz</button>
+    </div>
+
+    <!-- QUESTION SCREEN -->
+    <div id="screen-question">
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText"></div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-eyebrow" id="questionNumber"></div>
+        <div class="question-text" id="questionText"></div>
+        <div class="options-container" id="optionsContainer"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="next-btn-container" id="nextBtnContainer">
+          <button id="nextBtn" onclick="nextQuestion()">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div id="screen-results">
+      <div class="score-number" id="scoreNumber"></div>
+      <div class="score-details" id="scoreDetails"></div>
+      <div class="results-breakdown" id="resultsBreakdown"></div>
+      <div class="results-actions">
+        <button onclick="retake()">Retake Quiz</button>
+        <a href="index.html" class="results-back-link">← Back to Module</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        text: "Which of the following best describes the difference between data analytics and data science?",
+        options: [
+          "Analytics uses Python; data science uses R.",
+          "Analytics is more technical than data science.",
+          "Analytics is primarily backward-looking (what happened?); data science is primarily forward-looking (what will happen?).",
+          "Data science only works with structured data; analytics works with any data."
+        ],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. Analytics focuses on understanding past events (descriptive/diagnostic). Data science focuses on predicting future events or automating decisions (predictive/prescriptive).",
+        feedbackWrong: "Not quite. The key distinction is temporal: analytics is retrospective (what happened and why), while data science is prospective (what will happen, what should we do)."
+      },
+      {
+        text: "The 'three circles' Venn diagram definition of data science places it at the intersection of which three areas?",
+        options: [
+          "Python, SQL, and statistics.",
+          "Math and statistics, computer science and programming, and domain expertise.",
+          "Data engineering, data analysis, and machine learning.",
+          "Visualization, modeling, and communication."
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. The classic Venn diagram places data science at the intersection of math/statistics, computer science/programming, and domain knowledge. You need all three for the most impactful work.",
+        feedbackWrong: "Not quite. The three circles are math and statistics, computer science and programming, and domain expertise. Tools like Python or SQL are in the computer science circle, not separate circles."
+      },
+      {
+        text: "Which role is primarily responsible for deploying trained machine learning models into production systems?",
+        options: [
+          "Data Analyst",
+          "BI Developer",
+          "Data Engineer",
+          "ML Engineer"
+        ],
+        correctIndex: 3,
+        feedbackCorrect: "Correct. ML Engineers specialize in taking trained models and deploying them into production systems where they serve real users at scale.",
+        feedbackWrong: "Not quite. The ML Engineer role owns production deployment of models. Data Analysts focus on insight, BI Developers build dashboards, and Data Engineers build pipelines."
+      },
+      {
+        text: "A sports analytics team notices that players who drink more water during games have higher batting averages. They conclude that hydration causes better performance and recommend a mandatory hydration program. What critical thinking error is being made?",
+        options: [
+          "Confusing correlation with causation - a third variable (e.g. overall fitness habits) likely explains both.",
+          "Using too small a sample size.",
+          "Using the wrong statistical test.",
+          "Overfitting the model to training data."
+        ],
+        correctIndex: 0,
+        feedbackCorrect: "Correct. Correlation does not imply causation. A confounding variable like overall fitness habits likely drives both better hydration and better performance. You need an experiment, not an observation, to establish causation.",
+        feedbackWrong: "Not quite. This is the classic correlation/causation error. A third variable (fitness habits) likely explains both the hydration behavior and the batting performance. Observational data alone cannot establish causation."
+      },
+      {
+        text: "Which of the following is the most precisely stated, answerable data science question?",
+        options: [
+          "How do we improve player performance?",
+          "What is happening with our data?",
+          "Which minor-league pitchers aged 22-25 have the highest strikeout-to-walk ratio over the past two seasons, and does that ratio predict MLB promotion within 18 months?",
+          "Is Python better than R?"
+        ],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. A good data science question specifies the population, metric, time period, and outcome. This question has all four. The others are too vague to answer with data.",
+        feedbackWrong: "Not quite. Option C is the only one with a specific population (pitchers aged 22-25), a specific metric (K/BB ratio), a time window (two seasons), and a testable outcome (promotion within 18 months). The others are too broad."
+      },
+      {
+        text: "Why did Python become the dominant language for data science rather than a language built specifically for statistics like R?",
+        options: [
+          "Python runs faster than R for all operations.",
+          "Python is a general-purpose language with a massive ecosystem of libraries, broad community adoption, and applicability beyond statistics - making it more useful across the full data pipeline and in industry settings.",
+          "R is no longer maintained and has been deprecated.",
+          "Python has better built-in statistical functions than R."
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. Python's dominance comes from its general-purpose nature, ecosystem breadth, and industry adoption. A Python data scientist can write the analysis, build the API to serve it, and automate the pipeline all in one language.",
+        feedbackWrong: "Not quite. Python won because it is a general-purpose language with a huge ecosystem that extends far beyond statistics. R is excellent for statistics but Python's reach across the full data pipeline made it the industry default."
+      },
+      {
+        text: "What is the primary purpose of writing pseudocode before implementing a solution in Python?",
+        options: [
+          "To generate documentation that can be automatically converted to code.",
+          "To satisfy project requirements that mandate written specs.",
+          "To test code performance before writing it.",
+          "To think through the logic and structure of a solution before being distracted by syntax, so you discover design flaws while they are cheap to fix."
+        ],
+        correctIndex: 3,
+        feedbackCorrect: "Correct. Pseudocode separates the problem-solving step from the syntax-writing step. You work out the logic in plain language first, catch flaws early, then translate to Python.",
+        feedbackWrong: "Not quite. The purpose of pseudocode is to think through logic before syntax. It lets you discover that your approach is wrong before you have invested time writing Python."
+      },
+      {
+        text: "A hospital dataset shows that patients who receive a certain treatment have worse outcomes than those who do not. A data scientist concludes the treatment is harmful. What should they consider before reaching that conclusion?",
+        options: [
+          "Selection bias: sicker patients may be more likely to receive the treatment, making the treatment look harmful even if it helps.",
+          "The dataset is probably too small.",
+          "The hospital is probably hiding data.",
+          "The outcome variable should be changed to a different metric."
+        ],
+        correctIndex: 0,
+        feedbackCorrect: "Correct. This is selection bias. If the sickest patients are more likely to receive the treatment, they will have worse outcomes regardless of whether the treatment helps. The treatment appears harmful when it may in fact be beneficial.",
+        feedbackWrong: "Not quite. This is selection bias: the sickest patients are more likely to receive the treatment, so those patients will have worse outcomes regardless of whether the treatment helps. You need to control for baseline severity before drawing conclusions."
+      },
+      {
+        text: "Which Python library is most closely associated with tabular data manipulation (loading CSV files, filtering rows, aggregating columns)?",
+        options: [
+          "NumPy",
+          "Matplotlib",
+          "pandas",
+          "scikit-learn"
+        ],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. pandas is the primary Python library for tabular data: loading CSVs, cleaning columns, filtering rows, grouping, and aggregating. Every other library in the data stack integrates with it.",
+        feedbackWrong: "Not quite. pandas is the tabular data library. NumPy works with numerical arrays, Matplotlib makes charts, and scikit-learn is for machine learning."
+      },
+      {
+        text: "A data scientist reports: 'Treatment B outperforms Treatment A.' A critical thinker should ask which follow-up question first?",
+        options: [
+          "Which programming language was used to run the analysis?",
+          "By how much, and how confident are we in that estimate? What is the uncertainty range?",
+          "Was the analysis done in a Jupyter notebook?",
+          "Did the data scientist have a PhD?"
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. The size of the effect and its uncertainty are what matter. 'B outperforms A' is meaningless without knowing whether the difference is 0.1% or 30%, and whether that estimate is reliable.",
+        feedbackWrong: "Not quite. The most important follow-up is about the size and reliability of the effect. 'By how much?' and 'how certain are we?' are the questions that determine whether the finding is actionable."
+      }
+    ];
+
+    let currentQ = 0;
+    let results = [];
+
+    function beginQuiz() {
+      document.getElementById('screen-landing').style.display = 'none';
+      document.getElementById('screen-question').style.display = 'block';
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = questions[currentQ];
+      const total = questions.length;
+      const progressPercent = (currentQ / total) * 100;
+
+      document.getElementById('progressFill').style.width = progressPercent + '%';
+      document.getElementById('progressText').textContent = `Question ${currentQ + 1} of ${total}`;
+      document.getElementById('questionNumber').textContent = `Question ${currentQ + 1}`;
+      document.getElementById('questionText').textContent = q.text;
+
+      const optionsContainer = document.getElementById('optionsContainer');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((option, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(idx);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById('feedback').innerHTML = '';
+      document.getElementById('feedback').className = 'feedback';
+      document.getElementById('nextBtnContainer').classList.remove('show');
+    }
+
+    function selectAnswer(optionIndex) {
+      const q = questions[currentQ];
+      const isCorrect = optionIndex === q.correctIndex;
+      results[currentQ] = { correct: isCorrect };
+
+      // Disable all buttons
+      document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+
+      // Highlight correct and selected options
+      document.querySelectorAll('.option-btn').forEach((btn, idx) => {
+        if (idx === q.correctIndex) {
+          btn.classList.add('correct');
+        }
+        if (idx === optionIndex && !isCorrect) {
+          btn.classList.add('wrong');
+        }
+      });
+
+      // Show feedback
+      const feedbackEl = document.getElementById('feedback');
+      feedbackEl.textContent = isCorrect ? q.feedbackCorrect : q.feedbackWrong;
+      feedbackEl.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+
+      // Show next button
+      document.getElementById('nextBtnContainer').classList.add('show');
+      const nextBtn = document.getElementById('nextBtn');
+      if (currentQ === questions.length - 1) {
+        nextBtn.textContent = 'See Results →';
+      } else {
+        nextBtn.textContent = 'Next →';
+      }
+    }
+
+    function nextQuestion() {
+      currentQ++;
+      if (currentQ >= questions.length) {
+        showResults();
+      } else {
+        renderQuestion();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('screen-question').style.display = 'none';
+      document.getElementById('screen-results').style.display = 'block';
+
+      const score = results.filter(r => r.correct).length;
+      const total = results.length;
+      const percent = Math.round((score / total) * 100);
+      let grade = 'F';
+      if (percent >= 90) grade = 'A';
+      else if (percent >= 80) grade = 'B';
+      else if (percent >= 70) grade = 'C';
+      else if (percent >= 60) grade = 'D';
+
+      document.getElementById('scoreNumber').textContent = score + ' / ' + total;
+      document.getElementById('scoreDetails').textContent = percent + '% - Grade: ' + grade;
+
+      let breakdownHTML = '<div class="breakdown-title">Question Breakdown</div>';
+      results.forEach((result, idx) => {
+        const icon = result.correct ? '✓' : '✗';
+        const iconClass = result.correct ? 'correct' : 'wrong';
+        const correctAnswer = questions[idx].options[questions[idx].correctIndex];
+        breakdownHTML += `
+          <div class="breakdown-item">
+            <div class="breakdown-item-icon ${iconClass}">${icon}</div>
+            <div class="breakdown-item-text">
+              <strong>Q${idx + 1}:</strong> ${correctAnswer}
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('resultsBreakdown').innerHTML = breakdownHTML;
+
+      // Save score to localStorage
+      localStorage.setItem('dtsc520_quiz_m1', JSON.stringify({ score, total, percent, grade, completedAt: new Date().toISOString() }));
+    }
+
+    function retake() {
+      currentQ = 0;
+      results = [];
+      document.getElementById('screen-results').style.display = 'none';
+      document.getElementById('screen-landing').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

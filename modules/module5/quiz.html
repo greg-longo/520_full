@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 5 Quiz - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Zilla+Slab:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --bg-card2: #2a2824;
+      --accent: #a03070;
+      --accent-light: #c04888;
+      --text-primary: #f5f5f5;
+      --text-secondary: #b8b8b8;
+      --correct-bg: #4a9e6b;
+      --correct-text: #7ecfa0;
+      --wrong-bg: #b04040;
+      --wrong-text: #e08080;
+      --border: #3a3835;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Zilla Slab', serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* NAVIGATION */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .nav-breadcrumb {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .nav-breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .nav-breadcrumb a:hover {
+      color: var(--accent-light);
+    }
+
+    .nav-back {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .nav-back:hover {
+      color: var(--accent-light);
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    /* LANDING SCREEN */
+    #screen-landing {
+      text-align: center;
+    }
+
+    .module-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .quiz-description {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+
+    .quiz-note {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      padding: 16px;
+      margin-bottom: 32px;
+      text-align: left;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    button {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      background-color: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 12px 24px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--accent-light);
+    }
+
+    /* QUESTION SCREEN */
+    #screen-question {
+      display: none;
+    }
+
+    .progress-container {
+      margin-bottom: 32px;
+    }
+
+    .progress-bar {
+      background-color: var(--bg-card);
+      height: 4px;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      background-color: var(--accent);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-align: right;
+    }
+
+    .question-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 32px;
+      border-radius: 6px;
+    }
+
+    .question-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .option-btn {
+      background-color: var(--bg-card2);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 16px;
+      text-align: left;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      font-family: 'Zilla Slab', serif;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background-color: rgba(160, 48, 112, 0.1);
+    }
+
+    .option-btn:disabled {
+      cursor: not-allowed;
+    }
+
+    .option-btn.correct {
+      background-color: rgba(74, 158, 107, 0.15);
+      border-color: var(--correct-bg);
+    }
+
+    .option-btn.wrong {
+      background-color: rgba(176, 64, 64, 0.15);
+      border-color: var(--wrong-bg);
+    }
+
+    .feedback {
+      font-size: 14px;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.correct {
+      background-color: rgba(74, 158, 107, 0.1);
+      border: 1px solid var(--correct-bg);
+      color: var(--correct-text);
+    }
+
+    .feedback.wrong {
+      background-color: rgba(176, 64, 64, 0.1);
+      border: 1px solid var(--wrong-bg);
+      color: var(--wrong-text);
+    }
+
+    .next-btn-container {
+      display: none;
+      text-align: right;
+      margin-top: 24px;
+    }
+
+    .next-btn-container.show {
+      display: block;
+    }
+
+    /* RESULTS SCREEN */
+    #screen-results {
+      display: none;
+      text-align: center;
+    }
+
+    .score-number {
+      font-size: 80px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .score-details {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    .results-breakdown {
+      text-align: left;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 24px;
+      border-radius: 6px;
+      margin-bottom: 32px;
+    }
+
+    .breakdown-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .breakdown-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .breakdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .breakdown-item-icon {
+      flex-shrink: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .breakdown-item-icon.correct {
+      color: var(--correct-text);
+    }
+
+    .breakdown-item-icon.wrong {
+      color: var(--wrong-text);
+    }
+
+    .breakdown-item-text {
+      flex: 1;
+    }
+
+    .breakdown-item-number {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .results-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .results-back-link {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: 12px;
+    }
+
+    .results-back-link:hover {
+      color: var(--accent-light);
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-breadcrumb">
+      <a href="index.html">Course Home</a> > <a href="#">Module 5</a> > Quiz
+    </div>
+    <a href="index.html" class="nav-back">← Back to Module</a>
+  </nav>
+
+  <main>
+    <!-- LANDING SCREEN -->
+    <div id="screen-landing">
+      <div class="module-badge">Module 05 - Matplotlib & Seaborn</div>
+      <h1>Module 5 Quiz</h1>
+      <p class="quiz-description">Ten questions covering chart selection, Matplotlib's object model, Seaborn, visualization best practices, and common pitfalls.</p>
+      <div class="quiz-note">
+        <strong>Note:</strong> Questions appear one at a time. You cannot go back to previous questions once answered.
+      </div>
+      <button onclick="beginQuiz()">Begin Quiz</button>
+    </div>
+
+    <!-- QUESTION SCREEN -->
+    <div id="screen-question">
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText"></div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-eyebrow" id="questionNumber"></div>
+        <div class="question-text" id="questionText"></div>
+        <div class="options-container" id="optionsContainer"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="next-btn-container" id="nextBtnContainer">
+          <button id="nextBtn" onclick="nextQuestion()">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div id="screen-results">
+      <div class="score-number" id="scoreNumber"></div>
+      <div class="score-details" id="scoreDetails"></div>
+      <div class="results-breakdown" id="resultsBreakdown"></div>
+      <div class="results-actions">
+        <button onclick="retake()">Retake Quiz</button>
+        <a href="index.html" class="results-back-link">← Back to Module</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        text: "You want to show how batting averages for 5 players changed week-by-week over a season. Which chart type is most appropriate?",
+        options: [
+          "Bar chart - one bar per player per week.",
+          "Line chart - one line per player, x-axis = week.",
+          "Histogram - to show the distribution of averages.",
+          "Pie chart - to show each player's share of total batting."
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. Line charts are the standard for time series. Each player gets a line, the x-axis shows time (week), and the eye naturally follows trends.",
+        feedbackWrong: "Not quite. A line chart is the right tool for showing change over time. A bar chart per week would be extremely cluttered with 5 players. Histograms show distributions. Pie charts show proportions at a single point in time."
+      },
+      {
+        text: "In Matplotlib's object-oriented interface, what is the difference between a Figure and an Axes?",
+        options: [
+          "Figure is used for line charts; Axes is used for bar charts.",
+          "They are the same object with different names.",
+          "A Figure is the entire canvas; an Axes is one individual plot within that canvas.",
+          "An Axes is the overall canvas; a Figure is one subplot."
+        ],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. The Figure is the top-level container - the whole canvas. An Axes is one individual plot within that Figure. A Figure can have many Axes (via subplots). Most plot commands go on the Axes object.",
+        feedbackWrong: "Not quite. Figure = the entire canvas. Axes = one individual plot inside that canvas. A Figure can contain multiple Axes objects via subplots."
+      },
+      {
+        text: "You want to see whether batting average and home runs are related across the roster. Which chart is best?",
+        options: [
+          "Scatter plot - one point per player, avg on x-axis, hr on y-axis.",
+          "Histogram of batting averages.",
+          "Line chart over time.",
+          "Pie chart of home run shares."
+        ],
+        correctIndex: 0,
+        feedbackCorrect: "Correct. A scatter plot is designed to show the relationship between two continuous variables. Each point is a player, and the pattern reveals whether a correlation exists.",
+        feedbackWrong: "Not quite. A scatter plot is the right tool for showing the relationship between two numeric variables. Each player becomes a point. Histograms show distributions. Line charts require a time axis. Pie charts show proportions."
+      },
+      {
+        text: "Which code creates a 1-row, 2-column subplot layout and returns handles for both Axes?",
+        options: [
+          "fig = plt.figure(1, 2)",
+          "ax1, ax2 = plt.axes(1, 2)",
+          "fig, ax = plt.subplots()",
+          "fig, (ax1, ax2) = plt.subplots(1, 2)"
+        ],
+        correctIndex: 3,
+        feedbackCorrect: "Correct. plt.subplots(1, 2) creates 1 row, 2 columns. The tuple unpacking (ax1, ax2) gives you direct handles to each Axes object.",
+        feedbackWrong: "Not quite. plt.subplots(1, 2) is the correct call. The tuple unpacking fig, (ax1, ax2) gives handles to both Axes. plt.figure() does not create Axes. plt.subplots() with no arguments gives only 1 Axes."
+      },
+      {
+        text: "What is the main advantage of Seaborn over plain Matplotlib for a data scientist?",
+        options: [
+          "Seaborn can create interactive charts; Matplotlib cannot.",
+          "Seaborn integrates with pandas DataFrames and produces statistical plots with less code, including automatic grouping, error bars, and attractive defaults.",
+          "Seaborn replaces Matplotlib completely and is always preferred.",
+          "Seaborn charts render faster than Matplotlib charts."
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. Seaborn is designed around pandas DataFrames. Pass a DataFrame and column names, and it handles grouping, statistical summaries, and error bars automatically - in much less code than equivalent Matplotlib.",
+        feedbackWrong: "Not quite. Seaborn's main advantage is tight pandas integration and statistical plot support. It is not interactive (Plotly is), it is built on top of Matplotlib (not a replacement), and rendering speed is not a meaningful difference."
+      },
+      {
+        text: "A bar chart showing player home run counts has its y-axis starting at 0.5 instead of 0. Rivera has 4 HRs and Walker has 7. How does this affect the reader's perception?",
+        options: [
+          "It has no effect - the numbers are labeled on the bars.",
+          "It makes the chart easier to read by zooming in.",
+          "It exaggerates the difference between players, making Walker appear to have far more than 1.75x Rivera's HRs.",
+          "It has no effect because bar heights are still proportional to the data."
+        ],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. When the y-axis does not start at 0, bar heights are no longer proportional to the values. Walker's advantage appears much larger than the actual 7:4 ratio. Always start bar charts at zero.",
+        feedbackWrong: "Not quite. Truncating the y-axis distorts bar charts because bar height is the only visual encoding. If the axis starts at 0.5, a bar of 4 looks much shorter relative to a bar of 7 than the actual ratio. Labels help but do not fix the visual distortion."
+      },
+      {
+        text: "You want to compare the distribution of batting averages between outfielders and infielders on the roster. Which chart is most informative?",
+        options: [
+          "Box plot with position on the x-axis and batting average on the y-axis.",
+          "A single histogram of all batting averages.",
+          "A pie chart showing each player's share of the total batting average.",
+          "A line chart of batting average over games played."
+        ],
+        correctIndex: 0,
+        feedbackCorrect: "Correct. A box plot compactly shows median, interquartile range, and outliers for each group side by side. It is the standard tool for comparing distributions across categories.",
+        feedbackWrong: "Not quite. A box plot is the right tool for comparing distributions across groups. A single histogram mixes all positions. A pie chart shows proportions. A line chart needs a continuous x-axis."
+      },
+      {
+        text: "What does plt.tight_layout() do?",
+        options: [
+          "Compresses the figure to a smaller file size.",
+          "Locks the axis limits so they cannot be changed.",
+          "Removes all whitespace from the figure.",
+          "Automatically adjusts subplot spacing to prevent labels and titles from overlapping."
+        ],
+        correctIndex: 3,
+        feedbackCorrect: "Correct. plt.tight_layout() adjusts padding between subplots and between plot elements so that titles, labels, and tick marks do not overlap or get clipped.",
+        feedbackWrong: "Not quite. plt.tight_layout() adjusts spacing between plot elements to prevent overlap. It does not affect file size, axis limits, or remove all whitespace."
+      },
+      {
+        text: "Which Seaborn function produces a matrix of scatter plots for every pair of numeric variables in a DataFrame?",
+        options: [
+          "sns.heatmap()",
+          "sns.scatterplot()",
+          "sns.pairplot()",
+          "sns.jointplot()"
+        ],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. sns.pairplot() creates a grid of scatter plots for every pair of numeric columns, with distribution plots on the diagonal.",
+        feedbackWrong: "Not quite. sns.pairplot() is the answer. sns.heatmap() visualizes a matrix as colored cells. sns.scatterplot() draws one plot. sns.jointplot() shows one pair with marginal distributions."
+      },
+      {
+        text: "According to visualization best practices, which of these is the better chart title?",
+        options: [
+          "Batting Average Data",
+          "Outfielders Batted .308 on Average - 21 Points Above Infielders",
+          "Chart 1: Statistics",
+          "Eagles"
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. A good title communicates the takeaway, not just the topic. 'Outfielders Batted .308 on Average - 21 Points Above Infielders' tells the reader what to look for and why it matters.",
+        feedbackWrong: "Not quite. Option B is the only title that conveys a finding. 'Batting Average Data' describes the topic. 'Chart 1: Statistics' is a label. 'Eagles' is just the subject. A good title tells the reader what the chart says."
+      }
+    ];
+
+    let currentQ = 0;
+    let results = [];
+
+    function beginQuiz() {
+      document.getElementById('screen-landing').style.display = 'none';
+      document.getElementById('screen-question').style.display = 'block';
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = questions[currentQ];
+      const total = questions.length;
+      const progressPercent = (currentQ / total) * 100;
+
+      document.getElementById('progressFill').style.width = progressPercent + '%';
+      document.getElementById('progressText').textContent = `Question ${currentQ + 1} of ${total}`;
+      document.getElementById('questionNumber').textContent = `Question ${currentQ + 1}`;
+      document.getElementById('questionText').textContent = q.text;
+
+      const optionsContainer = document.getElementById('optionsContainer');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((option, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(idx);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById('feedback').innerHTML = '';
+      document.getElementById('feedback').className = 'feedback';
+      document.getElementById('nextBtnContainer').classList.remove('show');
+    }
+
+    function selectAnswer(optionIndex) {
+      const q = questions[currentQ];
+      const isCorrect = optionIndex === q.correctIndex;
+      results[currentQ] = { correct: isCorrect };
+
+      // Disable all buttons
+      document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+
+      // Highlight correct and selected options
+      document.querySelectorAll('.option-btn').forEach((btn, idx) => {
+        if (idx === q.correctIndex) {
+          btn.classList.add('correct');
+        }
+        if (idx === optionIndex && !isCorrect) {
+          btn.classList.add('wrong');
+        }
+      });
+
+      // Show feedback
+      const feedbackEl = document.getElementById('feedback');
+      feedbackEl.textContent = isCorrect ? q.feedbackCorrect : q.feedbackWrong;
+      feedbackEl.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+
+      // Show next button
+      document.getElementById('nextBtnContainer').classList.add('show');
+      const nextBtn = document.getElementById('nextBtn');
+      if (currentQ === questions.length - 1) {
+        nextBtn.textContent = 'See Results →';
+      } else {
+        nextBtn.textContent = 'Next →';
+      }
+    }
+
+    function nextQuestion() {
+      currentQ++;
+      if (currentQ >= questions.length) {
+        showResults();
+      } else {
+        renderQuestion();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('screen-question').style.display = 'none';
+      document.getElementById('screen-results').style.display = 'block';
+
+      const score = results.filter(r => r.correct).length;
+      const total = results.length;
+      const percent = Math.round((score / total) * 100);
+      let grade = 'F';
+      if (percent >= 90) grade = 'A';
+      else if (percent >= 80) grade = 'B';
+      else if (percent >= 70) grade = 'C';
+      else if (percent >= 60) grade = 'D';
+
+      document.getElementById('scoreNumber').textContent = score + ' / ' + total;
+      document.getElementById('scoreDetails').textContent = percent + '% - Grade: ' + grade;
+
+      let breakdownHTML = '<div class="breakdown-title">Question Breakdown</div>';
+      results.forEach((result, idx) => {
+        const icon = result.correct ? '✓' : '✗';
+        const iconClass = result.correct ? 'correct' : 'wrong';
+        const correctAnswer = questions[idx].options[questions[idx].correctIndex];
+        breakdownHTML += `
+          <div class="breakdown-item">
+            <div class="breakdown-item-icon ${iconClass}">${icon}</div>
+            <div class="breakdown-item-text">
+              <strong>Q${idx + 1}:</strong> ${correctAnswer}
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('resultsBreakdown').innerHTML = breakdownHTML;
+
+      // Save score to localStorage
+      localStorage.setItem('dtsc520_quiz_m5', JSON.stringify({ score, total, percent, grade, completedAt: new Date().toISOString() }));
+    }
+
+    function retake() {
+      currentQ = 0;
+      results = [];
+      document.getElementById('screen-results').style.display = 'none';
+      document.getElementById('screen-landing').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

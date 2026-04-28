@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 6 Quiz - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Zilla+Slab:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --bg-card2: #2a2824;
+      --accent: #8B1C40;
+      --accent-light: #a82050;
+      --text-primary: #f5f5f5;
+      --text-secondary: #b8b8b8;
+      --correct-bg: #4a9e6b;
+      --correct-text: #7ecfa0;
+      --wrong-bg: #b04040;
+      --wrong-text: #e08080;
+      --border: #3a3835;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Zilla Slab', serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* NAVIGATION */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .nav-breadcrumb {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .nav-breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .nav-breadcrumb a:hover {
+      color: var(--accent-light);
+    }
+
+    .nav-back {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .nav-back:hover {
+      color: var(--accent-light);
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    /* LANDING SCREEN */
+    #screen-landing {
+      text-align: center;
+    }
+
+    .module-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .quiz-description {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+
+    .quiz-note {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      padding: 16px;
+      margin-bottom: 32px;
+      text-align: left;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    button {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      background-color: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 12px 24px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--accent-light);
+    }
+
+    /* QUESTION SCREEN */
+    #screen-question {
+      display: none;
+    }
+
+    .progress-container {
+      margin-bottom: 32px;
+    }
+
+    .progress-bar {
+      background-color: var(--bg-card);
+      height: 4px;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      background-color: var(--accent);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-align: right;
+    }
+
+    .question-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 32px;
+      border-radius: 6px;
+    }
+
+    .question-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .option-btn {
+      background-color: var(--bg-card2);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 16px;
+      text-align: left;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      font-family: 'Zilla Slab', serif;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background-color: rgba(139, 28, 64, 0.1);
+    }
+
+    .option-btn:disabled {
+      cursor: not-allowed;
+    }
+
+    .option-btn.correct {
+      background-color: rgba(74, 158, 107, 0.15);
+      border-color: var(--correct-bg);
+    }
+
+    .option-btn.wrong {
+      background-color: rgba(176, 64, 64, 0.15);
+      border-color: var(--wrong-bg);
+    }
+
+    .feedback {
+      font-size: 14px;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.correct {
+      background-color: rgba(74, 158, 107, 0.1);
+      border: 1px solid var(--correct-bg);
+      color: var(--correct-text);
+    }
+
+    .feedback.wrong {
+      background-color: rgba(176, 64, 64, 0.1);
+      border: 1px solid var(--wrong-bg);
+      color: var(--wrong-text);
+    }
+
+    .next-btn-container {
+      display: none;
+      text-align: right;
+      margin-top: 24px;
+    }
+
+    .next-btn-container.show {
+      display: block;
+    }
+
+    /* RESULTS SCREEN */
+    #screen-results {
+      display: none;
+      text-align: center;
+    }
+
+    .score-number {
+      font-size: 80px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .score-details {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    .results-breakdown {
+      text-align: left;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 24px;
+      border-radius: 6px;
+      margin-bottom: 32px;
+    }
+
+    .breakdown-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .breakdown-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .breakdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .breakdown-item-icon {
+      flex-shrink: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .breakdown-item-icon.correct {
+      color: var(--correct-text);
+    }
+
+    .breakdown-item-icon.wrong {
+      color: var(--wrong-text);
+    }
+
+    .breakdown-item-text {
+      flex: 1;
+    }
+
+    .breakdown-item-number {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .results-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .results-back-link {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: 12px;
+    }
+
+    .results-back-link:hover {
+      color: var(--accent-light);
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-breadcrumb">
+      <a href="index.html">Course Home</a> > <a href="#">Module 6</a> > Quiz
+    </div>
+    <a href="index.html" class="nav-back">← Back to Module</a>
+  </nav>
+
+  <main>
+    <!-- LANDING SCREEN -->
+    <div id="screen-landing">
+      <div class="module-badge">Module 06 - Git & GitHub</div>
+      <h1>Module 6 Quiz</h1>
+      <p class="quiz-description">Ten questions covering version control concepts, Git commands, branching, merging, pull requests, and conflict resolution.</p>
+      <div class="quiz-note">
+        <strong>Note:</strong> Questions appear one at a time. You cannot go back to previous questions once answered.
+      </div>
+      <button onclick="beginQuiz()">Begin Quiz</button>
+    </div>
+
+    <!-- QUESTION SCREEN -->
+    <div id="screen-question">
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText"></div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-eyebrow" id="questionNumber"></div>
+        <div class="question-text" id="questionText"></div>
+        <div class="options-container" id="optionsContainer"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="next-btn-container" id="nextBtnContainer">
+          <button id="nextBtn" onclick="nextQuestion()">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div id="screen-results">
+      <div class="score-number" id="scoreNumber"></div>
+      <div class="score-details" id="scoreDetails"></div>
+      <div class="results-breakdown" id="resultsBreakdown"></div>
+      <div class="results-actions">
+        <button onclick="retake()">Retake Quiz</button>
+        <a href="index.html" class="results-back-link">← Back to Module</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        text: "What does git add . do?",
+        options: [
+          "Creates a new branch called 'add'",
+          "Stages all modified files in the current directory for the next commit",
+          "Pushes all local commits to GitHub",
+          "Adds a new remote repository called 'origin'"
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. git add . stages all changes in the current directory, preparing them for the next commit.",
+        feedbackWrong: "Not quite. git add . stages changes. It does not create branches, push commits, or configure remotes."
+      },
+      {
+        text: "Which of the following best describes the staging area?",
+        options: [
+          "The remote GitHub repository where your team collaborates",
+          "Your working directory where files are edited",
+          "A holding area where you decide which changes will be included in the next commit",
+          "A temporary backup of deleted files"
+        ],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. The staging area is where you curate exactly what goes into a commit before writing it to history.",
+        feedbackWrong: "Not quite. The staging area sits between your working directory and the repository. It is where you decide what to commit before committing."
+      },
+      {
+        text: "You run git commit -m 'Add player age column'. Where does this commit initially exist?",
+        options: [
+          "Only in your local repository",
+          "Only on GitHub",
+          "Both locally and on GitHub simultaneously",
+          "In the staging area, waiting for a push"
+        ],
+        correctIndex: 0,
+        feedbackCorrect: "Correct. Commits are local first. They do not reach GitHub until you run git push.",
+        feedbackWrong: "Not quite. git commit writes to your local repository only. A git push is needed to send it to GitHub."
+      },
+      {
+        text: "What is the purpose of creating a branch before starting new work?",
+        options: [
+          "To make your commits upload faster to GitHub",
+          "Branches are required by GitHub - you cannot commit without one",
+          "To create a backup copy of the repository on a second server",
+          "To isolate your work so changes do not affect the main codebase until they are ready"
+        ],
+        correctIndex: 3,
+        feedbackCorrect: "Correct. Branches let you develop in isolation so your experiments and in-progress work never break the main codebase.",
+        feedbackWrong: "Not quite. The purpose of branching is isolation. Your work stays separate from main until it is ready to merge."
+      },
+      {
+        text: "A merge conflict occurs when...",
+        options: [
+          "You try to push without a commit message",
+          "Two branches have made changes to the same lines in the same file",
+          "Your internet connection drops during a git push",
+          "A branch name already exists in the remote repository"
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. Conflicts happen when the same lines in the same file were changed on two different branches. Git cannot decide which version is correct without you.",
+        feedbackWrong: "Not quite. A merge conflict specifically occurs when two branches modified the same lines in the same file. Git cannot automatically resolve which change to keep."
+      },
+      {
+        text: "What does git pull origin main do?",
+        options: [
+          "Uploads your local main branch to GitHub",
+          "Creates a new branch called 'origin' from main",
+          "Downloads commits from the remote main branch and merges them into your local branch",
+          "Deletes the main branch from the remote"
+        ],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. git pull is fetch + merge. It downloads changes from the remote and merges them into your current branch.",
+        feedbackWrong: "Not quite. git pull downloads changes from the remote and merges them locally. git push does the opposite (uploads)."
+      },
+      {
+        text: "What is a Pull Request on GitHub?",
+        options: [
+          "A proposal to merge one branch into another, with a thread for code review and discussion",
+          "A request to pull someone else's repository to your machine",
+          "An automated script that pulls new commits every hour",
+          "A way to request read access to a private repository"
+        ],
+        correctIndex: 0,
+        feedbackCorrect: "Correct. A Pull Request is a GitHub feature that lets you propose, review, and discuss a branch merge before it happens.",
+        feedbackWrong: "Not quite. A Pull Request is a proposal to merge your branch into another (usually main), with a code review thread attached. It is not about downloading or access requests."
+      },
+      {
+        text: "Which command creates a new branch called feature/clean-data AND switches to it in one step?",
+        options: [
+          "git branch feature/clean-data",
+          "git switch feature/clean-data",
+          "git merge feature/clean-data",
+          "git checkout -b feature/clean-data"
+        ],
+        correctIndex: 3,
+        feedbackCorrect: "Correct. git checkout -b branchname creates the branch and switches to it in one command.",
+        feedbackWrong: "Not quite. git branch name creates but does not switch. git switch name switches to an existing branch. git checkout -b name creates and switches in one step."
+      },
+      {
+        text: "What is forking a repository on GitHub?",
+        options: [
+          "Splitting a repository into two separate projects permanently",
+          "Creating your own copy of someone else's repository under your GitHub account",
+          "Creating a branch on the remote repository",
+          "Downloading the repository without version history"
+        ],
+        correctIndex: 1,
+        feedbackCorrect: "Correct. Forking creates a copy of the repository under your own GitHub account so you can freely make changes without affecting the original.",
+        feedbackWrong: "Not quite. Forking means creating your own GitHub copy of someone else's repo. It is different from branching (same repo) or cloning (local download)."
+      },
+      {
+        text: "After resolving a merge conflict, what do you need to do before the merge is complete?",
+        options: [
+          "Run git conflict --resolve",
+          "Delete the branch that caused the conflict",
+          "Stage the resolved file with git add and then commit",
+          "Push the conflicted file to GitHub so a teammate can fix it"
+        ],
+        correctIndex: 2,
+        feedbackCorrect: "Correct. After editing the conflicted file, stage it with git add and then commit to complete the merge.",
+        feedbackWrong: "Not quite. To finish a conflict resolution: edit the file to remove the conflict markers, then git add the file, then git commit. git conflict --resolve does not exist."
+      }
+    ];
+
+    let currentQ = 0;
+    let results = [];
+
+    function beginQuiz() {
+      document.getElementById('screen-landing').style.display = 'none';
+      document.getElementById('screen-question').style.display = 'block';
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = questions[currentQ];
+      const total = questions.length;
+      const progressPercent = (currentQ / total) * 100;
+
+      document.getElementById('progressFill').style.width = progressPercent + '%';
+      document.getElementById('progressText').textContent = `Question ${currentQ + 1} of ${total}`;
+      document.getElementById('questionNumber').textContent = `Question ${currentQ + 1}`;
+      document.getElementById('questionText').textContent = q.text;
+
+      const optionsContainer = document.getElementById('optionsContainer');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((option, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(idx);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById('feedback').innerHTML = '';
+      document.getElementById('feedback').className = 'feedback';
+      document.getElementById('nextBtnContainer').classList.remove('show');
+    }
+
+    function selectAnswer(optionIndex) {
+      const q = questions[currentQ];
+      const isCorrect = optionIndex === q.correctIndex;
+      results[currentQ] = { correct: isCorrect };
+
+      // Disable all buttons
+      document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+
+      // Highlight correct and selected options
+      document.querySelectorAll('.option-btn').forEach((btn, idx) => {
+        if (idx === q.correctIndex) {
+          btn.classList.add('correct');
+        }
+        if (idx === optionIndex && !isCorrect) {
+          btn.classList.add('wrong');
+        }
+      });
+
+      // Show feedback
+      const feedbackEl = document.getElementById('feedback');
+      feedbackEl.textContent = isCorrect ? q.feedbackCorrect : q.feedbackWrong;
+      feedbackEl.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+
+      // Show next button
+      document.getElementById('nextBtnContainer').classList.add('show');
+      const nextBtn = document.getElementById('nextBtn');
+      if (currentQ === questions.length - 1) {
+        nextBtn.textContent = 'See Results →';
+      } else {
+        nextBtn.textContent = 'Next →';
+      }
+    }
+
+    function nextQuestion() {
+      currentQ++;
+      if (currentQ >= questions.length) {
+        showResults();
+      } else {
+        renderQuestion();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('screen-question').style.display = 'none';
+      document.getElementById('screen-results').style.display = 'block';
+
+      const score = results.filter(r => r.correct).length;
+      const total = results.length;
+      const percent = Math.round((score / total) * 100);
+      let grade = 'F';
+      if (percent >= 90) grade = 'A';
+      else if (percent >= 80) grade = 'B';
+      else if (percent >= 70) grade = 'C';
+      else if (percent >= 60) grade = 'D';
+
+      document.getElementById('scoreNumber').textContent = score + ' / ' + total;
+      document.getElementById('scoreDetails').textContent = percent + '% - Grade: ' + grade;
+
+      let breakdownHTML = '<div class="breakdown-title">Question Breakdown</div>';
+      results.forEach((result, idx) => {
+        const icon = result.correct ? '✓' : '✗';
+        const iconClass = result.correct ? 'correct' : 'wrong';
+        const correctAnswer = questions[idx].options[questions[idx].correctIndex];
+        breakdownHTML += `
+          <div class="breakdown-item">
+            <div class="breakdown-item-icon ${iconClass}">${icon}</div>
+            <div class="breakdown-item-text">
+              <strong>Q${idx + 1}:</strong> ${correctAnswer}
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('resultsBreakdown').innerHTML = breakdownHTML;
+
+      // Save score to localStorage
+      localStorage.setItem('dtsc520_quiz_m6', JSON.stringify({ score, total, percent, grade, completedAt: new Date().toISOString() }));
+    }
+
+    function retake() {
+      currentQ = 0;
+      results = [];
+      document.getElementById('screen-results').style.display = 'none';
+      document.getElementById('screen-landing').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

@@ -140,7 +140,8 @@
   }
 
   .step-dot.active   { background: var(--maroon); }
-  .step-dot.done     { background: var(--green); }
+  .step-dot.done     { background: var(--green); cursor: pointer; }
+  .step-dot.done:hover { background: var(--blue); }
 
   /* ---- LOADING ---- */
   #loadingScreen {
@@ -394,6 +395,49 @@
     border-color: var(--gray);
   }
 
+  .btn-hint:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .btn-reveal {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: transparent;
+    color: var(--amber);
+    border: 1px solid rgba(200,150,58,0.4);
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    display: none;
+  }
+
+  .btn-reveal.show { display: inline-flex; align-items: center; gap: 6px; }
+  .btn-reveal:hover { background: rgba(200,150,58,0.08); border-color: var(--amber); }
+
+  .btn-prev {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    display: none;
+  }
+
+  .btn-prev.show { display: inline-flex; align-items: center; gap: 6px; }
+  .btn-prev:hover { color: var(--text-dim); border-color: var(--gray); }
+
   .btn-next {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
@@ -514,6 +558,11 @@
 
   .hint-box.show { display: block; }
 
+  .hint-box.reveal-box {
+    background: rgba(200,150,58,0.08);
+    border-color: rgba(200,150,58,0.3);
+  }
+
   .hint-label {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
@@ -523,6 +572,8 @@
     color: var(--maroon-light);
     margin-bottom: 0.4rem;
   }
+
+  .hint-box.reveal-box .hint-label { color: var(--amber); }
 
   .hint-text {
     font-size: 0.9rem;
@@ -827,7 +878,11 @@ const challenges = [
 
 jersey_number =
 print(jersey_number)`,
-    hint: `Fill in the number after the equals sign: <code>jersey_number = 14</code>`,
+    hints: [
+      `A variable stores a value. The pattern is: <code>name = value</code>. Your variable is named <code>jersey_number</code> — what number goes after the <code>=</code>?`,
+      `Jersey #14. Fill in: <code>jersey_number = 14</code> — just the number, no quotes needed for integers.`
+    ],
+    answer: `<code>jersey_number = 14</code><br><code>print(jersey_number)</code>`,
     maxPoints: 2,
     grader: function(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -862,7 +917,11 @@ print(jersey_number)`,
 
 batting_avg =
 print(batting_avg)`,
-    hint: `Batting averages are written as decimals: <code>batting_avg = 0.287</code>`,
+    hints: [
+      `A float is a decimal number. The batting average is .287 — in Python, always write the leading zero: <code>0.287</code>. What goes after <code>batting_avg =</code>?`,
+      `Write it as: <code>batting_avg = 0.287</code>. The decimal point is what makes this a float instead of an int.`
+    ],
+    answer: `<code>batting_avg = 0.287</code><br><code>print(batting_avg)</code>`,
     maxPoints: 2,
     grader: function(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -893,7 +952,11 @@ print(batting_avg)`,
 
 player_name =
 print(player_name)`,
-    hint: `Wrap the name in quotes: <code>player_name = "Marcus Rivera"</code>`,
+    hints: [
+      `Text values in Python need quotes around them — either single <code>'</code> or double <code>"</code>. Try: <code>player_name = "Marcus Rivera"</code>`,
+      `The full name is two words: Marcus Rivera. Quotes go around the entire value: <code>player_name = "Marcus Rivera"</code>`
+    ],
+    answer: `<code>player_name = "Marcus Rivera"</code><br><code>print(player_name)</code>`,
     maxPoints: 2,
     grader: function(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -922,7 +985,11 @@ print(player_name)`,
 
 is_eligible =
 print(is_eligible)`,
-    hint: `<code>is_eligible = True</code> - capital T, no quotes around it`,
+    hints: [
+      `Booleans are either <code>True</code> or <code>False</code> — capital first letter, no quotes. Rivera is cleared to play, so which value is correct?`,
+      `<code>is_eligible = True</code> — capital T, no quotes. Writing <code>"True"</code> with quotes would make it a string, not a boolean.`
+    ],
+    answer: `<code>is_eligible = True</code><br><code>print(is_eligible)</code>`,
     maxPoints: 2,
     grader: function(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -961,7 +1028,11 @@ is_eligible =
 
 # Print all four values
 `,
-    hint: `Add the four values, then four print() calls. Try <code>print("Name:", player_name)</code> for labeled output.`,
+    hints: [
+      `You've done each of these separately. Combine them: string in quotes, integer without, float with a decimal, boolean with capital T. Then four <code>print()</code> calls.`,
+      `Fill in the four values: <code>"Marcus Rivera"</code>, <code>14</code>, <code>0.287</code>, <code>True</code> — then print each one with <code>print(player_name)</code>, etc.`
+    ],
+    answer: `<code>player_name = "Marcus Rivera"</code><br><code>jersey_number = 14</code><br><code>batting_avg = 0.287</code><br><code>is_eligible = True</code><br><br><code>print(player_name)</code><br><code>print(jersey_number)</code><br><code>print(batting_avg)</code><br><code>print(is_eligible)</code>`,
     maxPoints: 2,
     grader: function(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -985,6 +1056,7 @@ let pyodideInstance = null;
 let currentChallenge = 0;
 let scores = new Array(challenges.length).fill(null);
 let completed = false;
+let hintIndex = -1;  // -1 = no hint shown yet
 
 // ===== FRIENDLY ERROR TRANSLATOR =====
 function friendlyError(raw) {
@@ -1061,6 +1133,7 @@ function renderChallenge(idx) {
   const c = challenges[idx];
   const area = document.getElementById('challengeArea');
 
+  hintIndex = -1;
   document.getElementById('challengeNum').textContent = idx + 1;
   updateDots(idx);
 
@@ -1087,16 +1160,20 @@ function renderChallenge(idx) {
           <button class="btn-run" id="btnRun" onclick="runCode(${idx})">
             &#9654; Run Code
           </button>
-          <button class="btn-hint" onclick="toggleHint()">Hint</button>
-          <button class="btn-next show" id="btnNext" onclick="nextChallenge()" style="display:none">
+          <button class="btn-hint" id="btnHint" onclick="showNextHint(${idx})">Hint 1 of ${c.hints.length}</button>
+          <button class="btn-reveal" id="btnReveal" onclick="revealAnswer(${idx})">&#128065; Reveal Answer</button>
+          <button class="btn-prev ${idx > 0 ? 'show' : ''}" id="btnPrev" onclick="prevChallenge()">
+            &larr; Prev
+          </button>
+          <button class="btn-next" id="btnNext" onclick="nextChallenge()" style="display:none">
             ${idx < challenges.length - 1 ? 'Next Challenge &rarr;' : 'See Results &rarr;'}
           </button>
         </div>
       </div>
 
       <div class="hint-box" id="hintBox">
-        <div class="hint-label">Hint</div>
-        <div class="hint-text">${c.hint}</div>
+        <div class="hint-label" id="hintLabel">Hint</div>
+        <div class="hint-text" id="hintText"></div>
       </div>
 
       <div class="output-wrap" style="margin-top:1rem">
@@ -1123,21 +1200,50 @@ function renderChallenge(idx) {
     }
   });
 
-  // If already scored this challenge, show result
+  // If already scored this challenge, show result and restore appropriate button state
   if (scores[idx] !== null) {
     const prev = scores[idx];
     showFeedback(prev.level, prev.verdict, prev.msg);
+    // Always show Next on revisit (they already answered)
     document.getElementById('btnNext').style.display = 'inline-flex';
+    // If they previously got 0 (fail or reveal), still show Next but dim hint button
+    if (prev.level === 'fail') {
+      // hints still usable on revisit — leave button as-is
+    }
   }
 }
 
 function updateDots(active) {
   for (let i = 0; i < challenges.length; i++) {
     const dot = document.getElementById('dot' + i);
-    if (i < active)       { dot.className = 'step-dot done'; }
-    else if (i === active) { dot.className = 'step-dot active'; }
-    else                   { dot.className = 'step-dot'; }
+    if (i < active) {
+      dot.className = 'step-dot done';
+      dot.title = 'Go back to Challenge ' + (i + 1);
+      dot.onclick = (function(idx) { return function() { goToChallenge(idx); }; })(i);
+    } else if (i === active) {
+      dot.className = 'step-dot active';
+      dot.title = '';
+      dot.onclick = null;
+    } else {
+      dot.className = 'step-dot';
+      dot.title = '';
+      dot.onclick = null;
+    }
   }
+}
+
+function prevChallenge() {
+  if (currentChallenge > 0) {
+    currentChallenge--;
+    renderChallenge(currentChallenge);
+    window.scrollTo(0, 0);
+  }
+}
+
+function goToChallenge(idx) {
+  currentChallenge = idx;
+  renderChallenge(idx);
+  window.scrollTo(0, 0);
 }
 
 // ===== RUN CODE =====
@@ -1186,7 +1292,10 @@ async function runCode(idx) {
   showFeedback(result.level, scores[idx].verdict, result.msg);
   updateScore();
 
-  document.getElementById('btnNext').style.display = 'inline-flex';
+  // Only unlock Next on pass or partial — not on fail
+  if (result.level === 'pass' || result.level === 'partial') {
+    document.getElementById('btnNext').style.display = 'inline-flex';
+  }
   saveProgress();
 }
 
@@ -1199,9 +1308,56 @@ function showFeedback(level, verdict, msg) {
   text.innerHTML = msg;
 }
 
-function toggleHint() {
-  const hintBox = document.getElementById('hintBox');
-  hintBox.classList.toggle('show');
+function showNextHint(idx) {
+  const c = challenges[idx];
+  hintIndex++;
+
+  const hintBox   = document.getElementById('hintBox');
+  const hintLabel = document.getElementById('hintLabel');
+  const hintText  = document.getElementById('hintText');
+  const btnHint   = document.getElementById('btnHint');
+  const btnReveal = document.getElementById('btnReveal');
+
+  if (hintIndex < c.hints.length) {
+    hintBox.classList.add('show');
+    hintBox.classList.remove('reveal-box');
+    hintLabel.textContent = 'Hint ' + (hintIndex + 1) + ' of ' + c.hints.length;
+    hintText.innerHTML = c.hints[hintIndex];
+
+    // Update button label for next hint, or disable when all shown
+    if (hintIndex + 1 < c.hints.length) {
+      btnHint.textContent = 'Hint ' + (hintIndex + 2) + ' of ' + c.hints.length;
+    } else {
+      btnHint.textContent = 'No more hints';
+      btnHint.disabled = true;
+      btnReveal.classList.add('show');
+    }
+  }
+}
+
+function revealAnswer(idx) {
+  const c = challenges[idx];
+  const hintBox   = document.getElementById('hintBox');
+  const hintLabel = document.getElementById('hintLabel');
+  const hintText  = document.getElementById('hintText');
+  const btnReveal = document.getElementById('btnReveal');
+
+  hintBox.classList.add('show', 'reveal-box');
+  hintLabel.textContent = 'Answer';
+  hintText.innerHTML = c.answer;
+  btnReveal.classList.remove('show');
+
+  // Revealing the answer still lets them advance (at 0 pts if they haven't run correct code)
+  // — the answer reveal itself doesn't grant points, but unlocks Next so they aren't stuck
+  const btnNext = document.getElementById('btnNext');
+  if (btnNext) btnNext.style.display = 'inline-flex';
+
+  // If no score yet, record a 0 so the debrief isn't blank
+  if (scores[idx] === null) {
+    scores[idx] = { pts: 0, level: 'fail', msg: 'Answer revealed.', verdict: 'Revealed', title: c.title, max: c.maxPoints };
+    updateScore();
+    saveProgress();
+  }
 }
 
 function updateScore() {

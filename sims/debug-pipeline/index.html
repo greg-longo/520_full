@@ -7,26 +7,30 @@
   <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --maroon: #8B1C40;
-      --orange: #c07830;
-      --orange-light: #e09040;
-      --orange-dim: rgba(192,120,48,0.12);
-      --green: #3e8a58;
-      --green-light: #5aaf78;
-      --red: #9e3a3a;
-      --red-light: #c05050;
-      --blue: #2A7195;
-      --gray: #646469;
-      --bg: #0c0b0a;
-      --bg-panel: #131110;
-      --bg-card: #1b1917;
-      --bg-card2: #222018;
-      --bg-code: #0a0908;
-      --text: #e0dbd4;
-      --text-dim: #9a9490;
-      --text-bright: #f0ece6;
-      --border: #2a2825;
-      --border-l: #222018;
+      /* Debug the Pipeline — cool slate / terminal palette */
+      --orange:       #d4862a;   /* amber-orange — terminal accent */
+      --orange-light: #e8a040;
+      --orange-dim:   rgba(212,134,42,0.12);
+      --green:        #3a9a60;
+      --green-light:  #5abf7a;
+      --red:          #a03a3a;
+      --red-light:    #c05858;
+      --blue:         #4a90b8;
+      --gray:         #6a6e7a;
+
+      --bg:       #0a0c10;   /* slate-black — cool, almost blue */
+      --bg-panel: #0e1118;
+      --bg-card:  #141820;
+      --bg-card2: #1a1e28;
+      --bg-code:  #080a0e;
+
+      --text:       #dde2ec;   /* cool-white with blue tint */
+      --text-dim:   #8a90a0;
+      --text-bright: #eef1f8;
+      --border:   #1e2330;
+      --border-l: #161b24;
+
+      --maroon: #d4862a;   /* legacy alias — unused in this sim */
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -37,7 +41,7 @@
 
     /* ---- TOPBAR ---- */
     .topbar {
-      background: #0f0e0c; border-bottom: 1px solid var(--border);
+      background: #080b0f; border-bottom: 1px solid var(--border);
       padding: 0 1.5rem; height: 50px;
       display: flex; align-items: center; justify-content: space-between;
       flex-shrink: 0; position: sticky; top: 0; z-index: 100;
@@ -62,7 +66,7 @@
     .tb-pips { display: flex; gap: 0.3rem; align-items: center; }
     .tb-pip {
       width: 9px; height: 9px; border-radius: 50%;
-      background: var(--border); border: 1px solid #3a3530; transition: all 0.3s;
+      background: var(--border); border: 1px solid #262e3a; transition: all 0.3s;
     }
     .tb-pip.done    { background: var(--green);  border-color: var(--green-light); }
     .tb-pip.current { background: var(--orange); border-color: var(--orange-light); }
@@ -176,11 +180,11 @@
       border-radius: 3px; padding: 0.85rem 1rem;
       font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
       line-height: 1.7; overflow-y: auto; flex: 1; min-height: 200px;
-      color: #c8c4bc;
+      color: #c4cad8;
     }
-    .pp-terminal .term-prompt { color: #5a5550; }
+    .pp-terminal .term-prompt { color: #525a6a; }
     .pp-terminal .term-cmd    { color: var(--orange-light); }
-    .pp-terminal .term-out    { color: #c8c4bc; }
+    .pp-terminal .term-out    { color: #c4cad8; }
     .pp-terminal .term-err    { color: #d47a7a; }
     .pp-terminal .term-warn   { color: #c4892a; }
     .pp-terminal .term-good   { color: var(--green-light); }
@@ -193,14 +197,14 @@
     .df-tbl th {
       color: var(--orange-light); text-align: right;
       padding: 0.2rem 0.75rem 0.2rem 0.3rem;
-      border-bottom: 1px solid #3a3530; font-weight: 500; white-space: nowrap;
+      border-bottom: 1px solid #262e3a; font-weight: 500; white-space: nowrap;
     }
-    .df-tbl th.idx { color: #4a4642; text-align: left; }
+    .df-tbl th.idx { color: #404858; text-align: left; }
     .df-tbl td {
       padding: 0.18rem 0.75rem 0.18rem 0.3rem; text-align: right;
-      border-bottom: 1px solid rgba(42,40,37,0.6); color: #c8c4bc; white-space: nowrap;
+      border-bottom: 1px solid rgba(30,35,48,0.8); color: #c4cad8; white-space: nowrap;
     }
-    .df-tbl td.idx  { color: #6a6460; text-align: left; }
+    .df-tbl td.idx  { color: #606878; text-align: left; }
     .df-tbl .v-num  { color: #6ab0d0; }
     .df-tbl .v-str  { color: #85b87d; }
     .df-tbl .v-nan  { color: #b04040; }
@@ -215,7 +219,7 @@
       border-left: 3px solid var(--green-light); border-radius: 3px;
       padding: 0.75rem 1rem; font-family: 'IBM Plex Mono', monospace;
       font-size: 0.77rem; line-height: 1.7; white-space: pre; overflow-x: auto;
-      color: #c8c4bc;
+      color: #c4cad8;
     }
     .code-reveal.show { display: block; }
     .cr-label {
@@ -228,7 +232,7 @@
     .cr .st   { color: #7aaa58; }
     .cr .nm   { color: #6ab0d0; }
     .cr .fn   { color: #d4a84e; }
-    .cr .cmt  { color: #5a5550; font-style: italic; }
+    .cr .cmt  { color: #525a6a; font-style: italic; }
     .cr .fix  { color: var(--green-light); font-weight: 600; }
 
     /* Right: diagnosis panel */
@@ -312,6 +316,19 @@
     }
     .next-btn.show { display: block; }
     .next-btn:hover { background: var(--orange-light); }
+
+    /* Try again button */
+    .try-again-btn {
+      display: none; align-self: flex-start;
+      background: transparent; color: var(--text-dim); border: 1px solid var(--border);
+      border-radius: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.55rem 1.4rem; cursor: pointer; transition: color 0.15s, border-color 0.15s;
+    }
+    .try-again-btn.show { display: block; }
+    .try-again-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+    .btn-row { display: flex; justify-content: space-between; align-items: center; }
 
     /* ---- RESULTS ---- */
     #results {
@@ -443,7 +460,10 @@
         <div class="fb-title" id="fbTitle"></div>
         <div id="fbText"></div>
       </div>
-      <button class="next-btn" id="nextBtn" onclick="nextStage()"></button>
+      <div class="btn-row">
+        <button class="try-again-btn" id="tryAgainBtn" onclick="tryAgain()">&#8635; Try Again</button>
+        <button class="next-btn" id="nextBtn" onclick="nextStage()"></button>
+      </div>
     </div>
   </div>
 </div>
@@ -794,7 +814,7 @@ by_pos = active.<span class="fn">groupby</span>(<span class="st">'position'</spa
 
 // ── Helper: build HTML table ──
 function buildTable(headers, rows, caption) {
-  let h = '<div style="margin-bottom:0.3rem;font-size:0.65rem;color:#5a5550;letter-spacing:0.06em;text-transform:uppercase;">' + caption + '</div>';
+  let h = '<div style="margin-bottom:0.3rem;font-size:0.65rem;color:#525a6a;letter-spacing:0.06em;text-transform:uppercase;">' + caption + '</div>';
   h += '<table class="df-tbl"><thead><tr>';
   headers.forEach((hd,i) => {
     h += '<th class="' + (i===0 && hd==='idx' ? 'idx' : '') + '">' + (hd==='idx'?'':hd) + '</th>';
@@ -813,6 +833,23 @@ function buildTable(headers, rows, caption) {
   });
   h += '</tbody></table>';
   return h;
+}
+
+// ── Typewriter ──
+let _twTimer = null;
+function typewrite(el, text, speed) {
+  if (_twTimer) clearTimeout(_twTimer);
+  el.textContent = '';
+  let i = 0;
+  function tick() {
+    if (i < text.length) {
+      el.textContent += text[i++];
+      const ch = text[i - 1];
+      const delay = (ch === '.' || ch === ',' || ch === '?' || ch === '!') ? 110 : (speed || 18);
+      _twTimer = setTimeout(tick, delay);
+    }
+  }
+  tick();
 }
 
 // ── State ──
@@ -866,7 +903,7 @@ function renderStage() {
 
   // Situation bar
   document.getElementById('sitWho').textContent = s.who;
-  document.getElementById('sitMsg').textContent  = s.msg;
+  typewrite(document.getElementById('sitMsg'), s.msg);
 
   // Pipeline panel
   document.getElementById('ppStep').innerHTML = s.ppStep;
@@ -904,6 +941,7 @@ function renderStage() {
   const nb = document.getElementById('nextBtn');
   nb.className = 'next-btn';
   nb.textContent = current < stages.length-1 ? 'Next Stage ->' : 'See Results ->';
+  document.getElementById('tryAgainBtn').className = 'try-again-btn';
 
   updatePips();
   startClock(current);
@@ -911,18 +949,11 @@ function renderStage() {
 
 function handleChoice(btn, ch, s) {
   if (answered) return;
-  answered = true;
 
-  scores[current] = ch.pts;
-  const total = scores.reduce((a,b)=>a+b,0);
-  document.getElementById('tbScore').textContent = total;
-
-  // Disable + reveal correct
-  document.querySelectorAll('.choice-btn').forEach(b => {
-    b.disabled = true;
-    if (b.dataset.correct === 'true') b.classList.add('reveal-correct');
-  });
   const isCorrect = btn.dataset.correct === 'true';
+
+  // Disable all choices while showing feedback
+  document.querySelectorAll('.choice-btn').forEach(b => { b.disabled = true; });
   btn.classList.add(isCorrect ? 'chosen-correct' : 'chosen-wrong');
 
   // Feedback
@@ -931,17 +962,43 @@ function handleChoice(btn, ch, s) {
   document.getElementById('fbText').innerHTML = isCorrect ? s.feedback.correct : s.feedback.wrong;
   fb.className = 'fb-box show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
 
-  // Show fix + updated terminal
-  document.getElementById('crLabel').className = 'cr-label show';
-  document.getElementById('crReveal').innerHTML = s.fixCode;
-  document.getElementById('crReveal').className = 'code-reveal cr show';
+  if (isCorrect) {
+    answered = true;
+    scores[current] = ch.pts;
+    const total = scores.reduce((a,b)=>a+b,0);
+    document.getElementById('tbScore').textContent = total;
 
-  // Update terminal with fixed output
-  const terminal = document.getElementById('ppTerminal');
-  terminal.innerHTML = s.terminalFixed.replace(/{TABLE_FIXED[^}]*}/, s.tableHtmlFixed);
+    // Reveal correct highlight on all buttons (redundant but clean)
+    document.querySelectorAll('.choice-btn').forEach(b => {
+      if (b.dataset.correct === 'true') b.classList.add('reveal-correct');
+    });
 
-  document.getElementById('nextBtn').classList.add('show');
+    // Show fix + updated terminal
+    document.getElementById('crLabel').className = 'cr-label show';
+    document.getElementById('crReveal').innerHTML = s.fixCode;
+    document.getElementById('crReveal').className = 'code-reveal cr show';
+    const terminal = document.getElementById('ppTerminal');
+    terminal.innerHTML = s.terminalFixed.replace(/{TABLE_FIXED[^}]*}/, s.tableHtmlFixed);
+
+    document.getElementById('nextBtn').classList.add('show');
+    document.getElementById('tryAgainBtn').className = 'try-again-btn'; // hide try again
+  } else {
+    // Wrong — show Try Again, keep Next hidden
+    document.getElementById('tryAgainBtn').className = 'try-again-btn show';
+  }
+
   updatePips();
+}
+
+function tryAgain() {
+  // Re-enable all choices, clear wrong highlight, hide feedback and try-again
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.disabled = false;
+    b.classList.remove('chosen-wrong', 'chosen-correct', 'reveal-correct');
+  });
+  const fb = document.getElementById('fbBox');
+  fb.className = 'fb-box';
+  document.getElementById('tryAgainBtn').className = 'try-again-btn';
 }
 
 function nextStage() {

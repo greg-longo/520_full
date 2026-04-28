@@ -255,6 +255,44 @@
       .sidebar { position: static; }
       .concept-grid { grid-template-columns: 1fr; }
     }
+
+    /* quiz link card */
+    .quiz-link-card {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.75rem 2rem;
+    }
+    .quiz-link-icon {
+      font-size: 2rem;
+      color: var(--accent-light);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .quiz-link-body { flex: 1; min-width: 0; }
+    .quiz-link-body h2 { border-bottom: none; margin-bottom: 0.4rem; font-size: 1.2rem; }
+    .quiz-link-body p { color: var(--text-dim); font-size: 0.9rem; margin: 0; }
+    .quiz-link-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.65rem 1.25rem;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .quiz-link-btn:hover { background: var(--accent-light); color: #fff; }
+    @media (max-width: 600px) {
+      .quiz-link-card { flex-direction: column; align-items: flex-start; }
+    }
   </style>
   <!-- CodeMirror 5 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
@@ -274,7 +312,7 @@
   </div>
   <div class="nav-right">
     <a href="../../index.html">Course Home</a>
-    <a href="#quiz">Take Quiz</a>
+    <a href="quiz.html">Take Quiz</a>
   </div>
 </nav>
 
@@ -302,7 +340,7 @@
   <a href="#cleaning" class="tab-link">Data Cleaning</a>
   <a href="#aggregation" class="tab-link">Aggregation</a>
   <a href="#groupby" class="tab-link">GroupBy</a>
-  <a href="#quiz" class="tab-link">Quiz</a>
+  <a href="quiz.html" class="tab-link quiz-tab-link">Quiz</a>
 </nav>
 
 <div class="page-wrap">
@@ -897,155 +935,23 @@ pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'<
       </div>
     </section>
 
-    <!-- QUIZ -->
+    <!-- QUIZ LINK -->
     <section id="quiz">
-      <div id="quiz-section">
-        <h2>Module 4 Quiz</h2>
-        <p class="quiz-intro">Ten questions covering Series, DataFrames, selection, filtering, cleaning, and aggregation. Select one answer per question, then submit.</p>
-
-        <div class="q-block" data-correct="b">
-          <span class="q-num">Question 01</span>
-          <p class="q-text">What is the key difference between a pandas Series and a DataFrame?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q1" value="a"> A Series can only hold strings; a DataFrame can hold any type.</label>
-            <label class="opt-label"><input type="radio" name="q1" value="b"> A Series is 1-dimensional with a single index; a DataFrame is 2-dimensional with both a row index and column labels.</label>
-            <label class="opt-label"><input type="radio" name="q1" value="c"> A DataFrame is faster than a Series for all operations.</label>
-            <label class="opt-label"><input type="radio" name="q1" value="d"> A Series always has an integer index; a DataFrame can have string labels.</label>
-          </div>
-          <div class="q-feedback" id="fb1"></div>
+      <div class="quiz-link-card">
+        <div class="quiz-link-icon">&#9998;</div>
+        <div class="quiz-link-body">
+          <h2>Module 4 Quiz</h2>
+          <p>Ten questions covering Series, DataFrames, selection, filtering, cleaning, and aggregation. Each question comes up one at a time — no going back, but you can retake when done.</p>
         </div>
-
-        <div class="q-block" data-correct="c">
-          <span class="q-num">Question 02</span>
-          <p class="q-text">You want to inspect the data types of every column in <code>df</code>. Which command is correct?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q2" value="a"> <code>df.types()</code></label>
-            <label class="opt-label"><input type="radio" name="q2" value="b"> <code>df.info(types=True)</code></label>
-            <label class="opt-label"><input type="radio" name="q2" value="c"> <code>df.dtypes</code></label>
-            <label class="opt-label"><input type="radio" name="q2" value="d"> <code>df.schema()</code></label>
-          </div>
-          <div class="q-feedback" id="fb2"></div>
-        </div>
-
-        <div class="q-block" data-correct="a">
-          <span class="q-num">Question 03</span>
-          <p class="q-text">What does <code>df.loc[2, 'avg']</code> return?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q3" value="a"> The value in the row with label 2 and the column named 'avg'.</label>
-            <label class="opt-label"><input type="radio" name="q3" value="b"> The value in the 2nd column and the row named 'avg'.</label>
-            <label class="opt-label"><input type="radio" name="q3" value="c"> The 2nd element of 'avg' regardless of index.</label>
-            <label class="opt-label"><input type="radio" name="q3" value="d"> A new DataFrame with 2 rows from 'avg'.</label>
-          </div>
-          <div class="q-feedback" id="fb3"></div>
-        </div>
-
-        <div class="q-block" data-correct="d">
-          <span class="q-num">Question 04</span>
-          <p class="q-text">You want all rows where <code>salary &gt; 50000</code> AND <code>avg &gt; .300</code>. Which expression is correct?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q4" value="a"> <code>df[df['salary'] > 50000 and df['avg'] > .300]</code></label>
-            <label class="opt-label"><input type="radio" name="q4" value="b"> <code>df[df['salary'] > 50000 &amp;&amp; df['avg'] > .300]</code></label>
-            <label class="opt-label"><input type="radio" name="q4" value="c"> <code>df.filter(salary > 50000, avg > .300)</code></label>
-            <label class="opt-label"><input type="radio" name="q4" value="d"> <code>df[(df['salary'] > 50000) &amp; (df['avg'] > .300)]</code></label>
-          </div>
-          <div class="q-feedback" id="fb4"></div>
-        </div>
-
-        <div class="q-block" data-correct="b">
-          <span class="q-num">Question 05</span>
-          <p class="q-text">A salary column contains the string "N/A" in some rows and loads as object dtype. What is the correct approach to use it for numeric analysis?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q5" value="a"> Use <code>df['salary'].to_numeric()</code>.</label>
-            <label class="opt-label"><input type="radio" name="q5" value="b"> Replace the "N/A" strings with NaN, then cast: <code>df['salary'].replace('N/A', pd.NA).astype(float)</code>.</label>
-            <label class="opt-label"><input type="radio" name="q5" value="c"> Drop the column because it cannot be converted.</label>
-            <label class="opt-label"><input type="radio" name="q5" value="d"> Use <code>df['salary'].astype(int)</code> - pandas handles strings automatically.</label>
-          </div>
-          <div class="q-feedback" id="fb5"></div>
-        </div>
-
-        <div class="q-block" data-correct="c">
-          <span class="q-num">Question 06</span>
-          <p class="q-text">What does <code>df.isna().sum()</code> compute?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q6" value="a"> The total number of rows in the DataFrame.</label>
-            <label class="opt-label"><input type="radio" name="q6" value="b"> Whether any column has at least one missing value (True/False per column).</label>
-            <label class="opt-label"><input type="radio" name="q6" value="c"> The count of missing values in each column.</label>
-            <label class="opt-label"><input type="radio" name="q6" value="d"> The sum of all numeric columns after removing NaNs.</label>
-          </div>
-          <div class="q-feedback" id="fb6"></div>
-        </div>
-
-        <div class="q-block" data-correct="a">
-          <span class="q-num">Question 07</span>
-          <p class="q-text">You call <code>df.dropna()</code>. What happens to the original DataFrame?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q7" value="a"> Nothing - dropna() returns a new DataFrame. The original is unchanged unless you reassign.</label>
-            <label class="opt-label"><input type="radio" name="q7" value="b"> The original is modified in place and the missing rows are permanently removed.</label>
-            <label class="opt-label"><input type="radio" name="q7" value="c"> Missing values are filled with 0 in the original.</label>
-            <label class="opt-label"><input type="radio" name="q7" value="d"> An error is raised unless you pass inplace=True.</label>
-          </div>
-          <div class="q-feedback" id="fb7"></div>
-        </div>
-
-        <div class="q-block" data-correct="d">
-          <span class="q-num">Question 08</span>
-          <p class="q-text">The Eagles roster has one player (Kim) on MLB rehab earning $760,000 while others earn $14,400-$19,200. You need to report a "typical" salary. Which measure is more appropriate and why?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q8" value="a"> Mean, because it uses all data points and is always more accurate.</label>
-            <label class="opt-label"><input type="radio" name="q8" value="b"> Mean, because standard deviation normalizes for outliers.</label>
-            <label class="opt-label"><input type="radio" name="q8" value="c"> Median and mean are identical when the data has one outlier.</label>
-            <label class="opt-label"><input type="radio" name="q8" value="d"> Median, because it is resistant to outliers and better represents what a typical player earns.</label>
-          </div>
-          <div class="q-feedback" id="fb8"></div>
-        </div>
-
-        <div class="q-block" data-correct="b">
-          <span class="q-num">Question 09</span>
-          <p class="q-text">What does <code>roster.groupby('position')['avg'].mean()</code> produce?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q9" value="a"> The mean batting average of every player in the roster.</label>
-            <label class="opt-label"><input type="radio" name="q9" value="b"> A Series with one mean batting average per unique position value.</label>
-            <label class="opt-label"><input type="radio" name="q9" value="c"> A DataFrame grouped by position with all columns averaged.</label>
-            <label class="opt-label"><input type="radio" name="q9" value="d"> An error - you must call .agg('mean') instead of .mean() after groupby.</label>
-          </div>
-          <div class="q-feedback" id="fb9"></div>
-        </div>
-
-        <div class="q-block" data-correct="c">
-          <span class="q-num">Question 10</span>
-          <p class="q-text">Which of the following is the safest way to assign a value to a specific cell in a DataFrame?</p>
-          <div class="options">
-            <label class="opt-label"><input type="radio" name="q10" value="a"> <code>df['salary'][3] = 20000</code></label>
-            <label class="opt-label"><input type="radio" name="q10" value="b"> <code>df.salary[3] = 20000</code></label>
-            <label class="opt-label"><input type="radio" name="q10" value="c"> <code>df.loc[3, 'salary'] = 20000</code></label>
-            <label class="opt-label"><input type="radio" name="q10" value="d"> <code>df.assign(salary=20000)</code></label>
-          </div>
-          <div class="q-feedback" id="fb10"></div>
-        </div>
-
-        <button class="quiz-submit" id="quizSubmit" onclick="submitQuiz()">Submit Quiz</button>
-        <div class="quiz-result" id="quizResult">
-          <div class="score-big" id="scoreDisplay"></div>
-          <div class="grade-label" id="gradeDisplay"></div>
-        </div>
+        <a href="quiz.html" class="quiz-link-btn">Take the Quiz &rarr;</a>
       </div>
     </section>
 
   </div><!-- /content-col -->
 
   <aside class="sidebar">
-    <div class="sidebar-card">
-      <h4>Quiz Score</h4>
-      <div class="score-display" id="sidebarScore">--</div>
-      <div class="score-sub">Module 4 - 10 questions</div>
-      <a href="#quiz" class="quiz-cta-btn">Take the Quiz</a>
-    </div>
-    <div class="sim-cta">
-      <h4>Simulation</h4>
-      <p>Put your pandas skills to work cleaning a real messy dataset - missing values, outliers, and type errors included.</p>
-      <a href="../../sims/dirty_dataset_sim.html" class="sim-cta-btn">Launch: The Dirty Dataset</a>
-    </div>
-    <div class="sidebar-card">
+
+<div class="sidebar-card">
       <h4>On This Page</h4>
       <div class="toc-links">
         <a href="#series">Series</a>
@@ -1055,9 +961,24 @@ pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'<
         <a href="#cleaning">Data Cleaning</a>
         <a href="#aggregation">Aggregation</a>
         <a href="#groupby">GroupBy</a>
-        <a href="#quiz">Quiz</a>
+        <a href="quiz.html">Quiz</a>
       </div>
     </div>
+
+
+    <a class="sim-cta" href="../../sims/dirty_dataset_sim.html">
+      <div class="sim-cta-label">Simulation</div>
+      <h4>The Dirty Dataset</h4>
+      <p>Put your pandas skills to work cleaning a real messy dataset - missing values, outliers, and type errors included.</p>
+    </a>
+
+
+    <div class="sidebar-card">
+      <h4>Quiz</h4>
+      <p style="font-size:0.85rem; color:var(--text-dim); margin:0 0 0.75rem;">Test your knowledge with 10 questions, one at a time.</p>
+      <a href="quiz.html" class="quiz-cta-btn">Take the Quiz</a>
+    </div>
+
   </aside>
 
 </div>
@@ -1067,135 +988,6 @@ pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'<
 </footer>
 
 <script>
-const STORAGE_KEY = 'dtsc520_quiz_m4';
-
-const ANSWERS = {
-  q1: { correct: 'b', feedback: {
-    a: 'Incorrect. Both Series and DataFrames can hold any data type.',
-    b: 'Correct! A Series is 1D - one column of values with an index. A DataFrame is 2D - rows and columns. Every column in a DataFrame is a Series.',
-    c: 'Incorrect. Speed depends on the operation, not the structure.',
-    d: 'Incorrect. Both Series and DataFrames support string (or other) index labels.'
-  }},
-  q2: { correct: 'c', feedback: {
-    a: 'Incorrect. There is no .types() method.',
-    b: 'Incorrect. df.info() exists but has no types= parameter.',
-    c: 'Correct! df.dtypes is an attribute (not a method call) that returns the dtype of each column.',
-    d: 'Incorrect. Pandas has no .schema() method.'
-  }},
-  q3: { correct: 'a', feedback: {
-    a: 'Correct! .loc[] is label-based. df.loc[2, "avg"] finds the row whose index label is 2 and returns the value in the "avg" column.',
-    b: 'Incorrect. .loc[] is row-first, then column.',
-    c: 'Incorrect. That describes .iloc[], not .loc[]. The distinction matters when the index is not the default integer range.',
-    d: 'Incorrect. .loc[2, "avg"] returns a scalar, not a DataFrame.'
-  }},
-  q4: { correct: 'd', feedback: {
-    a: "Incorrect. Python's 'and' keyword does not work element-wise on Series. It raises a ValueError.",
-    b: 'Incorrect. && is not valid Python syntax.',
-    c: 'Incorrect. There is no df.filter() method with this signature for row filtering.',
-    d: 'Correct! The & operator works element-wise on boolean Series. Each condition must be in parentheses because & has higher precedence than comparison operators.'
-  }},
-  q5: { correct: 'b', feedback: {
-    a: 'Incorrect. There is no .to_numeric() method on a Series - the function is pd.to_numeric(df["salary"]).',
-    b: 'Correct! You need to handle the string "N/A" before casting. Replacing it with pd.NA then calling .astype(float) is the right sequence.',
-    c: 'Incorrect. The column can be salvaged - dropping it would lose real data.',
-    d: 'Incorrect. .astype(int) will raise an error on string values.'
-  }},
-  q6: { correct: 'c', feedback: {
-    a: 'Incorrect. Use df.shape[0] for row count.',
-    b: 'Incorrect. That describes df.isna().any() - which returns True/False per column.',
-    c: 'Correct! df.isna() returns a boolean DataFrame. Calling .sum() sums the True values per column, giving the count of missing values in each column.',
-    d: 'Incorrect. .sum() here counts True values from the boolean mask, not numeric values.'
-  }},
-  q7: { correct: 'a', feedback: {
-    a: 'Correct! Pandas methods generally return new objects by default. To persist the change, reassign: df = df.dropna().',
-    b: 'Incorrect. Only if you pass inplace=True does the original change.',
-    c: 'Incorrect. dropna() removes rows - it does not fill values.',
-    d: 'Incorrect. dropna() works fine without inplace=True; it just returns a new DataFrame.'
-  }},
-  q8: { correct: 'd', feedback: {
-    a: 'Incorrect. Mean uses all data, but that makes it sensitive to outliers.',
-    b: 'Incorrect. Standard deviation measures spread; it does not adjust the mean.',
-    c: 'Incorrect. With a single large outlier like Kim, mean and median diverge significantly.',
-    d: 'Correct! The median is not affected by extreme values. With Kim earning ~44x a typical player, the mean is pulled far above what most players earn. Median accurately describes the typical player.'
-  }},
-  q9: { correct: 'b', feedback: {
-    a: 'Incorrect. Without groupby you would use roster["avg"].mean(). The groupby splits first.',
-    b: 'Correct! groupby() splits the DataFrame into groups. Selecting a column and calling .mean() gives one mean per group - a Series indexed by position.',
-    c: 'Incorrect. Because we selected only ["avg"], the result is a Series, not a DataFrame.',
-    d: 'Incorrect. Both .mean() and .agg("mean") work after groupby.'
-  }},
-  q10: { correct: 'c', feedback: {
-    a: 'Incorrect. Chained indexing df["col"][row] can cause SettingWithCopyWarning and may silently fail.',
-    b: 'Incorrect. Same issue as (a) - dot notation chained with integer access is also chained indexing.',
-    c: 'Correct! df.loc[row_label, column_name] = value is the safe, explicit, pandas-recommended way to set a value.',
-    d: 'Incorrect. df.assign() creates a new column with a constant value across all rows - not a targeted cell update.'
-  }}
-};
-
-function submitQuiz() {
-  let score = 0;
-  const total = 10;
-  const answers = {};
-
-  for (let i = 1; i <= total; i++) {
-    const name = 'q' + i;
-    const sel = document.querySelector('input[name="' + name + '"]:checked');
-    const fb = document.getElementById('fb' + i);
-    const opts = document.querySelectorAll('input[name="' + name + '"]');
-    const info = ANSWERS[name];
-
-    if (!sel) {
-      fb.className = 'q-feedback show wrong';
-      fb.textContent = 'Please select an answer.';
-      continue;
-    }
-
-    const chosen = sel.value;
-    answers[name] = chosen;
-
-    opts.forEach(function(opt) {
-      const lbl = opt.closest('.opt-label');
-      if (opt.value === info.correct) lbl.classList.add('opt-correct');
-      else if (opt.value === chosen && chosen !== info.correct) lbl.classList.add('opt-wrong');
-      opt.disabled = true;
-    });
-
-    if (chosen === info.correct) {
-      score++;
-      fb.className = 'q-feedback show correct';
-      fb.textContent = info.feedback[chosen];
-    } else {
-      fb.className = 'q-feedback show wrong';
-      fb.textContent = info.feedback[chosen];
-    }
-  }
-
-  const pct = Math.round((score / total) * 100);
-  let grade = pct === 100 ? 'Perfect score - Pandas expert!' :
-              pct >= 80  ? 'Strong work - keep building!' :
-              pct >= 60  ? 'Decent start - review sections where you missed.' :
-                           'Review the module content and try again.';
-
-  document.getElementById('scoreDisplay').textContent = score + ' / ' + total;
-  document.getElementById('gradeDisplay').textContent = pct + '% - ' + grade;
-  document.getElementById('quizResult').className = 'quiz-result show';
-  document.getElementById('quizSubmit').disabled = true;
-  document.getElementById('sidebarScore').textContent = score + '/10';
-
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ score: score, total: total, pct: pct, answers: answers, ts: Date.now() }));
-  } catch(e) {}
-}
-
-(function() {
-  try {
-    var saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved && saved.score !== undefined) {
-      document.getElementById('sidebarScore').textContent = saved.score + '/10';
-    }
-  } catch(e) {}
-})();
-</script>
 
 <a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
 <style>
