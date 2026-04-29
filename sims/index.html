@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulations - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --maroon: #8B1C40;
+      --maroon-light: #a82050;
+      --blue: #2A7195;
+      --blue-light: #3388b0;
+      --gray: #646469;
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --bg-card2: #211f1d;
+      --text: #e8e4de;
+      --text-dim: #a09a92;
+      --text-bright: #f5f2ee;
+      --border: #2e2b28;
+      --green: #4a9e6b;
+      --amber: #c88840;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Zilla Slab', serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--maroon);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: #fff; }
+    .nav-logo { width: 28px; height: 28px; }
+    .nav-logo img { width: 100%; height: 100%; object-fit: contain; }
+    .nav-title { font-size: 1rem; font-weight: 600; letter-spacing: 0.01em; }
+    .nav-links { display: flex; gap: 0.25rem; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.8); text-decoration: none;
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 0.875rem;
+      padding: 0.4rem 0.75rem; border-radius: 4px; transition: background 0.15s, color 0.15s;
+    }
+    .nav-links a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .nav-links a.active { background: rgba(255,255,255,0.15); color: #fff; }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #1a1815 0%, #12100f 60%, #0f0d0c 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 4rem 2rem 3rem; text-align: center; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--maroon), var(--blue), #7a55b5, #4a8f6b, #b07030, #a03070, var(--maroon));
+    }
+    .hero-tag {
+      display: inline-block; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem; color: var(--blue-light); letter-spacing: 0.12em;
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-size: 2.6rem; font-weight: 700; color: var(--text-bright);
+      line-height: 1.15; margin-bottom: 0.85rem;
+    }
+    .hero p {
+      font-size: 1rem; color: var(--text-dim); max-width: 540px;
+      margin: 0 auto 2rem; line-height: 1.65;
+    }
+
+    /* Hero stats strip */
+    .hero-stats {
+      display: flex; justify-content: center; gap: 3rem;
+      padding-top: 1.5rem; border-top: 1px solid var(--border);
+      max-width: 480px; margin: 0 auto;
+    }
+    .hero-stat-num {
+      font-family: 'IBM Plex Mono', monospace; font-size: 1.6rem;
+      font-weight: 500; color: var(--text-bright); line-height: 1;
+    }
+    .hero-stat-label {
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 0.72rem;
+      color: var(--text-dim); margin-top: 0.3rem; letter-spacing: 0.04em;
+    }
+
+    /* ── CONTENT ── */
+    .content { max-width: 1060px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+    /* Module group headers */
+    .mod-group { margin-bottom: 3.5rem; }
+    .mod-group-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 1.25rem; padding-bottom: 0.65rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .mod-badge {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.2rem 0.55rem; border-radius: 3px; border: 1px solid;
+      white-space: nowrap;
+    }
+    .mod-group-title {
+      font-size: 1rem; font-weight: 600; color: var(--text-dim);
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+    .mod-group-count {
+      margin-left: auto;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      color: var(--text-dim); opacity: 0.5;
+    }
+
+    /* ── SIM CARDS ── */
+    .sim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1rem; }
+
+    .sim-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 6px; overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: border-color 0.18s, transform 0.15s, box-shadow 0.18s;
+      text-decoration: none; color: inherit;
+      position: relative;
+    }
+    .sim-card:hover {
+      border-color: rgba(255,255,255,0.18);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+    }
+
+    /* Colored left accent bar */
+    .sim-card::before {
+      content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+      background: var(--card-accent, #444);
+    }
+
+    .sim-card-inner { padding: 1.25rem 1.25rem 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.6rem; flex: 1; }
+
+    .sim-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
+    .sim-card-meta { display: flex; flex-direction: column; gap: 0.1rem; }
+
+    .sim-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .sim-title { font-size: 1.05rem; font-weight: 700; color: var(--text-bright); line-height: 1.25; }
+    .sim-desc { font-size: 0.875rem; color: var(--text-dim); line-height: 1.55; flex: 1; }
+
+    /* Type pill */
+    .sim-type {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.18rem 0.55rem; border-radius: 20px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-dim);
+      width: fit-content;
+    }
+
+    .sim-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1.25rem 0.75rem 1.5rem;
+      border-top: 1px solid var(--border);
+      background: rgba(0,0,0,0.15);
+    }
+    .sim-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      color: var(--text-dim); letter-spacing: 0.04em;
+    }
+    .sim-launch {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.05em; color: #fff; text-decoration: none;
+      padding: 0.32rem 0.85rem; border-radius: 4px;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .sim-launch:hover { opacity: 0.85; transform: translateX(2px); }
+
+    /* ── PROGRESS DOT ── */
+    .sim-progress-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 3px;
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .sim-progress-dot.complete {
+      background: var(--green);
+      border-color: var(--green);
+      box-shadow: 0 0 6px rgba(74,158,107,0.5);
+    }
+    .sim-progress-dot.partial {
+      background: var(--amber);
+      border-color: var(--amber);
+      box-shadow: 0 0 6px rgba(200,136,64,0.45);
+    }
+
+    /* Progress legend */
+    .progress-legend {
+      display: flex; align-items: center; gap: 1.25rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      color: var(--text-dim); margin-bottom: 2rem;
+    }
+    .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+    .legend-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.07);
+    }
+    .legend-dot.complete { background: var(--green); border-color: var(--green); }
+    .legend-dot.partial  { background: var(--amber); border-color: var(--amber); }
+
+    /* ── MODULE ACCENT CLASSES ── */
+    .m1 { --card-accent: #2A7195; }
+    .m2 { --card-accent: #7a55b5; }
+    .m3 { --card-accent: #4a8f6b; }
+    .m4 { --card-accent: #b07030; }
+    .m5 { --card-accent: #a03070; }
+    .m6 { --card-accent: #8B1C40; }
+
+    .mod-badge.m1 { background: rgba(42,113,149,0.12); color: #3a8ab0; border-color: rgba(42,113,149,0.3); }
+    .mod-badge.m2 { background: rgba(122,85,181,0.12); color: #9a75d5; border-color: rgba(122,85,181,0.3); }
+    .mod-badge.m3 { background: rgba(74,143,107,0.12); color: #5cad84; border-color: rgba(74,143,107,0.3); }
+    .mod-badge.m4 { background: rgba(176,112,48,0.12); color: #c88840; border-color: rgba(176,112,48,0.3); }
+    .mod-badge.m5 { background: rgba(160,48,112,0.12); color: #c04888; border-color: rgba(160,48,112,0.3); }
+    .mod-badge.m6 { background: rgba(139,28,64,0.12); color: #a82050; border-color: rgba(139,28,64,0.3); }
+
+    .sim-label.m1 { color: #3a8ab0; }
+    .sim-label.m2 { color: #9a75d5; }
+    .sim-label.m3 { color: #5cad84; }
+    .sim-label.m4 { color: #c88840; }
+    .sim-label.m5 { color: #c04888; }
+    .sim-label.m6 { color: #a82050; }
+
+    .sim-launch.m1 { background: #2A7195; }
+    .sim-launch.m2 { background: #7a55b5; }
+    .sim-launch.m3 { background: #4a8f6b; }
+    .sim-launch.m4 { background: #b07030; }
+    .sim-launch.m5 { background: #a03070; }
+    .sim-launch.m6 { background: #8B1C40; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 2rem; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem; color: var(--text-dim); border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--text-dim); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    /* Back to top */
+    #back-to-top {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      display: flex; align-items: center; justify-content: center;
+      width: 2.1rem; height: 2.1rem;
+      background: rgba(20,18,16,0.85); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px; color: rgba(255,255,255,0.55);
+      font-size: 1.25rem; line-height: 1; text-decoration: none;
+      backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s, color 0.15s, border-color 0.15s;
+    }
+    #back-to-top.visible { opacity: 1; pointer-events: auto; }
+    #back-to-top:hover { color: #fff; border-color: rgba(255,255,255,0.35); }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 1.9rem; }
+      .sim-grid { grid-template-columns: 1fr; }
+      nav .nav-links { display: none; }
+      .hero-stats { gap: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html" class="nav-brand">
+    <div class="nav-logo"><img src="../assets/eastern_shield.png" alt="Eastern University" /></div>
+    <span class="nav-title">DTSC 520</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Course Home</a></li>
+    <li><a href="index.html" class="active">Simulations</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">DTSC 520 &mdash; Eastern University</div>
+  <h1>Simulations</h1>
+  <p>Hands-on scenarios that put you inside real data science situations. Each sim maps to a course module and builds skills you'll use on the job.</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">8</div>
+      <div class="hero-stat-label">Simulations</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">6</div>
+      <div class="hero-stat-label">Modules covered</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num" id="completedCount">--</div>
+      <div class="hero-stat-label">Your completions</div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="progress-legend">
+    <div class="legend-item"><div class="legend-dot"></div> not started</div>
+    <div class="legend-item"><div class="legend-dot partial"></div> in progress</div>
+    <div class="legend-item"><div class="legend-dot complete"></div> complete</div>
+  </div>
+
+  <!-- MODULE 1 -->
+  <div class="mod-group">
+    <div class="mod-group-header">
+      <span class="mod-badge m1">Module 1</span>
+      <h2 class="mod-group-title">Introduction to Data Science</h2>
+      <span class="mod-group-count">2 sims</span>
+    </div>
+    <div class="sim-grid">
+
+      <a class="sim-card m1" href="find-your-path/index.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m1">Role Exploration</div>
+              <div class="sim-title">Find Your Path</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="find-your-path" title="No progress tracking"></div>
+          </div>
+          <div class="sim-desc">Eight questions. One honest answer each. Map your instincts to the data role that actually fits you — analyst, engineer, scientist, or something in between.</div>
+          <div class="sim-type">&#9654; Interactive quiz</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M1 &bull; Careers</span>
+          <span class="sim-launch m1">Launch &rarr;</span>
+        </div>
+      </a>
+
+      <a class="sim-card m1" href="morning-brief/index.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m1">DS Lifecycle</div>
+              <div class="sim-title">The Morning Brief</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="morning-brief" title="No progress tracking"></div>
+          </div>
+          <div class="sim-desc">It's 8:47am at StatDeck Analytics. A client presentation is in two hours and the data isn't ready. Step through a full data science workflow under pressure.</div>
+          <div class="sim-type">&#128466; Narrative scenario</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M1 &bull; Workflow</span>
+          <span class="sim-launch m1">Launch &rarr;</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="mod-group">
+    <div class="mod-group-header">
+      <span class="mod-badge m2">Module 2</span>
+      <h2 class="mod-group-title">Introduction to Python</h2>
+      <span class="mod-group-count">2 sims</span>
+    </div>
+    <div class="sim-grid">
+
+      <a class="sim-card m2" href="python_sim/index.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m2">Coding Challenges</div>
+              <div class="sim-title">Python Field Training</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="pft" title="Loading..."></div>
+          </div>
+          <div class="sim-desc">Run real Python in your browser. Three progressive modules covering variables and types, lists and indexing, and loops and conditionals — all using Eagles roster data.</div>
+          <div class="sim-type">&#128187; Live coding (Pyodide)</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M2 &bull; Python fundamentals</span>
+          <span class="sim-launch m2">Launch &rarr;</span>
+        </div>
+      </a>
+
+      <a class="sim-card m2" href="python_sim/finale.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m2">Capstone Challenge</div>
+              <div class="sim-title">The Scouting Report</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="pft-finale" title="Loading..."></div>
+          </div>
+          <div class="sim-desc">The season-end capstone for Python Field Training. Combine everything — variables, lists, loops, and conditionals — to build a complete scouting report for the St. Davids Eagles.</div>
+          <div class="sim-type">&#127942; Capstone project</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M2 &bull; Capstone</span>
+          <span class="sim-launch m2">Launch &rarr;</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="mod-group">
+    <div class="mod-group-header">
+      <span class="mod-badge m3">Module 3</span>
+      <h2 class="mod-group-title">NumPy</h2>
+      <span class="mod-group-count">1 sim</span>
+    </div>
+    <div class="sim-grid">
+
+      <a class="sim-card m3" href="debug-pipeline/index.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m3">Debugging Scenario</div>
+              <div class="sim-title">Debug the Pipeline</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="debug" title="Loading..."></div>
+          </div>
+          <div class="sim-desc">A pre-game stats pipeline just broke. Diagnose each failure stage — wrong dtype, shape mismatch, bad index, divide-by-zero — and fix it before the coach's briefing.</div>
+          <div class="sim-type">&#128270; Debugging challenge</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M3 &bull; NumPy / pandas</span>
+          <span class="sim-launch m3">Launch &rarr;</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="mod-group">
+    <div class="mod-group-header">
+      <span class="mod-badge m4">Module 4</span>
+      <h2 class="mod-group-title">Pandas</h2>
+      <span class="mod-group-count">1 sim</span>
+    </div>
+    <div class="sim-grid">
+
+      <a class="sim-card m4" href="dirty_dataset_sim.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m4">Data Cleaning</div>
+              <div class="sim-title">The Dirty Dataset</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="dirty" title="No progress tracking"></div>
+          </div>
+          <div class="sim-desc">The Eagles roster data just came in from the front office — and it's a mess. Missing values, wrong types, outliers, and duplicates. Clean it before the GM meeting.</div>
+          <div class="sim-type">&#128466; Narrative scenario</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M4 &bull; pandas</span>
+          <span class="sim-launch m4">Launch &rarr;</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="mod-group">
+    <div class="mod-group-header">
+      <span class="mod-badge m5">Module 5</span>
+      <h2 class="mod-group-title">Matplotlib &amp; Seaborn</h2>
+      <span class="mod-group-count">1 sim</span>
+    </div>
+    <div class="sim-grid">
+
+      <a class="sim-card m5" href="pitch-the-viz/index.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m5">Decision Scenario</div>
+              <div class="sim-title">Pitch the Viz</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="pitch" title="No progress tracking"></div>
+          </div>
+          <div class="sim-desc">You're live in the Volta Records committee room. Four chart decisions. One artist to sign. Pick the right visualization for each data question before the vote closes.</div>
+          <div class="sim-type">&#128202; Chart challenge</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M5 &bull; Visualization</span>
+          <span class="sim-launch m5">Launch &rarr;</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- MODULE 6 -->
+  <div class="mod-group">
+    <div class="mod-group-header">
+      <span class="mod-badge m6">Module 6</span>
+      <h2 class="mod-group-title">Git &amp; GitHub</h2>
+      <span class="mod-group-count">1 sim</span>
+    </div>
+    <div class="sim-grid">
+
+      <a class="sim-card m6" href="../modules/module6/branch_crisis_sim.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m6">Crisis Scenario</div>
+              <div class="sim-title">The Branch Crisis</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="branch" title="Loading..."></div>
+          </div>
+          <div class="sim-desc">A bad merge just hit the StatDeck production repo at 9pm. Diagnose the conflict, choose the right fix strategy, and get the main branch clean before the morning deploy.</div>
+          <div class="sim-type">&#128293; Crisis scenario</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M6 &bull; Git</span>
+          <span class="sim-launch m6">Launch &rarr;</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<footer>
+  Built for DTSC 520 &mdash; Eastern University &bull; <a href="../index.html">Course Home</a><br>
+  &copy; Eastern University. All rights reserved.
+</footer>
+
+<a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
+
+<script>
+(function () {
+  // ── Read progress from localStorage ────────────────────────────────────────
+  function get(k) {
+    try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e) { return null; }
+  }
+
+  // pft_progress: {mod1, mod2, mod3, finale} each {status: 'completed'|'in_progress'|'open', score}
+  const pft    = get('pft_progress') || {};
+  const debug  = get('dtsc520_debugpipeline');
+  const branch = get('dtsc520_branchcrisis');
+
+  // pft overall: complete if all 3 training modules complete, partial if any started
+  function pftState() {
+    const mods = ['mod1','mod2','mod3'];
+    const states = mods.map(k => pft[k] ? pft[k].status : 'open');
+    if (states.every(s => s === 'completed')) return 'complete';
+    if (states.some(s => s === 'completed' || s === 'in_progress')) return 'partial';
+    return 'empty';
+  }
+
+  function pftFinaleState() {
+    const f = pft['finale'];
+    if (!f) return 'empty';
+    if (f.status === 'completed') return 'complete';
+    if (f.status === 'in_progress') return 'partial';
+    return 'empty';
+  }
+
+  // Map data-sim → state
+  const simStates = {
+    'find-your-path': 'empty',    // no tracking
+    'morning-brief':  'empty',    // no tracking
+    'pft':            pftState(),
+    'pft-finale':     pftFinaleState(),
+    'debug':          debug  ? 'complete' : 'empty',
+    'dirty':          'empty',    // no tracking
+    'pitch':          'empty',    // no tracking
+    'branch':         branch && branch.completed ? 'complete' : 'empty',
+  };
+
+  // Apply dots
+  document.querySelectorAll('.sim-progress-dot').forEach(dot => {
+    const sim = dot.dataset.sim;
+    const state = simStates[sim] || 'empty';
+    if (state !== 'empty') dot.classList.add(state);
+
+    const labels = { 'empty': 'Not started', 'partial': 'In progress', 'complete': 'Complete' };
+    dot.title = labels[state] || '';
+  });
+
+  // Update hero completions count
+  const completed = Object.values(simStates).filter(s => s === 'complete').length;
+  const partial   = Object.values(simStates).filter(s => s === 'partial').length;
+  const countEl = document.getElementById('completedCount');
+  if (countEl) {
+    if (completed === 0 && partial === 0) {
+      countEl.textContent = '--';
+    } else {
+      countEl.textContent = completed + (partial > 0 ? '+' : '');
+    }
+  }
+
+  // Back to top
+  var btn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function(){
+    btn.classList.toggle('visible', window.scrollY > 300);
+  }, {passive: true});
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+})();
+</script>
+
+</body>
+</html>

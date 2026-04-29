@@ -430,11 +430,201 @@
       line-height: 1.6;
     }
 
+    /* ---- PROGRESS DASHBOARD ---- */
+    .dashboard-wrap {
+      padding: 0 2rem 2rem;
+    }
+    .dashboard-card {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    /* Collapsed pill row */
+    .dash-collapsed {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.85rem 1.25rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .dash-collapsed:hover { background: rgba(255,255,255,0.03); }
+    .dash-collapsed-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .dash-dots {
+      display: flex;
+      gap: 0.45rem;
+      flex: 1;
+    }
+    .dash-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .dash-dot.complete {
+      background: #4a9e6b;
+      border-color: #4a9e6b;
+    }
+    .dash-dot.partial {
+      background: #c88840;
+      border-color: #c88840;
+    }
+    .dash-toggle-icon {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      transition: transform 0.2s;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .dashboard-card.open .dash-toggle-icon {
+      transform: rotate(180deg);
+    }
+    /* Expanded section */
+    .dash-expanded {
+      display: none;
+      padding: 0 1.25rem 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .dashboard-card.open .dash-expanded {
+      display: block;
+    }
+    .dashboard-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.9rem 0 0.9rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .dashboard-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .dashboard-overall {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .progress-bar-wrap {
+      width: 160px;
+      height: 5px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), #4a9e8b);
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.6s ease;
+    }
+    .progress-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+    }
+    .dash-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .dash-mod-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .dash-item {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.4rem 0.55rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      min-height: 46px;
+    }
+    .dash-item-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .dash-item-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-dim);
+    }
+    .dash-item.complete {
+      border-color: rgba(74,158,107,0.4);
+      background: rgba(74,158,107,0.06);
+    }
+    .dash-item.complete .dash-item-value { color: #6bc98a; }
+    .dash-item.partial {
+      border-color: rgba(200,136,64,0.35);
+      background: rgba(200,136,64,0.05);
+    }
+    .dash-item.partial .dash-item-value { color: #c88840; }
+    .dash-item.empty .dash-item-value { color: rgba(255,255,255,0.15); }
+    .dash-item.untracked { opacity: 0.5; }
+    .dash-item.untracked .dash-item-value { color: rgba(255,255,255,0.12); }
+    .dash-reset {
+      margin-top: 0.75rem;
+      text-align: right;
+    }
+    .dash-reset-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.18);
+      background: none;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      transition: color 0.15s;
+      padding: 0;
+    }
+    .dash-reset-btn:hover { color: rgba(255,255,255,0.5); }
+
+    @media (max-width: 900px) {
+      .dashboard-grid { grid-template-columns: repeat(4, 1fr); }
+    }
     @media (max-width: 640px) {
       .hero h1 { font-size: 2rem; }
       .nav-links { display: none; }
       .about-strip { grid-template-columns: 1fr; }
       .hero-stats { gap: 1.5rem; }
+      .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+      .progress-bar-wrap { width: 100px; }
+      .dashboard-wrap { padding: 0 1rem 1.5rem; }
     }
   </style>
 </head>
@@ -448,7 +638,7 @@
     </a>
     <ul class="nav-links">
       <li><a href="#modules">Modules</a></li>
-      <li><a href="#sims">Simulations</a></li>
+      <li><a href="sims/index.html">Simulations</a></li>
       <li><a href="modules/module2/index.html">Python</a></li>
       <li><a href="modules/module6/index.html">Git &amp; GitHub</a></li>
     </ul>
@@ -478,6 +668,41 @@
         <div class="hero-stat-num" id="progressPct">--</div>
         <div class="hero-stat-label">Your Progress</div>
       </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS DASHBOARD -->
+  <div class="dashboard-wrap">
+    <div class="dashboard-card" id="dashboard">
+
+      <!-- Collapsed view: 7 dots -->
+      <div class="dash-collapsed" id="dashCollapsed" onclick="toggleDashboard()">
+        <span class="dash-collapsed-label">Your Progress</span>
+        <div class="dash-dots" id="dashDots">
+          <!-- 7 dots populated by JS -->
+        </div>
+        <span class="dash-toggle-icon">&#9660;</span>
+      </div>
+
+      <!-- Expanded view -->
+      <div class="dash-expanded" id="dashExpanded">
+        <div class="dashboard-header">
+          <span class="dashboard-title">Progress by Module</span>
+          <div class="dashboard-overall">
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" id="overallBar"></div>
+            </div>
+            <span class="progress-label" id="overallLabel">-- / 13 complete</span>
+          </div>
+        </div>
+        <div class="dashboard-grid" id="dashGrid">
+          <!-- populated by JS -->
+        </div>
+        <div class="dash-reset">
+          <button class="dash-reset-btn" onclick="resetProgress()">reset progress</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -694,51 +919,192 @@
   </footer>
 
   <script>
-    // Read progress from localStorage and update hero + card indicators
-    function loadProgress() {
-      // Python sim progress
-      const pft = JSON.parse(localStorage.getItem('pft_progress') || '{}');
-      const pftDone = ['mod1','mod2','mod3','finale'].filter(k => pft[k]?.status === 'done').length;
+  // ── Module accent colors ──────────────────────────────────────────────────
+  const MOD_COLORS = ['#7a7a80','#2A7195','#7a55b5','#4a8f6b','#b07030','#a03070','#8B1C40'];
+  const MOD_NAMES  = ['Intro','DS & Analytics','Python','NumPy','Pandas','Visualization','Git & GitHub'];
 
-      // Module quiz progress (key: dtsc520_quiz_mN)
-      const quizDone = [0,1,2,3,4,5,6].filter(n => {
-        const q = JSON.parse(localStorage.getItem('dtsc520_quiz_m'+n) || '{}');
-        return q.completed === true;
-      }).length;
+  // ── Progress data sources ─────────────────────────────────────────────────
+  function readProgress() {
+    const get = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e) { return null; } };
 
-      // Update module progress indicators
-      [0,1,2,3,4,5,6].forEach(n => {
-        const el = document.getElementById('m'+n+'progress');
-        if (!el) return;
-        const q = JSON.parse(localStorage.getItem('dtsc520_quiz_m'+n) || '{}');
-        if (q.completed) {
-          el.textContent = 'Quiz: ' + q.score + '%';
-          el.classList.add('done');
-        }
+    const quizzes = [0,1,2,3,4,5,6].map(n => {
+      const d = get('dtsc520_quiz_m' + n);
+      if (d && d.completed) return { state: 'complete', label: d.score + '%' };
+      return { state: 'empty', label: '--' };
+    });
+
+    const pft = get('pft_progress') || {};
+    const pftItems = ['mod1','mod2','mod3','finale'].map((k, i) => {
+      const names = ['Vars & Types','Lists & Index','Loops & Cond','Scouting Rpt'];
+      const d = pft[k];
+      if (!d) return { state: 'empty', label: '--', name: names[i] };
+      if (d.status === 'completed') return { state: 'complete', label: d.score + 'pts', name: names[i] };
+      if (d.status === 'in_progress') return { state: 'partial', label: 'in progress', name: names[i] };
+      return { state: 'empty', label: '--', name: names[i] };
+    });
+
+    const debug = get('dtsc520_debugpipeline');
+    const debugItem = debug
+      ? { state: 'complete', label: debug.score + '/' + (debug.score <= 20 ? '20' : '20') }
+      : { state: 'empty', label: '--' };
+
+    const branch = get('dtsc520_branchcrisis');
+    const branchItem = branch
+      ? { state: 'complete', label: branch.score + '%' }
+      : { state: 'empty', label: '--' };
+
+    return { quizzes, pftItems, debugItem, branchItem };
+  }
+
+  // ── Build dashboard grid ──────────────────────────────────────────────────
+  function buildDashboard() {
+    const { quizzes, pftItems, debugItem, branchItem } = readProgress();
+    const grid = document.getElementById('dashGrid');
+    if (!grid) return;
+
+    // Per-module columns
+    // Each column: mod label + quiz row + sim rows
+    // untracked = no localStorage (always shows as 'not started')
+    const simsByMod = [
+      [], // mod0 — no sims
+      [ // mod1
+        { state: 'untracked', label: '--', name: 'Morning Brief' },
+        { state: 'untracked', label: '--', name: 'Find Your Path' },
+      ],
+      pftItems, // mod2 — python field training (4 items)
+      [{ ...debugItem, name: 'Debug Pipeline' }], // mod3
+      [ // mod4
+        { state: 'untracked', label: '--', name: 'Dirty Dataset' },
+      ],
+      [ // mod5
+        { state: 'untracked', label: '--', name: 'Pitch the Viz' },
+      ],
+      [{ ...branchItem, name: 'Branch Crisis' }], // mod6
+    ];
+
+    grid.innerHTML = '';
+
+    [0,1,2,3,4,5,6].forEach(n => {
+      const col = document.createElement('div');
+      col.className = 'dash-col';
+
+      // Module label
+      const lbl = document.createElement('div');
+      lbl.className = 'dash-mod-label';
+      lbl.style.color = MOD_COLORS[n];
+      lbl.textContent = 'M' + n;
+      col.appendChild(lbl);
+
+      // Quiz item
+      const quiz = quizzes[n];
+      const qEl = document.createElement('div');
+      qEl.className = 'dash-item ' + quiz.state;
+      qEl.innerHTML = `<span class="dash-item-label">Quiz</span><span class="dash-item-value">${quiz.label}</span>`;
+      qEl.title = 'Module ' + n + ' Quiz';
+      col.appendChild(qEl);
+
+      // Sim items
+      simsByMod[n].forEach(sim => {
+        const sEl = document.createElement('div');
+        sEl.className = 'dash-item ' + sim.state;
+        const shortName = sim.name || 'Sim';
+        sEl.innerHTML = `<span class="dash-item-label" title="${shortName}">${shortName}</span><span class="dash-item-value">${sim.label}</span>`;
+        col.appendChild(sEl);
       });
 
-      // Overall progress percentage (quizzes 0-6 + pft modules out of 11 total checkpoints)
-      const total = quizDone + pftDone;
-      const pct = Math.round((total / 11) * 100);
-      const el = document.getElementById('progressPct');
-      if (el) el.textContent = total > 0 ? pct + '%' : '--';
-    }
+      grid.appendChild(col);
+    });
 
-    loadProgress();
+    // Overall count: 7 quizzes + 4 pft modules + debug + branch = 13 scored items
+    const TOTAL = 13;
+    const done =
+      quizzes.filter(q => q.state === 'complete').length +
+      pftItems.filter(p => p.state === 'complete').length +
+      (debugItem.state === 'complete' ? 1 : 0) +
+      (branchItem.state === 'complete' ? 1 : 0);
 
-    // Auto-count active (unlocked) simulations
-    const simCountEl = document.getElementById('simCount');
-    if (simCountEl) {
-      const activeSims = document.querySelectorAll('a.sim-card').length;
-      simCountEl.textContent = activeSims;
+    const pct = Math.round((done / TOTAL) * 100);
+    const bar = document.getElementById('overallBar');
+    const lbl2 = document.getElementById('overallLabel');
+    if (bar) bar.style.width = pct + '%';
+    if (lbl2) lbl2.textContent = done + ' / ' + TOTAL + ' complete';
+
+    // Hero stat
+    const heroEl = document.getElementById('progressPct');
+    if (heroEl) heroEl.textContent = done > 0 ? pct + '%' : '--';
+
+    // Module card quiz badges
+    [0,1,2,3,4,5,6].forEach(n => {
+      const el = document.getElementById('m' + n + 'progress');
+      if (!el) return;
+      const q = quizzes[n];
+      if (q.state === 'complete') {
+        el.textContent = 'Quiz ' + q.label;
+        el.classList.add('done');
+      }
+    });
+
+    // Update collapsed dot row
+    // Module dot state = complete if quiz done AND all tracked sims done
+    // partial if any quiz or sim is partial/started
+    const dotsEl = document.getElementById('dashDots');
+    if (dotsEl) {
+      dotsEl.innerHTML = '';
+      [0,1,2,3,4,5,6].forEach(n => {
+        const dot = document.createElement('div');
+        dot.className = 'dash-dot';
+        dot.title = 'M' + n + ': ' + MOD_NAMES[n];
+
+        // Gather all trackable items for this module
+        const items = [quizzes[n]];
+        if (n === 2) items.push(...pftItems);
+        if (n === 3) items.push(debugItem);
+        if (n === 6) items.push(branchItem);
+
+        const hasComplete = items.some(i => i.state === 'complete');
+        const hasPartial  = items.some(i => i.state === 'partial');
+        const allComplete = items.every(i => i.state === 'complete');
+
+        if (allComplete) dot.classList.add('complete');
+        else if (hasComplete || hasPartial) dot.classList.add('partial');
+        // else stays gray (empty)
+
+        dot.style.borderColor = (allComplete || hasComplete || hasPartial)
+          ? MOD_COLORS[n]
+          : 'rgba(255,255,255,0.12)';
+
+        dotsEl.appendChild(dot);
+      });
     }
+  }
+
+  function toggleDashboard() {
+    const card = document.getElementById('dashboard');
+    if (card) card.classList.toggle('open');
+  }
+
+  function resetProgress() {
+    if (!confirm('Reset all quiz and sim progress? This cannot be undone.')) return;
+    ['dtsc520_quiz_m0','dtsc520_quiz_m1','dtsc520_quiz_m2','dtsc520_quiz_m3',
+     'dtsc520_quiz_m4','dtsc520_quiz_m5','dtsc520_quiz_m6',
+     'pft_progress','dtsc520_debugpipeline','dtsc520_branchcrisis'].forEach(k => {
+      try { localStorage.removeItem(k); } catch(e) {}
+    });
+    buildDashboard();
+  }
+
+  buildDashboard();
+
+  // Auto-count sims
+  const simCountEl = document.getElementById('simCount');
+  if (simCountEl) simCountEl.textContent = document.querySelectorAll('a.sim-card').length;
   </script>
 
 
 <a id="back-to-top" href="#" title="Back to top" aria-label="Back to top">&#8679;</a>
 <style>
   #back-to-top {
-    position: fixed; top: 64px; left: 1rem; z-index: 999;
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
     display: flex; align-items: center; justify-content: center;
     width: 2.1rem; height: 2.1rem;
     background: rgba(20,18,16,0.85); border: 1px solid rgba(255,255,255,0.12);
