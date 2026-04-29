@@ -798,7 +798,13 @@ function showSection(id) {
   history.replaceState(null, '', '#' + id);
 }
 document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab.addEventListener('click', function() { showSection(tab.dataset.section); }); });
-(function() { var hash = window.location.hash.replace('#', ''); var initial = SECTIONS.indexOf(hash) !== -1 ? hash : SECTIONS[0]; showSection(initial); })();
+(function() {
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      var hash = window.location.hash.replace('#', '');
+      var initial = SECTIONS.indexOf(hash) !== -1 ? hash : SECTIONS[0];
+      showSection(initial);
+      window.scrollTo({top: 0, behavior: 'instant'});
+    })();
 </script>
 </body>
 </html>
