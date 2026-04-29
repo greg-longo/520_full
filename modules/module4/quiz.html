@@ -223,6 +223,26 @@
       cursor: not-allowed;
     }
 
+    .option-btn.selected {
+      border-color: var(--accent);
+      background-color: rgba(42, 113, 149, 0.15);
+      font-weight: 600;
+    }
+
+    .submit-btn-container {
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .submit-btn-container.show {
+      display: block;
+    }
+
+    #submitBtn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
     .option-btn.correct {
       background-color: rgba(74, 158, 107, 0.15);
       border-color: var(--correct-bg);
@@ -392,6 +412,9 @@
         <div class="question-eyebrow" id="questionNumber"></div>
         <div class="question-text" id="questionText"></div>
         <div class="options-container" id="optionsContainer"></div>
+        <div class="submit-btn-container" id="submitBtnContainer">
+          <button id="submitBtn" onclick="submitAnswer()" disabled>Submit Answer</button>
+        </div>
         <div class="feedback" id="feedback"></div>
         <div class="next-btn-container" id="nextBtnContainer">
           <button id="nextBtn" onclick="nextQuestion()">Next →</button>
@@ -1082,27 +1105,44 @@
       document.getElementById('feedback').innerHTML = '';
       document.getElementById('feedback').className = 'feedback';
       document.getElementById('nextBtnContainer').classList.remove('show');
+      document.getElementById('submitBtnContainer').classList.remove('show');
+      document.getElementById('submitBtn').disabled = true;
+      selectedOption = null;
     }
 
+    let selectedOption = null;
+
     function selectAnswer(optionIndex) {
-      const q = questions[currentQ];
-      const isCorrect = optionIndex === q.correctIndex;
-      results[currentQ] = { correct: isCorrect };
+      selectedOption = optionIndex;
 
-      // Disable all buttons
-      document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
-
-      // Highlight correct and selected options
+      // Highlight selected, clear others
       document.querySelectorAll('.option-btn').forEach((btn, idx) => {
-        if (idx === q.correctIndex) {
-          btn.classList.add('correct');
-        }
-        if (idx === optionIndex && !isCorrect) {
-          btn.classList.add('wrong');
-        }
+        btn.classList.toggle('selected', idx === optionIndex);
       });
 
-      // Show feedback
+      // Enable submit button
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = false;
+      document.getElementById('submitBtnContainer').classList.add('show');
+    }
+
+    function submitAnswer() {
+      if (selectedOption === null) return;
+      const q = questions[currentQ];
+      const isCorrect = selectedOption === q.correctIndex;
+      results[currentQ] = { correct: isCorrect };
+
+      // Disable all option buttons
+      document.querySelectorAll('.option-btn').forEach((btn, idx) => {
+        btn.disabled = true;
+        btn.classList.remove('selected');
+        if (idx === q.correctIndex) btn.classList.add('correct');
+        if (idx === selectedOption && !isCorrect) btn.classList.add('wrong');
+      });
+
+      // Hide submit, show feedback
+      document.getElementById('submitBtnContainer').classList.remove('show');
+
       const feedbackEl = document.getElementById('feedback');
       feedbackEl.textContent = isCorrect ? q.feedbackCorrect : q.feedbackWrong;
       feedbackEl.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
@@ -1110,11 +1150,7 @@
       // Show next button
       document.getElementById('nextBtnContainer').classList.add('show');
       const nextBtn = document.getElementById('nextBtn');
-      if (currentQ === questions.length - 1) {
-        nextBtn.textContent = 'See Results →';
-      } else {
-        nextBtn.textContent = 'Next →';
-      }
+      nextBtn.textContent = currentQ === questions.length - 1 ? 'See Results →' : 'Next →';
     }
 
     function nextQuestion() {
