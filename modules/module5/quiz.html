@@ -414,7 +414,8 @@
   </main>
 
   <script>
-    const questions = [
+    const allQuestions = [
+      // --- CHART SELECTION ---
       {
         text: "You want to show how batting averages for 5 players changed week-by-week over a season. Which chart type is most appropriate?",
         options: [
@@ -424,20 +425,9 @@
           "Pie chart - to show each player's share of total batting."
         ],
         correctIndex: 1,
-        feedbackCorrect: "Correct. Line charts are the standard for time series. Each player gets a line, the x-axis shows time (week), and the eye naturally follows trends.",
-        feedbackWrong: "Not quite. A line chart is the right tool for showing change over time. A bar chart per week would be extremely cluttered with 5 players. Histograms show distributions. Pie charts show proportions at a single point in time."
-      },
-      {
-        text: "In Matplotlib's object-oriented interface, what is the difference between a Figure and an Axes?",
-        options: [
-          "Figure is used for line charts; Axes is used for bar charts.",
-          "They are the same object with different names.",
-          "A Figure is the entire canvas; an Axes is one individual plot within that canvas.",
-          "An Axes is the overall canvas; a Figure is one subplot."
-        ],
-        correctIndex: 2,
-        feedbackCorrect: "Correct. The Figure is the top-level container - the whole canvas. An Axes is one individual plot within that Figure. A Figure can have many Axes (via subplots). Most plot commands go on the Axes object.",
-        feedbackWrong: "Not quite. Figure = the entire canvas. Axes = one individual plot inside that canvas. A Figure can contain multiple Axes objects via subplots."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Line charts are the standard for time series. Each player gets a line and the eye naturally follows trends.",
+        feedbackWrong: "Not quite. A line chart is the right tool for change over time. Histograms show distributions. Pie charts show proportions at one point in time."
       },
       {
         text: "You want to see whether batting average and home runs are related across the roster. Which chart is best?",
@@ -448,8 +438,88 @@
           "Pie chart of home run shares."
         ],
         correctIndex: 0,
-        feedbackCorrect: "Correct. A scatter plot is designed to show the relationship between two continuous variables. Each point is a player, and the pattern reveals whether a correlation exists.",
-        feedbackWrong: "Not quite. A scatter plot is the right tool for showing the relationship between two numeric variables. Each player becomes a point. Histograms show distributions. Line charts require a time axis. Pie charts show proportions."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. A scatter plot shows the relationship between two continuous variables. Each player is a point.",
+        feedbackWrong: "Not quite. Scatter plots show relationships between two numeric variables. Each player becomes a point."
+      },
+      {
+        text: "You want to show the distribution of batting averages across the roster. Which chart is best?",
+        options: [
+          "Line chart",
+          "Histogram",
+          "Pie chart",
+          "Bar chart with one bar per player"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Histograms show how continuous values are distributed across bins.",
+        feedbackWrong: "Not quite. A histogram is designed for distribution of continuous values. Bar charts compare discrete categories."
+      },
+      {
+        text: "You want to compare batting averages across 6 positions as discrete categories. Which chart is most appropriate?",
+        options: [
+          "Line chart - connect the positions with a line",
+          "Histogram - bin the positions by average",
+          "Bar chart - one bar per position",
+          "Scatter plot - one point per position"
+        ],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Bar charts are ideal for comparing discrete categorical groups. Each position gets a bar.",
+        feedbackWrong: "Not quite. Bar charts compare discrete categories. Line charts imply continuous change over a sequence. Scatter plots show relationships between two numeric variables."
+      },
+      {
+        text: "You want to compare the distribution of batting averages between outfielders and infielders. Which chart is most informative?",
+        options: [
+          "Box plot with position on the x-axis and batting average on the y-axis.",
+          "A single histogram of all batting averages.",
+          "A pie chart showing each player's share.",
+          "A line chart of batting average over games played."
+        ],
+        correctIndex: 0,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. A box plot compactly shows median, IQR, and outliers for each group side by side.",
+        feedbackWrong: "Not quite. A box plot is the right tool for comparing distributions across groups. A single histogram mixes all positions."
+      },
+      {
+        text: "A pie chart slices up to 120% of the total because the analyst summed overlapping categories. What is this an example of?",
+        options: [
+          "Bad design",
+          "Bad data",
+          "Bad perception",
+          "Normal pie chart behavior"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Per the course framework, bad visualizations result from bad data (errors, wrong aggregation), bad design (poor choices), or bad perception (misleading the eye). Summing overlapping categories is a data error.",
+        feedbackWrong: "Not quite. The three sources of bad visualizations are: bad data, bad design, and bad perception. A chart that sums to more than 100% is a data problem."
+      },
+      {
+        text: "Truncating the y-axis so it starts at 0.28 instead of 0 on a bar chart makes small differences look large. What is this an example of?",
+        options: [
+          "Bad data",
+          "Bad design",
+          "Bad perception - exploiting how the eye reads bar heights",
+          "Acceptable practice to zoom into small differences"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Truncating the y-axis exploits the perceptual principle that bar heights should be proportional to values. This is bad perception manipulation.",
+        feedbackWrong: "Not quite. Truncated y-axes mislead because bar height is the visual encoding. Starting above zero makes small differences look proportionally large - this is bad perception."
+      },
+      // --- MATPLOTLIB ---
+      {
+        text: "In Matplotlib's object-oriented interface, what is the difference between a Figure and an Axes?",
+        options: [
+          "Figure is used for line charts; Axes is used for bar charts.",
+          "They are the same object with different names.",
+          "A Figure is the entire canvas; an Axes is one individual plot within that canvas.",
+          "An Axes is the overall canvas; a Figure is one subplot."
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Figure = entire canvas. Axes = one individual plot. A Figure can contain many Axes via subplots.",
+        feedbackWrong: "Not quite. Figure = the whole canvas. Axes = one plot inside it. Most plot commands go on the Axes."
       },
       {
         text: "Which code creates a 1-row, 2-column subplot layout and returns handles for both Axes?",
@@ -460,44 +530,9 @@
           "fig, (ax1, ax2) = plt.subplots(1, 2)"
         ],
         correctIndex: 3,
-        feedbackCorrect: "Correct. plt.subplots(1, 2) creates 1 row, 2 columns. The tuple unpacking (ax1, ax2) gives you direct handles to each Axes object.",
-        feedbackWrong: "Not quite. plt.subplots(1, 2) is the correct call. The tuple unpacking fig, (ax1, ax2) gives handles to both Axes. plt.figure() does not create Axes. plt.subplots() with no arguments gives only 1 Axes."
-      },
-      {
-        text: "What is the main advantage of Seaborn over plain Matplotlib for a data scientist?",
-        options: [
-          "Seaborn can create interactive charts; Matplotlib cannot.",
-          "Seaborn integrates with pandas DataFrames and produces statistical plots with less code, including automatic grouping, error bars, and attractive defaults.",
-          "Seaborn replaces Matplotlib completely and is always preferred.",
-          "Seaborn charts render faster than Matplotlib charts."
-        ],
-        correctIndex: 1,
-        feedbackCorrect: "Correct. Seaborn is designed around pandas DataFrames. Pass a DataFrame and column names, and it handles grouping, statistical summaries, and error bars automatically - in much less code than equivalent Matplotlib.",
-        feedbackWrong: "Not quite. Seaborn's main advantage is tight pandas integration and statistical plot support. It is not interactive (Plotly is), it is built on top of Matplotlib (not a replacement), and rendering speed is not a meaningful difference."
-      },
-      {
-        text: "A bar chart showing player home run counts has its y-axis starting at 0.5 instead of 0. Rivera has 4 HRs and Walker has 7. How does this affect the reader's perception?",
-        options: [
-          "It has no effect - the numbers are labeled on the bars.",
-          "It makes the chart easier to read by zooming in.",
-          "It exaggerates the difference between players, making Walker appear to have far more than 1.75x Rivera's HRs.",
-          "It has no effect because bar heights are still proportional to the data."
-        ],
-        correctIndex: 2,
-        feedbackCorrect: "Correct. When the y-axis does not start at 0, bar heights are no longer proportional to the values. Walker's advantage appears much larger than the actual 7:4 ratio. Always start bar charts at zero.",
-        feedbackWrong: "Not quite. Truncating the y-axis distorts bar charts because bar height is the only visual encoding. If the axis starts at 0.5, a bar of 4 looks much shorter relative to a bar of 7 than the actual ratio. Labels help but do not fix the visual distortion."
-      },
-      {
-        text: "You want to compare the distribution of batting averages between outfielders and infielders on the roster. Which chart is most informative?",
-        options: [
-          "Box plot with position on the x-axis and batting average on the y-axis.",
-          "A single histogram of all batting averages.",
-          "A pie chart showing each player's share of the total batting average.",
-          "A line chart of batting average over games played."
-        ],
-        correctIndex: 0,
-        feedbackCorrect: "Correct. A box plot compactly shows median, interquartile range, and outliers for each group side by side. It is the standard tool for comparing distributions across categories.",
-        feedbackWrong: "Not quite. A box plot is the right tool for comparing distributions across groups. A single histogram mixes all positions. A pie chart shows proportions. A line chart needs a continuous x-axis."
+        difficulty: "medium",
+        feedbackCorrect: "Correct. plt.subplots(1, 2) creates 1 row, 2 columns. Tuple unpacking (ax1, ax2) gives handles to each Axes.",
+        feedbackWrong: "Not quite. plt.subplots(1, 2) is correct. fig, (ax1, ax2) unpacks both Axes handles."
       },
       {
         text: "What does plt.tight_layout() do?",
@@ -508,8 +543,122 @@
           "Automatically adjusts subplot spacing to prevent labels and titles from overlapping."
         ],
         correctIndex: 3,
-        feedbackCorrect: "Correct. plt.tight_layout() adjusts padding between subplots and between plot elements so that titles, labels, and tick marks do not overlap or get clipped.",
-        feedbackWrong: "Not quite. plt.tight_layout() adjusts spacing between plot elements to prevent overlap. It does not affect file size, axis limits, or remove all whitespace."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. plt.tight_layout() adjusts padding between plot elements so titles, labels, and tick marks don't overlap.",
+        feedbackWrong: "Not quite. plt.tight_layout() adjusts spacing to prevent overlap. It doesn't affect file size or axis limits."
+      },
+      {
+        text: "Which Matplotlib call adds a label to the x-axis on an Axes object ax?",
+        options: [
+          "plt.xlabel('label')",
+          "ax.xlabel('label')",
+          "ax.set_xlabel('label')",
+          "ax.x_label = 'label'"
+        ],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. In the OO interface, ax.set_xlabel() sets the x-axis label. plt.xlabel() works in the functional interface.",
+        feedbackWrong: "Not quite. With Axes objects use ax.set_xlabel(). ax.xlabel() doesn't exist."
+      },
+      {
+        text: "What does ax.set_title('Eagles Batting') do?",
+        options: [
+          "Sets the window title of the figure",
+          "Sets the title above the specific axes (subplot)",
+          "Sets a global title for all subplots",
+          "Error - use plt.title() instead"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. ax.set_title() sets the title for that specific Axes. For a figure-level title use fig.suptitle().",
+        feedbackWrong: "Not quite. ax.set_title() sets the title for that specific Axes. To title the whole figure use fig.suptitle()."
+      },
+      {
+        text: "What does ax.plot(x, y, color='red', linestyle='--') do?",
+        options: [
+          "Draws a red bar chart",
+          "Draws a red dashed line through the points (x, y)",
+          "Colors the axes background red",
+          "Error - color and linestyle cannot be combined"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. ax.plot() draws a line. color='red' and linestyle='--' style the line as a red dashed line.",
+        feedbackWrong: "Not quite. ax.plot() creates a line chart. color and linestyle are just styling parameters."
+      },
+      {
+        text: "What does plt.savefig('chart.png', dpi=150) do?",
+        options: [
+          "Opens a dialog to save the chart manually",
+          "Saves the current figure to a PNG file at 150 dots per inch resolution",
+          "Displays the chart at 150% zoom",
+          "Error - savefig only supports .jpg format"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. savefig() writes the figure to a file. dpi controls resolution. Must be called before plt.show().",
+        feedbackWrong: "Not quite. plt.savefig() saves to file. dpi sets resolution. savefig supports PNG, JPG, SVG, PDF and more."
+      },
+      {
+        text: "What does ax.legend() do?",
+        options: [
+          "Adds a data table below the chart",
+          "Displays a legend box identifying each plotted series by its label",
+          "Removes axis tick marks",
+          "Error - legend must be specified when creating each plot line"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. ax.legend() displays a legend using the label= strings passed to each plot call.",
+        feedbackWrong: "Not quite. ax.legend() shows a legend box. To use it, set label='name' in your plot calls first."
+      },
+      {
+        text: "Which parameter controls transparency of a plotted element in Matplotlib?",
+        options: ["transparency=0.5", "alpha=0.5", "opacity=0.5", "fill=0.5"],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. alpha sets transparency from 0 (invisible) to 1 (fully opaque).",
+        feedbackWrong: "Not quite. The parameter is alpha, not transparency or opacity. alpha=0 is invisible, alpha=1 is solid."
+      },
+      {
+        text: "What does ax.bar(positions, values) do compared to ax.barh(positions, values)?",
+        options: [
+          "bar() is vertical bars; barh() is horizontal bars",
+          "bar() is a histogram; barh() is a bar chart",
+          "They are identical with different defaults",
+          "barh() requires a DataFrame; bar() requires lists"
+        ],
+        correctIndex: 0,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. bar() draws vertical bars (categories on x). barh() draws horizontal bars (categories on y). Horizontal is useful for long category labels.",
+        feedbackWrong: "Not quite. bar() = vertical. barh() = horizontal. The 'h' suffix stands for horizontal."
+      },
+      {
+        text: "You want to add a horizontal reference line at y=0.300 ('the .300 barrier'). Which call does this?",
+        options: [
+          "ax.line(y=0.300)",
+          "ax.hline(0.300)",
+          "ax.axhline(y=0.300, linestyle='--', color='red')",
+          "ax.refline(0.300)"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. ax.axhline() draws a horizontal reference line across the full width of the plot.",
+        feedbackWrong: "Not quite. ax.axhline(y=value) draws a horizontal line. ax.axvline(x=value) draws a vertical line."
+      },
+      // --- SEABORN ---
+      {
+        text: "What is the main advantage of Seaborn over plain Matplotlib for a data scientist?",
+        options: [
+          "Seaborn can create interactive charts; Matplotlib cannot.",
+          "Seaborn integrates with pandas DataFrames and produces statistical plots with less code.",
+          "Seaborn replaces Matplotlib completely and is always preferred.",
+          "Seaborn charts render faster than Matplotlib charts."
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Seaborn integrates with pandas and automates grouping, error bars, and aesthetics - in much less code.",
+        feedbackWrong: "Not quite. Seaborn's advantage is tight pandas integration and statistical plot support. It is built on Matplotlib, not a replacement."
       },
       {
         text: "Which Seaborn function produces a matrix of scatter plots for every pair of numeric variables in a DataFrame?",
@@ -520,9 +669,129 @@
           "sns.jointplot()"
         ],
         correctIndex: 2,
-        feedbackCorrect: "Correct. sns.pairplot() creates a grid of scatter plots for every pair of numeric columns, with distribution plots on the diagonal.",
-        feedbackWrong: "Not quite. sns.pairplot() is the answer. sns.heatmap() visualizes a matrix as colored cells. sns.scatterplot() draws one plot. sns.jointplot() shows one pair with marginal distributions."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. sns.pairplot() creates a grid of scatter plots for every pair of numeric columns, with distributions on the diagonal.",
+        feedbackWrong: "Not quite. sns.pairplot() is the answer. heatmap shows a matrix as colored cells. jointplot shows one pair with marginals."
       },
+      {
+        text: "What does sns.boxplot(x='position', y='avg', data=df) do?",
+        options: [
+          "Draws one box for the entire dataset",
+          "Draws one box plot per unique position, showing distribution of avg for each group",
+          "Draws a scatter plot colored by position",
+          "Error - boxplot requires a numeric x-axis"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Seaborn automatically groups by x='position' and draws a box plot per group. This is Seaborn's key advantage over raw Matplotlib.",
+        feedbackWrong: "Not quite. Seaborn handles the grouping automatically. x='position' (categorical) splits into groups; y='avg' is the numeric axis."
+      },
+      {
+        text: "What does the hue parameter do in sns.scatterplot(x='avg', y='hr', hue='position', data=df)?",
+        options: [
+          "Sets the background color of the plot",
+          "Colors each point by its position value, adding a color legend automatically",
+          "Changes the size of each point based on position",
+          "Filters the data to show only one position"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. hue maps a categorical variable to color, with a legend added automatically.",
+        feedbackWrong: "Not quite. hue='position' assigns a different color to each position category and automatically adds a color legend."
+      },
+      {
+        text: "What does sns.histplot(data=df, x='avg', kde=True) add compared to a plain histogram?",
+        options: [
+          "Nothing - kde=True is not a valid parameter",
+          "Overlays a KDE (kernel density estimate) smooth curve on top of the histogram bars",
+          "Adds error bars to each bin",
+          "Draws the histogram in 3D"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. kde=True overlays a smooth kernel density curve, which shows the approximate probability density.",
+        feedbackWrong: "Not quite. kde=True adds a smooth kernel density estimate curve on top of the histogram."
+      },
+      {
+        text: "What does sns.heatmap(corr_matrix, annot=True) do?",
+        options: [
+          "Colors cells by value and prints the numeric values inside each cell",
+          "Draws a heatmap without any numbers",
+          "Creates a 3D surface plot",
+          "Error - annot must be False by default"
+        ],
+        correctIndex: 0,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. annot=True prints the correlation coefficient inside each cell of the heatmap.",
+        feedbackWrong: "Not quite. annot=True annotates each cell with its numeric value. This is standard when making correlation heatmaps."
+      },
+      {
+        text: "What does sns.set_style('whitegrid') do?",
+        options: [
+          "Sets the background to white with no grid",
+          "Sets a white background with horizontal grid lines",
+          "Removes all axis lines",
+          "Applies only to the next plot and then resets"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Seaborn styles change the visual appearance. 'whitegrid' = white background with horizontal grid lines.",
+        feedbackWrong: "Not quite. 'whitegrid' sets a white background with grid lines. Other styles: 'darkgrid', 'dark', 'white', 'ticks'."
+      },
+      {
+        text: "What does sns.barplot(x='position', y='avg', data=df) plot by default?",
+        options: [
+          "The raw avg value for every player as separate bars",
+          "The mean avg per position with 95% confidence interval error bars",
+          "A histogram of avg grouped by position",
+          "A bar chart with no error bars"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. Seaborn's barplot computes the mean and adds 95% CI error bars automatically.",
+        feedbackWrong: "Not quite. sns.barplot shows the mean with confidence interval error bars by default - this is what sets it apart from a simple bar chart."
+      },
+      {
+        text: "What does sns.violinplot show that a box plot does not?",
+        options: [
+          "The median and quartiles",
+          "Outliers as individual points",
+          "The full shape of the distribution (using kernel density estimation)",
+          "The range of the data"
+        ],
+        correctIndex: 2,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. A violin plot shows the full distribution shape via KDE, not just the box plot summary statistics.",
+        feedbackWrong: "Not quite. The violin plot adds the full distribution shape. Box plots show only the 5-number summary."
+      },
+      // --- PLOTTING WITH PANDAS ---
+      {
+        text: "What does df['avg'].plot(kind='hist') do?",
+        options: [
+          "Requires Matplotlib to be imported first; otherwise it errors",
+          "Creates a histogram of the avg column using the pandas built-in plotting interface",
+          "Creates a line chart by default (kind='hist' is ignored)",
+          "Saves the histogram to a file"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. pandas DataFrames and Series have a .plot() method that wraps Matplotlib. kind='hist' draws a histogram.",
+        feedbackWrong: "Not quite. pandas .plot() wraps Matplotlib. kind='hist' produces a histogram. Matplotlib doesn't need to be imported explicitly."
+      },
+      {
+        text: "Which pandas .plot() call creates a bar chart from a Series?",
+        options: [
+          "s.plot.bar()",
+          "s.plot(type='bar')",
+          "s.bar_chart()",
+          "pd.plot(s, 'bar')"
+        ],
+        correctIndex: 0,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. s.plot.bar() and s.plot(kind='bar') are both valid pandas plotting syntax.",
+        feedbackWrong: "Not quite. s.plot.bar() or s.plot(kind='bar') are both valid. type='bar' is not a valid parameter name."
+      },
+      // --- BEST PRACTICES ---
       {
         text: "According to visualization best practices, which of these is the better chart title?",
         options: [
@@ -532,12 +801,281 @@
           "Eagles"
         ],
         correctIndex: 1,
-        feedbackCorrect: "Correct. A good title communicates the takeaway, not just the topic. 'Outfielders Batted .308 on Average - 21 Points Above Infielders' tells the reader what to look for and why it matters.",
-        feedbackWrong: "Not quite. Option B is the only title that conveys a finding. 'Batting Average Data' describes the topic. 'Chart 1: Statistics' is a label. 'Eagles' is just the subject. A good title tells the reader what the chart says."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. A good title communicates the takeaway, not just the topic. Option B tells the reader what the chart says.",
+        feedbackWrong: "Not quite. Option B is the only title that conveys a finding. A good title tells the reader what the chart means."
+      },
+      {
+        text: "A bar chart showing home run counts has y-axis starting at 0.5. Rivera has 4 HRs and Walker has 7. How does this affect perception?",
+        options: [
+          "No effect - the numbers are labeled on the bars.",
+          "It makes the chart easier to read by zooming in.",
+          "It exaggerates the difference, making Walker appear to have far more than 1.75x Rivera's HRs.",
+          "No effect because bar heights are still proportional."
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. When y doesn't start at 0, bar heights are no longer proportional to values. Always start bar charts at zero.",
+        feedbackWrong: "Not quite. Truncating the y-axis distorts bar charts. The visual ratio of the bars no longer reflects the data ratio."
+      },
+      {
+        text: "You need to present batting stats to the front office (executives, not data scientists). Which visualization principle is most important?",
+        options: [
+          "Include as many variables as possible so they have all the data",
+          "Use technical jargon to demonstrate credibility",
+          "Keep it simple - one key finding per chart, plain language labels, clear takeaway title",
+          "Use 3D charts to make the presentation more impressive"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. For non-technical audiences, simplicity and clarity are paramount. One key finding, plain labels, and a headline title.",
+        feedbackWrong: "Not quite. Non-technical audiences need simple, focused charts. More data and technical jargon reduce understanding. 3D charts often distort data."
+      },
+      {
+        text: "When should you use a log scale on an axis?",
+        options: [
+          "Whenever the numbers are large",
+          "When the data spans several orders of magnitude (e.g., salaries from $14,000 to $760,000)",
+          "Log scales are always clearer than linear scales",
+          "Only when using Seaborn, not Matplotlib"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. Log scales compress extreme ranges so you can see variation at both ends. Single-A salaries vs. MLB rehab assignments is a classic use case.",
+        feedbackWrong: "Not quite. Use a log scale when data spans many orders of magnitude. It lets you see both the $14,400 and $760,000 salaries meaningfully on the same chart."
+      },
+      {
+        text: "What is overplotting in a scatter plot, and how do you address it?",
+        options: [
+          "When there are too many axes labels - remove some labels",
+          "When many points overlap and you cannot see the density - use alpha transparency or jitter",
+          "When the chart title is too long",
+          "When you have too many colors in the legend"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Overplotting occurs when many points occupy the same space. alpha (transparency) or jitter (small random offset) reveals the density.",
+        feedbackWrong: "Not quite. Overplotting = overlapping points that obscure density. Solutions: alpha transparency, jitter, hexbin plots, or 2D histograms."
+      },
+      {
+        text: "Which color consideration is important for accessibility?",
+        options: [
+          "Never use more than 2 colors",
+          "Always use dark backgrounds",
+          "Avoid red-green color combinations that are indistinguishable to red-green colorblind viewers",
+          "Only use the default Matplotlib colors"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Red-green colorblindness affects ~8% of men. Use colorblind-friendly palettes (e.g., Seaborn's 'colorblind' or 'viridis').",
+        feedbackWrong: "Not quite. Colorblind accessibility is important. Seaborn's 'colorblind' palette and matplotlib's 'viridis' colormap are safe choices."
+      },
+      {
+        text: "What does plt.show() do?",
+        options: [
+          "Saves the figure to disk",
+          "Displays the figure in the current environment and flushes the figure state",
+          "Opens the figure in a browser",
+          "Resizes the figure to fit the screen"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. plt.show() renders and displays the figure, then resets the state. In Jupyter, figures display inline without it.",
+        feedbackWrong: "Not quite. plt.show() displays the current figure. After calling it, the figure is cleared. Use plt.savefig() before plt.show() to save."
+      },
+      {
+        text: "What does fig.set_figsize(12, 6) or plt.figure(figsize=(12, 6)) control?",
+        options: [
+          "The pixel resolution of the saved image",
+          "The width and height of the figure in inches",
+          "The number of subplots",
+          "The font size of all text elements"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. figsize=(width, height) sets the figure dimensions in inches. Combined with dpi this determines the pixel size.",
+        feedbackWrong: "Not quite. figsize sets the figure's physical size in inches. dpi (dots per inch) determines pixel density."
+      },
+      {
+        text: "What does ax.scatter(x, y, s=df['hr']*10) do with the s parameter?",
+        options: [
+          "Sets all points to the same size",
+          "Colors points by the hr value",
+          "Sets each point's size proportional to hr - creating a bubble chart effect",
+          "Error - s must be a single integer"
+        ],
+        correctIndex: 2,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. s controls point size. Passing an array maps each point to a different size, creating a bubble chart where size encodes hr.",
+        feedbackWrong: "Not quite. s accepts an array for variable point sizes. Scaling by hr creates a bubble chart where larger bubbles = more home runs."
+      },
+      {
+        text: "What is the difference between plt.subplot() and plt.subplots()?",
+        options: [
+          "They are identical functions",
+          "plt.subplot() selects or adds a single subplot; plt.subplots() creates a whole grid and returns Figure + Axes array in one call",
+          "plt.subplots() is deprecated; use plt.subplot() instead",
+          "plt.subplot() is for Seaborn; plt.subplots() is for Matplotlib"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. plt.subplots() is the modern convenience function that creates the figure and all axes in one call. plt.subplot() adds one subplot at a time.",
+        feedbackWrong: "Not quite. plt.subplots(rows, cols) creates the whole grid and returns fig, axes together. plt.subplot(nrows, ncols, index) adds one subplot at a time."
+      }
+      ,
+      // --- ADDITIONAL QUESTIONS ---
+      {
+        text: "What does ax.annotate('Elite', xy=(0.310, 12)) do on a scatter plot?",
+        options: [
+          "Adds a point at (0.310, 12) labeled 'Elite'",
+          "Adds a text annotation 'Elite' at the data coordinates (0.310, 12) on the chart",
+          "Creates a new plot titled 'Elite'",
+          "Filters the data to show only elite players"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. ax.annotate() adds text labels at specified data coordinates - useful for calling out specific points.",
+        feedbackWrong: "Not quite. ax.annotate() places text at a data location. It doesn't add a data point, just a label."
+      },
+      {
+        text: "What does sns.set_palette('colorblind') do?",
+        options: [
+          "Makes the chart visible only to colorblind users",
+          "Sets a color palette designed to be distinguishable by colorblind viewers",
+          "Converts the chart to grayscale",
+          "Error - colorblind is not a valid Seaborn palette"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Seaborn's 'colorblind' palette uses colors that remain distinguishable for the most common forms of colorblindness.",
+        feedbackWrong: "Not quite. sns.set_palette('colorblind') sets an accessible color palette. Good practice for any chart that will be shared."
+      },
+      {
+        text: "What does plt.rcParams['figure.figsize'] = (10, 5) do?",
+        options: [
+          "Sets the figure size for the next plot only",
+          "Sets the default figure size for all subsequent plots in the session",
+          "Resizes the current figure that is already displayed",
+          "Error - figure size must be set in plt.figure()"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. plt.rcParams sets global Matplotlib defaults. Changing figure.figsize applies to all subsequent figures.",
+        feedbackWrong: "Not quite. rcParams sets global defaults for the whole session. figsize can also be set per-figure in plt.figure(figsize=...)."
+      },
+      {
+        text: "What does ax.set_ylim(0, 0.400) do?",
+        options: [
+          "Sets the y-axis scale to log",
+          "Forces the y-axis to display from 0 to 0.400",
+          "Removes all y-axis tick marks outside this range",
+          "Sets the figure height to 0.400 inches"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. ax.set_ylim() controls the visible range of the y-axis. Useful for focusing on a specific data range.",
+        feedbackWrong: "Not quite. set_ylim(min, max) forces the y-axis to display the specified range. ax.set_xlim() does the same for x."
+      },
+      {
+        text: "What does df.plot(kind='box') produce?",
+        options: [
+          "A box chart showing the layout of the DataFrame",
+          "A box plot for each numeric column, showing distribution with quartiles and outliers",
+          "A bar chart styled to look like boxes",
+          "Error - box is not a valid kind parameter"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. kind='box' creates box plots for each numeric column via the pandas plotting interface.",
+        feedbackWrong: "Not quite. kind='box' draws box plots for all numeric columns. This is part of pandas' built-in Matplotlib wrapper."
+      },
+      {
+        text: "In a box plot, what does the line inside the box represent?",
+        options: [
+          "The mean",
+          "The median (50th percentile)",
+          "The mode",
+          "The standard deviation"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. The center line in a box plot is the median. The box spans Q1 to Q3 (the interquartile range).",
+        feedbackWrong: "Not quite. The line inside the box = median. The box = IQR (Q1 to Q3). Whiskers extend to the data range. Points beyond are outliers."
+      },
+      {
+        text: "What does a wider Interquartile Range (IQR) in a box plot indicate?",
+        options: [
+          "More data points in the middle",
+          "Greater spread / variability in the middle 50% of the data",
+          "A skewed distribution",
+          "Fewer outliers"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. IQR = Q3 - Q1. A wider box means more spread in the central 50% of values.",
+        feedbackWrong: "Not quite. A wide IQR (box) means the middle 50% of values is spread over a large range - high variability."
+      },
+      {
+        text: "What does setting marker='o' do in ax.plot(x, y, marker='o')?",
+        options: [
+          "Colors the line orange",
+          "Places a circular marker at each data point along the line",
+          "Creates a scatter plot instead of a line chart",
+          "Sets the origin point of the chart"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. marker='o' adds circular markers at each data point. You still get a line; the markers highlight individual observations.",
+        feedbackWrong: "Not quite. marker='o' adds circle markers at data points while keeping the connecting line. Other markers: 's' (square), '^' (triangle)."
+      },
+      {
+        text: "What does ax.set_yscale('log') do?",
+        options: [
+          "Rounds all y-axis values to the nearest log",
+          "Changes the y-axis to a logarithmic scale, compressing large ranges",
+          "Labels the y-axis with the word 'log'",
+          "Error - set_yscale requires a numeric argument"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Log scale compresses large ranges. Useful when data spans many orders of magnitude (like salaries from $14k to $760k).",
+        feedbackWrong: "Not quite. set_yscale('log') applies a log scale. Each unit on the axis represents a power of 10."
+      },
+      {
+        text: "What is the purpose of a color bar (colorbar) in a heatmap?",
+        options: [
+          "To show the chart title in color",
+          "To provide a legend that maps colors to data values",
+          "To add color to axis labels",
+          "To set the background color of the figure"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. A colorbar is a legend for color-encoded charts. It shows which color corresponds to which data value.",
+        feedbackWrong: "Not quite. A colorbar is the legend for color encoding in heatmaps and other color-mapped charts."
+      },
+      {
+        text: "What visualization is best for showing the relationship between two continuous variables along with their individual distributions?",
+        options: [
+          "Bar chart",
+          "Pie chart",
+          "sns.jointplot() - scatter in the center with histograms on each axis margin",
+          "Box plot"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. sns.jointplot() shows the bivariate scatter in the center and the univariate distributions on the margins - three views in one.",
+        feedbackWrong: "Not quite. sns.jointplot() combines a scatter plot with marginal histograms, giving both the relationship and each variable's distribution."
       }
     ];
 
-    let currentQ = 0;
+    // Shuffle and pick 10 questions each attempt
+    const questions = allQuestions
+      .slice()
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 10);
+
+        let currentQ = 0;
     let results = [];
 
     function beginQuiz() {

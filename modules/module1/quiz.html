@@ -414,7 +414,8 @@
   </main>
 
   <script>
-    const questions = [
+    const allQuestions = [
+      // --- DS vs ANALYTICS ---
       {
         text: "Which of the following best describes the difference between data analytics and data science?",
         options: [
@@ -424,8 +425,9 @@
           "Data science only works with structured data; analytics works with any data."
         ],
         correctIndex: 2,
-        feedbackCorrect: "Correct. Analytics focuses on understanding past events (descriptive/diagnostic). Data science focuses on predicting future events or automating decisions (predictive/prescriptive).",
-        feedbackWrong: "Not quite. The key distinction is temporal: analytics is retrospective (what happened and why), while data science is prospective (what will happen, what should we do)."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Analytics is retrospective (descriptive/diagnostic). Data science is prospective (predictive/prescriptive).",
+        feedbackWrong: "Not quite. The key distinction is temporal: analytics = what happened, data science = what will happen."
       },
       {
         text: "The 'three circles' Venn diagram definition of data science places it at the intersection of which three areas?",
@@ -436,23 +438,104 @@
           "Visualization, modeling, and communication."
         ],
         correctIndex: 1,
-        feedbackCorrect: "Correct. The classic Venn diagram places data science at the intersection of math/statistics, computer science/programming, and domain knowledge. You need all three for the most impactful work.",
-        feedbackWrong: "Not quite. The three circles are math and statistics, computer science and programming, and domain expertise. Tools like Python or SQL are in the computer science circle, not separate circles."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. The classic Venn: math/statistics + computer science/programming + domain knowledge.",
+        feedbackWrong: "Not quite. The three circles are: math/statistics, computer science/programming, and domain expertise."
       },
+      {
+        text: "What is descriptive analytics?",
+        options: [
+          "Predicting what will happen in the future",
+          "Summarizing and describing what has already happened in data",
+          "Prescribing the best action to take",
+          "Building machine learning models"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Descriptive analytics summarizes past data: totals, averages, distributions, trends.",
+        feedbackWrong: "Not quite. Descriptive = what happened. Diagnostic = why it happened. Predictive = what will happen. Prescriptive = what to do."
+      },
+      {
+        text: "What distinguishes prescriptive analytics from predictive analytics?",
+        options: [
+          "Prescriptive only works with structured data",
+          "Predictive forecasts what will happen; prescriptive recommends what action to take based on that forecast",
+          "They are the same type of analysis with different names",
+          "Prescriptive analytics is purely descriptive statistics"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Predictive says 'this player's batting average will drop next month.' Prescriptive says 'therefore bench them and move up the replacement.'",
+        feedbackWrong: "Not quite. Predictive = what will happen. Prescriptive = what to do about it."
+      },
+      // --- CAREERS ---
       {
         text: "Which role is primarily responsible for deploying trained machine learning models into production systems?",
-        options: [
-          "Data Analyst",
-          "BI Developer",
-          "Data Engineer",
-          "ML Engineer"
-        ],
+        options: ["Data Analyst", "BI Developer", "Data Engineer", "ML Engineer"],
         correctIndex: 3,
-        feedbackCorrect: "Correct. ML Engineers specialize in taking trained models and deploying them into production systems where they serve real users at scale.",
-        feedbackWrong: "Not quite. The ML Engineer role owns production deployment of models. Data Analysts focus on insight, BI Developers build dashboards, and Data Engineers build pipelines."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. ML Engineers specialize in taking trained models and deploying them into production at scale.",
+        feedbackWrong: "Not quite. ML Engineers own production deployment. Data Analysts focus on insight. Data Engineers build pipelines."
       },
       {
-        text: "A sports analytics team notices that players who drink more water during games have higher batting averages. They conclude that hydration causes better performance and recommend a mandatory hydration program. What critical thinking error is being made?",
+        text: "Which role is most associated with building dashboards and reporting tools using tools like Tableau or Power BI?",
+        options: ["ML Engineer", "Data Scientist", "BI Developer", "Data Engineer"],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. BI (Business Intelligence) Developers build dashboards and reporting infrastructure for business stakeholders.",
+        feedbackWrong: "Not quite. BI Developers build dashboards and reports. Data Scientists focus on analysis and modeling. ML Engineers deploy models."
+      },
+      {
+        text: "What does a Data Engineer primarily do?",
+        options: [
+          "Analyzes data to extract business insights",
+          "Builds and maintains pipelines that collect, store, and prepare data for analysis",
+          "Deploys machine learning models to production APIs",
+          "Creates executive dashboards with visualization tools"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Data Engineers build the infrastructure: ETL pipelines, data warehouses, and data lakes that make data available for analysis.",
+        feedbackWrong: "Not quite. Data Engineers build pipelines and infrastructure. Data Scientists analyze the data those pipelines deliver."
+      },
+      {
+        text: "Which career role is most likely to spend their day writing SQL queries and creating Excel reports for a business team?",
+        options: ["ML Engineer", "Data Analyst", "Data Engineer", "Research Scientist"],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Data Analysts typically work closely with business teams, using SQL and spreadsheet tools to answer operational questions.",
+        feedbackWrong: "Not quite. Data Analysts work with business stakeholders using SQL, Excel, and BI tools to generate insights."
+      },
+      // --- COMPANY TYPES ---
+      {
+        text: "What kind of data science work is most common at a startup vs. a large enterprise?",
+        options: [
+          "Startups have larger data science teams; enterprises have smaller ones",
+          "Startups do more research; enterprises do more applied work",
+          "Startups often have generalist data scientists who do everything; enterprises have specialized roles (analyst, engineer, scientist)",
+          "Enterprise data scientists code more than startup data scientists"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. At startups, one person might handle analysis, engineering, and modeling. At large companies, these are separate specialized roles.",
+        feedbackWrong: "Not quite. Startups need generalists who cover multiple roles. Enterprises can afford specialization."
+      },
+      {
+        text: "Which type of company would most likely have a role called 'Analytics Engineer'?",
+        options: [
+          "A small nonprofit with 10 employees",
+          "A company with a mature data stack that needs someone bridging data engineering and data analysis",
+          "A company that only does machine learning research",
+          "A company that has no data warehouse"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. Analytics Engineers typically work with tools like dbt to transform data in the warehouse - a role that emerged at data-mature companies.",
+        feedbackWrong: "Not quite. Analytics Engineering emerged at companies with mature data infrastructure, bridging engineering and analysis."
+      },
+      // --- CRITICAL THINKING ---
+      {
+        text: "A sports analytics team notices that players who drink more water during games have higher batting averages. They conclude that hydration causes better performance. What error is being made?",
         options: [
           "Confusing correlation with causation - a third variable (e.g. overall fitness habits) likely explains both.",
           "Using too small a sample size.",
@@ -460,8 +543,9 @@
           "Overfitting the model to training data."
         ],
         correctIndex: 0,
-        feedbackCorrect: "Correct. Correlation does not imply causation. A confounding variable like overall fitness habits likely drives both better hydration and better performance. You need an experiment, not an observation, to establish causation.",
-        feedbackWrong: "Not quite. This is the classic correlation/causation error. A third variable (fitness habits) likely explains both the hydration behavior and the batting performance. Observational data alone cannot establish causation."
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Correlation does not imply causation. A confounding variable like fitness habits likely drives both.",
+        feedbackWrong: "Not quite. This is the classic correlation/causation error. A third variable likely explains both the hydration and batting performance."
       },
       {
         text: "Which of the following is the most precisely stated, answerable data science question?",
@@ -472,21 +556,85 @@
           "Is Python better than R?"
         ],
         correctIndex: 2,
-        feedbackCorrect: "Correct. A good data science question specifies the population, metric, time period, and outcome. This question has all four. The others are too vague to answer with data.",
-        feedbackWrong: "Not quite. Option C is the only one with a specific population (pitchers aged 22-25), a specific metric (K/BB ratio), a time window (two seasons), and a testable outcome (promotion within 18 months). The others are too broad."
+        difficulty: "medium",
+        feedbackCorrect: "Correct. A good question specifies the population, metric, time period, and outcome. Option C has all four.",
+        feedbackWrong: "Not quite. Option C is the only question with a specific population, metric, timeframe, and testable outcome."
       },
       {
-        text: "Why did Python become the dominant language for data science rather than a language built specifically for statistics like R?",
+        text: "A hospital dataset shows patients who receive a certain treatment have worse outcomes than those who don't. What should a data scientist consider before concluding the treatment is harmful?",
+        options: [
+          "Selection bias: sicker patients may be more likely to receive the treatment, making it appear harmful even if it helps.",
+          "The dataset is probably too small.",
+          "The hospital is probably hiding data.",
+          "The outcome variable should be changed."
+        ],
+        correctIndex: 0,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Selection bias - the sickest patients are more likely to receive treatment, and they have worse outcomes regardless.",
+        feedbackWrong: "Not quite. Selection bias: if sicker patients get the treatment, they'll have worse outcomes whether or not the treatment helps."
+      },
+      {
+        text: "A data scientist reports: 'Treatment B outperforms Treatment A.' A critical thinker should ask which follow-up question first?",
+        options: [
+          "Which programming language was used?",
+          "By how much, and how confident are we? What is the uncertainty range?",
+          "Was the analysis done in a Jupyter notebook?",
+          "Did the data scientist have a PhD?"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Effect size and uncertainty matter. 'B outperforms A' is meaningless without knowing the magnitude and reliability of the difference.",
+        feedbackWrong: "Not quite. The most important follow-up: by how much, and how certain? Effect size and confidence intervals determine if the finding is actionable."
+      },
+      {
+        text: "What is confirmation bias in data analysis?",
+        options: [
+          "When the analyst uses the wrong statistical test",
+          "When an analyst selectively looks for data that confirms their existing belief and ignores contradictory evidence",
+          "When data is collected from a biased sample",
+          "When the sample size is too small to draw conclusions"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Confirmation bias is the tendency to seek out and emphasize data that confirms what you already believe.",
+        feedbackWrong: "Not quite. Confirmation bias = looking for confirming evidence and ignoring disconfirming evidence. Critical thinking means actively seeking to disprove your hypothesis."
+      },
+      {
+        text: "What is the difference between a population and a sample in data science?",
+        options: [
+          "A population is structured data; a sample is unstructured data",
+          "A population is the complete set of all units of interest; a sample is a subset drawn from it",
+          "A sample is always more accurate than a population",
+          "Populations are used in machine learning; samples are used in statistics"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Population = all possible cases. Sample = the subset you actually have. Inferential statistics let you reason from a sample to a population.",
+        feedbackWrong: "Not quite. Population = all cases of interest. Sample = a subset. You use the sample to make inferences about the population."
+      },
+      // --- WHY PYTHON ---
+      {
+        text: "Why did Python become the dominant language for data science rather than R?",
         options: [
           "Python runs faster than R for all operations.",
-          "Python is a general-purpose language with a massive ecosystem of libraries, broad community adoption, and applicability beyond statistics - making it more useful across the full data pipeline and in industry settings.",
+          "Python is a general-purpose language with a massive ecosystem, broad community adoption, and applicability beyond statistics - making it more useful across the full data pipeline.",
           "R is no longer maintained and has been deprecated.",
           "Python has better built-in statistical functions than R."
         ],
         correctIndex: 1,
-        feedbackCorrect: "Correct. Python's dominance comes from its general-purpose nature, ecosystem breadth, and industry adoption. A Python data scientist can write the analysis, build the API to serve it, and automate the pipeline all in one language.",
-        feedbackWrong: "Not quite. Python won because it is a general-purpose language with a huge ecosystem that extends far beyond statistics. R is excellent for statistics but Python's reach across the full data pipeline made it the industry default."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Python's general-purpose nature and ecosystem breadth - analysis, pipelines, APIs, automation - made it the industry default.",
+        feedbackWrong: "Not quite. Python won because it's general-purpose with a huge ecosystem. R remains excellent for statistics but Python has broader industry reach."
       },
+      {
+        text: "Which Python library is most closely associated with tabular data manipulation?",
+        options: ["NumPy", "Matplotlib", "pandas", "scikit-learn"],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. pandas is the primary Python library for tabular data: loading CSVs, cleaning columns, filtering rows, grouping.",
+        feedbackWrong: "Not quite. pandas handles tabular data. NumPy works with arrays. Matplotlib makes charts. scikit-learn is for machine learning."
+      },
+      // --- PSEUDOCODE ---
       {
         text: "What is the primary purpose of writing pseudocode before implementing a solution in Python?",
         options: [
@@ -496,48 +644,424 @@
           "To think through the logic and structure of a solution before being distracted by syntax, so you discover design flaws while they are cheap to fix."
         ],
         correctIndex: 3,
-        feedbackCorrect: "Correct. Pseudocode separates the problem-solving step from the syntax-writing step. You work out the logic in plain language first, catch flaws early, then translate to Python.",
-        feedbackWrong: "Not quite. The purpose of pseudocode is to think through logic before syntax. It lets you discover that your approach is wrong before you have invested time writing Python."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Pseudocode separates problem-solving from syntax. Work out the logic first, catch flaws early, then translate to Python.",
+        feedbackWrong: "Not quite. Pseudocode separates logic from syntax. You catch design flaws before investing time writing Python."
       },
       {
-        text: "A hospital dataset shows that patients who receive a certain treatment have worse outcomes than those who do not. A data scientist concludes the treatment is harmful. What should they consider before reaching that conclusion?",
+        text: "Which of the following is the best pseudocode for 'find the highest batting average on the roster'?",
         options: [
-          "Selection bias: sicker patients may be more likely to receive the treatment, making the treatment look harmful even if it helps.",
-          "The dataset is probably too small.",
-          "The hospital is probably hiding data.",
-          "The outcome variable should be changed to a different metric."
-        ],
-        correctIndex: 0,
-        feedbackCorrect: "Correct. This is selection bias. If the sickest patients are more likely to receive the treatment, they will have worse outcomes regardless of whether the treatment helps. The treatment appears harmful when it may in fact be beneficial.",
-        feedbackWrong: "Not quite. This is selection bias: the sickest patients are more likely to receive the treatment, so those patients will have worse outcomes regardless of whether the treatment helps. You need to control for baseline severity before drawing conclusions."
-      },
-      {
-        text: "Which Python library is most closely associated with tabular data manipulation (loading CSV files, filtering rows, aggregating columns)?",
-        options: [
-          "NumPy",
-          "Matplotlib",
-          "pandas",
-          "scikit-learn"
-        ],
-        correctIndex: 2,
-        feedbackCorrect: "Correct. pandas is the primary Python library for tabular data: loading CSVs, cleaning columns, filtering rows, grouping, and aggregating. Every other library in the data stack integrates with it.",
-        feedbackWrong: "Not quite. pandas is the tabular data library. NumPy works with numerical arrays, Matplotlib makes charts, and scikit-learn is for machine learning."
-      },
-      {
-        text: "A data scientist reports: 'Treatment B outperforms Treatment A.' A critical thinker should ask which follow-up question first?",
-        options: [
-          "Which programming language was used to run the analysis?",
-          "By how much, and how confident are we in that estimate? What is the uncertainty range?",
-          "Was the analysis done in a Jupyter notebook?",
-          "Did the data scientist have a PhD?"
+          "np.max(avgs)",
+          "For each player, if their avg is higher than the current best, update best. Return best.",
+          "print(roster.max)",
+          "SELECT MAX(avg) FROM roster"
         ],
         correctIndex: 1,
-        feedbackCorrect: "Correct. The size of the effect and its uncertainty are what matter. 'B outperforms A' is meaningless without knowing whether the difference is 0.1% or 30%, and whether that estimate is reliable.",
-        feedbackWrong: "Not quite. The most important follow-up is about the size and reliability of the effect. 'By how much?' and 'how certain are we?' are the questions that determine whether the finding is actionable."
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Good pseudocode describes the logic in plain English without committing to any specific syntax.",
+        feedbackWrong: "Not quite. np.max() is Python. SQL SELECT is database code. Option B describes the algorithm in plain language - that's pseudocode."
+      },
+      {
+        text: "What does 'algorithmic thinking' mean in the context of data science?",
+        options: [
+          "Memorizing the syntax of common algorithms",
+          "Breaking a complex problem into a sequence of clear, logical steps that can be implemented as code",
+          "Using only built-in Python functions to solve problems",
+          "Writing code that runs as fast as possible"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Algorithmic thinking is the ability to decompose problems into ordered, logical steps - independent of any specific programming language.",
+        feedbackWrong: "Not quite. Algorithmic thinking = decomposing problems into clear, ordered steps. The syntax comes after the logic is clear."
+      },
+      {
+        text: "A data science team is analyzing whether a new training program improves sprint times. They compare times before and after for 20 athletes. What type of question is this?",
+        options: [
+          "A visualization question",
+          "A causal inference question - does the program cause improvement?",
+          "A data engineering question",
+          "A data cleaning question"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Before/after comparisons address causation. Without a control group, it's hard to rule out other explanations for improvement.",
+        feedbackWrong: "Not quite. This is a causal question: did the program cause the improvement? A control group is needed to answer it properly."
+      },
+      {
+        text: "What is a key limitation of observational data (data collected without a controlled experiment)?",
+        options: [
+          "Observational data cannot be stored in a DataFrame",
+          "You cannot establish causation because confounding variables may explain the observed relationship",
+          "Observational data always has too many missing values",
+          "Observational data requires Python 3.10 or later to analyze"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. Observational data shows correlation but cannot establish causation. Confounders may explain the relationship.",
+        feedbackWrong: "Not quite. The key limitation is that observational data cannot establish causation - only experiments with random assignment can."
+      },
+      {
+        text: "What does 'domain expertise' contribute to a data science project?",
+        options: [
+          "It replaces the need for statistical knowledge",
+          "It allows the analyst to use Python more efficiently",
+          "It provides context for interpreting results, identifying relevant features, and asking the right questions",
+          "It is only necessary for senior data scientists"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Domain expertise lets you know which questions matter, which results are plausible, and how to communicate findings to stakeholders.",
+        feedbackWrong: "Not quite. Domain expertise = knowing the field. It helps you ask meaningful questions, sanity-check results, and communicate to stakeholders."
+      },
+      {
+        text: "What is a 'data product'?",
+        options: [
+          "A dataset in CSV format",
+          "A Python package for data manipulation",
+          "An output that uses data to deliver value to users, such as a recommendation engine, dashboard, or predictive model",
+          "A report generated by Excel"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Data products deliver ongoing value from data - examples include recommendation engines, real-time dashboards, and fraud detection systems.",
+        feedbackWrong: "Not quite. A data product is an ongoing system that delivers value from data. A one-time report is not a data product."
+      }
+      ,
+      // --- ADDITIONAL QUESTIONS ---
+      {
+        text: "What is a 'data-driven decision'?",
+        options: [
+          "Any decision made by a computer",
+          "A decision informed by analysis of relevant data rather than gut feeling alone",
+          "A decision that requires a PhD to make",
+          "A decision made without human input"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Data-driven decisions use analysis to inform (not replace) human judgment - combining evidence with domain expertise.",
+        feedbackWrong: "Not quite. Data-driven = using data analysis to inform decisions, not replacing judgment but enhancing it."
+      },
+      {
+        text: "What is the difference between a quantitative variable and a categorical variable?",
+        options: [
+          "Quantitative variables are more important than categorical variables",
+          "Quantitative variables are numeric and support arithmetic; categorical variables represent discrete groups or labels",
+          "Categorical variables are always text; quantitative variables are always integers",
+          "There is no meaningful difference in data science"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Quantitative = numeric, supports math (avg, sum). Categorical = groups/labels (position, team). The distinction affects which analyses apply.",
+        feedbackWrong: "Not quite. Quantitative = numbers you can do math on. Categorical = labels/groups. Different chart types and statistics apply to each."
+      },
+      {
+        text: "What is A/B testing?",
+        options: [
+          "Comparing the performance of Python version A vs version B",
+          "A controlled experiment that compares two versions (A and B) to determine which performs better on a metric",
+          "A grading scheme for data science assignments",
+          "A method for sorting DataFrames alphabetically"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. A/B testing is a controlled experiment: randomly assign users to two groups, measure outcomes, compare. Used in web products, medicine, marketing.",
+        feedbackWrong: "Not quite. A/B testing = a randomized experiment comparing two variants. Used to test product changes, marketing copy, medical treatments."
+      },
+      {
+        text: "What does 'statistical significance' mean in plain terms?",
+        options: [
+          "The result is important to the company",
+          "The result is so large it can be seen in a chart",
+          "The observed effect is unlikely to have occurred by chance alone, given the data",
+          "The sample size is at least 1000"
+        ],
+        correctIndex: 2,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. Statistical significance indicates the probability the result is due to chance is below a threshold (e.g., p < 0.05).",
+        feedbackWrong: "Not quite. Statistical significance means the result is unlikely to be due to random chance - but it says nothing about whether the effect is large or important."
+      },
+      {
+        text: "What is the difference between accuracy and precision when evaluating a classifier?",
+        options: [
+          "Accuracy and precision are the same metric",
+          "Accuracy measures overall correct predictions; precision measures what fraction of positive predictions are actually positive",
+          "Precision is only relevant for regression models",
+          "Accuracy is calculated per-class; precision is overall"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. Accuracy = (TP + TN) / total. Precision = TP / (TP + FP). A model can be highly accurate but have low precision if classes are imbalanced.",
+        feedbackWrong: "Not quite. Accuracy = overall correct rate. Precision = of predicted positives, how many are actually positive."
+      },
+      {
+        text: "What is recall (also called sensitivity) in classification?",
+        options: [
+          "How well the model remembers training examples",
+          "The fraction of actual positives that the model correctly identified",
+          "The speed at which the model makes predictions",
+          "The same as accuracy"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. Recall = TP / (TP + FN). It measures how many real positives were caught. High recall is critical when missing a positive is costly (e.g., disease screening).",
+        feedbackWrong: "Not quite. Recall = of all actual positives, how many did the model catch? Low recall = model is missing real positives."
+      },
+      {
+        text: "A data scientist finds that their model achieves 99% accuracy on a fraud detection dataset where 99% of transactions are legitimate. Why is this misleading?",
+        options: [
+          "99% is too high to be real",
+          "A model that predicts 'not fraud' for every transaction achieves the same accuracy by doing nothing - accuracy is the wrong metric for imbalanced classes",
+          "The model must have been trained incorrectly",
+          "The dataset is too large for accurate evaluation"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. When classes are imbalanced, accuracy is misleading. A model that always predicts the majority class 'wins' on accuracy while being useless.",
+        feedbackWrong: "Not quite. With 99% legitimate transactions, always predicting 'not fraud' gives 99% accuracy but catches zero fraud. Precision/recall are better metrics."
+      },
+      {
+        text: "What is the purpose of normalizing or standardizing numerical features before machine learning?",
+        options: [
+          "It makes the code run faster",
+          "It converts all features to the same scale so that features with large values don't dominate the model",
+          "It is required by all machine learning algorithms",
+          "It converts numeric features to categorical features"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Salary (0-750000) and batting average (0.200-0.350) have vastly different scales. Normalizing prevents salary from overwhelming avg in distance-based models.",
+        feedbackWrong: "Not quite. Features on different scales can bias some algorithms. Normalizing puts them on a common scale."
+      },
+      {
+        text: "What is one-hot encoding?",
+        options: [
+          "Encrypting sensitive data with a single key",
+          "Converting a categorical variable into multiple binary (0/1) columns, one per category",
+          "Encoding all missing values as -1",
+          "Converting all text to uppercase before modeling"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. One-hot encoding turns 'position' with values [OF, 1B, SS] into three binary columns: is_OF, is_1B, is_SS.",
+        feedbackWrong: "Not quite. One-hot encoding converts categories to binary columns. Machine learning models need numeric inputs, not text labels."
+      },
+      {
+        text: "What does 'underfitting' mean in machine learning?",
+        options: [
+          "The model has too many parameters",
+          "The model is too simple to capture the patterns in the data and performs poorly on both training and test sets",
+          "The model was trained on too much data",
+          "The model outputs predictions that are too small in magnitude"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Underfitting = model too simple. Poor on both training AND test data. Opposite of overfitting.",
+        feedbackWrong: "Not quite. Underfitting = too simple to learn the pattern. Poor training AND test performance. Overfitting = too complex, poor only on test data."
+      },
+      {
+        text: "What is the role of a validation set (distinct from the test set)?",
+        options: [
+          "To replace the training set when data is limited",
+          "To tune hyperparameters during development without 'using up' the test set",
+          "To validate that the data was collected correctly",
+          "To validate that the code runs without errors"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. The validation set is used to tune hyperparameters. The test set is held out until the very end for final evaluation.",
+        feedbackWrong: "Not quite. Training set = learn parameters. Validation set = tune hyperparameters. Test set = final evaluation. Keep them separate."
+      },
+      {
+        text: "What is natural language processing (NLP)?",
+        options: [
+          "Processing data using natural (human-readable) variable names",
+          "A branch of data science focused on enabling computers to understand and generate human language",
+          "A method for translating Python code to other programming languages",
+          "A technique for compressing large text files"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. NLP = making computers work with human language. Applications: sentiment analysis, chatbots, document classification, translation.",
+        feedbackWrong: "Not quite. NLP = enabling computers to understand and generate human language (text and speech)."
+      },
+      {
+        text: "What is a recommendation system?",
+        options: [
+          "A system that recommends Python libraries to install",
+          "A model that predicts items a user is likely to be interested in based on past behavior or similarity to other users",
+          "A management tool for tracking project recommendations",
+          "A database of best practices for data cleaning"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Recommendation systems (like Netflix, Amazon, Spotify) predict what a user will like based on their history or similarity to other users.",
+        feedbackWrong: "Not quite. Recommendation systems predict user preferences - used by Netflix, Spotify, Amazon, etc."
+      },
+      {
+        text: "What does 'reproducibility' mean in data science?",
+        options: [
+          "The ability to copy a dataset multiple times",
+          "The ability for another researcher to run the same analysis on the same data and get the same results",
+          "The ability to re-train a model without any data",
+          "Documenting which Python version was used"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Reproducibility means others (or your future self) can run the same code and get the same results. Achieved by version control, fixed seeds, documented environments.",
+        feedbackWrong: "Not quite. Reproducibility = same code + same data → same results. Essential for scientific integrity and debugging."
+      },
+      {
+        text: "What is data governance?",
+        options: [
+          "Government regulation of data scientists",
+          "The policies, processes, and standards that ensure data is accurate, accessible, consistent, and protected across an organization",
+          "A method for organizing files on a hard drive",
+          "The process of electing a data team leader"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Data governance covers who can access data, how it's defined, how it's protected, and who is responsible for its quality.",
+        feedbackWrong: "Not quite. Data governance = organizational policies and standards for data quality, access, and security."
+      },
+      {
+        text: "What is the primary ethical concern when using demographic data (race, gender, age) in predictive models?",
+        options: [
+          "Demographic data is always inaccurate",
+          "Models may perpetuate or amplify existing societal biases if trained on historically biased data",
+          "Demographic data is too difficult to clean",
+          "Regulations prevent any use of demographic data"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. If training data reflects historical bias, the model learns and perpetuates that bias - potentially causing harm in hiring, lending, criminal justice, etc.",
+        feedbackWrong: "Not quite. Biased training data → biased model. Models can perpetuate discrimination even without explicitly using protected attributes."
+      },
+      {
+        text: "What does 'data literacy' mean?",
+        options: [
+          "The ability to read and write data files",
+          "The ability to read, understand, evaluate, and communicate with data and data-driven arguments",
+          "A certification required to become a data scientist",
+          "The ability to type fast enough to handle large datasets"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Data literacy includes understanding statistics, interpreting charts, evaluating data quality, and spotting misleading claims.",
+        feedbackWrong: "Not quite. Data literacy = the ability to critically read and reason about data and the claims made from it."
+      },
+      {
+        text: "What is a key skill that separates a good data scientist from an average one, according to practitioners?",
+        options: [
+          "Knowing the most programming languages",
+          "The ability to communicate findings clearly to non-technical stakeholders",
+          "Never making mistakes in analysis",
+          "Using the newest machine learning algorithms"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Communication is consistently cited as a critical skill. Insights that can't be communicated don't drive decisions.",
+        feedbackWrong: "Not quite. Communication is consistently cited as a differentiator. Insights that aren't communicated effectively don't create value."
+      },
+      {
+        text: "What is the 'garbage in, garbage out' principle in data science?",
+        options: [
+          "Poor data storage leads to data loss",
+          "The quality of model outputs is directly limited by the quality of the data going in - bad data produces bad results regardless of the algorithm",
+          "Python code with syntax errors produces garbage outputs",
+          "Uncompressed files waste disk space"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. No algorithm can compensate for fundamentally flawed, biased, or incomplete data. Data quality is foundational.",
+        feedbackWrong: "Not quite. Garbage in, garbage out: even sophisticated models fail if the input data is flawed, biased, or incomplete."
+      },
+      {
+        text: "What is the difference between a model's parameters and its hyperparameters?",
+        options: [
+          "Parameters are set by the user; hyperparameters are learned from data",
+          "Parameters are learned from training data; hyperparameters are set before training to control the learning process",
+          "They are the same thing with different names in different frameworks",
+          "Parameters control model size; hyperparameters control output size"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. Parameters (like neural network weights) are learned. Hyperparameters (like learning rate, max depth) are set before training.",
+        feedbackWrong: "Not quite. Parameters = learned from data. Hyperparameters = configured before training to control how learning happens."
+      },
+      {
+        text: "Which Python library is most commonly used for building machine learning models?",
+        options: [
+          "matplotlib",
+          "scikit-learn",
+          "seaborn",
+          "requests"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. scikit-learn (sklearn) is the standard Python library for classical machine learning: classification, regression, clustering, preprocessing.",
+        feedbackWrong: "Not quite. scikit-learn is the standard ML library. matplotlib and seaborn are for visualization. requests is for HTTP calls."
+      },
+      {
+        text: "What is clustering in machine learning?",
+        options: [
+          "Grouping similar data points together without predefined labels (unsupervised learning)",
+          "Sorting rows alphabetically in a DataFrame",
+          "Combining multiple DataFrames into one",
+          "A method for handling missing values"
+        ],
+        correctIndex: 0,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Clustering (e.g., k-means) groups data points by similarity without labeled categories - unsupervised learning.",
+        feedbackWrong: "Not quite. Clustering groups similar points together without predefined labels. Examples: customer segments, player archetypes."
+      },
+      {
+        text: "What is the 'curse of dimensionality'?",
+        options: [
+          "Having too many rows in a dataset",
+          "As the number of features increases, data becomes increasingly sparse and models need exponentially more data to perform well",
+          "Having too many missing values in a dataset",
+          "A limitation of 2D visualizations when data has 3 dimensions"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. In high dimensions, data points become sparse. Distance-based models struggle. Feature selection and dimensionality reduction help.",
+        feedbackWrong: "Not quite. The curse of dimensionality: high-dimensional spaces make data sparse, hurt distance-based algorithms, and require exponentially more data."
+      },
+      {
+        text: "What makes Python's Jupyter notebooks particularly useful for data science compared to writing plain .py scripts?",
+        options: [
+          "Notebooks run faster than scripts",
+          "Notebooks allow iterative exploration: run one cell, see the output, then decide what to do next without re-running the whole program",
+          "Notebooks support more Python libraries than scripts",
+          "Notebooks automatically fix syntax errors"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. The cell-by-cell execution model lets you explore interactively - inspect intermediate results, adjust, and continue.",
+        feedbackWrong: "Not quite. Notebooks support iterative, cell-by-cell execution. You can inspect results at each step and adjust your approach."
+      },
+      {
+        text: "In a data science context, what does 'signal vs. noise' mean?",
+        options: [
+          "Comparing audio quality of different dataset recordings",
+          "Signal is the true underlying pattern in data; noise is random variation that doesn't represent real patterns",
+          "Signal processing is used for time-series data; noise reduction is for image data",
+          "It refers to network latency when downloading datasets"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. The goal of analysis is to find signal (true patterns) and separate it from noise (random variation). Overfitting learns the noise.",
+        feedbackWrong: "Not quite. Signal = the real pattern. Noise = random variation. Good models capture signal; overfitted models learn noise."
       }
     ];
 
-    let currentQ = 0;
+    // Shuffle and pick 10 questions each attempt
+    const questions = allQuestions
+      .slice()
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 10);
+
+        let currentQ = 0;
     let results = [];
 
     function beginQuiz() {

@@ -414,7 +414,8 @@
   </main>
 
   <script>
-    const questions = [
+    const allQuestions = [
+      // --- SERIES ---
       {
         text: "What is the key difference between a pandas Series and a DataFrame?",
         options: [
@@ -424,16 +425,117 @@
           "A Series always has an integer index; a DataFrame can have string labels."
         ],
         correctIndex: 1,
-        feedbackCorrect: "Correct. A Series is 1D - one column of values with an index. A DataFrame is 2D - rows and columns. Every column in a DataFrame is a Series.",
-        feedbackWrong: "Not quite. The key distinction is dimensions. A Series is 1D (one column with an index). A DataFrame is 2D (rows and columns). Every DataFrame column is a Series."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. A Series is 1D - one column of values with an index. A DataFrame is 2D - rows and columns.",
+        feedbackWrong: "Not quite. The key distinction is dimensions. A Series is 1D. A DataFrame is 2D. Every DataFrame column is a Series."
       },
+      {
+        text: "You create s = pd.Series([14400, 19200, 760000]). What is s[1]?",
+        options: ["14400", "19200", "760000", "Error - Series uses labels, not integer positions"],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. With a default integer index, s[1] accesses the second element: 19200.",
+        feedbackWrong: "Not quite. A Series created from a list gets a default integer index (0, 1, 2). s[1] returns the element at index 1: 19200."
+      },
+      {
+        text: "How do you create a Series with a custom string index?",
+        options: [
+          "pd.Series([1, 2, 3], labels=['a', 'b', 'c'])",
+          "pd.Series([1, 2, 3], index=['a', 'b', 'c'])",
+          "pd.Series({'a': 1, 'b': 2}, labels=True)",
+          "pd.Series([1, 2, 3]).set_labels(['a', 'b', 'c'])"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. The index= parameter sets custom labels when creating a Series.",
+        feedbackWrong: "Not quite. Use pd.Series(data, index=[...]) to set a custom index. You can also pass a dictionary directly."
+      },
+      {
+        text: "Given s = pd.Series([10, 20, 30], index=['a', 'b', 'c']), what does s['b'] return?",
+        options: ["10", "20", "30", "Error"],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. With a string index, you access elements by label. 'b' maps to the second value, 20.",
+        feedbackWrong: "Not quite. s['b'] uses label-based access. Index 'b' corresponds to the second element, 20."
+      },
+      {
+        text: "s = pd.Series([10, 20, None, 40]). What does s.isna() return?",
+        options: [
+          "[False, False, False, False]",
+          "[False, False, True, False]",
+          "[10, 20, NaN, 40]",
+          "Error - None is not allowed in a Series"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. isna() returns a boolean Series: True where values are NaN/None, False elsewhere.",
+        feedbackWrong: "Not quite. isna() returns a boolean mask. None is stored as NaN in pandas, so position 2 is True and the rest are False."
+      },
+      {
+        text: "What does s * 2 do for s = pd.Series([1, 2, 3])?",
+        options: [
+          "Appends the Series to itself: [1, 2, 3, 1, 2, 3]",
+          "Returns a new Series [2, 4, 6] - element-wise multiplication",
+          "Error - arithmetic operators don't work on Series",
+          "Returns a scalar: the sum doubled"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Arithmetic on a Series is element-wise, returning a new Series. s * 2 gives [2, 4, 6].",
+        feedbackWrong: "Not quite. Pandas Series support vectorized arithmetic. s * 2 multiplies every element by 2."
+      },
+      // --- DATAFRAMES ---
       {
         text: "You want to inspect the data types of every column in df. Which command is correct?",
         options: ["df.types()", "df.info(types=True)", "df.dtypes", "df.schema()"],
         correctIndex: 2,
+        difficulty: "easy",
         feedbackCorrect: "Correct. df.dtypes is an attribute (not a method call) that returns the dtype of each column.",
         feedbackWrong: "Not quite. df.dtypes is the correct attribute. df.types() and df.schema() do not exist. df.info() prints a summary but dtypes is the direct attribute."
       },
+      {
+        text: "Which method shows the first 5 rows of a DataFrame?",
+        options: ["df.first()", "df.head()", "df.top(5)", "df.rows(5)"],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. df.head() returns the first 5 rows by default. Pass a number like df.head(10) for more.",
+        feedbackWrong: "Not quite. df.head() is the correct method. df.first() and df.top() don't exist. df.tail() shows the last rows."
+      },
+      {
+        text: "What does df.describe() return?",
+        options: [
+          "The column names and dtypes",
+          "A summary table with count, mean, std, min, quartiles, and max for each numeric column",
+          "The number of rows and columns",
+          "A list of all missing values"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. describe() computes descriptive statistics for numeric columns: count, mean, std, min, 25%, 50%, 75%, max.",
+        feedbackWrong: "Not quite. df.describe() gives descriptive stats. df.shape gives dimensions. df.info() gives dtypes and nulls. df.dtypes gives column types."
+      },
+      {
+        text: "How do you create a DataFrame from a dictionary?",
+        options: [
+          "pd.DataFrame.from_dict({'col1': [1, 2], 'col2': [3, 4]})",
+          "pd.DataFrame({'col1': [1, 2], 'col2': [3, 4]})",
+          "pd.Series({'col1': [1, 2], 'col2': [3, 4]})",
+          "pd.Table({'col1': [1, 2], 'col2': [3, 4]})"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. pd.DataFrame(dict) is the most common construction method. Keys become column names, values (lists) become column data.",
+        feedbackWrong: "Not quite. pd.DataFrame({'col': [values]}) constructs from a dictionary. Keys are column names."
+      },
+      {
+        text: "What does df.shape return for a DataFrame with 100 rows and 5 columns?",
+        options: ["500", "(5, 100)", "(100, 5)", "[100, 5]"],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. df.shape returns a tuple of (rows, columns). Always rows first.",
+        feedbackWrong: "Not quite. shape returns (rows, columns) as a tuple. For 100 rows and 5 columns: (100, 5)."
+      },
+      // --- SELECTION ---
       {
         text: "What does df.loc[2, 'avg'] return?",
         options: [
@@ -443,9 +545,58 @@
           "A new DataFrame with 2 rows from 'avg'."
         ],
         correctIndex: 0,
-        feedbackCorrect: "Correct. .loc[] is label-based. df.loc[2, 'avg'] finds the row whose index label is 2 and returns the value in the 'avg' column.",
-        feedbackWrong: "Not quite. .loc[] uses labels, not positions. df.loc[2, 'avg'] means: row with label 2, column named 'avg'. For position-based access use .iloc[]."
+        difficulty: "medium",
+        feedbackCorrect: "Correct. .loc[] is label-based. df.loc[2, 'avg'] finds the row with index label 2 and returns the 'avg' value.",
+        feedbackWrong: "Not quite. .loc[] uses labels. df.loc[2, 'avg'] = row label 2, column 'avg'. For position use .iloc[]."
       },
+      {
+        text: "What is the difference between df.loc and df.iloc?",
+        options: [
+          "loc is for columns, iloc is for rows",
+          "loc uses label-based indexing; iloc uses integer position-based indexing",
+          "iloc is faster than loc for all operations",
+          "loc returns a Series; iloc returns a DataFrame"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. loc uses labels (index values and column names). iloc uses integer positions (0, 1, 2...).",
+        feedbackWrong: "Not quite. loc = label-based (use actual index values and column names). iloc = integer position (0-based, like a NumPy array)."
+      },
+      {
+        text: "df.iloc[0, 2] returns which element?",
+        options: [
+          "The row with label 0 and column named '2'",
+          "The element in the first row and third column (position-based)",
+          "The element in the third row and first column",
+          "Error - iloc requires slices, not integers"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. iloc is position-based. iloc[0, 2] = first row (position 0), third column (position 2).",
+        feedbackWrong: "Not quite. iloc uses integer positions. [0, 2] means row position 0 (first row) and column position 2 (third column)."
+      },
+      {
+        text: "How do you select just the 'avg' column from df as a Series?",
+        options: ["df.avg", "df['avg']", "df.loc['avg']", "df.select('avg')"],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. df['column_name'] is the standard way to select a column as a Series. Dot notation also works but fails for names with spaces.",
+        feedbackWrong: "Not quite. df['avg'] is the safe, standard approach. Dot notation (df.avg) also works but fails for column names with spaces or that match DataFrame methods."
+      },
+      {
+        text: "How do you select the columns 'name' and 'avg' from df as a DataFrame?",
+        options: [
+          "df['name', 'avg']",
+          "df[['name', 'avg']]",
+          "df.select(['name', 'avg'])",
+          "df.loc['name', 'avg']"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Passing a list of column names inside double brackets returns a DataFrame with those columns.",
+        feedbackWrong: "Not quite. To select multiple columns: df[['col1', 'col2']] - a list inside the outer brackets."
+      },
+      // --- FILTERING ---
       {
         text: "You want all rows where salary > 50000 AND avg > .300. Which expression is correct?",
         options: [
@@ -455,20 +606,49 @@
           "df[(df['salary'] > 50000) & (df['avg'] > .300)]"
         ],
         correctIndex: 3,
-        feedbackCorrect: "Correct. The & operator works element-wise on boolean Series. Each condition must be in parentheses because & has higher precedence than comparison operators.",
-        feedbackWrong: "Not quite. For combining conditions in pandas: use & (not 'and'), wrap each condition in parentheses, and use bracket filtering. df[(cond1) & (cond2)] is the correct pattern."
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Use & (not 'and'), wrap each condition in parentheses, and use bracket filtering.",
+        feedbackWrong: "Not quite. For combining conditions in pandas: use & (not 'and'), wrap each condition in parentheses. df[(cond1) & (cond2)] is correct."
       },
       {
-        text: "A salary column contains the string 'N/A' in some rows and loads as object dtype. What is the correct approach to use it for numeric analysis?",
+        text: "How do you filter for rows where position is either 'OF' or '1B'?",
+        options: [
+          "df[df['position'] == 'OF' or df['position'] == '1B']",
+          "df[df['position'] in ['OF', '1B']]",
+          "df[df['position'].isin(['OF', '1B'])]",
+          "df.filter(position=['OF', '1B'])"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. .isin() checks membership in a list and returns a boolean Series for filtering.",
+        feedbackWrong: "Not quite. .isin(['OF', '1B']) is the pandas way to check if values belong to a set. 'in' and 'or' don't work element-wise."
+      },
+      {
+        text: "You want rows where avg is NOT missing. Which is correct?",
+        options: [
+          "df[df['avg'] != None]",
+          "df[df['avg'].notnull()]",
+          "df.dropna(column='avg')",
+          "df[df['avg'] != NaN]"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. .notnull() returns True where values are not NaN. Also valid: df[df['avg'].notna()] or ~df['avg'].isna().",
+        feedbackWrong: "Not quite. In pandas, use .notnull() or .notna(). Comparing with != None or != NaN does not work correctly for missing values."
+      },
+      // --- CLEANING ---
+      {
+        text: "A salary column contains the string 'N/A' in some rows and loads as object dtype. What is the correct approach?",
         options: [
           "Use df['salary'].to_numeric().",
-          "Replace the 'N/A' strings with NaN, then cast: df['salary'].replace('N/A', pd.NA).astype(float).",
+          "Replace the 'N/A' strings with NaN, then cast: df['salary'].replace('N/A', np.nan).astype(float).",
           "Drop the column because it cannot be converted.",
           "Use df['salary'].astype(int) - pandas handles strings automatically."
         ],
         correctIndex: 1,
-        feedbackCorrect: "Correct. You need to handle the string 'N/A' before casting. Replacing it with pd.NA then calling .astype(float) is the right sequence.",
-        feedbackWrong: "Not quite. .to_numeric() is a function (pd.to_numeric()), not a method. .astype(int) will raise an error on string values. The correct approach is to replace the string first, then cast."
+        difficulty: "medium",
+        feedbackCorrect: "Correct. You need to handle the string 'N/A' before casting. Replace first, then convert.",
+        feedbackWrong: "Not quite. .to_numeric() is a function (pd.to_numeric()), not a method. .astype(int) raises an error on string values."
       },
       {
         text: "What does df.isna().sum() compute?",
@@ -479,47 +659,126 @@
           "The sum of all numeric columns after removing NaNs."
         ],
         correctIndex: 2,
-        feedbackCorrect: "Correct. df.isna() returns a boolean DataFrame. Calling .sum() sums the True values per column, giving the count of missing values in each column.",
-        feedbackWrong: "Not quite. df.isna() creates a boolean mask. .sum() on a boolean column counts the True values, giving missing value counts per column. For any() use df.isna().any()."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. df.isna() returns a boolean DataFrame. .sum() counts True values per column = missing value counts.",
+        feedbackWrong: "Not quite. df.isna() creates a boolean mask. .sum() on booleans counts True values, giving missing counts per column."
       },
       {
         text: "You call df.dropna(). What happens to the original DataFrame?",
         options: [
           "Nothing - dropna() returns a new DataFrame. The original is unchanged unless you reassign.",
-          "The original is modified in place and the missing rows are permanently removed.",
+          "The original is modified in place.",
           "Missing values are filled with 0 in the original.",
           "An error is raised unless you pass inplace=True."
         ],
         correctIndex: 0,
-        feedbackCorrect: "Correct. Pandas methods generally return new objects by default. To persist the change, reassign: df = df.dropna().",
-        feedbackWrong: "Not quite. dropna() returns a new DataFrame without modifying the original. To make the change permanent, reassign: df = df.dropna(). Pass inplace=True to modify in place."
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Pandas methods generally return new objects. To persist: df = df.dropna() or pass inplace=True.",
+        feedbackWrong: "Not quite. dropna() returns a new DataFrame. To make changes permanent: df = df.dropna()."
       },
       {
-        text: "The Eagles roster has one player (Kim) on MLB rehab earning $760,000 while others earn $14,400-$19,200. You need to report a typical salary. Which measure is more appropriate and why?",
+        text: "What does df['avg'].fillna(df['avg'].mean()) do?",
         options: [
-          "Mean, because it uses all data points and is always more accurate.",
+          "Removes all rows where avg is NaN",
+          "Replaces NaN values in avg with the column's mean",
+          "Replaces all values in avg with the mean",
+          "Error - fillna requires a fixed constant, not a function call"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. fillna() replaces NaN values. Passing the column mean is a common imputation strategy.",
+        feedbackWrong: "Not quite. fillna(value) replaces NaN cells with value. Passing the column mean replaces missing values with the average."
+      },
+      {
+        text: "Which method removes duplicate rows from a DataFrame?",
+        options: ["df.unique()", "df.remove_duplicates()", "df.drop_duplicates()", "df.dedupe()"],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. df.drop_duplicates() returns a DataFrame with duplicate rows removed.",
+        feedbackWrong: "Not quite. df.drop_duplicates() is the correct method. .unique() is a Series method for unique values, not a DataFrame method."
+      },
+      {
+        text: "What does df.rename(columns={'old': 'new'}) do?",
+        options: [
+          "Replaces all values named 'old' with 'new'",
+          "Returns a new DataFrame with the column 'old' renamed to 'new'",
+          "Deletes the column named 'old'",
+          "Error - rename requires inplace=True"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. rename() returns a new DataFrame with renamed columns. Pass inplace=True to modify in place.",
+        feedbackWrong: "Not quite. rename(columns={old: new}) renames columns and returns a new DataFrame. The original is unchanged unless you reassign or pass inplace=True."
+      },
+      {
+        text: "You run df['avg'] = pd.to_numeric(df['avg'], errors='coerce'). What does errors='coerce' do?",
+        options: [
+          "Raises an error if any value cannot be converted",
+          "Skips any values that cannot be converted",
+          "Converts values that cannot be parsed to NaN instead of raising an error",
+          "Forces all values to zero if conversion fails"
+        ],
+        correctIndex: 2,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. errors='coerce' silently converts unparseable values to NaN instead of raising an exception.",
+        feedbackWrong: "Not quite. errors='coerce' converts bad values to NaN. errors='raise' (default) raises an exception. errors='ignore' leaves bad values as-is."
+      },
+      // --- AGGREGATION ---
+      {
+        text: "The Eagles roster has one player (Kim) on MLB rehab earning $760,000 while others earn $14,400-$19,200. Which measure better represents typical salary?",
+        options: [
+          "Mean, because it uses all data points.",
           "Mean, because standard deviation normalizes for outliers.",
           "Median and mean are identical when the data has one outlier.",
-          "Median, because it is resistant to outliers and better represents what a typical player earns."
+          "Median, because it is resistant to outliers."
         ],
         correctIndex: 3,
-        feedbackCorrect: "Correct. The median is not affected by extreme values. With Kim earning roughly 44x a typical player, the mean is pulled far above what most players earn. Median accurately describes the typical player.",
-        feedbackWrong: "Not quite. The median is the right answer. It is not affected by outliers. Kim's $760,000 pulls the mean to about $202,000, far above what any active player earns. The median stays near $18,000."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. The median is not affected by extreme values. Kim's $760,000 pulls the mean far above what most players earn.",
+        feedbackWrong: "Not quite. The median is resistant to outliers. Kim's salary makes the mean misleading. Median stays near $18,000."
       },
       {
         text: "What does roster.groupby('position')['avg'].mean() produce?",
         options: [
-          "The mean batting average of every player in the roster.",
-          "A Series with one mean batting average per unique position value.",
+          "The mean batting average of every player.",
+          "A Series with one mean batting average per unique position.",
           "A DataFrame grouped by position with all columns averaged.",
           "An error - you must call .agg('mean') instead of .mean() after groupby."
         ],
         correctIndex: 1,
-        feedbackCorrect: "Correct. groupby() splits the DataFrame into groups. Selecting a column and calling .mean() gives one mean per group - a Series indexed by position.",
-        feedbackWrong: "Not quite. groupby('position') splits the data into groups. ['avg'] selects one column. .mean() computes one mean per group. The result is a Series indexed by the position values."
+        difficulty: "medium",
+        feedbackCorrect: "Correct. groupby() splits the data into groups. ['avg'] selects one column. .mean() gives one mean per group.",
+        feedbackWrong: "Not quite. groupby('position') groups. ['avg'] selects the column. .mean() computes one mean per group."
       },
       {
-        text: "Which of the following is the safest way to assign a value to a specific cell in a DataFrame?",
+        text: "What does df.groupby('team').agg({'avg': 'mean', 'hr': 'sum'}) do?",
+        options: [
+          "Groups by team and computes avg mean and hr sum for each team",
+          "Computes the mean and sum of all columns",
+          "Error - agg cannot take a dictionary",
+          "Drops the team column and aggregates the rest"
+        ],
+        correctIndex: 0,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. .agg() with a dict applies different aggregations to different columns. avg gets mean, hr gets sum, grouped by team.",
+        feedbackWrong: "Not quite. .agg({'col': 'function'}) applies named aggregations. This gives avg mean and hr sum per team."
+      },
+      {
+        text: "What does df['salary'].value_counts() return?",
+        options: [
+          "The number of unique salary values",
+          "A sorted count of each unique value in the salary column",
+          "The total sum of all salaries",
+          "Error - value_counts only works on string columns"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. value_counts() returns a Series with each unique value and how many times it appears, sorted descending.",
+        feedbackWrong: "Not quite. value_counts() returns a frequency count of each unique value, sorted from most to least frequent."
+      },
+      // --- ASSIGNMENT & SAFETY ---
+      {
+        text: "Which of the following is the safest way to assign a value to a specific cell?",
         options: [
           "df['salary'][3] = 20000",
           "df.salary[3] = 20000",
@@ -527,12 +786,272 @@
           "df.assign(salary=20000)"
         ],
         correctIndex: 2,
-        feedbackCorrect: "Correct. df.loc[row_label, column_name] = value is the safe, explicit, pandas-recommended way to set a value.",
-        feedbackWrong: "Not quite. df.loc[3, 'salary'] = 20000 is the correct approach. Chained indexing (df['col'][row] or df.col[row]) can trigger SettingWithCopyWarning and may silently fail. df.assign() sets a whole column, not a single cell."
+        difficulty: "medium",
+        feedbackCorrect: "Correct. df.loc[row_label, column_name] = value is the safe, pandas-recommended way to set a value.",
+        feedbackWrong: "Not quite. df.loc[3, 'salary'] = 20000 is correct. Chained indexing can trigger SettingWithCopyWarning and may silently fail."
+      },
+      {
+        text: "You filter df: high_earners = df[df['salary'] > 100000]. Then high_earners['bonus'] = 500. What warning does pandas raise?",
+        options: [
+          "TypeError: cannot assign to a filtered DataFrame",
+          "SettingWithCopyWarning: a value is trying to be set on a copy of a slice",
+          "KeyError: 'bonus' not found",
+          "No warning - this is the recommended approach"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. Boolean filtering may return a copy or a view. Assigning to it triggers SettingWithCopyWarning. Use .copy() or .loc[] to be safe.",
+        feedbackWrong: "Not quite. Filtering may return a copy. Assigning to a copy doesn't modify the original and triggers SettingWithCopyWarning."
+      },
+      {
+        text: "What does df.copy() do?",
+        options: [
+          "Saves a copy to disk",
+          "Creates a deep copy so changes to the copy do not affect the original",
+          "Creates a reference (same as df2 = df)",
+          "Copies only the column names, not the data"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. .copy() creates an independent DataFrame. Changes to the copy won't affect the original.",
+        feedbackWrong: "Not quite. df.copy() creates a completely independent copy. df2 = df creates a reference - both point to the same data."
+      },
+      // --- MERGING & JOINING ---
+      {
+        text: "What does pd.merge(df1, df2, on='player_id') do?",
+        options: [
+          "Stacks df1 and df2 vertically",
+          "Joins df1 and df2 on matching player_id values (inner join by default)",
+          "Concatenates column names from both DataFrames",
+          "Error - merge requires left_on and right_on parameters"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. pd.merge performs a join. By default it's an inner join: only rows with matching keys in both DataFrames are kept.",
+        feedbackWrong: "Not quite. pd.merge joins DataFrames on a common key (like SQL JOIN). Default is inner join: only matching rows."
+      },
+      {
+        text: "What does pd.concat([df1, df2]) do?",
+        options: [
+          "Joins df1 and df2 on a common key column",
+          "Stacks df1 and df2 vertically (adds more rows), aligning by column name",
+          "Merges df1 and df2 side by side (adds columns)",
+          "Averages matching columns from df1 and df2"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. pd.concat stacks DataFrames vertically by default (axis=0). Columns are aligned by name.",
+        feedbackWrong: "Not quite. pd.concat stacks DataFrames vertically by default. Use axis=1 to concatenate horizontally."
+      },
+      // --- SORTING & INDEXING ---
+      {
+        text: "What does df.sort_values('avg', ascending=False) do?",
+        options: [
+          "Sorts the index column in descending order",
+          "Returns a new DataFrame sorted by avg from highest to lowest",
+          "Modifies df in place, sorting avg descending",
+          "Error - ascending must be True"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. sort_values returns a new DataFrame sorted by the specified column. ascending=False means highest first.",
+        feedbackWrong: "Not quite. sort_values('avg', ascending=False) returns a new sorted DataFrame. It does not modify the original."
+      },
+      {
+        text: "What does df.set_index('player_id') do?",
+        options: [
+          "Adds a new column called player_id",
+          "Sets the player_id column as the row index, replacing the default integer index",
+          "Sorts the DataFrame by player_id",
+          "Removes the player_id column"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. set_index() promotes a column to become the row index for label-based access.",
+        feedbackWrong: "Not quite. set_index('player_id') makes player_id the row index so you can use df.loc['player_id_value'] for lookup."
+      },
+      {
+        text: "What does df.reset_index() do?",
+        options: [
+          "Resets all values in the DataFrame to zero",
+          "Converts the current index back to a regular column and replaces it with a default 0-based integer index",
+          "Removes all index labels",
+          "Resets the DataFrame to its original state"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. reset_index() moves the current index into a column and restores the default integer index.",
+        feedbackWrong: "Not quite. reset_index() converts the row index back into a regular column and re-numbers rows from 0."
+      },
+      // --- APPLY & TRANSFORMATIONS ---
+      {
+        text: "What does df['avg'].apply(lambda x: round(x, 3)) do?",
+        options: [
+          "Rounds every value in the avg column to 3 decimal places and returns a new Series",
+          "Applies the function only to the first 3 rows",
+          "Error - apply cannot take a lambda",
+          "Rounds the column mean to 3 decimal places"
+        ],
+        correctIndex: 0,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. apply(function) applies the function element-wise to a Series and returns a new Series.",
+        feedbackWrong: "Not quite. apply(lambda) applies the function to every element. The result is a new Series."
+      },
+      {
+        text: "What does df['level'] = pd.cut(df['avg'], bins=[0, .250, .300, 1.0], labels=['low', 'mid', 'high']) do?",
+        options: [
+          "Filters rows where avg is between 0 and 1.0",
+          "Bins the avg values into 3 categories based on the specified ranges",
+          "Converts avg to an integer range 0-3",
+          "Error - pd.cut requires equal-width bins"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. pd.cut bins continuous values into labeled categories. A common way to convert a numeric column to an ordered categorical.",
+        feedbackWrong: "Not quite. pd.cut(data, bins, labels) creates categorical bins. Each avg value gets assigned a label based on which bin it falls into."
+      },
+      // --- PIVOTING ---
+      {
+        text: "What does df.pivot_table(values='avg', index='position', aggfunc='mean') do?",
+        options: [
+          "Returns the avg for each row separately",
+          "Creates a table with one row per position showing the mean avg for that position",
+          "Pivots the rows into columns",
+          "Error - pivot_table requires both index and columns parameters"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. pivot_table aggregates data. index='position' groups rows, values='avg' selects the data, aggfunc='mean' computes the statistic.",
+        feedbackWrong: "Not quite. pivot_table with index='position' and aggfunc='mean' gives one row per position with the average avg for each."
+      },
+      {
+        text: "What does df.melt(id_vars=['name'], value_vars=['avg', 'hr']) do?",
+        options: [
+          "Combines avg and hr into one column, creating separate rows for each stat per player",
+          "Removes the avg and hr columns",
+          "Calculates a weighted average of avg and hr",
+          "Error - melt requires numeric id_vars"
+        ],
+        correctIndex: 0,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. melt() converts from wide to long format. Each player gets multiple rows, one per statistic.",
+        feedbackWrong: "Not quite. melt() reshapes from wide format (one row per player) to long format (one row per player-stat combination)."
+      },
+      {
+        text: "What does df['avg'].str.contains('3') do if avg is a string column?",
+        options: [
+          "Counts how many times '3' appears in the avg column",
+          "Returns a boolean Series: True where the string '3' appears in avg",
+          "Filters rows where avg equals '3'",
+          "Error - contains is not a pandas method"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. The .str accessor exposes string methods element-wise. .str.contains('3') returns a boolean Series.",
+        feedbackWrong: "Not quite. .str.contains() returns a boolean Series, which you can then use for filtering: df[df['col'].str.contains('3')]."
+      }
+      ,
+      // --- ADDITIONAL QUESTIONS ---
+      {
+        text: "What does df.info() show?",
+        options: [
+          "The first 5 rows of data",
+          "A summary of the DataFrame including column names, non-null counts, dtypes, and memory usage",
+          "The correlation between all columns",
+          "The number of unique values in each column"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. df.info() gives a concise overview: column names, how many non-null values, dtype, and total memory.",
+        feedbackWrong: "Not quite. df.info() shows columns, non-null counts, dtypes, and memory usage. df.head() shows first rows."
+      },
+      {
+        text: "What does df['position'].unique() return?",
+        options: [
+          "The number of unique positions",
+          "An array of all distinct values in the position column",
+          "The most common position",
+          "A DataFrame with one row per unique position"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. .unique() returns an array of distinct values in the Series.",
+        feedbackWrong: "Not quite. .unique() returns all distinct values as an array. .nunique() returns the count of distinct values."
+      },
+      {
+        text: "What does df['salary'].median() return?",
+        options: [
+          "The average salary",
+          "The middle value when salaries are sorted",
+          "The most frequently occurring salary",
+          "The salary range (max - min)"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. The median is the middle value when sorted. For an even number of values, it's the average of the two middle ones.",
+        feedbackWrong: "Not quite. .median() is the middle value when sorted. .mean() is the average. .mode() is the most frequent."
+      },
+      {
+        text: "What does df.tail(3) return?",
+        options: [
+          "The last column of the DataFrame",
+          "The last 3 rows of the DataFrame",
+          "The last 3 columns",
+          "The 3 rows with the smallest index values"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. .tail(n) returns the last n rows. Default is 5.",
+        feedbackWrong: "Not quite. .tail(3) returns the last 3 rows. .head(3) returns the first 3."
+      },
+      {
+        text: "What does df['avg'].std() compute?",
+        options: [
+          "The average of avg",
+          "The standard deviation - a measure of how spread out avg values are around the mean",
+          "The string description of the column",
+          "The count of non-null values"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. .std() computes the standard deviation, measuring how spread out values are around the mean.",
+        feedbackWrong: "Not quite. .std() = standard deviation (spread). .mean() = average. .describe() gives both plus more."
+      },
+      {
+        text: "What does df.assign(salary_k=df['salary'] / 1000) do?",
+        options: [
+          "Modifies the salary column in place",
+          "Returns a new DataFrame with an added column 'salary_k' containing salary divided by 1000",
+          "Error - assign cannot do arithmetic",
+          "Renames the salary column to salary_k"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. .assign() returns a new DataFrame with the added or modified column. The original is unchanged.",
+        feedbackWrong: "Not quite. .assign() returns a new DataFrame with the new column added. Original df is unchanged."
+      },
+      {
+        text: "What is the purpose of df.sample(5)?",
+        options: [
+          "Returns the 5 highest-valued rows",
+          "Returns 5 randomly selected rows from the DataFrame",
+          "Creates 5 copies of the DataFrame",
+          "Selects every 5th row"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. .sample(n) returns n randomly selected rows. Useful for quick inspection of large datasets.",
+        feedbackWrong: "Not quite. .sample(5) randomly selects 5 rows. Use random_state= for reproducible samples."
       }
     ];
 
-    let currentQ = 0;
+    // Shuffle and pick 10 questions each attempt
+    const questions = allQuestions
+      .slice()
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 10);
+
+        let currentQ = 0;
     let results = [];
 
     function beginQuiz() {

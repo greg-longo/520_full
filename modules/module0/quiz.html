@@ -414,109 +414,15 @@
   </main>
 
   <script>
-    const questions = [
+    const allQuestions = [
+      // --- COURSE STRUCTURE ---
       {
         text: "Which module in DTSC 520 covers the pandas library for tabular data manipulation?",
         options: ["Module 2", "Module 3", "Module 4", "Module 5"],
         correctIndex: 2,
-        feedbackCorrect: "Correct. Module 4 is dedicated to pandas, the primary library for loading, cleaning, filtering, and aggregating tabular data in Python.",
-        feedbackWrong: "Not quite. Module 4 covers pandas. Module 2 is Python fundamentals, Module 3 is NumPy, and Module 5 is visualization."
-      },
-      {
-        text: "What is the recommended way to verify your Python data science environment is correctly installed?",
-        options: [
-          "Open a Jupyter notebook and run import numpy as np; import pandas as pd; print(np.__version__) - if it prints a version number without errors, the install is working.",
-          "Check if Python.exe is in your Program Files folder.",
-          "Run pip check from the terminal.",
-          "Restart your computer and open the Anaconda website."
-        ],
-        correctIndex: 0,
-        feedbackCorrect: "Correct. The simplest verification is to import the libraries in a Jupyter cell and check that they load without errors. Printing the version number confirms which version is installed.",
-        feedbackWrong: "Not quite. Finding Python.exe or running pip check does not confirm the data science libraries are installed. The right check is to import numpy and pandas and print a version number."
-      },
-      {
-        text: "In Python, when you get a traceback (error message), where should you look first to understand the error?",
-        options: [
-          "The very first line of the traceback.",
-          "The middle of the traceback where the longest lines are.",
-          "The line numbers shown in the traceback.",
-          "The last line of the traceback, which contains the error type and message."
-        ],
-        correctIndex: 3,
-        feedbackCorrect: "Correct. Python tracebacks should be read from the bottom up. The last line is always the error type and message. Once you understand the error, you can trace upward to find where it was triggered.",
-        feedbackWrong: "Not quite. Python tracebacks are read bottom-up. The last line gives you the error type and message (e.g. KeyError: 'avg'). That is where you start."
-      },
-      {
-        text: "What does Anaconda provide that a plain Python install does not?",
-        options: [
-          "Faster Python execution speed.",
-          "A bundled distribution that includes Python, Jupyter, and major data science libraries (NumPy, pandas, Matplotlib) in a single installer.",
-          "Access to the internet from within Python scripts.",
-          "A graphical interface for writing Python code."
-        ],
-        correctIndex: 1,
-        feedbackCorrect: "Correct. Anaconda is a Python distribution that packages Python plus the most commonly used data science libraries. Instead of installing each library separately with pip, Anaconda installs them all together in a compatible, tested configuration.",
-        feedbackWrong: "Not quite. Anaconda's primary value is bundling Python with all major data science libraries in one installer. It does not change execution speed, network access, or add a code editor."
-      },
-      {
-        text: "Amazon's recommendation engine (Customers who bought X also bought Y) is an application of data science that primarily relies on which foundational skill covered in this course?",
-        options: [
-          "Git version control",
-          "Matplotlib visualization",
-          "NumPy array operations - collaborative filtering is built on matrix math",
-          "Python string formatting"
-        ],
-        correctIndex: 2,
-        feedbackCorrect: "Correct. Collaborative filtering, the technique behind 'customers also bought', works by representing user-item interactions as a matrix and finding similarity between rows or columns. This is fundamentally NumPy array math.",
-        feedbackWrong: "Not quite. The recommendation engine relies on matrix operations. Collaborative filtering is built on NumPy-style array math: representing purchases as a matrix and computing similarity between rows or columns."
-      },
-      {
-        text: "What is Jupyter Lab primarily used for in a data science workflow?",
-        options: [
-          "An interactive notebook environment where you can write and run Python code in cells, see output immediately, and mix code with narrative text and visualizations.",
-          "A version control system for tracking changes to notebooks.",
-          "A database for storing large datasets.",
-          "A deployment platform for serving machine learning models."
-        ],
-        correctIndex: 0,
-        feedbackCorrect: "Correct. Jupyter Lab is an interactive development environment for data science. You write code in cells, execute them one at a time, see output including charts inline, and write markdown text between cells.",
-        feedbackWrong: "Not quite. Jupyter Lab is a notebook environment for writing and running Python interactively. It is not version control, a database, or a deployment platform."
-      },
-      {
-        text: "A student cannot install software on their computer. What alternative does this course support?",
-        options: [
-          "The course cannot be completed without a local Python installation.",
-          "Students must use R instead of Python.",
-          "Students can only read the content but not run code.",
-          "Google Colab - a browser-based Jupyter notebook environment with all major libraries pre-installed, requiring only a Google account."
-        ],
-        correctIndex: 3,
-        feedbackCorrect: "Correct. Google Colab runs Jupyter notebooks in your browser and has NumPy, pandas, Matplotlib, and Seaborn pre-installed. All you need is a Google account. Your notebooks save to Google Drive.",
-        feedbackWrong: "Not quite. Google Colab is the alternative. It runs fully in your browser with no installation required and has all major libraries pre-installed."
-      },
-      {
-        text: "Which module in this course directly addresses how to work with branching, merging, and pull requests?",
-        options: [
-          "Module 4",
-          "Module 6",
-          "Module 2",
-          "Module 1"
-        ],
-        correctIndex: 1,
-        feedbackCorrect: "Correct. Module 6 is Git and GitHub, which covers version control fundamentals including branching, merging, conflict resolution, and pull requests.",
-        feedbackWrong: "Not quite. Module 6 is Git and GitHub. It covers branching, merging, conflict resolution, and pull requests. The Branch Crisis simulation in Module 6 puts you through a realistic Git scenario."
-      },
-      {
-        text: "The 'Moneyball' revolution in baseball analytics (Oakland A's, 2002) demonstrated which broader principle that data scientists apply today?",
-        options: [
-          "Sports data is always more accurate than business data.",
-          "Machine learning can replace all human scouts.",
-          "Data analysis can identify market inefficiencies and inform decisions that conventional wisdom misses.",
-          "Batting average is the most important statistic in baseball."
-        ],
-        correctIndex: 2,
-        feedbackCorrect: "Correct. The Oakland A's front office used on-base percentage and other undervalued stats to find players that conventional wisdom overlooked. This is the core data science principle: rigorous analysis of data reveals truths that intuition and tradition miss.",
-        feedbackWrong: "Not quite. The Moneyball insight was that data analysis can find value that conventional wisdom misses. The A's found undervalued players by analyzing stats that other teams ignored."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Module 4 is dedicated to pandas - loading, cleaning, filtering, and aggregating tabular data.",
+        feedbackWrong: "Not quite. Module 4 covers pandas. Module 2 is Python fundamentals, Module 3 is NumPy, Module 5 is visualization."
       },
       {
         text: "This course covers 7 modules numbered 0-6. What is the correct sequence for the core Python/data stack modules?",
@@ -527,12 +433,639 @@
           "Python (Module 1) then pandas (Module 2) then NumPy (Module 3) then Git (Module 4)"
         ],
         correctIndex: 0,
-        feedbackCorrect: "Correct. The sequence is intentional. Python first (you need the language before the libraries), then NumPy (the numerical engine), then pandas (which builds on NumPy), then visualization (which uses all three). Git is Module 6.",
-        feedbackWrong: "Not quite. The correct sequence is Python (Module 2) then NumPy (Module 3) then pandas (Module 4) then Matplotlib/Seaborn (Module 5). Python must come first as it is the foundation for the libraries."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Python first (foundation), then NumPy (numerical engine), then pandas (builds on NumPy), then visualization. Git is Module 6.",
+        feedbackWrong: "Not quite. The correct sequence is Python (M2), NumPy (M3), pandas (M4), visualization (M5). Python must come first."
+      },
+      {
+        text: "Which module in this course directly addresses branching, merging, and pull requests?",
+        options: ["Module 4", "Module 6", "Module 2", "Module 1"],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Module 6 is Git and GitHub, covering version control including branching, merging, and pull requests.",
+        feedbackWrong: "Not quite. Module 6 is Git and GitHub. The Branch Crisis simulation is in Module 6."
+      },
+      {
+        text: "What does Module 0 of DTSC 520 primarily cover?",
+        options: [
+          "Python syntax and variables",
+          "Course introduction - syllabus, resources, and real-world data science examples",
+          "Git and GitHub workflows",
+          "NumPy array operations"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Module 0 is the course introduction: syllabus, resources, and 'DS in action' examples to motivate the course.",
+        feedbackWrong: "Not quite. Module 0 is the intro module. Python starts in Module 2, NumPy in Module 3, Git in Module 6."
+      },
+      {
+        text: "Which source textbook is associated with the Python modules of DTSC 520?",
+        options: [
+          "Python for Data Analysis",
+          "Learn Python, Break Python",
+          "Automate the Boring Stuff with Python",
+          "Think Python"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. The Python modules draw from 'Learn Python, Break Python'.",
+        feedbackWrong: "Not quite. The Python content in this course is drawn from 'Learn Python, Break Python'."
+      },
+      // --- TOOLS & ENVIRONMENT ---
+      {
+        text: "What is the recommended way to verify your Python data science environment is correctly installed?",
+        options: [
+          "Open a Jupyter notebook and run: import numpy as np; import pandas as pd; print(np.__version__)",
+          "Check if Python.exe is in your Program Files folder.",
+          "Run pip check from the terminal.",
+          "Restart your computer and open the Anaconda website."
+        ],
+        correctIndex: 0,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Importing the libraries and printing a version number is the simplest verification.",
+        feedbackWrong: "Not quite. The right check is to import numpy and pandas in a notebook cell and print a version number."
+      },
+      {
+        text: "What does Anaconda provide that a plain Python install does not?",
+        options: [
+          "Faster Python execution speed.",
+          "A bundled distribution that includes Python, Jupyter, and major data science libraries in a single installer.",
+          "Access to the internet from within Python scripts.",
+          "A graphical interface for writing Python code."
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Anaconda bundles Python plus the most commonly used data science libraries together in a tested, compatible configuration.",
+        feedbackWrong: "Not quite. Anaconda packages Python with all major data science libraries. It doesn't change execution speed or network access."
+      },
+      {
+        text: "What is Jupyter Lab primarily used for in a data science workflow?",
+        options: [
+          "An interactive notebook environment where you write and run Python code in cells, see output immediately, and mix code with text and visualizations.",
+          "A version control system for tracking changes to notebooks.",
+          "A database for storing large datasets.",
+          "A deployment platform for serving machine learning models."
+        ],
+        correctIndex: 0,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Jupyter Lab is a notebook environment for interactive Python development, with inline output including charts.",
+        feedbackWrong: "Not quite. Jupyter Lab is an interactive notebook environment. It is not version control, a database, or a deployment platform."
+      },
+      {
+        text: "A student cannot install software on their computer. What alternative does this course support?",
+        options: [
+          "The course cannot be completed without a local Python installation.",
+          "Students must use R instead of Python.",
+          "Students can only read the content but not run code.",
+          "Google Colab - a browser-based Jupyter notebook environment with all major libraries pre-installed, requiring only a Google account."
+        ],
+        correctIndex: 3,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Google Colab runs Jupyter notebooks in your browser with no installation required. Notebooks save to Google Drive.",
+        feedbackWrong: "Not quite. Google Colab is the alternative. It runs fully in your browser with pre-installed libraries."
+      },
+      {
+        text: "In Python, when you get a traceback (error message), where should you look first to understand the error?",
+        options: [
+          "The very first line of the traceback.",
+          "The middle of the traceback where the longest lines are.",
+          "The line numbers shown in the traceback.",
+          "The last line of the traceback, which contains the error type and message."
+        ],
+        correctIndex: 3,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Python tracebacks are read bottom-up. The last line gives the error type (e.g., KeyError: 'avg').",
+        feedbackWrong: "Not quite. Read tracebacks from the bottom up. The last line gives you the error type and message."
+      },
+      // --- DATA SCIENCE IN PRACTICE ---
+      {
+        text: "Amazon's recommendation engine ('Customers who bought X also bought Y') primarily relies on which foundational skill covered in this course?",
+        options: [
+          "Git version control",
+          "Matplotlib visualization",
+          "NumPy array operations - collaborative filtering is built on matrix math",
+          "Python string formatting"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Collaborative filtering represents user-item interactions as a matrix and finds similarity between rows or columns - fundamentally NumPy array math.",
+        feedbackWrong: "Not quite. The recommendation engine relies on matrix operations. Collaborative filtering is built on NumPy-style array math."
+      },
+      {
+        text: "The 'Moneyball' revolution in baseball analytics demonstrated which broader principle?",
+        options: [
+          "Sports data is always more accurate than business data.",
+          "Machine learning can replace all human scouts.",
+          "Data analysis can identify market inefficiencies that conventional wisdom misses.",
+          "Batting average is the most important statistic in baseball."
+        ],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. The Oakland A's used undervalued stats to find value conventional wisdom missed. This is a core data science principle.",
+        feedbackWrong: "Not quite. The Moneyball insight: rigorous data analysis reveals truths that intuition and tradition miss."
+      },
+      {
+        text: "What is Google Maps' use of historical traffic data to predict future congestion an example of?",
+        options: [
+          "Descriptive analytics (what happened)",
+          "Diagnostic analytics (why it happened)",
+          "Predictive analytics (what will happen)",
+          "Data engineering"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Using past data to predict future events is predictive analytics - one of the primary applications of data science.",
+        feedbackWrong: "Not quite. Prediction of future events from historical data is predictive analytics."
+      },
+      {
+        text: "What does it mean when a module page shows a yellow/amber dot in your progress dashboard?",
+        options: [
+          "You have not started the module",
+          "The module has an error",
+          "You have partially completed the module (some items done, not all)",
+          "You scored below 70% on the quiz"
+        ],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. The amber/yellow dot indicates partial completion - you've completed some items but not all quizzes and simulations.",
+        feedbackWrong: "Not quite. Gray = not started. Amber/yellow = partial (some done). Green = all items complete."
+      },
+      {
+        text: "Which of the following is the best description of what a Jupyter notebook cell does?",
+        options: [
+          "Stores data in a table format like a spreadsheet",
+          "Executes a block of Python code and displays the output immediately below it",
+          "Runs code on a remote server and emails you the results",
+          "Converts Python code to a PDF automatically"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Cells are executable units. When you run a code cell, Python executes it and shows output inline.",
+        feedbackWrong: "Not quite. A Jupyter code cell runs Python code and shows output directly below the cell - inline in the notebook."
+      },
+      // --- SETUP & WORKFLOW ---
+      {
+        text: "What is the correct order of steps to use a Python library like NumPy in a Jupyter notebook?",
+        options: [
+          "Write np.array() directly - NumPy is always available",
+          "Install with pip, then in the notebook cell: import numpy as np",
+          "Download NumPy from the website, then restart Python",
+          "NumPy requires a special Jupyter server to activate"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. First install (once), then import in your script or notebook. After import you can use the alias (np) to call functions.",
+        feedbackWrong: "Not quite. Install once (pip or conda), then import in each session. import numpy as np lets you use np.array(), np.mean(), etc."
+      },
+      {
+        text: "Why do data scientists use import numpy as np instead of import numpy?",
+        options: [
+          "np loads a smaller version of NumPy",
+          "import numpy would cause an error",
+          "The as np alias saves typing. Instead of numpy.array() you write np.array()",
+          "np gives access to additional functions not available via numpy"
+        ],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. as np creates a shorter alias. The convention is universal: everyone in the community uses np for NumPy.",
+        feedbackWrong: "Not quite. as np is purely a naming convention to save typing. The alias doesn't change what's loaded."
+      },
+      {
+        text: "Which of the following best describes the role of pip in Python?",
+        options: [
+          "A built-in Python module for data analysis",
+          "A package manager for installing third-party Python libraries",
+          "An IDE for writing Python code",
+          "A debugger for finding errors in Python scripts"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. pip is Python's package manager. pip install pandas downloads and installs the pandas library.",
+        feedbackWrong: "Not quite. pip installs packages. Anaconda's equivalent is conda. Both download and install Python libraries."
+      },
+      {
+        text: "What does it mean for a Python library to have 'dependencies'?",
+        options: [
+          "The library requires a paid subscription",
+          "The library is optional and not needed for most tasks",
+          "The library requires other libraries to be installed first in order to work",
+          "The library can only be used with certain Python versions"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Dependencies are other libraries that must be present. pandas depends on NumPy, for example. pip and conda handle dependencies automatically.",
+        feedbackWrong: "Not quite. Dependencies are other packages a library needs. pip install pandas automatically installs NumPy too, because pandas depends on it."
+      },
+      {
+        text: "What is the difference between a Jupyter notebook (.ipynb) and a Python script (.py)?",
+        options: [
+          "There is no difference - they run identically",
+          "A .py file can only contain print statements; a .ipynb can contain functions",
+          "A notebook runs code interactively in cells with inline output; a .py script runs top-to-bottom as one execution",
+          "Notebooks are slower because they use more memory"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Notebooks are interactive (run cells in any order, see output inline). Scripts run sequentially top-to-bottom.",
+        feedbackWrong: "Not quite. The key difference: notebooks run cells interactively with inline output. Scripts run top-to-bottom sequentially."
+      },
+      // --- ACADEMIC INTEGRITY & RESOURCES ---
+      {
+        text: "When encountering an error you cannot solve, which approach is most appropriate for a data science student?",
+        options: [
+          "Give up and remove the code that causes the error",
+          "Copy any code found online without reading it",
+          "Read the error message carefully, search for the specific error type, read documentation, then ask for help with the specific error context",
+          "Restart the kernel and hope it goes away"
+        ],
+        correctIndex: 2,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. The debugging process: read the error, search for the error type, consult docs, then ask with context. This builds problem-solving skills.",
+        feedbackWrong: "Not quite. Good debugging: read the error message carefully, look it up specifically, try a fix, then ask for help with the actual error and what you tried."
+      },
+      {
+        text: "What resource does this course provide for running Python without installing anything?",
+        options: [
+          "A downloadable Python executable that requires no install",
+          "A course-specific terminal on the module pages using Pyodide (Python in the browser)",
+          "A shared server that students log into via SSH",
+          "A PDF with pre-computed outputs"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. The course module pages include interactive Python sandboxes powered by Pyodide, running Python directly in your browser.",
+        feedbackWrong: "Not quite. The course pages embed Pyodide - a WebAssembly port of Python that runs fully in your browser with no installation."
+      },
+      {
+        text: "What does the 'DS in Action' section of Module 0 primarily show students?",
+        options: [
+          "Step-by-step coding tutorials",
+          "Real-world examples of data science being applied in industry and sports contexts",
+          "Practice quizzes on course material",
+          "Assignment submission instructions"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. DS in Action provides concrete examples of data science creating real-world impact - motivating why the skills matter.",
+        feedbackWrong: "Not quite. DS in Action shows real-world applications to motivate the course, not tutorials or assignments."
+      },
+      {
+        text: "Which statement best describes why DTSC 520 uses Python instead of another language like R?",
+        options: [
+          "R is no longer supported and has been deprecated",
+          "Python is the only language that supports data frames",
+          "Python is a general-purpose language with broad industry adoption, a rich ecosystem, and is used across the full data pipeline from analysis to deployment",
+          "Python requires no installation while R requires complex setup"
+        ],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Python's dominance in data science comes from its general-purpose nature, massive ecosystem, and industry adoption beyond pure statistics.",
+        feedbackWrong: "Not quite. Python won because it's a general-purpose language used across the full pipeline. R is still widely used for statistics but Python has broader industry reach."
+      },
+      {
+        text: "A student scores 7 out of 10 on a module quiz. What grade letter does that correspond to in this course's quiz system?",
+        options: ["A", "B", "C", "D"],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. 70% = C in the quiz grading scale (A: 90%+, B: 80%+, C: 70%+, D: 60%+).",
+        feedbackWrong: "Not quite. 7/10 = 70%. The grading scale: A = 90%+, B = 80%+, C = 70%+, D = 60%+. 70% is a C."
+      },
+      {
+        text: "What does 'randomized quiz bank' mean in the context of this course's module quizzes?",
+        options: [
+          "Questions are pulled from the internet randomly",
+          "The quiz uses a large pool of questions and randomly selects a subset for each attempt, so each attempt may show different questions",
+          "The answer order is randomized but the questions are always the same",
+          "Questions are randomly generated by AI with no fixed answers"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Each module has a bank of 50 questions. The quiz randomly selects 10 per attempt, so retaking gives a different set.",
+        feedbackWrong: "Not quite. The quiz bank has 50 questions per module. Each attempt draws 10 at random, giving you different questions across attempts."
+      },
+      {
+        text: "Which of the following correctly describes how course progress is tracked?",
+        options: [
+          "Progress is stored on a central server tied to your email",
+          "Progress is stored in your browser's localStorage - visible only in that browser on that device",
+          "Progress is submitted automatically to the instructor",
+          "There is no progress tracking"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Progress uses browser localStorage. It is browser and device specific - switching browsers or clearing storage loses it.",
+        feedbackWrong: "Not quite. Progress is stored in browser localStorage - local to your browser. Switching browsers or devices means starting fresh."
+      },
+      {
+        text: "What type of data science application does a spam filter represent?",
+        options: [
+          "Descriptive analytics - describes what emails you received",
+          "Classification - automatically categorizes emails as spam or not based on learned patterns",
+          "Data visualization - shows your inbox in chart form",
+          "Data engineering - moves email data between servers"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Spam filters use classification - a machine learning task that assigns incoming emails to categories based on trained patterns.",
+        feedbackWrong: "Not quite. A spam filter is a classifier - it categorizes each email into 'spam' or 'not spam' based on patterns learned from examples."
+      },
+      {
+        text: "Which statement about the relationship between data engineering and data science is most accurate?",
+        options: [
+          "Data engineers and data scientists do the same job",
+          "Data engineers build and maintain the pipelines that collect and prepare data; data scientists analyze that data to extract insights",
+          "Data scientists do not need to understand how data is collected",
+          "Data engineering is a subset of data science that only large companies need"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Data engineers build the infrastructure (pipelines, warehouses). Data scientists use that infrastructure to do analysis and modeling.",
+        feedbackWrong: "Not quite. Data engineers build pipelines; data scientists analyze the data those pipelines deliver. They are complementary roles."
+      },
+      {
+        text: "What does it mean to 'clean' a dataset before analysis?",
+        options: [
+          "Delete any rows that contain numbers",
+          "Remove all duplicate column names from the CSV file header",
+          "Handle missing values, fix data type errors, remove duplicates, and address inconsistent formatting so the data is ready for analysis",
+          "Sort the data alphabetically by the first column"
+        ],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Data cleaning prepares raw, messy data for analysis: handling NaN values, fixing types, removing duplicates, and standardizing formats.",
+        feedbackWrong: "Not quite. Cleaning means making data analysis-ready: handling missing values, correcting types, removing duplicates, standardizing formats."
+      }
+      ,
+      // --- ADDITIONAL QUESTIONS ---
+      {
+        text: "What is the difference between supervised and unsupervised machine learning?",
+        options: [
+          "Supervised learning requires a computer; unsupervised uses calculators",
+          "Supervised learning trains on labeled data (known outcomes); unsupervised learning finds patterns in unlabeled data",
+          "Unsupervised is always more accurate than supervised",
+          "Supervised is only used for image classification"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Supervised = labeled training data with known answers. Unsupervised = finding patterns with no labels.",
+        feedbackWrong: "Not quite. Supervised learning uses labeled examples to learn a mapping. Unsupervised finds structure without labels - like clustering."
+      },
+      {
+        text: "Which of the following is an example of structured data?",
+        options: [
+          "A collection of tweet text",
+          "A CSV file of player statistics with rows and columns",
+          "A folder of game highlight videos",
+          "A PDF of a scouting report"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Structured data is organized in rows and columns with defined types - like a spreadsheet or database table.",
+        feedbackWrong: "Not quite. Structured data has rows and columns with defined types. Tweets, videos, and PDFs are unstructured."
+      },
+      {
+        text: "What does ETL stand for in data engineering?",
+        options: [
+          "Edit, Transfer, Load",
+          "Extract, Transform, Load",
+          "Export, Test, Launch",
+          "Encode, Train, Label"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. ETL = Extract (get data from source), Transform (clean/reshape), Load (store in destination). The core data pipeline pattern.",
+        feedbackWrong: "Not quite. ETL = Extract, Transform, Load. It describes the standard process for moving data from raw sources into an analytical store."
+      },
+      {
+        text: "What is a data warehouse?",
+        options: [
+          "A physical room where servers are stored",
+          "A large, structured database optimized for analytical queries across multiple data sources",
+          "A Python library for storing DataFrames",
+          "A version-controlled repository for datasets"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. A data warehouse aggregates data from many sources into a structured, analysis-optimized database.",
+        feedbackWrong: "Not quite. A data warehouse is an analytical database that combines data from multiple operational systems for reporting and analysis."
+      },
+      {
+        text: "What does overfitting mean in machine learning?",
+        options: [
+          "The model has too many columns in its training data",
+          "The model performs well on training data but poorly on new, unseen data because it memorized noise",
+          "The model is too simple to capture patterns in the data",
+          "The model takes too long to train"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Overfitting = memorizing the training set, including noise. The model fails to generalize to new examples.",
+        feedbackWrong: "Not quite. Overfitting = great on training data, poor on new data. The model learned noise rather than signal."
+      },
+      {
+        text: "What is a confusion matrix used for?",
+        options: [
+          "Documenting confusing variable names in a codebase",
+          "Evaluating a classification model by showing counts of true positives, false positives, true negatives, and false negatives",
+          "Visualizing correlation between features",
+          "Tracking the number of missing values per column"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. A confusion matrix shows how many predictions were correct vs. incorrect and what types of errors were made.",
+        feedbackWrong: "Not quite. A confusion matrix evaluates classifiers by showing TP, FP, TN, FN counts."
+      },
+      {
+        text: "What is feature engineering?",
+        options: [
+          "Selecting which Python version to use",
+          "Creating new input variables from raw data to improve model performance",
+          "Debugging feature-level bugs in production",
+          "Writing documentation for model features"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Feature engineering transforms raw data into more useful inputs: computing ratios, binning values, extracting date parts, etc.",
+        feedbackWrong: "Not quite. Feature engineering = creating better input variables. For example, computing strike zone percentage from pitch-level data."
+      },
+      {
+        text: "What is cross-validation?",
+        options: [
+          "Testing code across different Python versions",
+          "Validating data types across columns",
+          "A technique that splits data into multiple train/test folds to get a more robust estimate of model performance",
+          "Running the same model on two different computers"
+        ],
+        correctIndex: 2,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. Cross-validation (e.g., k-fold) trains and tests on different partitions of the data to get a reliable performance estimate.",
+        feedbackWrong: "Not quite. Cross-validation uses multiple train/test splits to evaluate how well a model generalizes."
+      },
+      {
+        text: "What does API stand for, and why do data scientists use them?",
+        options: [
+          "Analytical Processing Interface - used to speed up pandas",
+          "Application Programming Interface - used to request data from or send data to external services programmatically",
+          "Automated Python Interpreter - used to run scripts without a terminal",
+          "Array Processing Index - used to index NumPy arrays"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. APIs let programs communicate. Data scientists use them to fetch live data (e.g., sports stats APIs) or call external ML services.",
+        feedbackWrong: "Not quite. API = Application Programming Interface. Data scientists use APIs to get data from services or deploy models."
+      },
+      {
+        text: "What is the purpose of train/test split in machine learning?",
+        options: [
+          "To speed up model training",
+          "To separate the data used to train the model from the data used to evaluate how it performs on unseen examples",
+          "To remove outliers from the training data",
+          "To split a large CSV file into smaller chunks"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Train/test split evaluates how a model performs on examples it has never seen - simulating real-world use.",
+        feedbackWrong: "Not quite. Training on all data then testing on the same data gives optimistic results. The test set simulates unseen data."
+      },
+      {
+        text: "What is a data lake?",
+        options: [
+          "A geographic feature near data centers",
+          "A large storage repository that holds raw, unprocessed data in its native format until needed",
+          "A structured database like a data warehouse",
+          "A Python module for loading large datasets"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. A data lake stores raw data in native format (JSON, CSV, video, etc.) at scale. Data is processed when it is needed.",
+        feedbackWrong: "Not quite. A data lake = raw data storage at scale. A data warehouse = structured, processed data optimized for analytics."
+      },
+      {
+        text: "What does it mean for a model to 'generalize'?",
+        options: [
+          "To work on multiple types of computers",
+          "To perform well on new, unseen data outside the training set",
+          "To use general-purpose Python instead of specialized libraries",
+          "To make predictions using general knowledge rather than data"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Generalization = performing well on new data. A model that only works on training data has failed to generalize.",
+        feedbackWrong: "Not quite. Generalization means the model learned real patterns, not memorized examples, so it works on new data."
+      },
+      {
+        text: "What is the difference between classification and regression in machine learning?",
+        options: [
+          "Classification is only for text; regression is only for numbers",
+          "Classification predicts a discrete category; regression predicts a continuous numeric value",
+          "Regression is more accurate than classification",
+          "They are the same type of model with different output formats"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Classification: predict a class label (spam/not spam). Regression: predict a number (salary, batting average).",
+        feedbackWrong: "Not quite. Classification = discrete categories. Regression = continuous numbers. Both are supervised learning tasks."
+      },
+      {
+        text: "What does 'big data' typically refer to?",
+        options: [
+          "Any dataset larger than 1MB",
+          "Datasets that are too large, fast, or varied to be processed by traditional tools - often characterized by Volume, Velocity, and Variety",
+          "Classified government datasets",
+          "Datasets with more than 100 columns"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Big Data is commonly described by the 3 Vs: Volume (size), Velocity (speed of generation), Variety (different types).",
+        feedbackWrong: "Not quite. Big Data = data characterized by Volume, Velocity, and Variety that challenges traditional processing tools."
+      },
+      {
+        text: "In a typical data science project lifecycle, which step comes after data collection but before modeling?",
+        options: [
+          "Deployment",
+          "Data cleaning and exploratory data analysis (EDA)",
+          "Stakeholder presentation",
+          "Model evaluation"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. After collecting data, you clean it and explore it (EDA) before building any models.",
+        feedbackWrong: "Not quite. The lifecycle: collect → clean/EDA → model → evaluate → deploy. Cleaning and exploration come before modeling."
+      },
+      {
+        text: "What is exploratory data analysis (EDA)?",
+        options: [
+          "Training a machine learning model to explore patterns",
+          "The initial investigation of data using statistics and visualization to understand structure, spot anomalies, and form hypotheses",
+          "Exporting data to another format for exploration",
+          "A Python library for automated data analysis"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. EDA uses summary statistics and visualizations to understand the data before formal modeling.",
+        feedbackWrong: "Not quite. EDA = exploratory data analysis. It uses charts, summaries, and simple statistics to understand the data before modeling."
+      },
+      {
+        text: "What is a hyperparameter in machine learning?",
+        options: [
+          "A parameter with a very large value",
+          "A configuration value set before training that controls how the model learns (e.g., learning rate, number of trees)",
+          "A parameter learned from the training data",
+          "A required column in the training dataset"
+        ],
+        correctIndex: 1,
+        difficulty: "hard",
+        feedbackCorrect: "Correct. Hyperparameters are set before training and control the learning process. Model parameters are learned from data.",
+        feedbackWrong: "Not quite. Hyperparameters are external configs set before training (like max depth in a tree). Parameters (like weights) are learned during training."
+      },
+      {
+        text: "What is the primary purpose of version control (Git) in a data science project?",
+        options: [
+          "To speed up Python code execution",
+          "To track changes to code over time, enable collaboration, and allow reverting to previous versions when something breaks",
+          "To store large datasets efficiently",
+          "To automatically run tests on new code"
+        ],
+        correctIndex: 1,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Version control tracks history, enables team collaboration, and lets you revert to any past state.",
+        feedbackWrong: "Not quite. Git tracks code changes, enables collaboration, and lets you revert bad changes. It doesn't store large data or run tests by itself."
+      },
+      {
+        text: "What does 'model interpretability' mean?",
+        options: [
+          "Whether the model can be run on multiple platforms",
+          "The degree to which humans can understand why a model makes a particular prediction",
+          "How accurately a model's code is documented",
+          "Whether a model can be translated to multiple programming languages"
+        ],
+        correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Interpretability = can we explain WHY the model predicted X? Important for trust, debugging, and compliance.",
+        feedbackWrong: "Not quite. Interpretability = understanding why the model made a decision. Complex models like deep neural nets are often 'black boxes'."
+      },
+      {
+        text: "What Python function would you use to read a CSV file into a pandas DataFrame?",
+        options: [
+          "pd.read_table('file.csv')",
+          "pd.open('file.csv')",
+          "pd.read_csv('file.csv')",
+          "pd.load('file.csv')"
+        ],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. pd.read_csv() is the standard function to load a CSV file into a DataFrame.",
+        feedbackWrong: "Not quite. pd.read_csv('filename.csv') is the correct call. pd.read_table() also works but uses tab as default delimiter."
       }
     ];
 
-    let currentQ = 0;
+    // Shuffle and pick 10 questions each attempt
+    const questions = allQuestions
+      .slice()
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 10);
+
+        let currentQ = 0;
     let results = [];
 
     function beginQuiz() {
