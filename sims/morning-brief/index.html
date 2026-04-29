@@ -1426,8 +1426,7 @@ ward_check = df_clean[df_clean[<span class="st">'followup_scheduled'</span>] == 
     --border:    #d4cfc9;
   }
   /* Font scale */
-  :root { --font-scale: 1; }
-  body  { font-size: calc(1rem * var(--font-scale)); }
+  :root { --font-scale: 1; font-size: calc(16px * var(--font-scale)); }
 
   /* Floating gear button */
   #settings-toggle {
@@ -1544,7 +1543,9 @@ ward_check = df_clean[df_clean[<span class="st">'followup_scheduled'</span>] == 
   }
 
   function setFont(size) {
-    document.documentElement.style.setProperty('--font-scale', FONT_SCALES[size] || 1);
+    var scale = FONT_SCALES[size] || 1;
+    document.documentElement.style.setProperty('--font-scale', scale);
+    document.documentElement.style.fontSize = 'calc(16px * ' + scale + ')';
     localStorage.setItem(FONT_KEY, size);
     document.querySelectorAll('.font-opt').forEach(function(b) { b.classList.remove('active'); });
     var el = document.getElementById('font-' + size);
