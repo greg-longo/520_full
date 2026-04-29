@@ -131,7 +131,6 @@
       border: none;
       padding: 12px 24px;
       cursor: pointer;
-      text-transform: uppercase;
       letter-spacing: 0.5px;
       border-radius: 4px;
       transition: background-color 0.2s;
@@ -183,7 +182,6 @@
       font-family: 'IBM Plex Mono', monospace;
       font-size: 12px;
       color: var(--accent);
-      text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 12px;
     }
@@ -1065,7 +1063,7 @@
       .sort(() => Math.random() - 0.5)
       .slice(0, 10);
 
-        let currentQ = 0;
+    let currentQ = 0;
     let results = [];
 
     function beginQuiz() {
@@ -1156,7 +1154,7 @@
       else if (percent >= 60) grade = 'D';
 
       document.getElementById('scoreNumber').textContent = score + ' / ' + total;
-      document.getElementById('scoreDetails').textContent = percent + '% - Grade: ' + grade;
+      document.getElementById('scoreDetails').textContent = percent + '%';
 
       let breakdownHTML = '<div class="breakdown-title">Question Breakdown</div>';
       results.forEach((result, idx) => {
@@ -1176,7 +1174,7 @@
       document.getElementById('resultsBreakdown').innerHTML = breakdownHTML;
 
       // Save score to localStorage
-      localStorage.setItem('dtsc520_quiz_m0', JSON.stringify({ score, total, percent, grade, completedAt: new Date().toISOString() }));
+      localStorage.setItem('dtsc520_quiz_m0', JSON.stringify({ score, total, percent, completedAt: new Date().toISOString() }));
     }
 
     function retake() {

@@ -344,7 +344,6 @@
   </div>
   <div class="nav-right">
     <a href="../../index.html">Course Home</a>
-    <a href="quiz.html">Take Quiz</a>
   </div>
 </nav>
 
@@ -751,7 +750,6 @@ roster = [
         <a onclick="showSection('why-python')">Why Python?</a>
         <a onclick="showSection('critical-thinking')">Critical Thinking</a>
         <a onclick="showSection('pseudocode')">Pseudocode</a>
-        <a href="quiz.html" style="margin-top:0.4rem;border-top:1px solid var(--border);padding-top:0.5rem;">&#9998; Take Quiz</a>
       </div>
     </div>
 
@@ -768,12 +766,6 @@ roster = [
       <p>Eight questions. One honest answer each. Map your instincts to the data role that actually fits you.</p>
     </a>
 
-
-    <div class="sidebar-card">
-      <h4>Quiz</h4>
-      <p style="font-size:0.85rem; color:var(--text-dim); margin:0 0 0.75rem;">Test your knowledge with 10 questions, one at a time.</p>
-      <a href="quiz.html" class="quiz-cta-btn">Take the Quiz</a>
-    </div>
 
     <div class="next-mod">
       <h4>Next Module</h4>
@@ -811,7 +803,7 @@ roster = [
 (function(){
   var btn = document.getElementById('back-to-top');
   window.addEventListener('scroll', function(){
-    btn.classList.toggle('visible', window.scrollY > 300);
+    btn.classList.toggle('visible', window.scrollY > 80);
   }, {passive: true});
   btn.addEventListener('click', function(e){
     e.preventDefault();

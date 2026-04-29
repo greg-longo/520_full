@@ -572,7 +572,7 @@ git --version
 (function(){
   var btn = document.getElementById('back-to-top');
   window.addEventListener('scroll', function(){
-    btn.classList.toggle('visible', window.scrollY > 300);
+    btn.classList.toggle('visible', window.scrollY > 80);
   }, {passive: true});
   btn.addEventListener('click', function(e){
     e.preventDefault();
