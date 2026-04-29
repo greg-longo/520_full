@@ -80,6 +80,18 @@
       border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
     }
     .tab-link:hover { color: var(--text); border-bottom-color: var(--accent); }
+    .toc-links { display: flex; flex-direction: column; gap: 0.15rem; }
+    .toc-links a { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; color: var(--text-dim); text-decoration: none; padding: 0.3rem 0.6rem; border-radius: 3px; transition: color 0.15s, background 0.15s; cursor: pointer; border-left: 2px solid transparent; }
+    .toc-links a:hover { color: var(--accent-light); background: rgba(176,112,48,0.06); }
+    .toc-links a.active { color: var(--accent-light); background: rgba(176,112,48,0.1); border-left-color: var(--accent); }
+    .tab-link.active { color: var(--accent-light); border-bottom-color: var(--accent); }
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+    .subpage-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .subpage-nav-btn { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; letter-spacing: 0.05em; color: var(--text-dim); background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem 1rem; cursor: pointer; text-decoration: none; transition: color 0.15s, border-color 0.15s, background 0.15s; }
+    .subpage-nav-btn:hover { color: var(--accent-light); border-color: var(--accent); background: rgba(176,112,48,0.06); }
+    .subpage-nav-btn.invisible { visibility: hidden; }
+    .subpage-nav-center { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; }
 
     .page-wrap {
       max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem;
@@ -333,21 +345,28 @@
 </div>
 
 <nav class="section-tabs">
-  <a href="#series" class="tab-link">Series</a>
-  <a href="#dataframes" class="tab-link">DataFrames</a>
-  <a href="#selection" class="tab-link">Selection</a>
-  <a href="#filtering" class="tab-link">Filtering</a>
-  <a href="#cleaning" class="tab-link">Data Cleaning</a>
-  <a href="#aggregation" class="tab-link">Aggregation</a>
-  <a href="#groupby" class="tab-link">GroupBy</a>
-  <a href="quiz.html" class="tab-link quiz-tab-link">Quiz</a>
+  <a class="tab-link" data-section="series">Series</a>
+  <a class="tab-link" data-section="dataframes">DataFrames</a>
+  <a class="tab-link" data-section="selection">Selection</a>
+  <a class="tab-link" data-section="filtering">Filtering</a>
+  <a class="tab-link" data-section="cleaning">Data Cleaning</a>
+  <a class="tab-link" data-section="aggregation">Aggregation</a>
+  <a class="tab-link" data-section="groupby">GroupBy</a>
+  <a class="tab-link" data-section="index-objects">Index Objects</a>
+  <a class="tab-link" data-section="arithmetic">Arithmetic & Alignment</a>
+  <a class="tab-link" data-section="descriptive-stats">Descriptive Stats</a>
+  <a class="tab-link" data-section="unique-values">Unique & Value Counts</a>
+  <a class="tab-link" data-section="multiindex">MultiIndex</a>
+  <a class="tab-link" data-section="combining">Combining Data</a>
+  <a class="tab-link" data-section="pivot-tables">Pivot Tables</a>
+  <a href="quiz.html" class="tab-link">Quiz</a>
 </nav>
 
 <div class="page-wrap">
   <div class="content-col">
 
     <!-- SERIES -->
-    <section id="series">
+    <section id="series" class="content-section">
       <h2>Series: The 1D Building Block</h2>
       <p>A <strong>Series</strong> is pandas' one-dimensional labeled array. Think of it as a single column from a spreadsheet - every value has an index label alongside it. Series are the atoms from which DataFrames are built.</p>
       <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
@@ -391,10 +410,16 @@ slugging = batting_avgs * <span class="nm">1.4</span></code></pre>
           <tr><td class="mono">.isna()</td><td>Boolean mask of missing values</td></tr>
         </tbody>
       </table>
+    
+      <div class="subpage-nav">
+        <span class="subpage-nav-btn invisible">prev</span>
+        <span class="subpage-nav-center">1 / 14</span>
+        <button class="subpage-nav-btn" onclick="showSection('dataframes')">Next: DataFrames &rarr;</button>
+      </div>
     </section>
 
     <!-- DATAFRAMES -->
-    <section id="dataframes">
+    <section id="dataframes" class="content-section">
       <h2>DataFrames: Tabular Data</h2>
       <p>A <strong>DataFrame</strong> is a 2-dimensional labeled table - rows and columns, like a spreadsheet or SQL table. Each column is a Series, all sharing the same index. This is the central data structure for nearly all pandas work.</p>
       <pre><code><span class="cm"># Create a DataFrame from a dict</span>
@@ -441,10 +466,16 @@ roster = pd.<span class="fn">read_csv</span>(
     parse_dates=[<span class="st">'dob'</span>],     <span class="cm"># convert string dates</span>
     na_values=[<span class="st">'N/A'</span>, <span class="st">'-'</span>]  <span class="cm"># treat these as missing</span>
 )</code></pre>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('series')">&larr; Series</button>
+        <span class="subpage-nav-center">2 / 14</span>
+        <button class="subpage-nav-btn" onclick="showSection('selection')">Next: Selection &rarr;</button>
+      </div>
     </section>
 
     <!-- SELECTION -->
-    <section id="selection">
+    <section id="selection" class="content-section">
       <h2>Selection: Accessing Your Data</h2>
       <p>Pandas gives you multiple ways to pull out rows, columns, or individual cells. The two main tools are <code>.loc[]</code> (label-based) and <code>.iloc[]</code> (integer position-based). Getting these right is one of the most important pandas fundamentals.</p>
       <div class="concept-grid">
@@ -495,10 +526,16 @@ roster.<span class="fn">iloc</span>[:<span class="nm">2</span>]     <span class=
         <div class="callout-label">Common mistake</div>
         Chaining selections like <code>df['col'][0]</code> can cause a <code>SettingWithCopyWarning</code> and unpredictable behavior when assigning values. Always use <code>.loc[]</code> or <code>.iloc[]</code> for assignment: <code>df.loc[0, 'col'] = value</code>.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('dataframes')">&larr; DataFrames</button>
+        <span class="subpage-nav-center">3 / 14</span>
+        <button class="subpage-nav-btn" onclick="showSection('filtering')">Next: Filtering &rarr;</button>
+      </div>
     </section>
 
     <!-- FILTERING -->
-    <section id="filtering">
+    <section id="filtering" class="content-section">
       <h2>Filtering: Selecting Rows by Condition</h2>
       <p>Filtering uses a <strong>boolean mask</strong> - a Series of True/False values aligned to the DataFrame's index. Rows where the mask is True are kept; rows where it's False are dropped.</p>
       <pre><code><span class="cm"># Boolean comparison creates the mask</span>
@@ -542,10 +579,16 @@ roster.<span class="fn">dropna</span>()
 
 <span class="cm"># Drop only when specific columns are missing</span>
 roster.<span class="fn">dropna</span>(subset=[<span class="st">'avg'</span>, <span class="st">'hr'</span>])</code></pre>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('selection')">&larr; Selection</button>
+        <span class="subpage-nav-center">4 / 14</span>
+        <button class="subpage-nav-btn" onclick="showSection('cleaning')">Next: Data Cleaning &rarr;</button>
+      </div>
     </section>
 
     <!-- DATA CLEANING -->
-    <section id="cleaning">
+    <section id="cleaning" class="content-section">
       <h2>Data Cleaning</h2>
       <p>Real datasets are messy. Missing values, wrong types, duplicates, and inconsistent strings are the norm. Pandas has a rich toolkit for identifying and fixing these issues before analysis.</p>
       <h3>Handling missing values</h3>
@@ -585,10 +628,16 @@ roster.<span class="fn">rename</span>(columns={<span class="st">'avg'</span>: <s
         <div class="callout-label">In-place vs. returning new objects</div>
         Most pandas cleaning methods return a new DataFrame by default rather than modifying the original. To make changes permanent, either reassign (<code>df = df.dropna()</code>) or use <code>inplace=True</code>. Reassignment is generally preferred as it is clearer and easier to debug.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('filtering')">&larr; Filtering</button>
+        <span class="subpage-nav-center">5 / 14</span>
+        <button class="subpage-nav-btn" onclick="showSection('aggregation')">Next: Aggregation &rarr;</button>
+      </div>
     </section>
 
     <!-- AGGREGATION -->
-    <section id="aggregation">
+    <section id="aggregation" class="content-section">
       <h2>Aggregation: Summarizing Data</h2>
       <p>Aggregation collapses many rows into summary statistics. Pandas provides both column-level methods and the flexible <code>.agg()</code> interface for computing multiple statistics at once.</p>
       <pre><code><span class="cm"># Single-column aggregations</span>
@@ -620,10 +669,16 @@ roster.<span class="fn">agg</span>({
         <div class="callout-label">Why median matters for salary data</div>
         The Eagles roster has salaries ranging from $14,400 to $760,000. The mean salary (~$202,600) is misleading - it is inflated by Kim's MLB rehab assignment. The median (~$18,000) better represents what a typical player earns. Whenever you have potential outliers, always compare mean vs. median before reporting a "typical" value.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('cleaning')">&larr; Data Cleaning</button>
+        <span class="subpage-nav-center">6 / 14</span>
+        <button class="subpage-nav-btn" onclick="showSection('groupby')">Next: GroupBy &rarr;</button>
+      </div>
     </section>
 
     <!-- GROUPBY -->
-    <section id="groupby">
+    <section id="groupby" class="content-section">
       <h2>GroupBy: Split-Apply-Combine</h2>
       <p>GroupBy divides your data into groups, applies a function to each group, and combines the results. This "split-apply-combine" pattern is one of the most powerful tools for exploratory analysis.</p>
       <pre><code><span class="cm"># Add a position column for demonstration</span>
@@ -689,10 +744,16 @@ roster[<span class="st">'avg_rank'</span>] = roster[<span class="st">'avg'</span
         <div class="callout-label">Merging DataFrames</div>
         When data is split across multiple tables (like player stats and contracts), use <code>pd.merge()</code> to join them - similar to SQL JOIN. The most common form: <code>pd.merge(df1, df2, on='player_id', how='left')</code>. The <code>how</code> parameter accepts <code>'inner'</code>, <code>'left'</code>, <code>'right'</code>, and <code>'outer'</code>, matching SQL join types.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('aggregation')">&larr; Aggregation</button>
+        <span class="subpage-nav-center">7 / 14</span>
+        <button class="subpage-nav-btn" onclick="showSection('index-objects')">Next: Index Objects &rarr;</button>
+      </div>
     </section>
 
     <!-- INDEX OBJECTS -->
-    <section id="content">
+    <section id="index-objects" class="content-section">
       <h2>Index Objects</h2>
       <p>Every pandas Series and DataFrame has an <strong>Index</strong> - the row labels. The Index is an immutable array-like object that enables fast lookup, alignment, and slicing. Understanding it helps explain pandas behavior that might otherwise seem surprising.</p>
 
@@ -722,10 +783,16 @@ starters = roster[roster[<span class="st">'ab'</span>] > <span class="nm">300</s
 <span class="cm"># Set a column as the index</span>
 roster = roster.<span class="fn">set_index</span>(<span class="st">'player_id'</span>)
 roster.<span class="fn">loc</span>[<span class="st">'P042'</span>]  <span class="cm"># look up by player ID directly</span></code></pre>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('groupby')">&larr; GroupBy</button>
+        <span class="subpage-nav-center">8 / 14</span>
+        <button class="subpage-nav-btn" onclick="showSection('arithmetic')">Next: Arithmetic & Alignment &rarr;</button>
+      </div>
     </section>
 
     <!-- ARITHMETIC AND DATA ALIGNMENT -->
-    <section id="content">
+    <section id="arithmetic" class="content-section">
       <h2>Arithmetic and Data Alignment</h2>
       <p>When you perform arithmetic between two pandas objects, pandas automatically <strong>aligns on the index</strong> before computing. This prevents silent errors when data comes from different sources with different row orders - but it also introduces NaN when labels don't match.</p>
 
@@ -752,10 +819,16 @@ roster.<span class="fn">sort_index</span>(ascending=<span class="kw">False</span
         <div class="callout-label">Why alignment matters</div>
         Imagine you have two DataFrames from different data pulls - same players but in different row orders. Without index alignment, a naive NumPy subtraction would compare wrong rows. Pandas fixes this by aligning on the index first, so you always get a meaningful result (or an explicit NaN warning you something didn't match).
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('index-objects')">&larr; Index Objects</button>
+        <span class="subpage-nav-center">9 / 14</span>
+        <button class="subpage-nav-btn" onclick="showSection('descriptive-stats')">Next: Descriptive Stats &rarr;</button>
+      </div>
     </section>
 
     <!-- DESCRIPTIVE STATISTICS -->
-    <section id="content">
+    <section id="descriptive-stats" class="content-section">
       <h2>Summarizing and Descriptive Statistics</h2>
       <p>Pandas provides reduction methods that compute a summary statistic across rows or columns. These are essential for getting a quick feel for your data.</p>
 
@@ -775,10 +848,16 @@ roster[<span class="st">'hr'</span>].<span class="fn">idxmax</span>()  <span cla
 <span class="cm"># axis=0 (default): compute down each column</span>
 <span class="cm"># axis=1: compute across each row</span>
 roster[[<span class="st">'hr'</span>, <span class="st">'rbi'</span>]].<span class="fn">sum</span>(axis=<span class="nm">1</span>)  <span class="cm"># total production per player</span></code></pre>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('arithmetic')">&larr; Arithmetic & Alignment</button>
+        <span class="subpage-nav-center">10 / 14</span>
+        <button class="subpage-nav-btn" onclick="showSection('unique-values')">Next: Unique & Value Counts &rarr;</button>
+      </div>
     </section>
 
     <!-- UNIQUE VALUES, VALUE COUNTS, MEMBERSHIP -->
-    <section id="content">
+    <section id="unique-values" class="content-section">
       <h2>Unique Values, Value Counts, and Membership</h2>
       <p>These methods are building blocks for exploratory data analysis - quickly understanding the range and distribution of categorical and discrete data.</p>
 
@@ -817,10 +896,16 @@ non_pitchers = roster[~roster[<span class="st">'position'</span>].<span class="f
         <div class="callout-label">Checking for unexpected categories</div>
         <code>value_counts()</code> is often the first thing to run on a categorical column after loading data. It reveals typos ('Outfield' vs 'OF'), encoding inconsistencies ('M' vs 'Male'), and unexpected values that would break downstream analysis.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('descriptive-stats')">&larr; Descriptive Stats</button>
+        <span class="subpage-nav-center">11 / 14</span>
+        <button class="subpage-nav-btn" onclick="showSection('multiindex')">Next: MultiIndex &rarr;</button>
+      </div>
     </section>
 
     <!-- MULTIINDEX -->
-    <section id="content">
+    <section id="multiindex" class="content-section">
       <h2>MultiIndex: Hierarchical Indexing</h2>
       <p>A <strong>MultiIndex</strong> (also called a hierarchical index) lets you work with data that has multiple levels of grouping - for example, performance stats organized by both team and player, or sales data by year and quarter.</p>
 
@@ -846,10 +931,16 @@ stats.<span class="fn">reset_index</span>()</code></pre>
         <div class="callout-label">When to use MultiIndex</div>
         MultiIndex shines when data is naturally hierarchical and you need to slice at different levels (all data for a team, then drill down to a player). For simpler analysis, <code>groupby()</code> is often easier. You'll encounter MultiIndex in output from groupby operations, so knowing how to navigate it is important even if you rarely create it manually.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('unique-values')">&larr; Unique & Value Counts</button>
+        <span class="subpage-nav-center">12 / 14</span>
+        <button class="subpage-nav-btn" onclick="showSection('combining')">Next: Combining Data &rarr;</button>
+      </div>
     </section>
 
     <!-- COMBINING DATA -->
-    <section id="content">
+    <section id="combining" class="content-section">
       <h2>Combining Data: concat, join, and merge</h2>
       <p>Real data pipelines assemble information from multiple sources. Pandas offers three main tools - each suited to a different combining pattern.</p>
 
@@ -884,10 +975,16 @@ students.<span class="fn">set_index</span>(<span class="st">'student_id'</span>)
         <div class="callout-label">concat vs merge</div>
         Use <code>concat</code> when tables have the same structure and you're stacking them (more rows or more columns). Use <code>merge</code> when tables have different columns linked by a shared key (like a student ID). When in doubt, merge is the more powerful and flexible tool.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('multiindex')">&larr; MultiIndex</button>
+        <span class="subpage-nav-center">13 / 14</span>
+        <button class="subpage-nav-btn" onclick="showSection('pivot-tables')">Next: Pivot Tables &rarr;</button>
+      </div>
     </section>
 
     <!-- PIVOT TABLES -->
-    <section id="content">
+    <section id="pivot-tables" class="content-section">
       <h2>Pivot Tables</h2>
       <p>A <strong>pivot table</strong> reorganizes data by grouping on one or more columns and applying an aggregation - think of it as a more flexible, readable alternative to <code>groupby()</code> for multi-dimensional summaries.</p>
 
@@ -933,6 +1030,12 @@ pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'<
         <div class="callout-label">groupby vs pivot_table</div>
         Both do split-apply-combine, but <code>pivot_table</code> produces a 2D grid that's easier to read when you have two grouping dimensions. For a single grouping column, <code>groupby()</code> is simpler. When you need to cross-tabulate two categorical columns (region x product, month x category), reach for <code>pivot_table</code>.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('combining')">&larr; Combining Data</button>
+        <span class="subpage-nav-center">14 / 14</span>
+        <a href="quiz.html" class="subpage-nav-btn">Take the Quiz &rarr;</a>
+      </div>
     </section>
 
     <!-- QUIZ LINK -->
@@ -952,16 +1055,23 @@ pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'<
   <aside class="sidebar">
 
 <div class="sidebar-card">
-      <h4>On This Page</h4>
-      <div class="toc-links">
-        <a href="#series">Series</a>
-        <a href="#dataframes">DataFrames</a>
-        <a href="#selection">Selection</a>
-        <a href="#filtering">Filtering</a>
-        <a href="#cleaning">Data Cleaning</a>
-        <a href="#aggregation">Aggregation</a>
-        <a href="#groupby">GroupBy</a>
-        <a href="quiz.html">Quiz</a>
+      <h4>Topics</h4>
+      <div class="toc-links" id="tocLinks">
+        <a onclick="showSection('series')">Series</a>
+        <a onclick="showSection('dataframes')">DataFrames</a>
+        <a onclick="showSection('selection')">Selection</a>
+        <a onclick="showSection('filtering')">Filtering</a>
+        <a onclick="showSection('cleaning')">Data Cleaning</a>
+        <a onclick="showSection('aggregation')">Aggregation</a>
+        <a onclick="showSection('groupby')">GroupBy</a>
+        <a onclick="showSection('index-objects')">Index Objects</a>
+        <a onclick="showSection('arithmetic')">Arithmetic & Alignment</a>
+        <a onclick="showSection('descriptive-stats')">Descriptive Stats</a>
+        <a onclick="showSection('unique-values')">Unique & Value Counts</a>
+        <a onclick="showSection('multiindex')">MultiIndex</a>
+        <a onclick="showSection('combining')">Combining Data</a>
+        <a onclick="showSection('pivot-tables')">Pivot Tables</a>
+        <a href="quiz.html" style="margin-top:0.4rem;border-top:1px solid var(--border);padding-top:0.5rem;">&#9998; Take Quiz</a>
       </div>
     </div>
 
@@ -1397,5 +1507,19 @@ pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'<
 })();
 </script>
 
+
+<script>
+const SECTIONS = ['series', 'dataframes', 'selection', 'filtering', 'cleaning', 'aggregation', 'groupby', 'index-objects', 'arithmetic', 'descriptive-stats', 'unique-values', 'multiindex', 'combining', 'pivot-tables'];
+function showSection(id) {
+  SECTIONS.forEach(function(s) { var el = document.getElementById(s); if (el) el.classList.remove('active'); });
+  var target = document.getElementById(id);
+  if (target) { target.classList.add('active'); window.scrollTo({top: 0, behavior: 'smooth'}); }
+  document.querySelectorAll('.tab-link[data-section]').forEach(function(t) { t.classList.toggle('active', t.dataset.section === id); });
+  document.querySelectorAll('#tocLinks a[onclick]').forEach(function(a) { var needle = "'" + id + "'"; a.classList.toggle('active', a.getAttribute('onclick').indexOf(needle) !== -1); });
+  history.replaceState(null, '', '#' + id);
+}
+document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab.addEventListener('click', function() { showSection(tab.dataset.section); }); });
+(function() { var hash = window.location.hash.replace('#', ''); var initial = SECTIONS.indexOf(hash) !== -1 ? hash : SECTIONS[0]; showSection(initial); })();
+</script>
 </body>
 </html>

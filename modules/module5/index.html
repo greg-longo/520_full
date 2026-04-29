@@ -78,6 +78,18 @@
       border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
     }
     .tab-link:hover { color: var(--text); border-bottom-color: var(--accent); }
+    .toc-links { display: flex; flex-direction: column; gap: 0.15rem; }
+    .toc-links a { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; color: var(--text-dim); text-decoration: none; padding: 0.3rem 0.6rem; border-radius: 3px; transition: color 0.15s, background 0.15s; cursor: pointer; border-left: 2px solid transparent; }
+    .toc-links a:hover { color: var(--accent-light); background: rgba(160,48,112,0.06); }
+    .toc-links a.active { color: var(--accent-light); background: rgba(160,48,112,0.1); border-left-color: var(--accent); }
+    .tab-link.active { color: var(--accent-light); border-bottom-color: var(--accent); }
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+    .subpage-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .subpage-nav-btn { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; letter-spacing: 0.05em; color: var(--text-dim); background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem 1rem; cursor: pointer; text-decoration: none; transition: color 0.15s, border-color 0.15s, background 0.15s; }
+    .subpage-nav-btn:hover { color: var(--accent-light); border-color: var(--accent); background: rgba(160,48,112,0.06); }
+    .subpage-nav-btn.invisible { visibility: hidden; }
+    .subpage-nav-center { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; }
 
     .page-wrap {
       max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem;
@@ -404,20 +416,22 @@
 </div>
 
 <nav class="section-tabs">
-  <a href="#chart-types" class="tab-link">Chart Types</a>
-  <a href="#matplotlib" class="tab-link">Matplotlib</a>
-  <a href="#seaborn" class="tab-link">Seaborn</a>
-  <a href="#subplots" class="tab-link">Subplots</a>
-  <a href="#styling" class="tab-link">Styling</a>
-  <a href="#best-practices" class="tab-link">Best Practices</a>
-  <a href="quiz.html" class="tab-link quiz-tab-link">Quiz</a>
+  <a class="tab-link" data-section="chart-types">Chart Types</a>
+  <a class="tab-link" data-section="matplotlib">Matplotlib</a>
+  <a class="tab-link" data-section="seaborn">Seaborn</a>
+  <a class="tab-link" data-section="subplots">Subplots</a>
+  <a class="tab-link" data-section="styling">Styling</a>
+  <a class="tab-link" data-section="plotting-pandas">Plotting with Pandas</a>
+  <a class="tab-link" data-section="annotations">Annotations</a>
+  <a class="tab-link" data-section="best-practices">Best Practices</a>
+  <a href="quiz.html" class="tab-link">Quiz</a>
 </nav>
 
 <div class="page-wrap">
   <div class="content-col">
 
     <!-- CHART TYPES -->
-    <section id="chart-types">
+    <section id="chart-types" class="content-section">
       <h2>Choosing the Right Chart</h2>
       <p>The most common visualization mistake is choosing a chart type based on aesthetics rather than the structure of your data and the question you are answering. Every chart type has a job. Using the wrong one obscures the truth; using the right one makes it obvious.</p>
 
@@ -458,10 +472,16 @@
         <div class="callout-label">Charts to avoid</div>
         Pie charts are rarely the right choice - humans are poor at comparing angles. Use a bar chart instead. 3D charts almost always distort perception. Dual-axis charts often imply a relationship that does not exist. When in doubt, simpler is better.
       </div>
+    
+      <div class="subpage-nav">
+        <span class="subpage-nav-btn invisible">prev</span>
+        <span class="subpage-nav-center">1 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('matplotlib')">Next: Matplotlib &rarr;</button>
+      </div>
     </section>
 
     <!-- MATPLOTLIB -->
-    <section id="matplotlib">
+    <section id="matplotlib" class="content-section">
       <h2>Matplotlib: The Foundation</h2>
       <p>Matplotlib is the core plotting library for Python. Almost every other visualization library - Seaborn, pandas' built-in plotting, and others - is built on top of it. Understanding Matplotlib's architecture makes you effective with all of them.</p>
 
@@ -540,10 +560,16 @@ ax.<span class="fn">barh</span>(players, hrs, color=<span class="st">'#3a8fa0'</
           <canvas id="chartBarH"></canvas>
         </div>
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('chart-types')">&larr; Chart Types</button>
+        <span class="subpage-nav-center">2 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('seaborn')">Next: Seaborn &rarr;</button>
+      </div>
     </section>
 
     <!-- SEABORN -->
-    <section id="seaborn">
+    <section id="seaborn" class="content-section">
       <h2>Seaborn: Statistical Visualization</h2>
       <p>Seaborn is built on top of Matplotlib and integrates tightly with pandas DataFrames. It makes statistical plots that would require significant Matplotlib code just a single function call. It also applies attractive default styles automatically.</p>
 
@@ -585,10 +611,16 @@ sns.<span class="fn">histplot</span>(data=roster, x=<span class="st">'avg'</span
         <div class="callout-label">Seaborn vs. Matplotlib</div>
         Use Seaborn when you want quick, attractive statistical charts that work directly with pandas DataFrames. Use Matplotlib when you need fine-grained control over layout, annotations, or custom visual elements. In practice, you will often use both together - Seaborn to draw the plot, then Matplotlib methods (<code>ax.set_title()</code>, <code>ax.set_xlabel()</code>) to customize it.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('matplotlib')">&larr; Matplotlib</button>
+        <span class="subpage-nav-center">3 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('subplots')">Next: Subplots &rarr;</button>
+      </div>
     </section>
 
     <!-- SUBPLOTS -->
-    <section id="subplots">
+    <section id="subplots" class="content-section">
       <h2>Subplots: Multiple Charts in One Figure</h2>
       <p>Subplots let you arrange multiple related charts side by side for comparison. The key function is <code>plt.subplots(nrows, ncols)</code>, which returns a Figure and an array of Axes objects.</p>
 
@@ -626,10 +658,16 @@ plt.<span class="fn">tight_layout</span>()  <span class="cm"># prevents overlap<
         <div class="chart-demo-label">Rendered output - 2x2 Subplot Grid: Eagles Roster Stats</div>
         <canvas id="chartSubplots" style="max-height:340px;"></canvas>
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('seaborn')">&larr; Seaborn</button>
+        <span class="subpage-nav-center">4 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('styling')">Next: Styling &rarr;</button>
+      </div>
     </section>
 
     <!-- STYLING -->
-    <section id="styling">
+    <section id="styling" class="content-section">
       <h2>Styling Your Charts</h2>
       <p>Default Matplotlib charts are functional but plain. A few small changes - a clean style, consistent colors, clear labels - dramatically improve readability and professionalism.</p>
 
@@ -670,10 +708,16 @@ ax.spines[<span class="st">'right'</span>].<span class="fn">set_visible</span>(<
     )
 
 plt.<span class="fn">tight_layout</span>()</code></pre>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('subplots')">&larr; Subplots</button>
+        <span class="subpage-nav-center">5 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('plotting-pandas')">Next: Plotting with Pandas &rarr;</button>
+      </div>
     </section>
 
     <!-- PLOTTING WITH PANDAS -->
-    <section id="content">
+    <section id="plotting-pandas" class="content-section">
       <h2>Plotting with Pandas</h2>
       <p>Pandas DataFrames and Series have a built-in <code>.plot()</code> method that wraps Matplotlib. For quick, exploratory plots, <code>df.plot()</code> is faster to write than calling Matplotlib directly - it automatically uses the DataFrame's column names as labels and the index as the x-axis.</p>
 
@@ -723,10 +767,16 @@ monthly.<span class="fn">plot</span>(kind=<span class="st">'scatter'</span>, x=<
         <div class="callout-label">df.plot() vs raw Matplotlib</div>
         <code>df.plot()</code> is great for quick exploratory analysis during data cleaning and EDA. It produces a Matplotlib <code>Axes</code> object that you can customize further using regular Matplotlib commands. For publication-quality or highly customized charts, work directly with Matplotlib's <code>fig, ax = plt.subplots()</code> pattern - but don't hesitate to start with <code>df.plot()</code> to see what the data looks like first.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('styling')">&larr; Styling</button>
+        <span class="subpage-nav-center">6 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('annotations')">Next: Annotations &rarr;</button>
+      </div>
     </section>
 
     <!-- ANNOTATIONS -->
-    <section id="content">
+    <section id="annotations" class="content-section">
       <h2>Annotations: Adding Text and Reference Lines</h2>
       <p>Annotations guide the reader to the most important parts of a chart. They include text labels, arrows pointing to data points, and reference lines marking thresholds or averages.</p>
 
@@ -764,10 +814,16 @@ plt.<span class="fn">show</span>()</code></pre>
         <div class="callout-label">When to annotate</div>
         Don't annotate everything - only the data points that need context the chart doesn't already provide. A good annotation answers a question the reader is likely to ask: "Why does this spike?" or "What threshold are we comparing against?" Use sparingly so annotations stay meaningful.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('plotting-pandas')">&larr; Plotting with Pandas</button>
+        <span class="subpage-nav-center">7 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('best-practices')">Next: Best Practices &rarr;</button>
+      </div>
     </section>
 
     <!-- BEST PRACTICES -->
-    <section id="best-practices">
+    <section id="best-practices" class="content-section">
       <h2>Visualization Best Practices</h2>
       <p>A technically correct chart can still mislead. These principles come from data visualization research and decades of practitioner experience. Apply them every time.</p>
 
@@ -810,6 +866,12 @@ plt.<span class="fn">show</span>()</code></pre>
         <div class="callout-label">Saving publication-quality figures</div>
         <code>plt.savefig('chart.png', dpi=150, bbox_inches='tight')</code> - the <code>dpi</code> parameter controls resolution (150 is good for presentations, 300 for print). <code>bbox_inches='tight'</code> prevents labels from being clipped. For vector graphics (scalable at any size), save as <code>.svg</code> or <code>.pdf</code> instead.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('annotations')">&larr; Annotations</button>
+        <span class="subpage-nav-center">8 / 8</span>
+        <a href="quiz.html" class="subpage-nav-btn">Take the Quiz &rarr;</a>
+      </div>
     </section>
 
     <!-- QUIZ LINK -->
@@ -829,15 +891,17 @@ plt.<span class="fn">show</span>()</code></pre>
   <aside class="sidebar">
 
 <div class="sidebar-card">
-      <h4>On This Page</h4>
-      <div class="toc-links">
-        <a href="#chart-types">Chart Types</a>
-        <a href="#matplotlib">Matplotlib</a>
-        <a href="#seaborn">Seaborn</a>
-        <a href="#subplots">Subplots</a>
-        <a href="#styling">Styling</a>
-        <a href="#best-practices">Best Practices</a>
-        <a href="quiz.html">Quiz</a>
+      <h4>Topics</h4>
+      <div class="toc-links" id="tocLinks">
+        <a onclick="showSection('chart-types')">Chart Types</a>
+        <a onclick="showSection('matplotlib')">Matplotlib</a>
+        <a onclick="showSection('seaborn')">Seaborn</a>
+        <a onclick="showSection('subplots')">Subplots</a>
+        <a onclick="showSection('styling')">Styling</a>
+        <a onclick="showSection('plotting-pandas')">Plotting with Pandas</a>
+        <a onclick="showSection('annotations')">Annotations</a>
+        <a onclick="showSection('best-practices')">Best Practices</a>
+        <a href="quiz.html" style="margin-top:0.4rem;border-top:1px solid var(--border);padding-top:0.5rem;">&#9998; Take Quiz</a>
       </div>
     </div>
 
@@ -1072,5 +1136,19 @@ plt.<span class="fn">show</span>()</code></pre>
 })();
 </script>
 
+
+<script>
+const SECTIONS = ['chart-types', 'matplotlib', 'seaborn', 'subplots', 'styling', 'plotting-pandas', 'annotations', 'best-practices'];
+function showSection(id) {
+  SECTIONS.forEach(function(s) { var el = document.getElementById(s); if (el) el.classList.remove('active'); });
+  var target = document.getElementById(id);
+  if (target) { target.classList.add('active'); window.scrollTo({top: 0, behavior: 'smooth'}); }
+  document.querySelectorAll('.tab-link[data-section]').forEach(function(t) { t.classList.toggle('active', t.dataset.section === id); });
+  document.querySelectorAll('#tocLinks a[onclick]').forEach(function(a) { var needle = "'" + id + "'"; a.classList.toggle('active', a.getAttribute('onclick').indexOf(needle) !== -1); });
+  history.replaceState(null, '', '#' + id);
+}
+document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab.addEventListener('click', function() { showSection(tab.dataset.section); }); });
+(function() { var hash = window.location.hash.replace('#', ''); var initial = SECTIONS.indexOf(hash) !== -1 ? hash : SECTIONS[0]; showSection(initial); })();
+</script>
 </body>
 </html>

@@ -75,8 +75,49 @@
       font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.05em;
       color: var(--text-dim); text-decoration: none; padding: 0.75rem 1rem;
       border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
+      cursor: pointer;
     }
     .tab-link:hover { color: var(--text); border-bottom-color: var(--accent); }
+    .toc-links { display: flex; flex-direction: column; gap: 0.15rem; }
+    .toc-links a { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; color: var(--text-dim); text-decoration: none; padding: 0.3rem 0.6rem; border-radius: 3px; transition: color 0.15s, background 0.15s; cursor: pointer; border-left: 2px solid transparent; }
+    .toc-links a:hover { color: var(--accent-light); background: rgba(42,113,149,0.06); }
+    .toc-links a.active { color: var(--accent-light); background: rgba(42,113,149,0.1); border-left-color: var(--accent); }
+    .tab-link.active { color: var(--accent-light); border-bottom-color: var(--accent); }
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+    .subpage-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .subpage-nav-btn { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; letter-spacing: 0.05em; color: var(--text-dim); background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem 1rem; cursor: pointer; text-decoration: none; transition: color 0.15s, border-color 0.15s, background 0.15s; }
+    .subpage-nav-btn:hover { color: var(--accent-light); border-color: var(--accent); background: rgba(42,113,149,0.06); }
+    .subpage-nav-btn.invisible { visibility: hidden; }
+    .subpage-nav-center { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; }
+    .toc-links { display: flex; flex-direction: column; gap: 0.15rem; }
+    .toc-links a {
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; color: var(--text-dim);
+      text-decoration: none; padding: 0.3rem 0.6rem; border-radius: 3px;
+      transition: color 0.15s, background 0.15s; cursor: pointer;
+      border-left: 2px solid transparent;
+    }
+    .toc-links a:hover { color: var(--accent-light); background: rgba(42,113,149,0.06); }
+    .toc-links a.active {
+      color: var(--accent-light); background: rgba(42,113,149,0.1);
+      border-left-color: var(--accent);
+    }
+    .subpage-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+    }
+    .subpage-nav-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; letter-spacing: 0.05em;
+      color: var(--text-dim); background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.5rem 1rem; cursor: pointer; text-decoration: none;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .subpage-nav-btn:hover { color: var(--accent-light); border-color: var(--accent); background: rgba(42,113,149,0.06); }
+    .subpage-nav-btn.invisible { visibility: hidden; }
+    .subpage-nav-center {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    }
 
     .page-wrap {
       max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem;
@@ -284,22 +325,22 @@
 </div>
 
 <nav class="section-tabs">
-  <a href="#what-is-ds" class="tab-link">What is DS?</a>
-  <a href="#ds-vs-analytics" class="tab-link">DS vs. Analytics</a>
-  <a href="#careers" class="tab-link">Careers</a>
-  <a href="#company-types" class="tab-link">Company Types</a>
-  <a href="#tools" class="tab-link">Key Tools</a>
-  <a href="#why-python" class="tab-link">Why Python</a>
-  <a href="#critical-thinking" class="tab-link">Critical Thinking</a>
-  <a href="#pseudocode" class="tab-link">Pseudocode</a>
-  <a href="quiz.html" class="tab-link quiz-tab-link">Quiz</a>
+  <a class="tab-link" data-section="what-is-ds">What is Data Science?</a>
+  <a class="tab-link" data-section="ds-vs-analytics">DS vs. Analytics</a>
+  <a class="tab-link" data-section="careers">Careers in Data</a>
+  <a class="tab-link" data-section="company-types">Company Types</a>
+  <a class="tab-link" data-section="tools">Tool Stack</a>
+  <a class="tab-link" data-section="why-python">Why Python?</a>
+  <a class="tab-link" data-section="critical-thinking">Critical Thinking</a>
+  <a class="tab-link" data-section="pseudocode">Pseudocode</a>
+  <a href="quiz.html" class="tab-link">Quiz</a>
 </nav>
 
 <div class="page-wrap">
   <div class="content-col">
 
     <!-- WHAT IS DS -->
-    <section id="what-is-ds">
+    <section id="what-is-ds" class="content-section">
       <h2>What is Data Science?</h2>
       <p>Data science is the practice of extracting knowledge and insight from data through a combination of statistics, programming, and domain expertise. The oft-cited "Venn diagram" definition says data science sits at the intersection of three areas: <strong>math and statistics</strong>, <strong>computer science and programming</strong>, and <strong>domain knowledge</strong>. You need at least two of the three to be effective, and all three to be exceptional.</p>
 
@@ -312,10 +353,16 @@
 
       <h3>Data science vs. data engineering vs. ML engineering</h3>
       <p>The field has fragmented into specializations. Data scientists build models and generate insight. Data engineers build the pipelines that move and store data at scale. ML engineers take a data scientist's prototype model and deploy it into production systems. In a small company, one person often does all three; at large companies they are distinct teams.</p>
+    
+      <div class="subpage-nav">
+        <span class="subpage-nav-btn invisible">prev</span>
+        <span class="subpage-nav-center">1 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('ds-vs-analytics')">Next: DS vs. Analytics &rarr;</button>
+      </div>
     </section>
 
     <!-- DS VS ANALYTICS -->
-    <section id="ds-vs-analytics">
+    <section id="ds-vs-analytics" class="content-section">
       <h2>Data Science vs. Data Analytics</h2>
       <p>These two terms are often used interchangeably, but they have a meaningful distinction. Understanding the difference helps you know what kind of work you are being asked to do.</p>
 
@@ -358,10 +405,16 @@
       </table>
 
       <p>In practice, analytics and data science are complementary. Analysts keep the lights on - they make sure the business understands what is happening right now. Data scientists push the frontier - they build systems that automate and scale decisions. Most teams need both.</p>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('what-is-ds')">&larr; What is Data Science?</button>
+        <span class="subpage-nav-center">2 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('careers')">Next: Careers in Data &rarr;</button>
+      </div>
     </section>
 
     <!-- CAREERS -->
-    <section id="careers">
+    <section id="careers" class="content-section">
       <h2>Careers in Data</h2>
       <p>The data field offers a wide range of roles. Here are the most common entry points and mid-career positions, mapped to the skills this course builds toward.</p>
 
@@ -396,10 +449,16 @@
         <div class="callout-label">Which role is right for me?</div>
         If you enjoy storytelling and working with business stakeholders, analytics is a natural fit. If you enjoy coding and building systems, data engineering or ML engineering may suit you better. If you enjoy math and research, data science or research science is the direction to pursue. Most practitioners start in analytics and specialize over time.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('ds-vs-analytics')">&larr; DS vs. Analytics</button>
+        <span class="subpage-nav-center">3 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('company-types')">Next: Company Types &rarr;</button>
+      </div>
     </section>
 
     <!-- COMPANY TYPES -->
-    <section id="company-types">
+    <section id="company-types" class="content-section">
       <h2>Types of Companies Hiring Data Talent</h2>
       <p>The type of company you work for shapes what data science actually looks like day-to-day. A startup data scientist does very different work than one at a large tech company or a hospital system.</p>
 
@@ -440,10 +499,16 @@
           </tr>
         </tbody>
       </table>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('careers')">&larr; Careers in Data</button>
+        <span class="subpage-nav-center">4 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('tools')">Next: Tool Stack &rarr;</button>
+      </div>
     </section>
 
     <!-- KEY TOOLS -->
-    <section id="tools">
+    <section id="tools" class="content-section">
       <h2>The Data Science Tool Stack</h2>
       <p>No single tool does everything. A working data scientist typically uses a layered stack - each layer handles a different part of the workflow. Here are the tools you will encounter most often, and the ones this course prepares you to use.</p>
 
@@ -487,10 +552,16 @@
       </div>
 
       <p>This course focuses on the Python layer - pandas, NumPy, Matplotlib, and Git. These are the foundational tools that make the rest of the stack accessible.</p>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('company-types')">&larr; Company Types</button>
+        <span class="subpage-nav-center">5 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('why-python')">Next: Why Python? &rarr;</button>
+      </div>
     </section>
 
     <!-- WHY PYTHON -->
-    <section id="why-python">
+    <section id="why-python" class="content-section">
       <h2>Why Python?</h2>
       <p>Python has become the dominant language of data science. It was not designed specifically for data science - it is a general-purpose language - but a combination of factors made it the community standard.</p>
 
@@ -505,10 +576,16 @@
 
       <h3>Python vs. R</h3>
       <p>R is Python's main competitor in academic and statistical contexts. R was designed by statisticians for statistical computing and is excellent for certain tasks - particularly advanced statistical modeling and publication-quality plots. But Python has largely displaced R in industry because of its broader applicability. If you go into academic research or biostatistics, you may need R. For most industry data science roles, Python is the right starting point.</p>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('tools')">&larr; Tool Stack</button>
+        <span class="subpage-nav-center">6 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('critical-thinking')">Next: Critical Thinking &rarr;</button>
+      </div>
     </section>
 
     <!-- CRITICAL THINKING -->
-    <section id="critical-thinking">
+    <section id="critical-thinking" class="content-section">
       <h2>Critical Thinking for Data Scientists</h2>
       <p>Technical skills are necessary but not sufficient. A data scientist who cannot think critically about a problem will build the wrong model correctly - which is worse than building nothing at all. These mental habits separate effective practitioners from technically competent ones.</p>
 
@@ -523,10 +600,16 @@
 
       <h3>Uncertainty is not failure</h3>
       <p>A good data scientist quantifies uncertainty and communicates it clearly. Saying "we are 80% confident that treatment B outperforms treatment A by 5-15%" is more honest and more useful than saying "B is better than A." Decision-makers need to know the confidence interval, not just the point estimate.</p>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('why-python')">&larr; Why Python?</button>
+        <span class="subpage-nav-center">7 / 8</span>
+        <button class="subpage-nav-btn" onclick="showSection('pseudocode')">Next: Pseudocode &rarr;</button>
+      </div>
     </section>
 
     <!-- PSEUDOCODE -->
-    <section id="pseudocode">
+    <section id="pseudocode" class="content-section">
       <h2>A 6-Step Problem-Solving Framework</h2>
       <p>Before writing a single line of Python, effective data scientists work through the problem systematically. This six-step framework builds the habit of thinking before coding - which saves far more time than it costs.</p>
 
@@ -592,6 +675,12 @@ roster = [
         <div class="callout-label">Pseudocode vs. comments</div>
         Pseudocode is written before the code exists. Comments are written inside existing code to explain it. Both are valuable, but pseudocode is a planning tool - it helps you discover edge cases and design flaws before you are invested in a half-written implementation. Get in the habit of sketching logic in plain language first.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('critical-thinking')">&larr; Critical Thinking</button>
+        <span class="subpage-nav-center">8 / 8</span>
+        <a href="quiz.html" class="subpage-nav-btn">Take the Quiz &rarr;</a>
+      </div>
     </section>
 
     <!-- QUIZ LINK -->
@@ -611,17 +700,17 @@ roster = [
   <aside class="sidebar">
 
 <div class="sidebar-card">
-      <h4>On This Page</h4>
-      <div class="toc-links">
-        <a href="#what-is-ds">What is DS?</a>
-        <a href="#ds-vs-analytics">DS vs. Analytics</a>
-        <a href="#careers">Careers</a>
-        <a href="#company-types">Company Types</a>
-        <a href="#tools">Key Tools</a>
-        <a href="#why-python">Why Python</a>
-        <a href="#critical-thinking">Critical Thinking</a>
-        <a href="#pseudocode">Pseudocode</a>
-        <a href="quiz.html">Quiz</a>
+      <h4>Topics</h4>
+      <div class="toc-links" id="tocLinks">
+        <a onclick="showSection('what-is-ds')">What is Data Science?</a>
+        <a onclick="showSection('ds-vs-analytics')">DS vs. Analytics</a>
+        <a onclick="showSection('careers')">Careers in Data</a>
+        <a onclick="showSection('company-types')">Company Types</a>
+        <a onclick="showSection('tools')">Tool Stack</a>
+        <a onclick="showSection('why-python')">Why Python?</a>
+        <a onclick="showSection('critical-thinking')">Critical Thinking</a>
+        <a onclick="showSection('pseudocode')">Pseudocode</a>
+        <a href="quiz.html" style="margin-top:0.4rem;border-top:1px solid var(--border);padding-top:0.5rem;">&#9998; Take Quiz</a>
       </div>
     </div>
 
@@ -694,6 +783,22 @@ roster = [
     window.scrollTo({top:0, behavior:'smooth'});
   });
 })();
+</script>
+
+
+
+<script>
+const SECTIONS = ['what-is-ds', 'ds-vs-analytics', 'careers', 'company-types', 'tools', 'why-python', 'critical-thinking', 'pseudocode'];
+function showSection(id) {
+  SECTIONS.forEach(function(s) { var el = document.getElementById(s); if (el) el.classList.remove('active'); });
+  var target = document.getElementById(id);
+  if (target) { target.classList.add('active'); window.scrollTo({top: 0, behavior: 'smooth'}); }
+  document.querySelectorAll('.tab-link[data-section]').forEach(function(t) { t.classList.toggle('active', t.dataset.section === id); });
+  document.querySelectorAll('#tocLinks a[onclick]').forEach(function(a) { var needle = "'" + id + "'"; a.classList.toggle('active', a.getAttribute('onclick').indexOf(needle) !== -1); });
+  history.replaceState(null, '', '#' + id);
+}
+document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab.addEventListener('click', function() { showSection(tab.dataset.section); }); });
+(function() { var hash = window.location.hash.replace('#', ''); var initial = SECTIONS.indexOf(hash) !== -1 ? hash : SECTIONS[0]; showSection(initial); })();
 </script>
 </body>
 </html>

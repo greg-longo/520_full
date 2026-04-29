@@ -176,6 +176,46 @@
     }
 
     .tab-link:hover { color: var(--text); border-bottom-color: var(--accent); }
+    .toc-links { display: flex; flex-direction: column; gap: 0.15rem; }
+    .toc-links a { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; color: var(--text-dim); text-decoration: none; padding: 0.3rem 0.6rem; border-radius: 3px; transition: color 0.15s, background 0.15s; cursor: pointer; border-left: 2px solid transparent; }
+    .toc-links a:hover { color: var(--accent-light); background: rgba(122,85,181,0.06); }
+    .toc-links a.active { color: var(--accent-light); background: rgba(122,85,181,0.1); border-left-color: var(--accent); }
+    .tab-link.active { color: var(--accent-light); border-bottom-color: var(--accent); }
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+    .subpage-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .subpage-nav-btn { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; letter-spacing: 0.05em; color: var(--text-dim); background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem 1rem; cursor: pointer; text-decoration: none; transition: color 0.15s, border-color 0.15s, background 0.15s; }
+    .subpage-nav-btn:hover { color: var(--accent-light); border-color: var(--accent); background: rgba(122,85,181,0.06); }
+    .subpage-nav-btn.invisible { visibility: hidden; }
+    .subpage-nav-center { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; }
+    .toc-links { display: flex; flex-direction: column; gap: 0.15rem; }
+    .toc-links a {
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; color: var(--text-dim);
+      text-decoration: none; padding: 0.3rem 0.6rem; border-radius: 3px;
+      transition: color 0.15s, background 0.15s; cursor: pointer;
+      border-left: 2px solid transparent;
+    }
+    .toc-links a:hover { color: var(--accent-light); background: rgba(122,85,181,0.06); }
+    .toc-links a.active {
+      color: var(--accent-light); background: rgba(122,85,181,0.1);
+      border-left-color: var(--accent);
+    }
+    .subpage-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+    }
+    .subpage-nav-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; letter-spacing: 0.05em;
+      color: var(--text-dim); background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.5rem 1rem; cursor: pointer; text-decoration: none;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .subpage-nav-btn:hover { color: var(--accent-light); border-color: var(--accent); background: rgba(122,85,181,0.06); }
+    .subpage-nav-btn.invisible { visibility: hidden; }
+    .subpage-nav-center {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    }
 
     /* ---- PAGE LAYOUT ---- */
     .page-wrap {
@@ -737,7 +777,7 @@
       </div>
 
       <!-- GETTING STARTED -->
-      <section id="getting-started">
+      <section id="getting-started" class="content-section">
         <h2><span class="sec-num">01</span> Getting Started</h2>
 
         <p>Python programs run line by line, top to bottom. The most basic program you can write is a single <code>print()</code> call - it displays output to the screen.</p>
@@ -788,10 +828,16 @@
           <div class="callout-title">How to watch the videos</div>
           <p>Don't watch passively - have a notebook open and try every example yourself as you go. Pause and re-run anything you don't understand. Check the Python docs when a function surprises you.</p>
         </div>
-      </section>
+    
+      <div class="subpage-nav">
+        <span class="subpage-nav-btn invisible">prev</span>
+        <span class="subpage-nav-center">1 / 7</span>
+        <button class="subpage-nav-btn" onclick="showSection('variables')">Next: Variables & Types &rarr;</button>
+      </div>
+    </section>
 
       <!-- VARIABLES -->
-      <section id="variables">
+      <section id="variables" class="content-section">
         <h2><span class="sec-num">02</span> Variables &amp; Data Types</h2>
 
         <p>A <strong>variable</strong> is a named container for a value. You create one with the assignment operator <code>=</code>. Python figures out the type automatically.</p>
@@ -882,10 +928,16 @@ return_value = <span class="num">42</span></code></pre>
 <span class="fn">print</span>(batting_avg >= <span class="num">0.250</span>)   <span class="cmt"># True</span>
 <span class="fn">print</span>(batting_avg == <span class="num">0.287</span>)   <span class="cmt"># True  (note: == not =)</span>
 <span class="fn">print</span>(batting_avg != <span class="num">0.300</span>)   <span class="cmt"># True</span></code></pre>
-      </section>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('getting-started')">&larr; Getting Started</button>
+        <span class="subpage-nav-center">2 / 7</span>
+        <button class="subpage-nav-btn" onclick="showSection('strings')">Next: Strings &rarr;</button>
+      </div>
+    </section>
 
       <!-- STRINGS -->
-      <section id="strings">
+      <section id="strings" class="content-section">
         <h2><span class="sec-num">03</span> Strings</h2>
 
         <p>Strings are sequences of characters. You can use single quotes, double quotes, or triple quotes (for multi-line strings). Strings are <strong>immutable</strong> - you can't change individual characters, but you can build new strings from old ones.</p>
@@ -930,10 +982,16 @@ team[-1]  &rarr;  <span class="out-str">'s'</span>
 team[0:3] &rarr;  <span class="out-str">'Eag'</span>
 <span class="out-str">Marcus Rivera is batting 0.287 this season.</span>
         </div>
-      </section>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('variables')">&larr; Variables & Types</button>
+        <span class="subpage-nav-center">3 / 7</span>
+        <button class="subpage-nav-btn" onclick="showSection('conditions')">Next: Conditions &rarr;</button>
+      </div>
+    </section>
 
       <!-- CONDITIONS -->
-      <section id="conditions">
+      <section id="conditions" class="content-section">
         <h2><span class="sec-num">04</span> Conditions</h2>
 
         <p>Conditions let your program make decisions. The <code>if</code> statement checks a boolean expression; if it's <code>True</code>, the indented block runs. Python uses <strong>indentation</strong> (4 spaces) to define blocks - not curly braces.</p>
@@ -971,10 +1029,16 @@ games = <span class="num">120</span>
           <div class="callout-title">= vs ==</div>
           <p><code>=</code> assigns a value to a variable. <code>==</code> compares two values. Using <code>=</code> inside an <code>if</code> condition is one of the most common beginner mistakes.</p>
         </div>
-      </section>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('strings')">&larr; Strings</button>
+        <span class="subpage-nav-center">4 / 7</span>
+        <button class="subpage-nav-btn" onclick="showSection('loops')">Next: Loops &rarr;</button>
+      </div>
+    </section>
 
       <!-- LOOPS -->
-      <section id="loops">
+      <section id="loops" class="content-section">
         <h2><span class="sec-num">05</span> Loops</h2>
 
         <p>Loops let you repeat code without copy-pasting. Python has two kinds: <code>for</code> loops (iterate over a sequence) and <code>while</code> loops (repeat while a condition is true).</p>
@@ -1043,10 +1107,16 @@ games = <span class="num">120</span>
 <span class="out-str">Okafor</span>
 <span class="out-str">Patel</span>
         </div>
-      </section>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('conditions')">&larr; Conditions</button>
+        <span class="subpage-nav-center">5 / 7</span>
+        <button class="subpage-nav-btn" onclick="showSection('data-structures')">Next: Data Structures &rarr;</button>
+      </div>
+    </section>
 
       <!-- DATA STRUCTURES -->
-      <section id="data-structures">
+      <section id="data-structures" class="content-section">
         <h2><span class="sec-num">06</span> Built-In Data Structures</h2>
 
         <p>Python's built-in data structures let you store collections of values. Choosing the right one for the job matters.</p>
@@ -1115,10 +1185,16 @@ player["stats"]["HR"]  &rarr;  <span class="out-num">8</span>
 <span class="out-str">avg</span>: <span class="out-num">0.301</span>
 <span class="out-str">stats</span>: {<span class="out-str">'HR'</span>: <span class="out-num">8</span>, <span class="out-str">'RBI'</span>: <span class="out-num">42</span>}
         </div>
-      </section>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('loops')">&larr; Loops</button>
+        <span class="subpage-nav-center">6 / 7</span>
+        <button class="subpage-nav-btn" onclick="showSection('functions')">Next: Functions &rarr;</button>
+      </div>
+    </section>
 
       <!-- FUNCTIONS -->
-      <section id="functions">
+      <section id="functions" class="content-section">
         <h2><span class="sec-num">07</span> Functions</h2>
 
         <p>A <strong>function</strong> is a reusable block of code with a name. You define it once with <code>def</code>, then call it as many times as you need. Functions make code shorter, more readable, and easier to debug.</p>
@@ -1200,7 +1276,13 @@ result = <span class="fn">calc_ops</span>(<span class="num">400</span>, <span cl
           <div class="callout-title">Next Steps</div>
           <p>This module covers the core Python you need for data science. When you're ready for more, work through exercises on <strong>Exercism</strong> or <strong>LeetCode Easy</strong> problems. Consider taking DTSC-575 for deeper Python coverage.</p>
         </div>
-      </section>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('data-structures')">&larr; Data Structures</button>
+        <span class="subpage-nav-center">7 / 7</span>
+        <a href="quiz.html" class="subpage-nav-btn">Take the Quiz &rarr;</a>
+      </div>
+    </section>
 
       <!-- QUIZ LINK -->
       <section id="quiz">
@@ -1222,17 +1304,17 @@ result = <span class="fn">calc_ops</span>(<span class="num">400</span>, <span cl
     <aside class="sidebar">
 
       <div class="sidebar-card">
-        <div class="sidebar-label">On This Page</div>
-        <ul class="toc-list">
-          <li><a href="#getting-started">Getting Started</a></li>
-          <li><a href="#variables">Variables &amp; Types</a></li>
-          <li><a href="#strings">Strings</a></li>
-          <li><a href="#lists">Lists</a></li>
-          <li><a href="#dicts">Dictionaries</a></li>
-          <li><a href="#functions">Functions</a></li>
-          <li><a href="#control">Control Flow</a></li>
-          <li><a href="quiz.html">Quiz</a></li>
-        </ul>
+        <h4>Topics</h4>
+        <div class="toc-links" id="tocLinks">
+        <a onclick="showSection('getting-started')">Getting Started</a>
+        <a onclick="showSection('variables')">Variables & Types</a>
+        <a onclick="showSection('strings')">Strings</a>
+        <a onclick="showSection('conditions')">Conditions</a>
+        <a onclick="showSection('loops')">Loops</a>
+        <a onclick="showSection('data-structures')">Data Structures</a>
+        <a onclick="showSection('functions')">Functions</a>
+        <a href="quiz.html" style="margin-top:0.4rem;border-top:1px solid var(--border);padding-top:0.5rem;">&#9998; Take Quiz</a>
+        </div>
       </div>
 
       <a class="sim-cta" href="../../sims/python_sim/index.html">
@@ -1661,5 +1743,21 @@ result = <span class="fn">calc_ops</span>(<span class="num">400</span>, <span cl
 })();
 </script>
 
+
+
+
+<script>
+const SECTIONS = ['getting-started', 'variables', 'strings', 'conditions', 'loops', 'data-structures', 'functions'];
+function showSection(id) {
+  SECTIONS.forEach(function(s) { var el = document.getElementById(s); if (el) el.classList.remove('active'); });
+  var target = document.getElementById(id);
+  if (target) { target.classList.add('active'); window.scrollTo({top: 0, behavior: 'smooth'}); }
+  document.querySelectorAll('.tab-link[data-section]').forEach(function(t) { t.classList.toggle('active', t.dataset.section === id); });
+  document.querySelectorAll('#tocLinks a[onclick]').forEach(function(a) { var needle = "'" + id + "'"; a.classList.toggle('active', a.getAttribute('onclick').indexOf(needle) !== -1); });
+  history.replaceState(null, '', '#' + id);
+}
+document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab.addEventListener('click', function() { showSection(tab.dataset.section); }); });
+(function() { var hash = window.location.hash.replace('#', ''); var initial = SECTIONS.indexOf(hash) !== -1 ? hash : SECTIONS[0]; showSection(initial); })();
+</script>
 </body>
 </html>
