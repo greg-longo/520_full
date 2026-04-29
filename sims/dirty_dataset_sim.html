@@ -1529,5 +1529,173 @@ document.getElementById('screen-0').style.display = 'block';
 <footer style="max-width:900px;width:100%;margin:20px auto 0;padding:0 0 24px;text-align:center;font-size:12px;color:#646469;font-family:'IBM Plex Mono',monospace;">
     This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by Eastern University faculty and staff.<br>&copy; Eastern University. All rights reserved.
 </footer>
+
+<!-- ═══════════════ SETTINGS WIDGET ═══════════════ -->
+<style>
+  /* Light theme overrides */
+  :root.theme-light {
+    --bg:        #f5f2ee;
+    --bg-card:   #ffffff;
+    --bg-card2:  #ede9e3;
+    --bg-code:   #ede9e3;
+    --text:      #1a1715;
+    --text-dim:  #5a5550;
+    --text-bright: #0d0c0a;
+    --border:    #d4cfc9;
+  }
+  /* Font scale */
+  :root { --font-scale: 1; }
+  body  { font-size: calc(1rem * var(--font-scale)); }
+
+  /* Floating gear button */
+  #settings-toggle {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9000;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    border: none; cursor: pointer; font-size: 1.2rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s, background 0.2s;
+  }
+  #settings-toggle:hover { transform: scale(1.1); background: var(--accent-light); }
+
+  /* Panel */
+  #settings-panel {
+    position: fixed; bottom: 78px; right: 24px; z-index: 9000;
+    width: 260px; background: var(--bg-card);
+    border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    padding: 18px 20px 16px;
+    display: none; flex-direction: column; gap: 18px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    transition: opacity 0.15s;
+  }
+  #settings-panel.open { display: flex; }
+
+  .sp-header {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-dim);
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+
+  .sp-row { display: flex; flex-direction: column; gap: 8px; }
+  .sp-label { font-size: 0.78rem; color: var(--text-dim); font-weight: 600; }
+
+  /* Theme toggle */
+  .theme-switch {
+    display: flex; background: var(--bg-card2);
+    border-radius: 8px; overflow: hidden; border: 1px solid var(--border);
+  }
+  .theme-opt {
+    flex: 1; padding: 7px 0; text-align: center; cursor: pointer;
+    font-size: 0.78rem; color: var(--text-dim);
+    transition: background 0.15s, color 0.15s; border: none;
+    background: transparent;
+  }
+  .theme-opt.active {
+    background: var(--accent); color: #fff; font-weight: 600;
+  }
+
+  /* Font size buttons */
+  .font-switch {
+    display: flex; gap: 6px;
+  }
+  .font-opt {
+    flex: 1; padding: 7px 0; text-align: center; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 6px;
+    background: var(--bg-card2); color: var(--text-dim);
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .font-opt.active {
+    background: var(--accent); color: #fff;
+    border-color: var(--accent); font-weight: 600;
+  }
+  .font-opt:nth-child(1) { font-size: 0.75rem; }
+  .font-opt:nth-child(2) { font-size: 0.9rem; }
+  .font-opt:nth-child(3) { font-size: 1.05rem; }
+
+  .sp-reset {
+    font-size: 0.72rem; color: var(--text-dim); background: none;
+    border: none; cursor: pointer; text-align: left; padding: 0;
+    text-decoration: underline; opacity: 0.7;
+  }
+  .sp-reset:hover { opacity: 1; }
+</style>
+
+<button id="settings-toggle" aria-label="Settings" title="Display settings">⚙</button>
+
+<div id="settings-panel" role="dialog" aria-label="Display settings">
+  <div class="sp-header">Display Settings</div>
+
+  <div class="sp-row">
+    <span class="sp-label">Theme</span>
+    <div class="theme-switch">
+      <button class="theme-opt" id="theme-dark"  onclick="setTheme('dark')">🌙 Dark</button>
+      <button class="theme-opt" id="theme-light" onclick="setTheme('light')">☀️ Light</button>
+    </div>
+  </div>
+
+  <div class="sp-row">
+    <span class="sp-label">Text Size</span>
+    <div class="font-switch">
+      <button class="font-opt" id="font-normal" onclick="setFont('normal')">A</button>
+      <button class="font-opt" id="font-large"  onclick="setFont('large')">A</button>
+      <button class="font-opt" id="font-xl"     onclick="setFont('xl')">A</button>
+    </div>
+  </div>
+
+  <button class="sp-reset" onclick="resetSettings()">Reset to defaults</button>
+</div>
+
+<script>
+(function() {
+  var THEME_KEY = 'dtsc520_theme';
+  var FONT_KEY  = 'dtsc520_font';
+  var FONT_SCALES = { normal: 1, large: 1.12, xl: 1.25 };
+
+  function setTheme(t) {
+    document.documentElement.classList.toggle('theme-light', t === 'light');
+    localStorage.setItem(THEME_KEY, t);
+    document.querySelectorAll('.theme-opt').forEach(function(b) { b.classList.remove('active'); });
+    var el = document.getElementById('theme-' + t);
+    if (el) el.classList.add('active');
+  }
+
+  function setFont(size) {
+    document.documentElement.style.setProperty('--font-scale', FONT_SCALES[size] || 1);
+    localStorage.setItem(FONT_KEY, size);
+    document.querySelectorAll('.font-opt').forEach(function(b) { b.classList.remove('active'); });
+    var el = document.getElementById('font-' + size);
+    if (el) el.classList.add('active');
+  }
+
+  function resetSettings() {
+    setTheme('dark');
+    setFont('normal');
+  }
+
+  // Apply saved prefs immediately
+  var savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+  var savedFont  = localStorage.getItem(FONT_KEY)  || 'normal';
+  setTheme(savedTheme);
+  setFont(savedFont);
+
+  // Toggle panel open/close
+  document.getElementById('settings-toggle').addEventListener('click', function(e) {
+    e.stopPropagation();
+    document.getElementById('settings-panel').classList.toggle('open');
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', function(e) {
+    var panel = document.getElementById('settings-panel');
+    if (panel.classList.contains('open') && !panel.contains(e.target)) {
+      panel.classList.remove('open');
+    }
+  });
+})();
+</script>
+<!-- ═══════════════ END SETTINGS WIDGET ═══════════════ -->
+
 </body>
 </html>
