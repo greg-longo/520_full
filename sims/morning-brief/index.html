@@ -1556,6 +1556,10 @@ ward_check = df_clean[df_clean[<span class="st">'followup_scheduled'</span>] == 
     setFont('normal');
   }
 
+  window.setTheme = setTheme;
+  window.setFont = setFont;
+  window.resetSettings = resetSettings;
+
   // Apply saved prefs immediately
   var savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
   var savedFont  = localStorage.getItem(FONT_KEY)  || 'normal';

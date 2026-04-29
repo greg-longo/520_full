@@ -1301,6 +1301,10 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
     setFont('normal');
   }
 
+  window.setTheme = setTheme;
+  window.setFont = setFont;
+  window.resetSettings = resetSettings;
+
   // Apply saved prefs immediately
   var savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
   var savedFont  = localStorage.getItem(FONT_KEY)  || 'normal';
