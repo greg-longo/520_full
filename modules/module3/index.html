@@ -75,8 +75,32 @@
       font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.05em;
       color: var(--text-dim); text-decoration: none; padding: 0.75rem 1rem;
       border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
+      cursor: pointer;
     }
-    .tab-link:hover { color: var(--text); border-bottom-color: var(--accent); }
+    .tab-link:hover { color: var(--text); border-bottom-color: rgba(74,143,107,0.4); }
+    .tab-link.active { color: var(--accent-light); border-bottom-color: var(--accent); }
+
+    /* Subpage sections — only active section visible */
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+
+    /* Subpage navigation footer */
+    .subpage-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+    }
+    .subpage-nav-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; letter-spacing: 0.05em;
+      color: var(--text-dim); background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.5rem 1rem; cursor: pointer; text-decoration: none;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .subpage-nav-btn:hover { color: var(--accent-light); border-color: var(--accent); background: rgba(74,143,107,0.06); }
+    .subpage-nav-btn.invisible { visibility: hidden; }
+    .subpage-nav-center {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
+    }
 
     .page-wrap {
       max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem;
@@ -214,9 +238,18 @@
     }
     .score-display { font-family: 'IBM Plex Mono', monospace; font-size: 1.6rem; color: var(--accent-light); font-weight: 700; }
     .score-sub { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.2rem; }
-    .toc-links { display: flex; flex-direction: column; gap: 0.3rem; }
-    .toc-links a { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; color: var(--text-dim); text-decoration: none; padding: 0.2rem 0; transition: color 0.15s; }
-    .toc-links a:hover { color: var(--accent-light); }
+    .toc-links { display: flex; flex-direction: column; gap: 0.15rem; }
+    .toc-links a {
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; color: var(--text-dim);
+      text-decoration: none; padding: 0.3rem 0.6rem; border-radius: 3px;
+      transition: color 0.15s, background 0.15s; cursor: pointer;
+      border-left: 2px solid transparent;
+    }
+    .toc-links a:hover { color: var(--accent-light); background: rgba(74,143,107,0.06); }
+    .toc-links a.active {
+      color: var(--accent-light); background: rgba(74,143,107,0.1);
+      border-left-color: var(--accent);
+    }
     .quiz-cta-btn {
       display: block; border: 1px solid var(--accent); color: var(--accent-light);
       text-decoration: none; text-align: center; padding: 0.55rem 1rem; border-radius: 4px;
@@ -329,20 +362,23 @@
 </div>
 
 <nav class="section-tabs">
-  <a href="#arrays" class="tab-link">Arrays</a>
-  <a href="#indexing" class="tab-link">Indexing</a>
-  <a href="#vectorization" class="tab-link">Vectorization</a>
-  <a href="#stats" class="tab-link">Statistical Methods</a>
-  <a href="#boolean" class="tab-link">Boolean Indexing</a>
-  <a href="#fancy" class="tab-link">Fancy Indexing</a>
-  <a href="quiz.html" class="tab-link quiz-tab-link">Quiz</a>
+  <a class="tab-link" data-section="arrays">Arrays</a>
+  <a class="tab-link" data-section="indexing">Indexing</a>
+  <a class="tab-link" data-section="vectorization">Vectorization</a>
+  <a class="tab-link" data-section="stats">Statistical Methods</a>
+  <a class="tab-link" data-section="boolean">Boolean Indexing</a>
+  <a class="tab-link" data-section="fancy">Fancy Indexing</a>
+  <a class="tab-link" data-section="random">Random Numbers</a>
+  <a class="tab-link" data-section="conditional">Conditional Logic</a>
+  <a class="tab-link" data-section="combining">Combining Arrays</a>
+  <a href="quiz.html" class="tab-link">Quiz</a>
 </nav>
 
 <div class="page-wrap">
   <div class="content-col">
 
     <!-- ARRAYS -->
-    <section id="arrays">
+    <section id="arrays" class="content-section">
       <h2>The ndarray: NumPy's Core Object</h2>
       <p>NumPy's central data structure is the <strong>ndarray</strong> (n-dimensional array) - a fixed-type, fixed-size grid of values. Unlike a Python list, every element in a NumPy array is the same data type, and they are stored contiguously in memory. This is what makes NumPy so fast.</p>
 
@@ -407,10 +443,16 @@ grid.<span class="fn">ravel</span>()  <span class="cm"># faster - returns a view
         <div class="callout-label">Why not just use Python lists?</div>
         Python lists can hold mixed types, but that flexibility costs speed. NumPy stores values of one type in a single contiguous memory block, allowing C-level loops instead of Python-level loops. For large datasets, NumPy operations can be 10-100x faster than the equivalent Python list comprehension.
       </div>
+    
+      <div class="subpage-nav">
+        <span class="subpage-nav-btn invisible">prev</span>
+        <span class="subpage-nav-center">1 / 9</span>
+        <button class="subpage-nav-btn" onclick="showSection('indexing')">Next: Indexing &#8594;</button>
+      </div>
     </section>
 
     <!-- INDEXING -->
-    <section id="indexing">
+    <section id="indexing" class="content-section">
       <h2>Indexing and Slicing</h2>
       <p>NumPy indexing is similar to Python list slicing but extends to multiple dimensions. Slicing returns a <strong>view</strong> of the original data, not a copy - so modifying the slice modifies the original array too.</p>
 
@@ -460,10 +502,16 @@ stats[:2, :2]    &rarr;  [[<span class="out-num">0.312  4.</span>]
         <div class="callout-label">Views vs. copies</div>
         NumPy slices return views, not copies. If you do <code>sub = stats[:2]</code> and then <code>sub[0, 0] = 0</code>, you will also change <code>stats[0, 0]</code>. To get an independent copy, call <code>.copy()</code>: <code>sub = stats[:2].copy()</code>.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('arrays')">&#8592; Arrays</button>
+        <span class="subpage-nav-center">2 / 9</span>
+        <button class="subpage-nav-btn" onclick="showSection('vectorization')">Next: Vectorization &#8594;</button>
+      </div>
     </section>
 
     <!-- VECTORIZATION -->
-    <section id="vectorization">
+    <section id="vectorization" class="content-section">
       <h2>Vectorization: No Loops Required</h2>
       <p>The most important NumPy concept is <strong>vectorization</strong> - applying an operation to every element of an array at once, without writing a Python loop. This both simplifies your code and makes it dramatically faster because the loop runs in compiled C code instead of the Python interpreter.</p>
 
@@ -536,10 +584,16 @@ stats.sum(axis=0)   &rarr;  [<span class="out-num"> 0.900  13.000  68.000</span>
 stats.mean(axis=0)  &rarr;  [<span class="out-num"> 0.300   4.333  22.667</span>]       <span class="out-idx"># column means</span>
 stats.sum(axis=1)   &rarr;  [<span class="out-num">26.312  17.287  38.301</span>]       <span class="out-idx"># row totals (per player)</span>
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('indexing')">&#8592; Indexing</button>
+        <span class="subpage-nav-center">3 / 9</span>
+        <button class="subpage-nav-btn" onclick="showSection('stats')">Next: Statistical Methods &#8594;</button>
+      </div>
     </section>
 
     <!-- STATS -->
-    <section id="stats">
+    <section id="stats" class="content-section">
       <h2>Statistical Methods</h2>
       <p>NumPy provides a comprehensive set of statistical functions. These are the building blocks for exploratory data analysis before you even reach pandas.</p>
 
@@ -573,10 +627,16 @@ players = np.<span class="fn">array</span>([<span class="st">'Rivera'</span>, <s
 <span class="cm"># Percentile analysis</span>
 np.<span class="fn">percentile</span>(salaries, <span class="nm">25</span>)   <span class="cm"># 25th percentile</span>
 np.<span class="fn">percentile</span>(salaries, [<span class="nm">25</span>, <span class="nm">50</span>, <span class="nm">75</span>])  <span class="cm"># quartiles</span></code></pre>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('vectorization')">&#8592; Vectorization</button>
+        <span class="subpage-nav-center">4 / 9</span>
+        <button class="subpage-nav-btn" onclick="showSection('boolean')">Next: Boolean Indexing &#8594;</button>
+      </div>
     </section>
 
     <!-- BOOLEAN INDEXING -->
-    <section id="boolean">
+    <section id="boolean" class="content-section">
       <h2>Boolean Indexing</h2>
       <p>Boolean indexing lets you select elements based on a condition. A comparison on a NumPy array produces a boolean array of the same shape. Using that boolean array as an index returns only the elements where the condition is True.</p>
 
@@ -614,10 +674,16 @@ players[avgs &gt; .295]        &rarr;  [<span class="out-str">'Rivera'  'Walker'
         <div class="callout-label">Boolean indexing vs. np.where</div>
         <code>np.where(condition, x, y)</code> returns elements from array <code>x</code> where the condition is True, and from <code>y</code> where it is False. This is useful for conditional assignment: <code>np.where(avgs > .300, 'hot', 'cold')</code> returns <code>['hot', 'cold', 'hot', 'cold', 'cold']</code>.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('stats')">&#8592; Statistical Methods</button>
+        <span class="subpage-nav-center">5 / 9</span>
+        <button class="subpage-nav-btn" onclick="showSection('fancy')">Next: Fancy Indexing &#8594;</button>
+      </div>
     </section>
 
     <!-- FANCY INDEXING -->
-    <section id="fancy">
+    <section id="fancy" class="content-section">
       <h2>Fancy Indexing</h2>
       <p>Fancy indexing means passing an array of <em>integers</em> as an index - instead of a single index or a slice, you hand NumPy a list of positions and it returns exactly those elements, in that order. Unlike slicing, fancy indexing always returns a <strong>copy</strong>, not a view.</p>
 
@@ -673,10 +739,16 @@ players[order[::-<span class="nm">1</span>]]  <span class="cm"># ['Rivera', 'Wal
         <div class="callout-label">NumPy as pandas' engine</div>
         Every pandas Series and DataFrame column is backed by a NumPy array. When you call <code>df['avg'].values</code>, you get the underlying NumPy array. Understanding NumPy means you understand what pandas is doing under the hood - and you can drop down to NumPy when you need maximum performance.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('boolean')">&#8592; Boolean Indexing</button>
+        <span class="subpage-nav-center">6 / 9</span>
+        <button class="subpage-nav-btn" onclick="showSection('random')">Next: Random Numbers &#8594;</button>
+      </div>
     </section>
 
     <!-- RANDOM NUMBER GENERATION -->
-    <section id="content">
+    <section id="random" class="content-section">
       <h2>Pseudorandom Number Generation</h2>
       <p>Random numbers are essential in data science for simulations, sampling, and setting up reproducible experiments. NumPy's random module generates <strong>pseudorandom</strong> numbers - they look random but are produced by a deterministic algorithm seeded with a starting value.</p>
 
@@ -705,10 +777,16 @@ rng.<span class="fn">shuffle</span>(arr)       <span class="cm"># shuffle in pla
         <div class="callout-label">Why "pseudo" random?</div>
         Computers can't generate true randomness - they use a mathematical formula that produces sequences <em>that look</em> random. The seed is just the starting point for that formula. Same seed = same sequence every time, which makes your analysis reproducible.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('fancy')">&#8592; Fancy Indexing</button>
+        <span class="subpage-nav-center">7 / 9</span>
+        <button class="subpage-nav-btn" onclick="showSection('conditional')">Next: Conditional Logic &#8594;</button>
+      </div>
     </section>
 
     <!-- CONDITIONAL LOGIC AS ARRAY OPERATIONS -->
-    <section id="content">
+    <section id="conditional" class="content-section">
       <h2>Conditional Logic as Array Operations</h2>
       <p>Instead of writing Python <code>if/else</code> loops over arrays (slow!), NumPy provides vectorized conditional operations that apply logic element-wise across entire arrays at once.</p>
 
@@ -739,10 +817,16 @@ category = np.<span class="fn">where</span>(temps > <span class="nm">70</span>, 
         <div class="callout-label">np.where vs Python loops</div>
         A Python <code>for</code> loop checking 1 million values might take seconds. <code>np.where</code> on the same array takes milliseconds - it runs compiled C code under the hood. Always prefer vectorized operations when working with large datasets.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('random')">&#8592; Random Numbers</button>
+        <span class="subpage-nav-center">8 / 9</span>
+        <button class="subpage-nav-btn" onclick="showSection('combining')">Next: Combining Arrays &#8594;</button>
+      </div>
     </section>
 
     <!-- CONCATENATING, STACKING, SPLITTING -->
-    <section id="content">
+    <section id="combining" class="content-section">
       <h2>Concatenating, Stacking, and Splitting</h2>
       <p>Real data often arrives in pieces - sensor readings from different days, student scores from different exams, etc. NumPy provides tools to combine and split arrays efficiently.</p>
 
@@ -790,6 +874,12 @@ first_half, second_half = np.<span class="fn">split</span>(monthly_sales, [<span
         <div class="callout-label">vstack vs concatenate(axis=0)</div>
         <code>np.vstack</code> and <code>np.concatenate([...], axis=0)</code> do the same thing. <code>vstack</code> is more readable when you're stacking rows; <code>concatenate</code> is more explicit and flexible. You'll see both in practice - knowing they're equivalent prevents confusion.
       </div>
+    
+      <div class="subpage-nav">
+        <button class="subpage-nav-btn" onclick="showSection('conditional')">&#8592; Conditional Logic</button>
+        <span class="subpage-nav-center">9 / 9</span>
+        <a href="quiz.html" class="subpage-nav-btn">Take the Quiz &#8594;</a>
+      </div>
     </section>
 
     <!-- QUIZ LINK -->
@@ -809,15 +899,18 @@ first_half, second_half = np.<span class="fn">split</span>(monthly_sales, [<span
   <aside class="sidebar">
 
 <div class="sidebar-card">
-      <h4>On This Page</h4>
-      <div class="toc-links">
-        <a href="#arrays">Arrays</a>
-        <a href="#indexing">Indexing</a>
-        <a href="#vectorization">Vectorization</a>
-        <a href="#stats">Statistical Methods</a>
-        <a href="#boolean">Boolean Indexing</a>
-        <a href="#fancy">Fancy Indexing</a>
-        <a href="quiz.html">Quiz</a>
+      <h4>Topics</h4>
+      <div class="toc-links" id="tocLinks">
+        <a onclick="showSection('arrays')">Arrays</a>
+        <a onclick="showSection('indexing')">Indexing</a>
+        <a onclick="showSection('vectorization')">Vectorization</a>
+        <a onclick="showSection('stats')">Statistical Methods</a>
+        <a onclick="showSection('boolean')">Boolean Indexing</a>
+        <a onclick="showSection('fancy')">Fancy Indexing</a>
+        <a onclick="showSection('random')">Random Numbers</a>
+        <a onclick="showSection('conditional')">Conditional Logic</a>
+        <a onclick="showSection('combining')">Combining Arrays</a>
+        <a href="quiz.html" style="margin-top:0.4rem; border-top: 1px solid var(--border); padding-top:0.5rem;">&#9998; Take Quiz</a>
       </div>
     </div>
 
@@ -1259,5 +1352,53 @@ first_half, second_half = np.<span class="fn">split</span>(monthly_sales, [<span
 })();
 </script>
 
+
+<script>
+// ── Section routing ───────────────────────────────────────────────────────────
+const SECTIONS = ['arrays','indexing','vectorization','stats','boolean','fancy','random','conditional','combining'];
+
+function showSection(id) {
+  // Hide all sections
+  SECTIONS.forEach(function(s) {
+    var el = document.getElementById(s);
+    if (el) el.classList.remove('active');
+  });
+
+  // Show target
+  var target = document.getElementById(id);
+  if (target) {
+    target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Update tab active state
+  document.querySelectorAll('.tab-link[data-section]').forEach(function(t) {
+    t.classList.toggle('active', t.dataset.section === id);
+  });
+
+  // Update sidebar active state
+  document.querySelectorAll('#tocLinks a[onclick]').forEach(function(a) {
+    var match = a.getAttribute('onclick').indexOf("'" + id + "'") !== -1;
+    a.classList.toggle('active', match);
+  });
+
+  // Update URL hash without scroll jump
+  history.replaceState(null, '', '#' + id);
+}
+
+// Wire up tab clicks
+document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    showSection(tab.dataset.section);
+  });
+});
+
+// On load: read hash or default to first section
+(function() {
+  var hash = window.location.hash.replace('#', '');
+  var initial = SECTIONS.indexOf(hash) !== -1 ? hash : SECTIONS[0];
+  showSection(initial);
+})();
+</script>
 </body>
 </html>

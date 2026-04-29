@@ -597,6 +597,11 @@
     .dash-item.empty .dash-item-value { color: rgba(255,255,255,0.15); }
     .dash-item.untracked { opacity: 0.5; }
     .dash-item.untracked .dash-item-value { color: rgba(255,255,255,0.12); }
+    a.dash-item {
+      text-decoration: none; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    a.dash-item:hover { border-color: rgba(255,255,255,0.25); background: var(--bg-card2) !important; }
     .dash-reset {
       margin-top: 0.75rem;
       text-align: right;
@@ -965,22 +970,35 @@
     // Per-module columns
     // Each column: mod label + quiz row + sim rows
     // untracked = no localStorage (always shows as 'not started')
+    const QUIZ_URLS = [
+      'modules/module0/quiz.html',
+      'modules/module1/quiz.html',
+      'modules/module2/quiz.html',
+      'modules/module3/quiz.html',
+      'modules/module4/quiz.html',
+      'modules/module5/quiz.html',
+      'modules/module6/quiz.html',
+    ];
     const simsByMod = [
       [], // mod0 — no sims
       [ // mod1
-        { state: 'untracked', label: '--', name: 'Morning Brief' },
-        { state: 'untracked', label: '--', name: 'Find Your Path' },
+        { state: 'untracked', label: '--', name: 'Morning Brief',  href: 'sims/morning-brief/index.html' },
+        { state: 'untracked', label: '--', name: 'Find Your Path', href: 'sims/find-your-path/index.html' },
       ],
-      pftItems, // mod2 — python field training (4 items)
-      [{ ...debugItem, name: 'Debug Pipeline' }], // mod3
+      pftItems.map((item, i) => ({ ...item, href: 'sims/python_sim/' + ['index.html','module1.html','module2.html','module3.html'][i+1] || 'sims/python_sim/index.html' })),
+      [{ ...debugItem, name: 'Debug Pipeline', href: 'sims/debug-pipeline/index.html' }],
       [ // mod4
-        { state: 'untracked', label: '--', name: 'Dirty Dataset' },
+        { state: 'untracked', label: '--', name: 'Dirty Dataset', href: 'sims/dirty_dataset_sim.html' },
       ],
       [ // mod5
-        { state: 'untracked', label: '--', name: 'Pitch the Viz' },
+        { state: 'untracked', label: '--', name: 'Pitch the Viz', href: 'sims/pitch-the-viz/index.html' },
       ],
-      [{ ...branchItem, name: 'Branch Crisis' }], // mod6
+      [{ ...branchItem, name: 'Branch Crisis', href: 'modules/module6/branch_crisis_sim.html' }],
     ];
+
+    // Fix pft hrefs properly
+    const pftHrefs = ['sims/python_sim/module1.html','sims/python_sim/module2.html','sims/python_sim/module3.html','sims/python_sim/finale.html'];
+    simsByMod[2] = pftItems.map((item, i) => ({ ...item, href: pftHrefs[i] }));
 
     grid.innerHTML = '';
 
@@ -988,25 +1006,30 @@
       const col = document.createElement('div');
       col.className = 'dash-col';
 
-      // Module label
-      const lbl = document.createElement('div');
+      // Module label — links to module page
+      const lbl = document.createElement('a');
       lbl.className = 'dash-mod-label';
       lbl.style.color = MOD_COLORS[n];
       lbl.textContent = 'M' + n;
+      lbl.href = 'modules/module' + n + '/index.html';
+      lbl.style.textDecoration = 'none';
       col.appendChild(lbl);
 
-      // Quiz item
+      // Quiz item — links to quiz page
       const quiz = quizzes[n];
-      const qEl = document.createElement('div');
+      const qEl = document.createElement('a');
       qEl.className = 'dash-item ' + quiz.state;
+      qEl.href = QUIZ_URLS[n];
       qEl.innerHTML = `<span class="dash-item-label">Quiz</span><span class="dash-item-value">${quiz.label}</span>`;
       qEl.title = 'Module ' + n + ' Quiz';
       col.appendChild(qEl);
 
-      // Sim items
+      // Sim items — links to sim pages
       simsByMod[n].forEach(sim => {
-        const sEl = document.createElement('div');
+        const tag = sim.href ? 'a' : 'div';
+        const sEl = document.createElement(tag);
         sEl.className = 'dash-item ' + sim.state;
+        if (sim.href) sEl.href = sim.href;
         const shortName = sim.name || 'Sim';
         sEl.innerHTML = `<span class="dash-item-label" title="${shortName}">${shortName}</span><span class="dash-item-value">${sim.label}</span>`;
         col.appendChild(sEl);
