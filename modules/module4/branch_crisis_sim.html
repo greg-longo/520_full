@@ -1311,5 +1311,83 @@
   renderGraph(0);
   </script>
 
+  <!-- Settings Widget -->
+  <style>
+    :root.theme-light {
+      --bg: #f5f2ee;
+      --bg-card: #ffffff;
+      --bg-card2: #ede9e3;
+      --bg-code: #ede9e3;
+      --text: #1a1715;
+      --text-dim: #5a5550;
+      --text-bright: #0d0c0a;
+      --border: #d4cfc9;
+    }
+    :root { --font-scale: 1; }
+    body { font-size: calc(1rem * var(--font-scale)); }
+    #settings-toggle {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--accent, #7c6ef7); color: #fff;
+      border: none; font-size: 20px; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      display: flex; align-items: center; justify-content: center;
+    }
+    #settings-panel {
+      position: fixed; bottom: 76px; right: 24px; z-index: 9998;
+      background: var(--bg-card, #1e1b2e); border: 1px solid var(--border, #333);
+      border-radius: 12px; padding: 16px; min-width: 200px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5); display: none;
+    }
+    #settings-panel h3 { margin: 0 0 12px; font-size: 14px; color: var(--text-dim, #aaa); text-transform: uppercase; letter-spacing: 1px; }
+    .settings-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .settings-btn {
+      flex: 1; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border, #444);
+      background: var(--bg-card2, #2a273f); color: var(--text, #eee);
+      cursor: pointer; font-size: 13px; text-align: center;
+    }
+    .settings-btn.active { background: var(--accent, #7c6ef7); color: #fff; border-color: var(--accent, #7c6ef7); }
+  </style>
+  <button id="settings-toggle" title="Settings">⚙</button>
+  <div id="settings-panel">
+    <h3>Settings</h3>
+    <div style="margin-bottom:8px;font-size:13px;color:var(--text-dim,#aaa)">Theme</div>
+    <div class="settings-row">
+      <button class="settings-btn" id="btn-dark" onclick="setTheme('dark')">Dark</button>
+      <button class="settings-btn" id="btn-light" onclick="setTheme('light')">Light</button>
+    </div>
+    <div style="margin-bottom:8px;font-size:13px;color:var(--text-dim,#aaa)">Font Size</div>
+    <div class="settings-row">
+      <button class="settings-btn" id="btn-normal" onclick="setFont(1,'normal')">Normal</button>
+      <button class="settings-btn" id="btn-large" onclick="setFont(1.12,'large')">Large</button>
+      <button class="settings-btn" id="btn-xl" onclick="setFont(1.25,'xl')">XL</button>
+    </div>
+  </div>
+  <script>
+    (function(){
+      function setTheme(t){
+        localStorage.setItem('dtsc520_theme',t);
+        document.documentElement.classList.toggle('theme-light',t==='light');
+        document.getElementById('btn-dark').classList.toggle('active',t==='dark');
+        document.getElementById('btn-light').classList.toggle('active',t==='light');
+      }
+      function setFont(scale,name){
+        localStorage.setItem('dtsc520_font',name);
+        document.documentElement.style.setProperty('--font-scale',scale);
+        ['normal','large','xl'].forEach(function(n){
+          document.getElementById('btn-'+n).classList.toggle('active',n===name);
+        });
+      }
+      window.setTheme=setTheme; window.setFont=setFont;
+      document.getElementById('settings-toggle').addEventListener('click',function(){
+        var p=document.getElementById('settings-panel');
+        p.style.display=p.style.display==='block'?'none':'block';
+      });
+      var t=localStorage.getItem('dtsc520_theme')||'dark';
+      var f=localStorage.getItem('dtsc520_font')||'normal';
+      var scales={normal:1,large:1.12,xl:1.25};
+      setTheme(t); setFont(scales[f]||1,f);
+    })();
+  </script>
 </body>
 </html>
