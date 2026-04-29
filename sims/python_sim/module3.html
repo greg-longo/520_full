@@ -797,6 +797,81 @@ initPyodide();
     --text-dim:  #5a5550;
     --text-bright: #0d0c0a;
     --border:    #d4cfc9;
+    --maroon:    #dcd7d0;
+    --surface:   #ffffff;
+    --surface2:  #ede9e3;
+    --surface3:  #e4e0d8;
+    --border-l:  #d4cfc9;
+    --muted:     #8a8078;
+  }
+  /* ── Light mode overrides (comprehensive) ── */
+  /* Nav */
+  :root.theme-light nav,
+  :root.theme-light #topnav,
+  :root.theme-light #coursenav {
+    background: #dcd7d0 !important;
+  }
+  :root.theme-light nav *,
+  :root.theme-light #topnav *,
+  :root.theme-light #coursenav * {
+    color: #3a3530 !important;
+    border-color: rgba(0,0,0,0.18) !important;
+  }
+  :root.theme-light nav a:hover,
+  :root.theme-light #topnav a:hover,
+  :root.theme-light #coursenav a:hover {
+    color: #1a1715 !important;
+    background: rgba(0,0,0,0.06) !important;
+  }
+  /* Hero / banner areas */
+  :root.theme-light .mod-banner,
+  :root.theme-light .hero,
+  :root.theme-light [class*="banner"],
+  :root.theme-light [class*="hero"] {
+    background: #e8e3dc !important;
+  }
+  /* Card titles (hardcoded white in base styles) */
+  :root.theme-light .module-card h3,
+  :root.theme-light .module-card h2,
+  :root.theme-light .sim-card h3,
+  :root.theme-light .sim-card h2 {
+    color: #0d0c0a !important;
+  }
+  /* Footer */
+  :root.theme-light footer {
+    background: #dcd7d0 !important;
+  }
+  /* Code editors */
+  :root.theme-light textarea.code-editor,
+  :root.theme-light .output-box {
+    background: #f0ece6 !important;
+    color: #1a1715 !important;
+    border-color: #c8c3bc !important;
+  }
+  /* Sim option cards and counters */
+  :root.theme-light .opt-letter {
+    background: rgba(0,0,0,0.07) !important;
+    border-color: rgba(0,0,0,0.2) !important;
+    color: #3a3530 !important;
+  }
+  :root.theme-light .q-num,
+  :root.theme-light .track-label,
+  :root.theme-light .q-count,
+  :root.theme-light [class*="counter"],
+  :root.theme-light [class*="progress-label"] {
+    color: #5a5550 !important;
+  }
+  :root.theme-light .q-option {
+    background: #ffffff !important;
+    border-color: #d4cfc9 !important;
+  }
+  :root.theme-light .q-option:hover {
+    border-color: #a09890 !important;
+    background: #f5f2ee !important;
+  }
+  /* Gear button visible on light bg */
+  :root.theme-light #settings-toggle {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.12) !important;
   }
   /* Font scale */
   :root { --font-scale: 1; font-size: calc(16px * var(--font-scale)); }

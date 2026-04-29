@@ -739,12 +739,12 @@ roster = [
 </div>
 
 <div style="max-width:1100px;margin:0 auto;padding:1.5rem 2rem 0;display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
-  <a href="../../sims/morning-brief/index.html" style="display:block;background:#1a1815;border:1px solid #2e2b28;border-top:3px solid #2A7195;border-radius:4px;padding:1.25rem 1.5rem;text-decoration:none;color:#e8e4de;transition:background 0.15s;" onmouseover="this.style.background='#211f1d'" onmouseout="this.style.background='#1a1815'">
+  <a href="../../sims/morning-brief/index.html" class="sidebar-sim-card" style="display:block;background:var(--bg-card);border:1px solid var(--border);border-top:3px solid #2A7195;border-radius:4px;padding:1.25rem 1.5rem;text-decoration:none;color:var(--text);transition:background 0.15s;">
     <div style="font-family:'IBM Plex Mono',monospace;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:#3d8fb5;margin-bottom:0.4rem;">Module 01 - Simulation</div>
     <div style="font-size:1rem;font-weight:600;color:#f0ece6;margin-bottom:0.3rem;">The Morning Brief</div>
     <div style="font-size:0.85rem;color:#a09a92;">Walk the full DS lifecycle - Ask, Acquire, Clean, Explore, Analyze, Communicate - on a real healthcare case.</div>
   </a>
-  <a href="../../sims/find-your-path/index.html" style="display:block;background:#1a1815;border:1px solid #2e2b28;border-top:3px solid #8B1C40;border-radius:4px;padding:1.25rem 1.5rem;text-decoration:none;color:#e8e4de;transition:background 0.15s;" onmouseover="this.style.background='#211f1d'" onmouseout="this.style.background='#1a1815'">
+  <a href="../../sims/find-your-path/index.html" class="sidebar-sim-card" style="display:block;background:var(--bg-card);border:1px solid var(--border);border-top:3px solid #8B1C40;border-radius:4px;padding:1.25rem 1.5rem;text-decoration:none;color:var(--text);transition:background 0.15s;">
     <div style="font-family:'IBM Plex Mono',monospace;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:#a85070;margin-bottom:0.4rem;">Module 01 - Simulation</div>
     <div style="font-size:1rem;font-weight:600;color:#f0ece6;margin-bottom:0.3rem;">Find Your Path</div>
     <div style="font-size:0.85rem;color:#a09a92;">Eight questions. One honest answer each. Map your instincts to the data role that actually fits you.</div>
@@ -789,10 +789,10 @@ roster = [
 
 <script>
 const SECTIONS = ['what-is-ds', 'ds-vs-analytics', 'careers', 'company-types', 'tools', 'why-python', 'critical-thinking', 'pseudocode'];
-function showSection(id) {
+function showSection(id, noScroll) {
   SECTIONS.forEach(function(s) { var el = document.getElementById(s); if (el) el.classList.remove('active'); });
   var target = document.getElementById(id);
-  if (target) { target.classList.add('active'); window.scrollTo({top: 0, behavior: 'smooth'}); }
+  if (target) { target.classList.add('active'); if (!noScroll) window.scrollTo({top: 0, behavior: 'smooth'}); }
   document.querySelectorAll('.tab-link[data-section]').forEach(function(t) { t.classList.toggle('active', t.dataset.section === id); });
   document.querySelectorAll('#tocLinks a[onclick]').forEach(function(a) { var needle = "'" + id + "'"; a.classList.toggle('active', a.getAttribute('onclick').indexOf(needle) !== -1); });
   history.replaceState(null, '', '#' + id);
@@ -802,7 +802,7 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
       if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
       var hash = window.location.hash.replace('#', '');
       var initial = SECTIONS.indexOf(hash) !== -1 ? hash : SECTIONS[0];
-      showSection(initial);
+      showSection(initial, true);
       window.scrollTo({top: 0, behavior: 'instant'});
     })();
 </script>
@@ -819,6 +819,60 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
     --text-dim:  #5a5550;
     --text-bright: #0d0c0a;
     --border:    #d4cfc9;
+    --maroon:    #dcd7d0;
+    --surface:   #ffffff;
+    --surface2:  #ede9e3;
+    --surface3:  #e4e0d8;
+    --border-l:  #d4cfc9;
+    --muted:     #8a8078;
+  }
+  /* ── Light mode overrides (comprehensive) ── */
+  /* Nav */
+  :root.theme-light nav,
+  :root.theme-light #topnav,
+  :root.theme-light #coursenav {
+    background: #dcd7d0 !important;
+  }
+  :root.theme-light nav *,
+  :root.theme-light #topnav *,
+  :root.theme-light #coursenav * {
+    color: #3a3530 !important;
+    border-color: rgba(0,0,0,0.18) !important;
+  }
+  :root.theme-light nav a:hover,
+  :root.theme-light #topnav a:hover,
+  :root.theme-light #coursenav a:hover {
+    color: #1a1715 !important;
+    background: rgba(0,0,0,0.06) !important;
+  }
+  /* Hero / banner areas */
+  :root.theme-light .mod-banner,
+  :root.theme-light .hero,
+  :root.theme-light [class*="banner"],
+  :root.theme-light [class*="hero"] {
+    background: #e8e3dc !important;
+  }
+  /* Card titles (hardcoded white in base styles) */
+  :root.theme-light .module-card h3,
+  :root.theme-light .module-card h2,
+  :root.theme-light .sim-card h3,
+  :root.theme-light .sim-card h2 {
+    color: #0d0c0a !important;
+  }
+  /* Footer */
+  :root.theme-light footer {
+    background: #dcd7d0 !important;
+  }
+  /* Code editors */
+  :root.theme-light textarea.code-editor,
+  :root.theme-light .output-box {
+    background: #f0ece6 !important;
+    color: #1a1715 !important;
+    border-color: #c8c3bc !important;
+  }
+  /* Gear button visible on light bg */
+  :root.theme-light #settings-toggle {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.12) !important;
   }
   /* Font scale */
   :root { --font-scale: 1; font-size: calc(16px * var(--font-scale)); }
