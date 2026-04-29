@@ -1510,21 +1510,25 @@ pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'<
 
 <script>
 const SECTIONS = ['series', 'dataframes', 'selection', 'filtering', 'cleaning', 'aggregation', 'groupby', 'index-objects', 'arithmetic', 'descriptive-stats', 'unique-values', 'multiindex', 'combining', 'pivot-tables'];
-function showSection(id, noScroll) {
+function showSection(id, noScroll, noHash) {
   SECTIONS.forEach(function(s) { var el = document.getElementById(s); if (el) el.classList.remove('active'); });
   var target = document.getElementById(id);
   if (target) { target.classList.add('active'); if (!noScroll) window.scrollTo({top: 0, behavior: 'smooth'}); }
   document.querySelectorAll('.tab-link[data-section]').forEach(function(t) { t.classList.toggle('active', t.dataset.section === id); });
   document.querySelectorAll('#tocLinks a[onclick]').forEach(function(a) { var needle = "'" + id + "'"; a.classList.toggle('active', a.getAttribute('onclick').indexOf(needle) !== -1); });
-  history.replaceState(null, '', '#' + id);
+  if (!noHash) history.replaceState(null, '', '#' + id);
 }
 document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab.addEventListener('click', function() { showSection(tab.dataset.section); }); });
 (function() {
       if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
       var hash = window.location.hash.replace('#', '');
       var initial = SECTIONS.indexOf(hash) !== -1 ? hash : SECTIONS[0];
-      showSection(initial, true);
-      window.scrollTo({top: 0, behavior: 'instant'});
+      showSection(initial, true, true);
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          window.scrollTo({top: 0, behavior: 'instant'});
+        });
+      });
     })();
 </script>
 

@@ -1357,7 +1357,7 @@ first_half, second_half = np.<span class="fn">split</span>(monthly_sales, [<span
 // ── Section routing ───────────────────────────────────────────────────────────
 const SECTIONS = ['arrays','indexing','vectorization','stats','boolean','fancy','random','conditional','combining'];
 
-function showSection(id, noScroll) {
+function showSection(id, noScroll, noHash) {
   // Hide all sections
   SECTIONS.forEach(function(s) {
     var el = document.getElementById(s);
@@ -1383,7 +1383,7 @@ function showSection(id, noScroll) {
   });
 
   // Update URL hash without scroll jump
-  history.replaceState(null, '', '#' + id);
+  if (!noHash) history.replaceState(null, '', '#' + id);
 }
 
 // Wire up tab clicks
@@ -1398,8 +1398,12 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) {
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   var hash = window.location.hash.replace('#', '');
   var initial = SECTIONS.indexOf(hash) !== -1 ? hash : SECTIONS[0];
-  showSection(initial, true);
-  window.scrollTo({top: 0, behavior: 'instant'});
+  showSection(initial, true, true);
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      window.scrollTo({top: 0, behavior: 'instant'});
+    });
+  });
 })();
 </script>
 
