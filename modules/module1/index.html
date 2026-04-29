@@ -286,6 +286,47 @@
     @media (max-width: 600px) {
       .quiz-link-card { flex-direction: column; align-items: flex-start; }
     }
+    .sim-cta {
+      background: var(--accent);
+      border-radius: 4px;
+      padding: 1.1rem;
+      text-decoration: none;
+      display: block;
+      transition: background 0.15s;
+      margin-bottom: 0.5rem;
+    }
+    .sim-cta:hover { background: var(--accent-light); }
+    .sim-cta-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+    .sim-cta h4 {
+      font-family: 'Zilla Slab', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+    .sim-cta p {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.4;
+      margin: 0;
+    }
+    /* Second sim button - outlined variant */
+    .sim-cta-2 {
+      background: var(--bg-card);
+      border: 2px solid var(--accent);
+    }
+    .sim-cta-2:hover { background: var(--accent-dim, rgba(42,113,149,0.1)); }
+    .sim-cta-2 .sim-cta-label { color: var(--accent-light); }
+    .sim-cta-2 h4 { color: var(--text-bright); }
+    .sim-cta-2 p { color: var(--text-dim); }
+
     @media (max-width: 768px) {
       .page-wrap { grid-template-columns: 1fr; }
       .sidebar { position: static; }
@@ -715,10 +756,16 @@ roster = [
     </div>
 
 
-    <a class="sim-cta" href="../../sims/find-your-path/index.html">
-      <div class="sim-cta-label">Simulation</div>
+    <a class="sim-cta" href="../../sims/morning-brief/index.html">
+      <div class="sim-cta-label">Simulation 1</div>
+      <h4>The Morning Brief</h4>
+      <p>Walk the full DS lifecycle on a real-world case — from business question to model to recommendation.</p>
+    </a>
+
+    <a class="sim-cta sim-cta-2" href="../../sims/find-your-path/index.html">
+      <div class="sim-cta-label">Simulation 2</div>
       <h4>Find Your Path</h4>
-      <p>Explore data science career tracks and find the role that fits your strengths.</p>
+      <p>Eight questions. One honest answer each. Map your instincts to the data role that actually fits you.</p>
     </a>
 
 
@@ -738,18 +785,6 @@ roster = [
 
 </div>
 
-<div style="max-width:1100px;margin:0 auto;padding:1.5rem 2rem 0;display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
-  <a href="../../sims/morning-brief/index.html" class="sidebar-sim-card" style="display:block;background:var(--bg-card);border:1px solid var(--border);border-top:3px solid #2A7195;border-radius:4px;padding:1.25rem 1.5rem;text-decoration:none;color:var(--text);transition:background 0.15s;">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:#3d8fb5;margin-bottom:0.4rem;">Module 01 - Simulation</div>
-    <div style="font-size:1rem;font-weight:600;color:#f0ece6;margin-bottom:0.3rem;">The Morning Brief</div>
-    <div style="font-size:0.85rem;color:#a09a92;">Walk the full DS lifecycle - Ask, Acquire, Clean, Explore, Analyze, Communicate - on a real healthcare case.</div>
-  </a>
-  <a href="../../sims/find-your-path/index.html" class="sidebar-sim-card" style="display:block;background:var(--bg-card);border:1px solid var(--border);border-top:3px solid #8B1C40;border-radius:4px;padding:1.25rem 1.5rem;text-decoration:none;color:var(--text);transition:background 0.15s;">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:#a85070;margin-bottom:0.4rem;">Module 01 - Simulation</div>
-    <div style="font-size:1rem;font-weight:600;color:#f0ece6;margin-bottom:0.3rem;">Find Your Path</div>
-    <div style="font-size:0.85rem;color:#a09a92;">Eight questions. One honest answer each. Map your instincts to the data role that actually fits you.</div>
-  </a>
-</div>
 
 <footer>
   This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by Eastern University faculty and staff.<br>&copy; Eastern University. All rights reserved.
