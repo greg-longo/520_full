@@ -237,6 +237,76 @@ body {
 /* ── FOOTER ── */
 footer { background: #010409; border-top: 1px solid var(--term-border); padding: 1.4rem 1.5rem; text-align: center; font-size: 0.72rem; color: var(--term-dim); line-height: 1.8; margin-top: 2rem; }
 
+/* ── GIT OUTPUT COLORS ── */
+.c-branch   { color: #79c0ff; }
+.c-git-add  { color: #56d364; }
+.c-git-rm   { color: #f85149; }
+.c-git-hunk { color: #79c0ff; }
+.c-git-meta { color: #8b949e; }
+.c-staged   { color: #56d364; }
+.c-unstaged { color: #f85149; }
+
+/* ── EDIT PANEL ── */
+.edit-panel {
+  display: none;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+.edit-panel.show { display: flex; }
+.edit-panel-head {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-light);
+  margin-bottom: 0.25rem;
+}
+.edit-panel-title {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 0.5rem;
+}
+.edit-panel-story {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+.edit-typewriter-wrap {
+  background: var(--term-bg);
+  border: 1px solid var(--term-border);
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  line-height: 1.75;
+  min-height: 200px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.edit-tw-line { white-space: pre; }
+.edit-continue-btn {
+  align-self: center;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 2rem;
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.4s, background 0.15s;
+}
+.edit-continue-btn:hover { background: var(--accent-light); }
+
 /* ══════════════════════════════════════════
    LIGHT MODE
    Terminal elements stay dark always.
@@ -267,8 +337,11 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
 :root.theme-light .mode-toggle          { border-color: #c4bfb8; }
 :root.theme-light .mode-btn:first-child { border-color: #c4bfb8; }
 :root.theme-light .between-panel        { background: #fff; border-color: #d4cfc9; }
+:root.theme-light .between2Panel        { background: #fff; border-color: #d4cfc9; }
 :root.theme-light .between-title        { color: #0d0c0a; }
 :root.theme-light .between-body         { color: #5a5550; }
+:root.theme-light .edit-panel           { background: #fff; border-color: #d4cfc9; }
+:root.theme-light .edit-panel-story     { color: #4a4540; }
 :root.theme-light .completion-panel     { background: #fff; border-color: #d4cfc9; }
 :root.theme-light .completion-title     { color: #0d0c0a; }
 :root.theme-light .completion-body      { color: #5a5550; }
@@ -479,6 +552,11 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
         <span class="platform-card-cta">Start &rarr;</span>
       </button>
     </div>
+
+    <p style="text-align:center; margin-top:1.5rem; font-size:0.8rem; color:var(--text-dim);">
+      Haven't opened a terminal yet?
+      <a href="../../modules/module6/index.html#terminal-intro" style="color:var(--accent-light); text-decoration:none;">See the setup guide in Module 6 &rarr;</a>
+    </p>
   </div>
 </div>
 
@@ -551,6 +629,8 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
       <div id="tocPart1"></div>
       <div class="toc-part-head">Part 2 &middot; Going Deeper</div>
       <div id="tocPart2"></div>
+      <div class="toc-part-head">Part 3 &middot; Git in Action</div>
+      <div id="tocPart3"></div>
       <button class="toc-ref-btn" onclick="openFlashcards()">Command Reference</button>
     </nav>
 
@@ -608,16 +688,38 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
       <button class="between-btn" onclick="beginPart(2)">Start Part 2: Going Deeper &rarr;</button>
     </div>
 
+    <!-- Between Part 2 and Part 3 -->
+    <div class="between-panel" id="between2Panel">
+      <div class="between-icon">&#10003;</div>
+      <div class="between-title">Part 2 Complete</div>
+      <p class="between-body">You can navigate, read files, and create your own. Maya is impressed.<br><br>
+        She sent you a message: <em>"There's a bug in analysis.py - the salary normalization uses max() scaling instead of z-score. Can you create a branch, fix it, and push it up for review?"</em><br><br>
+        Time to use Git.
+      </p>
+      <button class="between-btn" onclick="beginPart(3)">Start Part 3: Git in Action &rarr;</button>
+    </div>
+
+    <!-- Edit panel (mid-Part 3 story moment) -->
+    <div class="edit-panel" id="editPanel">
+      <div>
+        <div class="edit-panel-head">Story moment &middot; Day 3 at StatDeck</div>
+        <div class="edit-panel-title">Making the Fix</div>
+        <p class="edit-panel-story">You open <code>analysis.py</code> in VS Code. The bug is on line 13 - salary is being divided by its maximum value, which doesn't center the data. The correct approach is z-score normalization, the same technique already applied to batting averages on line 11.</p>
+      </div>
+      <div class="edit-typewriter-wrap" id="editTypewriter"></div>
+      <button class="edit-continue-btn" id="editContinueBtn" onclick="dismissEditPanel()">The file is saved. Continue &rarr;</button>
+    </div>
+
     <!-- Completion -->
     <div class="completion-panel" id="completionPanel">
       <div class="completion-icon">&#10003;</div>
       <div class="completion-title">Terminal Certified</div>
-      <p class="completion-body">You can navigate, read files, and create your own. Every Git command starts at a prompt just like this one. You're ready.</p>
-      <div class="completion-score" id="completionScore">14/14</div>
+      <p class="completion-body">You navigated the file system, read code, and ran a complete Git workflow. That's the real thing - branch, edit, stage, commit, push. You're ready to work on a real repo.</p>
+      <div class="completion-score" id="completionScore">25/25</div>
       <div class="completion-score-label">Challenges Completed</div>
       <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:0.25rem;">
         <button class="completion-btn" style="background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);" onclick="openFlashcards()">Review Command Reference</button>
-        <a href="../../modules/module6/index.html#three-states" class="completion-btn">Continue to The Three States &rarr;</a>
+        <a href="../../modules/module6/index.html#branching" class="completion-btn">Continue to Branching &rarr;</a>
       </div>
     </div>
 
@@ -678,15 +780,32 @@ var vfs = {
   },
   '/home/intern/projects': { type: 'dir', children: ['statdeck', 'practice'] },
   '/home/intern/projects/practice': { type: 'dir', children: [] },
-  '/home/intern/projects/statdeck': { type: 'dir', children: ['analysis.py', 'data.csv'] },
+  '/home/intern/projects/statdeck': { type: 'dir', children: ['analysis.py', 'data.csv', 'my_work'] },
   '/home/intern/projects/statdeck/analysis.py': {
     type: 'file',
-    content: '# StatDeck data analysis\nimport pandas as pd\n\ndf = pd.read_csv("data.csv")\nprint(df.head())\nprint(df.describe())'
+    content: '# StatDeck Analytics - Player Performance Pipeline\n# Author: Maya Rodriguez\n# Purpose: Normalize player stats for the scouting model\n\nimport pandas as pd\nimport numpy as np\n\ndf = pd.read_csv(\'data.csv\')\n\n# Batting average - z-score normalization\ndf[\'avg_zscore\'] = (df[\'avg\'] - df[\'avg\'].mean()) / df[\'avg\'].std()\n\n# Salary normalization (FIXME: divides by max, doesn\'t center data)\ndf[\'salary_norm\'] = df[\'salary\'] / df[\'salary\'].max()\n\nprint(df[[\'name\', \'avg\', \'salary\', \'avg_zscore\', \'salary_norm\']])\nprint(\'\\nStats summary:\')\nprint(df.describe())'
   },
   '/home/intern/projects/statdeck/data.csv': {
     type: 'file',
-    content: 'player_id,name,avg,hr\n1,J. Rodriguez,.312,14\n2,S. Chen,.278,8\n3,N. Kim,.301,22'
-  }
+    content: 'player_id,name,avg,hr,salary\n1,J. Rodriguez,.312,14,35000\n2,S. Chen,.278,8,32500\n3,N. Kim,.301,22,760000'
+  },
+  '/home/intern/projects/statdeck/.git': { type: 'dir', children: [] },
+  '/home/intern/projects/statdeck/my_work': { type: 'dir', children: ['analysis_notes.txt'] },
+  '/home/intern/projects/statdeck/my_work/analysis_notes.txt': { type: 'file', content: '' }
+};
+
+/* ────────────────────────────────────────────
+   GIT STATE
+──────────────────────────────────────────── */
+var gitState = {
+  branch: 'main',
+  modified: [],   /* files edited but not staged */
+  staged: [],     /* files staged but not committed */
+  commitMsg: '',  /* the commit message student types */
+  commits: [
+    { hash: 'b8e4a2f', msg: 'Add data validation step',         ref: '(HEAD -> main, origin/main)', after: false },
+    { hash: 'a3f2c1d', msg: 'Initial commit - add pipeline',    ref: '',                            after: false }
+  ]
 };
 
 /* ────────────────────────────────────────────
@@ -793,6 +912,86 @@ var part2 = [
     hint: 'cd ~',
     check: function (cmd) { return /^cd(\s+~\/?|\s*$)/.test(cmd); },
     success: "Back home. That's every navigation skill you need for Git."
+  }
+];
+
+var part3 = [
+  {
+    title: 'Check repo status',
+    instruction: "Maya has added you to the repo. Before touching anything, check the current state of the repository.",
+    hint: 'git status',
+    check: function(cmd) { return cmd.trim() === 'git status'; },
+    success: "On branch main. Working tree clean - no uncommitted changes."
+  },
+  {
+    title: 'Create a feature branch',
+    instruction: "Never commit directly to main. Create a new branch called fix/salary-normalization and switch to it in one command.",
+    hint: 'git checkout -b fix/salary-normalization',
+    check: function(cmd) { return /^git\s+checkout\s+-b\s+fix\/salary-normalization$/.test(cmd.trim()); },
+    success: "Switched to a new branch. main is untouched - your work is isolated."
+  },
+  {
+    title: 'Confirm your branch',
+    instruction: "Verify you're on the new branch before making any changes.",
+    hint: 'git branch',
+    check: function(cmd) { return /^git\s+branch(\s|$)/.test(cmd.trim()); },
+    success: "Confirmed: you're on fix/salary-normalization. The edit is coming."
+  },
+  {
+    title: 'Check status after the edit',
+    instruction: "The file has been modified. Run git status to see what Git noticed.",
+    hint: 'git status',
+    check: function(cmd) { return cmd.trim() === 'git status'; },
+    success: "Git sees analysis.py in your working directory as modified, but not staged yet."
+  },
+  {
+    title: 'View the changed file',
+    instruction: "Use cat to read the updated analysis.py and confirm the fix is there.",
+    hint: 'cat analysis.py',
+    check: function(cmd) { return cmd.trim() === 'cat analysis.py'; },
+    success: "The salary_norm line now uses z-score. That's the fix."
+  },
+  {
+    title: 'See exactly what changed',
+    instruction: "Before staging, use git diff to see precisely which lines were added and removed.",
+    hint: 'git diff',
+    check: function(cmd) { return /^git\s+diff(\s|$)/.test(cmd.trim()); },
+    success: "Red = removed, green = added. One line changed. Clean, focused fix."
+  },
+  {
+    title: 'Stage the fix',
+    instruction: "Tell Git to include this change in your next commit. Stage analysis.py.",
+    hint: 'git add analysis.py',
+    check: function(cmd) { return /^git\s+add\s+(analysis\.py|\.)$/.test(cmd.trim()); },
+    success: "Staged. The change is in Git's waiting room - ready to commit."
+  },
+  {
+    title: 'Verify staged changes',
+    instruction: "Run git status again. Notice how the output changed after staging.",
+    hint: 'git status',
+    check: function(cmd) { return cmd.trim() === 'git status'; },
+    success: "Now it shows 'Changes to be committed'. You're ready to commit."
+  },
+  {
+    title: 'Commit the fix',
+    instruction: "Create a commit with a clear message describing what you fixed and why.",
+    hint: 'git commit -m "Fix salary normalization to use z-score"',
+    check: function(cmd) { return /^git\s+commit\s+-m\s+(["']).+\1$/.test(cmd.trim()); },
+    success: "Committed. Git stored a permanent snapshot with your message attached."
+  },
+  {
+    title: 'Review the commit history',
+    instruction: "See your new commit in context with the rest of the project history.",
+    hint: 'git log --oneline',
+    check: function(cmd) { return /^git\s+log(\s|$)/.test(cmd.trim()); },
+    success: "Three commits. Yours is at the top with HEAD pointing to your branch."
+  },
+  {
+    title: 'Push your branch',
+    instruction: "Send the branch to GitHub so Maya can review it and open a pull request.",
+    hint: 'git push origin fix/salary-normalization',
+    check: function(cmd) { return /^git\s+push(\s|$)/.test(cmd.trim()); },
+    success: "Branch pushed. Maya can now open a pull request to merge your fix into main."
   }
 ];
 
@@ -1061,10 +1260,148 @@ function execute(raw) {
       break;
     }
 
+    case 'git': {
+      var gitSub = parts[1] || '';
+      var gitArgs = parts.slice(2);
+      var gitArg2 = gitArgs.join(' ');
+
+      if (gitSub === 'status') {
+        appendLine('<span class="c-dim">On branch <span class="c-branch">' + esc(gitState.branch) + '</span></span>');
+        if (gitState.staged.length > 0) {
+          appendLine('<span class="c-dim">Changes to be committed:</span>');
+          appendLine('<span class="c-dim">  (use "git restore --staged &lt;file&gt;..." to unstage)</span>');
+          appendLine('');
+          gitState.staged.forEach(function(f) {
+            appendLine('&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-staged">modified:   ' + esc(f) + '</span>');
+          });
+          appendLine('');
+        } else if (gitState.modified.length > 0) {
+          appendLine('<span class="c-dim">Changes not staged for commit:</span>');
+          appendLine('<span class="c-dim">  (use "git add &lt;file&gt;..." to update what will be committed)</span>');
+          appendLine('');
+          gitState.modified.forEach(function(f) {
+            appendLine('&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-unstaged">modified:   ' + esc(f) + '</span>');
+          });
+          appendLine('');
+          appendLine('<span class="c-dim">no changes added to commit (use "git add" and/or "git commit -a")</span>');
+        } else {
+          appendLine('<span class="c-dim">nothing to commit, working tree clean</span>');
+        }
+
+      } else if (gitSub === 'branch') {
+        if (gitArgs[0] === '-b' || gitArgs[0] === '-B') {
+          /* git branch -b name (some students might try this instead of checkout -b) */
+          appendLine('<span class="c-err">use: git checkout -b &lt;branchname&gt;</span>');
+        } else {
+          var branches = ['main'];
+          if (gitState.branch !== 'main') branches.push(gitState.branch);
+          branches.forEach(function(b) {
+            var isCur = b === gitState.branch;
+            appendLine((isCur ? '<span class="c-git-add">* ' : '  ') + esc(b) + (isCur ? '</span>' : ''));
+          });
+        }
+
+      } else if (gitSub === 'checkout') {
+        if (gitArgs[0] === '-b') {
+          var newBranch = gitArgs.slice(1).join(' ');
+          if (!newBranch) {
+            appendLine('<span class="c-err">error: must provide branch name</span>');
+          } else {
+            gitState.branch = newBranch;
+            appendLine("<span class=\"c-dim\">Switched to a new branch '<span class=\"c-branch\">" + esc(newBranch) + "</span>'</span>");
+          }
+        } else {
+          appendLine('<span class="c-err">error: pathspec \'' + esc(gitArg2) + '\' did not match any branch (hint: use -b to create)</span>');
+        }
+
+      } else if (gitSub === 'diff') {
+        if (gitState.modified.length === 0 && gitState.staged.length === 0) {
+          /* no output - nothing to diff */
+        } else if (gitState.staged.length > 0 && gitState.modified.length === 0) {
+          appendLine('<span class="c-dim">(all changes are staged - use git diff --staged to see them)</span>');
+        } else {
+          appendLine('<span class="c-git-meta">diff --git a/analysis.py b/analysis.py</span>');
+          appendLine('<span class="c-git-meta">index 3a1f2b4..9c8d7e1 100644</span>');
+          appendLine('<span class="c-git-meta">--- a/analysis.py</span>');
+          appendLine('<span class="c-git-meta">+++ b/analysis.py</span>');
+          appendLine('<span class="c-git-hunk">@@ -11,7 +11,7 @@ df = pd.read_csv(\'data.csv\')</span>');
+          appendLine(' <span class="c-dim"># Batting average - z-score normalization</span>');
+          appendLine(' df[\'avg_zscore\'] = (df[\'avg\'] - df[\'avg\'].mean()) / df[\'avg\'].std()');
+          appendLine(' ');
+          appendLine('<span class="c-git-rm">-# Salary normalization (FIXME: divides by max, doesn\'t center data)</span>');
+          appendLine('<span class="c-git-rm">-df[\'salary_norm\'] = df[\'salary\'] / df[\'salary\'].max()</span>');
+          appendLine('<span class="c-git-add">+# Salary normalization - z-score centers and scales the data</span>');
+          appendLine('<span class="c-git-add">+df[\'salary_norm\'] = (df[\'salary\'] - df[\'salary\'].mean()) / df[\'salary\'].std()</span>');
+        }
+
+      } else if (gitSub === 'add') {
+        if (!gitArg2) {
+          appendLine('<span class="c-err">Nothing specified, nothing added.</span>');
+        } else {
+          /* move modified to staged */
+          var toStage = (gitArg2 === '.' || gitArg2 === '-A') ? gitState.modified.slice() : [gitArg2];
+          toStage.forEach(function(f) {
+            var mi = gitState.modified.indexOf(f);
+            if (mi !== -1) {
+              gitState.modified.splice(mi, 1);
+              if (!gitState.staged.includes(f)) gitState.staged.push(f);
+            }
+          });
+          /* no output on success - that's correct git behavior */
+        }
+
+      } else if (gitSub === 'commit') {
+        if (gitState.staged.length === 0) {
+          appendLine('<span class="c-dim">On branch <span class="c-branch">' + esc(gitState.branch) + '</span></span>');
+          appendLine('<span class="c-dim">nothing to commit, working tree clean</span>');
+        } else {
+          /* extract message from -m "..." */
+          var msgMatch = gitArg2.match(/^-m\s+["'](.+)["']$/);
+          var commitMsg = msgMatch ? msgMatch[1] : 'Update files';
+          gitState.commitMsg = commitMsg;
+          gitState.staged = [];
+          /* add commit to history */
+          gitState.commits.unshift({ hash: 'c9d3e7a', msg: commitMsg, ref: '(HEAD -> ' + gitState.branch + ')', after: true });
+          /* update the second commit ref */
+          if (gitState.commits[1]) gitState.commits[1].ref = '(origin/main, main)';
+          appendLine('<span class="c-dim">[<span class="c-branch">' + esc(gitState.branch) + '</span> c9d3e7a] ' + esc(commitMsg) + '</span>');
+          appendLine('<span class="c-dim"> 1 file changed, 1 insertion(+), 1 deletion(-)</span>');
+        }
+
+      } else if (gitSub === 'log') {
+        gitState.commits.forEach(function(c) {
+          var refHtml = c.ref ? ' <span class="c-dim">(' + esc(c.ref) + ')</span>' : '';
+          appendLine('<span class="c-branch">' + esc(c.hash) + '</span>' + refHtml + ' <span class="c-out">' + esc(c.msg) + '</span>');
+        });
+
+      } else if (gitSub === 'push') {
+        if (gitState.commits.some(function(c){ return c.after; })) {
+          appendLine('<span class="c-dim">Enumerating objects: 5, done.</span>');
+          appendLine('<span class="c-dim">Counting objects: 100% (5/5), done.</span>');
+          appendLine('<span class="c-dim">Delta compression using up to 8 threads</span>');
+          appendLine('<span class="c-dim">Compressing objects: 100% (3/3), done.</span>');
+          appendLine('<span class="c-dim">Writing objects: 100% (3/3), 412 bytes | 412.00 KiB/s, done.</span>');
+          appendLine('<span class="c-dim">Total 3 (delta 1), reused 0 (delta 0), pack-reused 0</span>');
+          appendLine('<span class="c-dim">To github.com:statdeck/analytics-pipeline.git</span>');
+          appendLine(' <span class="c-git-add">* [new branch]      fix/salary-normalization -&gt; fix/salary-normalization</span>');
+        } else {
+          appendLine('<span class="c-err">error: failed to push some refs - commit something first</span>');
+        }
+
+      } else {
+        appendLine('<span class="c-err">git: \'' + esc(gitSub) + '\' is not a git command</span>');
+        appendLine('<span class="c-dim">Did you mean one of: status, branch, checkout, diff, add, commit, log, push</span>');
+      }
+      break;
+    }
+
     case 'help':
       appendLine('<span class="c-dim">Available commands:</span>');
       [['pwd','print working directory'],['ls','list directory contents'],['cd','change directory'],
-       ['cat','display file contents'],['mkdir','create a directory'],['touch','create an empty file'],['clear','clear the terminal']].forEach(function(c){
+       ['cat','display file contents'],['mkdir','create a directory'],['touch','create an empty file'],['clear','clear the terminal'],
+       ['git status','show repo state'],['git branch','list branches'],['git checkout -b','create and switch to branch'],
+       ['git diff','show unstaged changes'],['git add','stage a file'],['git commit -m','commit staged changes'],
+       ['git log --oneline','show commit history'],['git push','push branch to remote']].forEach(function(c){
         appendLine('&nbsp;&nbsp;<span class="c-out">' + c[0] + '</span><span class="c-dim">  ' + c[1] + '</span>');
       });
       break;
@@ -1104,9 +1441,16 @@ function checkChallenge(cmd) {
   flash(ch.success, 'good');
 
   if (idx < challenges.length) {
-    setTimeout(function () { loadChallenge(idx); }, 1100);
+    /* Special case: after git branch (challenge index 2 in part 3), show the edit panel */
+    if (part === 3 && idx === 3) {
+      setTimeout(showEditPanel, 1200);
+    } else {
+      setTimeout(function () { loadChallenge(idx); }, 1100);
+    }
   } else if (part === 1) {
     setTimeout(showBetween, 1300);
+  } else if (part === 2) {
+    setTimeout(showBetween2, 1300);
   } else {
     setTimeout(showCompletion, 1300);
   }
@@ -1157,15 +1501,29 @@ function showBetween() {
   });
 }
 
+function showBetween2() {
+  document.getElementById('challengeCard').style.display = 'none';
+  document.getElementById('between2Panel').classList.add('show');
+  document.querySelectorAll('.progress-dot').forEach(function(d) { d.classList.remove('current'); d.classList.add('done'); });
+  document.getElementById('feedbackFlash').classList.remove('show');
+  /* mark all part 2 items done */
+  part2.forEach(function(_, i) {
+    var el = document.getElementById('toc-p2-' + i);
+    if (!el) return;
+    el.classList.remove('locked','current'); el.classList.add('done');
+    var check = el.querySelector('.toc-check');
+    if (check) check.textContent = '✓';
+  });
+}
+
 function showCompletion() {
   document.getElementById('challengeCard').style.display = 'none';
-  document.getElementById('completionScore').textContent = completed + '/' + (part1.length + part2.length);
+  document.getElementById('completionScore').textContent = completed + '/' + (part1.length + part2.length + part3.length);
   document.getElementById('completionPanel').classList.add('show');
   document.querySelectorAll('.progress-dot').forEach(function (d) { d.classList.remove('current'); d.classList.add('done'); });
   document.getElementById('feedbackFlash').classList.remove('show');
   /* mark all items done in TOC */
-  ['part1','part2'].forEach(function (listKey, pi) {
-    var arr = pi === 0 ? part1 : part2;
+  [part1, part2, part3].forEach(function (arr, pi) {
     arr.forEach(function (_, i) {
       var el = document.getElementById('toc-p' + (pi + 1) + '-' + i);
       if (!el) return;
@@ -1197,7 +1555,7 @@ window.beginPart = function (p) {
     appendGap();
     updatePromptEl();
     renderTreeInto('liveTree', false);
-  } else {
+  } else if (p === 2) {
     /* Part 2 */
     document.getElementById('betweenPanel').classList.remove('show');
     document.getElementById('challengeCard').style.display = '';
@@ -1215,7 +1573,127 @@ window.beginPart = function (p) {
     appendGap();
     updatePromptEl();
     renderTreeInto('liveTree', false);
+  } else if (p === 3) {
+    document.getElementById('between2Panel').classList.remove('show');
+    document.getElementById('challengeCard').style.display = '';
+    part       = 3;
+    challenges = part3;
+    idx        = 0;
+    cwd        = '/home/intern/projects/statdeck';
+    document.getElementById('partBadge').textContent = 'Part 3: Git in Action';
+    document.getElementById('progressPartLabel').textContent = 'PART 3';
+    buildDots(part3.length);
+    /* Add part3 to TOC if not already there */
+    var tocP3 = document.getElementById('tocPart3');
+    if (tocP3 && tocP3.children.length === 0) {
+      part3.forEach(function(ch, i) {
+        var item = document.createElement('div');
+        item.className = 'toc-item locked';
+        item.id = 'toc-p3-' + i;
+        item.setAttribute('title', 'Jump to: ' + ch.title);
+        item.innerHTML = '<div class="toc-check"></div><div class="toc-item-label">' + esc(ch.title) + '</div>';
+        (function(ci) {
+          item.addEventListener('click', function() { jumpToChallenge(3, ci); });
+        }(i));
+        tocP3.appendChild(item);
+      });
+    }
+    loadChallenge(0);
+    termOutput.innerHTML = '';
+    appendLine('<span class="c-dim">Day 3 at StatDeck. Maya added you to the repo.</span>');
+    appendLine('<span class="c-dim">Part 3 of 3: Git in Action. Type <span class="c-out">help</span> for commands.</span>');
+    appendLine('<span class="c-git-add">hint: git commands now available</span>');
+    appendGap();
+    updatePromptEl();
+    renderTreeInto('liveTree', false);
   }
+};
+
+/* ────────────────────────────────────────────
+   EDIT PANEL (Part 3)
+──────────────────────────────────────────── */
+var editApplied = false;
+
+function showEditPanel() {
+  document.getElementById('challengeCard').style.display = 'none';
+  document.getElementById('editPanel').classList.add('show');
+  if (!editApplied) {
+    playEditTypewriter();
+  }
+}
+
+function applyVfsEdit() {
+  if (editApplied) return;
+  editApplied = true;
+  /* Update analysis.py in VFS to the fixed version */
+  var path = '/home/intern/projects/statdeck/analysis.py';
+  vfs[path].content =
+    '# StatDeck Analytics - Player Performance Pipeline\n' +
+    '# Author: Maya Rodriguez\n' +
+    '# Purpose: Normalize player stats for the scouting model\n\n' +
+    'import pandas as pd\n' +
+    'import numpy as np\n\n' +
+    "df = pd.read_csv('data.csv')\n\n" +
+    '# Batting average - z-score normalization\n' +
+    "df['avg_zscore'] = (df['avg'] - df['avg'].mean()) / df['avg'].std()\n\n" +
+    '# Salary normalization - z-score centers and scales the data\n' +
+    "df['salary_norm'] = (df['salary'] - df['salary'].mean()) / df['salary'].std()\n\n" +
+    "print(df[['name', 'avg', 'salary', 'avg_zscore', 'salary_norm']])\n" +
+    "print('\\nStats summary:')\n" +
+    'print(df.describe())';
+  /* Mark as modified */
+  if (!gitState.modified.includes('analysis.py')) {
+    gitState.modified.push('analysis.py');
+  }
+}
+
+function playEditTypewriter() {
+  var el = document.getElementById('editTypewriter');
+  if (!el) return;
+  el.innerHTML = '';
+
+  var lines = [
+    { text: '$ code analysis.py', cls: 'c-dim', delay: 0 },
+    { text: '[VS Code opened analysis.py]', cls: 'c-dim', delay: 600 },
+    { text: '', cls: '', delay: 1200 },
+    { text: 'Line 13: # Salary normalization (FIXME...)', cls: 'c-unstaged', delay: 1800 },
+    { text: 'Found the bug. Applying the fix...', cls: 'c-dim', delay: 2600 },
+    { text: '', cls: '', delay: 3200 },
+    { text: '--- a/analysis.py', cls: 'c-git-meta', delay: 3400 },
+    { text: '+++ b/analysis.py', cls: 'c-git-meta', delay: 3500 },
+    { text: '@@ -13,2 +13,2 @@', cls: 'c-git-hunk', delay: 3600 },
+    { text: '-# Salary normalization (FIXME: divides by max, doesn\'t center data)', cls: 'c-git-rm', delay: 3800 },
+    { text: "-df['salary_norm'] = df['salary'] / df['salary'].max()", cls: 'c-git-rm', delay: 4100 },
+    { text: '+# Salary normalization - z-score centers and scales the data', cls: 'c-git-add', delay: 4400 },
+    { text: "+df['salary_norm'] = (df['salary'] - df['salary'].mean()) / df['salary'].std()", cls: 'c-git-add', delay: 4700 },
+    { text: '', cls: '', delay: 5200 },
+    { text: '[analysis.py saved]', cls: 'c-staged', delay: 5400 },
+  ];
+
+  var lastDelay = 0;
+  lines.forEach(function(line) {
+    lastDelay = line.delay;
+    setTimeout(function() {
+      var span = document.createElement('div');
+      span.className = 'edit-tw-line ' + (line.cls || '');
+      span.textContent = line.text;
+      el.appendChild(span);
+      el.scrollTop = el.scrollHeight;
+    }, line.delay);
+  });
+
+  /* Apply the VFS edit and show Continue button after animation */
+  setTimeout(function() {
+    applyVfsEdit();
+    var btn = document.getElementById('editContinueBtn');
+    if (btn) btn.style.opacity = '1';
+  }, lastDelay + 800);
+}
+
+window.dismissEditPanel = function() {
+  document.getElementById('editPanel').classList.remove('show');
+  document.getElementById('challengeCard').style.display = '';
+  loadChallenge(idx);
 };
 
 /* ────────────────────────────────────────────
@@ -1393,6 +1871,7 @@ function buildToc() {
   }
   renderList('tocPart1', part1, 1);
   renderList('tocPart2', part2, 2);
+  renderList('tocPart3', part3, 3);
 }
 
 /* Jump to any challenge by clicking its TOC item */
@@ -1410,11 +1889,19 @@ function jumpToChallenge(partNum, ci) {
     document.getElementById('partBadge').textContent     = 'Part 2: Going Deeper';
     document.getElementById('progressPartLabel').textContent = 'PART 2';
     buildDots(part2.length);
+  } else if (partNum === 3 && part !== 3) {
+    part       = 3;
+    challenges = part3;
+    document.getElementById('partBadge').textContent     = 'Part 3: Git in Action';
+    document.getElementById('progressPartLabel').textContent = 'PART 3';
+    buildDots(part3.length);
   }
   idx = ci;
   /* show challenge card, hide transition panels */
   document.getElementById('challengeCard').style.display = '';
   document.getElementById('betweenPanel').classList.remove('show');
+  document.getElementById('between2Panel').classList.remove('show');
+  document.getElementById('editPanel').classList.remove('show');
   document.getElementById('completionPanel').classList.remove('show');
   document.getElementById('feedbackFlash').classList.remove('show');
   loadChallenge(ci);
@@ -1427,8 +1914,8 @@ function updateToc() {
     if (!el) return;
     var check = el.querySelector('.toc-check');
     el.classList.remove('locked','current','done');
-    if (part === 2 || (part === 1 && idx === challenges.length && challenges === part1)) {
-      /* Part 2 running or part 1 fully done */
+    if (part === 2 || part === 3 || (part === 1 && idx === challenges.length && challenges === part1)) {
+      /* Part 2 or 3 running or part 1 fully done */
       el.classList.add('done'); check.textContent = '✓';
     } else if (part === 1) {
       if (i < idx) { el.classList.add('done'); check.textContent = '✓'; }
@@ -1444,6 +1931,23 @@ function updateToc() {
     var check = el.querySelector('.toc-check');
     el.classList.remove('locked','current','done');
     if (part === 1) {
+      el.classList.add('locked'); check.textContent = '';
+    } else if (part === 3) {
+      el.classList.add('done'); check.textContent = '✓';
+    } else {
+      if (i < idx) { el.classList.add('done'); check.textContent = '✓'; }
+      else if (i === idx) { el.classList.add('current'); check.textContent = ''; }
+      else { el.classList.add('locked'); check.textContent = ''; }
+    }
+  });
+
+  /* Part 3 items */
+  part3.forEach(function (_, i) {
+    var el = document.getElementById('toc-p3-' + i);
+    if (!el) return;
+    var check = el.querySelector('.toc-check');
+    el.classList.remove('locked','current','done');
+    if (part < 3) {
       el.classList.add('locked'); check.textContent = '';
     } else {
       if (i < idx) { el.classList.add('done'); check.textContent = '✓'; }

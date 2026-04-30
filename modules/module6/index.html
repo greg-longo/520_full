@@ -775,7 +775,11 @@
       <!-- SECTION 2 -->
       <h2 id="three-states">The Three States</h2>
 
-      <p>Every file in a Git project lives in one of three states at any given moment:</p>
+      <p>
+        Before diving into the states, it helps to know <em>how</em> Git stores your work. Unlike tools that track a list of changes ("line 14 changed from X to Y"), <strong>Git saves a complete snapshot of every file in your project each time you commit</strong> - like taking a photograph of the entire folder at that moment. This is why reverting to any point in history is instant: Git just loads the snapshot from that commit rather than replaying a chain of diffs.
+      </p>
+
+      <p>This snapshot model is also why <code>git add</code> and <code>git commit</code> are two separate steps. You're first choosing <em>what</em> goes into the snapshot (staging), then pressing the shutter (committing). Every file in a Git project lives in one of three states that reflect where it is in that process:</p>
 
       <div class="concept-grid">
         <div class="concept-box">
