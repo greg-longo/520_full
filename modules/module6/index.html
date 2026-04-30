@@ -221,6 +221,7 @@
       padding: 0.3rem 0.5rem;
       border-left: 2px solid transparent;
       border-radius: 3px;
+      cursor: pointer;
       transition: background 0.12s, color 0.12s, border-left-color 0.15s;
     }
 
@@ -263,6 +264,8 @@
     }
 
     /* ---- CONTENT ---- */
+    html { scroll-behavior: smooth; }
+
     .content h2 {
       font-size: 1.4rem;
       font-weight: 700;
@@ -271,6 +274,7 @@
       margin-bottom: 0.75rem;
       padding-top: 1.5rem;
       border-top: 1px solid var(--border);
+      scroll-margin-top: 72px; /* offset for sticky nav */
     }
 
     .content h2:first-child {
@@ -705,10 +709,16 @@
       <h2 id="terminal-intro">Using the Terminal</h2>
 
       <p>
-        Git is a command-line tool. Before you can use it, you need to be comfortable navigating your computer through a terminal window. If you've never opened a terminal before, start with one of these guides — then come back here.
+        Git is a command-line tool. Before you can use it, you need to be comfortable navigating your computer through a terminal window. If you've never opened a terminal before, or are new to it, start with our Terminal Trainer simulation below - or one of the two guides that follow it.
       </p>
 
-      <div class="concept-grid" style="grid-template-columns: 1fr 1fr; margin: 1.25rem 0;">
+      <a class="sim-cta" href="../../sims/terminal-trainer/index.html" style="display:block; margin:1.25rem 0;">
+        <div class="sim-cta-label">Simulation</div>
+        <h4>Terminal Trainer</h4>
+        <p>Fourteen command-line challenges in a live fake terminal. Navigate directories, read files, and create your workspace - all from the command line.</p>
+      </a>
+
+      <div class="concept-grid" style="grid-template-columns: 1fr 1fr; margin: 0.5rem 0 1.25rem;">
         <a href="https://developer.mozilla.org/en-US/docs/Learn_web_technology/Tools_testing/Understanding_client-side_tools/Command_line" target="_blank" rel="noopener" style="display:block; background:var(--bg-card); border:1px solid var(--border); border-top:3px solid var(--accent); border-radius:4px; padding:1.1rem 1.25rem; text-decoration:none; transition:background 0.15s;">
           <div style="font-family:'IBM Plex Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent-light); margin-bottom:0.4rem;">Mac &amp; PC · MDN</div>
           <div style="font-size:0.95rem; font-weight:600; color:var(--text-bright); margin-bottom:0.3rem;">Command Line Crash Course</div>
@@ -720,16 +730,6 @@
           <div style="font-size:0.82rem; color:var(--text-dim); line-height:1.4;">Official Microsoft guide to Windows Terminal, covering setup, navigation, and customization for PC users.</div>
         </a>
       </div>
-
-      <p style="font-size:0.88rem; color:var(--text-dim); margin-top:0.5rem;">
-        Once you're comfortable with <code>pwd</code>, <code>ls</code>, <code>cd</code>, and <code>mkdir</code>, you're ready for Git. Practice those commands in the simulation below.
-      </p>
-
-      <a class="sim-cta" href="../../sims/terminal-trainer/index.html" style="display:block; margin:1.5rem 0 0.5rem;">
-        <div class="sim-cta-label">Simulation</div>
-        <h4>Terminal Trainer</h4>
-        <p>Eight challenges in a live fake terminal. Navigate directories, read files, and create your workspace - all from the command line.</p>
-      </a>
 
       <!-- SECTION 2 -->
       <h2 id="three-states">The Three States</h2>
@@ -1129,6 +1129,29 @@
   :root.theme-light .output-block .out-hdr { color: var(--accent) !important; }
   :root.theme-light .df-table th { color: #2a7a3a !important; border-bottom-color: #c8c3bc !important; }
   :root.theme-light .df-table th.idx-col { color: #8a8078 !important; }
+  /* Content headings (hardcoded #fff in base styles) */
+  :root.theme-light .content h2           { color: #0d0c0a !important; border-top-color: #d4cfc9 !important; }
+  :root.theme-light .content h3           { color: #1a1715 !important; }
+  :root.theme-light .quiz-header h2       { color: #0d0c0a !important; }
+  :root.theme-light .q-text              { color: #1a1715 !important; }
+  :root.theme-light .result-label        { color: #0d0c0a !important; }
+  :root.theme-light .objectives h3       { color: var(--maroon-light) !important; }
+  :root.theme-light .mod-header h1       { color: #0d0c0a !important; }
+  :root.theme-light .quiz-link-body h2   { color: #0d0c0a !important; }
+  :root.theme-light pre                  { background: #ede9e3 !important; color: #2a2420 !important; border-color: #c8c3bc !important; }
+  :root.theme-light code                 { background: rgba(0,0,0,0.06) !important; color: #3a3028 !important; }
+  :root.theme-light .callout             { background: #fff !important; border-color: #d4cfc9 !important; }
+  :root.theme-light .concept-box        { background: #fff !important; border-color: #d4cfc9 !important; }
+  :root.theme-light .concept-box p      { color: #5a5550 !important; }
+  :root.theme-light .objectives         { background: #fff !important; border-color: #d4cfc9 !important; }
+  :root.theme-light .objectives ol li   { color: #5a5550 !important; }
+  :root.theme-light .toc-list a         { color: #5a5550 !important; }
+  :root.theme-light .toc-list a:hover   { background: rgba(0,0,0,0.04) !important; color: #1a1715 !important; }
+  :root.theme-light .toc-list a.active  { color: var(--accent) !important; background: rgba(139,28,64,0.08) !important; border-left-color: var(--accent) !important; }
+  :root.theme-light .sidebar-card       { background: #fff !important; border-color: #d4cfc9 !important; }
+  :root.theme-light .sidebar-card h4    { color: #8a8078 !important; }
+  :root.theme-light .quiz-question      { background: #fff !important; border-color: #d4cfc9 !important; }
+
   /* Gear button visible on light bg */
   :root.theme-light #settings-toggle {
     box-shadow: 0 2px 8px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.12) !important;

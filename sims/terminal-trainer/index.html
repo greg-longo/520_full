@@ -6,398 +6,428 @@
 <title>Terminal Trainer - DTSC 520</title>
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --accent:       #8B1C40;
-    --accent-light: #c04570;
-    --accent-dim:   rgba(139,28,64,0.15);
-    --green:        #56d364;
-    --green-dim:    rgba(86,211,100,0.12);
-    --red:          #f85149;
-    --yellow:       #e3b341;
-    --blue:         #79c0ff;
-    --term-bg:      #010409;
-    --term-surface: #0d1117;
-    --term-border:  #30363d;
-    --term-text:    #e6edf3;
-    --term-dim:     #8b949e;
-    --term-success: #56d364;
-    --term-error:   #f85149;
-    --bg:           #0a0c10;
-    --surface:      #161b22;
-    --surface2:     #1c2128;
-    --border:       #30363d;
-    --text:         #e6edf3;
-    --text-dim:     #8b949e;
-    --text-bright:  #f0f6fc;
-    --sans:         'IBM Plex Sans', sans-serif;
-    --mono:         'IBM Plex Mono', monospace;
-    --serif:        'Zilla Slab', Georgia, serif;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 16px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+/* ── ROOT VARIABLES ── */
+:root {
+  --accent:       #8B1C40;
+  --accent-light: #c04570;
+  --green:        #56d364;
+  --green-dim:    rgba(86,211,100,0.12);
+  --red:          #f85149;
+  --yellow:       #e3b341;
+  --blue:         #79c0ff;
+  /* terminal (always dark) */
+  --term-bg:      #010409;
+  --term-titlebar:#21262d;
+  --term-border:  #30363d;
+  --term-text:    #e6edf3;
+  --term-dim:     #8b949e;
+  /* ui surfaces */
+  --bg:           #0a0c10;
+  --surface:      #161b22;
+  --surface2:     #1c2128;
+  --surface3:     #21262d;
+  --border:       #30363d;
+  --text:         #e6edf3;
+  --text-dim:     #8b949e;
+  --text-bright:  #f0f6fc;
+  --sans: 'IBM Plex Sans', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Zilla Slab', Georgia, serif;
+}
 
-  /* ── COURSE NAV ── */
-  #coursenav {
-    background: #010409;
-    border-bottom: 1px solid var(--term-border);
-    padding: 0 1.5rem;
-    height: 36px;
-    display: flex; align-items: center;
-    position: sticky; top: 0; z-index: 300;
-  }
-  #coursenav a {
-    font-family: var(--mono); font-size: 0.68rem;
-    color: rgba(255,255,255,0.45); text-decoration: none;
-    letter-spacing: 0.06em; transition: color 0.15s;
-  }
-  #coursenav a:hover { color: rgba(255,255,255,0.85); }
-  #coursenav .cn-sep { color: rgba(255,255,255,0.18); margin: 0 0.5rem; }
-  #coursenav .cn-cur { font-family: var(--mono); font-size: 0.68rem; color: rgba(255,255,255,0.3); letter-spacing: 0.06em; }
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--sans); font-size: 16px; line-height: 1.6; min-height: 100vh;
+}
 
-  /* ── LANDING ── */
-  .landing-screen {
-    max-width: 680px; margin: 0 auto;
-    padding: 3rem 1.5rem 4rem;
-  }
-  .landing-masthead {
-    text-align: center; margin-bottom: 3rem;
-  }
-  .landing-eyebrow {
-    font-family: var(--mono); font-size: 0.65rem;
-    text-transform: uppercase; letter-spacing: 0.12em;
-    color: var(--accent-light); margin-bottom: 0.75rem;
-  }
-  .landing-title {
-    font-family: var(--serif);
-    font-size: 2.4rem; font-weight: 700;
-    color: var(--text-bright); line-height: 1.15; margin-bottom: 0.6rem;
-  }
-  .landing-subtitle {
-    font-size: 1rem; color: var(--text-dim); line-height: 1.65;
-    max-width: 480px; margin: 0 auto;
-  }
-  .landing-context {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px; padding: 1.4rem 1.5rem;
-    font-size: 0.9rem; color: var(--text-dim);
-    line-height: 1.75; margin-bottom: 2.5rem;
-  }
-  .landing-context p + p { margin-top: 0.75rem; }
-  .landing-context strong { color: var(--text); }
-  .landing-prompt {
-    text-align: center;
-    font-family: var(--mono); font-size: 0.72rem;
-    text-transform: uppercase; letter-spacing: 0.1em;
-    color: var(--text-dim); margin-bottom: 1.1rem;
-  }
-  .platform-cards {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
-  }
-  .platform-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px; padding: 1.6rem 1.4rem 1.5rem;
-    cursor: pointer; text-align: left;
-    transition: border-color 0.18s, background 0.18s, transform 0.18s;
-    display: block; text-decoration: none; color: inherit;
-  }
-  .platform-card:hover {
-    border-color: var(--accent-light);
-    background: var(--surface2);
-    transform: translateY(-2px);
-  }
-  .platform-card-preview {
-    background: var(--term-bg);
-    border: 1px solid var(--term-border);
-    border-radius: 5px; padding: 0.65rem 0.85rem;
-    font-family: var(--mono); font-size: 0.75rem;
-    line-height: 1.8; margin-bottom: 1.1rem;
-    min-height: 70px;
-  }
-  .platform-card-name {
-    font-family: var(--serif);
-    font-size: 1.05rem; font-weight: 600;
-    color: var(--text-bright); margin-bottom: 0.25rem;
-  }
-  .platform-card-desc {
-    font-size: 0.8rem; color: var(--text-dim); line-height: 1.5;
-  }
-  .platform-card-cta {
-    display: inline-block; margin-top: 1rem;
-    font-family: var(--mono); font-size: 0.72rem;
-    text-transform: uppercase; letter-spacing: 0.07em;
-    color: var(--accent-light);
-  }
-  .platform-card:hover .platform-card-cta { color: var(--green); }
+/* ── COURSE NAV ── */
+#coursenav {
+  background: #010409; border-bottom: 1px solid var(--term-border);
+  padding: 0 1.5rem; height: 36px;
+  display: flex; align-items: center;
+  position: sticky; top: 0; z-index: 300;
+}
+#coursenav a { font-family: var(--mono); font-size: 0.68rem; color: rgba(255,255,255,0.45); text-decoration: none; letter-spacing: 0.06em; transition: color 0.15s; }
+#coursenav a:hover { color: rgba(255,255,255,0.85); }
+#coursenav .cn-sep { color: rgba(255,255,255,0.18); margin: 0 0.5rem; }
+#coursenav .cn-cur { font-family: var(--mono); font-size: 0.68rem; color: rgba(255,255,255,0.3); letter-spacing: 0.06em; }
 
-  /* ── HEADER (shown after platform chosen) ── */
-  .sim-header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 1.1rem 2rem 1rem;
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 1rem; flex-wrap: wrap;
-  }
-  .sim-header-left { flex: 1; min-width: 200px; }
-  .sim-eyebrow {
-    font-family: var(--mono);
-    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em;
-    color: var(--accent-light); margin-bottom: 0.2rem;
-  }
-  .sim-title {
-    font-family: var(--serif);
-    font-size: 1.3rem; font-weight: 700;
-    color: var(--text-bright); line-height: 1.2;
-  }
+/* ══════════════════════════════════════════
+   LANDING SCREEN
+══════════════════════════════════════════ */
+.landing-wrap { max-width: 680px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+.landing-masthead { text-align: center; margin-bottom: 2.5rem; }
+.landing-eyebrow { font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent-light); margin-bottom: 0.75rem; }
+.landing-title { font-family: var(--serif); font-size: 2.4rem; font-weight: 700; color: var(--text-bright); line-height: 1.15; margin-bottom: 0.6rem; }
+.landing-subtitle { font-size: 1rem; color: var(--text-dim); line-height: 1.65; max-width: 480px; margin: 0 auto; }
+.landing-context { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 1.4rem 1.5rem; font-size: 0.9rem; color: var(--text-dim); line-height: 1.75; margin-bottom: 2.5rem; }
+.landing-context p + p { margin-top: 0.75rem; }
+.landing-context strong { color: var(--text); }
+.landing-prompt { text-align: center; font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 1.1rem; }
+.platform-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.platform-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 1.6rem 1.4rem 1.5rem; cursor: pointer; text-align: left;
+  transition: border-color 0.18s, background 0.18s, transform 0.18s;
+  display: block; text-decoration: none; color: inherit; font: inherit;
+}
+.platform-card:hover { border-color: var(--accent-light); background: var(--surface2); transform: translateY(-2px); }
+.platform-card-preview {
+  background: var(--term-bg); border: 1px solid var(--term-border); border-radius: 5px;
+  padding: 0.65rem 0.85rem; font-family: var(--mono); font-size: 0.75rem;
+  line-height: 1.8; margin-bottom: 1.1rem; min-height: 70px;
+  color: var(--term-text);
+}
+.platform-card-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.25rem; }
+.platform-card-desc { font-size: 0.8rem; color: var(--text-dim); line-height: 1.5; }
+.platform-card-cta { display: inline-block; margin-top: 1rem; font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--accent-light); }
+.platform-card:hover .platform-card-cta { color: var(--green); }
 
-  /* ── MODE TOGGLE (secondary, in header) ── */
-  .mode-toggle {
-    display: flex; border: 1px solid var(--border);
-    border-radius: 6px; overflow: hidden; flex-shrink: 0; align-self: flex-start;
-  }
-  .mode-btn {
-    padding: 0.4rem 0.95rem;
-    font-family: var(--mono); font-size: 0.7rem;
-    background: var(--surface2); color: var(--text-dim);
-    border: none; cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    letter-spacing: 0.03em;
-  }
-  .mode-btn.active { background: var(--accent); color: #fff; }
-  .mode-btn:first-child { border-right: 1px solid var(--border); }
+/* ══════════════════════════════════════════
+   OVERVIEW SCREEN
+══════════════════════════════════════════ */
+.overview-wrap { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+.overview-header { margin-bottom: 2rem; }
+.overview-eyebrow { font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent-light); margin-bottom: 0.4rem; }
+.overview-title { font-family: var(--serif); font-size: 1.7rem; font-weight: 700; color: var(--text-bright); margin-bottom: 0.35rem; }
+.overview-sub { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; }
+.overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
 
-  /* ── BODY LAYOUT ── */
-  .sim-body {
-    max-width: 860px; margin: 0 auto;
-    padding: 1.75rem 1.5rem 3rem;
-    display: flex; flex-direction: column; gap: 1.1rem;
-  }
+/* File tree panel */
+.filetree-panel { background: var(--term-bg); border: 1px solid var(--term-border); border-radius: 8px; overflow: hidden; }
+.filetree-titlebar { background: var(--term-titlebar); padding: 0.5rem 1rem; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--term-border); }
+.ft-dot { width: 11px; height: 11px; border-radius: 50%; }
+.ft-dot-r { background: #f85149; }
+.ft-dot-y { background: #e3b341; }
+.ft-dot-g { background: #56d364; }
+.filetree-name { font-family: var(--mono); font-size: 0.68rem; color: var(--term-dim); margin-left: 0.25rem; }
+.filetree-body { padding: 0.85rem 1rem 1rem; font-family: var(--mono); font-size: 0.8rem; line-height: 1.8; white-space: pre; overflow-x: auto; }
+.ft-dir-name { color: var(--blue); }
+.ft-file-name { color: var(--term-text); }
+.ft-annotation { color: var(--term-dim); font-size: 0.72rem; }
+.ft-branch { color: #484f58; }
+.ft-current-dir { color: var(--green); font-weight: 600; }
 
-  /* ── PROGRESS ── */
-  .progress-row {
-    display: flex; align-items: center; gap: 0.85rem;
-  }
-  .progress-label {
-    font-family: var(--mono); font-size: 0.68rem;
-    color: var(--text-dim); letter-spacing: 0.07em; white-space: nowrap;
-  }
-  .progress-dots { display: flex; gap: 7px; flex: 1; }
-  .progress-dot {
-    width: 10px; height: 10px; border-radius: 50%;
-    background: var(--border); transition: background 0.3s, transform 0.2s;
-  }
-  .progress-dot.done    { background: var(--green); }
-  .progress-dot.current { background: var(--accent); transform: scale(1.25); }
+/* Flashcards */
+.flashcard-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+.flashcard-header { padding: 0.75rem 1.1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.flashcard-label { font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
+.flashcard-counter { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); }
+.flashcard-stage { flex: 1; position: relative; perspective: 1000px; min-height: 200px; cursor: pointer; }
+.flashcard { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 0.45s; margin: 1rem; }
+.flashcard.flipped { transform: rotateY(180deg); }
+.card-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.25rem; text-align: center; }
+.card-front { background: var(--surface2); border: 1px solid var(--border); }
+.card-back  { background: var(--term-bg); border: 1px solid var(--term-border); transform: rotateY(180deg); align-items: flex-start; text-align: left; justify-content: flex-start; padding: 1rem 1.15rem; }
+.card-cmd { font-family: var(--mono); font-size: 1.6rem; color: var(--green); font-weight: 500; margin-bottom: 0.4rem; }
+.card-what { font-family: var(--sans); font-size: 0.78rem; color: var(--text-dim); }
+.card-tap { font-family: var(--mono); font-size: 0.65rem; color: var(--term-dim); margin-top: 0.75rem; text-transform: uppercase; letter-spacing: 0.07em; }
+.card-back-cmd { font-family: var(--mono); font-size: 1rem; color: var(--green); margin-bottom: 0.5rem; }
+.card-back-def { font-size: 0.82rem; color: var(--term-text); line-height: 1.55; margin-bottom: 0.6rem; }
+.card-back-ex { font-family: var(--mono); font-size: 0.75rem; color: var(--term-dim); }
+.card-back-ex span { color: var(--term-text); }
+.flashcard-nav { padding: 0.6rem 1rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.fc-nav-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); font-family: var(--mono); font-size: 0.75rem; padding: 0.3rem 0.7rem; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+.fc-nav-btn:hover { color: var(--text); border-color: var(--text-dim); }
+.fc-nav-btn:disabled { opacity: 0.3; cursor: default; }
+.fc-dots { display: flex; gap: 5px; }
+.fc-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background 0.2s; }
+.fc-dot.active { background: var(--accent-light); }
 
-  /* ── CHALLENGE CARD ── */
-  .challenge-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: 4px;
-    padding: 1.1rem 1.25rem 1.15rem;
-  }
-  .challenge-num {
-    font-family: var(--mono);
-    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
-    color: var(--accent-light); margin-bottom: 0.35rem;
-  }
-  .challenge-title {
-    font-family: var(--serif);
-    font-size: 1.05rem; font-weight: 600; color: var(--text-bright);
-    margin-bottom: 0.4rem;
-  }
-  .challenge-instruction {
-    font-size: 0.88rem; color: var(--text-dim); line-height: 1.65;
-  }
-  .challenge-hint-box {
-    margin-top: 0.85rem;
-    background: var(--term-bg);
-    border: 1px solid var(--term-border);
-    border-radius: 4px;
-    padding: 0.55rem 0.9rem;
-    display: flex; align-items: baseline; gap: 0.6rem;
-  }
-  .challenge-hint-label {
-    font-family: var(--mono); font-size: 0.67rem;
-    text-transform: uppercase; letter-spacing: 0.07em;
-    color: var(--text-dim); white-space: nowrap;
-  }
-  .challenge-hint-cmd {
-    font-family: var(--mono); font-size: 0.88rem;
-    color: var(--green);
-  }
+.overview-start-btn { display: block; width: 100%; padding: 0.85rem; background: var(--accent); color: #fff; border: none; border-radius: 6px; font-family: var(--serif); font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: background 0.15s; text-align: center; }
+.overview-start-btn:hover { background: var(--accent-light); }
 
-  /* ── TERMINAL WINDOW ── */
-  .terminal-window {
-    background: var(--term-bg);
-    border: 1px solid var(--term-border);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 6px 28px rgba(0,0,0,0.5);
-    cursor: text;
-  }
-  .term-titlebar {
-    background: #21262d;
-    padding: 0.55rem 1rem;
-    display: flex; align-items: center; gap: 6px;
-    border-bottom: 1px solid var(--term-border);
-  }
-  .term-dot {
-    width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
-  }
-  .dot-red    { background: #f85149; }
-  .dot-yellow { background: #e3b341; }
-  .dot-green  { background: #56d364; }
-  .term-name {
-    font-family: var(--mono); font-size: 0.7rem;
-    color: var(--term-dim); margin-left: 0.3rem;
-  }
-  .term-output {
-    padding: 0.9rem 1.2rem 0.4rem;
-    min-height: 240px; max-height: 360px;
-    overflow-y: auto;
-    font-family: var(--mono);
-    font-size: 0.84rem; line-height: 1.75;
-    scrollbar-width: thin;
-    scrollbar-color: #30363d transparent;
-  }
-  .term-output::-webkit-scrollbar { width: 6px; }
-  .term-output::-webkit-scrollbar-track { background: transparent; }
-  .term-output::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+/* ══════════════════════════════════════════
+   SIM HEADER
+══════════════════════════════════════════ */
+.sim-header {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 0.9rem 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+.sim-header-left { flex: 1; min-width: 0; }
+.sim-eyebrow { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-light); margin-bottom: 0.15rem; }
+.sim-title { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; color: var(--text-bright); }
+.sim-part-badge { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim); margin-left: 0.6rem; }
+.mode-toggle { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+.mode-btn { padding: 0.38rem 0.9rem; font-family: var(--mono); font-size: 0.7rem; background: var(--surface2); color: var(--text-dim); border: none; cursor: pointer; transition: background 0.15s, color 0.15s; letter-spacing: 0.03em; }
+.mode-btn.active { background: var(--accent); color: #fff; }
+.mode-btn:first-child { border-right: 1px solid var(--border); }
 
-  .tl { display: block; }
-  .tl.blank-line { display: block; height: 0.5em; }
-  .c-dim   { color: var(--term-dim); }
-  .c-out   { color: #b0bac4; }
-  .c-ok    { color: var(--green); }
-  .c-err   { color: var(--red); }
-  .c-dir   { color: var(--blue); }
-  .c-file  { color: var(--term-text); }
-  .c-cmd   { color: var(--term-text); }
-  .c-user  { color: var(--green); }
-  .c-host  { color: var(--green); }
-  .c-path  { color: var(--blue); }
-  .c-sym   { color: var(--term-dim); }
-  .c-bash  { color: #e3b341; }
+/* ══════════════════════════════════════════
+   SIM BODY
+══════════════════════════════════════════ */
+.sim-body { max-width: 1000px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; display: flex; flex-direction: column; gap: 1rem; }
 
-  .term-input-row {
-    display: flex; align-items: center;
-    padding: 0.35rem 1.2rem 0.9rem; gap: 0;
-  }
-  .term-input-prompt {
-    font-family: var(--mono); font-size: 0.84rem;
-    white-space: nowrap; flex-shrink: 0;
-    user-select: none;
-  }
-  .term-input {
-    flex: 1; background: transparent; border: none; outline: none;
-    font-family: var(--mono); font-size: 0.84rem;
-    color: var(--term-text); caret-color: var(--green);
-    padding: 0; min-width: 0;
-  }
+/* Progress */
+.progress-row { display: flex; align-items: center; gap: 0.75rem; }
+.progress-label { font-family: var(--mono); font-size: 0.66rem; color: var(--text-dim); letter-spacing: 0.07em; white-space: nowrap; }
+.progress-dots { display: flex; gap: 6px; flex: 1; }
+.progress-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border); transition: background 0.3s, transform 0.2s; }
+.progress-dot.done { background: var(--green); }
+.progress-dot.current { background: var(--accent); transform: scale(1.3); }
 
-  /* ── FEEDBACK FLASH ── */
-  .feedback-flash {
-    border-radius: 4px; padding: 0.65rem 1rem;
-    font-family: var(--mono); font-size: 0.82rem;
-    opacity: 0; transition: opacity 0.25s; pointer-events: none;
-  }
-  .feedback-flash.show { opacity: 1; pointer-events: auto; }
-  .feedback-flash.good {
-    background: var(--green-dim);
-    border: 1px solid rgba(86,211,100,0.25);
-    color: var(--green);
-  }
-  .feedback-flash.bad {
-    background: rgba(248,81,73,0.08);
-    border: 1px solid rgba(248,81,73,0.25);
-    color: var(--red);
-  }
+/* Challenge card */
+.challenge-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 4px; padding: 1rem 1.2rem 1.1rem; }
+.challenge-num { font-family: var(--mono); font-size: 0.63rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-light); margin-bottom: 0.3rem; }
+.challenge-title { font-family: var(--serif); font-size: 1rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.35rem; }
+.challenge-instruction { font-size: 0.87rem; color: var(--text-dim); line-height: 1.65; }
+.challenge-hint-box { margin-top: 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-left: 2px solid var(--green); border-radius: 3px; padding: 0.5rem 0.85rem; display: flex; align-items: baseline; gap: 0.6rem; }
+.challenge-hint-label { font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); white-space: nowrap; }
+.challenge-hint-cmd { font-family: var(--mono); font-size: 0.88rem; color: var(--green); }
 
-  /* ── COMPLETION PANEL ── */
-  .completion-panel {
-    display: none;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-top: 3px solid var(--green);
-    border-radius: 4px;
-    padding: 2.25rem 2rem;
-    text-align: center;
-  }
-  .completion-panel.show { display: block; }
-  .completion-icon { font-size: 2.4rem; margin-bottom: 0.65rem; line-height: 1; }
-  .completion-title {
-    font-family: var(--serif);
-    font-size: 1.5rem; font-weight: 700;
-    color: var(--text-bright); margin-bottom: 0.5rem;
-  }
-  .completion-body {
-    font-size: 0.9rem; color: var(--text-dim);
-    max-width: 440px; margin: 0 auto 1.5rem; line-height: 1.7;
-  }
-  .completion-score {
-    font-family: var(--mono);
-    font-size: 2.2rem; font-weight: 700;
-    color: var(--green); margin-bottom: 0.2rem;
-  }
-  .completion-score-label {
-    font-family: var(--mono);
-    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em;
-    color: var(--text-dim); margin-bottom: 1.75rem;
-  }
-  .completion-btn {
-    display: inline-block;
-    background: var(--accent); color: #fff;
-    padding: 0.65rem 1.6rem; border-radius: 4px;
-    text-decoration: none; font-size: 0.9rem; font-weight: 600;
-    transition: background 0.15s; border: none; cursor: pointer;
-    letter-spacing: 0.01em;
-  }
-  .completion-btn:hover { background: var(--accent-light); }
+/* Main terminal grid: tree left, terminal right */
+.sim-grid { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; }
+.tree-col { display: flex; flex-direction: column; gap: 0.5rem; }
+.tree-label { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); padding: 0 0.2rem; }
+.tree-box { background: var(--term-bg); border: 1px solid var(--term-border); border-radius: 6px; padding: 0.7rem 0.85rem; font-family: var(--mono); font-size: 0.74rem; line-height: 1.9; white-space: pre; overflow-x: auto; flex: 1; }
 
-  /* ── FOOTER ── */
-  footer {
-    background: #010409;
-    border-top: 1px solid var(--border);
-    padding: 1.4rem 1.5rem;
-    text-align: center;
-    font-size: 0.72rem; color: var(--text-dim); line-height: 1.8;
-    margin-top: 2rem;
-  }
+/* Terminal window */
+.terminal-window { background: var(--term-bg); border: 1px solid var(--term-border); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.45); cursor: text; }
+.term-titlebar { background: var(--term-titlebar); padding: 0.5rem 0.9rem; display: flex; align-items: center; gap: 5px; border-bottom: 1px solid var(--term-border); }
+.term-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+.dot-r { background: #f85149; } .dot-y { background: #e3b341; } .dot-g { background: #56d364; }
+.term-name { font-family: var(--mono); font-size: 0.68rem; color: var(--term-dim); margin-left: 0.25rem; }
+.term-output { padding: 0.8rem 1.1rem 0.3rem; min-height: 220px; max-height: 340px; overflow-y: auto; font-family: var(--mono); font-size: 0.82rem; line-height: 1.75; scrollbar-width: thin; scrollbar-color: #30363d transparent; }
+.term-output::-webkit-scrollbar { width: 5px; }
+.term-output::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+.tl { display: block; }
+.tl.gap { height: 0.4em; display: block; }
+.c-dim { color: var(--term-dim); }
+.c-out { color: #b0bac4; }
+.c-dir { color: var(--blue); }
+.c-file { color: var(--term-text); }
+.c-ok  { color: var(--green); }
+.c-err { color: var(--red); }
+.c-user { color: var(--green); }
+.c-path { color: var(--blue); }
+.c-sym  { color: var(--term-dim); }
+.c-bash { color: var(--yellow); }
+.term-input-row { display: flex; align-items: center; padding: 0.3rem 1.1rem 0.8rem; }
+.term-input-prompt { font-family: var(--mono); font-size: 0.82rem; white-space: nowrap; flex-shrink: 0; user-select: none; }
+.term-input { flex: 1; background: transparent; border: none; outline: none; font-family: var(--mono); font-size: 0.82rem; color: var(--term-text); caret-color: var(--green); padding: 0; min-width: 0; }
 
-  /* ── LIGHT MODE: terminal stays dark always ── */
-  :root.theme-light { --bg: #f5f2ee; --surface: #fff; --surface2: #ede9e3; --border: #d4cfc9; --text: #1a1715; --text-dim: #5a5550; --text-bright: #0d0c0a; }
-  :root.theme-light #coursenav { background: #dcd7d0 !important; }
-  :root.theme-light #coursenav * { color: #3a3530 !important; }
-  :root.theme-light .sim-header { background: #dcd7d0; border-color: #c4bfb8; }
-  :root.theme-light .challenge-card { background: #fff; border-color: #d4cfc9; }
-  :root.theme-light .landing-context { background: #fff; border-color: #d4cfc9; }
-  :root.theme-light .platform-card { background: #fff; border-color: #d4cfc9; }
-  :root.theme-light .platform-card:hover { background: #ede9e3; border-color: var(--accent-light); }
-  :root.theme-light .mode-btn { background: #ede9e3; color: #5a5550; }
-  :root.theme-light .mode-btn.active { background: var(--accent); color: #fff; }
-  :root.theme-light .mode-toggle { border-color: #c4bfb8; }
-  :root.theme-light .mode-btn:first-child { border-color: #c4bfb8; }
-  :root.theme-light footer { background: #dcd7d0 !important; }
-  /* Terminal window always stays dark regardless of theme */
-  .terminal-window,
-  .terminal-window * {
-    /* inherits from :root vars scoped inside .terminal-window */
-  }
-  .terminal-window { background: var(--term-bg) !important; }
-  .term-titlebar   { background: #21262d !important; color: var(--term-dim) !important; }
-  .term-output     { background: var(--term-bg) !important; color: var(--term-text) !important; }
-  .term-input-row  { background: var(--term-bg) !important; }
-  .term-input      { color: var(--term-text) !important; }
+/* Feedback */
+.feedback-flash { border-radius: 4px; padding: 0.6rem 0.95rem; font-family: var(--mono); font-size: 0.8rem; opacity: 0; transition: opacity 0.25s; pointer-events: none; }
+.feedback-flash.show { opacity: 1; pointer-events: auto; }
+.feedback-flash.good { background: rgba(86,211,100,0.1); border: 1px solid rgba(86,211,100,0.22); color: var(--green); }
+.feedback-flash.bad  { background: rgba(248,81,73,0.08); border: 1px solid rgba(248,81,73,0.22); color: var(--red); }
+
+/* Between parts panel */
+.between-panel { display: none; background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accent); border-radius: 4px; padding: 2rem; text-align: center; }
+.between-panel.show { display: block; }
+.between-icon { font-size: 2rem; margin-bottom: 0.6rem; line-height: 1; }
+.between-title { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; color: var(--text-bright); margin-bottom: 0.4rem; }
+.between-body { font-size: 0.88rem; color: var(--text-dim); max-width: 420px; margin: 0 auto 1.25rem; line-height: 1.65; }
+.between-btn { display: inline-block; background: var(--accent); color: #fff; padding: 0.6rem 1.4rem; border-radius: 4px; border: none; cursor: pointer; font-family: var(--serif); font-size: 0.95rem; font-weight: 600; transition: background 0.15s; }
+.between-btn:hover { background: var(--accent-light); }
+
+/* Completion panel */
+.completion-panel { display: none; background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--green); border-radius: 4px; padding: 2.25rem 2rem; text-align: center; }
+.completion-panel.show { display: block; }
+.completion-icon { font-size: 2.4rem; margin-bottom: 0.65rem; line-height: 1; }
+.completion-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; color: var(--text-bright); margin-bottom: 0.5rem; }
+.completion-body { font-size: 0.9rem; color: var(--text-dim); max-width: 440px; margin: 0 auto 1.5rem; line-height: 1.7; }
+.completion-score { font-family: var(--mono); font-size: 2.2rem; font-weight: 700; color: var(--green); margin-bottom: 0.2rem; }
+.completion-score-label { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 1.75rem; }
+.completion-btn { display: inline-block; background: var(--accent); color: #fff; padding: 0.65rem 1.6rem; border-radius: 4px; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: background 0.15s; border: none; cursor: pointer; }
+.completion-btn:hover { background: var(--accent-light); }
+
+/* ── FOOTER ── */
+footer { background: #010409; border-top: 1px solid var(--term-border); padding: 1.4rem 1.5rem; text-align: center; font-size: 0.72rem; color: var(--term-dim); line-height: 1.8; margin-top: 2rem; }
+
+/* ══════════════════════════════════════════
+   LIGHT MODE
+   Terminal elements stay dark always.
+   UI chrome adapts.
+══════════════════════════════════════════ */
+:root.theme-light {
+  --bg: #f5f2ee; --surface: #ffffff; --surface2: #ede9e3; --surface3: #e4e0d8;
+  --border: #d4cfc9; --text: #1a1715; --text-dim: #5a5550; --text-bright: #0d0c0a;
+}
+:root.theme-light #coursenav             { background: #dcd7d0 !important; }
+:root.theme-light #coursenav *           { color: #3a3530 !important; }
+:root.theme-light .sim-header            { background: #dcd7d0; border-color: #c4bfb8; }
+:root.theme-light .sim-title            { color: #0d0c0a; }
+:root.theme-light .landing-context      { background: #fff; border-color: #d4cfc9; }
+:root.theme-light .platform-card        { background: #fff; border-color: #d4cfc9; }
+:root.theme-light .platform-card:hover  { background: #ede9e3; border-color: var(--accent-light); }
+/* Platform card preview stays dark - it's a terminal window */
+:root.theme-light .platform-card-name   { color: #0d0c0a; }
+:root.theme-light .platform-card-desc   { color: #5a5550; }
+:root.theme-light .challenge-card       { background: #fff; border-color: #d4cfc9; }
+:root.theme-light .challenge-title      { color: #0d0c0a; }
+:root.theme-light .challenge-instruction { color: #5a5550; }
+:root.theme-light .challenge-hint-box   { background: #f0ece6; border-color: #c8c3bc; border-left-color: #3a8a50; }
+:root.theme-light .challenge-hint-label { color: #6a6460; }
+:root.theme-light .challenge-hint-cmd   { color: #2a7040; }
+:root.theme-light .mode-btn             { background: #ede9e3; color: #5a5550; }
+:root.theme-light .mode-btn.active      { background: var(--accent); color: #fff; }
+:root.theme-light .mode-toggle          { border-color: #c4bfb8; }
+:root.theme-light .mode-btn:first-child { border-color: #c4bfb8; }
+:root.theme-light .between-panel        { background: #fff; border-color: #d4cfc9; }
+:root.theme-light .between-title        { color: #0d0c0a; }
+:root.theme-light .between-body         { color: #5a5550; }
+:root.theme-light .completion-panel     { background: #fff; border-color: #d4cfc9; }
+:root.theme-light .completion-title     { color: #0d0c0a; }
+:root.theme-light .completion-body      { color: #5a5550; }
+:root.theme-light .overview-wrap        { color: #1a1715; }
+:root.theme-light .overview-title       { color: #0d0c0a; }
+:root.theme-light .overview-sub         { color: #5a5550; }
+:root.theme-light .flashcard-panel      { background: #fff; border-color: #d4cfc9; }
+:root.theme-light .flashcard-header     { border-color: #d4cfc9; }
+:root.theme-light .card-front           { background: #ede9e3; border-color: #d4cfc9; }
+:root.theme-light .fc-nav-btn           { background: #ede9e3; border-color: #d4cfc9; color: #5a5550; }
+:root.theme-light .fc-nav-btn:hover     { color: #1a1715; border-color: #9a9490; }
+:root.theme-light .flashcard-nav        { border-color: #d4cfc9; }
+:root.theme-light .fc-dot               { background: #d4cfc9; }
+:root.theme-light .fc-dot.active        { background: var(--accent-light); }
+:root.theme-light footer                { background: #dcd7d0 !important; color: #8a8078 !important; }
+/* Feedback adapts */
+:root.theme-light .feedback-flash.good  { background: rgba(40,140,60,0.1); border-color: rgba(40,140,60,0.25); color: #287840; }
+:root.theme-light .feedback-flash.bad   { background: rgba(180,50,40,0.08); border-color: rgba(180,50,40,0.2); color: #b43228; }
+/* progress dots */
+:root.theme-light .progress-dot         { background: #d4cfc9; }
+:root.theme-light .progress-dot.done    { background: #3a9a54; }
+:root.theme-light .progress-dot.current { background: var(--accent); }
+:root.theme-light .tree-label           { color: #6a6460; }
+
+/* ══════════════════════════════════════════
+   SIM LAYOUT  (sidebar + main)
+══════════════════════════════════════════ */
+.sim-layout { display: flex; align-items: flex-start; }
+
+/* .sim-body still used on overview; sim-main replaces it inside the sim */
+.sim-main {
+  flex: 1; min-width: 0;
+  padding: 1.5rem 1.5rem 3rem;
+  display: flex; flex-direction: column; gap: 1rem;
+}
+
+/* ── TOC SIDEBAR ── */
+.toc-sidebar {
+  width: 210px; flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky; top: 36px;
+  height: calc(100vh - 36px);
+  overflow-y: auto;
+  display: flex; flex-direction: column;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+.toc-sidebar::-webkit-scrollbar { width: 4px; }
+.toc-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.toc-part-head {
+  font-family: var(--mono); font-size: 0.58rem;
+  text-transform: uppercase; letter-spacing: 0.11em;
+  color: var(--text-dim); padding: 1rem 1rem 0.35rem;
+}
+.toc-part-head + .toc-part-head { margin-top: 0.25rem; }
+
+.toc-item {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.28rem 0.9rem;
+  font-size: 0.77rem; color: var(--text-dim);
+  line-height: 1.35; user-select: none;
+  transition: background 0.12s;
+}
+.toc-item.locked { opacity: 0.35; }
+.toc-item.current { color: var(--text-bright); background: var(--surface2); }
+.toc-item.done { color: var(--green); }
+
+.toc-check {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1.5px solid var(--border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.55rem; transition: all 0.2s;
+}
+.toc-item.current .toc-check { border-color: var(--accent); background: var(--accent); color: #fff; }
+.toc-item.done    .toc-check { border-color: var(--green);  background: var(--green);  color: #021408; content: '✓'; }
+
+.toc-item-label { flex: 1; }
+
+.toc-spacer { flex: 1; }
+.toc-divider { height: 1px; background: var(--border); margin: 0.5rem 0.9rem; }
+
+.toc-ref-btn {
+  margin: 0 0.75rem 1.1rem;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--border); border-radius: 4px;
+  background: transparent; color: var(--text-dim);
+  font-family: var(--mono); font-size: 0.67rem; letter-spacing: 0.04em;
+  cursor: pointer; text-align: left;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.toc-ref-btn:hover { border-color: var(--accent-light); color: var(--text-bright); background: var(--surface2); }
+
+/* ── LIGHT MODE: SIDEBAR ── */
+:root.theme-light .toc-sidebar       { background: #fff; border-color: #d4cfc9; }
+:root.theme-light .toc-item.current  { background: #ede9e3; color: #0d0c0a; }
+:root.theme-light .toc-item.done     { color: #2a7040; }
+:root.theme-light .toc-item.done .toc-check   { border-color: #2a7040; background: #2a7040; color: #fff; }
+:root.theme-light .toc-item.current .toc-check { border-color: var(--accent); background: var(--accent); }
+:root.theme-light .toc-divider       { background: #d4cfc9; }
+:root.theme-light .toc-ref-btn       { border-color: #d4cfc9; color: #5a5550; }
+:root.theme-light .toc-ref-btn:hover { border-color: var(--accent-light); color: #1a1715; background: #ede9e3; }
+
+/* ══════════════════════════════════════════
+   FLASHCARD DRAWER
+══════════════════════════════════════════ */
+.fc-overlay {
+  display: none; position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.5);
+}
+.fc-overlay.open { display: block; }
+
+.fc-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 390px;
+  z-index: 600; background: var(--surface);
+  border-left: 1px solid var(--border);
+  transform: translateX(100%); transition: transform 0.28s ease;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.fc-drawer.open { transform: translateX(0); }
+
+.fc-drawer-head {
+  padding: 0.85rem 1.1rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+.fc-drawer-title {
+  font-family: var(--mono); font-size: 0.68rem;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim);
+}
+.fc-drawer-close {
+  background: none; border: none; color: var(--text-dim);
+  font-size: 1.2rem; cursor: pointer; line-height: 1; padding: 0.1rem 0.3rem;
+  transition: color 0.15s;
+}
+.fc-drawer-close:hover { color: var(--text-bright); }
+
+.fc-drawer-body {
+  flex: 1; overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+.fc-drawer-body .flashcard-panel {
+  border: none; border-radius: 0; flex: 1;
+  display: flex; flex-direction: column;
+}
+.fc-drawer-body .flashcard-stage { flex: 1; min-height: 260px; }
+
+/* ── LIGHT MODE: DRAWER ── */
+:root.theme-light .fc-drawer      { background: #fff; border-color: #d4cfc9; }
+:root.theme-light .fc-drawer-head { border-color: #d4cfc9; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .platform-cards { grid-template-columns: 1fr; }
+  .overview-grid  { grid-template-columns: 1fr; }
+  .sim-grid       { grid-template-columns: 1fr; }
+  .tree-col       { display: none; }
+  .toc-sidebar    { display: none; }
+  .fc-drawer      { width: 100%; }
+}
 </style>
 </head>
 <body>
@@ -411,27 +441,23 @@
   <span class="cn-cur">Terminal Trainer</span>
 </nav>
 
-<!-- ══ LANDING SCREEN ══ -->
-<div id="landing-screen">
-  <div class="landing-screen">
+<!-- ══ SCREEN: LANDING ══ -->
+<div id="screen-landing">
+  <div class="landing-wrap">
     <div class="landing-masthead">
       <div class="landing-eyebrow">Eastern University &middot; DTSC 520 &middot; Module 6</div>
       <h1 class="landing-title">Terminal Trainer</h1>
-      <p class="landing-subtitle">Before you can run Git commands, you need to be comfortable in a terminal. Eight challenges. No prior experience needed.</p>
+      <p class="landing-subtitle">Before you can run Git commands, you need to be comfortable in a terminal. Two parts. No prior experience needed.</p>
     </div>
-
     <div class="landing-context">
       <p>It's your first week at <strong>StatDeck Analytics</strong>. The IT team has set up a sandboxed terminal session for your onboarding. Before you get access to the team's Git repository, you need to show you can navigate the file system.</p>
-      <p>Your manager left a note: <em>"Complete the eight terminal challenges, then come find me and we'll get you set up with Git."</em></p>
+      <p>Your manager left a note: <em>"Complete both parts of the terminal training, then come find me and we'll get you set up with Git."</em></p>
     </div>
-
     <div class="landing-prompt">Choose your platform to begin</div>
-
     <div class="platform-cards">
-
       <button class="platform-card" onclick="startSim('mac')">
         <div class="platform-card-preview">
-          <span style="color:var(--green)">intern@statdeck</span><span style="color:var(--term-dim)">:</span><span style="color:var(--blue)">~</span><span style="color:var(--term-dim)">$</span> <span style="color:var(--term-text)">pwd</span><br>
+          <span style="color:var(--green)">intern@statdeck</span><span style="color:var(--term-dim)">:</span><span style="color:var(--blue)">~</span><span style="color:var(--term-dim)">$</span> <span>pwd</span><br>
           <span style="color:#b0bac4">/home/intern</span><br>
           <span style="color:var(--green)">intern@statdeck</span><span style="color:var(--term-dim)">:</span><span style="color:var(--blue)">~</span><span style="color:var(--term-dim)">$</span> <span style="color:var(--term-dim)">_</span>
         </div>
@@ -439,599 +465,1026 @@
         <div class="platform-card-desc">Terminal app (zsh/bash). Standard Unix commands. Recommended if you're on a MacBook.</div>
         <span class="platform-card-cta">Start &rarr;</span>
       </button>
-
       <button class="platform-card" onclick="startSim('pc')">
         <div class="platform-card-preview">
           <span style="color:var(--green)">intern@STATDECK</span> <span style="color:var(--yellow)">MINGW64</span> <span style="color:var(--blue)">~</span><br>
-          <span style="color:var(--term-dim)">$</span> <span style="color:var(--term-text)">pwd</span><br>
+          <span style="color:var(--term-dim)">$</span> <span>pwd</span><br>
           <span style="color:#b0bac4">/home/intern</span>
         </div>
         <div class="platform-card-name">PC (Git Bash)</div>
         <div class="platform-card-desc">Git Bash on Windows. Uses the same Unix-style commands as Mac once Git is installed.</div>
         <span class="platform-card-cta">Start &rarr;</span>
       </button>
-
     </div>
   </div>
 </div>
 
-<!-- ══ SIM (hidden until platform chosen) ══ -->
-<div id="sim-screen" style="display:none;">
+<!-- ══ SCREEN: OVERVIEW (file tree + flashcards) ══ -->
+<div id="screen-overview" style="display:none">
+  <div class="overview-wrap">
+    <div class="overview-header">
+      <div class="overview-eyebrow">Terminal Trainer &middot; Before You Start</div>
+      <h2 class="overview-title">Know the territory</h2>
+      <p class="overview-sub">Here's the file system you'll be navigating, and the commands you'll use. Click each card to see the definition.</p>
+    </div>
 
-<!-- Header -->
-<header class="sim-header">
-  <div class="sim-header-left">
-    <div class="sim-eyebrow">Terminal Trainer &middot; Module 6</div>
-    <h1 class="sim-title">StatDeck Onboarding Terminal</h1>
+    <div class="overview-grid">
+
+      <!-- File tree -->
+      <div class="filetree-panel">
+        <div class="filetree-titlebar">
+          <div class="ft-dot ft-dot-r"></div>
+          <div class="ft-dot ft-dot-y"></div>
+          <div class="ft-dot ft-dot-g"></div>
+          <span class="filetree-name">Your file system</span>
+        </div>
+        <div class="filetree-body" id="staticTree"></div>
+      </div>
+
+      <!-- Flashcards -->
+      <div class="flashcard-panel">
+        <div class="flashcard-header">
+          <span class="flashcard-label">Command Reference</span>
+          <span class="flashcard-counter" id="fcCounter">1 / 7</span>
+        </div>
+        <div class="flashcard-stage" id="fcStage" onclick="flipCard()" title="Click to flip">
+          <!-- cards rendered by JS -->
+        </div>
+        <div class="flashcard-nav">
+          <button class="fc-nav-btn" id="fcPrev" onclick="fcNav(-1)" disabled>&larr; Prev</button>
+          <div class="fc-dots" id="fcDots"></div>
+          <button class="fc-nav-btn" id="fcNext" onclick="fcNav(1)">Next &rarr;</button>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="overview-start-btn" onclick="beginPart(1)">Begin Part 1: Navigation Basics &rarr;</button>
   </div>
-  <div class="mode-toggle" role="group" aria-label="Switch terminal mode">
-    <button class="mode-btn active" id="btn-mac" onclick="setMode('mac')">Mac</button>
-    <button class="mode-btn" id="btn-pc" onclick="setMode('pc')">PC (Git Bash)</button>
+</div>
+
+<!-- ══ SCREEN: SIM ══ -->
+<div id="screen-sim" style="display:none">
+
+  <header class="sim-header">
+    <div class="sim-header-left">
+      <div class="sim-eyebrow">Terminal Trainer &middot; StatDeck Analytics Onboarding</div>
+      <div class="sim-title">
+        StatDeck Terminal
+        <span class="sim-part-badge" id="partBadge">Part 1: Navigation</span>
+      </div>
+    </div>
+    <div class="mode-toggle" role="group" aria-label="Switch terminal mode">
+      <button class="mode-btn active" id="btn-mac" onclick="setMode('mac')">Mac</button>
+      <button class="mode-btn" id="btn-pc" onclick="setMode('pc')">PC (Git Bash)</button>
+    </div>
+  </header>
+
+  <div class="sim-layout">
+
+    <!-- TOC Sidebar -->
+    <nav class="toc-sidebar" id="tocSidebar" aria-label="Challenge progress">
+      <div class="toc-part-head">Part 1 &middot; Navigation</div>
+      <div id="tocPart1"></div>
+      <div class="toc-part-head">Part 2 &middot; Going Deeper</div>
+      <div id="tocPart2"></div>
+      <div class="toc-spacer"></div>
+      <div class="toc-divider"></div>
+      <button class="toc-ref-btn" onclick="openFlashcards()">&#9632; Command Reference</button>
+    </nav>
+
+  <main class="sim-main">
+
+    <!-- Progress -->
+    <div class="progress-row">
+      <span class="progress-label" id="progressPartLabel">PART 1</span>
+      <div class="progress-dots" id="progressDots"></div>
+      <span class="progress-label" id="progressText">1 / 8</span>
+    </div>
+
+    <!-- Challenge card -->
+    <div class="challenge-card" id="challengeCard">
+      <div class="challenge-num" id="challengeNum">Challenge 1</div>
+      <div class="challenge-title" id="challengeTitle"></div>
+      <div class="challenge-instruction" id="challengeInstruction"></div>
+      <div class="challenge-hint-box">
+        <span class="challenge-hint-label">Type:</span>
+        <span class="challenge-hint-cmd" id="challengeHint"></span>
+      </div>
+    </div>
+
+    <!-- File tree + Terminal grid -->
+    <div class="sim-grid">
+      <div class="tree-col">
+        <div class="tree-label">File System</div>
+        <div class="tree-box" id="liveTree"></div>
+      </div>
+      <div class="terminal-col">
+        <div class="terminal-window" id="termWindow">
+          <div class="term-titlebar">
+            <div class="term-dot dot-r"></div>
+            <div class="term-dot dot-y"></div>
+            <div class="term-dot dot-g"></div>
+            <span class="term-name" id="termName">intern@statdeck-lab - bash</span>
+          </div>
+          <div class="term-output" id="termOutput"></div>
+          <div class="term-input-row">
+            <span class="term-input-prompt" id="termPrompt"></span>
+            <input class="term-input" id="termInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" aria-label="Terminal input">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback -->
+    <div class="feedback-flash" id="feedbackFlash" role="status" aria-live="polite"></div>
+
+    <!-- Between parts -->
+    <div class="between-panel" id="betweenPanel">
+      <div class="between-icon">&#10003;</div>
+      <div class="between-title" id="betweenTitle">Part 1 Complete</div>
+      <p class="between-body" id="betweenBody">You can navigate the file system. Now let's go deeper - reading files, creating files, and using shortcuts.</p>
+      <button class="between-btn" onclick="beginPart(2)">Start Part 2: Going Deeper &rarr;</button>
+    </div>
+
+    <!-- Completion -->
+    <div class="completion-panel" id="completionPanel">
+      <div class="completion-icon">&#10003;</div>
+      <div class="completion-title">Terminal Certified</div>
+      <p class="completion-body">You can navigate, read files, and create your own. Every Git command starts at a prompt just like this one. You're ready.</p>
+      <div class="completion-score" id="completionScore">14/14</div>
+      <div class="completion-score-label">Challenges Completed</div>
+      <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:0.25rem;">
+        <button class="completion-btn" style="background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);" onclick="openFlashcards()">Review Command Reference</button>
+        <a href="../../modules/module6/index.html#three-states" class="completion-btn">Continue to The Three States &rarr;</a>
+      </div>
+    </div>
+
+  </main>
+  </div><!-- /.sim-layout -->
+</div>
+
+<!-- ══ FLASHCARD DRAWER ══ -->
+<div id="fcOverlay" class="fc-overlay" onclick="closeFlashcards()"></div>
+<div id="fcDrawer" class="fc-drawer" role="dialog" aria-modal="true" aria-label="Command Reference">
+  <div class="fc-drawer-head">
+    <span class="fc-drawer-title">Command Reference</span>
+    <button class="fc-drawer-close" onclick="closeFlashcards()" aria-label="Close">&#x2715;</button>
   </div>
-</header>
-
-<!-- Body -->
-<main class="sim-body">
-
-  <!-- Progress -->
-  <div class="progress-row" aria-label="Progress">
-    <span class="progress-label">CHALLENGE</span>
-    <div class="progress-dots" id="progressDots" aria-hidden="true"></div>
-    <span class="progress-label" id="progressText" aria-live="polite">1 / 8</span>
-  </div>
-
-  <!-- Challenge card -->
-  <div class="challenge-card" id="challengeCard">
-    <div class="challenge-num" id="challengeNum">Challenge 1 of 8</div>
-    <div class="challenge-title" id="challengeTitle"></div>
-    <div class="challenge-instruction" id="challengeInstruction"></div>
-    <div class="challenge-hint-box">
-      <span class="challenge-hint-label">Type:</span>
-      <span class="challenge-hint-cmd" id="challengeHintCmd"></span>
+  <div class="fc-drawer-body">
+    <div class="flashcard-panel">
+      <div class="flashcard-header">
+        <span class="flashcard-label">Click a card to flip it</span>
+        <span class="flashcard-counter" id="fc2Counter">1 / 7</span>
+      </div>
+      <div class="flashcard-stage" id="fc2Stage" onclick="flipCard2()" title="Click to flip"></div>
+      <div class="flashcard-nav">
+        <button class="fc-nav-btn" id="fc2Prev" onclick="fc2Nav(-1)" disabled>&larr; Prev</button>
+        <div class="fc-dots" id="fc2Dots"></div>
+        <button class="fc-nav-btn" id="fc2Next" onclick="fc2Nav(1)">Next &rarr;</button>
+      </div>
     </div>
   </div>
-
-  <!-- Terminal window -->
-  <div class="terminal-window" id="termWindow">
-    <div class="term-titlebar">
-      <div class="term-dot dot-red"></div>
-      <div class="term-dot dot-yellow"></div>
-      <div class="term-dot dot-green"></div>
-      <span class="term-name" id="termName">intern@statdeck-lab - bash</span>
-    </div>
-    <div class="term-output" id="termOutput"></div>
-    <div class="term-input-row">
-      <span class="term-input-prompt" id="termPrompt" aria-hidden="true"></span>
-      <input
-        class="term-input" id="termInput" type="text"
-        autocomplete="off" autocorrect="off" autocapitalize="none"
-        spellcheck="false" aria-label="Terminal input"
-      >
-    </div>
-  </div>
-
-  <!-- Feedback -->
-  <div class="feedback-flash" id="feedbackFlash" aria-live="polite" role="status"></div>
-
-  <!-- Completion -->
-  <div class="completion-panel" id="completionPanel" aria-live="polite">
-    <div class="completion-icon">&#10003;</div>
-    <div class="completion-title">Terminal Certified</div>
-    <p class="completion-body">
-      You can find your way around a file system. Every Git command you run starts exactly like this - at a prompt, in a directory. You're ready for the next step.
-    </p>
-    <div class="completion-score" id="completionScore">8/8</div>
-    <div class="completion-score-label">Challenges Completed</div>
-    <a href="../../modules/module6/index.html#three-states" class="completion-btn">Continue to The Three States &rarr;</a>
-  </div>
-
-</main>
-
-</div><!-- end #sim-screen -->
+</div>
+<!-- ══ END FLASHCARD DRAWER ══ -->
 
 <footer>
   This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by Eastern University faculty and staff.<br>
   &copy; Eastern University. All rights reserved.
 </footer>
 
-<!-- Main simulation script -->
+<!-- ══ MAIN SCRIPT ══ -->
 <script>
 (function () {
-  'use strict';
+'use strict';
 
-  /* ────────────────────────────────────────────
-     VIRTUAL FILE SYSTEM
-  ──────────────────────────────────────────── */
-  var HOME = '/home/intern';
+/* ────────────────────────────────────────────
+   VIRTUAL FILE SYSTEM
+──────────────────────────────────────────── */
+var HOME = '/home/intern';
+var cwd  = HOME;
 
-  /* Each node: { type: 'dir'|'file', children: [...names], content: '...' } */
-  var vfs = {
-    '/home/intern': { type: 'dir', children: ['projects', 'documents', 'welcome.txt'] },
+var vfs = {
+  '/home/intern': { type: 'dir', children: ['projects', 'documents', 'welcome.txt'] },
+  '/home/intern/welcome.txt': {
+    type: 'file',
+    content: 'Hi, intern! Welcome to StatDeck Analytics.\nYour username is: intern\nToday\'s task: learn to navigate the file system,\n              then come back for Git training.\nYou\'ve got this. - IT Team'
+  },
+  '/home/intern/documents': { type: 'dir', children: ['readme.txt'] },
+  '/home/intern/documents/readme.txt': {
+    type: 'file',
+    content: 'StatDeck Analytics - Project Documentation\nAsk your supervisor for access to the main data stores.'
+  },
+  '/home/intern/projects': { type: 'dir', children: ['statdeck', 'practice'] },
+  '/home/intern/projects/practice': { type: 'dir', children: [] },
+  '/home/intern/projects/statdeck': { type: 'dir', children: ['analysis.py', 'data.csv'] },
+  '/home/intern/projects/statdeck/analysis.py': {
+    type: 'file',
+    content: '# StatDeck data analysis\nimport pandas as pd\n\ndf = pd.read_csv("data.csv")\nprint(df.head())\nprint(df.describe())'
+  },
+  '/home/intern/projects/statdeck/data.csv': {
+    type: 'file',
+    content: 'player_id,name,avg,hr\n1,J. Rodriguez,.312,14\n2,S. Chen,.278,8\n3,N. Kim,.301,22'
+  }
+};
 
-    '/home/intern/welcome.txt': {
-      type: 'file',
-      content: [
-        'Hi, intern! Welcome to StatDeck Analytics.',
-        'Your username is: intern',
-        "Today's task: learn to navigate the file system,",
-        '              then come back for Git training.',
-        '',
-        'You\'ve got this. - IT Team'
-      ].join('\n')
-    },
+/* ────────────────────────────────────────────
+   CHALLENGES
+──────────────────────────────────────────── */
+var part1 = [
+  {
+    title: 'Find your footing',
+    instruction: "You've just opened your terminal on your first day at StatDeck. Before anything else, find out where you are in the file system.",
+    hint: 'pwd',
+    check: function (cmd) { return cmd === 'pwd'; },
+    success: "You're in /home/intern - your home directory."
+  },
+  {
+    title: "See what's here",
+    instruction: 'List the contents of your home directory so you know what you have to work with.',
+    hint: 'ls',
+    check: function (cmd) { return /^ls(\s|$)/.test(cmd); },
+    success: 'Two directories and a file. Now you know what you have.'
+  },
+  {
+    title: 'Read the welcome file',
+    instruction: "There's a file called welcome.txt in your current directory. Read its contents to see the IT team's note.",
+    hint: 'cat welcome.txt',
+    check: function (cmd) { return cmd === 'cat welcome.txt'; },
+    success: 'The IT team left you a note.'
+  },
+  {
+    title: 'Navigate into projects',
+    instruction: 'Move into the projects directory.',
+    hint: 'cd projects',
+    check: function (cmd) { return /^cd\s+(\.\/)?projects\/?$/.test(cmd); },
+    success: "You're now inside ~/projects."
+  },
+  {
+    title: 'Explore the projects folder',
+    instruction: "You're in projects. List what's here.",
+    hint: 'ls',
+    check: function (cmd) { return /^ls(\s|$)/.test(cmd); },
+    success: 'A statdeck directory and an empty practice folder.'
+  },
+  {
+    title: 'Go deeper',
+    instruction: 'Navigate into the statdeck directory.',
+    hint: 'cd statdeck',
+    check: function (cmd) { return /^cd\s+(\.\/)?statdeck\/?$/.test(cmd); },
+    success: "You're in ~/projects/statdeck - the main project folder."
+  },
+  {
+    title: 'Create your workspace',
+    instruction: "Make a new directory called my_work inside statdeck. This is where you'll save your own files.",
+    hint: 'mkdir my_work',
+    check: function (cmd) { return /^mkdir\s+my_work\/?$/.test(cmd); },
+    success: 'Directory created. Your workspace is ready.'
+  },
+  {
+    title: 'Step back',
+    instruction: 'Navigate back up one level to the projects directory.',
+    hint: 'cd ..',
+    check: function (cmd) { return /^cd\s+\.\.\/?$/.test(cmd); },
+    success: "Back in ~/projects."
+  }
+];
 
-    '/home/intern/documents': { type: 'dir', children: ['readme.txt'] },
-    '/home/intern/documents/readme.txt': {
-      type: 'file',
-      content: 'StatDeck Analytics - Project Documentation\nAsk your supervisor for access to the main data stores.'
-    },
+var part2 = [
+  {
+    title: 'Jump home with a shortcut',
+    instruction: "The next morning. You open your terminal. Navigate directly to the statdeck project folder in one command - use the ~ shortcut for home.",
+    hint: 'cd ~/projects/statdeck',
+    check: function (cmd) { return /^cd\s+~\/projects\/statdeck\/?$/.test(cmd); },
+    success: "Jumped straight to ~/projects/statdeck. The ~ shortcut always means home."
+  },
+  {
+    title: 'See the files in detail',
+    instruction: "List all files including hidden ones, with details like permissions and file sizes.",
+    hint: 'ls -la',
+    check: function (cmd) { return /^ls\s+(-la|-al|-l\s*-a|-a\s*-l)$/.test(cmd); },
+    success: 'The -l flag adds detail; -a shows hidden files (starting with .).'
+  },
+  {
+    title: 'Open the Python script',
+    instruction: "There's a file called analysis.py in statdeck. Print its contents so you can see what the script does.",
+    hint: 'cat analysis.py',
+    check: function (cmd) { return cmd === 'cat analysis.py'; },
+    success: 'A pandas script that loads data.csv and prints summary statistics.'
+  },
+  {
+    title: 'Look at the data',
+    instruction: "Read the CSV file the script depends on.",
+    hint: 'cat data.csv',
+    check: function (cmd) { return cmd === 'cat data.csv'; },
+    success: "Three players. Noah Kim leads in home runs. This is the data the script analyzes."
+  },
+  {
+    title: 'Create a notes file',
+    instruction: "Create an empty file called analysis_notes.txt inside my_work to track your observations.",
+    hint: 'touch my_work/analysis_notes.txt',
+    check: function (cmd) { return /^touch\s+my_work\/analysis_notes\.txt$/.test(cmd); },
+    success: 'File created. It\'s empty for now - you\'d open it in a text editor to add notes.'
+  },
+  {
+    title: 'Go home',
+    instruction: "You're done for the day. Return to your home directory using the shortest path.",
+    hint: 'cd ~',
+    check: function (cmd) { return /^cd(\s+~\/?|\s*$)/.test(cmd); },
+    success: "Back home. That's every navigation skill you need for Git."
+  }
+];
 
-    '/home/intern/projects': { type: 'dir', children: ['statdeck', 'practice'] },
-    '/home/intern/projects/practice': { type: 'dir', children: [] },
+/* ────────────────────────────────────────────
+   STATE
+──────────────────────────────────────────── */
+var mode       = 'mac';
+var part       = 1;
+var challenges = part1;
+var idx        = 0;
+var completed  = 0;
+var cmdHistory = [];
+var histIdx    = -1;
 
-    '/home/intern/projects/statdeck': { type: 'dir', children: ['analysis.py', 'data.csv'] },
-    '/home/intern/projects/statdeck/analysis.py': {
-      type: 'file',
-      content: '# StatDeck data analysis\nimport pandas as pd\n\ndf = pd.read_csv("data.csv")\nprint(df.head())'
-    },
-    '/home/intern/projects/statdeck/data.csv': {
-      type: 'file',
-      content: 'player_id,name,avg,hr\n1,J. Rodriguez,.312,14\n2,S. Chen,.278,8\n3,N. Kim,.301,22'
+/* ────────────────────────────────────────────
+   FLASHCARD DATA
+──────────────────────────────────────────── */
+var flashcards = [
+  { cmd: 'pwd',   what: 'Print Working Directory', def: 'Shows exactly where you are in the file system.', ex: '$ pwd\n/home/intern' },
+  { cmd: 'ls',    what: 'List',                    def: 'Shows files and folders in the current directory.\nAdd -la for details and hidden files.', ex: '$ ls\nprojects/  documents/  welcome.txt' },
+  { cmd: 'cd',    what: 'Change Directory',         def: 'Moves you to a different folder.\n  cd projects   go into a folder\n  cd ..         go up one level\n  cd ~          go home', ex: '$ cd projects' },
+  { cmd: 'cat',   what: 'Concatenate (Read)',        def: 'Prints a file\'s contents to the terminal.\nUsed to quickly read files.', ex: '$ cat welcome.txt\nHi, intern! Welcome...' },
+  { cmd: 'mkdir', what: 'Make Directory',            def: 'Creates a new folder.', ex: '$ mkdir my_project\n(no output = success)' },
+  { cmd: 'touch', what: 'Create File',               def: 'Creates a new empty file.\nIf the file already exists, updates its timestamp.', ex: '$ touch notes.txt' },
+  { cmd: 'clear', what: 'Clear Terminal',            def: 'Clears all text from the terminal screen.\nYour command history is still there - press ↑ to recall.', ex: '$ clear\n(screen clears)' }
+];
+
+/* ────────────────────────────────────────────
+   HELPERS
+──────────────────────────────────────────── */
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function resolvePath(target) {
+  if (!target || target === '~') return HOME;
+  if (target === '~/') return HOME;
+  if (target.startsWith('~/')) return HOME + target.slice(1);
+  if (target.startsWith('/')) return target;
+  var segs = cwd.split('/').filter(Boolean);
+  target.split('/').forEach(function (seg) {
+    if (seg === '..') segs.pop();
+    else if (seg && seg !== '.') segs.push(seg);
+  });
+  return '/' + segs.join('/');
+}
+
+function cwdDisplay() {
+  if (cwd === HOME) return '~';
+  if (cwd.startsWith(HOME + '/')) return '~' + cwd.slice(HOME.length);
+  return cwd;
+}
+
+function promptHtml() {
+  var p = esc(cwdDisplay());
+  if (mode === 'mac') {
+    return '<span class="c-user">intern@statdeck</span><span class="c-sym">:</span><span class="c-path">' + p + '</span><span class="c-sym">$</span> ';
+  }
+  return '<span class="c-user">intern@STATDECK</span> <span class="c-bash">MINGW64</span> <span class="c-path">' + p + '</span><span class="c-sym">$</span> ';
+}
+
+/* ────────────────────────────────────────────
+   FILE TREE RENDERER
+──────────────────────────────────────────── */
+var STATIC_ANNOTATIONS = {
+  '/home/intern/welcome.txt':           'read this first',
+  '/home/intern/documents':             '',
+  '/home/intern/documents/readme.txt':  'project docs',
+  '/home/intern/projects':             '',
+  '/home/intern/projects/practice':    'empty - for your work',
+  '/home/intern/projects/statdeck':    '',
+  '/home/intern/projects/statdeck/analysis.py': 'data analysis script',
+  '/home/intern/projects/statdeck/data.csv':    'player stats'
+};
+
+function renderTreeInto(elId, isStatic) {
+  var el = document.getElementById(elId);
+  if (!el) return;
+
+  var lines = [];
+
+  function treeNode(path, prefix, isLast) {
+    var name = path.split('/').pop();
+    var n = vfs[path];
+    if (!n) return;
+    var connector = isLast ? '└── ' : '├── ';
+    var childPfx  = isLast ? '    ' : '│   ';
+
+    var isCur = (!isStatic && path === cwd);
+    var isDir = n.type === 'dir';
+    var display = isDir ? name + '/' : name;
+
+    var cls = isCur ? 'ft-current-dir' : (isDir ? 'ft-dir-name' : 'ft-file-name');
+    var ann = isStatic ? (STATIC_ANNOTATIONS[path] || '') : '';
+    var annHtml = ann ? '  <span class="ft-annotation"># ' + esc(ann) + '</span>' : '';
+
+    lines.push('<span class="ft-branch">' + esc(prefix + connector) + '</span>' +
+               '<span class="' + cls + '">' + esc(display) + '</span>' + annHtml);
+
+    if (isDir && n.children && n.children.length) {
+      n.children.forEach(function (childName, i) {
+        treeNode(path + '/' + childName, prefix + childPfx, i === n.children.length - 1);
+      });
     }
-  };
-
-  /* ────────────────────────────────────────────
-     CHALLENGES
-  ──────────────────────────────────────────── */
-  var challenges = [
-    {
-      title: 'Find your footing',
-      instruction: "You've just opened your terminal on your first day at StatDeck. Before anything else, find out where you are. Print the current working directory.",
-      hint: 'pwd',
-      check: function (cmd) { return cmd === 'pwd'; }
-    },
-    {
-      title: "See what's here",
-      instruction: 'List the contents of your home directory so you know what you have to work with.',
-      hint: 'ls',
-      check: function (cmd) { return /^ls(\s|$)/.test(cmd); }
-    },
-    {
-      title: 'Read the welcome file',
-      instruction: "There's a file called welcome.txt in your current directory. Read its contents.",
-      hint: 'cat welcome.txt',
-      check: function (cmd) { return cmd === 'cat welcome.txt'; }
-    },
-    {
-      title: 'Navigate into projects',
-      instruction: 'Move into the projects directory.',
-      hint: 'cd projects',
-      check: function (cmd) { return /^cd\s+(\.\/)?projects\/?$/.test(cmd); }
-    },
-    {
-      title: 'Explore the projects folder',
-      instruction: "You're inside projects now. List what's here.",
-      hint: 'ls',
-      check: function (cmd) { return /^ls(\s|$)/.test(cmd); }
-    },
-    {
-      title: 'Go deeper',
-      instruction: 'Navigate into the statdeck directory.',
-      hint: 'cd statdeck',
-      check: function (cmd) { return /^cd\s+(\.\/)?statdeck\/?$/.test(cmd); }
-    },
-    {
-      title: 'Create your workspace',
-      instruction: "Make a new directory called my_work inside statdeck. This is where you'll save your own files.",
-      hint: 'mkdir my_work',
-      check: function (cmd) { return /^mkdir\s+my_work\/?$/.test(cmd); }
-    },
-    {
-      title: 'Step back',
-      instruction: 'Navigate back up one level to the projects directory.',
-      hint: 'cd ..',
-      check: function (cmd) { return /^cd\s+\.\.\/?$/.test(cmd); }
-    }
-  ];
-
-  /* ────────────────────────────────────────────
-     STATE
-  ──────────────────────────────────────────── */
-  var cwd        = HOME;
-  var mode       = 'mac';   /* 'mac' | 'pc' */
-  var challenge  = 0;
-  var completed  = 0;
-  var cmdHistory = [];
-  var histIdx    = -1;
-
-  /* ────────────────────────────────────────────
-     DOM REFS
-  ──────────────────────────────────────────── */
-  var termOutput  = document.getElementById('termOutput');
-  var termInput   = document.getElementById('termInput');
-  var termPromptEl = document.getElementById('termPrompt');
-  var feedbackEl  = document.getElementById('feedbackFlash');
-  var feedTimer;
-
-  /* ────────────────────────────────────────────
-     HELPERS
-  ──────────────────────────────────────────── */
-  function esc(s) {
-    return String(s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
   }
 
-  function resolvePath(target) {
-    if (!target || target === '~') return HOME;
-    if (target === '~/') return HOME;
-    if (target.startsWith('~/')) return HOME + target.slice(1);
-    if (target.startsWith('/')) return target;
-    var segs = cwd.split('/').filter(Boolean);
-    target.split('/').forEach(function (seg) {
-      if (seg === '..') { segs.pop(); }
-      else if (seg && seg !== '.') { segs.push(seg); }
+  var rootCls = (!isStatic && cwd === HOME) ? 'ft-current-dir' : 'ft-dir-name';
+  lines.push('<span class="' + rootCls + '">~/</span>');
+  var root = vfs[HOME];
+  if (root && root.children) {
+    root.children.forEach(function (name, i) {
+      treeNode(HOME + '/' + name, '', i === root.children.length - 1);
     });
-    return '/' + segs.join('/');
   }
+  el.innerHTML = lines.join('\n');
+}
 
-  function cwdDisplay() {
-    if (cwd === HOME) return '~';
-    if (cwd.startsWith(HOME + '/')) return '~' + cwd.slice(HOME.length);
-    return cwd;
-  }
+/* ────────────────────────────────────────────
+   TERMINAL OUTPUT
+──────────────────────────────────────────── */
+var termOutput = document.getElementById('termOutput');
 
-  /* ────────────────────────────────────────────
-     TERMINAL RENDERING
-  ──────────────────────────────────────────── */
-  function promptHtml() {
-    var p = esc(cwdDisplay());
-    if (mode === 'mac') {
-      return '<span class="c-user">intern@statdeck</span><span class="c-sym">:</span><span class="c-path">' + p + '</span><span class="c-sym">$</span> ';
-    } else {
-      return '<span class="c-user">intern@STATDECK</span> <span class="c-bash">MINGW64</span> <span class="c-path">' + p + '</span><span class="c-sym">$</span> ';
-    }
-  }
+function appendLine(html) {
+  var s = document.createElement('span');
+  s.className = 'tl';
+  s.innerHTML = html;
+  termOutput.appendChild(s);
+  termOutput.appendChild(document.createTextNode('\n'));
+}
+function appendGap() {
+  var s = document.createElement('span');
+  s.className = 'tl gap';
+  termOutput.appendChild(s);
+}
+function scrollTerm() { termOutput.scrollTop = termOutput.scrollHeight; }
+function echoCmd(cmd) { appendLine(promptHtml() + '<span class="c-file">' + esc(cmd) + '</span>'); }
 
-  function updatePromptEl() {
-    termPromptEl.innerHTML = promptHtml();
-  }
+/* ────────────────────────────────────────────
+   COMMAND EXECUTION
+──────────────────────────────────────────── */
+function execute(raw) {
+  var cmd = raw.trim();
+  if (!cmd) return;
 
-  function appendLine(html) {
-    var s = document.createElement('span');
-    s.className = 'tl';
-    s.innerHTML = html;
-    termOutput.appendChild(s);
-    termOutput.appendChild(document.createTextNode('\n'));
-  }
+  cmdHistory.unshift(cmd);
+  histIdx = -1;
+  echoCmd(cmd);
 
-  function appendBlank() {
-    var s = document.createElement('span');
-    s.className = 'tl blank-line';
-    termOutput.appendChild(s);
-  }
+  var parts = cmd.split(/\s+/);
+  var verb  = parts[0];
+  var arg   = parts.slice(1).join(' ');
 
-  function echoCmd(cmd) {
-    appendLine(promptHtml() + '<span class="c-cmd">' + esc(cmd) + '</span>');
-  }
+  switch (verb) {
 
-  function scrollTerm() {
-    termOutput.scrollTop = termOutput.scrollHeight;
-  }
+    case 'clear':
+      termOutput.innerHTML = '';
+      return;
 
-  /* ────────────────────────────────────────────
-     COMMAND EXECUTION
-  ──────────────────────────────────────────── */
-  function execute(raw) {
-    var cmd = raw.trim();
-    if (!cmd) return;
+    case 'pwd':
+      appendLine('<span class="c-out">' + esc(cwd) + '</span>');
+      break;
 
-    cmdHistory.unshift(cmd);
-    histIdx = -1;
-
-    echoCmd(cmd);
-
-    var parts = cmd.split(/\s+/);
-    var verb  = parts[0];
-    var arg   = parts.slice(1).join(' ');
-
-    switch (verb) {
-      case 'clear':
-        termOutput.innerHTML = '';
-        return;
-
-      case 'pwd':
-        appendLine('<span class="c-out">' + esc(cwd) + '</span>');
-        break;
-
-      case 'ls': {
-        var lsTarget = arg ? resolvePath(arg) : cwd;
-        var lsNode   = vfs[lsTarget];
-        if (!lsNode || lsNode.type !== 'dir') {
-          appendLine('<span class="c-err">ls: cannot access \'' + esc(arg || lsTarget) + '\': No such file or directory</span>');
-        } else if (lsNode.children.length === 0) {
-          /* empty dir - no output, just blank */
-        } else {
-          var items = lsNode.children.map(function (name) {
-            var childPath = lsTarget + '/' + name;
-            var child = vfs[childPath];
-            return (child && child.type === 'dir')
-              ? '<span class="c-dir">' + esc(name) + '</span>'
-              : '<span class="c-file">' + esc(name) + '</span>';
+    case 'ls': {
+      var lsArg    = arg.replace(/^-\S+\s*/, '').trim(); /* strip flags */
+      var lsTarget = lsArg ? resolvePath(lsArg) : cwd;
+      var lsNode   = vfs[lsTarget];
+      if (!lsNode || lsNode.type !== 'dir') {
+        appendLine('<span class="c-err">ls: cannot access \'' + esc(lsArg || lsTarget) + '\': No such file or directory</span>');
+      } else {
+        /* ls -la: show simulated detail */
+        if (/^ls\s+(-la|-al|-l\s*-a|-a\s*-l)$/.test(cmd)) {
+          appendLine('<span class="c-dim">total ' + (lsNode.children.length * 4 + 8) + '</span>');
+          appendLine('<span class="c-dim">drwxr-xr-x  intern  intern  ' + new Date().toDateString().slice(4) + '  .</span>');
+          appendLine('<span class="c-dim">drwxr-xr-x  root    root    ' + new Date().toDateString().slice(4) + '  ..</span>');
+          appendLine('<span class="c-dim">-rw-r--r--  intern  intern  ' + new Date().toDateString().slice(4) + '  .bash_history</span>');
+          lsNode.children.forEach(function (name) {
+            var cp = lsTarget + '/' + name;
+            var cn = vfs[cp];
+            var isDir = cn && cn.type === 'dir';
+            var perm = isDir ? 'drwxr-xr-x' : '-rw-r--r--';
+            var cls  = isDir ? 'c-dir' : 'c-file';
+            appendLine('<span class="c-dim">' + perm + '  intern  intern  ' + new Date().toDateString().slice(4) + '  </span><span class="' + cls + '">' + esc(name) + (isDir ? '/' : '') + '</span>');
           });
-          appendLine(items.join('&nbsp;&nbsp;&nbsp;'));
-        }
-        break;
-      }
-
-      case 'cd': {
-        var dest = arg ? resolvePath(arg) : HOME;
-        if (!vfs[dest]) {
-          appendLine('<span class="c-err">cd: ' + esc(arg) + ': No such file or directory</span>');
-        } else if (vfs[dest].type !== 'dir') {
-          appendLine('<span class="c-err">cd: ' + esc(arg) + ': Not a directory</span>');
         } else {
-          cwd = dest;
-          updatePromptEl();
-        }
-        break;
-      }
-
-      case 'cat': {
-        if (!arg) {
-          appendLine('<span class="c-err">cat: missing file operand</span>');
-          break;
-        }
-        var catPath = resolvePath(arg);
-        var catNode = vfs[catPath];
-        if (!catNode) {
-          appendLine('<span class="c-err">cat: ' + esc(arg) + ': No such file or directory</span>');
-        } else if (catNode.type === 'dir') {
-          appendLine('<span class="c-err">cat: ' + esc(arg) + ': Is a directory</span>');
-        } else {
-          catNode.content.split('\n').forEach(function (line) {
-            appendLine('<span class="c-out">' + esc(line) + '</span>');
-          });
-        }
-        break;
-      }
-
-      case 'mkdir': {
-        if (!arg) {
-          appendLine('<span class="c-err">mkdir: missing operand</span>');
-          break;
-        }
-        var mkPath   = cwd + '/' + arg.replace(/\/$/, '');
-        var mkName   = arg.replace(/\/$/, '').split('/').pop();
-        if (vfs[mkPath]) {
-          appendLine('<span class="c-err">mkdir: cannot create directory \'' + esc(arg) + '\': File exists</span>');
-        } else {
-          vfs[mkPath] = { type: 'dir', children: [] };
-          var parentNode = vfs[cwd];
-          if (parentNode && !parentNode.children.includes(mkName)) {
-            parentNode.children.push(mkName);
+          if (!lsNode.children.length) {
+            /* empty dir - no output */
+          } else {
+            var items = lsNode.children.map(function (name) {
+              var cp = lsTarget + '/' + name;
+              var cn = vfs[cp];
+              return (cn && cn.type === 'dir')
+                ? '<span class="c-dir">' + esc(name) + '</span>'
+                : '<span class="c-file">' + esc(name) + '</span>';
+            });
+            appendLine(items.join('&nbsp;&nbsp;&nbsp;'));
           }
-          /* silent success, like real mkdir */
         }
-        break;
       }
+      break;
+    }
 
-      case 'touch': {
-        if (!arg) {
-          appendLine('<span class="c-err">touch: missing file operand</span>');
-          break;
-        }
-        var touchPath = cwd + '/' + arg;
-        var touchName = arg.split('/').pop();
+    case 'cd': {
+      var dest = arg ? resolvePath(arg) : HOME;
+      if (!vfs[dest]) {
+        appendLine('<span class="c-err">cd: ' + esc(arg) + ': No such file or directory</span>');
+      } else if (vfs[dest].type !== 'dir') {
+        appendLine('<span class="c-err">cd: ' + esc(arg) + ': Not a directory</span>');
+      } else {
+        cwd = dest;
+        updatePromptEl();
+        renderTreeInto('liveTree', false);
+      }
+      break;
+    }
+
+    case 'cat': {
+      if (!arg) { appendLine('<span class="c-err">cat: missing file operand</span>'); break; }
+      var catPath = resolvePath(arg);
+      var catNode = vfs[catPath];
+      if (!catNode) {
+        appendLine('<span class="c-err">cat: ' + esc(arg) + ': No such file or directory</span>');
+      } else if (catNode.type === 'dir') {
+        appendLine('<span class="c-err">cat: ' + esc(arg) + ': Is a directory</span>');
+      } else if (!catNode.content) {
+        /* empty file - no output */
+      } else {
+        catNode.content.split('\n').forEach(function (line) {
+          appendLine('<span class="c-out">' + esc(line) + '</span>');
+        });
+      }
+      break;
+    }
+
+    case 'mkdir': {
+      if (!arg) { appendLine('<span class="c-err">mkdir: missing operand</span>'); break; }
+      var mkPath = cwd + '/' + arg.replace(/\/$/, '');
+      var mkName = arg.replace(/\/$/, '').split('/').pop();
+      if (vfs[mkPath]) {
+        appendLine('<span class="c-err">mkdir: cannot create directory \'' + esc(arg) + '\': File exists</span>');
+      } else {
+        vfs[mkPath] = { type: 'dir', children: [] };
+        var mkParent = vfs[cwd];
+        if (mkParent && !mkParent.children.includes(mkName)) mkParent.children.push(mkName);
+        renderTreeInto('liveTree', false);
+      }
+      break;
+    }
+
+    case 'touch': {
+      if (!arg) { appendLine('<span class="c-err">touch: missing file operand</span>'); break; }
+      /* handle path like my_work/notes.txt */
+      var touchParts  = arg.split('/');
+      var touchName   = touchParts.pop();
+      var touchDirRel = touchParts.join('/');
+      var touchDir    = touchDirRel ? resolvePath(touchDirRel) : cwd;
+      var touchPath   = touchDir + '/' + touchName;
+      if (!vfs[touchDir] || vfs[touchDir].type !== 'dir') {
+        appendLine('<span class="c-err">touch: cannot touch \'' + esc(arg) + '\': No such directory</span>');
+      } else {
         if (!vfs[touchPath]) {
           vfs[touchPath] = { type: 'file', content: '' };
-          var touchParent = vfs[cwd];
-          if (touchParent && !touchParent.children.includes(touchName)) {
-            touchParent.children.push(touchName);
-          }
+          if (!vfs[touchDir].children.includes(touchName)) vfs[touchDir].children.push(touchName);
+          renderTreeInto('liveTree', false);
         }
-        break;
       }
-
-      case 'help':
-        appendLine('<span class="c-dim">Available commands:</span>');
-        appendLine('<span class="c-out">&nbsp;&nbsp;pwd &nbsp;&nbsp; print working directory</span>');
-        appendLine('<span class="c-out">&nbsp;&nbsp;ls &nbsp;&nbsp;&nbsp; list directory contents</span>');
-        appendLine('<span class="c-out">&nbsp;&nbsp;cd &nbsp;&nbsp;&nbsp; change directory</span>');
-        appendLine('<span class="c-out">&nbsp;&nbsp;cat &nbsp;&nbsp; display file contents</span>');
-        appendLine('<span class="c-out">&nbsp;&nbsp;mkdir &nbsp;create a directory</span>');
-        appendLine('<span class="c-out">&nbsp;&nbsp;touch &nbsp;create an empty file</span>');
-        appendLine('<span class="c-out">&nbsp;&nbsp;clear &nbsp;clear the terminal</span>');
-        break;
-
-      default:
-        appendLine('<span class="c-err">' + esc(verb) + ': command not found</span>');
-        appendLine('<span class="c-dim">(Try <span style="color:var(--term-text)">help</span> for a list of commands)</span>');
+      break;
     }
 
-    appendBlank();
-    scrollTerm();
-    checkChallenge(cmd);
+    case 'help':
+      appendLine('<span class="c-dim">Available commands:</span>');
+      [['pwd','print working directory'],['ls','list directory contents'],['cd','change directory'],
+       ['cat','display file contents'],['mkdir','create a directory'],['touch','create an empty file'],['clear','clear the terminal']].forEach(function(c){
+        appendLine('&nbsp;&nbsp;<span class="c-out">' + c[0] + '</span><span class="c-dim">  ' + c[1] + '</span>');
+      });
+      break;
+
+    default:
+      appendLine('<span class="c-err">' + esc(verb) + ': command not found</span>');
+      appendLine('<span class="c-dim">(try <span class="c-out">help</span> for available commands)</span>');
   }
 
-  /* ────────────────────────────────────────────
-     CHALLENGE LOGIC
-  ──────────────────────────────────────────── */
-  function checkChallenge(cmd) {
-    if (challenge >= challenges.length) return;
-    var ch = challenges[challenge];
-    if (!ch.check(cmd)) return;
+  appendGap();
+  scrollTerm();
+  checkChallenge(cmd);
+}
 
-    /* Mark current dot done */
-    var dots = document.querySelectorAll('.progress-dot');
-    if (dots[challenge]) {
-      dots[challenge].classList.remove('current');
-      dots[challenge].classList.add('done');
-    }
+/* ────────────────────────────────────────────
+   CHALLENGE LOGIC
+──────────────────────────────────────────── */
+var feedTimer;
+function flash(msg, type) {
+  clearTimeout(feedTimer);
+  var el = document.getElementById('feedbackFlash');
+  el.textContent = msg;
+  el.className = 'feedback-flash ' + type + ' show';
+  feedTimer = setTimeout(function () { el.classList.remove('show'); }, 4000);
+}
 
-    challenge++;
-    completed++;
+function checkChallenge(cmd) {
+  if (idx >= challenges.length) return;
+  var ch = challenges[idx];
+  if (!ch.check(cmd)) return;
 
-    flash(ch.hint ? '+ ' + ch.hint + ' - ' + successMsg(challenge - 1) : successMsg(challenge - 1), 'good');
+  var dots = document.querySelectorAll('.progress-dot');
+  if (dots[idx]) { dots[idx].classList.remove('current'); dots[idx].classList.add('done'); }
 
-    if (challenge < challenges.length) {
-      setTimeout(function () { loadChallenge(challenge); }, 1100);
-    } else {
-      setTimeout(showCompletion, 1300);
-    }
+  idx++;
+  completed++;
+  flash(ch.success, 'good');
+
+  if (idx < challenges.length) {
+    setTimeout(function () { loadChallenge(idx); }, 1100);
+  } else if (part === 1) {
+    setTimeout(showBetween, 1300);
+  } else {
+    setTimeout(showCompletion, 1300);
   }
+}
 
-  function successMsg(idx) {
-    var msgs = [
-      "You're in /home/intern - your home directory.",
-      'Two directories and a file. Now you know what you have.',
-      'The IT team left you a note.',
-      "You're now in ~/projects.",
-      'Two project folders. You can see the statdeck directory.',
-      "You're in ~/projects/statdeck - the main project folder.",
-      'Directory created. Your workspace is ready.',
-      "Back in ~/projects. That's all you need to start using Git."
-    ];
-    return msgs[idx] || 'Correct.';
+/* ────────────────────────────────────────────
+   CHALLENGE DISPLAY
+──────────────────────────────────────────── */
+function buildDots(count) {
+  var el = document.getElementById('progressDots');
+  el.innerHTML = '';
+  for (var i = 0; i < count; i++) {
+    var d = document.createElement('div');
+    d.className = 'progress-dot' + (i === 0 ? ' current' : '');
+    el.appendChild(d);
   }
+}
 
-  function flash(msg, type) {
-    clearTimeout(feedTimer);
-    feedbackEl.textContent = msg;
-    feedbackEl.className = 'feedback-flash ' + type + ' show';
-    feedTimer = setTimeout(function () {
-      feedbackEl.classList.remove('show');
-    }, 3800);
-  }
-
-  /* ────────────────────────────────────────────
-     CHALLENGE DISPLAY
-  ──────────────────────────────────────────── */
-  function loadChallenge(idx) {
-    var ch = challenges[idx];
-    document.getElementById('challengeNum').textContent = 'Challenge ' + (idx + 1) + ' of ' + challenges.length;
-    document.getElementById('challengeTitle').textContent = ch.title;
-    document.getElementById('challengeInstruction').textContent = ch.instruction;
-    document.getElementById('challengeHintCmd').textContent = ch.hint;
-    document.getElementById('progressText').textContent = (idx + 1) + ' / ' + challenges.length;
-
-    var dots = document.querySelectorAll('.progress-dot');
-    dots.forEach(function (d, i) {
-      d.classList.remove('current', 'done');
-      if (i < idx) d.classList.add('done');
-      else if (i === idx) d.classList.add('current');
-    });
-
-    termInput.focus();
-  }
-
-  function showCompletion() {
-    document.getElementById('challengeCard').style.display = 'none';
-    document.getElementById('completionScore').textContent = completed + '/' + challenges.length;
-    document.getElementById('completionPanel').classList.add('show');
-    document.getElementById('progressText').textContent = challenges.length + ' / ' + challenges.length;
-    document.querySelectorAll('.progress-dot').forEach(function (d) {
-      d.classList.remove('current');
-      d.classList.add('done');
-    });
-    feedbackEl.classList.remove('show');
-  }
-
-  /* ────────────────────────────────────────────
-     LANDING -> SIM TRANSITION
-  ──────────────────────────────────────────── */
-  window.startSim = function (m) {
-    document.getElementById('landing-screen').style.display = 'none';
-    document.getElementById('sim-screen').style.display = 'block';
-    setMode(m);
-    termInput.focus();
-  };
-
-  /* ────────────────────────────────────────────
-     MODE SWITCH
-  ──────────────────────────────────────────── */
-  window.setMode = function (m) {
-    mode = m;
-    document.getElementById('btn-mac').classList.toggle('active', m === 'mac');
-    document.getElementById('btn-pc').classList.toggle('active', m === 'pc');
-    document.getElementById('termName').textContent =
-      m === 'mac' ? 'intern@statdeck-lab - bash'
-                  : 'MINGW64:/home/intern - Git Bash';
-    updatePromptEl();
-  };
-
-  /* ────────────────────────────────────────────
-     INPUT HANDLING
-  ──────────────────────────────────────────── */
-  termInput.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') {
-      var cmd = termInput.value;
-      termInput.value = '';
-      execute(cmd);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (histIdx < cmdHistory.length - 1) {
-        histIdx++;
-        termInput.value = cmdHistory[histIdx];
-        /* move cursor to end */
-        var v = termInput.value;
-        termInput.value = '';
-        termInput.value = v;
-      }
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      if (histIdx > 0) {
-        histIdx--;
-        termInput.value = cmdHistory[histIdx];
-      } else {
-        histIdx = -1;
-        termInput.value = '';
-      }
-    }
+function loadChallenge(i) {
+  var ch = challenges[i];
+  document.getElementById('challengeNum').textContent = 'Part ' + part + ' - Challenge ' + (i + 1) + ' of ' + challenges.length;
+  document.getElementById('challengeTitle').textContent = ch.title;
+  document.getElementById('challengeInstruction').textContent = ch.instruction;
+  document.getElementById('challengeHint').textContent = ch.hint;
+  document.getElementById('progressText').textContent = (i + 1) + ' / ' + challenges.length;
+  var dots = document.querySelectorAll('.progress-dot');
+  dots.forEach(function (d, n) {
+    d.classList.remove('current', 'done');
+    if (n < i) d.classList.add('done');
+    else if (n === i) d.classList.add('current');
   });
+  updateToc();
+  document.getElementById('termInput').focus();
+}
 
-  /* Click anywhere on terminal window = focus input */
-  document.getElementById('termWindow').addEventListener('click', function () {
-    termInput.focus();
+function showBetween() {
+  document.getElementById('challengeCard').style.display = 'none';
+  document.getElementById('betweenPanel').classList.add('show');
+  document.querySelectorAll('.progress-dot').forEach(function (d) { d.classList.remove('current'); d.classList.add('done'); });
+  document.getElementById('feedbackFlash').classList.remove('show');
+  /* mark all part 1 items done in TOC */
+  part1.forEach(function (_, i) {
+    var el = document.getElementById('toc-p1-' + i);
+    if (!el) return;
+    el.classList.remove('locked','current'); el.classList.add('done');
+    var check = el.querySelector('.toc-check');
+    if (check) check.textContent = '✓';
   });
+}
 
-  /* ────────────────────────────────────────────
-     INIT
-  ──────────────────────────────────────────── */
-  function init() {
-    /* Build progress dots */
-    var dotsEl = document.getElementById('progressDots');
-    challenges.forEach(function (_, i) {
-      var d = document.createElement('div');
-      d.className = 'progress-dot' + (i === 0 ? ' current' : '');
-      dotsEl.appendChild(d);
+function showCompletion() {
+  document.getElementById('challengeCard').style.display = 'none';
+  document.getElementById('completionScore').textContent = completed + '/' + (part1.length + part2.length);
+  document.getElementById('completionPanel').classList.add('show');
+  document.querySelectorAll('.progress-dot').forEach(function (d) { d.classList.remove('current'); d.classList.add('done'); });
+  document.getElementById('feedbackFlash').classList.remove('show');
+  /* mark all items done in TOC */
+  ['part1','part2'].forEach(function (listKey, pi) {
+    var arr = pi === 0 ? part1 : part2;
+    arr.forEach(function (_, i) {
+      var el = document.getElementById('toc-p' + (pi + 1) + '-' + i);
+      if (!el) return;
+      el.classList.remove('locked','current'); el.classList.add('done');
+      var check = el.querySelector('.toc-check');
+      if (check) check.textContent = '✓';
     });
+  });
+}
 
-    /* Opening message */
-    appendLine('<span class="c-dim">StatDeck Analytics - Intern Onboarding Terminal</span>');
-    appendLine('<span class="c-dim">Complete the challenges to earn terminal access. Type <span style="color:var(--term-text)">help</span> for commands.</span>');
-    appendBlank();
-
-    updatePromptEl();
+/* ────────────────────────────────────────────
+   PART TRANSITIONS
+──────────────────────────────────────────── */
+window.beginPart = function (p) {
+  if (p === 1) {
+    document.getElementById('screen-overview').style.display = 'none';
+    document.getElementById('screen-sim').style.display = 'block';
+    part       = 1;
+    challenges = part1;
+    idx        = 0;
+    buildToc();
+    document.getElementById('partBadge').textContent = 'Part 1: Navigation';
+    document.getElementById('progressPartLabel').textContent = 'PART 1';
+    buildDots(part1.length);
     loadChallenge(0);
-    /* don't autofocus — landing screen is visible first */
+    termOutput.innerHTML = '';
+    appendLine('<span class="c-dim">StatDeck Analytics - Intern Onboarding Terminal</span>');
+    appendLine('<span class="c-dim">Part 1 of 2: Navigation. Type <span class="c-out">help</span> for commands.</span>');
+    appendGap();
+    updatePromptEl();
+    renderTreeInto('liveTree', false);
+  } else {
+    /* Part 2 */
+    document.getElementById('betweenPanel').classList.remove('show');
+    document.getElementById('challengeCard').style.display = '';
+    part       = 2;
+    challenges = part2;
+    idx        = 0;
+    cwd        = HOME; /* reset location for narrative */
+    document.getElementById('partBadge').textContent = 'Part 2: Going Deeper';
+    document.getElementById('progressPartLabel').textContent = 'PART 2';
+    buildDots(part2.length);
+    loadChallenge(0); /* loadChallenge calls updateToc() */
+    termOutput.innerHTML = '';
+    appendLine('<span class="c-dim">Good morning. Day 2 at StatDeck Analytics.</span>');
+    appendLine('<span class="c-dim">Part 2 of 2: Deeper commands. Type <span class="c-out">help</span> for commands.</span>');
+    appendGap();
+    updatePromptEl();
+    renderTreeInto('liveTree', false);
   }
+};
 
-  init();
+/* ────────────────────────────────────────────
+   FLASHCARD COMPONENT
+──────────────────────────────────────────── */
+var fcIdx    = 0;
+var fcFlipped = false;
+
+function buildFlashcards() {
+  var stage = document.getElementById('fcStage');
+  stage.innerHTML = '';
+  flashcards.forEach(function (fc, i) {
+    var card = document.createElement('div');
+    card.className = 'flashcard' + (i > 0 ? ' hidden-card' : '');
+    card.id = 'fc-' + i;
+    card.style.display = i === 0 ? '' : 'none';
+    card.innerHTML =
+      '<div class="card-face card-front">' +
+        '<div class="card-cmd">' + esc(fc.cmd) + '</div>' +
+        '<div class="card-what">' + esc(fc.what) + '</div>' +
+        '<div class="card-tap">click to reveal definition</div>' +
+      '</div>' +
+      '<div class="card-face card-back">' +
+        '<div class="card-back-cmd">' + esc(fc.cmd) + '</div>' +
+        '<div class="card-back-def">' + esc(fc.def).replace(/\n/g,'<br>') + '</div>' +
+        '<div class="card-back-ex"><span>' + esc(fc.ex).replace(/\n/g,'<br>') + '</span></div>' +
+      '</div>';
+    stage.appendChild(card);
+  });
+
+  /* dots */
+  var dotsEl = document.getElementById('fcDots');
+  dotsEl.innerHTML = '';
+  flashcards.forEach(function (_, i) {
+    var d = document.createElement('div');
+    d.className = 'fc-dot' + (i === 0 ? ' active' : '');
+    dotsEl.appendChild(d);
+  });
+
+  updateFcButtons();
+}
+
+window.flipCard = function () {
+  var card = document.getElementById('fc-' + fcIdx);
+  if (!card) return;
+  fcFlipped = !fcFlipped;
+  card.classList.toggle('flipped', fcFlipped);
+};
+
+window.fcNav = function (dir) {
+  var card = document.getElementById('fc-' + fcIdx);
+  if (card) { card.style.display = 'none'; card.classList.remove('flipped'); }
+
+  fcIdx = Math.max(0, Math.min(flashcards.length - 1, fcIdx + dir));
+  fcFlipped = false;
+
+  var next = document.getElementById('fc-' + fcIdx);
+  if (next) next.style.display = '';
+
+  document.getElementById('fcCounter').textContent = (fcIdx + 1) + ' / ' + flashcards.length;
+  var dots = document.querySelectorAll('#fcDots .fc-dot');
+  dots.forEach(function (d, i) { d.classList.toggle('active', i === fcIdx); });
+  updateFcButtons();
+};
+
+function updateFcButtons() {
+  document.getElementById('fcPrev').disabled = fcIdx === 0;
+  document.getElementById('fcNext').disabled = fcIdx === flashcards.length - 1;
+}
+
+/* ────────────────────────────────────────────
+   FLASHCARD DRAWER (second instance - fc2)
+──────────────────────────────────────────── */
+var fc2Idx     = 0;
+var fc2Flipped = false;
+var fc2Built   = false;
+
+function buildFlashcards2() {
+  if (fc2Built) return;
+  fc2Built = true;
+  var stage = document.getElementById('fc2Stage');
+  if (!stage) return;
+  stage.innerHTML = '';
+  flashcards.forEach(function (fc, i) {
+    var card = document.createElement('div');
+    card.className = 'flashcard';
+    card.id = 'fc2-' + i;
+    card.style.display = i === 0 ? '' : 'none';
+    card.innerHTML =
+      '<div class="card-face card-front">' +
+        '<div class="card-cmd">' + esc(fc.cmd) + '</div>' +
+        '<div class="card-what">' + esc(fc.what) + '</div>' +
+        '<div class="card-tap">click to reveal definition</div>' +
+      '</div>' +
+      '<div class="card-face card-back">' +
+        '<div class="card-back-cmd">' + esc(fc.cmd) + '</div>' +
+        '<div class="card-back-def">' + esc(fc.def).replace(/\n/g,'<br>') + '</div>' +
+        '<div class="card-back-ex"><span>' + esc(fc.ex).replace(/\n/g,'<br>') + '</span></div>' +
+      '</div>';
+    stage.appendChild(card);
+  });
+  var dotsEl = document.getElementById('fc2Dots');
+  dotsEl.innerHTML = '';
+  flashcards.forEach(function (_, i) {
+    var d = document.createElement('div');
+    d.className = 'fc-dot' + (i === 0 ? ' active' : '');
+    dotsEl.appendChild(d);
+  });
+  updateFc2Buttons();
+}
+
+window.flipCard2 = function () {
+  var card = document.getElementById('fc2-' + fc2Idx);
+  if (!card) return;
+  fc2Flipped = !fc2Flipped;
+  card.classList.toggle('flipped', fc2Flipped);
+};
+
+window.fc2Nav = function (dir) {
+  var card = document.getElementById('fc2-' + fc2Idx);
+  if (card) { card.style.display = 'none'; card.classList.remove('flipped'); }
+  fc2Idx = Math.max(0, Math.min(flashcards.length - 1, fc2Idx + dir));
+  fc2Flipped = false;
+  var next = document.getElementById('fc2-' + fc2Idx);
+  if (next) next.style.display = '';
+  document.getElementById('fc2Counter').textContent = (fc2Idx + 1) + ' / ' + flashcards.length;
+  var dots = document.querySelectorAll('#fc2Dots .fc-dot');
+  dots.forEach(function (d, i) { d.classList.toggle('active', i === fc2Idx); });
+  updateFc2Buttons();
+};
+
+function updateFc2Buttons() {
+  document.getElementById('fc2Prev').disabled = fc2Idx === 0;
+  document.getElementById('fc2Next').disabled = fc2Idx === flashcards.length - 1;
+}
+
+window.openFlashcards = function () {
+  buildFlashcards2();
+  document.getElementById('fcOverlay').classList.add('open');
+  document.getElementById('fcDrawer').classList.add('open');
+};
+
+window.closeFlashcards = function () {
+  document.getElementById('fcOverlay').classList.remove('open');
+  document.getElementById('fcDrawer').classList.remove('open');
+};
+
+/* Esc key closes drawer */
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') { window.closeFlashcards(); }
+});
+
+/* ────────────────────────────────────────────
+   TOC SIDEBAR
+──────────────────────────────────────────── */
+function buildToc() {
+  function renderList(containerId, challenges, partNum) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    challenges.forEach(function (ch, i) {
+      var item = document.createElement('div');
+      item.className = 'toc-item locked';
+      item.id = 'toc-p' + partNum + '-' + i;
+      item.innerHTML =
+        '<div class="toc-check"></div>' +
+        '<div class="toc-item-label">' + esc(ch.title) + '</div>';
+      container.appendChild(item);
+    });
+  }
+  renderList('tocPart1', part1, 1);
+  renderList('tocPart2', part2, 2);
+}
+
+function updateToc() {
+  /* Part 1 items */
+  part1.forEach(function (_, i) {
+    var el = document.getElementById('toc-p1-' + i);
+    if (!el) return;
+    var check = el.querySelector('.toc-check');
+    el.classList.remove('locked','current','done');
+    if (part === 2 || (part === 1 && idx === challenges.length && challenges === part1)) {
+      /* Part 2 running or part 1 fully done */
+      el.classList.add('done'); check.textContent = '✓';
+    } else if (part === 1) {
+      if (i < idx) { el.classList.add('done'); check.textContent = '✓'; }
+      else if (i === idx) { el.classList.add('current'); check.textContent = ''; }
+      else { el.classList.add('locked'); check.textContent = ''; }
+    }
+  });
+
+  /* Part 2 items */
+  part2.forEach(function (_, i) {
+    var el = document.getElementById('toc-p2-' + i);
+    if (!el) return;
+    var check = el.querySelector('.toc-check');
+    el.classList.remove('locked','current','done');
+    if (part === 1) {
+      el.classList.add('locked'); check.textContent = '';
+    } else {
+      if (i < idx) { el.classList.add('done'); check.textContent = '✓'; }
+      else if (i === idx) { el.classList.add('current'); check.textContent = ''; }
+      else { el.classList.add('locked'); check.textContent = ''; }
+    }
+  });
+}
+
+/* ────────────────────────────────────────────
+   PROMPT
+──────────────────────────────────────────── */
+function updatePromptEl() {
+  document.getElementById('termPrompt').innerHTML = promptHtml();
+}
+
+/* ────────────────────────────────────────────
+   MODE SWITCH
+──────────────────────────────────────────── */
+window.setMode = function (m) {
+  mode = m;
+  document.getElementById('btn-mac').classList.toggle('active', m === 'mac');
+  document.getElementById('btn-pc').classList.toggle('active', m === 'pc');
+  document.getElementById('termName').textContent =
+    m === 'mac' ? 'intern@statdeck-lab - bash' : 'MINGW64:/home/intern - Git Bash';
+  updatePromptEl();
+};
+
+/* ────────────────────────────────────────────
+   INPUT
+──────────────────────────────────────────── */
+var termInput = document.getElementById('termInput');
+
+termInput.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') {
+    var cmd = termInput.value; termInput.value = ''; execute(cmd);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (histIdx < cmdHistory.length - 1) { histIdx++; termInput.value = cmdHistory[histIdx]; }
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (histIdx > 0) { histIdx--; termInput.value = cmdHistory[histIdx]; }
+    else { histIdx = -1; termInput.value = ''; }
+  }
+});
+
+document.getElementById('termWindow').addEventListener('click', function () { termInput.focus(); });
+
+/* ────────────────────────────────────────────
+   PLATFORM LANDING -> OVERVIEW
+──────────────────────────────────────────── */
+window.startSim = function (m) {
+  mode = m;
+  document.getElementById('screen-landing').style.display = 'none';
+  document.getElementById('screen-overview').style.display = 'block';
+  document.getElementById('btn-mac').classList.toggle('active', m === 'mac');
+  document.getElementById('btn-pc').classList.toggle('active', m === 'pc');
+  renderTreeInto('staticTree', true);
+  buildFlashcards();
+};
 
 }());
 </script>
 
-<!-- ═══════════════ SETTINGS WIDGET ═══════════════ -->
+<!-- ══ SETTINGS WIDGET ══ -->
 <style>
   :root { --font-scale: 1; font-size: calc(16px * var(--font-scale)); }
 
   #settings-toggle {
-    position: fixed; bottom: 24px; right: 24px; z-index: 9000;
+    position: fixed; bottom: 78px; right: 24px; z-index: 9000;
     width: 44px; height: 44px; border-radius: 50%;
-    background: var(--accent); color: #fff;
-    border: none; cursor: pointer; font-size: 1.2rem;
+    background: var(--accent); color: #fff; border: none; cursor: pointer; font-size: 1.2rem;
     box-shadow: 0 2px 12px rgba(0,0,0,0.4);
     display: flex; align-items: center; justify-content: center;
     transition: transform 0.2s, background 0.2s;
@@ -1039,15 +1492,14 @@
   #settings-toggle:hover { transform: scale(1.1); background: var(--accent-light); }
 
   #settings-panel {
-    position: fixed; bottom: 78px; right: 24px; z-index: 9000;
-    width: 260px; background: var(--surface);
-    border: 1px solid var(--border); border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    padding: 18px 20px 16px;
-    display: none; flex-direction: column; gap: 18px;
+    position: fixed; bottom: 132px; right: 24px; z-index: 9000;
+    width: 260px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    padding: 18px 20px 16px; display: none; flex-direction: column; gap: 18px;
     font-family: 'IBM Plex Sans', sans-serif;
   }
   #settings-panel.open { display: flex; }
+
   .sp-header { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); padding-bottom: 8px; border-bottom: 1px solid var(--border); }
   .sp-row { display: flex; flex-direction: column; gap: 8px; }
   .sp-label { font-size: 0.78rem; color: var(--text-dim); font-weight: 600; }
@@ -1062,6 +1514,16 @@
   .font-opt:nth-child(3) { font-size: 1.05rem; }
   .sp-reset { font-size: 0.72rem; color: var(--text-dim); background: none; border: none; cursor: pointer; text-align: left; padding: 0; text-decoration: underline; opacity: 0.7; }
   .sp-reset:hover { opacity: 1; }
+
+  /* Light mode for settings panel */
+  :root.theme-light #settings-panel    { background: #fff; border-color: #d4cfc9; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+  :root.theme-light .sp-header         { color: #6a6460; border-color: #d4cfc9; }
+  :root.theme-light .sp-label          { color: #5a5550; }
+  :root.theme-light .theme-switch      { background: #ede9e3; border-color: #d4cfc9; }
+  :root.theme-light .theme-opt         { color: #5a5550; }
+  :root.theme-light .font-switch .font-opt { background: #ede9e3; border-color: #d4cfc9; color: #5a5550; }
+  :root.theme-light .sp-reset          { color: #6a6460; }
+  :root.theme-light #settings-toggle   { box-shadow: 0 2px 8px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.12); }
 </style>
 
 <button id="settings-toggle" aria-label="Display settings" title="Display settings">&#9881;</button>
@@ -1084,11 +1546,12 @@
   </div>
   <button class="sp-reset" onclick="resetSettings()">Reset to defaults</button>
 </div>
+
 <script>
 (function () {
   var THEME_KEY = 'dtsc520_theme';
   var FONT_KEY  = 'dtsc520_font';
-  var FONT_SCALES = { normal: 1, large: 1.12, xl: 1.25 };
+  var SCALES    = { normal: 1, large: 1.12, xl: 1.25 };
 
   function setTheme(t) {
     document.documentElement.classList.toggle('theme-light', t === 'light');
@@ -1098,7 +1561,7 @@
     if (el) el.classList.add('active');
   }
   function setFont(size) {
-    var scale = FONT_SCALES[size] || 1;
+    var scale = SCALES[size] || 1;
     document.documentElement.style.setProperty('--font-scale', scale);
     document.documentElement.style.fontSize = 'calc(16px * ' + scale + ')';
     localStorage.setItem(FONT_KEY, size);
@@ -1112,10 +1575,8 @@
   window.setFont  = setFont;
   window.resetSettings = resetSettings;
 
-  var savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
-  var savedFont  = localStorage.getItem(FONT_KEY)  || 'normal';
-  setTheme(savedTheme);
-  setFont(savedFont);
+  setTheme(localStorage.getItem(THEME_KEY) || 'dark');
+  setFont(localStorage.getItem(FONT_KEY) || 'normal');
 
   document.getElementById('settings-toggle').addEventListener('click', function (e) {
     e.stopPropagation();
@@ -1123,13 +1584,11 @@
   });
   document.addEventListener('click', function (e) {
     var panel = document.getElementById('settings-panel');
-    if (panel.classList.contains('open') && !panel.contains(e.target)) {
-      panel.classList.remove('open');
-    }
+    if (panel.classList.contains('open') && !panel.contains(e.target)) panel.classList.remove('open');
   });
 }());
 </script>
-<!-- ═══════════════ END SETTINGS WIDGET ═══════════════ -->
+<!-- ══ END SETTINGS WIDGET ══ -->
 
 </body>
 </html>
