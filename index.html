@@ -315,11 +315,11 @@
       content: '';
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      height: 2px;
+      height: 3px;
       background: var(--accent, var(--maroon));
       transform: scaleX(0);
       transform-origin: left;
-      transition: transform 0.2s;
+      transition: transform 0.25s ease;
     }
 
     .sim-card:hover::after { transform: scaleX(1); }
@@ -832,63 +832,42 @@
       <div class="sims-grid">
 
         <a class="sim-card" href="sims/morning-brief/index.html" style="--accent: var(--blue);">
-          <div class="sim-status">
-            <span class="sim-badge">Play Now</span>
-          </div>
           <h3>The Morning Brief</h3>
           <p class="sim-desc">Walk the full DS lifecycle on a real-world case - from business question to model to recommendation.</p>
           <div class="sim-module-tag">Module 01 - DS Process</div>
         </a>
 
-        <a class="sim-card" href="sims/find-your-path/index.html" style="--accent: var(--maroon);">
-          <div class="sim-status">
-            <span class="sim-badge">Play Now</span>
-          </div>
+        <a class="sim-card" href="sims/find-your-path/index.html" style="--accent: var(--blue);">
           <h3>Find Your Path</h3>
           <p class="sim-desc">Eight questions. One honest answer each. Map your instincts to the data role that actually fits you.</p>
           <div class="sim-module-tag">Module 01 - Careers</div>
         </a>
 
         <a class="sim-card" href="sims/python_sim/index.html" style="--accent: var(--blue);">
-          <div class="sim-status">
-            <span class="sim-badge available">Available</span>
-          </div>
           <h3>Python Field Training</h3>
           <p class="sim-desc">Run real Python in the browser. Work through variables, lists, and loops while scouting players for the St. Davids Eagles.</p>
           <div class="sim-module-tag">Module 02 - Python fundamentals</div>
         </a>
 
         <a class="sim-card" href="sims/dirty_dataset_sim.html" style="--accent: #c07b30;">
-          <div class="sim-status">
-            <span class="sim-badge available">Available</span>
-          </div>
           <h3>The Dirty Dataset</h3>
           <p class="sim-desc">You're a junior analyst at StatDeck Analytics. Clean a messy player salary dataset before the Eagles' front office meeting.</p>
           <div class="sim-module-tag">Module 04 - pandas / data cleaning</div>
         </a>
 
         <a class="sim-card" href="sims/debug-pipeline/index.html" style="--accent: #c07b30;">
-          <div class="sim-status">
-            <span class="sim-badge live">Play Now</span>
-          </div>
           <h3>Debug the Pipeline</h3>
           <p class="sim-desc">It's 6:47 AM and the Eagles' stat report failed overnight. Track down five bugs hiding in a pandas/NumPy pipeline before first pitch.</p>
           <div class="sim-module-tag">Module 04 - pandas / NumPy</div>
         </a>
 
         <a class="sim-card" href="sims/pitch-the-viz/index.html" style="--accent: var(--teal, #2a9490);">
-          <div class="sim-status">
-            <span class="sim-badge">Play Now</span>
-          </div>
           <h3>Pitch the Viz</h3>
           <p class="sim-desc">You're live in the Volta Records committee room. Four chart decisions. One artist to sign. Make the data land before the vote.</p>
           <div class="sim-module-tag">Module 05 - Visualization</div>
         </a>
 
         <a class="sim-card" href="modules/module6/branch_crisis_sim.html" style="--accent: var(--maroon);">
-          <div class="sim-status">
-            <span class="sim-badge available">Available</span>
-          </div>
           <h3>The Branch Crisis</h3>
           <p class="sim-desc">A bad merge just hit the StatDeck repo. Work through branching, conflicts, and pull requests to get the pipeline back online.</p>
           <div class="sim-module-tag">Module 06 - Git &amp; GitHub</div>

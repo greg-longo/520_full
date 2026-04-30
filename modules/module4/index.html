@@ -231,21 +231,41 @@
     .score-display { font-family: 'IBM Plex Mono', monospace; font-size: 1.6rem; color: var(--accent-light); font-weight: 700; }
     .score-sub { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.2rem; }
     .sim-cta {
-      background: linear-gradient(135deg, #1f1a14 0%, #17130e 100%);
-      border: 1px solid rgba(192,123,48,0.25); border-radius: 4px; padding: 1.1rem;
+      background: var(--accent);
+      border-radius: 4px;
+      padding: 1.1rem;
+      text-decoration: none;
+      display: block;
+      transition: background 0.15s;
+      margin-bottom: 0.5rem;
+    }
+    .sim-cta:hover { background: var(--accent-light); }
+    .sim-cta-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
     }
     .sim-cta h4 {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
-      letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem;
+      font-family: 'Zilla Slab', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.35rem;
     }
-    .sim-cta p { font-size: 0.83rem; color: var(--text-dim); margin-bottom: 0.85rem; line-height: 1.5; }
-    .sim-cta-btn {
-      display: block; background: var(--accent); color: #fff; text-decoration: none;
-      text-align: center; padding: 0.55rem 1rem; border-radius: 4px;
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
-      letter-spacing: 0.05em; text-transform: uppercase; transition: background 0.15s;
+    .sim-cta p {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.4;
+      margin: 0;
     }
-    .sim-cta-btn:hover { background: var(--accent-light); }
+    /* Second sim — accent2 = maroon for Debug Pipeline */
+    .sim-cta-2 {
+      background: var(--maroon, #8B1C40);
+    }
+    .sim-cta-2:hover { background: var(--maroon-d, #6a1530); }
     .toc-links { display: flex; flex-direction: column; gap: 0.3rem; }
     .toc-links a { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; color: var(--text-dim); text-decoration: none; padding: 0.2rem 0; transition: color 0.15s; }
     .toc-links a:hover { color: var(--accent-light); }
@@ -1077,9 +1097,15 @@ pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'<
 
 
     <a class="sim-cta" href="../../sims/dirty_dataset_sim.html">
-      <div class="sim-cta-label">Simulation</div>
+      <div class="sim-cta-label">Simulation 1</div>
       <h4>The Dirty Dataset</h4>
-      <p>Put your pandas skills to work cleaning a real messy dataset - missing values, outliers, and type errors included.</p>
+      <p>Clean a real messy player salary dataset - missing values, outliers, and type errors included.</p>
+    </a>
+
+    <a class="sim-cta sim-cta-2" href="../../sims/debug-pipeline/index.html">
+      <div class="sim-cta-label">Simulation 2</div>
+      <h4>Debug the Pipeline</h4>
+      <p>It's 6:47 AM and the stat report failed. Track down five bugs in a pandas/NumPy pipeline before first pitch.</p>
     </a>
 
 
@@ -1532,6 +1558,49 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
     })();
 </script>
 
+
+<style>
+  /* Copy button on code blocks */
+  pre { position: relative; }
+  .copy-btn {
+    position: absolute; top: 6px; right: 6px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.45); border-radius: 4px;
+    padding: 3px 7px; font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.05em; cursor: pointer;
+    opacity: 0; transition: opacity 0.15s, background 0.15s, color 0.15s;
+    user-select: none;
+  }
+  pre:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); }
+  .copy-btn.copied { color: #6bc98a; border-color: #6bc98a; background: rgba(74,158,107,0.15); }
+  :root.theme-light .copy-btn {
+    background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.15); color: rgba(0,0,0,0.4);
+  }
+  :root.theme-light .copy-btn:hover { background: rgba(0,0,0,0.1); color: rgba(0,0,0,0.7); }
+</style>
+<script>
+(function() {
+  document.querySelectorAll('pre').forEach(function(pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function() {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      navigator.clipboard.writeText(text).then(function() {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
 <!-- ═══════════════ SETTINGS WIDGET ═══════════════ -->
 <style>
   /* Light theme overrides */
@@ -1604,7 +1673,7 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
 
   /* Floating gear button */
   #settings-toggle {
-    position: fixed; bottom: 24px; right: 24px; z-index: 9000;
+    position: fixed; bottom: 80px; right: 24px; z-index: 9000;
     width: 44px; height: 44px; border-radius: 50%;
     background: var(--accent); color: #fff;
     border: none; cursor: pointer; font-size: 1.2rem;
@@ -1616,7 +1685,7 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
 
   /* Panel */
   #settings-panel {
-    position: fixed; bottom: 78px; right: 24px; z-index: 9000;
+    position: fixed; bottom: 134px; right: 24px; z-index: 9000;
     width: 260px; background: var(--bg-card);
     border: 1px solid var(--border); border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.35);

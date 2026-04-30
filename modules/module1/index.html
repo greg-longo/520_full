@@ -834,6 +834,49 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
     })();
 </script>
 
+
+<style>
+  /* Copy button on code blocks */
+  pre { position: relative; }
+  .copy-btn {
+    position: absolute; top: 6px; right: 6px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.45); border-radius: 4px;
+    padding: 3px 7px; font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.05em; cursor: pointer;
+    opacity: 0; transition: opacity 0.15s, background 0.15s, color 0.15s;
+    user-select: none;
+  }
+  pre:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); }
+  .copy-btn.copied { color: #6bc98a; border-color: #6bc98a; background: rgba(74,158,107,0.15); }
+  :root.theme-light .copy-btn {
+    background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.15); color: rgba(0,0,0,0.4);
+  }
+  :root.theme-light .copy-btn:hover { background: rgba(0,0,0,0.1); color: rgba(0,0,0,0.7); }
+</style>
+<script>
+(function() {
+  document.querySelectorAll('pre').forEach(function(pre) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function() {
+      var code = pre.querySelector('code');
+      var text = code ? code.innerText : pre.innerText;
+      navigator.clipboard.writeText(text).then(function() {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
 <!-- ═══════════════ SETTINGS WIDGET ═══════════════ -->
 <style>
   /* Light theme overrides */
