@@ -152,10 +152,11 @@
 
     /* ---- SECTION TABS ---- */
     .section-tabs {
+      display: none !important;
       background: var(--bg-card);
       border-bottom: 1px solid var(--border);
       padding: 0 2rem;
-      display: flex;
+      
       gap: 0;
       overflow-x: auto;
       scrollbar-width: none;
@@ -1896,11 +1897,22 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
   }
   /* Code editors */
   :root.theme-light textarea.code-editor,
-  :root.theme-light .output-box {
+  :root.theme-light .output-box,
+  :root.theme-light .output-block {
     background: #f0ece6 !important;
     color: #1a1715 !important;
     border-color: #c8c3bc !important;
+    border-left-color: #b0aba4 !important;
   }
+  :root.theme-light .output-block-label {
+    color: #8a8078 !important;
+  }
+  :root.theme-light .output-block .out-num { color: #6a3fa0 !important; }
+  :root.theme-light .output-block .out-str { color: #2a7a3a !important; }
+  :root.theme-light .output-block .out-idx { color: #8a8078 !important; }
+  :root.theme-light .output-block .out-hdr { color: var(--accent) !important; }
+  :root.theme-light .df-table th { color: #2a7a3a !important; border-bottom-color: #c8c3bc !important; }
+  :root.theme-light .df-table th.idx-col { color: #8a8078 !important; }
   /* Gear button visible on light bg */
   :root.theme-light #settings-toggle {
     box-shadow: 0 2px 8px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.12) !important;
