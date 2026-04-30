@@ -61,35 +61,111 @@
   #coursenav .cn-sep { color: rgba(255,255,255,0.18); margin: 0 0.5rem; }
   #coursenav .cn-cur { font-family: var(--mono); font-size: 0.68rem; color: rgba(255,255,255,0.3); letter-spacing: 0.06em; }
 
-  /* ── HEADER ── */
+  /* ── LANDING ── */
+  .landing-screen {
+    max-width: 680px; margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+  }
+  .landing-masthead {
+    text-align: center; margin-bottom: 3rem;
+  }
+  .landing-eyebrow {
+    font-family: var(--mono); font-size: 0.65rem;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--accent-light); margin-bottom: 0.75rem;
+  }
+  .landing-title {
+    font-family: var(--serif);
+    font-size: 2.4rem; font-weight: 700;
+    color: var(--text-bright); line-height: 1.15; margin-bottom: 0.6rem;
+  }
+  .landing-subtitle {
+    font-size: 1rem; color: var(--text-dim); line-height: 1.65;
+    max-width: 480px; margin: 0 auto;
+  }
+  .landing-context {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px; padding: 1.4rem 1.5rem;
+    font-size: 0.9rem; color: var(--text-dim);
+    line-height: 1.75; margin-bottom: 2.5rem;
+  }
+  .landing-context p + p { margin-top: 0.75rem; }
+  .landing-context strong { color: var(--text); }
+  .landing-prompt {
+    text-align: center;
+    font-family: var(--mono); font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-dim); margin-bottom: 1.1rem;
+  }
+  .platform-cards {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  }
+  .platform-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 1.6rem 1.4rem 1.5rem;
+    cursor: pointer; text-align: left;
+    transition: border-color 0.18s, background 0.18s, transform 0.18s;
+    display: block; text-decoration: none; color: inherit;
+  }
+  .platform-card:hover {
+    border-color: var(--accent-light);
+    background: var(--surface2);
+    transform: translateY(-2px);
+  }
+  .platform-card-preview {
+    background: var(--term-bg);
+    border: 1px solid var(--term-border);
+    border-radius: 5px; padding: 0.65rem 0.85rem;
+    font-family: var(--mono); font-size: 0.75rem;
+    line-height: 1.8; margin-bottom: 1.1rem;
+    min-height: 70px;
+  }
+  .platform-card-name {
+    font-family: var(--serif);
+    font-size: 1.05rem; font-weight: 600;
+    color: var(--text-bright); margin-bottom: 0.25rem;
+  }
+  .platform-card-desc {
+    font-size: 0.8rem; color: var(--text-dim); line-height: 1.5;
+  }
+  .platform-card-cta {
+    display: inline-block; margin-top: 1rem;
+    font-family: var(--mono); font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--accent-light);
+  }
+  .platform-card:hover .platform-card-cta { color: var(--green); }
+
+  /* ── HEADER (shown after platform chosen) ── */
   .sim-header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 1.5rem 2rem 1.25rem;
-    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 1.1rem 2rem 1rem;
+    display: flex; justify-content: space-between; align-items: center;
     gap: 1rem; flex-wrap: wrap;
   }
   .sim-header-left { flex: 1; min-width: 200px; }
   .sim-eyebrow {
     font-family: var(--mono);
     font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em;
-    color: var(--accent-light); margin-bottom: 0.4rem;
+    color: var(--accent-light); margin-bottom: 0.2rem;
   }
   .sim-title {
     font-family: var(--serif);
-    font-size: 1.65rem; font-weight: 700;
-    color: var(--text-bright); line-height: 1.2; margin-bottom: 0.3rem;
+    font-size: 1.3rem; font-weight: 700;
+    color: var(--text-bright); line-height: 1.2;
   }
-  .sim-subtitle { font-size: 0.85rem; color: var(--text-dim); }
 
-  /* ── MODE TOGGLE ── */
+  /* ── MODE TOGGLE (secondary, in header) ── */
   .mode-toggle {
     display: flex; border: 1px solid var(--border);
     border-radius: 6px; overflow: hidden; flex-shrink: 0; align-self: flex-start;
   }
   .mode-btn {
-    padding: 0.45rem 1.1rem;
-    font-family: var(--mono); font-size: 0.73rem;
+    padding: 0.4rem 0.95rem;
+    font-family: var(--mono); font-size: 0.7rem;
     background: var(--surface2); color: var(--text-dim);
     border: none; cursor: pointer;
     transition: background 0.15s, color 0.15s;
@@ -304,6 +380,9 @@
   :root.theme-light #coursenav * { color: #3a3530 !important; }
   :root.theme-light .sim-header { background: #dcd7d0; border-color: #c4bfb8; }
   :root.theme-light .challenge-card { background: #fff; border-color: #d4cfc9; }
+  :root.theme-light .landing-context { background: #fff; border-color: #d4cfc9; }
+  :root.theme-light .platform-card { background: #fff; border-color: #d4cfc9; }
+  :root.theme-light .platform-card:hover { background: #ede9e3; border-color: var(--accent-light); }
   :root.theme-light .mode-btn { background: #ede9e3; color: #5a5550; }
   :root.theme-light .mode-btn.active { background: var(--accent); color: #fff; }
   :root.theme-light .mode-toggle { border-color: #c4bfb8; }
@@ -332,14 +411,60 @@
   <span class="cn-cur">Terminal Trainer</span>
 </nav>
 
+<!-- ══ LANDING SCREEN ══ -->
+<div id="landing-screen">
+  <div class="landing-screen">
+    <div class="landing-masthead">
+      <div class="landing-eyebrow">Eastern University &middot; DTSC 520 &middot; Module 6</div>
+      <h1 class="landing-title">Terminal Trainer</h1>
+      <p class="landing-subtitle">Before you can run Git commands, you need to be comfortable in a terminal. Eight challenges. No prior experience needed.</p>
+    </div>
+
+    <div class="landing-context">
+      <p>It's your first week at <strong>StatDeck Analytics</strong>. The IT team has set up a sandboxed terminal session for your onboarding. Before you get access to the team's Git repository, you need to show you can navigate the file system.</p>
+      <p>Your manager left a note: <em>"Complete the eight terminal challenges, then come find me and we'll get you set up with Git."</em></p>
+    </div>
+
+    <div class="landing-prompt">Choose your platform to begin</div>
+
+    <div class="platform-cards">
+
+      <button class="platform-card" onclick="startSim('mac')">
+        <div class="platform-card-preview">
+          <span style="color:var(--green)">intern@statdeck</span><span style="color:var(--term-dim)">:</span><span style="color:var(--blue)">~</span><span style="color:var(--term-dim)">$</span> <span style="color:var(--term-text)">pwd</span><br>
+          <span style="color:#b0bac4">/home/intern</span><br>
+          <span style="color:var(--green)">intern@statdeck</span><span style="color:var(--term-dim)">:</span><span style="color:var(--blue)">~</span><span style="color:var(--term-dim)">$</span> <span style="color:var(--term-dim)">_</span>
+        </div>
+        <div class="platform-card-name">Mac</div>
+        <div class="platform-card-desc">Terminal app (zsh/bash). Standard Unix commands. Recommended if you're on a MacBook.</div>
+        <span class="platform-card-cta">Start &rarr;</span>
+      </button>
+
+      <button class="platform-card" onclick="startSim('pc')">
+        <div class="platform-card-preview">
+          <span style="color:var(--green)">intern@STATDECK</span> <span style="color:var(--yellow)">MINGW64</span> <span style="color:var(--blue)">~</span><br>
+          <span style="color:var(--term-dim)">$</span> <span style="color:var(--term-text)">pwd</span><br>
+          <span style="color:#b0bac4">/home/intern</span>
+        </div>
+        <div class="platform-card-name">PC (Git Bash)</div>
+        <div class="platform-card-desc">Git Bash on Windows. Uses the same Unix-style commands as Mac once Git is installed.</div>
+        <span class="platform-card-cta">Start &rarr;</span>
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ SIM (hidden until platform chosen) ══ -->
+<div id="sim-screen" style="display:none;">
+
 <!-- Header -->
 <header class="sim-header">
   <div class="sim-header-left">
-    <div class="sim-eyebrow">Eastern University &middot; DTSC 520 &middot; Module 6</div>
-    <h1 class="sim-title">Terminal Trainer</h1>
-    <p class="sim-subtitle">Learn to navigate the file system before you tackle Git</p>
+    <div class="sim-eyebrow">Terminal Trainer &middot; Module 6</div>
+    <h1 class="sim-title">StatDeck Onboarding Terminal</h1>
   </div>
-  <div class="mode-toggle" role="group" aria-label="Terminal mode">
+  <div class="mode-toggle" role="group" aria-label="Switch terminal mode">
     <button class="mode-btn active" id="btn-mac" onclick="setMode('mac')">Mac</button>
     <button class="mode-btn" id="btn-pc" onclick="setMode('pc')">PC (Git Bash)</button>
   </div>
@@ -401,6 +526,8 @@
   </div>
 
 </main>
+
+</div><!-- end #sim-screen -->
 
 <footer>
   This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by Eastern University faculty and staff.<br>
@@ -812,6 +939,16 @@
   }
 
   /* ────────────────────────────────────────────
+     LANDING -> SIM TRANSITION
+  ──────────────────────────────────────────── */
+  window.startSim = function (m) {
+    document.getElementById('landing-screen').style.display = 'none';
+    document.getElementById('sim-screen').style.display = 'block';
+    setMode(m);
+    termInput.focus();
+  };
+
+  /* ────────────────────────────────────────────
      MODE SWITCH
   ──────────────────────────────────────────── */
   window.setMode = function (m) {
@@ -822,7 +959,6 @@
       m === 'mac' ? 'intern@statdeck-lab - bash'
                   : 'MINGW64:/home/intern - Git Bash';
     updatePromptEl();
-    termInput.focus();
   };
 
   /* ────────────────────────────────────────────
@@ -879,7 +1015,7 @@
 
     updatePromptEl();
     loadChallenge(0);
-    termInput.focus();
+    /* don't autofocus — landing screen is visible first */
   }
 
   init();
