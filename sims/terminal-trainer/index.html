@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal Trainer - DTSC 520</title>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent:       #8B1C40;
+    --accent-light: #c04570;
+    --accent-dim:   rgba(139,28,64,0.15);
+    --green:        #56d364;
+    --green-dim:    rgba(86,211,100,0.12);
+    --red:          #f85149;
+    --yellow:       #e3b341;
+    --blue:         #79c0ff;
+    --term-bg:      #010409;
+    --term-surface: #0d1117;
+    --term-border:  #30363d;
+    --term-text:    #e6edf3;
+    --term-dim:     #8b949e;
+    --term-success: #56d364;
+    --term-error:   #f85149;
+    --bg:           #0a0c10;
+    --surface:      #161b22;
+    --surface2:     #1c2128;
+    --border:       #30363d;
+    --text:         #e6edf3;
+    --text-dim:     #8b949e;
+    --text-bright:  #f0f6fc;
+    --sans:         'IBM Plex Sans', sans-serif;
+    --mono:         'IBM Plex Mono', monospace;
+    --serif:        'Zilla Slab', Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── COURSE NAV ── */
+  #coursenav {
+    background: #010409;
+    border-bottom: 1px solid var(--term-border);
+    padding: 0 1.5rem;
+    height: 36px;
+    display: flex; align-items: center;
+    position: sticky; top: 0; z-index: 300;
+  }
+  #coursenav a {
+    font-family: var(--mono); font-size: 0.68rem;
+    color: rgba(255,255,255,0.45); text-decoration: none;
+    letter-spacing: 0.06em; transition: color 0.15s;
+  }
+  #coursenav a:hover { color: rgba(255,255,255,0.85); }
+  #coursenav .cn-sep { color: rgba(255,255,255,0.18); margin: 0 0.5rem; }
+  #coursenav .cn-cur { font-family: var(--mono); font-size: 0.68rem; color: rgba(255,255,255,0.3); letter-spacing: 0.06em; }
+
+  /* ── HEADER ── */
+  .sim-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 2rem 1.25rem;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 1rem; flex-wrap: wrap;
+  }
+  .sim-header-left { flex: 1; min-width: 200px; }
+  .sim-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--accent-light); margin-bottom: 0.4rem;
+  }
+  .sim-title {
+    font-family: var(--serif);
+    font-size: 1.65rem; font-weight: 700;
+    color: var(--text-bright); line-height: 1.2; margin-bottom: 0.3rem;
+  }
+  .sim-subtitle { font-size: 0.85rem; color: var(--text-dim); }
+
+  /* ── MODE TOGGLE ── */
+  .mode-toggle {
+    display: flex; border: 1px solid var(--border);
+    border-radius: 6px; overflow: hidden; flex-shrink: 0; align-self: flex-start;
+  }
+  .mode-btn {
+    padding: 0.45rem 1.1rem;
+    font-family: var(--mono); font-size: 0.73rem;
+    background: var(--surface2); color: var(--text-dim);
+    border: none; cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .mode-btn.active { background: var(--accent); color: #fff; }
+  .mode-btn:first-child { border-right: 1px solid var(--border); }
+
+  /* ── BODY LAYOUT ── */
+  .sim-body {
+    max-width: 860px; margin: 0 auto;
+    padding: 1.75rem 1.5rem 3rem;
+    display: flex; flex-direction: column; gap: 1.1rem;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-row {
+    display: flex; align-items: center; gap: 0.85rem;
+  }
+  .progress-label {
+    font-family: var(--mono); font-size: 0.68rem;
+    color: var(--text-dim); letter-spacing: 0.07em; white-space: nowrap;
+  }
+  .progress-dots { display: flex; gap: 7px; flex: 1; }
+  .progress-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--border); transition: background 0.3s, transform 0.2s;
+  }
+  .progress-dot.done    { background: var(--green); }
+  .progress-dot.current { background: var(--accent); transform: scale(1.25); }
+
+  /* ── CHALLENGE CARD ── */
+  .challenge-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 1.1rem 1.25rem 1.15rem;
+  }
+  .challenge-num {
+    font-family: var(--mono);
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--accent-light); margin-bottom: 0.35rem;
+  }
+  .challenge-title {
+    font-family: var(--serif);
+    font-size: 1.05rem; font-weight: 600; color: var(--text-bright);
+    margin-bottom: 0.4rem;
+  }
+  .challenge-instruction {
+    font-size: 0.88rem; color: var(--text-dim); line-height: 1.65;
+  }
+  .challenge-hint-box {
+    margin-top: 0.85rem;
+    background: var(--term-bg);
+    border: 1px solid var(--term-border);
+    border-radius: 4px;
+    padding: 0.55rem 0.9rem;
+    display: flex; align-items: baseline; gap: 0.6rem;
+  }
+  .challenge-hint-label {
+    font-family: var(--mono); font-size: 0.67rem;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--text-dim); white-space: nowrap;
+  }
+  .challenge-hint-cmd {
+    font-family: var(--mono); font-size: 0.88rem;
+    color: var(--green);
+  }
+
+  /* ── TERMINAL WINDOW ── */
+  .terminal-window {
+    background: var(--term-bg);
+    border: 1px solid var(--term-border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.5);
+    cursor: text;
+  }
+  .term-titlebar {
+    background: #21262d;
+    padding: 0.55rem 1rem;
+    display: flex; align-items: center; gap: 6px;
+    border-bottom: 1px solid var(--term-border);
+  }
+  .term-dot {
+    width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+  }
+  .dot-red    { background: #f85149; }
+  .dot-yellow { background: #e3b341; }
+  .dot-green  { background: #56d364; }
+  .term-name {
+    font-family: var(--mono); font-size: 0.7rem;
+    color: var(--term-dim); margin-left: 0.3rem;
+  }
+  .term-output {
+    padding: 0.9rem 1.2rem 0.4rem;
+    min-height: 240px; max-height: 360px;
+    overflow-y: auto;
+    font-family: var(--mono);
+    font-size: 0.84rem; line-height: 1.75;
+    scrollbar-width: thin;
+    scrollbar-color: #30363d transparent;
+  }
+  .term-output::-webkit-scrollbar { width: 6px; }
+  .term-output::-webkit-scrollbar-track { background: transparent; }
+  .term-output::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+
+  .tl { display: block; }
+  .tl.blank-line { display: block; height: 0.5em; }
+  .c-dim   { color: var(--term-dim); }
+  .c-out   { color: #b0bac4; }
+  .c-ok    { color: var(--green); }
+  .c-err   { color: var(--red); }
+  .c-dir   { color: var(--blue); }
+  .c-file  { color: var(--term-text); }
+  .c-cmd   { color: var(--term-text); }
+  .c-user  { color: var(--green); }
+  .c-host  { color: var(--green); }
+  .c-path  { color: var(--blue); }
+  .c-sym   { color: var(--term-dim); }
+  .c-bash  { color: #e3b341; }
+
+  .term-input-row {
+    display: flex; align-items: center;
+    padding: 0.35rem 1.2rem 0.9rem; gap: 0;
+  }
+  .term-input-prompt {
+    font-family: var(--mono); font-size: 0.84rem;
+    white-space: nowrap; flex-shrink: 0;
+    user-select: none;
+  }
+  .term-input {
+    flex: 1; background: transparent; border: none; outline: none;
+    font-family: var(--mono); font-size: 0.84rem;
+    color: var(--term-text); caret-color: var(--green);
+    padding: 0; min-width: 0;
+  }
+
+  /* ── FEEDBACK FLASH ── */
+  .feedback-flash {
+    border-radius: 4px; padding: 0.65rem 1rem;
+    font-family: var(--mono); font-size: 0.82rem;
+    opacity: 0; transition: opacity 0.25s; pointer-events: none;
+  }
+  .feedback-flash.show { opacity: 1; pointer-events: auto; }
+  .feedback-flash.good {
+    background: var(--green-dim);
+    border: 1px solid rgba(86,211,100,0.25);
+    color: var(--green);
+  }
+  .feedback-flash.bad {
+    background: rgba(248,81,73,0.08);
+    border: 1px solid rgba(248,81,73,0.25);
+    color: var(--red);
+  }
+
+  /* ── COMPLETION PANEL ── */
+  .completion-panel {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--green);
+    border-radius: 4px;
+    padding: 2.25rem 2rem;
+    text-align: center;
+  }
+  .completion-panel.show { display: block; }
+  .completion-icon { font-size: 2.4rem; margin-bottom: 0.65rem; line-height: 1; }
+  .completion-title {
+    font-family: var(--serif);
+    font-size: 1.5rem; font-weight: 700;
+    color: var(--text-bright); margin-bottom: 0.5rem;
+  }
+  .completion-body {
+    font-size: 0.9rem; color: var(--text-dim);
+    max-width: 440px; margin: 0 auto 1.5rem; line-height: 1.7;
+  }
+  .completion-score {
+    font-family: var(--mono);
+    font-size: 2.2rem; font-weight: 700;
+    color: var(--green); margin-bottom: 0.2rem;
+  }
+  .completion-score-label {
+    font-family: var(--mono);
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-dim); margin-bottom: 1.75rem;
+  }
+  .completion-btn {
+    display: inline-block;
+    background: var(--accent); color: #fff;
+    padding: 0.65rem 1.6rem; border-radius: 4px;
+    text-decoration: none; font-size: 0.9rem; font-weight: 600;
+    transition: background 0.15s; border: none; cursor: pointer;
+    letter-spacing: 0.01em;
+  }
+  .completion-btn:hover { background: var(--accent-light); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #010409;
+    border-top: 1px solid var(--border);
+    padding: 1.4rem 1.5rem;
+    text-align: center;
+    font-size: 0.72rem; color: var(--text-dim); line-height: 1.8;
+    margin-top: 2rem;
+  }
+
+  /* ── LIGHT MODE: terminal stays dark always ── */
+  :root.theme-light { --bg: #f5f2ee; --surface: #fff; --surface2: #ede9e3; --border: #d4cfc9; --text: #1a1715; --text-dim: #5a5550; --text-bright: #0d0c0a; }
+  :root.theme-light #coursenav { background: #dcd7d0 !important; }
+  :root.theme-light #coursenav * { color: #3a3530 !important; }
+  :root.theme-light .sim-header { background: #dcd7d0; border-color: #c4bfb8; }
+  :root.theme-light .challenge-card { background: #fff; border-color: #d4cfc9; }
+  :root.theme-light .mode-btn { background: #ede9e3; color: #5a5550; }
+  :root.theme-light .mode-btn.active { background: var(--accent); color: #fff; }
+  :root.theme-light .mode-toggle { border-color: #c4bfb8; }
+  :root.theme-light .mode-btn:first-child { border-color: #c4bfb8; }
+  :root.theme-light footer { background: #dcd7d0 !important; }
+  /* Terminal window always stays dark regardless of theme */
+  .terminal-window,
+  .terminal-window * {
+    /* inherits from :root vars scoped inside .terminal-window */
+  }
+  .terminal-window { background: var(--term-bg) !important; }
+  .term-titlebar   { background: #21262d !important; color: var(--term-dim) !important; }
+  .term-output     { background: var(--term-bg) !important; color: var(--term-text) !important; }
+  .term-input-row  { background: var(--term-bg) !important; }
+  .term-input      { color: var(--term-text) !important; }
+</style>
+</head>
+<body>
+
+<!-- Course Nav -->
+<nav id="coursenav">
+  <a href="../../index.html">DTSC 520</a>
+  <span class="cn-sep">/</span>
+  <a href="../../modules/module6/index.html">Module 6: Git &amp; GitHub</a>
+  <span class="cn-sep">/</span>
+  <span class="cn-cur">Terminal Trainer</span>
+</nav>
+
+<!-- Header -->
+<header class="sim-header">
+  <div class="sim-header-left">
+    <div class="sim-eyebrow">Eastern University &middot; DTSC 520 &middot; Module 6</div>
+    <h1 class="sim-title">Terminal Trainer</h1>
+    <p class="sim-subtitle">Learn to navigate the file system before you tackle Git</p>
+  </div>
+  <div class="mode-toggle" role="group" aria-label="Terminal mode">
+    <button class="mode-btn active" id="btn-mac" onclick="setMode('mac')">Mac</button>
+    <button class="mode-btn" id="btn-pc" onclick="setMode('pc')">PC (Git Bash)</button>
+  </div>
+</header>
+
+<!-- Body -->
+<main class="sim-body">
+
+  <!-- Progress -->
+  <div class="progress-row" aria-label="Progress">
+    <span class="progress-label">CHALLENGE</span>
+    <div class="progress-dots" id="progressDots" aria-hidden="true"></div>
+    <span class="progress-label" id="progressText" aria-live="polite">1 / 8</span>
+  </div>
+
+  <!-- Challenge card -->
+  <div class="challenge-card" id="challengeCard">
+    <div class="challenge-num" id="challengeNum">Challenge 1 of 8</div>
+    <div class="challenge-title" id="challengeTitle"></div>
+    <div class="challenge-instruction" id="challengeInstruction"></div>
+    <div class="challenge-hint-box">
+      <span class="challenge-hint-label">Type:</span>
+      <span class="challenge-hint-cmd" id="challengeHintCmd"></span>
+    </div>
+  </div>
+
+  <!-- Terminal window -->
+  <div class="terminal-window" id="termWindow">
+    <div class="term-titlebar">
+      <div class="term-dot dot-red"></div>
+      <div class="term-dot dot-yellow"></div>
+      <div class="term-dot dot-green"></div>
+      <span class="term-name" id="termName">intern@statdeck-lab - bash</span>
+    </div>
+    <div class="term-output" id="termOutput"></div>
+    <div class="term-input-row">
+      <span class="term-input-prompt" id="termPrompt" aria-hidden="true"></span>
+      <input
+        class="term-input" id="termInput" type="text"
+        autocomplete="off" autocorrect="off" autocapitalize="none"
+        spellcheck="false" aria-label="Terminal input"
+      >
+    </div>
+  </div>
+
+  <!-- Feedback -->
+  <div class="feedback-flash" id="feedbackFlash" aria-live="polite" role="status"></div>
+
+  <!-- Completion -->
+  <div class="completion-panel" id="completionPanel" aria-live="polite">
+    <div class="completion-icon">&#10003;</div>
+    <div class="completion-title">Terminal Certified</div>
+    <p class="completion-body">
+      You can find your way around a file system. Every Git command you run starts exactly like this - at a prompt, in a directory. You're ready for the next step.
+    </p>
+    <div class="completion-score" id="completionScore">8/8</div>
+    <div class="completion-score-label">Challenges Completed</div>
+    <a href="../../modules/module6/index.html#three-states" class="completion-btn">Continue to The Three States &rarr;</a>
+  </div>
+
+</main>
+
+<footer>
+  This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by Eastern University faculty and staff.<br>
+  &copy; Eastern University. All rights reserved.
+</footer>
+
+<!-- Main simulation script -->
+<script>
+(function () {
+  'use strict';
+
+  /* ────────────────────────────────────────────
+     VIRTUAL FILE SYSTEM
+  ──────────────────────────────────────────── */
+  var HOME = '/home/intern';
+
+  /* Each node: { type: 'dir'|'file', children: [...names], content: '...' } */
+  var vfs = {
+    '/home/intern': { type: 'dir', children: ['projects', 'documents', 'welcome.txt'] },
+
+    '/home/intern/welcome.txt': {
+      type: 'file',
+      content: [
+        'Hi, intern! Welcome to StatDeck Analytics.',
+        'Your username is: intern',
+        "Today's task: learn to navigate the file system,",
+        '              then come back for Git training.',
+        '',
+        'You\'ve got this. - IT Team'
+      ].join('\n')
+    },
+
+    '/home/intern/documents': { type: 'dir', children: ['readme.txt'] },
+    '/home/intern/documents/readme.txt': {
+      type: 'file',
+      content: 'StatDeck Analytics - Project Documentation\nAsk your supervisor for access to the main data stores.'
+    },
+
+    '/home/intern/projects': { type: 'dir', children: ['statdeck', 'practice'] },
+    '/home/intern/projects/practice': { type: 'dir', children: [] },
+
+    '/home/intern/projects/statdeck': { type: 'dir', children: ['analysis.py', 'data.csv'] },
+    '/home/intern/projects/statdeck/analysis.py': {
+      type: 'file',
+      content: '# StatDeck data analysis\nimport pandas as pd\n\ndf = pd.read_csv("data.csv")\nprint(df.head())'
+    },
+    '/home/intern/projects/statdeck/data.csv': {
+      type: 'file',
+      content: 'player_id,name,avg,hr\n1,J. Rodriguez,.312,14\n2,S. Chen,.278,8\n3,N. Kim,.301,22'
+    }
+  };
+
+  /* ────────────────────────────────────────────
+     CHALLENGES
+  ──────────────────────────────────────────── */
+  var challenges = [
+    {
+      title: 'Find your footing',
+      instruction: "You've just opened your terminal on your first day at StatDeck. Before anything else, find out where you are. Print the current working directory.",
+      hint: 'pwd',
+      check: function (cmd) { return cmd === 'pwd'; }
+    },
+    {
+      title: "See what's here",
+      instruction: 'List the contents of your home directory so you know what you have to work with.',
+      hint: 'ls',
+      check: function (cmd) { return /^ls(\s|$)/.test(cmd); }
+    },
+    {
+      title: 'Read the welcome file',
+      instruction: "There's a file called welcome.txt in your current directory. Read its contents.",
+      hint: 'cat welcome.txt',
+      check: function (cmd) { return cmd === 'cat welcome.txt'; }
+    },
+    {
+      title: 'Navigate into projects',
+      instruction: 'Move into the projects directory.',
+      hint: 'cd projects',
+      check: function (cmd) { return /^cd\s+(\.\/)?projects\/?$/.test(cmd); }
+    },
+    {
+      title: 'Explore the projects folder',
+      instruction: "You're inside projects now. List what's here.",
+      hint: 'ls',
+      check: function (cmd) { return /^ls(\s|$)/.test(cmd); }
+    },
+    {
+      title: 'Go deeper',
+      instruction: 'Navigate into the statdeck directory.',
+      hint: 'cd statdeck',
+      check: function (cmd) { return /^cd\s+(\.\/)?statdeck\/?$/.test(cmd); }
+    },
+    {
+      title: 'Create your workspace',
+      instruction: "Make a new directory called my_work inside statdeck. This is where you'll save your own files.",
+      hint: 'mkdir my_work',
+      check: function (cmd) { return /^mkdir\s+my_work\/?$/.test(cmd); }
+    },
+    {
+      title: 'Step back',
+      instruction: 'Navigate back up one level to the projects directory.',
+      hint: 'cd ..',
+      check: function (cmd) { return /^cd\s+\.\.\/?$/.test(cmd); }
+    }
+  ];
+
+  /* ────────────────────────────────────────────
+     STATE
+  ──────────────────────────────────────────── */
+  var cwd        = HOME;
+  var mode       = 'mac';   /* 'mac' | 'pc' */
+  var challenge  = 0;
+  var completed  = 0;
+  var cmdHistory = [];
+  var histIdx    = -1;
+
+  /* ────────────────────────────────────────────
+     DOM REFS
+  ──────────────────────────────────────────── */
+  var termOutput  = document.getElementById('termOutput');
+  var termInput   = document.getElementById('termInput');
+  var termPromptEl = document.getElementById('termPrompt');
+  var feedbackEl  = document.getElementById('feedbackFlash');
+  var feedTimer;
+
+  /* ────────────────────────────────────────────
+     HELPERS
+  ──────────────────────────────────────────── */
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function resolvePath(target) {
+    if (!target || target === '~') return HOME;
+    if (target === '~/') return HOME;
+    if (target.startsWith('~/')) return HOME + target.slice(1);
+    if (target.startsWith('/')) return target;
+    var segs = cwd.split('/').filter(Boolean);
+    target.split('/').forEach(function (seg) {
+      if (seg === '..') { segs.pop(); }
+      else if (seg && seg !== '.') { segs.push(seg); }
+    });
+    return '/' + segs.join('/');
+  }
+
+  function cwdDisplay() {
+    if (cwd === HOME) return '~';
+    if (cwd.startsWith(HOME + '/')) return '~' + cwd.slice(HOME.length);
+    return cwd;
+  }
+
+  /* ────────────────────────────────────────────
+     TERMINAL RENDERING
+  ──────────────────────────────────────────── */
+  function promptHtml() {
+    var p = esc(cwdDisplay());
+    if (mode === 'mac') {
+      return '<span class="c-user">intern@statdeck</span><span class="c-sym">:</span><span class="c-path">' + p + '</span><span class="c-sym">$</span> ';
+    } else {
+      return '<span class="c-user">intern@STATDECK</span> <span class="c-bash">MINGW64</span> <span class="c-path">' + p + '</span><span class="c-sym">$</span> ';
+    }
+  }
+
+  function updatePromptEl() {
+    termPromptEl.innerHTML = promptHtml();
+  }
+
+  function appendLine(html) {
+    var s = document.createElement('span');
+    s.className = 'tl';
+    s.innerHTML = html;
+    termOutput.appendChild(s);
+    termOutput.appendChild(document.createTextNode('\n'));
+  }
+
+  function appendBlank() {
+    var s = document.createElement('span');
+    s.className = 'tl blank-line';
+    termOutput.appendChild(s);
+  }
+
+  function echoCmd(cmd) {
+    appendLine(promptHtml() + '<span class="c-cmd">' + esc(cmd) + '</span>');
+  }
+
+  function scrollTerm() {
+    termOutput.scrollTop = termOutput.scrollHeight;
+  }
+
+  /* ────────────────────────────────────────────
+     COMMAND EXECUTION
+  ──────────────────────────────────────────── */
+  function execute(raw) {
+    var cmd = raw.trim();
+    if (!cmd) return;
+
+    cmdHistory.unshift(cmd);
+    histIdx = -1;
+
+    echoCmd(cmd);
+
+    var parts = cmd.split(/\s+/);
+    var verb  = parts[0];
+    var arg   = parts.slice(1).join(' ');
+
+    switch (verb) {
+      case 'clear':
+        termOutput.innerHTML = '';
+        return;
+
+      case 'pwd':
+        appendLine('<span class="c-out">' + esc(cwd) + '</span>');
+        break;
+
+      case 'ls': {
+        var lsTarget = arg ? resolvePath(arg) : cwd;
+        var lsNode   = vfs[lsTarget];
+        if (!lsNode || lsNode.type !== 'dir') {
+          appendLine('<span class="c-err">ls: cannot access \'' + esc(arg || lsTarget) + '\': No such file or directory</span>');
+        } else if (lsNode.children.length === 0) {
+          /* empty dir - no output, just blank */
+        } else {
+          var items = lsNode.children.map(function (name) {
+            var childPath = lsTarget + '/' + name;
+            var child = vfs[childPath];
+            return (child && child.type === 'dir')
+              ? '<span class="c-dir">' + esc(name) + '</span>'
+              : '<span class="c-file">' + esc(name) + '</span>';
+          });
+          appendLine(items.join('&nbsp;&nbsp;&nbsp;'));
+        }
+        break;
+      }
+
+      case 'cd': {
+        var dest = arg ? resolvePath(arg) : HOME;
+        if (!vfs[dest]) {
+          appendLine('<span class="c-err">cd: ' + esc(arg) + ': No such file or directory</span>');
+        } else if (vfs[dest].type !== 'dir') {
+          appendLine('<span class="c-err">cd: ' + esc(arg) + ': Not a directory</span>');
+        } else {
+          cwd = dest;
+          updatePromptEl();
+        }
+        break;
+      }
+
+      case 'cat': {
+        if (!arg) {
+          appendLine('<span class="c-err">cat: missing file operand</span>');
+          break;
+        }
+        var catPath = resolvePath(arg);
+        var catNode = vfs[catPath];
+        if (!catNode) {
+          appendLine('<span class="c-err">cat: ' + esc(arg) + ': No such file or directory</span>');
+        } else if (catNode.type === 'dir') {
+          appendLine('<span class="c-err">cat: ' + esc(arg) + ': Is a directory</span>');
+        } else {
+          catNode.content.split('\n').forEach(function (line) {
+            appendLine('<span class="c-out">' + esc(line) + '</span>');
+          });
+        }
+        break;
+      }
+
+      case 'mkdir': {
+        if (!arg) {
+          appendLine('<span class="c-err">mkdir: missing operand</span>');
+          break;
+        }
+        var mkPath   = cwd + '/' + arg.replace(/\/$/, '');
+        var mkName   = arg.replace(/\/$/, '').split('/').pop();
+        if (vfs[mkPath]) {
+          appendLine('<span class="c-err">mkdir: cannot create directory \'' + esc(arg) + '\': File exists</span>');
+        } else {
+          vfs[mkPath] = { type: 'dir', children: [] };
+          var parentNode = vfs[cwd];
+          if (parentNode && !parentNode.children.includes(mkName)) {
+            parentNode.children.push(mkName);
+          }
+          /* silent success, like real mkdir */
+        }
+        break;
+      }
+
+      case 'touch': {
+        if (!arg) {
+          appendLine('<span class="c-err">touch: missing file operand</span>');
+          break;
+        }
+        var touchPath = cwd + '/' + arg;
+        var touchName = arg.split('/').pop();
+        if (!vfs[touchPath]) {
+          vfs[touchPath] = { type: 'file', content: '' };
+          var touchParent = vfs[cwd];
+          if (touchParent && !touchParent.children.includes(touchName)) {
+            touchParent.children.push(touchName);
+          }
+        }
+        break;
+      }
+
+      case 'help':
+        appendLine('<span class="c-dim">Available commands:</span>');
+        appendLine('<span class="c-out">&nbsp;&nbsp;pwd &nbsp;&nbsp; print working directory</span>');
+        appendLine('<span class="c-out">&nbsp;&nbsp;ls &nbsp;&nbsp;&nbsp; list directory contents</span>');
+        appendLine('<span class="c-out">&nbsp;&nbsp;cd &nbsp;&nbsp;&nbsp; change directory</span>');
+        appendLine('<span class="c-out">&nbsp;&nbsp;cat &nbsp;&nbsp; display file contents</span>');
+        appendLine('<span class="c-out">&nbsp;&nbsp;mkdir &nbsp;create a directory</span>');
+        appendLine('<span class="c-out">&nbsp;&nbsp;touch &nbsp;create an empty file</span>');
+        appendLine('<span class="c-out">&nbsp;&nbsp;clear &nbsp;clear the terminal</span>');
+        break;
+
+      default:
+        appendLine('<span class="c-err">' + esc(verb) + ': command not found</span>');
+        appendLine('<span class="c-dim">(Try <span style="color:var(--term-text)">help</span> for a list of commands)</span>');
+    }
+
+    appendBlank();
+    scrollTerm();
+    checkChallenge(cmd);
+  }
+
+  /* ────────────────────────────────────────────
+     CHALLENGE LOGIC
+  ──────────────────────────────────────────── */
+  function checkChallenge(cmd) {
+    if (challenge >= challenges.length) return;
+    var ch = challenges[challenge];
+    if (!ch.check(cmd)) return;
+
+    /* Mark current dot done */
+    var dots = document.querySelectorAll('.progress-dot');
+    if (dots[challenge]) {
+      dots[challenge].classList.remove('current');
+      dots[challenge].classList.add('done');
+    }
+
+    challenge++;
+    completed++;
+
+    flash(ch.hint ? '+ ' + ch.hint + ' - ' + successMsg(challenge - 1) : successMsg(challenge - 1), 'good');
+
+    if (challenge < challenges.length) {
+      setTimeout(function () { loadChallenge(challenge); }, 1100);
+    } else {
+      setTimeout(showCompletion, 1300);
+    }
+  }
+
+  function successMsg(idx) {
+    var msgs = [
+      "You're in /home/intern - your home directory.",
+      'Two directories and a file. Now you know what you have.',
+      'The IT team left you a note.',
+      "You're now in ~/projects.",
+      'Two project folders. You can see the statdeck directory.',
+      "You're in ~/projects/statdeck - the main project folder.",
+      'Directory created. Your workspace is ready.',
+      "Back in ~/projects. That's all you need to start using Git."
+    ];
+    return msgs[idx] || 'Correct.';
+  }
+
+  function flash(msg, type) {
+    clearTimeout(feedTimer);
+    feedbackEl.textContent = msg;
+    feedbackEl.className = 'feedback-flash ' + type + ' show';
+    feedTimer = setTimeout(function () {
+      feedbackEl.classList.remove('show');
+    }, 3800);
+  }
+
+  /* ────────────────────────────────────────────
+     CHALLENGE DISPLAY
+  ──────────────────────────────────────────── */
+  function loadChallenge(idx) {
+    var ch = challenges[idx];
+    document.getElementById('challengeNum').textContent = 'Challenge ' + (idx + 1) + ' of ' + challenges.length;
+    document.getElementById('challengeTitle').textContent = ch.title;
+    document.getElementById('challengeInstruction').textContent = ch.instruction;
+    document.getElementById('challengeHintCmd').textContent = ch.hint;
+    document.getElementById('progressText').textContent = (idx + 1) + ' / ' + challenges.length;
+
+    var dots = document.querySelectorAll('.progress-dot');
+    dots.forEach(function (d, i) {
+      d.classList.remove('current', 'done');
+      if (i < idx) d.classList.add('done');
+      else if (i === idx) d.classList.add('current');
+    });
+
+    termInput.focus();
+  }
+
+  function showCompletion() {
+    document.getElementById('challengeCard').style.display = 'none';
+    document.getElementById('completionScore').textContent = completed + '/' + challenges.length;
+    document.getElementById('completionPanel').classList.add('show');
+    document.getElementById('progressText').textContent = challenges.length + ' / ' + challenges.length;
+    document.querySelectorAll('.progress-dot').forEach(function (d) {
+      d.classList.remove('current');
+      d.classList.add('done');
+    });
+    feedbackEl.classList.remove('show');
+  }
+
+  /* ────────────────────────────────────────────
+     MODE SWITCH
+  ──────────────────────────────────────────── */
+  window.setMode = function (m) {
+    mode = m;
+    document.getElementById('btn-mac').classList.toggle('active', m === 'mac');
+    document.getElementById('btn-pc').classList.toggle('active', m === 'pc');
+    document.getElementById('termName').textContent =
+      m === 'mac' ? 'intern@statdeck-lab - bash'
+                  : 'MINGW64:/home/intern - Git Bash';
+    updatePromptEl();
+    termInput.focus();
+  };
+
+  /* ────────────────────────────────────────────
+     INPUT HANDLING
+  ──────────────────────────────────────────── */
+  termInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      var cmd = termInput.value;
+      termInput.value = '';
+      execute(cmd);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (histIdx < cmdHistory.length - 1) {
+        histIdx++;
+        termInput.value = cmdHistory[histIdx];
+        /* move cursor to end */
+        var v = termInput.value;
+        termInput.value = '';
+        termInput.value = v;
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (histIdx > 0) {
+        histIdx--;
+        termInput.value = cmdHistory[histIdx];
+      } else {
+        histIdx = -1;
+        termInput.value = '';
+      }
+    }
+  });
+
+  /* Click anywhere on terminal window = focus input */
+  document.getElementById('termWindow').addEventListener('click', function () {
+    termInput.focus();
+  });
+
+  /* ────────────────────────────────────────────
+     INIT
+  ──────────────────────────────────────────── */
+  function init() {
+    /* Build progress dots */
+    var dotsEl = document.getElementById('progressDots');
+    challenges.forEach(function (_, i) {
+      var d = document.createElement('div');
+      d.className = 'progress-dot' + (i === 0 ? ' current' : '');
+      dotsEl.appendChild(d);
+    });
+
+    /* Opening message */
+    appendLine('<span class="c-dim">StatDeck Analytics - Intern Onboarding Terminal</span>');
+    appendLine('<span class="c-dim">Complete the challenges to earn terminal access. Type <span style="color:var(--term-text)">help</span> for commands.</span>');
+    appendBlank();
+
+    updatePromptEl();
+    loadChallenge(0);
+    termInput.focus();
+  }
+
+  init();
+
+}());
+</script>
+
+<!-- ═══════════════ SETTINGS WIDGET ═══════════════ -->
+<style>
+  :root { --font-scale: 1; font-size: calc(16px * var(--font-scale)); }
+
+  #settings-toggle {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9000;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    border: none; cursor: pointer; font-size: 1.2rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s, background 0.2s;
+  }
+  #settings-toggle:hover { transform: scale(1.1); background: var(--accent-light); }
+
+  #settings-panel {
+    position: fixed; bottom: 78px; right: 24px; z-index: 9000;
+    width: 260px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    padding: 18px 20px 16px;
+    display: none; flex-direction: column; gap: 18px;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  #settings-panel.open { display: flex; }
+  .sp-header { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .sp-row { display: flex; flex-direction: column; gap: 8px; }
+  .sp-label { font-size: 0.78rem; color: var(--text-dim); font-weight: 600; }
+  .theme-switch { display: flex; background: var(--surface2); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .theme-opt { flex: 1; padding: 7px 0; text-align: center; cursor: pointer; font-size: 0.78rem; color: var(--text-dim); transition: background 0.15s, color 0.15s; border: none; background: transparent; }
+  .theme-opt.active { background: var(--accent); color: #fff; font-weight: 600; }
+  .font-switch { display: flex; gap: 6px; }
+  .font-opt { flex: 1; padding: 7px 0; text-align: center; cursor: pointer; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); color: var(--text-dim); transition: background 0.15s, color 0.15s, border-color 0.15s; }
+  .font-opt.active { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+  .font-opt:nth-child(1) { font-size: 0.75rem; }
+  .font-opt:nth-child(2) { font-size: 0.9rem; }
+  .font-opt:nth-child(3) { font-size: 1.05rem; }
+  .sp-reset { font-size: 0.72rem; color: var(--text-dim); background: none; border: none; cursor: pointer; text-align: left; padding: 0; text-decoration: underline; opacity: 0.7; }
+  .sp-reset:hover { opacity: 1; }
+</style>
+
+<button id="settings-toggle" aria-label="Display settings" title="Display settings">&#9881;</button>
+<div id="settings-panel" role="dialog" aria-label="Display settings">
+  <div class="sp-header">Display Settings</div>
+  <div class="sp-row">
+    <span class="sp-label">Theme</span>
+    <div class="theme-switch">
+      <button class="theme-opt" id="theme-dark"  onclick="setTheme('dark')">&#127769; Dark</button>
+      <button class="theme-opt" id="theme-light" onclick="setTheme('light')">&#9728;&#65039; Light</button>
+    </div>
+  </div>
+  <div class="sp-row">
+    <span class="sp-label">Text Size</span>
+    <div class="font-switch">
+      <button class="font-opt" id="font-normal" onclick="setFont('normal')">A</button>
+      <button class="font-opt" id="font-large"  onclick="setFont('large')">A</button>
+      <button class="font-opt" id="font-xl"     onclick="setFont('xl')">A</button>
+    </div>
+  </div>
+  <button class="sp-reset" onclick="resetSettings()">Reset to defaults</button>
+</div>
+<script>
+(function () {
+  var THEME_KEY = 'dtsc520_theme';
+  var FONT_KEY  = 'dtsc520_font';
+  var FONT_SCALES = { normal: 1, large: 1.12, xl: 1.25 };
+
+  function setTheme(t) {
+    document.documentElement.classList.toggle('theme-light', t === 'light');
+    localStorage.setItem(THEME_KEY, t);
+    document.querySelectorAll('.theme-opt').forEach(function (b) { b.classList.remove('active'); });
+    var el = document.getElementById('theme-' + t);
+    if (el) el.classList.add('active');
+  }
+  function setFont(size) {
+    var scale = FONT_SCALES[size] || 1;
+    document.documentElement.style.setProperty('--font-scale', scale);
+    document.documentElement.style.fontSize = 'calc(16px * ' + scale + ')';
+    localStorage.setItem(FONT_KEY, size);
+    document.querySelectorAll('.font-opt').forEach(function (b) { b.classList.remove('active'); });
+    var el = document.getElementById('font-' + size);
+    if (el) el.classList.add('active');
+  }
+  function resetSettings() { setTheme('dark'); setFont('normal'); }
+
+  window.setTheme = setTheme;
+  window.setFont  = setFont;
+  window.resetSettings = resetSettings;
+
+  var savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+  var savedFont  = localStorage.getItem(FONT_KEY)  || 'normal';
+  setTheme(savedTheme);
+  setFont(savedFont);
+
+  document.getElementById('settings-toggle').addEventListener('click', function (e) {
+    e.stopPropagation();
+    document.getElementById('settings-panel').classList.toggle('open');
+  });
+  document.addEventListener('click', function (e) {
+    var panel = document.getElementById('settings-panel');
+    if (panel.classList.contains('open') && !panel.contains(e.target)) {
+      panel.classList.remove('open');
+    }
+  });
+}());
+</script>
+<!-- ═══════════════ END SETTINGS WIDGET ═══════════════ -->
+
+</body>
+</html>

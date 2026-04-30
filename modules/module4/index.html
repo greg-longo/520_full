@@ -1604,30 +1604,7 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
 })();
 </script>
 
-<script>
-/* Synchronized sidebar scroll: independent until 80% page depth, then catches up */
-(function() {
-  var sidebar = document.querySelector('.sidebar');
-  if (!sidebar) return;
 
-  function onScroll() {
-    var scrollTop    = window.scrollY;
-    var scrollMax    = document.documentElement.scrollHeight - window.innerHeight;
-    var sidebarMax   = sidebar.scrollHeight - sidebar.clientHeight;
-    if (scrollMax <= 0 || sidebarMax <= 0) return;
-
-    var THRESHOLD = 0.80;
-    var progress  = (scrollTop / scrollMax - THRESHOLD) / (1 - THRESHOLD);
-    if (progress <= 0) {
-      sidebar.scrollTop = 0;
-    } else {
-      sidebar.scrollTop = Math.min(progress, 1) * sidebarMax;
-    }
-  }
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-})();
-</script>
 <!-- ═══════════════ SETTINGS WIDGET ═══════════════ -->
 <style>
   /* Light theme overrides */
