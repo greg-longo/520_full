@@ -330,10 +330,12 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
   display: flex; align-items: center; gap: 0.5rem;
   padding: 0.28rem 0.9rem;
   font-size: 0.77rem; color: var(--text-dim);
-  line-height: 1.35; user-select: none;
-  transition: background 0.12s;
+  line-height: 1.35; user-select: none; cursor: pointer;
+  transition: background 0.12s, color 0.12s;
 }
-.toc-item.locked { opacity: 0.35; }
+.toc-item:hover { background: var(--surface2); color: var(--text); }
+.toc-item.locked { opacity: 0.45; }
+.toc-item.locked:hover { opacity: 0.65; }
 .toc-item.current { color: var(--text-bright); background: var(--surface2); }
 .toc-item.done { color: var(--green); }
 
@@ -352,15 +354,16 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
 .toc-divider { height: 1px; background: var(--border); margin: 0.5rem 0.9rem; }
 
 .toc-ref-btn {
-  margin: 0 0.75rem 1.1rem;
-  padding: 0.45rem 0.8rem;
-  border: 1px solid var(--border); border-radius: 4px;
-  background: transparent; color: var(--text-dim);
-  font-family: var(--mono); font-size: 0.67rem; letter-spacing: 0.04em;
-  cursor: pointer; text-align: left;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  margin: 0.6rem 0.75rem 1rem;
+  padding: 0.55rem 0.9rem;
+  border: none; border-radius: 4px;
+  background: var(--accent); color: #fff;
+  font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.04em;
+  cursor: pointer; text-align: center; font-weight: 600;
+  transition: background 0.15s, transform 0.15s;
+  width: calc(100% - 1.5rem);
 }
-.toc-ref-btn:hover { border-color: var(--accent-light); color: var(--text-bright); background: var(--surface2); }
+.toc-ref-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
 
 /* ── LIGHT MODE: SIDEBAR ── */
 :root.theme-light .toc-sidebar       { background: #fff; border-color: #d4cfc9; }
@@ -369,8 +372,8 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
 :root.theme-light .toc-item.done .toc-check   { border-color: #2a7040; background: #2a7040; color: #fff; }
 :root.theme-light .toc-item.current .toc-check { border-color: var(--accent); background: var(--accent); }
 :root.theme-light .toc-divider       { background: #d4cfc9; }
-:root.theme-light .toc-ref-btn       { border-color: #d4cfc9; color: #5a5550; }
-:root.theme-light .toc-ref-btn:hover { border-color: var(--accent-light); color: #1a1715; background: #ede9e3; }
+:root.theme-light .toc-ref-btn       { background: #8B1C40; color: #fff; }
+:root.theme-light .toc-ref-btn:hover { background: #a82050; }
 
 /* ══════════════════════════════════════════
    FLASHCARD DRAWER
@@ -467,7 +470,7 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
       </button>
       <button class="platform-card" onclick="startSim('pc')">
         <div class="platform-card-preview">
-          <span style="color:var(--green)">intern@STATDECK</span> <span style="color:var(--yellow)">MINGW64</span> <span style="color:var(--blue)">~</span><br>
+          <span style="color:var(--green)">intern@statdeck</span> <span style="color:var(--yellow)">MINGW64</span> <span style="color:var(--blue)">~</span><br>
           <span style="color:var(--term-dim)">$</span> <span>pwd</span><br>
           <span style="color:#b0bac4">/home/intern</span>
         </div>
@@ -548,9 +551,7 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
       <div id="tocPart1"></div>
       <div class="toc-part-head">Part 2 &middot; Going Deeper</div>
       <div id="tocPart2"></div>
-      <div class="toc-spacer"></div>
-      <div class="toc-divider"></div>
-      <button class="toc-ref-btn" onclick="openFlashcards()">&#9632; Command Reference</button>
+      <button class="toc-ref-btn" onclick="openFlashcards()">Command Reference</button>
     </nav>
 
   <main class="sim-main">
@@ -850,7 +851,7 @@ function promptHtml() {
   if (mode === 'mac') {
     return '<span class="c-user">intern@statdeck</span><span class="c-sym">:</span><span class="c-path">' + p + '</span><span class="c-sym">$</span> ';
   }
-  return '<span class="c-user">intern@STATDECK</span> <span class="c-bash">MINGW64</span> <span class="c-path">' + p + '</span><span class="c-sym">$</span> ';
+  return '<span class="c-user">intern@statdeck</span> <span class="c-bash">MINGW64</span> <span class="c-path">' + p + '</span><span class="c-sym">$</span> ';
 }
 
 /* ────────────────────────────────────────────
@@ -1371,22 +1372,52 @@ document.addEventListener('keydown', function (e) {
    TOC SIDEBAR
 ──────────────────────────────────────────── */
 function buildToc() {
-  function renderList(containerId, challenges, partNum) {
+  function renderList(containerId, challengeArr, partNum) {
     var container = document.getElementById(containerId);
     if (!container) return;
     container.innerHTML = '';
-    challenges.forEach(function (ch, i) {
+    challengeArr.forEach(function (ch, i) {
       var item = document.createElement('div');
       item.className = 'toc-item locked';
       item.id = 'toc-p' + partNum + '-' + i;
+      item.setAttribute('title', 'Jump to: ' + ch.title);
       item.innerHTML =
         '<div class="toc-check"></div>' +
         '<div class="toc-item-label">' + esc(ch.title) + '</div>';
+      /* click: jump to this challenge */
+      (function (pn, ci) {
+        item.addEventListener('click', function () { jumpToChallenge(pn, ci); });
+      }(partNum, i));
       container.appendChild(item);
     });
   }
   renderList('tocPart1', part1, 1);
   renderList('tocPart2', part2, 2);
+}
+
+/* Jump to any challenge by clicking its TOC item */
+function jumpToChallenge(partNum, ci) {
+  /* switch parts if needed */
+  if (partNum === 1 && part !== 1) {
+    part       = 1;
+    challenges = part1;
+    document.getElementById('partBadge').textContent     = 'Part 1: Navigation';
+    document.getElementById('progressPartLabel').textContent = 'PART 1';
+    buildDots(part1.length);
+  } else if (partNum === 2 && part !== 2) {
+    part       = 2;
+    challenges = part2;
+    document.getElementById('partBadge').textContent     = 'Part 2: Going Deeper';
+    document.getElementById('progressPartLabel').textContent = 'PART 2';
+    buildDots(part2.length);
+  }
+  idx = ci;
+  /* show challenge card, hide transition panels */
+  document.getElementById('challengeCard').style.display = '';
+  document.getElementById('betweenPanel').classList.remove('show');
+  document.getElementById('completionPanel').classList.remove('show');
+  document.getElementById('feedbackFlash').classList.remove('show');
+  loadChallenge(ci);
 }
 
 function updateToc() {

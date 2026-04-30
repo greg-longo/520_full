@@ -1129,28 +1129,66 @@
   :root.theme-light .output-block .out-hdr { color: var(--accent) !important; }
   :root.theme-light .df-table th { color: #2a7a3a !important; border-bottom-color: #c8c3bc !important; }
   :root.theme-light .df-table th.idx-col { color: #8a8078 !important; }
-  /* Content headings (hardcoded #fff in base styles) */
+  /* ── Module header: keep dark intentionally (hero area) ──
+     Restore white text so it reads on the dark gradient. */
+  :root.theme-light .mod-header          { background: linear-gradient(160deg, #1e1210 0%, #0f0e0d 100%) !important; border-color: #2e2b28 !important; }
+  :root.theme-light .mod-header h1       { color: #fff !important; }
+  :root.theme-light .mod-header p        { color: rgba(255,255,255,0.65) !important; }
+  :root.theme-light .mod-num             { color: #a82050 !important; }
+  :root.theme-light .meta-pill           { background: rgba(255,255,255,0.08) !important; color: rgba(255,255,255,0.5) !important; }
+  :root.theme-light .mod-progress-box    { background: rgba(255,255,255,0.05) !important; border-color: rgba(255,255,255,0.1) !important; }
+
+  /* ── Content headings (hardcoded #fff in base styles) ── */
   :root.theme-light .content h2           { color: #0d0c0a !important; border-top-color: #d4cfc9 !important; }
   :root.theme-light .content h3           { color: #1a1715 !important; }
   :root.theme-light .quiz-header h2       { color: #0d0c0a !important; }
+  :root.theme-light .quiz-link-body h2   { color: #0d0c0a !important; }
   :root.theme-light .q-text              { color: #1a1715 !important; }
   :root.theme-light .result-label        { color: #0d0c0a !important; }
-  :root.theme-light .objectives h3       { color: var(--maroon-light) !important; }
-  :root.theme-light .mod-header h1       { color: #0d0c0a !important; }
-  :root.theme-light .quiz-link-body h2   { color: #0d0c0a !important; }
-  :root.theme-light pre                  { background: #ede9e3 !important; color: #2a2420 !important; border-color: #c8c3bc !important; }
-  :root.theme-light code                 { background: rgba(0,0,0,0.06) !important; color: #3a3028 !important; }
+  :root.theme-light .result-sub          { color: #5a5550 !important; }
+
+  /* ── Code ── */
+  :root.theme-light pre                  { background: #ede9e3 !important; color: #2a2420 !important; border-color: #c8c3bc !important; border-left-color: #8B1C40 !important; }
+  :root.theme-light code                 { background: rgba(0,0,0,0.07) !important; color: #3a3028 !important; }
+  :root.theme-light pre code             { background: none !important; color: inherit !important; }
+  :root.theme-light .cmd                 { color: #2A7195 !important; }
+  :root.theme-light .cmt                 { color: #8a8078 !important; }
+  :root.theme-light .str                 { color: #4a7a30 !important; }
+
+  /* ── Cards / surfaces ── */
   :root.theme-light .callout             { background: #fff !important; border-color: #d4cfc9 !important; }
-  :root.theme-light .concept-box        { background: #fff !important; border-color: #d4cfc9 !important; }
-  :root.theme-light .concept-box p      { color: #5a5550 !important; }
-  :root.theme-light .objectives         { background: #fff !important; border-color: #d4cfc9 !important; }
-  :root.theme-light .objectives ol li   { color: #5a5550 !important; }
-  :root.theme-light .toc-list a         { color: #5a5550 !important; }
-  :root.theme-light .toc-list a:hover   { background: rgba(0,0,0,0.04) !important; color: #1a1715 !important; }
-  :root.theme-light .toc-list a.active  { color: var(--accent) !important; background: rgba(139,28,64,0.08) !important; border-left-color: var(--accent) !important; }
-  :root.theme-light .sidebar-card       { background: #fff !important; border-color: #d4cfc9 !important; }
-  :root.theme-light .sidebar-card h4    { color: #8a8078 !important; }
-  :root.theme-light .quiz-question      { background: #fff !important; border-color: #d4cfc9 !important; }
+  :root.theme-light .callout-title       { color: #2A7195 !important; }
+  :root.theme-light .callout.warn .callout-title { color: #8a5020 !important; }
+  :root.theme-light .callout p           { color: #5a5550 !important; }
+  :root.theme-light .concept-box         { background: #fff !important; border-color: #d4cfc9 !important; }
+  :root.theme-light .concept-box h4      { color: #8B1C40 !important; }
+  :root.theme-light .concept-box p       { color: #5a5550 !important; }
+  :root.theme-light .objectives          { background: #fff !important; border-color: #d4cfc9 !important; border-top-color: #8B1C40 !important; }
+  :root.theme-light .objectives h3       { color: #8B1C40 !important; }
+  :root.theme-light .objectives ol li    { color: #5a5550 !important; }
+  :root.theme-light .quiz-question       { background: #fff !important; border-color: #d4cfc9 !important; }
+  :root.theme-light .quiz-result         { background: #fff !important; border-color: #d4cfc9 !important; }
+  :root.theme-light .result-score        { color: #8B1C40 !important; }
+  :root.theme-light .quiz-link-card      { background: #fff !important; border-color: #d4cfc9 !important; }
+
+  /* ── Sidebar ── */
+  :root.theme-light .sidebar-card        { background: #fff !important; border-color: #d4cfc9 !important; }
+  :root.theme-light .sidebar-card h4     { color: #8a8078 !important; }
+  :root.theme-light .toc-list a          { color: #5a5550 !important; }
+  :root.theme-light .toc-list a:hover    { background: rgba(0,0,0,0.04) !important; color: #1a1715 !important; }
+  :root.theme-light .toc-list a.active   { color: #8B1C40 !important; background: rgba(139,28,64,0.08) !important; border-left-color: #8B1C40 !important; }
+  :root.theme-light .sim-cta             { background: #8B1C40 !important; }
+  :root.theme-light .sim-cta:hover       { background: #a82050 !important; }
+
+  /* ── Quiz options ── */
+  :root.theme-light .q-option            { color: #5a5550 !important; border-color: transparent !important; }
+  :root.theme-light .q-option:hover:not(:disabled) { background: rgba(0,0,0,0.04) !important; border-color: #d4cfc9 !important; color: #1a1715 !important; }
+  :root.theme-light .q-option.selected   { border-color: #2A7195 !important; color: #1a1715 !important; background: rgba(42,113,149,0.08) !important; }
+  :root.theme-light .q-radio             { border-color: #c4bfb8 !important; }
+
+  /* ── Page background / body text ── */
+  :root.theme-light .content p           { color: #5a5550 !important; }
+  :root.theme-light .content p strong    { color: #1a1715 !important; }
 
   /* Gear button visible on light bg */
   :root.theme-light #settings-toggle {
