@@ -709,7 +709,48 @@
       <h2 id="terminal-intro">Using the Terminal</h2>
 
       <p>
-        Git is a command-line tool. Before you can use it, you need to be comfortable navigating your computer through a terminal window. If you've never opened a terminal before, or are new to it, start with our Terminal Trainer simulation below - or one of the two guides that follow it.
+        Git is a command-line tool - you interact with it by typing commands into a text window called a <strong>terminal</strong>, not by clicking through a graphical interface. Most developers prefer this because it's faster, scriptable, and it's exactly how Git is used in professional environments.
+      </p>
+
+      <p>
+        The terminal runs a program called a <strong>shell</strong> that interprets your commands. The shell you'll use depends on your operating system:
+      </p>
+
+      <div class="concept-grid" style="grid-template-columns: 1fr 1fr 1fr; margin: 0.75rem 0 1.25rem;">
+        <div class="concept-box">
+          <h4>Mac - Terminal (zsh)</h4>
+          <p>macOS ships with the Terminal app running zsh. You can also use iTerm2 as a more feature-rich alternative. All commands in this course work on Mac Terminal.</p>
+        </div>
+        <div class="concept-box">
+          <h4>Windows - Git Bash</h4>
+          <p>Windows uses PowerShell or CMD by default, but <strong>Git Bash</strong> (installed with Git for Windows) gives you a Bash shell that uses the same commands as Mac and Linux.</p>
+        </div>
+        <div class="concept-box">
+          <h4>VS Code - Integrated Terminal</h4>
+          <p>VS Code has a built-in terminal (View > Terminal or <code>Ctrl+`</code>) that opens in your project folder. This is the most convenient option when you're already working in VS Code.</p>
+        </div>
+      </div>
+
+      <h3>Opening Your Terminal</h3>
+
+      <div class="concept-grid" style="grid-template-columns: 1fr 1fr; margin: 0.5rem 0 1.25rem;">
+        <div class="concept-box">
+          <h4>On a Mac</h4>
+          <p>Press <code>Cmd + Space</code> to open Spotlight, type <strong>Terminal</strong>, and press Enter. Or find it in Applications > Utilities > Terminal. Your prompt will look like: <code>intern@macbook ~ %</code></p>
+        </div>
+        <div class="concept-box">
+          <h4>On Windows</h4>
+          <p>Download and install <strong>Git for Windows</strong> from git-scm.com. Once installed, right-click any folder and choose "Open Git Bash here", or search for Git Bash in the Start menu.</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-title">Using GitHub Codespaces</div>
+        <p>If you're working in GitHub Codespaces (a cloud-based VS Code environment), your terminal is already set up. Open the integrated terminal with <code>Ctrl+`</code> and you're ready to run Git commands - no local installation needed.</p>
+      </div>
+
+      <p>
+        New to the command line? Work through the Terminal Trainer simulation below before moving on. It covers the navigation commands you'll use constantly when working with Git.
       </p>
 
       <a class="sim-cta" href="../../sims/terminal-trainer/index.html" style="display:block; margin:1.25rem 0;">
@@ -783,17 +824,61 @@
       <!-- SECTION 4 -->
       <h2 id="repos">Setting Up a Repository</h2>
 
-      <p>There are two ways to start a Git project. You can initialize a new one locally, or you can clone an existing one from GitHub.</p>
+      <p>There are three common ways to start a Git project depending on your situation: initialize a brand new one locally, clone an existing one from GitHub, or fork someone else's repo and clone your copy.</p>
 
-<pre><code><span class="cmt"># Option A: Start fresh locally</span>
+      <h3>Option A: Start locally (local-first)</h3>
+
+      <p>Use this when you're starting a brand new project from scratch on your own machine. You create the folder, initialize Git, make your first commit, then connect it to GitHub.</p>
+
+<pre><code><span class="cmt"># 1. Create a folder and navigate into it</span>
+<span class="cmd">mkdir my-project</span>
+<span class="cmd">cd my-project</span>
+
+<span class="cmt"># 2. Initialize Git</span>
 <span class="cmd">git init</span>
+
+<span class="cmt"># 3. Add files and make your first commit</span>
+<span class="cmd">git add .</span>
+<span class="cmd">git commit -m <span class="str">"Initial commit"</span></span>
+
+<span class="cmt"># 4. Connect to a GitHub repo you already created on github.com</span>
 <span class="cmd">git remote add origin https://github.com/your-username/your-repo.git</span>
+<span class="cmd">git push -u origin main</span></code></pre>
 
-<span class="cmt"># Option B: Clone from GitHub (more common)</span>
+      <h3>Option B: Start from GitHub (remote-first)</h3>
+
+      <p>Use this when the repo already exists on GitHub - either one you created there, or one your instructor set up. <code>git clone</code> downloads the entire repo, history and all, and wires up the remote automatically.</p>
+
+<pre><code><span class="cmt"># Clone creates the folder for you</span>
 <span class="cmd">git clone https://github.com/your-username/your-repo.git</span>
-<span class="cmd">cd your-repo</span></code></pre>
+<span class="cmd">cd your-repo</span>
 
-      <p>For this course, you'll fork a starter repo on GitHub and clone it to your machine or open it in a Codespace. Forking gives you your own copy of the repository under your GitHub account - any changes you push go to your fork, not the original.</p>
+<span class="cmt"># You're ready to work - remote is already configured</span>
+<span class="cmd">git remote -v</span>   <span class="cmt"># verify the remote is set</span></code></pre>
+
+      <h3>Option C: Fork then clone (course workflow)</h3>
+
+      <p>
+        <strong>Forking</strong> creates your own independent copy of someone else's repository under your GitHub account. You can push changes to your fork freely without affecting the original. This is the standard workflow for course assignments and open-source contributions.
+      </p>
+
+      <p>The steps are always the same:</p>
+
+      <div class="callout">
+        <div class="callout-title">Fork + Clone Workflow</div>
+        <p><strong>1.</strong> On GitHub, open the repo you want to work with and click the <strong>Fork</strong> button (top right). GitHub creates a copy at <code>github.com/your-username/repo-name</code>.</p>
+        <p style="margin-top:0.5rem;"><strong>2.</strong> Clone <em>your fork</em> (not the original) to your machine:</p>
+      </div>
+
+<pre><code><span class="cmd">git clone https://github.com/your-username/repo-name.git</span>
+<span class="cmd">cd repo-name</span></code></pre>
+
+      <p>Any commits you push go to your fork. If you want to propose changes back to the original, you open a pull request from your fork - the same PR workflow covered in the Pull Requests section below.</p>
+
+      <div class="callout warn">
+        <div class="callout-title">Clone your fork, not the original</div>
+        <p>A common mistake: cloning the original repo instead of your fork. If you do that, you won't have push access. Always copy the URL from <em>your</em> forked version of the repo on GitHub.</p>
+      </div>
 
       <!-- SECTION 5 -->
       <h2 id="branching">Branching</h2>
