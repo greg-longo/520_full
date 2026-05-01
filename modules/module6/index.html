@@ -634,9 +634,100 @@
       transition: background 0.15s;
     }
     .quiz-link-btn:hover { background: var(--accent-light); color: #fff; }
+
+    /* ---- QUIZ CTA BUTTON (TASK 1) ---- */
+    .quiz-cta-btn {
+      display: block;
+      text-align: center;
+      background: var(--maroon);
+      color: #fff;
+      text-decoration: none;
+      padding: 0.55rem 1rem;
+      border-radius: 4px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    .quiz-cta-btn:hover { background: var(--maroon-light); color: #fff; }
+
+    /* ---- SECTION TABS (TASK 2) ---- */
+    .section-tabs {
+      background: #0d0c0b;
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+      position: sticky;
+      top: 56px;
+      z-index: 90;
+    }
+    .section-tabs::-webkit-scrollbar { display: none; }
+    .section-tabs .tab-link {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      padding: 0.7rem 1rem;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      display: block;
+    }
+    .section-tabs .tab-link:hover { color: rgba(255,255,255,0.8); }
+    .section-tabs .tab-link.active { color: #fff; border-bottom-color: var(--maroon); }
+
+    /* ---- CONTENT SECTIONS (PAGINATED) ---- */
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+
+    /* ---- SUBPAGE NAV ---- */
+    .subpage-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .subpage-nav-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .subpage-nav-btn:hover { color: var(--maroon-light); border-color: var(--maroon); }
+    .subpage-nav-btn.invisible { visibility: hidden; }
+    .subpage-nav-center {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
     @media (max-width: 600px) {
       .quiz-link-card { flex-direction: column; align-items: flex-start; }
     }
+
+    /* ---- LIGHT MODE OVERRIDES (TASK 1 & 2) ---- */
+    :root.theme-light .quiz-cta-btn { background: var(--maroon); color: #fff; }
+    :root.theme-light .section-tabs { background: #f5f1eb; border-bottom-color: #d4cfc9; }
+    :root.theme-light .section-tabs .tab-link { color: rgba(0,0,0,0.45); }
+    :root.theme-light .section-tabs .tab-link:hover { color: rgba(0,0,0,0.8); }
+    :root.theme-light .section-tabs .tab-link.active { color: #0d0c0a; border-bottom-color: var(--maroon); }
+    :root.theme-light .subpage-nav-btn { background: #fff; border-color: #d4cfc9; color: #646469; }
+    :root.theme-light .subpage-nav-btn:hover { color: var(--maroon); border-color: var(--maroon); }
   </style>
 </head>
 <body>
@@ -673,6 +764,20 @@
     </div>
   </div>
 
+  <!-- SECTION TABS -->
+  <nav class="section-tabs" id="sectionTabs">
+    <a class="tab-link" data-section="version-control">Version Control</a>
+    <a class="tab-link" data-section="terminal-intro">Terminal Setup</a>
+    <a class="tab-link" data-section="three-states">Three States</a>
+    <a class="tab-link" data-section="basic-workflow">Core Workflow</a>
+    <a class="tab-link" data-section="repos">Repositories</a>
+    <a class="tab-link" data-section="branching">Branching</a>
+    <a class="tab-link" data-section="merging">Merging</a>
+    <a class="tab-link" data-section="pull-requests">Pull Requests</a>
+    <a class="tab-link" data-section="sim-return">Practice Sim</a>
+    <a href="quiz.html" class="tab-link">Quiz &rarr;</a>
+  </nav>
+
   <div class="page-body">
 
     <!-- CONTENT -->
@@ -690,118 +795,142 @@
         </ol>
       </div>
 
-      <!-- SECTION 1 -->
-      <h2 id="version-control">What is Version Control?</h2>
+      <!-- SECTION 1: VERSION CONTROL -->
+      <section id="version-control" class="content-section">
+        <h2>What is Version Control?</h2>
 
-      <p>
-        A version control system records every change you make to your files over time, so you can go back to any earlier state of your project. Think of it as an unlimited undo history - not just for one file, but for your entire project directory.
-      </p>
+        <p>
+          A version control system records every change you make to your files over time, so you can go back to any earlier state of your project. Think of it as an unlimited undo history - not just for one file, but for your entire project directory.
+        </p>
 
-      <p>
-        For data scientists, this matters because your work is rarely linear. You'll try an approach, hit a dead end, and need to backtrack. You'll share a notebook with a teammate who changes it in ways that break your analysis. You'll want to know exactly what changed between the version that worked and the version that didn't. Version control handles all of this.
-      </p>
+        <p>
+          For data scientists, this matters because your work is rarely linear. You'll try an approach, hit a dead end, and need to backtrack. You'll share a notebook with a teammate who changes it in ways that break your analysis. You'll want to know exactly what changed between the version that worked and the version that didn't. Version control handles all of this.
+        </p>
 
-      <p>
-        <strong>Git</strong> is the most widely used version control system in the world. <strong>GitHub</strong> is a hosting platform built on top of Git that adds collaboration features like pull requests, code review, and issue tracking.
-      </p>
+        <p>
+          <strong>Git</strong> is the most widely used version control system in the world. <strong>GitHub</strong> is a hosting platform built on top of Git that adds collaboration features like pull requests, code review, and issue tracking.
+        </p>
 
-      <!-- TERMINAL SECTION -->
-      <h2 id="terminal-intro">Using the Terminal</h2>
-
-      <p>
-        Git is a command-line tool - you interact with it by typing commands into a text window called a <strong>terminal</strong>, not by clicking through a graphical interface. Most developers prefer this because it's faster, scriptable, and it's exactly how Git is used in professional environments.
-      </p>
-
-      <p>
-        The terminal runs a program called a <strong>shell</strong> that interprets your commands. The shell you'll use depends on your operating system:
-      </p>
-
-      <div class="concept-grid" style="grid-template-columns: 1fr 1fr 1fr; margin: 0.75rem 0 1.25rem;">
-        <div class="concept-box">
-          <h4>Mac - Terminal (zsh)</h4>
-          <p>macOS ships with the Terminal app running zsh. You can also use iTerm2 as a more feature-rich alternative. All commands in this course work on Mac Terminal.</p>
+        <div class="subpage-nav">
+          <span class="subpage-nav-btn invisible">←</span>
+          <span class="subpage-nav-center">1 / 9</span>
+          <button class="subpage-nav-btn" onclick="showSection('terminal-intro')">Next: Terminal Setup →</button>
         </div>
-        <div class="concept-box">
-          <h4>Windows - Git Bash</h4>
-          <p>Windows uses PowerShell or CMD by default, but <strong>Git Bash</strong> (installed with Git for Windows) gives you a Bash shell that uses the same commands as Mac and Linux.</p>
+      </section>
+
+      <!-- SECTION 2: TERMINAL INTRO -->
+      <section id="terminal-intro" class="content-section">
+        <h2>Using the Terminal</h2>
+
+        <p>
+          Git is a command-line tool - you interact with it by typing commands into a text window called a <strong>terminal</strong>, not by clicking through a graphical interface. Most developers prefer this because it's faster, scriptable, and it's exactly how Git is used in professional environments.
+        </p>
+
+        <p>
+          The terminal runs a program called a <strong>shell</strong> that interprets your commands. The shell you'll use depends on your operating system:
+        </p>
+
+        <div class="concept-grid" style="grid-template-columns: 1fr 1fr 1fr; margin: 0.75rem 0 1.25rem;">
+          <div class="concept-box">
+            <h4>Mac - Terminal (zsh)</h4>
+            <p>macOS ships with the Terminal app running zsh. You can also use iTerm2 as a more feature-rich alternative. All commands in this course work on Mac Terminal.</p>
+          </div>
+          <div class="concept-box">
+            <h4>Windows - Git Bash</h4>
+            <p>Windows uses PowerShell or CMD by default, but <strong>Git Bash</strong> (installed with Git for Windows) gives you a Bash shell that uses the same commands as Mac and Linux.</p>
+          </div>
+          <div class="concept-box">
+            <h4>VS Code - Integrated Terminal</h4>
+            <p>VS Code has a built-in terminal (View > Terminal or <code>Ctrl+`</code>) that opens in your project folder. This is the most convenient option when you're already working in VS Code.</p>
+          </div>
         </div>
-        <div class="concept-box">
-          <h4>VS Code - Integrated Terminal</h4>
-          <p>VS Code has a built-in terminal (View > Terminal or <code>Ctrl+`</code>) that opens in your project folder. This is the most convenient option when you're already working in VS Code.</p>
+
+        <h3>Opening Your Terminal</h3>
+
+        <div class="concept-grid" style="grid-template-columns: 1fr 1fr; margin: 0.5rem 0 1.25rem;">
+          <div class="concept-box">
+            <h4>On a Mac</h4>
+            <p>Press <code>Cmd + Space</code> to open Spotlight, type <strong>Terminal</strong>, and press Enter. Or find it in Applications > Utilities > Terminal. Your prompt will look like: <code>intern@macbook ~ %</code></p>
+          </div>
+          <div class="concept-box">
+            <h4>On Windows</h4>
+            <p>Download and install <strong>Git for Windows</strong> from git-scm.com. Once installed, right-click any folder and choose "Open Git Bash here", or search for Git Bash in the Start menu.</p>
+          </div>
         </div>
-      </div>
 
-      <h3>Opening Your Terminal</h3>
-
-      <div class="concept-grid" style="grid-template-columns: 1fr 1fr; margin: 0.5rem 0 1.25rem;">
-        <div class="concept-box">
-          <h4>On a Mac</h4>
-          <p>Press <code>Cmd + Space</code> to open Spotlight, type <strong>Terminal</strong>, and press Enter. Or find it in Applications > Utilities > Terminal. Your prompt will look like: <code>intern@macbook ~ %</code></p>
+        <div class="callout">
+          <div class="callout-title">Using GitHub Codespaces</div>
+          <p>If you're working in GitHub Codespaces (a cloud-based VS Code environment), your terminal is already set up. Open the integrated terminal with <code>Ctrl+`</code> and you're ready to run Git commands - no local installation needed.</p>
         </div>
-        <div class="concept-box">
-          <h4>On Windows</h4>
-          <p>Download and install <strong>Git for Windows</strong> from git-scm.com. Once installed, right-click any folder and choose "Open Git Bash here", or search for Git Bash in the Start menu.</p>
-        </div>
-      </div>
 
-      <div class="callout">
-        <div class="callout-title">Using GitHub Codespaces</div>
-        <p>If you're working in GitHub Codespaces (a cloud-based VS Code environment), your terminal is already set up. Open the integrated terminal with <code>Ctrl+`</code> and you're ready to run Git commands - no local installation needed.</p>
-      </div>
+        <p>
+          New to the command line? Work through the Terminal Trainer simulation below before moving on. It covers the navigation commands you'll use constantly when working with Git.
+        </p>
 
-      <p>
-        New to the command line? Work through the Terminal Trainer simulation below before moving on. It covers the navigation commands you'll use constantly when working with Git.
-      </p>
-
-      <a class="sim-cta" href="../../sims/terminal-trainer/index.html" style="display:block; margin:1.25rem 0;">
-        <div class="sim-cta-label">Simulation</div>
-        <h4>Terminal Trainer</h4>
-        <p>Fourteen command-line challenges in a live fake terminal. Navigate directories, read files, and create your workspace - all from the command line.</p>
-      </a>
-
-      <div class="concept-grid" style="grid-template-columns: 1fr 1fr; margin: 0.5rem 0 1.25rem;">
-        <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Environment_setup/Command_line" target="_blank" rel="noopener" style="display:block; background:var(--bg-card); border:1px solid var(--border); border-top:3px solid var(--accent); border-radius:4px; padding:1.1rem 1.25rem; text-decoration:none; transition:background 0.15s;">
-          <div style="font-family:'IBM Plex Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent-light); margin-bottom:0.4rem;">Mac &amp; PC · MDN</div>
-          <div style="font-size:0.95rem; font-weight:600; color:var(--text-bright); margin-bottom:0.3rem;">Command Line Crash Course</div>
-          <div style="font-size:0.82rem; color:var(--text-dim); line-height:1.4;">Mozilla's beginner guide covering both Mac (Terminal) and Windows (Git Bash / PowerShell). Recommended starting point.</div>
+        <a class="sim-cta" href="../../sims/terminal-trainer/index.html" style="display:block; margin:1.25rem 0;">
+          <div class="sim-cta-label">Simulation</div>
+          <h4>Terminal Trainer</h4>
+          <p>Fourteen command-line challenges in a live fake terminal. Navigate directories, read files, and create your workspace - all from the command line.</p>
         </a>
-        <a href="https://learn.microsoft.com/en-us/windows/terminal/getting-started" target="_blank" rel="noopener" style="display:block; background:var(--bg-card); border:1px solid var(--border); border-top:3px solid var(--accent); border-radius:4px; padding:1.1rem 1.25rem; text-decoration:none; transition:background 0.15s;">
-          <div style="font-family:'IBM Plex Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent-light); margin-bottom:0.4rem;">PC · Microsoft Learn</div>
-          <div style="font-size:0.95rem; font-weight:600; color:var(--text-bright); margin-bottom:0.3rem;">Windows Terminal — Getting Started</div>
-          <div style="font-size:0.82rem; color:var(--text-dim); line-height:1.4;">Official Microsoft guide to Windows Terminal, covering setup, navigation, and customization for PC users.</div>
-        </a>
-      </div>
 
-      <!-- SECTION 2 -->
-      <h2 id="three-states">The Three States</h2>
-
-      <p>
-        Before diving into the states, it helps to know <em>how</em> Git stores your work. Unlike tools that track a list of changes ("line 14 changed from X to Y"), <strong>Git saves a complete snapshot of every file in your project each time you commit</strong> - like taking a photograph of the entire folder at that moment. This is why reverting to any point in history is instant: Git just loads the snapshot from that commit rather than replaying a chain of diffs.
-      </p>
-
-      <p>This snapshot model is also why <code>git add</code> and <code>git commit</code> are two separate steps. You're first choosing <em>what</em> goes into the snapshot (staging), then pressing the shutter (committing). Every file in a Git project lives in one of three states that reflect where it is in that process:</p>
-
-      <div class="concept-grid">
-        <div class="concept-box">
-          <h4>Working Directory</h4>
-          <p>Your actual files on disk. When you edit a notebook or Python script, the changes live here until you stage them.</p>
+        <div class="concept-grid" style="grid-template-columns: 1fr 1fr; margin: 0.5rem 0 1.25rem;">
+          <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Environment_setup/Command_line" target="_blank" rel="noopener" style="display:block; background:var(--bg-card); border:1px solid var(--border); border-top:3px solid var(--accent); border-radius:4px; padding:1.1rem 1.25rem; text-decoration:none; transition:background 0.15s;">
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent-light); margin-bottom:0.4rem;">Mac &amp; PC · MDN</div>
+            <div style="font-size:0.95rem; font-weight:600; color:var(--text-bright); margin-bottom:0.3rem;">Command Line Crash Course</div>
+            <div style="font-size:0.82rem; color:var(--text-dim); line-height:1.4;">Mozilla's beginner guide covering both Mac (Terminal) and Windows (Git Bash / PowerShell). Recommended starting point.</div>
+          </a>
+          <a href="https://learn.microsoft.com/en-us/windows/terminal/getting-started" target="_blank" rel="noopener" style="display:block; background:var(--bg-card); border:1px solid var(--border); border-top:3px solid var(--accent); border-radius:4px; padding:1.1rem 1.25rem; text-decoration:none; transition:background 0.15s;">
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent-light); margin-bottom:0.4rem;">PC · Microsoft Learn</div>
+            <div style="font-size:0.95rem; font-weight:600; color:var(--text-bright); margin-bottom:0.3rem;">Windows Terminal — Getting Started</div>
+            <div style="font-size:0.82rem; color:var(--text-dim); line-height:1.4;">Official Microsoft guide to Windows Terminal, covering setup, navigation, and customization for PC users.</div>
+          </a>
         </div>
-        <div class="concept-box">
-          <h4>Staging Area</h4>
-          <p>A holding zone for changes you're about to commit. You choose which changes to include - not every edit has to go into the same commit.</p>
-        </div>
-        <div class="concept-box">
-          <h4>Repository</h4>
-          <p>The committed history. Once changes are committed, Git permanently records a snapshot. This is your undo history.</p>
-        </div>
-        <div class="concept-box">
-          <h4>Remote (GitHub)</h4>
-          <p>A copy of your repository hosted on GitHub. Push to share your commits with others; pull to receive theirs.</p>
-        </div>
-      </div>
 
-      <!-- SECTION 3 -->
-      <h2 id="basic-workflow">The Core Workflow</h2>
+        <div class="subpage-nav">
+          <button class="subpage-nav-btn" onclick="showSection('version-control')">← Version Control</button>
+          <span class="subpage-nav-center">2 / 9</span>
+          <button class="subpage-nav-btn" onclick="showSection('three-states')">Next: Three States →</button>
+        </div>
+      </section>
+      <!-- SECTION 3: THREE STATES -->
+      <section id="three-states" class="content-section">
+        <h2>The Three States</h2>
+
+        <p>
+          Before diving into the states, it helps to know <em>how</em> Git stores your work. Unlike tools that track a list of changes ("line 14 changed from X to Y"), <strong>Git saves a complete snapshot of every file in your project each time you commit</strong> - like taking a photograph of the entire folder at that moment. This is why reverting to any point in history is instant: Git just loads the snapshot from that commit rather than replaying a chain of diffs.
+        </p>
+
+        <p>This snapshot model is also why <code>git add</code> and <code>git commit</code> are two separate steps. You're first choosing <em>what</em> goes into the snapshot (staging), then pressing the shutter (committing). Every file in a Git project lives in one of three states that reflect where it is in that process:</p>
+
+        <div class="concept-grid">
+          <div class="concept-box">
+            <h4>Working Directory</h4>
+            <p>Your actual files on disk. When you edit a notebook or Python script, the changes live here until you stage them.</p>
+          </div>
+          <div class="concept-box">
+            <h4>Staging Area</h4>
+            <p>A holding zone for changes you're about to commit. You choose which changes to include - not every edit has to go into the same commit.</p>
+          </div>
+          <div class="concept-box">
+            <h4>Repository</h4>
+            <p>The committed history. Once changes are committed, Git permanently records a snapshot. This is your undo history.</p>
+          </div>
+          <div class="concept-box">
+            <h4>Remote (GitHub)</h4>
+            <p>A copy of your repository hosted on GitHub. Push to share your commits with others; pull to receive theirs.</p>
+          </div>
+        </div>
+
+        <div class="subpage-nav">
+          <button class="subpage-nav-btn" onclick="showSection('terminal-intro')">← Terminal Setup</button>
+          <span class="subpage-nav-center">3 / 9</span>
+          <button class="subpage-nav-btn" onclick="showSection('basic-workflow')">Next: Core Workflow →</button>
+        </div>
+      </section>
+
+      <!-- SECTION 4: BASIC WORKFLOW -->
+      <section id="basic-workflow" class="content-section">
+        <h2>The Core Workflow</h2>
 
       <p>Almost every Git session follows the same pattern. Once you have a repository set up, the day-to-day cycle looks like this:</p>
 
@@ -825,8 +954,16 @@
         <p>Write commit messages as if you're finishing the sentence "This commit will..." - so "Add batting average normalization step" rather than "stuff" or "fixed it". Your future self will thank you when you're scrolling through history three months later.</p>
       </div>
 
-      <!-- SECTION 4 -->
-      <h2 id="repos">Setting Up a Repository</h2>
+        <div class="subpage-nav">
+          <button class="subpage-nav-btn" onclick="showSection('three-states')">← Three States</button>
+          <span class="subpage-nav-center">4 / 9</span>
+          <button class="subpage-nav-btn" onclick="showSection('repos')">Next: Repositories →</button>
+        </div>
+      </section>
+
+      <!-- SECTION 5: REPOS -->
+      <section id="repos" class="content-section">
+        <h2>Setting Up a Repository</h2>
 
       <p>There are three common ways to start a Git project depending on your situation: initialize a brand new one locally, clone an existing one from GitHub, or fork someone else's repo and clone your copy.</p>
 
@@ -884,8 +1021,16 @@
         <p>A common mistake: cloning the original repo instead of your fork. If you do that, you won't have push access. Always copy the URL from <em>your</em> forked version of the repo on GitHub.</p>
       </div>
 
-      <!-- SECTION 5 -->
-      <h2 id="branching">Branching</h2>
+        <div class="subpage-nav">
+          <button class="subpage-nav-btn" onclick="showSection('basic-workflow')">← Core Workflow</button>
+          <span class="subpage-nav-center">5 / 9</span>
+          <button class="subpage-nav-btn" onclick="showSection('branching')">Next: Branching →</button>
+        </div>
+      </section>
+
+      <!-- SECTION 6: BRANCHING -->
+      <section id="branching" class="content-section">
+        <h2>Branching</h2>
 
       <p>
         A branch is an independent copy of your project history that you can work on without touching the main codebase. When you're building a new feature, fixing a bug, or running an experiment, you do that work on a branch. If it goes well, you merge it back. If it doesn't, you discard the branch and nothing is lost.
@@ -907,8 +1052,16 @@
         The convention is to keep <strong>main</strong> always in a working, deployable state. All active development happens on branches. This is how professional teams prevent broken code from reaching the shared codebase.
       </p>
 
-      <!-- SECTION 6 -->
-      <h2 id="merging">Merging and Conflicts</h2>
+        <div class="subpage-nav">
+          <button class="subpage-nav-btn" onclick="showSection('repos')">← Repositories</button>
+          <span class="subpage-nav-center">6 / 9</span>
+          <button class="subpage-nav-btn" onclick="showSection('merging')">Next: Merging →</button>
+        </div>
+      </section>
+
+      <!-- SECTION 7: MERGING -->
+      <section id="merging" class="content-section">
+        <h2>Merging and Conflicts</h2>
 
       <p>
         When your branch is ready, you merge it back into main. Git will try to combine the changes automatically. If two branches modified the same lines of the same file, Git cannot decide which version is correct - that's a <strong>merge conflict</strong>.
@@ -934,8 +1087,16 @@
         <p>Merge conflicts are a normal part of collaborative work - not a sign something went wrong. Git is simply telling you it needs a human to decide which version of the code is correct. Read both sides carefully before choosing.</p>
       </div>
 
-      <!-- SECTION 7 -->
-      <h2 id="pull-requests">Pull Requests</h2>
+        <div class="subpage-nav">
+          <button class="subpage-nav-btn" onclick="showSection('branching')">← Branching</button>
+          <span class="subpage-nav-center">7 / 9</span>
+          <button class="subpage-nav-btn" onclick="showSection('pull-requests')">Next: Pull Requests →</button>
+        </div>
+      </section>
+
+      <!-- SECTION 8: PULL REQUESTS -->
+      <section id="pull-requests" class="content-section">
+        <h2>Pull Requests</h2>
 
       <p>
         On GitHub, you don't usually merge branches directly from the command line when working on a team. Instead, you open a <strong>Pull Request</strong> (PR) - a proposal to merge your branch into main, with a built-in discussion thread for code review.
@@ -951,8 +1112,16 @@
         <p>Always <code>git pull</code> before you start new work. Write clear commit messages. Use branches for every new feature or fix. Review your own PR before asking someone else to. Delete merged branches.</p>
       </div>
 
-      <!-- RETURN TO TERMINAL TRAINER -->
-      <h2 id="sim-return" style="scroll-margin-top:72px;">Ready to Practice?</h2>
+        <div class="subpage-nav">
+          <button class="subpage-nav-btn" onclick="showSection('merging')">← Merging</button>
+          <span class="subpage-nav-center">8 / 9</span>
+          <button class="subpage-nav-btn" onclick="showSection('sim-return')">Next: Practice Sim →</button>
+        </div>
+      </section>
+
+      <!-- SECTION 9: SIM RETURN (PRACTICE) -->
+      <section id="sim-return" class="content-section">
+        <h2>Ready to Practice?</h2>
       <p>
         You've read through the Git concepts - snapshots, the three states, branching, and the full commit-push workflow. Now it's time to do it for real. Head back to the Terminal Trainer to complete Part 3, where you'll run all of these commands inside a live fake terminal against an actual codebase scenario.
       </p>
@@ -963,7 +1132,12 @@
         <p>Branch, edit, diff, stage, commit, and push - eleven challenges using the Git commands from this module against a real bug in the StatDeck analytics pipeline.</p>
       </a>
 
-      <!-- QUIZ LINK -->
+        <div class="subpage-nav">
+          <button class="subpage-nav-btn" onclick="showSection('pull-requests')">← Pull Requests</button>
+          <span class="subpage-nav-center">9 / 9</span>
+          <span class="subpage-nav-btn invisible">→</span>
+        </div>
+      </section>
       <section id="quiz">
         <div class="quiz-link-card">
           <div class="quiz-link-icon">&#9998;</div>
@@ -979,22 +1153,6 @@
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
-
-      <div class="sidebar-card">
-        <h4>On This Page</h4>
-        <ul class="toc-list">
-          <li><a href="#version-control">What is Version Control?</a></li>
-          <li><a href="#terminal-intro">Using the Terminal</a></li>
-          <li><a href="#three-states">The Three States</a></li>
-          <li><a href="#basic-workflow">Core Workflow</a></li>
-          <li><a href="#repos">Setting Up a Repo</a></li>
-          <li><a href="#branching">Branching</a></li>
-          <li><a href="#merging">Merging &amp; Conflicts</a></li>
-          <li><a href="#pull-requests">Pull Requests</a></li>
-          <li><a href="#sim-return">&#9654; Practice Sim</a></li>
-          <li><a href="quiz.html">Quiz</a></li>
-        </ul>
-      </div>
 
       <a class="sim-cta" href="../../sims/terminal-trainer/index.html">
         <div class="sim-cta-label">Simulation</div>
@@ -1062,6 +1220,44 @@
 </script>
 <script>if("scrollRestoration"in history)history.scrollRestoration="manual";window.scrollTo(0,0);</script>
 
+<script>
+(function() {
+  var SECTIONS = ['version-control','terminal-intro','three-states','basic-workflow','repos','branching','merging','pull-requests','sim-return'];
+
+  window.showSection = function(id, noScroll) {
+    SECTIONS.forEach(function(s) {
+      var el = document.getElementById(s);
+      if (el) el.classList.remove('active');
+    });
+    var target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      if (!noScroll) window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    document.querySelectorAll('.section-tabs .tab-link[data-section]').forEach(function(t) {
+      t.classList.toggle('active', t.dataset.section === id);
+    });
+    history.replaceState(null, '', '#' + id);
+  };
+
+  document.querySelectorAll('.section-tabs .tab-link[data-section]').forEach(function(tab) {
+    tab.addEventListener('click', function() { showSection(tab.dataset.section); });
+  });
+
+  // On load: check hash or default to first section
+  (function() {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    var hash = window.location.hash.replace('#', '');
+    var initial = SECTIONS.indexOf(hash) !== -1 ? hash : SECTIONS[0];
+    showSection(initial, true);
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      });
+    });
+  })();
+})();
+</script>
 
 <style>
   /* Copy button on code blocks */
