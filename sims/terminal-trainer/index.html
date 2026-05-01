@@ -553,7 +553,18 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
       </button>
     </div>
 
-    <p style="text-align:center; margin-top:1.5rem; font-size:0.8rem; color:var(--text-dim);">
+    <!-- Resume Part 3 - shown only if localStorage indicates Parts 1 & 2 are done -->
+    <div id="resumeCard" style="display:none; margin-top:1.75rem; background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--accent); border-radius:8px; padding:1.25rem 1.5rem; text-align:center;">
+      <div style="font-family:var(--mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent-light); margin-bottom:0.4rem;">Progress Saved</div>
+      <div style="font-family:var(--serif); font-size:1.05rem; font-weight:600; color:var(--text-bright); margin-bottom:0.5rem;">Parts 1 &amp; 2 Complete</div>
+      <p style="font-size:0.82rem; color:var(--text-dim); margin-bottom:1rem; line-height:1.55;">You've finished the terminal basics. If you've worked through the Git content in Module 6, choose your platform below to jump straight into Part 3.</p>
+      <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+        <button onclick="resumePart3('mac')" style="background:var(--accent); color:#fff; border:none; border-radius:6px; padding:0.6rem 1.4rem; font-family:var(--serif); font-size:0.9rem; font-weight:600; cursor:pointer;">Resume on Mac &rarr;</button>
+        <button onclick="resumePart3('pc')" style="background:var(--surface2); border:1px solid var(--border); color:var(--text-dim); border-radius:6px; padding:0.6rem 1.4rem; font-family:var(--serif); font-size:0.9rem; cursor:pointer;">Resume on PC (Git Bash) &rarr;</button>
+      </div>
+    </div>
+
+    <p style="text-align:center; margin-top:1.25rem; font-size:0.8rem; color:var(--text-dim);">
       Haven't opened a terminal yet?
       <a href="../../modules/module6/index.html#terminal-intro" style="color:var(--accent-light); text-decoration:none;">See the setup guide in Module 6 &rarr;</a>
     </p>
@@ -691,12 +702,16 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
     <!-- Between Part 2 and Part 3 -->
     <div class="between-panel" id="between2Panel">
       <div class="between-icon">&#10003;</div>
-      <div class="between-title">Part 2 Complete</div>
-      <p class="between-body">You can navigate, read files, and create your own. Maya is impressed.<br><br>
-        She sent you a message: <em>"There's a bug in analysis.py - the salary normalization uses max() scaling instead of z-score. Can you create a branch, fix it, and push it up for review?"</em><br><br>
-        Time to use Git.
+      <div class="between-title">Parts 1 &amp; 2 Complete</div>
+      <p class="between-body">You can navigate the file system, read code, and use terminal shortcuts. Terminal training done.<br><br>
+        Before Part 3, you need to know the Git commands you'll be using. Head back to <strong>Module 6</strong> and work through the Git content - the Three States, Core Workflow, branching, and committing. When you're done, come back here to put it all into practice.
       </p>
-      <button class="between-btn" onclick="beginPart(3)">Start Part 3: Git in Action &rarr;</button>
+      <a href="../../modules/module6/index.html#three-states" class="between-btn" style="display:inline-block; text-decoration:none; text-align:center;">
+        Return to Module 6 to Learn Git &rarr;
+      </a>
+      <p style="margin-top:1.1rem; font-size:0.8rem; color:var(--text-dim); text-align:center;">
+        Already read the module? <button onclick="beginPart(3)" style="background:none;border:none;color:var(--accent-light);font-size:0.8rem;cursor:pointer;padding:0;font-family:inherit;">Start Part 3 now &rarr;</button>
+      </p>
     </div>
 
     <!-- Edit panel (mid-Part 3 story moment) -->
@@ -780,7 +795,7 @@ var vfs = {
   },
   '/home/intern/projects': { type: 'dir', children: ['statdeck', 'practice'] },
   '/home/intern/projects/practice': { type: 'dir', children: [] },
-  '/home/intern/projects/statdeck': { type: 'dir', children: ['analysis.py', 'data.csv', 'my_work'] },
+  '/home/intern/projects/statdeck': { type: 'dir', children: ['analysis.py', 'data.csv'] },
   '/home/intern/projects/statdeck/analysis.py': {
     type: 'file',
     content: '# StatDeck Analytics - Player Performance Pipeline\n# Author: Maya Rodriguez\n# Purpose: Normalize player stats for the scouting model\n\nimport pandas as pd\nimport numpy as np\n\ndf = pd.read_csv(\'data.csv\')\n\n# Batting average - z-score normalization\ndf[\'avg_zscore\'] = (df[\'avg\'] - df[\'avg\'].mean()) / df[\'avg\'].std()\n\n# Salary normalization (FIXME: divides by max, doesn\'t center data)\ndf[\'salary_norm\'] = df[\'salary\'] / df[\'salary\'].max()\n\nprint(df[[\'name\', \'avg\', \'salary\', \'avg_zscore\', \'salary_norm\']])\nprint(\'\\nStats summary:\')\nprint(df.describe())'
@@ -789,9 +804,7 @@ var vfs = {
     type: 'file',
     content: 'player_id,name,avg,hr,salary\n1,J. Rodriguez,.312,14,35000\n2,S. Chen,.278,8,32500\n3,N. Kim,.301,22,760000'
   },
-  '/home/intern/projects/statdeck/.git': { type: 'dir', children: [] },
-  '/home/intern/projects/statdeck/my_work': { type: 'dir', children: ['analysis_notes.txt'] },
-  '/home/intern/projects/statdeck/my_work/analysis_notes.txt': { type: 'file', content: '' }
+  '/home/intern/projects/statdeck/.git': { type: 'dir', children: [] }
 };
 
 /* ────────────────────────────────────────────
@@ -1514,6 +1527,8 @@ function showBetween2() {
     var check = el.querySelector('.toc-check');
     if (check) check.textContent = '✓';
   });
+  /* save progress so the landing screen can offer a resume button */
+  try { localStorage.setItem('dtsc520_tt_p2done', '1'); } catch(e) {}
 }
 
 function showCompletion() {
@@ -1598,6 +1613,7 @@ window.beginPart = function (p) {
         tocP3.appendChild(item);
       });
     }
+    ensureMyWork(); /* guarantee my_work exists whether or not student did Part 1 */
     loadChallenge(0);
     termOutput.innerHTML = '';
     appendLine('<span class="c-dim">Day 3 at StatDeck. Maya added you to the repo.</span>');
@@ -1897,6 +1913,23 @@ function jumpToChallenge(partNum, ci) {
     buildDots(part3.length);
   }
   idx = ci;
+
+  /* Set cwd to the expected location for the part being jumped to.
+     Without this, TOC jumps leave cwd at HOME and cat/touch fail. */
+  if (partNum === 2 || partNum === 3) {
+    cwd = '/home/intern/projects/statdeck';
+  } else {
+    cwd = HOME;
+  }
+
+  /* Ensure my_work exists for Part 2 challenge 5 (touch) and all of Part 3 */
+  if (partNum === 3 || (partNum === 2 && ci >= 4)) {
+    ensureMyWork();
+  }
+
+  updatePromptEl();
+  renderTreeInto('liveTree', false);
+
   /* show challenge card, hide transition panels */
   document.getElementById('challengeCard').style.display = '';
   document.getElementById('betweenPanel').classList.remove('show');
@@ -1905,6 +1938,16 @@ function jumpToChallenge(partNum, ci) {
   document.getElementById('completionPanel').classList.remove('show');
   document.getElementById('feedbackFlash').classList.remove('show');
   loadChallenge(ci);
+}
+
+/* Ensure my_work directory exists - called when jumping to challenges that need it */
+function ensureMyWork() {
+  var statdeck = '/home/intern/projects/statdeck';
+  if (!vfs[statdeck + '/my_work']) {
+    vfs[statdeck + '/my_work'] = { type: 'dir', children: [] };
+    var parent = vfs[statdeck];
+    if (parent && !parent.children.includes('my_work')) parent.children.push('my_work');
+  }
 }
 
 function updateToc() {
@@ -2008,6 +2051,25 @@ window.startSim = function (m) {
   renderTreeInto('staticTree', true);
   buildFlashcards();
 };
+
+/* Resume directly into Part 3 (called from landing screen resume card) */
+window.resumePart3 = function (m) {
+  mode = m;
+  document.getElementById('screen-landing').style.display = 'none';
+  document.getElementById('screen-sim').style.display = 'block';
+  document.getElementById('btn-mac').classList.toggle('active', m === 'mac');
+  document.getElementById('btn-pc').classList.toggle('active', m === 'pc');
+  buildToc();
+  beginPart(3);
+};
+
+/* Check localStorage on page load - show resume card if Parts 1 & 2 done */
+try {
+  if (localStorage.getItem('dtsc520_tt_p2done') === '1') {
+    var rc = document.getElementById('resumeCard');
+    if (rc) rc.style.display = 'block';
+  }
+} catch(e) {}
 
 }());
 </script>
