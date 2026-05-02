@@ -1,0 +1,60 @@
+/* DTSC 520 — auth chip styles. Match Eastern brand. */
+#auth-slot {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 13px;
+}
+
+.auth-signin {
+  background: #8B1C40;
+  color: #fff;
+  border: 1px solid #8B1C40;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font: inherit;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+.auth-signin:hover { background: #6e1532; border-color: #6e1532; }
+
+.auth-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(139, 28, 64, 0.08);
+  border: 1px solid rgba(139, 28, 64, 0.35);
+  border-radius: 4px;
+  padding: 4px 4px 4px 10px;
+}
+.auth-chip .auth-name {
+  color: #e7e5e2;
+  font-weight: 500;
+  white-space: nowrap;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.auth-chip .auth-signout {
+  background: transparent;
+  color: #c8c5c0;
+  border: 1px solid rgba(200, 197, 192, 0.4);
+  border-radius: 3px;
+  padding: 3px 8px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.auth-chip .auth-signout:hover {
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+}
+
+/* Light mode override */
+@media (prefers-color-scheme: light) {
+  .auth-chip .auth-name { color: #2a2a2a; }
+  .auth-chip .auth-signout { color: #555; border-color: #bbb; }
+  .auth-chip .auth-signout:hover { background: #f0eeea; }
+}
+[data-theme="light"] .auth-chip .auth-name { color: #2a2a2a; }
+[data-theme="light"] .auth-chip .auth-signout { color: #555; border-color: #bbb; }

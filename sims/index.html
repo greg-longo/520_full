@@ -287,11 +287,11 @@
   <p>Hands-on scenarios that put you inside real data science situations. Each sim maps to a course module and builds skills you'll use on the job.</p>
   <div class="hero-stats">
     <div class="hero-stat">
-      <div class="hero-stat-num">8</div>
+      <div class="hero-stat-num">9</div>
       <div class="hero-stat-label">Simulations</div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-num">6</div>
+      <div class="hero-stat-num">5</div>
       <div class="hero-stat-label">Modules covered</div>
     </div>
     <div class="hero-stat">
@@ -405,42 +405,12 @@
     </div>
   </div>
 
-  <!-- MODULE 3 -->
-  <div class="mod-group">
-    <div class="mod-group-header">
-      <span class="mod-badge m3">Module 3</span>
-      <h2 class="mod-group-title">NumPy</h2>
-      <span class="mod-group-count">1 sim</span>
-    </div>
-    <div class="sim-grid">
-
-      <a class="sim-card m3" href="debug-pipeline/index.html">
-        <div class="sim-card-inner">
-          <div class="sim-card-top">
-            <div class="sim-card-meta">
-              <div class="sim-label m3">Debugging Scenario</div>
-              <div class="sim-title">Debug the Pipeline</div>
-            </div>
-            <div class="sim-progress-dot" data-sim="debug" title="Loading..."></div>
-          </div>
-          <div class="sim-desc">A pre-game stats pipeline just broke. Diagnose each failure stage — wrong dtype, shape mismatch, bad index, divide-by-zero — and fix it before the coach's briefing.</div>
-          <div class="sim-type">&#128270; Debugging challenge</div>
-        </div>
-        <div class="sim-footer">
-          <span class="sim-tag">M3 &bull; NumPy / pandas</span>
-          <span class="sim-launch m3">Launch &rarr;</span>
-        </div>
-      </a>
-
-    </div>
-  </div>
-
   <!-- MODULE 4 -->
   <div class="mod-group">
     <div class="mod-group-header">
       <span class="mod-badge m4">Module 4</span>
       <h2 class="mod-group-title">Pandas</h2>
-      <span class="mod-group-count">1 sim</span>
+      <span class="mod-group-count">2 sims</span>
     </div>
     <div class="sim-grid">
 
@@ -453,11 +423,29 @@
             </div>
             <div class="sim-progress-dot" data-sim="dirty" title="No progress tracking"></div>
           </div>
-          <div class="sim-desc">The Eagles roster data just came in from the front office — and it's a mess. Missing values, wrong types, outliers, and duplicates. Clean it before the GM meeting.</div>
+          <div class="sim-desc">The Eagles roster data just came in from the front office - and it's a mess. Missing values, wrong types, outliers, and duplicates. Clean it before the GM meeting.</div>
           <div class="sim-type">&#128466; Narrative scenario</div>
         </div>
         <div class="sim-footer">
           <span class="sim-tag">M4 &bull; pandas</span>
+          <span class="sim-launch m4">Launch &rarr;</span>
+        </div>
+      </a>
+
+      <a class="sim-card m4" href="debug-pipeline/index.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m4">Debugging Scenario</div>
+              <div class="sim-title">Debug the Pipeline</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="debug" title="Loading..."></div>
+          </div>
+          <div class="sim-desc">It's 6:47 AM and the Eagles' stat report failed overnight. Track down five bugs hiding in a pandas/NumPy pipeline before first pitch.</div>
+          <div class="sim-type">&#128270; Debugging challenge</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M4 &bull; pandas / NumPy</span>
           <span class="sim-launch m4">Launch &rarr;</span>
         </div>
       </a>
@@ -500,9 +488,27 @@
     <div class="mod-group-header">
       <span class="mod-badge m6">Module 6</span>
       <h2 class="mod-group-title">Git &amp; GitHub</h2>
-      <span class="mod-group-count">1 sim</span>
+      <span class="mod-group-count">2 sims</span>
     </div>
     <div class="sim-grid">
+
+      <a class="sim-card m6" href="terminal-trainer/index.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m6">Command-Line Basics</div>
+              <div class="sim-title">Terminal Trainer</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="terminal" title="No progress tracking"></div>
+          </div>
+          <div class="sim-desc">Eight command-line challenges in a live fake terminal. Navigate directories, read files, and create your workspace before you ever touch Git.</div>
+          <div class="sim-type">&#9654; Live terminal sim</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M6 &bull; Shell prerequisites</span>
+          <span class="sim-launch m6">Launch &rarr;</span>
+        </div>
+      </a>
 
       <a class="sim-card m6" href="../modules/module6/branch_crisis_sim.html">
         <div class="sim-card-inner">
@@ -572,6 +578,7 @@
     'debug':          debug  ? 'complete' : 'empty',
     'dirty':          'empty',    // no tracking
     'pitch':          'empty',    // no tracking
+    'terminal':       'empty',    // no tracking
     'branch':         branch && branch.completed ? 'complete' : 'empty',
   };
 

@@ -1,0 +1,87 @@
+/* DTSC 520 — Code-block copy button styles. */
+
+.code-copy-shell {
+  position: relative;
+  /* The shell inherits its block flow from whatever wrapped the <pre>.
+     We don't change margins; the original <pre> keeps its layout. */
+}
+
+.code-copy-shell > pre {
+  /* Make sure the button has somewhere to anchor — pre has its own padding. */
+  position: relative;
+}
+
+.code-copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(220, 218, 215, 0.85);
+  background: rgba(28, 26, 24, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: opacity 0.15s ease, transform 0.15s ease,
+              background 0.15s ease, color 0.15s ease;
+  z-index: 2;
+}
+
+.code-copy-shell:hover .code-copy-btn,
+.code-copy-btn:focus-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.code-copy-btn:hover {
+  color: #fff;
+  background: rgba(139, 28, 64, 0.85);     /* maroon */
+  border-color: rgba(139, 28, 64, 0.95);
+}
+
+.code-copy-btn.is-copied {
+  opacity: 1;
+  color: #fff;
+  background: rgba(74, 158, 107, 0.85);    /* green confirm */
+  border-color: rgba(74, 158, 107, 0.95);
+}
+.code-copy-btn.is-failed {
+  opacity: 1;
+  color: #fff;
+  background: rgba(176, 80, 80, 0.85);
+  border-color: rgba(176, 80, 80, 0.95);
+}
+
+.code-copy-btn svg {
+  flex-shrink: 0;
+}
+
+.code-copy-label {
+  /* Hide the text label on very small viewports to save room. */
+  display: inline;
+}
+@media (max-width: 540px) {
+  .code-copy-label { display: none; }
+  .code-copy-btn { padding: 5px; }
+}
+
+/* Light-mode override */
+:root.theme-light .code-copy-btn,
+[data-theme="light"] .code-copy-btn {
+  color: #2a2a2a;
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+:root.theme-light .code-copy-btn:hover,
+[data-theme="light"] .code-copy-btn:hover {
+  color: #fff;
+  background: rgba(139, 28, 64, 0.92);
+  border-color: rgba(139, 28, 64, 0.95);
+}

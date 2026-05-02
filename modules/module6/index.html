@@ -20,6 +20,7 @@
       --text-dim: #a09a92;
       --border: #2e2b28;
       --accent: #8B1C40;
+      --accent-light: #a82050;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -204,6 +205,20 @@
       color: var(--text-dim);
       margin-bottom: 0.75rem;
     }
+
+    .toc-links { display: flex; flex-direction: column; gap: 0.15rem; }
+    .toc-links a {
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem;
+      color: var(--text-dim); text-decoration: none;
+      padding: 0.3rem 0.6rem; border-radius: 3px;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, background 0.15s; cursor: pointer;
+    }
+    .toc-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .toc-links a.active { color: #fff; background: rgba(139,28,64,0.15); border-left-color: var(--maroon); }
+    :root.theme-light .toc-links a.active { color: var(--maroon) !important; background: rgba(139,28,64,0.08) !important; border-left-color: var(--maroon) !important; }
+    :root.theme-light .toc-links a { color: #5a5550 !important; }
+    :root.theme-light .toc-links a:hover { color: #1a1715 !important; background: rgba(0,0,0,0.04) !important; }
 
     .toc-list {
       list-style: none;
@@ -623,8 +638,8 @@
       display: inline-flex;
       align-items: center;
       padding: 0.65rem 1.25rem;
-      background: var(--accent);
-      color: #fff;
+      background: var(--maroon) !important;
+      color: #fff !important;
       border-radius: 4px;
       text-decoration: none;
       font-size: 0.9rem;
@@ -633,14 +648,14 @@
       flex-shrink: 0;
       transition: background 0.15s;
     }
-    .quiz-link-btn:hover { background: var(--accent-light); color: #fff; }
+    .quiz-link-btn:hover { background: var(--maroon-light) !important; color: #fff !important; }
 
     /* ---- QUIZ CTA BUTTON (TASK 1) ---- */
     .quiz-cta-btn {
       display: block;
       text-align: center;
-      background: var(--maroon);
-      color: #fff;
+      background: var(--maroon) !important;
+      color: #fff !important;
       text-decoration: none;
       padding: 0.55rem 1rem;
       border-radius: 4px;
@@ -649,7 +664,7 @@
       font-weight: 600;
       transition: background 0.15s;
     }
-    .quiz-cta-btn:hover { background: var(--maroon-light); color: #fff; }
+    .quiz-cta-btn:hover { background: var(--maroon-light) !important; color: #fff !important; }
 
     /* ---- SECTION TABS (TASK 2) ---- */
     .section-tabs {
@@ -729,6 +744,8 @@
     :root.theme-light .subpage-nav-btn { background: #fff; border-color: #d4cfc9; color: #646469; }
     :root.theme-light .subpage-nav-btn:hover { color: var(--maroon); border-color: var(--maroon); }
   </style>
+  <link rel="stylesheet" href="../../assets/code-copy.css">
+  <script src="../../assets/code-copy.js" defer></script>
 </head>
 <body>
 
@@ -759,24 +776,11 @@
         </div>
       </div>
       <div class="mod-progress-box">
-        <a href="quiz.html" style="color:var(--accent-light);font-size:0.9rem;text-decoration:none;">Take the Quiz &rarr;</a>
+        <a href="quiz.html" style="color:rgba(255,255,255,0.75);font-size:0.9rem;text-decoration:none;">Take the Quiz &rarr;</a>
       </div>
     </div>
   </div>
 
-  <!-- SECTION TABS -->
-  <nav class="section-tabs" id="sectionTabs">
-    <a class="tab-link" data-section="version-control">Version Control</a>
-    <a class="tab-link" data-section="terminal-intro">Terminal Setup</a>
-    <a class="tab-link" data-section="three-states">Three States</a>
-    <a class="tab-link" data-section="basic-workflow">Core Workflow</a>
-    <a class="tab-link" data-section="repos">Repositories</a>
-    <a class="tab-link" data-section="branching">Branching</a>
-    <a class="tab-link" data-section="merging">Merging</a>
-    <a class="tab-link" data-section="pull-requests">Pull Requests</a>
-    <a class="tab-link" data-section="sim-return">Practice Sim</a>
-    <a href="quiz.html" class="tab-link">Quiz &rarr;</a>
-  </nav>
 
   <div class="page-body">
 
@@ -1154,6 +1158,22 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
 
+      <div class="sidebar-card">
+        <h4>Topics</h4>
+        <div class="toc-links" id="tocLinks">
+          <a onclick="showSection('version-control')">Version Control</a>
+          <a onclick="showSection('terminal-intro')">Terminal Setup</a>
+          <a onclick="showSection('three-states')">Three States</a>
+          <a onclick="showSection('basic-workflow')">Core Workflow</a>
+          <a onclick="showSection('repos')">Repositories</a>
+          <a onclick="showSection('branching')">Branching</a>
+          <a onclick="showSection('merging')">Merging</a>
+          <a onclick="showSection('pull-requests')">Pull Requests</a>
+          <a onclick="showSection('sim-return')">Practice Sim</a>
+          <a href="quiz.html" style="margin-top:0.4rem;border-top:1px solid var(--border);padding-top:0.5rem;">&#9998; Take Quiz</a>
+        </div>
+      </div>
+
       <a class="sim-cta" href="../../sims/terminal-trainer/index.html">
         <div class="sim-cta-label">Simulation</div>
         <h4>Terminal Trainer</h4>
@@ -1175,11 +1195,11 @@
       <div class="sidebar-card">
         <h4>Key Commands</h4>
         <ul class="toc-list">
-          <li><a href="#basic-workflow"><code>git add</code> / <code>git commit</code></a></li>
-          <li><a href="#basic-workflow"><code>git push</code> / <code>git pull</code></a></li>
-          <li><a href="#branching"><code>git checkout -b</code></a></li>
-          <li><a href="#merging"><code>git merge</code></a></li>
-          <li><a href="#repos"><code>git clone</code></a></li>
+          <li><a onclick="showSection('basic-workflow')" style="cursor:pointer;"><code>git add</code> / <code>git commit</code></a></li>
+          <li><a onclick="showSection('basic-workflow')" style="cursor:pointer;"><code>git push</code> / <code>git pull</code></a></li>
+          <li><a onclick="showSection('branching')" style="cursor:pointer;"><code>git checkout -b</code></a></li>
+          <li><a onclick="showSection('merging')" style="cursor:pointer;"><code>git merge</code></a></li>
+          <li><a onclick="showSection('repos')" style="cursor:pointer;"><code>git clone</code></a></li>
         </ul>
       </div>
 
@@ -1234,15 +1254,16 @@
       target.classList.add('active');
       if (!noScroll) window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    document.querySelectorAll('.section-tabs .tab-link[data-section]').forEach(function(t) {
-      t.classList.toggle('active', t.dataset.section === id);
-    });
+    // Highlight active TOC link
+    var toc = document.getElementById('tocLinks');
+    if (toc) {
+      toc.querySelectorAll('a[onclick]').forEach(function(a) {
+        var match = a.getAttribute('onclick').indexOf("'" + id + "'") !== -1;
+        a.classList.toggle('active', match);
+      });
+    }
     history.replaceState(null, '', '#' + id);
   };
-
-  document.querySelectorAll('.section-tabs .tab-link[data-section]').forEach(function(tab) {
-    tab.addEventListener('click', function() { showSection(tab.dataset.section); });
-  });
 
   // On load: check hash or default to first section
   (function() {
