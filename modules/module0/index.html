@@ -81,6 +81,28 @@
     .tab-link:hover { color: var(--text); border-bottom-color: var(--accent); }
     .tab-link.active { color: var(--accent-light); border-bottom-color: var(--accent); }
 
+    /* ---- SIM CTA CARD ---- */
+    a.sim-cta {
+      display: block; text-decoration: none;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-light);
+      border-radius: 4px; padding: 1.1rem 1.25rem;
+      margin: 1.5rem 0; transition: border-color 0.15s, background 0.15s;
+    }
+    a.sim-cta:hover { background: var(--bg-card2); border-color: var(--accent-light); }
+    a.sim-cta .sim-cta-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent-light); margin-bottom: 0.35rem;
+    }
+    a.sim-cta h4 {
+      font-family: 'Zilla Slab', serif; font-size: 1.05rem;
+      color: var(--text-bright); margin-bottom: 0.25rem;
+    }
+    a.sim-cta p {
+      font-size: 0.875rem; color: var(--text-dim); margin: 0;
+    }
+
     /* ---- SECTION PAGINATION ---- */
     .content-section { display: none; }
     .content-section.active { display: block; }
@@ -296,17 +318,6 @@
   </div>
 </div>
 
-<nav class="section-tabs" id="section-tabs">
-  <span class="tab-link" data-sec="overview">Course Overview</span>
-  <span class="tab-link" data-sec="syllabus">Syllabus</span>
-  <span class="tab-link" data-sec="modules">Module Roadmap</span>
-  <span class="tab-link" data-sec="ds-in-action">DS in Action</span>
-  <span class="tab-link" data-sec="setup">Software Setup</span>
-  <span class="tab-link" data-sec="resources">Resources</span>
-  <a href="quiz.html" class="tab-link">Quiz</a>
-</nav>
-
-<div style="height:3px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0.4;"></div>
 <div class="page-wrap">
   <div class="content-col">
 
