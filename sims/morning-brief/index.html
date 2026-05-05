@@ -604,9 +604,9 @@
       <div class="artifact-header"><span class="artifact-icon">&#128140;</span> Slack &middot; Dr. Renata Voss &middot; 8:02 AM</div>
       <div class="artifact-body">
         <div class="sender">Dr. Renata Voss &rarr; you (direct message)</div>
-        <p>Good morning. I need you to take point on the Riverside ask today. They've seen a spike in 30-day readmissions this quarter - rate went from 12% to 17% - and the board wants to understand why before they meet at noon.</p>
-        <p>I know it's a fast turnaround. But I need someone who will <strong>do this right</strong>, not just fast. The last team that rushed question definition spent three days answering the wrong thing. Don't be that team.</p>
-        <p>Six stages. Don't skip any. I'll be in the board meeting - you'll brief me at 11:30.</p>
+        <p class="slack-text">Good morning. I need you to take point on the Riverside ask today. They've seen a spike in 30-day readmissions this quarter - rate went from 12% to 17% - and the board wants to understand why before they meet at noon.</p>
+        <p class="slack-text">I know it's a fast turnaround. But I need someone who will do this right, not just fast. The last team that rushed question definition spent three days answering the wrong thing. Don't be that team.</p>
+        <p class="slack-text">Six stages. Don't skip any. I'll be in the board meeting - you'll brief me at 11:30.</p>
       </div>
     </div>
 
@@ -1175,17 +1175,22 @@
   function revealPart(partId, btnId) {
     if (btnId) document.getElementById(btnId).style.display = 'none';
     const part = document.getElementById(partId);
+    // Pre-clear all typewriter targets BEFORE making the part visible
+    // so there's no flash of full content before the typewriter starts
+    const msgs = part.querySelectorAll('.slack-text');
+    msgs.forEach(el => {
+      const original = el.getAttribute('data-tw') || el.textContent.trim();
+      el.setAttribute('data-tw', original);
+      el.textContent = '';
+    });
     part.style.display = 'block';
     setTimeout(() => {
       const top = part.getBoundingClientRect().top + window.scrollY - 90;
       window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
     }, 50);
-    // Typewrite .slack-text elements inside the newly revealed part
-    const msgs = part.querySelectorAll('.slack-text');
+    // Now start typewriters
     msgs.forEach((el, idx) => {
-      const original = el.getAttribute('data-tw') || el.textContent.trim();
-      el.setAttribute('data-tw', original);
-      typewrite(el, original, 16, idx * 140 + 200);
+      typewrite(el, el.getAttribute('data-tw'), 16, idx * 140 + 200);
     });
   }
 
@@ -1582,6 +1587,15 @@ ward_check = df_clean[df_clean[<span class="st">'followup_scheduled'</span>] == 
   :root.theme-light .q-option:hover {
     border-color: #a09890 !important;
     background: #f5f2ee !important;
+  }
+  /* Lifecycle rail steps */
+  :root.theme-light .lc-step {
+    color: #3a2010 !important;
+    background: rgba(184,68,24,0.08) !important;
+    border-color: rgba(184,68,24,0.3) !important;
+  }
+  :root.theme-light .lc-step:not(:last-child)::after {
+    color: rgba(184,68,24,0.55) !important;
   }
   /* Gear button visible on light bg */
   :root.theme-light #settings-toggle {
