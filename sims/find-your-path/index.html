@@ -1583,6 +1583,15 @@ function retakeQuiz() {
     border-color: #a09890 !important;
     background: #f5f2ee !important;
   }
+  :root.theme-light .q-option.selected {
+    background: rgba(139,28,64,0.07) !important;
+    border-color: var(--maroon) !important;
+  }
+  :root.theme-light .q-option.selected .opt-letter {
+    background: var(--maroon) !important;
+    color: #fff !important;
+    border-color: var(--maroon) !important;
+  }
   /* Gear button visible on light bg */
   :root.theme-light #settings-toggle {
     box-shadow: 0 2px 8px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.12) !important;

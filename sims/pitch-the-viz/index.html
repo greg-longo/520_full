@@ -818,7 +818,7 @@
     </div>
 
     <div class="landing-setup">
-      You're a junior data analyst at <strong>Volta Records</strong>, an independent label. A&R director <strong>Nadia Okafor</strong> has been fighting to sign <strong>Luz</strong>, a singer-songwriter whose debut single "Drift" went viral six months ago. Today Nadia pitches to the investment committee - and she needs your data brief to make the case. You built four slides. They're on the screen. The committee is already in the room.
+      You're a junior data analyst at Volta Records, an independent label. A&R director Nadia Okafor has been fighting to sign Luz, a singer-songwriter whose debut single "Drift" went viral six months ago. Today Nadia pitches to the investment committee - and she needs your data brief to make the case. You built four slides. They're on the screen. The committee is already in the room.
     </div>
 
     <div class="email-artifact">
@@ -2565,6 +2565,16 @@ function restartSim() {
   :root.theme-light .q-option:hover {
     border-color: #a09890 !important;
     background: #f5f2ee !important;
+  }
+  /* Masthead — always-dark bg, so pin text to light regardless of theme */
+  :root.theme-light .landing-masthead .masthead-title {
+    color: #f0e8d8 !important;
+  }
+  :root.theme-light .landing-masthead .masthead-sub {
+    color: rgba(240,232,216,0.65) !important;
+  }
+  :root.theme-light .landing-masthead .masthead-badge {
+    color: var(--accent) !important;
   }
   /* Gear button visible on light bg */
   :root.theme-light #settings-toggle {
