@@ -1048,7 +1048,7 @@ games = <span class="num">120</span>
 
         <h3>for loops</h3>
 
-<pre><code>roster = [<span class="str">"Rivera"</span>, <span class="str">"Chen"</span>, <span class="str">"Okafor"</span>, <span class="str">"Patel"</span>]
+<pre><code>roster = [<span class="str">"Rivera"</span>, <span class="str">"Chen"</span>, <span class="str">"Santos"</span>, <span class="str">"Patel"</span>]
 
 <span class="kw">for</span> player <span class="kw">in</span> roster:
     <span class="fn">print</span>(<span class="str">f"Player: </span>{player}<span class="str">"</span>)
@@ -1065,12 +1065,12 @@ games = <span class="num">120</span>
           <div class="output-block-label">output &mdash; for loop + enumerate</div>
 <span class="out-str">Player: Rivera</span>
 <span class="out-str">Player: Chen</span>
-<span class="out-str">Player: Okafor</span>
+<span class="out-str">Player: Santos</span>
 <span class="out-str">Player: Patel</span>
 <span class="out-idx">--- enumerate ---</span>
 <span class="out-num">0</span>: <span class="out-str">Rivera</span>
 <span class="out-num">1</span>: <span class="out-str">Chen</span>
-<span class="out-num">2</span>: <span class="out-str">Okafor</span>
+<span class="out-num">2</span>: <span class="out-str">Santos</span>
 <span class="out-num">3</span>: <span class="out-str">Patel</span>
         </div>
 
@@ -1091,7 +1091,7 @@ games = <span class="num">120</span>
         <h3>break &amp; continue</h3>
 
 <pre><code><span class="kw">for</span> player <span class="kw">in</span> roster:
-    <span class="kw">if</span> player == <span class="str">"Okafor"</span>:
+    <span class="kw">if</span> player == <span class="str">"Santos"</span>:
         <span class="kw">break</span>           <span class="cmt"># stop the loop entirely</span>
     <span class="fn">print</span>(player)
 
@@ -1101,13 +1101,13 @@ games = <span class="num">120</span>
     <span class="fn">print</span>(player)</code></pre>
 
         <div class="output-block">
-          <div class="output-block-label">output &mdash; break (stops at Okafor) / continue (skips Chen)</div>
+          <div class="output-block-label">output &mdash; break (stops at Santos) / continue (skips Chen)</div>
 <span class="out-idx">--- break ---</span>
 <span class="out-str">Rivera</span>
 <span class="out-str">Chen</span>
 <span class="out-idx">--- continue ---</span>
 <span class="out-str">Rivera</span>
-<span class="out-str">Okafor</span>
+<span class="out-str">Santos</span>
 <span class="out-str">Patel</span>
         </div>
     
@@ -1145,7 +1145,7 @@ games = <span class="num">120</span>
 
         <h3>Lists</h3>
 
-<pre><code>roster = [<span class="str">"Rivera"</span>, <span class="str">"Chen"</span>, <span class="str">"Okafor"</span>]
+<pre><code>roster = [<span class="str">"Rivera"</span>, <span class="str">"Chen"</span>, <span class="str">"Santos"</span>]
 
 roster.<span class="fn">append</span>(<span class="str">"Patel"</span>)        <span class="cmt"># add to end</span>
 roster.<span class="fn">insert</span>(<span class="num">0</span>, <span class="str">"Garcia"</span>)   <span class="cmt"># add at index</span>
@@ -1156,7 +1156,7 @@ roster.<span class="fn">remove</span>(<span class="str">"Chen"</span>)        <s
 
         <div class="output-block">
           <div class="output-block-label">output &mdash; list after append/insert/remove</div>
-roster  &rarr;  [<span class="out-str">'Garcia'</span>, <span class="out-str">'Rivera'</span>, <span class="out-str">'Okafor'</span>, <span class="out-str">'Patel'</span>]
+roster  &rarr;  [<span class="out-str">'Garcia'</span>, <span class="out-str">'Rivera'</span>, <span class="out-str">'Santos'</span>, <span class="out-str">'Patel'</span>]
 roster[0]  &rarr;  <span class="out-str">'Garcia'</span>
 len(roster)  &rarr;  <span class="out-num">4</span>
 'Rivera' in roster  &rarr;  <span class="out-num">True</span>

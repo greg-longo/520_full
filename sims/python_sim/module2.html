@@ -333,7 +333,7 @@ const challenges = [
   {
     title: "Build the Roster List",
     tag: "Lists - Creating",
-    desc: `Jonah drops a CSV printout on your desk. "Load the Eagles' starting lineup into Python." Create a list named <code>roster</code> containing these five player names in order: <code>"Rivera"</code>, <code>"Okafor"</code>, <code>"Chen"</code>, <code>"Williams"</code>, <code>"Torres"</code>. Then print the list.`,
+    desc: `Jonah drops a CSV printout on your desk. "Load the Eagles' starting lineup into Python." Create a list named <code>roster</code> containing these five player names in order: <code>"Rivera"</code>, <code>"Santos"</code>, <code>"Chen"</code>, <code>"Williams"</code>, <code>"Torres"</code>. Then print the list.`,
     info: {
       label: "Concept: Lists",
       html: `<p>A <code>list</code> holds multiple values in a specific order, inside square brackets:</p>
@@ -348,20 +348,20 @@ const challenges = [
 roster = ["Rivera",
 `,
     hints: [
-      `A list uses square brackets and commas: <code>roster = ["Rivera", "Okafor", ...]</code>. You've started it — keep adding the remaining three names.`,
-      `Complete the list: <code>roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]</code>. Don't forget the closing bracket and then <code>print(roster)</code>.`
+      `A list uses square brackets and commas: <code>roster = ["Rivera", "Santos", ...]</code>. You've started it — keep adding the remaining three names.`,
+      `Complete the list: <code>roster = ["Rivera", "Santos", "Chen", "Williams", "Torres"]</code>. Don't forget the closing bracket and then <code>print(roster)</code>.`
     ],
-    answer: `<code>roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]</code><br>Then <code>print(roster)</code> to display it.`,
+    answer: `<code>roster = ["Rivera", "Santos", "Chen", "Williams", "Torres"]</code><br>Then <code>print(roster)</code> to display it.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
-      const names = ['Rivera','Okafor','Chen','Williams','Torres'];
+      const names = ['Rivera','Santos','Chen','Williams','Torres'];
       const hasAll = names.every(n => code.includes(`"${n}"`) || code.includes(`'${n}'`));
       const hasList = /roster\s*=\s*\[/.test(code);
       const hasPrint = stdout.includes('Rivera') && stdout.includes('Torres');
       if (hasAll && hasList && hasPrint) return { pts: 2, level: 'pass', msg: `Correct. The list maintains insertion order - this is important. When you load a CSV with pandas, each column becomes a list-like structure. Knowing how to create and inspect lists is the first step to understanding that.` };
       if (hasList && hasPrint) return { pts: 1, level: 'partial', msg: `List is printing, but double-check all five names are spelled correctly and in the right order.` };
-      return { pts: 0, level: 'fail', msg: `Create <code>roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]</code> and print it.` };
+      return { pts: 0, level: 'fail', msg: `Create <code>roster = ["Rivera", "Santos", "Chen", "Williams", "Torres"]</code> and print it.` };
     }
   },
   {
@@ -371,14 +371,14 @@ roster = ["Rivera",
     info: {
       label: "Concept: Indexing",
       html: `<p>Access individual items using square brackets and an index number. <strong>Python starts counting at 0:</strong></p>
-<div class="code-example"><span class="kw">roster</span> = [<span class="str">"Rivera"</span>, <span class="str">"Okafor"</span>, <span class="str">"Chen"</span>, <span class="str">"Williams"</span>, <span class="str">"Torres"</span>]
+<div class="code-example"><span class="kw">roster</span> = [<span class="str">"Rivera"</span>, <span class="str">"Santos"</span>, <span class="str">"Chen"</span>, <span class="str">"Williams"</span>, <span class="str">"Torres"</span>]
 
 <span class="fn">print</span>(<span class="kw">roster</span>[<span class="num">0</span>])   <span class="cmt"># "Rivera"  (first item)</span>
-<span class="fn">print</span>(<span class="kw">roster</span>[<span class="num">1</span>])   <span class="cmt"># "Okafor"  (second item)</span>
+<span class="fn">print</span>(<span class="kw">roster</span>[<span class="num">1</span>])   <span class="cmt"># "Santos"  (second item)</span>
 <span class="fn">print</span>(<span class="kw">roster</span>[<span class="num">-1</span>])  <span class="cmt"># "Torres"  (last item)</span></div>
 <p style="margin-top:0.5rem">Negative indices count from the end: <code>-1</code> is last, <code>-2</code> is second-to-last, etc.</p>`
     },
-    starterCode: `roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]
+    starterCode: `roster = ["Rivera", "Santos", "Chen", "Williams", "Torres"]
 
 # Print the player at batting position 3 (index 2)
 print(roster[  ])`,
@@ -404,17 +404,17 @@ print(roster[  ])`,
     info: {
       label: "Concept: Append & Slicing",
       html: `<p><code>append()</code> adds an item to the end of a list. <strong>Slicing</strong> extracts a portion using <code>[start:end]</code> (end is not included):</p>
-<div class="code-example"><span class="kw">roster</span> = [<span class="str">"Rivera"</span>, <span class="str">"Okafor"</span>, <span class="str">"Chen"</span>]
+<div class="code-example"><span class="kw">roster</span> = [<span class="str">"Rivera"</span>, <span class="str">"Santos"</span>, <span class="str">"Chen"</span>]
 <span class="kw">roster</span>.<span class="fn">append</span>(<span class="str">"Williams"</span>)   <span class="cmt"># adds to end</span>
 
 <span class="cmt"># Slice: items at index 1 and 2 (stop before index 3)</span>
-<span class="fn">print</span>(<span class="kw">roster</span>[<span class="num">1</span>:<span class="num">3</span>])   <span class="cmt"># ['Okafor', 'Chen']</span>
+<span class="fn">print</span>(<span class="kw">roster</span>[<span class="num">1</span>:<span class="num">3</span>])   <span class="cmt"># ['Santos', 'Chen']</span>
 
 <span class="cmt"># Omit start or end to go to the edge</span>
 <span class="fn">print</span>(<span class="kw">roster</span>[<span class="num">2</span>:])    <span class="cmt"># ['Chen', 'Williams']</span>
-<span class="fn">print</span>(<span class="kw">roster</span>[:<span class="num">2</span>])    <span class="cmt"># ['Rivera', 'Okafor']</span></div>`
+<span class="fn">print</span>(<span class="kw">roster</span>[:<span class="num">2</span>])    <span class="cmt"># ['Rivera', 'Santos']</span></div>`
     },
-    starterCode: `roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]
+    starterCode: `roster = ["Rivera", "Santos", "Chen", "Williams", "Torres"]
 
 # Add "Patel" to the roster
 roster.append(    )
@@ -454,7 +454,7 @@ print(roster[   ])`,
 <span class="cmt"># Option 2: comma in print (easier)</span>
 <span class="fn">print</span>(<span class="str">"Count:"</span>, <span class="kw">count</span>)</div>`
     },
-    starterCode: `roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]
+    starterCode: `roster = ["Rivera", "Santos", "Chen", "Williams", "Torres"]
 roster.append("Patel")
 
 # Count the players and store it in a variable
@@ -485,7 +485,7 @@ print("The Eagles have", count, "players on the active roster.")`,
     info: {
       label: "Concept: .index() and 'in'",
       html: `<p>Two useful ways to search a list:</p>
-<div class="code-example"><span class="kw">roster</span> = [<span class="str">"Rivera"</span>, <span class="str">"Okafor"</span>, <span class="str">"Torres"</span>]
+<div class="code-example"><span class="kw">roster</span> = [<span class="str">"Rivera"</span>, <span class="str">"Santos"</span>, <span class="str">"Torres"</span>]
 
 <span class="cmt"># .index() returns the position of an item</span>
 <span class="fn">print</span>(<span class="kw">roster</span>.<span class="fn">index</span>(<span class="str">"Torres"</span>))   <span class="cmt"># 2</span>
@@ -494,7 +494,7 @@ print("The Eagles have", count, "players on the active roster.")`,
 <span class="fn">print</span>(<span class="str">"Rivera"</span> <span class="kw">in</span> <span class="kw">roster</span>)        <span class="cmt"># True</span>
 <span class="fn">print</span>(<span class="str">"Patel"</span> <span class="kw">in</span> <span class="kw">roster</span>)         <span class="cmt"># False</span></div>`
     },
-    starterCode: `roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]
+    starterCode: `roster = ["Rivera", "Santos", "Chen", "Williams", "Torres"]
 
 # Find Torres's index position
 torres_pos = roster.index(     )

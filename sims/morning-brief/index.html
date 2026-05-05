@@ -320,7 +320,7 @@
   .bad-code  { color: #f08090; }
 
   /* Data tables */
-  .data-table-wrap { overflow-x: auto; margin-bottom: 28px; }
+  .data-table-wrap { overflow-x: hidden; margin-bottom: 28px; }
   .table-caption {
     font-family: var(--mono); font-size: 11px; color: var(--muted);
     margin-bottom: 10px; letter-spacing: 0.5px; text-transform: uppercase;
@@ -329,7 +329,7 @@
   .table-caption::before { content:''; display:inline-block; width:12px; height:1px; background:var(--muted); }
   .data-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12.5px; }
   .data-table th { background: var(--surface2); color: var(--muted); padding: 8px 12px; text-align: left; border-bottom: 2px solid var(--accent); white-space: nowrap; font-weight: 500; letter-spacing: 0.3px; }
-  .data-table td { padding: 7px 12px; border-bottom: 1px solid var(--border-l); color: var(--text); white-space: nowrap; }
+  .data-table td { padding: 7px 12px; border-bottom: 1px solid var(--border-l); color: var(--text); }
   .data-table tr:hover td { background: var(--surface2); }
   .data-table .flag  { color: #f5c76a; }
   .data-table .bad   { color: #f08090; font-weight: bold; }
@@ -469,6 +469,10 @@
   @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
   .fade-in { animation: fadeIn 0.35s ease forwards; }
 
+  /* ---- WITHIN-SCREEN REVEAL ---- */
+  .screen-subpart { display: none; }
+  .reveal-trigger-wrap { text-align: center; margin: 2rem 0 1rem; }
+
   @media (max-width: 680px) {
     #main { padding: 32px 16px 60px; }
     .objectives-grid { grid-template-columns: 1fr; }
@@ -489,7 +493,7 @@
 <!-- STATUS BAR -->
 <div id="statusbar">
   <div class="sb-inner">
-    <div class="sb-brand">Meridian Health</div>
+    <div class="sb-brand">St. Davids Health</div>
     <div class="sb-metrics">
       <div class="sb-metric">
         <div class="sb-metric-label">Analysis Score</div>
@@ -543,7 +547,7 @@
   <div class="landing-body">
     <div class="landing-section">
       <h2>Your Assignment</h2>
-      <p>You're a junior data scientist at <strong>Meridian Health Consulting</strong>. It's 8 AM and your phone is already buzzing. A hospital client needs answers before noon - and Dr. Renata Voss, your VP, has dropped this in your lap.</p>
+      <p>You're a junior data scientist at <strong>St. Davids Health Consulting</strong>. It's 8 AM and your phone is already buzzing. A hospital client needs answers before noon - and Dr. Renata Voss, your VP, has dropped this in your lap.</p>
       <p>The job is straightforward on paper: walk the full data science lifecycle from scratch. Define the question. Scope the data. Clean what needs cleaning. Explore what the data is actually saying. Interpret it carefully. Then communicate it to a room that includes clinicians, executives, and two trustees who have never touched a spreadsheet.</p>
       <p>Each stage is a decision point. There are shortcuts you can take - and every one of them has consequences.</p>
     </div>
@@ -587,39 +591,51 @@
   </div>
 
   <div class="scene fade-in">
-    <div class="timestamp">Tuesday, 8:02 AM &middot; Your desk, Meridian Health Consulting</div>
-    <p>You started at Meridian three months ago. You know pandas, you've cleaned a few datasets, and you've sat in on two client calls but never led one. This morning Dr. Voss stops at your desk on her way to the conference room. She sets her coffee down. That's never a good sign...</p>
+    <div class="timestamp">Tuesday, 8:02 AM &middot; Your desk, St. Davids Health Consulting</div>
+    <p>You started at St. Davids three months ago. You know pandas, you've cleaned a few datasets, and you've sat in on two client calls but never led one. This morning Dr. Voss stops at your desk on her way to the conference room. She sets her coffee down. That's never a good sign...</p>
   </div>
 
-  <div class="artifact fade-in">
-    <div class="artifact-header"><span class="artifact-icon">&#128140;</span> Slack &middot; #analytics-team &middot; 8:02 AM</div>
-    <div class="artifact-body">
-      <div class="sender">Dr. Renata Voss &rarr; you (direct message)</div>
-      <p>Good morning. I need you to take point on the Riverside ask today. They've seen a spike in 30-day readmissions this quarter - rate went from 12% to 17% - and the board wants to understand why before they meet at noon.</p>
-      <p>I know it's a fast turnaround. But I need someone who will <strong>do this right</strong>, not just fast. The last team that rushed question definition spent three days answering the wrong thing. Don't be that team.</p>
-      <p>Six stages. Don't skip any. I'll be in the board meeting - you'll brief me at 11:30.</p>
+  <div id="btn-reveal-1a" class="reveal-trigger-wrap">
+    <button class="continue-btn" onclick="revealPart('part-1-slack', 'btn-reveal-1a')">Continue -></button>
+  </div>
+
+  <div id="part-1-slack" class="screen-subpart">
+    <div class="artifact fade-in">
+      <div class="artifact-header"><span class="artifact-icon">&#128140;</span> Slack &middot; Dr. Renata Voss &middot; 8:02 AM</div>
+      <div class="artifact-body">
+        <div class="sender">Dr. Renata Voss &rarr; you (direct message)</div>
+        <p>Good morning. I need you to take point on the Riverside ask today. They've seen a spike in 30-day readmissions this quarter - rate went from 12% to 17% - and the board wants to understand why before they meet at noon.</p>
+        <p>I know it's a fast turnaround. But I need someone who will <strong>do this right</strong>, not just fast. The last team that rushed question definition spent three days answering the wrong thing. Don't be that team.</p>
+        <p>Six stages. Don't skip any. I'll be in the board meeting - you'll brief me at 11:30.</p>
+      </div>
+    </div>
+
+    <div id="btn-reveal-1b" class="reveal-trigger-wrap">
+      <button class="continue-btn" onclick="revealPart('part-1-rest', 'btn-reveal-1b')">Continue -></button>
     </div>
   </div>
 
-  <div class="scene fade-in">
-    <p>You pull up the six-step framework from your onboarding notes. You've seen it on slides. Today you're actually using it.</p>
-  </div>
+  <div id="part-1-rest" class="screen-subpart">
+    <div class="scene fade-in">
+      <p>You pull up the six-step framework from your onboarding notes. You've seen it on slides. Today you're actually using it.</p>
+    </div>
 
-  <div class="framework-card fade-in">
-    <div class="fw-label">The 6-Step Problem-Solving Framework - Module 1</div>
-    <div class="fw-step"><strong>1. Understand</strong> - Comprehend requirements and constraints before anything else</div>
-    <div class="fw-step"><strong>2. Plan</strong> - Map the logical flow before touching data</div>
-    <div class="fw-step"><strong>3. Break It Down</strong> - Divide into sub-problems; each one solvable independently</div>
-    <div class="fw-step"><strong>4. Pseudocode</strong> - Write out the logic before writing any code</div>
-    <div class="fw-step"><strong>5. Code Each Part</strong> - Implement piece by piece</div>
-    <div class="fw-step"><strong>6. Test &amp; Debug</strong> - Check outputs, look for edge cases, verify conclusions</div>
-  </div>
+    <div class="framework-card fade-in">
+      <div class="fw-label">The 6-Step Problem-Solving Framework - Module 1</div>
+      <div class="fw-step"><strong>1. Understand</strong> - Comprehend requirements and constraints before anything else</div>
+      <div class="fw-step"><strong>2. Plan</strong> - Map the logical flow before touching data</div>
+      <div class="fw-step"><strong>3. Break It Down</strong> - Divide into sub-problems; each one solvable independently</div>
+      <div class="fw-step"><strong>4. Pseudocode</strong> - Write out the logic before writing any code</div>
+      <div class="fw-step"><strong>5. Code Each Part</strong> - Implement piece by piece</div>
+      <div class="fw-step"><strong>6. Test &amp; Debug</strong> - Check outputs, look for edge cases, verify conclusions</div>
+    </div>
 
-  <div class="scene fade-in">
-    <p>First step: understand. Which means before you open a single file, you need to know exactly what question you're trying to answer.</p>
-  </div>
+    <div class="scene fade-in">
+      <p>First step: understand. Which means before you open a single file, you need to know exactly what question you're trying to answer.</p>
+    </div>
 
-  <button class="continue-btn fade-in" onclick="goTo(2)">Stage 1: Define the Question -></button>
+    <button class="continue-btn fade-in" onclick="goTo(2)">Stage 1: Define the Question -></button>
+  </div>
 </div>
 
 <!-- ══ SCREEN 2: ASK ══ -->
@@ -697,25 +713,36 @@
     <p>Kenji Lora, the data engineer who manages the Riverside connection, pings you before you even reach out to him. He's clearly already seen Dr. Voss's calendar invite.</p>
   </div>
 
-  <div class="slack-msg fade-in">
-    <div class="slack-header"><span class="artifact-icon">&#35;</span> analytics-team</div>
-    <div class="slack-body">
-      <div class="slack-line">
-        <div class="slack-avatar teal">KL</div>
-        <div class="slack-content">
-          <div class="slack-name">Kenji Lora <span>8:31 AM</span></div>
-          <div class="slack-text">hey - heard you're on the Riverside ask. I have access to their warehouse. tell me exactly what to pull so I don't waste query time on the wrong tables. what do you need?</div>
+  <div id="btn-reveal-3a" class="reveal-trigger-wrap">
+    <button class="continue-btn" onclick="revealPart('part-3-slack', 'btn-reveal-3a')">Continue -></button>
+  </div>
+
+  <div id="part-3-slack" class="screen-subpart">
+    <div class="slack-msg fade-in">
+      <div class="slack-header"><span class="artifact-icon">&#35;</span> analytics-team</div>
+      <div class="slack-body">
+        <div class="slack-line">
+          <div class="slack-avatar teal">KL</div>
+          <div class="slack-content">
+            <div class="slack-name">Kenji Lora <span>8:31 AM</span></div>
+            <div class="slack-text">hey - heard you're on the Riverside ask. I have access to their warehouse. tell me exactly what to pull so I don't waste query time on the wrong tables. what do you need?</div>
+          </div>
         </div>
       </div>
     </div>
+
+    <div id="btn-reveal-3b" class="reveal-trigger-wrap">
+      <button class="continue-btn" onclick="revealPart('part-3-rest', 'btn-reveal-3b')">Continue -></button>
+    </div>
   </div>
 
-  <div class="scene fade-in">
-    <p>Your question is: <strong>Which Q3 patient groups have the highest 30-day readmission rate, and what discharge factors are associated with those readmissions?</strong></p>
-    <p>Kenji sends over the data dictionary. Four tables available.</p>
-  </div>
+  <div id="part-3-rest" class="screen-subpart">
+    <div class="scene fade-in">
+      <p>Your question is: <strong>Which Q3 patient groups have the highest 30-day readmission rate, and what discharge factors are associated with those readmissions?</strong></p>
+      <p>Kenji sends over the data dictionary. Four tables available.</p>
+    </div>
 
-  <div class="data-table-wrap fade-in">
+    <div class="data-table-wrap fade-in">
     <div class="table-caption">Riverside Hospital &middot; Available Datasets</div>
     <table class="data-table">
       <thead><tr><th>Dataset</th><th>Contents</th><th>Rows</th></tr></thead>
@@ -762,6 +789,7 @@
   <div id="next-3" style="display:none;">
     <button class="continue-btn" onclick="goTo(4)">Stage 3: Clean the Data -></button>
   </div>
+  </div><!-- /part-3-rest -->
 </div>
 
 <!-- ══ SCREEN 4: CLEAN ══ -->
@@ -776,20 +804,31 @@
     <p>Kenji drops the files in the shared folder. You load them up. It takes about ninety seconds to realize the data is not clean.</p>
   </div>
 
-  <div class="slack-msg fade-in">
-    <div class="slack-header"><span class="artifact-icon">&#35;</span> analytics-team</div>
-    <div class="slack-body">
-      <div class="slack-line">
-        <div class="slack-avatar teal">KL</div>
-        <div class="slack-content">
-          <div class="slack-name">Kenji Lora <span>9:04 AM</span></div>
-          <div class="slack-text">files are in /data/riverside_q3/. heads up - discharge_condition_score has a lot of blanks, maybe 30%. also there are ~20 patient IDs in admissions_q3 that have no match in discharge_notes. probably AMA discharges (left against medical advice). just flagging it</div>
+  <div id="btn-reveal-4a" class="reveal-trigger-wrap">
+    <button class="continue-btn" onclick="revealPart('part-4-slack', 'btn-reveal-4a')">Continue -></button>
+  </div>
+
+  <div id="part-4-slack" class="screen-subpart">
+    <div class="slack-msg fade-in">
+      <div class="slack-header"><span class="artifact-icon">&#35;</span> analytics-team</div>
+      <div class="slack-body">
+        <div class="slack-line">
+          <div class="slack-avatar teal">KL</div>
+          <div class="slack-content">
+            <div class="slack-name">Kenji Lora <span>9:04 AM</span></div>
+            <div class="slack-text">files are in /data/riverside_q3/. heads up - discharge_condition_score has a lot of blanks, maybe 30%. also there are ~20 patient IDs in admissions_q3 that have no match in discharge_notes. probably AMA discharges (left against medical advice). just flagging it</div>
+          </div>
         </div>
       </div>
     </div>
+
+    <div id="btn-reveal-4b" class="reveal-trigger-wrap">
+      <button class="continue-btn" onclick="revealPart('part-4-rest', 'btn-reveal-4b')">Continue -></button>
+    </div>
   </div>
 
-  <div class="artifact fade-in">
+  <div id="part-4-rest" class="screen-subpart">
+    <div class="artifact fade-in">
     <div class="artifact-header"><span class="artifact-icon">&#128187;</span> notebook &middot; riverside_analysis.ipynb</div>
     <div class="artifact-body" style="display:block;">
       <div class="code-label">Checking for missing values</div>
@@ -854,6 +893,7 @@
   <div id="next-4" style="display:none;">
     <button class="continue-btn" onclick="goTo(5)">Stage 4: Explore the Data -></button>
   </div>
+  </div><!-- /part-4-rest -->
 </div>
 
 <!-- ══ SCREEN 5: EXPLORE ══ -->
@@ -899,20 +939,31 @@
     <p>Then your colleague Darius pings you.</p>
   </div>
 
-  <div class="slack-msg fade-in">
-    <div class="slack-header"><span class="artifact-icon">&#35;</span> analytics-team</div>
-    <div class="slack-body">
-      <div class="slack-line">
-        <div class="slack-avatar maroon">MW</div>
-        <div class="slack-content">
-          <div class="slack-name">Darius Webb <span>10:01 AM</span></div>
-          <div class="slack-text">just peeked at your prelim output - the follow-up finding is huge. 28.7% vs 11.2% - that's almost triple the rate. this is your headline. the hospital should mandate follow-ups for everyone immediately, right?</div>
+  <div id="btn-reveal-5a" class="reveal-trigger-wrap">
+    <button class="continue-btn" onclick="revealPart('part-5-slack', 'btn-reveal-5a')">Continue -></button>
+  </div>
+
+  <div id="part-5-slack" class="screen-subpart">
+    <div class="slack-msg fade-in">
+      <div class="slack-header"><span class="artifact-icon">&#35;</span> analytics-team</div>
+      <div class="slack-body">
+        <div class="slack-line">
+          <div class="slack-avatar maroon">MW</div>
+          <div class="slack-content">
+            <div class="slack-name">Darius Webb <span>10:01 AM</span></div>
+            <div class="slack-text">just peeked at your prelim output - the follow-up finding is huge. 28.7% vs 11.2% - that's almost triple the rate. this is your headline. the hospital should mandate follow-ups for everyone immediately, right?</div>
+          </div>
         </div>
       </div>
     </div>
+
+    <div id="btn-reveal-5b" class="reveal-trigger-wrap">
+      <button class="continue-btn" onclick="revealPart('part-5-rest', 'btn-reveal-5b')">Continue -></button>
+    </div>
   </div>
 
-  <div class="decision-block fade-in">
+  <div id="part-5-rest" class="screen-subpart">
+    <div class="decision-block fade-in">
     <div class="decision-label">Your Decision</div>
     <div class="decision-question">How do you respond to Darius?</div>
     <div class="choices" id="choices-5">
@@ -946,6 +997,7 @@
   <div id="next-5" style="display:none;">
     <button class="continue-btn" onclick="goTo(6)">Stage 5: Analyze and Interpret -></button>
   </div>
+  </div><!-- /part-5-rest -->
 </div>
 
 <!-- ══ SCREEN 6: ANALYZE ══ -->
@@ -972,15 +1024,26 @@
     </table>
   </div>
 
-  <div class="artifact fade-in">
-    <div class="artifact-header"><span class="artifact-icon">&#128140;</span> Slack DM &middot; Dr. Renata Voss &middot; 10:48 AM</div>
-    <div class="artifact-body">
-      <div class="sender">Dr. Renata Voss &rarr; you</div>
-      <p>Good progress. Before you write up the findings: how confident are we in these numbers? The board will ask directly whether this is preliminary or definitive. Don't oversell, but don't undersell either. They need to act on something today.</p>
+  <div id="btn-reveal-6a" class="reveal-trigger-wrap">
+    <button class="continue-btn" onclick="revealPart('part-6-slack', 'btn-reveal-6a')">Continue -></button>
+  </div>
+
+  <div id="part-6-slack" class="screen-subpart">
+    <div class="artifact fade-in">
+      <div class="artifact-header"><span class="artifact-icon">&#128140;</span> Slack DM &middot; Dr. Renata Voss &middot; 10:48 AM</div>
+      <div class="artifact-body">
+        <div class="sender">Dr. Renata Voss &rarr; you</div>
+        <p>Good progress. Before you write up the findings: how confident are we in these numbers? The board will ask directly whether this is preliminary or definitive. Don't oversell, but don't undersell either. They need to act on something today.</p>
+      </div>
+    </div>
+
+    <div id="btn-reveal-6b" class="reveal-trigger-wrap">
+      <button class="continue-btn" onclick="revealPart('part-6-rest', 'btn-reveal-6b')">Continue -></button>
     </div>
   </div>
 
-  <div class="decision-block fade-in">
+  <div id="part-6-rest" class="screen-subpart">
+    <div class="decision-block fade-in">
     <div class="decision-label">Your Decision</div>
     <div class="decision-question">How do you characterize the strength of the findings to Dr. Voss?</div>
     <div class="choices" id="choices-6">
@@ -1014,6 +1077,7 @@
   <div id="next-6" style="display:none;">
     <button class="continue-btn" onclick="goTo(7)">Stage 6: Communicate -></button>
   </div>
+  </div><!-- /part-6-rest -->
 </div>
 
 <!-- ══ SCREEN 7: COMMUNICATE ══ -->
@@ -1107,9 +1171,31 @@
     _twTimers.push(t0);
   }
 
+  // ---- WITHIN-SCREEN REVEAL ----
+  function revealPart(partId, btnId) {
+    if (btnId) document.getElementById(btnId).style.display = 'none';
+    const part = document.getElementById(partId);
+    part.style.display = 'block';
+    setTimeout(() => {
+      const top = part.getBoundingClientRect().top + window.scrollY - 90;
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    }, 50);
+    // Typewrite .slack-text elements inside the newly revealed part
+    const msgs = part.querySelectorAll('.slack-text');
+    msgs.forEach((el, idx) => {
+      const original = el.getAttribute('data-tw') || el.textContent.trim();
+      el.setAttribute('data-tw', original);
+      typewrite(el, original, 16, idx * 140 + 200);
+    });
+  }
+
   // ---- NAVIGATION ----
   function goTo(n) {
     _clearTW();
+    // Reset all within-screen subparts and their reveal buttons
+    document.querySelectorAll('.screen-subpart').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.reveal-trigger-wrap').forEach(el => el.style.display = 'block');
+
     for (let i = 0; i <= 8; i++) {
       const el = document.getElementById('screen-' + i);
       if (el) el.style.display = 'none';
@@ -1125,10 +1211,11 @@
       updateStatusBar(n);
     }
 
-    // Typewrite any Slack messages on this screen
+    // Typewrite .slack-text elements on this screen that are NOT inside a hidden subpart
     if (target) {
       const msgs = target.querySelectorAll('.slack-text');
       msgs.forEach((el, idx) => {
+        if (el.closest('.screen-subpart')) return; // will be typewritten on reveal
         const original = el.getAttribute('data-tw') || el.textContent.trim();
         el.setAttribute('data-tw', original);
         typewrite(el, original, 16, idx * 120);
@@ -1217,7 +1304,7 @@
 
 <span class="cm">// Now we know what to ask Kenji for</span></pre></div>` },
         A: { type:'bad', title:'Not quite - 0 pts', body:`<p><strong>"Why are readmissions going up?"</strong> is not specific enough to be answerable. "Why" questions are starting points, not analysis questions. Before pulling any data, you need to specify: which patients, which time window, and which factors you're examining.</p><p>Dr. Voss catches the vagueness before you leave her desk. "That's a conversation, not an analysis question," she says. You spend 20 minutes reframing it - time you don't have.</p>` },
-        C: { type:'warn', title:'Partially useful - 0 pts', body:`<p>Benchmarking is useful context, but it doesn't answer the board's question. They already know they're above average - that's why they called Meridian. They want to understand their own patients and act on the findings.</p><p>This makes a good supporting slide, not a core analysis. You're answering the wrong question.</p>` },
+        C: { type:'warn', title:'Partially useful - 0 pts', body:`<p>Benchmarking is useful context, but it doesn't answer the board's question. They already know they're above average - that's why they called St. Davids Health. They want to understand their own patients and act on the findings.</p><p>This makes a good supporting slide, not a core analysis. You're answering the wrong question.</p>` },
         D: { type:'bad', title:'Off track - 0 pts', body:`<p>Length of stay is a metric, not an analysis question. Knowing the average LOS of readmitted patients doesn't tell you who is at risk or what factors drive readmission - which is what the hospital needs to actually change anything.</p><p>You produce a clean answer to a question nobody asked.</p>` },
       }
     },
@@ -1295,7 +1382,7 @@ ward_check = df_clean[df_clean[<span class="st">'followup_scheduled'</span>] == 
         <p>Dr. Voss nods. <em>"Good. That's exactly how you frame it in the room."</em></p>`, codeReveal: false },
         A: { type:'bad', title:'Overclaiming - 0 pts', body:`<p>Observational data cannot establish definitive findings. You haven't run a controlled experiment. The board treats the results as conclusive and commits major resources to heart failure patients only. Six months later, COPD readmissions - also elevated - have gone unaddressed. The intervention was real. The certainty was invented.</p>` },
         C: { type:'bad', title:'Underselling - 0 pts', body:`<p>Uncertainty is not failure. Two findings at 95% confidence from a 4,000-patient dataset are meaningful and actionable. Withholding them because of caveats means the board has nothing to work with. Dr. Voss has to bring in an outside firm to re-run the analysis. They present your same findings two weeks later.</p>` },
-        D: { type:'warn', title:'Hiding the uncertainty - 0 pts', body:`<p>The board approves a major program based on the heart failure finding. A trustee later asks for the confidence intervals - they weren't in the slide deck. This becomes a trust issue between Meridian and the client. One clean headline is persuasive. One clean headline without supporting evidence is a liability.</p>` },
+        D: { type:'warn', title:'Hiding the uncertainty - 0 pts', body:`<p>The board approves a major program based on the heart failure finding. A trustee later asks for the confidence intervals - they weren't in the slide deck. This becomes a trust issue between St. Davids Health and the client. One clean headline is persuasive. One clean headline without supporting evidence is a liability.</p>` },
       }
     },
     7: {

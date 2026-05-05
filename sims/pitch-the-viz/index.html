@@ -459,7 +459,7 @@
   /* main prep work area */
   .prep-work {
     display: grid;
-    grid-template-columns: minmax(380px, 2fr) 3fr;
+    grid-template-columns: 3fr minmax(300px, 2fr);
     gap: 1.25rem;
     align-items: start;
     margin-bottom: 1rem;
@@ -491,7 +491,7 @@
   .prep-df-badge.clean  { background: rgba(58,158,110,0.18); border: 1px solid rgba(58,158,110,0.3); color: #7dd4a8; }
   .prep-df-badge.warn   { background: rgba(196,154,42,0.18); border: 1px solid rgba(196,154,42,0.3); color: #d4b84a; }
 
-  .prep-df-scroll { overflow-x: auto; max-height: 400px; overflow-y: auto; }
+  .prep-df-scroll { overflow-x: hidden; overflow-y: visible; }
   .prep-df-tbl {
     border-collapse: collapse;
     font-family: var(--mono); font-size: 0.72rem;

@@ -807,7 +807,8 @@
           <div class="badge-sub">Demonstrated professional-level Git workflow under pressure.</div>
         </div>
 
-        <button class="retry-btn" onclick="resetSim()">Start Over</button>
+        <button class="retry-btn" onclick="resetSim()">Replay simulation</button>
+        <a class="retry-btn" href="index.html" style="display:block;text-align:center;margin-top:0.6rem;text-decoration:none;">Return to module</a>
       </div>
 
     </div><!-- /scenario-panel -->
@@ -902,7 +903,7 @@
       question: 'How should you stage and commit the fix?',
       maxPts: 4,
       choices: [
-        { key: 'A', text: 'git add . then git commit -m "fix"', sub: 'Stage everything, vague message', pts: 2 },
+        { key: 'A', text: 'git add . then git commit -m "fix"', sub: 'Stage everything', pts: 2 },
         { key: 'B', text: 'git push origin hotfix/restore-fetch-roster without committing first', sub: 'Try to push without committing', pts: 0 },
         { key: 'C', text: 'git commit -am "fixed the broken thing"', sub: '-a stages all tracked files automatically', pts: 2 },
         { key: 'D', text: 'git add utils.py then git commit -m "Restore fetch_roster deleted in WIP refactor"', sub: 'Stage the specific file, write a descriptive message', pts: 4, correct: true },
@@ -962,10 +963,10 @@
       question: 'What\'s the best way to write your Pull Request title and description?',
       maxPts: 4,
       choices: [
-        { key: 'A', text: 'Title: "Fix" | Description: "Fixed the bug"', sub: 'Minimal, vague PR', pts: 0 },
-        { key: 'B', text: 'Title: "Hotfix: Restore fetch_roster deleted in WIP refactor" | Description: explains the root cause, what was changed, and that you verified the pipeline runs', sub: 'Specific title + full context in description', pts: 4, correct: true },
-        { key: 'C', text: 'Skip the PR - merge directly into main from the command line since it\'s urgent', sub: 'git merge hotfix/restore-fetch-roster directly', pts: 1 },
-        { key: 'D', text: 'Title: "Hotfix" | Description: just paste the error traceback', sub: 'Half-specific title, raw error dump', pts: 2 },
+        { key: 'A', text: 'Title: "fix" | Description: "fixed it"', sub: 'git commit -style message', pts: 0 },
+        { key: 'B', text: 'Title: "Hotfix: Restore fetch_roster deleted in WIP refactor" | Description: "Root cause: fetch_roster removed in commit a3f9d21 during refactor. Restored original function. Ran pipeline against full roster - 25 players processed clean."', sub: 'Specific title + root cause + verification', pts: 4, correct: true },
+        { key: 'C', text: 'Skip the PR - merge directly into main from the command line since it\'s urgent', sub: 'git merge hotfix/restore-fetch-roster', pts: 1 },
+        { key: 'D', text: 'Title: "Hotfix: restore fetch_roster" | Description: "Restored the function. Pipeline is working again."', sub: 'Reasonable title, thin description', pts: 2 },
       ],
       feedback: {
         correct: 'Excellent. A great PR has a specific title that makes the log readable, and a description that gives reviewers everything they need: what broke, what you changed, and how you verified the fix. Even in an emergency, a one-minute description saves your reviewer five minutes of archaeology.',

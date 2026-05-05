@@ -230,17 +230,17 @@ const challenges = [
   {
     title: "Print the Lineup",
     tag: "Loops - for loop basics",
-    desc: `The Eagles' lineup card is a list. Use a <code>for</code> loop to print each player's name on its own line. The roster: <code>["Rivera", "Okafor", "Chen", "Williams", "Torres"]</code>`,
+    desc: `The Eagles' lineup card is a list. Use a <code>for</code> loop to print each player's name on its own line. The roster: <code>["Rivera", "Santos", "Chen", "Williams", "Torres"]</code>`,
     info: {
       label: "Concept: for Loops",
       html: `<p>A <code>for</code> loop repeats a block of code once for each item in a list. The indented block is the "body" of the loop:</p>
-<div class="code-example"><span class="kw">players</span> = [<span class="str">"Rivera"</span>, <span class="str">"Okafor"</span>]
+<div class="code-example"><span class="kw">players</span> = [<span class="str">"Rivera"</span>, <span class="str">"Santos"</span>]
 
 <span class="kw">for</span> <span class="kw">player</span> <span class="kw">in</span> <span class="kw">players</span>:
-    <span class="fn">print</span>(<span class="kw">player</span>)   <span class="cmt"># prints Rivera, then Okafor</span></div>
+    <span class="fn">print</span>(<span class="kw">player</span>)   <span class="cmt"># prints Rivera, then Santos</span></div>
 <p style="margin-top:0.5rem">The loop variable (<code>player</code>) takes the value of each item in turn. The colon and the indentation (4 spaces) are required.</p>`
     },
-    starterCode: `roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]
+    starterCode: `roster = ["Rivera", "Santos", "Chen", "Williams", "Torres"]
 
 # Loop through the roster and print each name
 for player in roster:
@@ -255,7 +255,7 @@ for player in roster:
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}. Check your indentation - the print() must be indented inside the for loop.` };
       const hasFor = /for\s+\w+\s+in\s+roster/.test(code);
       const hasPrint = /print\s*\(/.test(code);
-      const names = ['Rivera','Okafor','Chen','Williams','Torres'];
+      const names = ['Rivera','Santos','Chen','Williams','Torres'];
       const allPrinted = names.every(n => stdout.includes(n));
       if (hasFor && hasPrint && allPrinted) return { pts: 2, level: 'pass', msg: `Correct. The <code>for</code> loop is the workhorse of Python data processing. When you load a 10,000-row dataset and need to process every row, this is the mechanism. The indentation rule is strict - Python uses it to know what's inside the loop.` };
       if (hasFor && allPrinted) return { pts: 1, level: 'partial', msg: `All names printed - good. Make sure your code uses a proper for loop rather than individual print statements.` };
@@ -265,7 +265,7 @@ for player in roster:
   {
     title: "Number the Batting Order",
     tag: "Loops - range() and enumerate",
-    desc: `Print a numbered lineup: "1. Rivera", "2. Okafor", etc. Use a <code>for</code> loop with <code>range()</code> and indexing, <em>or</em> try <code>enumerate()</code> for bonus style points.`,
+    desc: `Print a numbered lineup: "1. Rivera", "2. Santos", etc. Use a <code>for</code> loop with <code>range()</code> and indexing, <em>or</em> try <code>enumerate()</code> for bonus style points.`,
     info: {
       label: "Concept: range() and enumerate()",
       html: `<p><code>range(n)</code> produces numbers 0 through n-1. Use it with <code>len()</code> to loop by index:</p>
@@ -275,16 +275,16 @@ for player in roster:
 <div class="code-example"><span class="kw">for</span> <span class="kw">i</span>, <span class="kw">player</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="kw">roster</span>, <span class="kw">start</span>=<span class="num">1</span>):
     <span class="fn">print</span>(<span class="fn">str</span>(<span class="kw">i</span>) + <span class="str">". "</span> + <span class="kw">player</span>)</div>`
     },
-    starterCode: `roster = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]
+    starterCode: `roster = ["Rivera", "Santos", "Chen", "Williams", "Torres"]
 
-# Print numbered lineup: "1. Rivera", "2. Okafor", etc.
+# Print numbered lineup: "1. Rivera", "2. Santos", etc.
 for i in range(len(roster)):
     print(   )`,
     hints: [
       `<code>range(len(roster))</code> gives you 0, 1, 2, 3, 4. Inside the loop, <code>i</code> is the index and <code>roster[i]</code> is the player. How do you print the batting number (1-based)?`,
       `Use <code>print(i+1, roster[i])</code> inside the loop — <code>i+1</code> converts from 0-based to 1-based. Or: <code>print(str(i+1) + ". " + roster[i])</code> for "1. Rivera" format.`
     ],
-    answer: `Inside the loop: <code>print(i+1, roster[i])</code> prints "1 Rivera", "2 Okafor", etc. Add <code>". "</code> for "1. Rivera" style.`,
+    answer: `Inside the loop: <code>print(i+1, roster[i])</code> prints "1 Rivera", "2 Santos", etc. Add <code>". "</code> for "1. Rivera" style.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -292,7 +292,7 @@ for i in range(len(roster)):
       const lines = stdout.trim().split('\n').filter(l => l.trim());
       const hasNums = lines.some(l => l.includes('1') && l.includes('Rivera'));
       const hasFive = lines.length >= 5;
-      const allPresent = ['Rivera','Okafor','Chen','Williams','Torres'].every(n => stdout.includes(n));
+      const allPresent = ['Rivera','Santos','Chen','Williams','Torres'].every(n => stdout.includes(n));
       if (hasFor && hasNums && hasFive && allPresent) return { pts: 2, level: 'pass', msg: `Well done. The pattern of looping with an index is foundational. In pandas you'll use <code>.iterrows()</code> for similar work - but the mental model is the same: index + value, one step at a time.` };
       if (allPresent && hasFive) return { pts: 1, level: 'partial', msg: `All names are there. Make sure each line shows the batting position number before the name.` };
       return { pts: 0, level: 'fail', msg: `Inside <code>for i in range(len(roster)):</code>, print the number <code>i+1</code> and the player <code>roster[i]</code>.` };
@@ -312,7 +312,7 @@ for i in range(len(roster)):
         <span class="fn">print</span>(<span class="str">"COLD"</span>)</div>
 <p style="margin-top:0.5rem">Common comparison operators: <code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code> <code>==</code> (equals) <code>!=</code> (not equals)</p>`
     },
-    starterCode: `players = ["Rivera", "Okafor", "Chen", "Williams", "Torres"]
+    starterCode: `players = ["Rivera", "Santos", "Chen", "Williams", "Torres"]
 averages = [0.287, 0.261, 0.305, 0.271, 0.293]
 
 for i in range(len(players)):
@@ -326,19 +326,19 @@ for i in range(len(players)):
       `The if/else structure is already there — you just need to fill in what to print. What two quoted strings go in the blanks after <code>name,</code>?`,
       `Fill in the quoted strings: <code>print(name, "HOT")</code> for averages above .280, and <code>print(name, "COLD")</code> for everyone else.`
     ],
-    answer: `<code>print(name, "HOT")</code> in the if branch, <code>print(name, "COLD")</code> in the else. Rivera (.287), Chen (.305), Torres (.293) are HOT; Okafor and Williams are COLD.`,
+    answer: `<code>print(name, "HOT")</code> in the if branch, <code>print(name, "COLD")</code> in the else. Rivera (.287), Chen (.305), Torres (.293) are HOT; Santos and Williams are COLD.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
       const hasIf = /if\s+avg\s*>\s*0\.280/.test(code) || /if\s+avg\s*>\s*\.280/.test(code) || /if\s+avg\s*>=?\s*0\.28/.test(code);
       const hasHot  = stdout.includes('HOT');
       const hasCold = stdout.includes('COLD');
-      // Rivera .287 HOT, Okafor .261 COLD, Chen .305 HOT, Williams .271 COLD, Torres .293 HOT
+      // Rivera .287 HOT, Santos .261 COLD, Chen .305 HOT, Williams .271 COLD, Torres .293 HOT
       const riveraHot  = stdout.includes('Rivera') && stdout.match(/Rivera.*HOT|HOT.*Rivera/);
       const chenHot    = stdout.includes('Chen')   && stdout.match(/Chen.*HOT|HOT.*Chen/);
-      const okaforCold = stdout.includes('Okafor') && stdout.match(/Okafor.*COLD|COLD.*Okafor/);
-      if (hasIf && hasHot && hasCold && riveraHot && chenHot && okaforCold) return { pts: 2, level: 'pass', msg: `Correct. Rivera (.287), Chen (.305), and Torres (.293) should be HOT; Okafor (.261) and Williams (.271) COLD. This if/else-inside-a-loop pattern is the core of row-level data processing in every language, not just Python.` };
-      if (hasHot && hasCold) return { pts: 1, level: 'partial', msg: `HOT/COLD flags are showing. Check that Rivera, Chen, and Torres are HOT and that Okafor and Williams are COLD.` };
+      const okaforCold = stdout.includes('Santos') && stdout.match(/Santos.*COLD|COLD.*Santos/);
+      if (hasIf && hasHot && hasCold && riveraHot && chenHot && okaforCold) return { pts: 2, level: 'pass', msg: `Correct. Rivera (.287), Chen (.305), and Torres (.293) should be HOT; Santos (.261) and Williams (.271) COLD. This if/else-inside-a-loop pattern is the core of row-level data processing in every language, not just Python.` };
+      if (hasHot && hasCold) return { pts: 1, level: 'partial', msg: `HOT/COLD flags are showing. Check that Rivera, Chen, and Torres are HOT and that Santos and Williams are COLD.` };
       return { pts: 0, level: 'fail', msg: `Fill in <code>"HOT"</code> and <code>"COLD"</code> in the print statements. The threshold is avg > 0.280.` };
     }
   },

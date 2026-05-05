@@ -67,17 +67,33 @@
     }
 
     .section-tabs {
-      display: none !important;
+      display: flex;
       background: var(--bg-card); border-bottom: 1px solid var(--border);
-      padding: 0 2rem;  gap: 0; overflow-x: auto; scrollbar-width: none;
+      padding: 0 2rem; gap: 0; overflow-x: auto; scrollbar-width: none;
     }
     .section-tabs::-webkit-scrollbar { display: none; }
     .tab-link {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.05em;
       color: var(--text-dim); text-decoration: none; padding: 0.75rem 1rem;
       border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s;
+      cursor: pointer;
     }
     .tab-link:hover { color: var(--text); border-bottom-color: var(--accent); }
+    .tab-link.active { color: var(--accent-light); border-bottom-color: var(--accent); }
+
+    /* ---- SECTION PAGINATION ---- */
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+    .section-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .sf-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.73rem; letter-spacing: 0.04em;
+      color: var(--accent-light); background: none; border: 1px solid var(--border);
+      border-radius: 3px; padding: 0.45rem 1rem; cursor: pointer; transition: all 0.15s;
+      text-decoration: none; display: inline-block;
+    }
+    .sf-btn:hover { border-color: var(--accent); color: var(--text-bright); }
+    .sf-btn.fwd { background: var(--accent); color: var(--text-bright); border-color: var(--accent); }
+    .sf-btn.fwd:hover { background: var(--accent-light); }
 
     .page-wrap {
       max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem;
@@ -271,7 +287,8 @@
     <p>Welcome to DTSC 520. This module covers what the course is, how it's structured, what you'll need to install, and a preview of data science in action across real industries.</p>
     <div class="banner-pills">
       <span class="pill">Course Overview</span>
-      <span class="pill">Learning Outcomes</span>
+      <span class="pill">Syllabus</span>
+      <span class="pill">Module Roadmap</span>
       <span class="pill">DS in Action</span>
       <span class="pill">Software Setup</span>
       <span class="pill">Resources</span>
@@ -279,13 +296,14 @@
   </div>
 </div>
 
-<nav class="section-tabs">
-  <a href="#overview" class="tab-link">Course Overview</a>
-  <a href="#modules" class="tab-link">Module Roadmap</a>
-  <a href="#ds-in-action" class="tab-link">DS in Action</a>
-  <a href="#setup" class="tab-link">Software Setup</a>
-  <a href="#resources" class="tab-link">Resources</a>
-  <a href="quiz.html" class="tab-link quiz-tab-link">Quiz</a>
+<nav class="section-tabs" id="section-tabs">
+  <span class="tab-link" data-sec="overview">Course Overview</span>
+  <span class="tab-link" data-sec="syllabus">Syllabus</span>
+  <span class="tab-link" data-sec="modules">Module Roadmap</span>
+  <span class="tab-link" data-sec="ds-in-action">DS in Action</span>
+  <span class="tab-link" data-sec="setup">Software Setup</span>
+  <span class="tab-link" data-sec="resources">Resources</span>
+  <a href="quiz.html" class="tab-link">Quiz</a>
 </nav>
 
 <div style="height:3px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0.4;"></div>
@@ -293,7 +311,7 @@
   <div class="content-col">
 
     <!-- OVERVIEW -->
-    <section id="overview">
+    <section id="overview" class="content-section">
       <h2>Course Overview</h2>
       <p>DTSC 520 is an introductory graduate-level course in data science. The course is designed for students who want to build practical, working skills in Python-based data science - not just theoretical knowledge, but the ability to pick up a real dataset and do something useful with it.</p>
 
@@ -317,16 +335,38 @@
         <div class="callout-label">A note on difficulty</div>
         This is an introductory course, but "introductory" does not mean easy. Graduate-level means you are expected to struggle productively with unfamiliar material, look things up, and work through confusion rather than waiting for it to be resolved for you. That is what real data scientists do every day.
       </div>
+
+      <div class="section-footer">
+        <span></span>
+        <button class="sf-btn fwd" onclick="showSection('syllabus')">Syllabus &rarr;</button>
+      </div>
+    </section>
+
+    <!-- SYLLABUS -->
+    <section id="syllabus" class="content-section">
+      <h2>Course Syllabus</h2>
+      <p>The official course syllabus can be found on the official course Brightspace page under Module 0.</p>
+      <p>The syllabus contains all grading policies, assignment due dates, late work policies, academic integrity expectations, and instructor contact information. Review it before the first week is out.</p>
+
+      <div class="callout">
+        <div class="callout-label">Where to find it</div>
+        Log in to Brightspace &rarr; DTSC 520 &rarr; Module 0. The syllabus is the first item listed.
+      </div>
+
+      <div class="section-footer">
+        <button class="sf-btn" onclick="showSection('overview')">&larr; Course Overview</button>
+        <button class="sf-btn fwd" onclick="showSection('modules')">Module Roadmap &rarr;</button>
+      </div>
     </section>
 
     <!-- MODULE ROADMAP -->
-    <section id="modules">
+    <section id="modules" class="content-section">
       <h2>Module Roadmap</h2>
       <p>The course is organized into 7 modules (numbered 0-6). Each builds on the previous, so the sequence matters. Modules 2-4 form the core technical sequence: Python fundamentals, then NumPy, then pandas.</p>
 
       <table class="data-table">
         <thead>
-          <tr><th>#</th><th>Module</th><th>Core Topics</th><th>Simulation</th></tr>
+          <tr><th>#</th><th>Module</th><th>Core Topics</th><th>Simulation(s)</th></tr>
         </thead>
         <tbody>
           <tr>
@@ -339,7 +379,7 @@
             <td class="mono">01</td>
             <td><strong>Intro to Data Science</strong></td>
             <td>DS vs. analytics, careers, tools, critical thinking, pseudocode</td>
-            <td>-</td>
+            <td>The Morning Brief, Find Your Path</td>
           </tr>
           <tr>
             <td class="mono">02</td>
@@ -357,26 +397,31 @@
             <td class="mono">04</td>
             <td><strong>Pandas</strong></td>
             <td>Series, DataFrames, selection, filtering, cleaning, aggregation</td>
-            <td>The Dirty Dataset</td>
+            <td>The Dirty Dataset, Debug the Pipeline</td>
           </tr>
           <tr>
             <td class="mono">05</td>
             <td><strong>Matplotlib &amp; Seaborn</strong></td>
             <td>Chart types, Matplotlib, Seaborn, subplots, styling, viz best practices</td>
-            <td>-</td>
+            <td>Pitch the Viz</td>
           </tr>
           <tr>
             <td class="mono">06</td>
             <td><strong>Git &amp; GitHub</strong></td>
             <td>Version control, branching, merging, conflicts, pull requests</td>
-            <td>Branch Crisis</td>
+            <td>Terminal Trainer, The Branch Crisis</td>
           </tr>
         </tbody>
       </table>
+
+      <div class="section-footer">
+        <button class="sf-btn" onclick="showSection('syllabus')">&larr; Syllabus</button>
+        <button class="sf-btn fwd" onclick="showSection('ds-in-action')">DS in Action &rarr;</button>
+      </div>
     </section>
 
     <!-- DS IN ACTION -->
-    <section id="ds-in-action">
+    <section id="ds-in-action" class="content-section">
       <h2>Data Science in Action</h2>
       <p>Data science is not an abstract discipline. It is being applied right now to every industry you can name. These examples are drawn from real applications - the same techniques you will learn in this course power each of them.</p>
 
@@ -417,10 +462,15 @@
         <div class="callout-label">The common thread</div>
         Every example above uses the same core stack: Python for scripting, pandas/NumPy for data manipulation, Matplotlib/Seaborn for visualization, and Git for version control. Mastering these seven modules gives you the foundation to enter any of these fields.
       </div>
+
+      <div class="section-footer">
+        <button class="sf-btn" onclick="showSection('modules')">&larr; Module Roadmap</button>
+        <button class="sf-btn fwd" onclick="showSection('setup')">Software Setup &rarr;</button>
+      </div>
     </section>
 
     <!-- SOFTWARE SETUP -->
-    <section id="setup">
+    <section id="setup" class="content-section">
       <h2>Software Setup</h2>
       <p>You need two things to run Python data science code: a Python environment and a way to write and run code interactively. The recommended setup for this course is Anaconda + Jupyter Lab.</p>
 
@@ -470,10 +520,15 @@ git --version
 <span class="cm"># macOS: xcode-select --install  (or brew install git)</span>
 <span class="cm"># Windows: download from git-scm.com</span>
 <span class="cm"># Linux: sudo apt install git</span></code></pre>
+
+      <div class="section-footer">
+        <button class="sf-btn" onclick="showSection('ds-in-action')">&larr; DS in Action</button>
+        <button class="sf-btn fwd" onclick="showSection('resources')">Resources &rarr;</button>
+      </div>
     </section>
 
     <!-- RESOURCES -->
-    <section id="resources">
+    <section id="resources" class="content-section">
       <h2>Course Resources</h2>
       <p>These are the primary resources for the course. The textbooks are not required purchases - both are available free online in their full versions.</p>
 
@@ -498,10 +553,15 @@ git --version
         <div class="callout-label">How to read a Python error</div>
         Python error messages are called tracebacks. Read them from the bottom up. The last line is the actual error (e.g., <code>KeyError: 'avg'</code>). The lines above show where in your code the error originated. The bottom line is the one that matters most.
       </div>
+
+      <div class="section-footer">
+        <button class="sf-btn" onclick="showSection('setup')">&larr; Software Setup</button>
+        <button class="sf-btn fwd" onclick="showSection('quiz')">Take the Quiz &rarr;</button>
+      </div>
     </section>
 
     <!-- QUIZ LINK -->
-    <section id="quiz">
+    <section id="quiz" class="content-section">
       <div class="quiz-link-card">
         <div class="quiz-link-icon">&#9998;</div>
         <div class="quiz-link-body">
@@ -509,6 +569,11 @@ git --version
           <p>Ten questions covering the course structure, setup, and the basics of working in a Python data science environment. Each question comes up one at a time — no going back, but you can retake when done.</p>
         </div>
         <a href="quiz.html" class="quiz-link-btn">Take the Quiz &rarr;</a>
+      </div>
+
+      <div class="section-footer">
+        <button class="sf-btn" onclick="showSection('resources')">&larr; Resources</button>
+        <span></span>
       </div>
     </section>
 
@@ -518,12 +583,13 @@ git --version
 
 <div class="sidebar-card">
       <h4>On This Page</h4>
-      <div class="toc-links">
-        <a href="#overview">Course Overview</a>
-        <a href="#modules">Module Roadmap</a>
-        <a href="#ds-in-action">DS in Action</a>
-        <a href="#setup">Software Setup</a>
-        <a href="#resources">Resources</a>
+      <div class="toc-links" id="toc-links">
+        <a href="#" data-sec="overview">Course Overview</a>
+        <a href="#" data-sec="syllabus">Syllabus</a>
+        <a href="#" data-sec="modules">Module Roadmap</a>
+        <a href="#" data-sec="ds-in-action">DS in Action</a>
+        <a href="#" data-sec="setup">Software Setup</a>
+        <a href="#" data-sec="resources">Resources</a>
         <a href="quiz.html">Quiz</a>
       </div>
     </div>
@@ -586,6 +652,42 @@ git --version
 })();
 </script>
 <script>if("scrollRestoration"in history)history.scrollRestoration="manual";window.scrollTo(0,0);</script>
+
+<script>
+// ---- MODULE 0 SECTION PAGINATION ----
+const M0_SECTIONS = ['overview','syllabus','modules','ds-in-action','setup','resources','quiz'];
+
+function showSection(id) {
+  if (!M0_SECTIONS.includes(id)) return;
+  M0_SECTIONS.forEach(s => {
+    const el = document.getElementById(s);
+    if (el) el.classList.toggle('active', s === id);
+  });
+  // Update tab strip
+  document.querySelectorAll('#section-tabs .tab-link[data-sec]').forEach(t => {
+    t.classList.toggle('active', t.dataset.sec === id);
+  });
+  // Update sidebar ToC
+  document.querySelectorAll('#toc-links a[data-sec]').forEach(a => {
+    a.classList.toggle('active', a.dataset.sec === id);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Wire up tab strip
+  document.querySelectorAll('#section-tabs .tab-link[data-sec]').forEach(t => {
+    t.addEventListener('click', function() { showSection(this.dataset.sec); });
+  });
+  // Wire up sidebar ToC
+  document.querySelectorAll('#toc-links a[data-sec]').forEach(a => {
+    a.addEventListener('click', function(e) { e.preventDefault(); showSection(this.dataset.sec); });
+  });
+  // Show initial section (respect hash if valid)
+  var hash = window.location.hash.replace('#','');
+  showSection(M0_SECTIONS.includes(hash) ? hash : 'overview');
+});
+</script>
 
 
 <style>
