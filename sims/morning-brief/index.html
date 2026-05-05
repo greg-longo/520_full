@@ -1033,7 +1033,7 @@
       <div class="artifact-header"><span class="artifact-icon">&#128140;</span> Slack DM &middot; Dr. Renata Voss &middot; 10:48 AM</div>
       <div class="artifact-body">
         <div class="sender">Dr. Renata Voss &rarr; you</div>
-        <p>Good progress. Before you write up the findings: how confident are we in these numbers? The board will ask directly whether this is preliminary or definitive. Don't oversell, but don't undersell either. They need to act on something today.</p>
+        <p class="slack-text">Good progress. Before you write up the findings: how confident are we in these numbers? The board will ask directly whether this is preliminary or definitive. Don't oversell, but don't undersell either. They need to act on something today.</p>
       </div>
     </div>
 
@@ -1153,6 +1153,18 @@
   // ---- TYPEWRITER ----
   const _twTimers = [];
   function _clearTW() { _twTimers.forEach(t => clearTimeout(t)); _twTimers.length = 0; }
+
+  // Estimate how long a typewriter run will take (ms) so we can chain sequentially
+  function twDuration(text, speed) {
+    speed = speed || 18;
+    let dur = 0;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      dur += (ch === '.' || ch === ',' || ch === '?' || ch === '!') ? 110 : speed;
+    }
+    return dur;
+  }
+
   function typewrite(el, text, speed, startDelay) {
     const t0 = setTimeout(() => {
       el.textContent = '';
@@ -1188,9 +1200,12 @@
       const top = part.getBoundingClientRect().top + window.scrollY - 90;
       window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
     }, 50);
-    // Now start typewriters
-    msgs.forEach((el, idx) => {
-      typewrite(el, el.getAttribute('data-tw'), 16, idx * 140 + 200);
+    // Chain typewriters sequentially — each starts after the previous one finishes
+    let delay = 200;
+    msgs.forEach(el => {
+      const text = el.getAttribute('data-tw');
+      typewrite(el, text, 16, delay);
+      delay += twDuration(text, 16) + 280; // 280ms pause between elements
     });
   }
 
@@ -1218,12 +1233,15 @@
 
     // Typewrite .slack-text elements on this screen that are NOT inside a hidden subpart
     if (target) {
+      let delay = 0;
       const msgs = target.querySelectorAll('.slack-text');
-      msgs.forEach((el, idx) => {
+      msgs.forEach(el => {
         if (el.closest('.screen-subpart')) return; // will be typewritten on reveal
         const original = el.getAttribute('data-tw') || el.textContent.trim();
         el.setAttribute('data-tw', original);
-        typewrite(el, original, 16, idx * 120);
+        el.textContent = '';
+        typewrite(el, original, 16, delay);
+        delay += twDuration(original, 16) + 280;
       });
     }
   }
