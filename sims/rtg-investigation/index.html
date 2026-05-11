@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reading Terminal Grill - DTSC 520</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+  <style>
+    /* ── Variables ───────────────────────────────────────────────── */
+    :root {
+      --bg:       #0d0b09;
+      --bg-card:  #1a1714;
+      --bg-card2: #221f1b;
+      --border:   rgba(255,255,255,0.08);
+      --text:     #d8cfc4;
+      --text-bright: #f0e8dc;
+      --text-dim: #8a7e72;
+      --gold:       #c9a84c;
+      --gold-light: #e0be72;
+      --gold-dim:   rgba(201,168,76,0.12);
+      --parchment:  #f5edd8;
+      --ink:        #2a1f0e;
+      --ink-dim:    #6b5c42;
+      --ink-faint:  #a09070;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: 'IBM Plex Mono', monospace; background: var(--bg); color: var(--text); }
+
+    /* ── Screen system ───────────────────────────────────────────── */
+    .screen { display: none; min-height: 100vh; }
+    .screen.active { display: flex; flex-direction: column; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       LANDING SCREEN
+    ═══════════════════════════════════════════════════════════════ */
+    #screen-landing {
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      position: relative;
+      /* subtle noise texture via radial gradient dots */
+      background:
+        radial-gradient(circle at 20% 80%, rgba(201,168,76,0.04) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(201,168,76,0.04) 0%, transparent 50%),
+        var(--bg);
+    }
+
+    .landing-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 520px;
+      border: 1px solid rgba(201,168,76,0.2);
+      padding: 3rem 2.5rem 2.5rem;
+      position: relative;
+    }
+
+    /* corner accents */
+    .landing-inner::before,
+    .landing-inner::after {
+      content: '';
+      position: absolute;
+      width: 18px; height: 18px;
+      border-color: var(--gold);
+      border-style: solid;
+    }
+    .landing-inner::before {
+      top: -1px; left: -1px;
+      border-width: 2px 0 0 2px;
+    }
+    .landing-inner::after {
+      bottom: -1px; right: -1px;
+      border-width: 0 2px 2px 0;
+    }
+
+    .landing-module-tag {
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.75rem;
+    }
+
+    .landing-ornament {
+      font-size: 0.9rem;
+      color: rgba(201,168,76,0.4);
+      letter-spacing: 0.5em;
+      margin-bottom: 1.25rem;
+    }
+
+    .landing-title {
+      font-family: 'Zilla Slab', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      color: var(--text-bright);
+      line-height: 1.12;
+      margin-bottom: 0.4rem;
+    }
+
+    .landing-subtitle {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 0.98rem;
+      color: var(--gold);
+      margin-bottom: 1.75rem;
+    }
+
+    .landing-divider {
+      width: 40px;
+      height: 1px;
+      background: rgba(201,168,76,0.35);
+      margin: 0 auto 1.75rem;
+    }
+
+    .landing-desc {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      line-height: 1.75;
+      margin-bottom: 2rem;
+    }
+
+    .landing-stats {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 2.25rem;
+    }
+
+    .landing-stat-num {
+      display: block;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      line-height: 1;
+      margin-bottom: 0.2rem;
+    }
+
+    .landing-stat-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .landing-btn {
+      display: inline-block;
+      padding: 0.8rem 2.25rem;
+      background: var(--gold);
+      color: #0d0b09;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-bottom: 1.5rem;
+    }
+    .landing-btn:hover { background: var(--gold-light); }
+
+    .landing-footer {
+      position: absolute;
+      bottom: 1.25rem;
+      left: 0; right: 0;
+      text-align: center;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+    }
+    .landing-footer a { color: var(--text-dim); text-decoration: none; }
+    .landing-footer a:hover { color: var(--text); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       NARRATIVE SCREEN
+    ═══════════════════════════════════════════════════════════════ */
+    #screen-narrative {
+      background: var(--parchment);
+      color: var(--ink);
+    }
+
+    .narrative-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--parchment);
+      border-bottom: 1px solid rgba(42,31,14,0.12);
+      padding: 0.85rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .narrative-topbar-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .narrative-skip {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      padding: 0.28rem 0.75rem;
+      background: transparent;
+      border: 1px solid rgba(42,31,14,0.25);
+      color: var(--ink-dim);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .narrative-skip:hover { border-color: var(--ink-dim); color: var(--ink); }
+
+    .narrative-scroll {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 4rem 2rem 5rem;
+    }
+
+    .narrative-col {
+      max-width: 580px;
+      width: 100%;
+    }
+
+    .narrative-chapter {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      text-align: center;
+      margin-bottom: 2.75rem;
+    }
+
+    /* chapter rule with ornament */
+    .narrative-chapter::before,
+    .narrative-chapter::after {
+      content: '——  ';
+      letter-spacing: 0;
+    }
+    .narrative-chapter::after { content: '  ——'; }
+
+    #typeContainer {
+      font-family: 'Lora', serif;
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: var(--ink);
+    }
+
+    .type-para {
+      margin-bottom: 1.6rem;
+      font-style: italic;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      min-height: 1.5em;
+    }
+    .type-para.visible { opacity: 1; }
+
+    .type-cursor {
+      display: inline-block;
+      width: 1.5px;
+      height: 0.95em;
+      background: var(--ink);
+      vertical-align: text-bottom;
+      margin-left: 1px;
+      animation: blink 0.65s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .narrative-cta {
+      text-align: center;
+      margin-top: 2.5rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid rgba(42,31,14,0.12);
+      display: none;
+    }
+    .narrative-cta.show { display: block; }
+
+    .narrative-cta-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 1rem;
+    }
+
+    .narrative-cta-btn {
+      display: inline-block;
+      padding: 0.8rem 2.25rem;
+      background: var(--ink);
+      color: var(--parchment);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .narrative-cta-btn:hover { background: #3d2e1a; }
+
+    .narrative-footer {
+      padding: 1.25rem 1.75rem;
+      border-top: 1px solid rgba(42,31,14,0.1);
+      text-align: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--ink-faint);
+    }
+    .narrative-footer a { color: var(--ink-faint); text-decoration: none; }
+    .narrative-footer a:hover { color: var(--ink-dim); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SIM SCREEN (placeholder)
+    ═══════════════════════════════════════════════════════════════ */
+    #screen-sim {
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+    }
+
+    .sim-placeholder {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+
+    .sim-placeholder strong {
+      display: block;
+      font-family: 'Zilla Slab', serif;
+      font-size: 1.5rem;
+      color: var(--text-bright);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── Responsive ──────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .landing-inner { padding: 2.25rem 1.5rem 2rem; }
+      .landing-stats { gap: 1.5rem; }
+      .narrative-scroll { padding: 2.5rem 1.25rem 4rem; }
+      #typeContainer { font-size: 0.97rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ LANDING ══════════════════════════════════════════════════════ -->
+<div id="screen-landing" class="screen active">
+  <div class="landing-inner">
+    <div class="landing-module-tag">DTSC 520 &nbsp;&middot;&nbsp; Module 4 &nbsp;&middot;&nbsp; Pandas</div>
+    <div class="landing-ornament">&#10022; &#10022; &#10022;</div>
+    <h1 class="landing-title">Reading Terminal<br>Grill</h1>
+    <p class="landing-subtitle">Something changed. The data will tell you what.</p>
+    <div class="landing-divider"></div>
+    <p class="landing-desc">A Philly restaurant started getting complaints. Nobody could say exactly what was different. You have four data tables and a set of pandas tools. Your job is to find out what actually changed — and prove it.</p>
+    <div class="landing-stats">
+      <div>
+        <span class="landing-stat-num">5</span>
+        <span class="landing-stat-label">Challenges</span>
+      </div>
+      <div>
+        <span class="landing-stat-num">20</span>
+        <span class="landing-stat-label">Points</span>
+      </div>
+      <div>
+        <span class="landing-stat-num">4</span>
+        <span class="landing-stat-label">Tables</span>
+      </div>
+    </div>
+    <button class="landing-btn" onclick="showNarrative()">Open the File &nbsp;&#8594;</button>
+  </div>
+  <div class="landing-footer">
+    <a href="../../index.html">&#8592; Course Home</a> &nbsp;&middot;&nbsp; Eastern University &middot; DTSC 520
+  </div>
+</div>
+
+<!-- ══ NARRATIVE ════════════════════════════════════════════════════ -->
+<div id="screen-narrative" class="screen">
+
+  <div class="narrative-topbar">
+    <span class="narrative-topbar-label">Reading Terminal Grill &nbsp;&middot;&nbsp; Background</span>
+    <button class="narrative-skip" onclick="skipToEnd()">Skip &#8594;</button>
+  </div>
+
+  <div class="narrative-scroll" id="narrativeScroll">
+    <div class="narrative-col">
+      <div class="narrative-chapter">How It Started</div>
+      <div id="typeContainer"></div>
+      <div class="narrative-cta" id="narrativeCta">
+        <div class="narrative-cta-label">The records are in. Time to work.</div>
+        <button class="narrative-cta-btn" onclick="showSim()">Begin Investigation &nbsp;&#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="narrative-footer">
+    Eastern University &middot; DTSC 520 &nbsp;&middot;&nbsp; <a href="../../index.html">Course Home</a>
+  </div>
+
+</div>
+
+<!-- ══ SIM (placeholder) ════════════════════════════════════════════ -->
+<div id="screen-sim" class="screen">
+  <div class="sim-placeholder">
+    <strong>Challenges loading...</strong>
+    The sim is being built. Check back soon.
+  </div>
+</div>
+
+<script>
+  // ── Screen helpers ────────────────────────────────────────────────
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function showNarrative() {
+    showScreen('screen-narrative');
+    startTypewriter();
+  }
+
+  function showSim() {
+    showScreen('screen-sim');
+  }
+
+  // ── Narrative paragraphs ──────────────────────────────────────────
+  const PARAGRAPHS = [
+    "Friday night. You've been looking forward to this all week.",
+
+    "You take your usual seat at Reading Terminal Grill and order what you always order: the cheesesteak, with soft pretzel bites on the side. The pretzel bites arrive first — warm, lightly salted, fine. But something is slightly off. Not enough to send back. Just enough to notice.",
+
+    "Then the cheesesteak. The texture is different. The flavor is flatter. You finish it, but you leave unsatisfied, sitting with a feeling you can't quite name.",
+
+    "The next day you text a friend from high school. She was there two weeks ago — also got the cheesesteak. \"Honestly? I didn't want to say anything, but something felt a little different. I don't know. The whole meal just felt a little off.\"",
+
+    "You ping an acquaintance from college. He was there last month, ordered the cheesesteak egg rolls. \"Yeah — they were not the same. Kind of flat. I thought it was just me.\"",
+
+    "Three separate visits. A handful of dishes. The same vague, hard-to-place feeling that something had shifted.",
+
+    "The restaurant posted about a kitchen change in the fall — a new head chef. Everyone assumes that's it. But you've looked at enough data to know that assuming isn't knowing. A chef change affects everything. A supply change affects only what changed.",
+
+    "You pull the records. Time to find out what actually happened."
+  ];
+
+  let paraIdx    = 0;
+  let isTyping   = false;
+  let skipFlag   = false;
+  let typeTimer  = null;
+  const SPEED    = 22;   // ms per character
+  const PAUSE    = 560;  // ms between paragraphs
+
+  function startTypewriter() {
+    paraIdx   = 0;
+    isTyping  = false;
+    skipFlag  = false;
+    if (typeTimer) clearTimeout(typeTimer);
+    document.getElementById('typeContainer').innerHTML = '';
+    document.getElementById('narrativeCta').classList.remove('show');
+    typeNextPara();
+  }
+
+  function typeNextPara() {
+    if (skipFlag)              { renderRemaining(); return; }
+    if (paraIdx >= PARAGRAPHS.length) { finishNarrative(); return; }
+
+    const p = document.createElement('p');
+    p.className = 'type-para';
+
+    const cursor = document.createElement('span');
+    cursor.className = 'type-cursor';
+
+    p.appendChild(cursor);
+    document.getElementById('typeContainer').appendChild(p);
+
+    // fade in
+    requestAnimationFrame(() => requestAnimationFrame(() => p.classList.add('visible')));
+
+    isTyping = true;
+    const text = PARAGRAPHS[paraIdx];
+    let ci = 0;
+
+    function tick() {
+      if (skipFlag) { p.textContent = text; renderRemaining(); return; }
+
+      if (ci < text.length) {
+        p.textContent = text.slice(0, ci + 1);
+        p.appendChild(cursor);
+        ci++;
+        typeTimer = setTimeout(tick, SPEED);
+      } else {
+        // paragraph done
+        if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
+        isTyping = false;
+        paraIdx++;
+        // gently scroll the new paragraph into view
+        p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        typeTimer = setTimeout(typeNextPara, PAUSE);
+      }
+    }
+    tick();
+  }
+
+  function renderRemaining() {
+    if (typeTimer) clearTimeout(typeTimer);
+    const container = document.getElementById('typeContainer');
+    // remove any dangling cursor
+    const cur = container.querySelector('.type-cursor');
+    if (cur) cur.remove();
+    // fix last partial paragraph
+    const existing = container.querySelectorAll('.type-para');
+    if (existing.length && paraIdx > 0) {
+      existing[existing.length - 1].textContent = PARAGRAPHS[paraIdx - 1];
+    }
+    // append all remaining
+    for (let i = paraIdx; i < PARAGRAPHS.length; i++) {
+      const p = document.createElement('p');
+      p.className = 'type-para visible';
+      p.textContent = PARAGRAPHS[i];
+      container.appendChild(p);
+    }
+    paraIdx  = PARAGRAPHS.length;
+    isTyping = false;
+    finishNarrative();
+  }
+
+  function finishNarrative() {
+    document.getElementById('narrativeCta').classList.add('show');
+    // scroll to CTA
+    setTimeout(() => {
+      document.getElementById('narrativeCta').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 300);
+  }
+
+  function skipToEnd() {
+    skipFlag = true;
+    if (!isTyping) renderRemaining();
+    // if isTyping, the current tick() call catches skipFlag
+  }
+</script>
+
+</body>
+</html>

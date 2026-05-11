@@ -608,6 +608,82 @@
     }
     .dash-reset-btn:hover { color: rgba(255,255,255,0.5); }
 
+    /* what's next nudge */
+    .next-step-wrap {
+      padding: 0 2rem;
+      max-width: 1100px;
+      margin: 0.75rem auto 0;
+    }
+    .next-step-bar {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 0.85rem 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--ns-color, var(--blue));
+      border-radius: 0 6px 6px 0;
+    }
+    .ns-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .ns-mod {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--ns-color, var(--blue));
+      white-space: nowrap;
+    }
+    .ns-divider {
+      width: 1px;
+      height: 1.5rem;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .ns-message {
+      font-size: 0.88rem;
+      color: var(--text);
+      flex: 1;
+    }
+    .ns-actions {
+      display: flex;
+      gap: 0.6rem;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+    .ns-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 4px;
+      text-decoration: none;
+      background: var(--ns-color, var(--blue));
+      color: #fff;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+    .ns-btn:hover { opacity: 0.82; }
+    .ns-btn.ns-btn-ghost {
+      background: transparent;
+      border: 1px solid var(--ns-color, var(--blue));
+      color: var(--ns-color, var(--blue));
+    }
+    .ns-all-done {
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      flex: 1;
+    }
+    @media (max-width: 640px) {
+      .next-step-wrap { padding: 0 1rem; }
+      .next-step-bar { flex-wrap: wrap; gap: 0.65rem; }
+      .ns-divider { display: none; }
+    }
+
     @media (max-width: 900px) {
       .dashboard-grid { grid-template-columns: repeat(4, 1fr); }
     }
@@ -697,6 +773,13 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- WHAT'S NEXT -->
+  <div class="next-step-wrap" id="nextStepWrap" style="display:none">
+    <div class="next-step-bar" id="nextStepBar">
+      <!-- populated by JS -->
     </div>
   </div>
 
@@ -1091,6 +1174,91 @@
         dotsEl.appendChild(dot);
       });
     }
+
+    // ── What's Next nudge ────────────────────────────────────────────────────
+    (function buildNextStep() {
+      const wrap = document.getElementById('nextStepWrap');
+      const bar  = document.getElementById('nextStepBar');
+      if (!wrap || !bar) return;
+
+      // Define what "complete" means per module
+      const modDef = [
+        { name: 'Intro',          complete: quizzes[0].state === 'complete',
+          actions: [{ label: 'Take M0 Quiz', href: 'modules/module0/quiz.html' }] },
+        { name: 'DS & Analytics', complete: quizzes[1].state === 'complete',
+          actions: [{ label: 'Take M1 Quiz', href: 'modules/module1/quiz.html' }] },
+        { name: 'Python',
+          complete: quizzes[2].state === 'complete' && pftItems.every(p => p.state === 'complete'),
+          actions: [
+            ...(quizzes[2].state !== 'complete' ? [{ label: 'Take M2 Quiz', href: 'modules/module2/quiz.html' }] : []),
+            ...pftItems.map((p, i) => p.state !== 'complete' ? {
+              label: ['Vars & Types','Lists & Index','Loops & Cond','Scouting Rpt'][i],
+              href: ['sims/python_sim/module1.html','sims/python_sim/module2.html','sims/python_sim/module3.html','sims/python_sim/finale.html'][i]
+            } : null).filter(Boolean).slice(0, 1),
+          ] },
+        { name: 'NumPy',
+          complete: quizzes[3].state === 'complete' && debugItem.state === 'complete' && charttopItem.state === 'complete',
+          actions: [
+            ...(quizzes[3].state !== 'complete' ? [{ label: 'Take M3 Quiz', href: 'modules/module3/quiz.html' }] : []),
+            ...(debugItem.state !== 'complete'    ? [{ label: 'Debug Pipeline', href: 'sims/debug-pipeline/index.html' }] : []),
+            ...(charttopItem.state !== 'complete' ? [{ label: 'Chart Toppers', href: 'sims/numpy-lab/index.html' }] : []),
+          ] },
+        { name: 'Pandas',
+          complete: quizzes[4].state === 'complete' && dirtyItem.state === 'complete',
+          actions: [
+            ...(quizzes[4].state !== 'complete' ? [{ label: 'Take M4 Quiz', href: 'modules/module4/quiz.html' }] : []),
+            ...(dirtyItem.state !== 'complete'   ? [{ label: 'Dirty Dataset', href: 'sims/dirty_dataset_sim.html' }] : []),
+          ] },
+        { name: 'Visualization',
+          complete: quizzes[5].state === 'complete' && pitchvizItem.state === 'complete',
+          actions: [
+            ...(quizzes[5].state !== 'complete'    ? [{ label: 'Take M5 Quiz', href: 'modules/module5/quiz.html' }] : []),
+            ...(pitchvizItem.state !== 'complete'  ? [{ label: 'Pitch the Viz', href: 'sims/pitch-the-viz/index.html' }] : []),
+          ] },
+        { name: 'Git & GitHub',
+          complete: quizzes[6].state === 'complete' && branchItem.state === 'complete',
+          actions: [
+            ...(quizzes[6].state !== 'complete' ? [{ label: 'Take M6 Quiz', href: 'modules/module6/quiz.html' }] : []),
+            ...(branchItem.state !== 'complete'  ? [{ label: 'Branch Crisis', href: 'modules/module6/branch_crisis_sim.html' }] : []),
+          ] },
+      ];
+
+      // If nothing has ever been touched, stay hidden
+      const anyProgress = done > 0 || pftItems.some(p => p.state !== 'empty') ||
+        [morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem].some(x => x.state === 'complete');
+      if (!anyProgress) return;
+
+      wrap.style.display = 'block';
+
+      // Find first incomplete module
+      const idx = modDef.findIndex(m => !m.complete);
+
+      if (idx === -1) {
+        // All done
+        bar.style.setProperty('--ns-color', '#4a9e6b');
+        bar.innerHTML = `
+          <span class="ns-eyebrow">Status</span>
+          <span class="ns-mod" style="color:#4a9e6b">All modules complete</span>
+          <div class="ns-divider"></div>
+          <span class="ns-all-done">You've finished everything. Nice work.</span>`;
+        return;
+      }
+
+      const mod = modDef[idx];
+      const color = MOD_COLORS[idx];
+      bar.style.setProperty('--ns-color', color);
+
+      const actionBtns = mod.actions.slice(0, 2).map((a, i) =>
+        `<a class="ns-btn${i > 0 ? ' ns-btn-ghost' : ''}" href="${a.href}">${a.label} &rarr;</a>`
+      ).join('');
+
+      bar.innerHTML = `
+        <span class="ns-eyebrow">Where you left off</span>
+        <span class="ns-mod">M${idx} - ${mod.name}</span>
+        <div class="ns-divider"></div>
+        <span class="ns-message">Next up in this module:</span>
+        <div class="ns-actions">${actionBtns}</div>`;
+    })();
   }
 
   function toggleDashboard() {
