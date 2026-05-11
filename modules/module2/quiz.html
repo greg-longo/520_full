@@ -352,6 +352,17 @@
       flex: 1;
     }
 
+    .review-wrong {
+      font-size: 0.82rem;
+      color: #d47a7a;
+      margin-top: 0.25rem;
+    }
+    .review-correct {
+      font-size: 0.82rem;
+      color: var(--correct-text, #7ecfa0);
+      margin-top: 0.1rem;
+    }
+
     .breakdown-item-number {
       font-family: 'IBM Plex Mono', monospace;
       color: var(--text-secondary);
@@ -993,7 +1004,7 @@
       if (selectedOption === null) return;
       const q = questions[currentQ];
       const isCorrect = selectedOption === q.correctIndex;
-      results[currentQ] = { correct: isCorrect };
+      results[currentQ] = { correct: isCorrect, selected: selectedOption };
 
       // Disable all option buttons
       document.querySelectorAll('.option-btn').forEach((btn, idx) => {
@@ -1046,14 +1057,28 @@
         const icon = result.correct ? '✓' : '✗';
         const iconClass = result.correct ? 'correct' : 'wrong';
         const correctAnswer = questions[idx].options[questions[idx].correctIndex];
-        breakdownHTML += `
-          <div class="breakdown-item">
-            <div class="breakdown-item-icon ${iconClass}">${icon}</div>
-            <div class="breakdown-item-text">
-              <strong>Q${idx + 1}:</strong> ${correctAnswer}
+        if (result.correct) {
+          breakdownHTML += `
+            <div class="breakdown-item">
+              <div class="breakdown-item-icon correct">&#10003;</div>
+              <div class="breakdown-item-text">
+                <strong>Q${idx + 1}:</strong> ${correctAnswer}
+              </div>
             </div>
-          </div>
-        `;
+          `;
+        } else {
+          const yourAnswer = questions[idx].options[result.selected];
+          breakdownHTML += `
+            <div class="breakdown-item">
+              <div class="breakdown-item-icon wrong">&#10007;</div>
+              <div class="breakdown-item-text">
+                <strong>Q${idx + 1}:</strong>
+                <div class="review-wrong">Your answer: ${yourAnswer}</div>
+                <div class="review-correct">Correct: ${correctAnswer}</div>
+              </div>
+            </div>
+          `;
+        }
       });
 
       document.getElementById('resultsBreakdown').innerHTML = breakdownHTML;
