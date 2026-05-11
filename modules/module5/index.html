@@ -347,6 +347,46 @@
       .chart-grid { grid-template-columns: 1fr; }
     }
 
+    /* sim sidebar card */
+    .sim-cta {
+      display: block;
+      text-decoration: none;
+      padding: 0.75rem 0.85rem 0.75rem 1rem;
+      border-left: 3px solid var(--accent);
+      background: var(--bg-card2);
+      border-radius: 0 4px 4px 0;
+      transition: background 0.15s;
+    }
+    .sim-cta:hover { background: rgba(255,255,255,0.05); }
+    .sim-cta-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.2rem;
+    }
+    .sim-cta h4 {
+      font-family: 'Zilla Slab', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin: 0 0 0.25rem;
+      line-height: 1.3;
+    }
+    .sim-cta p {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      line-height: 1.45;
+      margin: 0 0 0.4rem;
+    }
+    .sim-cta-launch {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.04em;
+      color: var(--accent-light);
+    }
+
     /* quiz link card */
     .quiz-link-card {
       display: flex;
@@ -914,6 +954,7 @@ plt.<span class="fn">show</span>()</code></pre>
       <div class="sim-cta-label">Simulation</div>
       <h4>Pitch the Viz</h4>
       <p>You're live in the Volta Records committee room. Four chart decisions. One artist to sign. Make the data land.</p>
+      <div class="sim-cta-launch">Open Simulation &rarr;</div>
     </a>
 
 

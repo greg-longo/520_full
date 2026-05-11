@@ -184,6 +184,10 @@
     .sidebar {
       position: sticky;
       top: 72px;
+      max-height: calc(100vh - 85px);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.12) transparent;
       display: flex;
       flex-direction: column;
       gap: 1rem;
