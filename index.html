@@ -932,18 +932,30 @@
       ? { state: 'complete', label: branch.score + '%' }
       : { state: 'empty', label: '--' };
 
-    return { quizzes, pftItems, debugItem, branchItem };
+    const roleShort = { analyst: 'Analyst', scientist: 'Scientist', engineer: 'Engineer', ml: 'ML Eng', researcher: 'Researcher' };
+    const morning = get('dtsc520_morningbrief');
+    const morningItem = morning ? { state: 'complete', label: morning.score + '%' } : { state: 'empty', label: '--' };
+
+    const findpath = get('dtsc520_findyourpath');
+    const findpathItem = findpath ? { state: 'complete', label: roleShort[findpath.role] || 'done' } : { state: 'empty', label: '--' };
+
+    const pitchviz = get('dtsc520_pitchtheviz');
+    const pitchvizItem = pitchviz ? { state: 'complete', label: pitchviz.score + '/12' } : { state: 'empty', label: '--' };
+
+    const charttop = get('dtsc520_charttoppers');
+    const charttopItem = charttop ? { state: 'complete', label: charttop.score + '/18' } : { state: 'empty', label: '--' };
+
+    return { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem };
   }
 
   // ── Build dashboard grid ──────────────────────────────────────────────────
   function buildDashboard() {
-    const { quizzes, pftItems, debugItem, branchItem } = readProgress();
+    const { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem } = readProgress();
     const grid = document.getElementById('dashGrid');
     if (!grid) return;
 
     // Per-module columns
     // Each column: mod label + quiz row + sim rows
-    // untracked = no localStorage (always shows as 'not started')
     const QUIZ_URLS = [
       'modules/module0/quiz.html',
       'modules/module1/quiz.html',
@@ -956,16 +968,19 @@
     const simsByMod = [
       [], // mod0 — no sims
       [ // mod1
-        { state: 'untracked', label: '--', name: 'Morning Brief',  href: 'sims/morning-brief/index.html' },
-        { state: 'untracked', label: '--', name: 'Find Your Path', href: 'sims/find-your-path/index.html' },
+        { ...morningItem,   name: 'Morning Brief',  href: 'sims/morning-brief/index.html' },
+        { ...findpathItem,  name: 'Find Your Path', href: 'sims/find-your-path/index.html' },
       ],
       pftItems.map((item, i) => ({ ...item, href: 'sims/python_sim/' + ['index.html','module1.html','module2.html','module3.html'][i+1] || 'sims/python_sim/index.html' })),
-      [{ ...debugItem, name: 'Debug Pipeline', href: 'sims/debug-pipeline/index.html' }],
+      [ // mod3
+        { ...debugItem,    name: 'Debug Pipeline', href: 'sims/debug-pipeline/index.html' },
+        { ...charttopItem, name: 'Chart Toppers',  href: 'sims/numpy-lab/index.html' },
+      ],
       [ // mod4
         { state: 'untracked', label: '--', name: 'Dirty Dataset', href: 'sims/dirty_dataset_sim.html' },
       ],
       [ // mod5
-        { state: 'untracked', label: '--', name: 'Pitch the Viz', href: 'sims/pitch-the-viz/index.html' },
+        { ...pitchvizItem, name: 'Pitch the Viz', href: 'sims/pitch-the-viz/index.html' },
       ],
       [{ ...branchItem, name: 'Branch Crisis', href: 'modules/module6/branch_crisis_sim.html' }],
     ];
@@ -1084,7 +1099,8 @@
     if (!confirm('Reset all quiz and sim progress? This cannot be undone.')) return;
     ['dtsc520_quiz_m0','dtsc520_quiz_m1','dtsc520_quiz_m2','dtsc520_quiz_m3',
      'dtsc520_quiz_m4','dtsc520_quiz_m5','dtsc520_quiz_m6',
-     'pft_progress','dtsc520_debugpipeline','dtsc520_branchcrisis'].forEach(k => {
+     'pft_progress','dtsc520_debugpipeline','dtsc520_branchcrisis',
+     'dtsc520_morningbrief','dtsc520_findyourpath','dtsc520_pitchtheviz','dtsc520_charttoppers'].forEach(k => {
       try { localStorage.removeItem(k); } catch(e) {}
     });
     buildDashboard();

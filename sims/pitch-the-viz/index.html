@@ -2342,6 +2342,7 @@ function showDebrief() {
   }
 
   const pct = Math.round((totalScore / 12) * 100);
+  try { localStorage.setItem('dtsc520_pitchtheviz', JSON.stringify({ completed: true, score: totalScore, pct: pct })); } catch(e) {}
 
   let verdict, verdictBody;
   if (pct === 100) {

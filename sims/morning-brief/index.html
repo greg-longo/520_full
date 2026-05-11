@@ -1450,6 +1450,7 @@ ward_check = df_clean[df_clean[<span class="st">'followup_scheduled'</span>] == 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     const pct = Math.round((score / maxScore) * 100);
+    try { localStorage.setItem('dtsc520_morningbrief', JSON.stringify({ completed: true, score: pct })); } catch(e) {}
     let rank, badgeClass, summary;
     if (pct === 100) {
       rank = 'Lead Analyst'; badgeClass = 'green';

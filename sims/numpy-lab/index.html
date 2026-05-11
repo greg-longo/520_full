@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chart Toppers - NumPy Lab | DTSC 520</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+<style>
+:root {
+  --maroon:       #8B1C40;
+  --maroon-light: #b02454;
+  --blue:         #2A7195;
+  --blue-light:   #3a9cc4;
+  --bg:           #0e0c0b;
+  --surface:      #161311;
+  --surface2:     #1d1a17;
+  --surface3:     #252220;
+  --text:         #f0ece6;
+  --text-dim:     #b8b0a6;
+  --text-muted:   #7a7268;
+  --border:       #2e2a26;
+  /* Challenge accent colors */
+  --c1: #a78bfa;
+  --c2: #34d399;
+  --c3: #fbbf24;
+  --c4: #f87171;
+  --c5: #60a5fa;
+  --c6: #fb923c;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Zilla Slab', serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: var(--surface);
+  padding: 0 1.5rem;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  position: relative;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--c1), var(--c2), var(--c3), var(--c4), var(--c5), var(--c6));
+}
+.header-left { display: flex; align-items: center; gap: 0.85rem; }
+.header-icon {
+  width: 34px; height: 34px;
+  background: var(--maroon);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+}
+.header-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px; font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.header-title span { color: #f0ece6; }
+.header-module {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ===== STATUS BAR ===== */
+.status-bar {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-shrink: 0;
+}
+.challenge-dots { display: flex; gap: 7px; align-items: center; }
+.dot {
+  width: 30px; height: 5px;
+  border-radius: 3px;
+  background: var(--surface3);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+.dot:hover { opacity: 0.85; }
+.status-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.status-score {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+.status-score strong { color: var(--text); font-size: 14px; }
+
+/* ===== LANDING ===== */
+.landing-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 600;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+.landing-overlay .landing-card {
+  margin: auto;
+}
+.landing-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  width: 100%;
+  max-width: 720px;
+  overflow: hidden;
+}
+.landing-stripe {
+  height: 4px;
+  background: linear-gradient(90deg, var(--c1), var(--c2), var(--c3), var(--c4), var(--c5), var(--c6));
+}
+.landing-body {
+  padding: 2.25rem 2.5rem 2rem;
+}
+.landing-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+.landing-title {
+  font-size: 28px; font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.15rem;
+}
+.landing-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--blue-light);
+  margin-bottom: 1.75rem;
+}
+.landing-prose {
+  font-size: 15px;
+  color: var(--text-dim);
+  line-height: 1.75;
+  margin-bottom: 1.25rem;
+}
+.landing-prose + .landing-prose {
+  margin-top: -0.5rem;
+}
+.landing-scoring {
+  display: flex;
+  gap: 0.65rem;
+  margin: 1.5rem 0;
+}
+.scoring-pip {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.65rem 0.75rem;
+  text-align: center;
+}
+.scoring-pip-pts {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 20px; font-weight: 600;
+  margin-bottom: 2px;
+}
+.scoring-pip-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.landing-artists {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  color: var(--text-muted);
+  margin-bottom: 1.75rem;
+  line-height: 1.9;
+}
+.landing-artists span {
+  color: var(--blue-light);
+}
+.landing-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+.landing-note {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.btn-start {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px; font-weight: 600;
+  padding: 11px 28px;
+  background: var(--maroon);
+  color: #fff;
+  border: none; border-radius: 4px;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+.btn-start:hover { filter: brightness(1.12); }
+
+/* ===== LOADING ===== */
+.loading-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 400;
+}
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--maroon-light);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1.25rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ===== MAIN LAYOUT ===== */
+.main-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ===== LEFT PANEL ===== */
+.left-panel {
+  width: 340px;
+  min-width: 300px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.left-panel-header {
+  padding: 1rem 1.1rem 0.7rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: var(--surface);
+  z-index: 1;
+}
+.panel-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.panel-heading {
+  font-size: 14px; font-weight: 700;
+  color: var(--text);
+}
+.panel-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.dataset-section { padding: 0.9rem 1.1rem; }
+.section-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+/* Song table */
+.song-table { width: 100%; border-collapse: collapse; }
+.song-table th {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-align: left;
+  padding: 3px 6px 3px 0;
+  border-bottom: 1px solid var(--border);
+}
+.song-table td {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  padding: 4px 6px 4px 0;
+  border-bottom: 1px solid rgba(46,42,38,0.4);
+  vertical-align: top;
+}
+.song-table tr:hover td { background: var(--surface2); }
+.td-idx { color: var(--text-muted); width: 18px; }
+.td-song-name { color: var(--text); display: block; }
+.td-artist-name { color: var(--blue-light); font-size: 9px; display: block; margin-top: 1px; }
+.td-plays { color: var(--c2); text-align: right; padding-right: 8px; }
+.td-rating { color: var(--c3); text-align: right; padding-right: 8px; }
+.td-len { color: var(--text-muted); text-align: right; }
+
+/* Code display */
+.code-display {
+  background: #0b0908;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.7rem 0.85rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  line-height: 1.75;
+  color: var(--text-dim);
+  overflow-x: auto;
+  margin-bottom: 0.65rem;
+}
+.code-display .k { color: #c792ea; }
+.code-display .f { color: #82aaff; }
+.code-display .s { color: #c3e88d; }
+.code-display .n { color: #f78c6c; }
+.code-display .c { color: var(--text-muted); }
+
+/* ===== RIGHT PANEL ===== */
+.right-panel {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Challenge card */
+.challenge-card {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  flex-direction: column;
+}
+.challenge-card.active { display: flex; }
+
+.card-top {
+  border-top: 3px solid var(--accent-color, #8B1C40);
+  padding: 1rem 1.25rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+}
+.card-tag {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  padding: 3px 9px;
+  border-radius: 3px;
+  margin-bottom: 0.5rem;
+}
+.card-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  float: right;
+  padding-top: 2px;
+}
+.card-title {
+  font-size: 20px; font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+  clear: right;
+}
+.card-desc {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  line-height: 1.65;
+}
+.card-desc code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  background: var(--surface3);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* Editor */
+.card-editor { padding: 1rem 1.25rem; }
+.editor-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+.editor-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+.attempt-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.attempt-count strong { color: var(--text-dim); }
+
+textarea.editor {
+  width: 100%;
+  height: 320px;
+  background: #09080a;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.7rem 0.9rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--text);
+  resize: vertical;
+  outline: none;
+  tab-size: 4;
+  transition: border-color 0.15s;
+}
+textarea.editor:focus { border-color: var(--accent-color, var(--maroon-light)); }
+textarea.editor:read-only { opacity: 0.7; cursor: default; }
+
+/* Buttons */
+.btn-row { display: flex; gap: 0.6rem; margin-top: 0.65rem; }
+.btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn-run { color: #fff; }
+.btn-run:hover { filter: brightness(1.12); }
+.btn-run:disabled { opacity: 0.45; cursor: not-allowed; filter: none; }
+.btn-hint {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.btn-hint:hover { border-color: var(--text-muted); color: var(--text-dim); }
+
+/* Output */
+.output-wrap { margin-top: 0.75rem; }
+.output-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+.output-box {
+  background: #09080a;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.65rem 0.9rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-dim);
+  min-height: 44px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.output-box.err { color: #f87171; }
+
+/* Feedback */
+.feedback {
+  margin-top: 0.7rem;
+  padding: 0.8rem 1rem;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.6;
+  display: none;
+}
+.feedback.pass {
+  background: rgba(52,211,153,0.07);
+  border: 1px solid rgba(52,211,153,0.22);
+  color: #a7f3d0;
+  display: block;
+}
+.feedback.fail {
+  background: rgba(248,113,113,0.07);
+  border: 1px solid rgba(248,113,113,0.2);
+  color: #fca5a5;
+  display: block;
+}
+.feedback.info {
+  background: rgba(148,163,184,0.05);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  display: block;
+}
+.feedback-head {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.feedback code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  background: rgba(255,255,255,0.07);
+  padding: 1px 5px; border-radius: 3px;
+}
+.expected-out {
+  margin-top: 0.5rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: pre;
+  background: rgba(0,0,0,0.3);
+  padding: 0.4rem 0.6rem;
+  border-radius: 3px;
+}
+
+/* Nav */
+.nav-row {
+  display: none;
+  justify-content: flex-end;
+  margin-top: 0.85rem;
+}
+.btn-next {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; font-weight: 600;
+  padding: 9px 20px;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-next:hover { color: #fff; background: var(--accent-color, var(--maroon)); border-color: var(--accent-color, var(--maroon)); }
+
+/* ===== FINAL SCREEN ===== */
+.final-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 2rem;
+  min-height: 100%;
+}
+.final-screen.active { display: flex; }
+.final-emoji { font-size: 64px; margin-bottom: 0.75rem; }
+.final-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-muted); margin-bottom: 0.3rem;
+}
+.final-title { font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+.final-score {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 20px; color: var(--c2);
+  margin-bottom: 2rem;
+}
+.breakdown {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  width: 100%; max-width: 500px;
+  margin-bottom: 2rem;
+}
+.b-cell {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.7rem 0.5rem;
+}
+.b-label { font-size: 11px; color: var(--text-muted); margin-bottom: 0.2rem; }
+.b-score {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 17px; font-weight: 600;
+}
+.btn-restart {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; font-weight: 600;
+  padding: 10px 26px;
+  background: var(--maroon);
+  color: #fff; border: none;
+  border-radius: 4px; cursor: pointer;
+}
+.btn-restart:hover { filter: brightness(1.12); }
+
+/* ===== REFERENCE MODAL ===== */
+.ref-fab {
+  position: fixed;
+  bottom: 1.4rem; right: 1.4rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; font-weight: 600;
+  padding: 8px 13px;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-dim);
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.15s;
+}
+.ref-fab:hover { background: var(--maroon); color: #fff; border-color: var(--maroon); }
+
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 200;
+  display: none;
+  justify-content: flex-end;
+  padding: 54px 0 0 0;
+}
+.overlay.open { display: flex; }
+
+.ref-panel {
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  width: 400px;
+  max-width: 100vw;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.ref-panel-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky; top: 0;
+  background: var(--surface);
+}
+.ref-panel-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px; font-weight: 600;
+  color: var(--text);
+}
+.ref-close {
+  background: none; border: none;
+  color: var(--text-muted);
+  font-size: 18px; cursor: pointer;
+  line-height: 1; padding: 0;
+}
+.ref-body { padding: 0.75rem 1.25rem 1.5rem; }
+
+.ref-section {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin: 1rem 0 0.45rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+.ref-section:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+
+.ref-item { margin-bottom: 0.55rem; }
+.ref-code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px; color: var(--c1);
+}
+.ref-desc { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Landing -->
+<div class="landing-overlay" id="landingOverlay">
+  <div class="landing-card">
+    <div class="landing-stripe"></div>
+    <div class="landing-body">
+      <div class="landing-eyebrow">DTSC 520 &middot; Module 3 &middot; NumPy</div>
+      <div class="landing-title">Chart Toppers</div>
+      <div class="landing-sub">An interactive NumPy lab</div>
+
+      <p class="landing-prose">You have been handed access to StreamChart's internal dataset - 10 songs from five artists whose names you may recognize. Your job is to work through six coding challenges covering the core of what makes NumPy worth learning: how it stores data, how to slice and index into arrays, how to run math across an entire dataset without writing a loop, and how to filter rows with conditions.</p>
+
+      <p class="landing-prose">The dataset stays visible on the left the whole time. On the right you will see the challenge description, a code editor with starter code already filled in, and an output panel where your results appear. Each challenge asks you to complete or modify a few lines to produce a specific output.</p>
+
+      <div class="landing-scoring">
+        <div class="scoring-pip">
+          <div class="scoring-pip-pts" style="color:var(--c2)">3 pts</div>
+          <div class="scoring-pip-label">first try</div>
+        </div>
+        <div class="scoring-pip">
+          <div class="scoring-pip-pts" style="color:var(--c3)">2 pts</div>
+          <div class="scoring-pip-label">second try</div>
+        </div>
+        <div class="scoring-pip">
+          <div class="scoring-pip-pts" style="color:var(--c4)">1 pt</div>
+          <div class="scoring-pip-label">third try or later</div>
+        </div>
+        <div class="scoring-pip">
+          <div class="scoring-pip-pts" style="color:var(--text-muted)">18</div>
+          <div class="scoring-pip-label">points total</div>
+        </div>
+      </div>
+
+      <p class="landing-prose">If you get stuck, the Hint button will nudge you in the right direction. After three attempts it becomes Show Answer. The REF button in the bottom-right corner opens a reference card with NumPy syntax and examples you can consult at any time.</p>
+
+      <div class="landing-artists">
+        Tonight's lineup: &nbsp;
+        <span>Bayesian Rhapsody</span> &middot;
+        <span>Regression to the Mean</span> &middot;
+        <span>Sigmoid Freud</span> &middot;
+        <span>Tuple Shakur</span> &middot;
+        <span>Feature Engineers</span>
+      </div>
+
+      <div class="landing-footer">
+        <div class="landing-note">6 challenges &middot; Python runs in your browser</div>
+        <button class="btn-start" onclick="startSim()">Start the Lab &rarr;</button>
+      </div>
+      <div style="margin-top:1rem;font-family:'IBM Plex Mono',monospace;font-size:0.63rem;color:var(--text-muted);text-align:center;">
+        Built for DTSC 520 &mdash; Eastern University &bull; <a href="../../index.html" style="color:var(--text-muted);text-decoration:none;">Course Home</a><br>
+        &copy; Eastern University. All rights reserved.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Loading Python environment...</div>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-icon">🎵</div>
+    <div class="header-title">Chart <span>Toppers</span> — NumPy Lab</div>
+  </div>
+  <div class="header-module">DTSC 520 &middot; Module 3</div>
+</div>
+
+<!-- Status bar -->
+<div class="status-bar">
+  <div class="challenge-dots" id="dots"></div>
+  <div class="status-label" id="statusLabel">Challenge 1 of 6</div>
+  <div class="status-score">Score: <strong id="scoreEl">0</strong> / 18</div>
+</div>
+
+<!-- Main layout -->
+<div class="main-layout">
+
+  <!-- Left: dataset -->
+  <div class="left-panel">
+    <div class="left-panel-header">
+      <div class="panel-eyebrow">StreamChart Dataset</div>
+      <div class="panel-heading">10 Songs &middot; 5 Artists</div>
+      <div class="panel-sub">Reference this while you code</div>
+    </div>
+
+    <div class="dataset-section">
+      <div class="section-eyebrow">All Songs &middot; index 0-9</div>
+      <table class="song-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Song / Artist</th>
+            <th style="text-align:right;padding-right:8px">Plays</th>
+            <th style="text-align:right;padding-right:8px">Rtg</th>
+            <th style="text-align:right">Len</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-idx">0</td>
+            <td><span class="td-song-name">Prior Engagement</span><span class="td-artist-name">Bayesian Rhapsody</span></td>
+            <td class="td-plays">847</td><td class="td-rating">4.2</td><td class="td-len">3:34</td>
+          </tr>
+          <tr>
+            <td class="td-idx">1</td>
+            <td><span class="td-song-name">Posterior Dreams</span><span class="td-artist-name">Bayesian Rhapsody</span></td>
+            <td class="td-plays">623</td><td class="td-rating">3.8</td><td class="td-len">3:18</td>
+          </tr>
+          <tr>
+            <td class="td-idx">2</td>
+            <td><span class="td-song-name">Ordinary Least Squares</span><span class="td-artist-name">Regression to the Mean</span></td>
+            <td class="td-plays">1205</td><td class="td-rating">4.7</td><td class="td-len">4:27</td>
+          </tr>
+          <tr>
+            <td class="td-idx">3</td>
+            <td><span class="td-song-name">Line of Best Fit</span><span class="td-artist-name">Regression to the Mean</span></td>
+            <td class="td-plays">934</td><td class="td-rating">4.1</td><td class="td-len">4:01</td>
+          </tr>
+          <tr>
+            <td class="td-idx">4</td>
+            <td><span class="td-song-name">The Activation Function</span><span class="td-artist-name">Sigmoid Freud</span></td>
+            <td class="td-plays">782</td><td class="td-rating">3.9</td><td class="td-len">3:43</td>
+          </tr>
+          <tr>
+            <td class="td-idx">5</td>
+            <td><span class="td-song-name">Dreams of Convergence</span><span class="td-artist-name">Sigmoid Freud</span></td>
+            <td class="td-plays">1089</td><td class="td-rating">4.5</td><td class="td-len">4:15</td>
+          </tr>
+          <tr>
+            <td class="td-idx">6</td>
+            <td><span class="td-song-name">All Eyez on Data</span><span class="td-artist-name">Tuple Shakur</span></td>
+            <td class="td-plays">2341</td><td class="td-rating">4.9</td><td class="td-len">5:12</td>
+          </tr>
+          <tr>
+            <td class="td-idx">7</td>
+            <td><span class="td-song-name">Head Up (Gradient)</span><span class="td-artist-name">Tuple Shakur</span></td>
+            <td class="td-plays">1876</td><td class="td-rating">4.6</td><td class="td-len">4:47</td>
+          </tr>
+          <tr>
+            <td class="td-idx">8</td>
+            <td><span class="td-song-name">Drop the Column</span><span class="td-artist-name">Feature Engineers</span></td>
+            <td class="td-plays">543</td><td class="td-rating">3.5</td><td class="td-len">3:09</td>
+          </tr>
+          <tr>
+            <td class="td-idx">9</td>
+            <td><span class="td-song-name">Scale My Heart</span><span class="td-artist-name">Feature Engineers</span></td>
+            <td class="td-plays">698</td><td class="td-rating">4.0</td><td class="td-len">3:54</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="dataset-section" style="border-top:1px solid var(--border);padding-top:0.9rem">
+      <div class="section-eyebrow">Arrays in memory</div>
+
+      <div class="code-display">
+<span class="c"># 1D arrays (length 10)</span>
+<span class="k">plays</span> = <span class="f">np.array</span>([
+  <span class="n">847</span>, <span class="n">623</span>, <span class="n">1205</span>, <span class="n">934</span>, <span class="n">782</span>,
+  <span class="n">1089</span>, <span class="n">2341</span>, <span class="n">1876</span>, <span class="n">543</span>, <span class="n">698</span>])
+
+<span class="k">ratings</span> = <span class="f">np.array</span>([
+  <span class="n">4.2</span>, <span class="n">3.8</span>, <span class="n">4.7</span>, <span class="n">4.1</span>, <span class="n">3.9</span>,
+  <span class="n">4.5</span>, <span class="n">4.9</span>, <span class="n">4.6</span>, <span class="n">3.5</span>, <span class="n">4.0</span>])
+
+<span class="k">lengths</span> = <span class="f">np.array</span>([
+  <span class="n">214</span>, <span class="n">198</span>, <span class="n">267</span>, <span class="n">241</span>, <span class="n">223</span>,
+  <span class="n">255</span>, <span class="n">312</span>, <span class="n">287</span>, <span class="n">189</span>, <span class="n">234</span>])
+
+<span class="c"># 2D: 5 artists x 2 songs</span>
+<span class="k">plays_2d</span> = <span class="f">np.array</span>([
+  [<span class="n">847</span>,  <span class="n">623</span>],  <span class="c"># Bayesian Rhapsody</span>
+  [<span class="n">1205</span>, <span class="n">934</span>],  <span class="c"># Regression to the Mean</span>
+  [<span class="n">782</span>,  <span class="n">1089</span>], <span class="c"># Sigmoid Freud</span>
+  [<span class="n">2341</span>, <span class="n">1876</span>], <span class="c"># Tuple Shakur</span>
+  [<span class="n">543</span>,  <span class="n">698</span>]]) <span class="c"># Feature Engineers</span>
+
+<span class="c"># songs = np.array([...]) length 10</span></div>
+    </div>
+  </div>
+
+  <!-- Right: challenge area -->
+  <div class="right-panel" id="rightPanel">
+    <!-- cards injected by JS -->
+
+    <!-- Final screen -->
+    <div class="final-screen" id="finalScreen">
+      <div class="final-emoji" id="finalEmoji">🏆</div>
+      <div class="final-eyebrow">Final Score</div>
+      <div class="final-title" id="finalTitle">Platinum Artist</div>
+      <div class="final-score" id="finalScore">18 / 18</div>
+      <div class="breakdown" id="breakdown"></div>
+      <button class="btn-restart" onclick="restartSim()">Try Again</button>
+    </div>
+  </div>
+</div>
+
+<footer style="border-top:1px solid var(--border);padding:0.85rem 1.5rem;font-family:'IBM Plex Mono',monospace;font-size:0.63rem;color:var(--text-muted);text-align:center;flex-shrink:0;">
+  Built for DTSC 520 &mdash; Eastern University &bull; <a href="../../index.html" style="color:var(--text-muted);text-decoration:none;">Course Home</a><br>
+  &copy; Eastern University. All rights reserved.
+</footer>
+
+<!-- Reference FAB -->
+<button class="ref-fab" onclick="toggleRef()">&#9432; REF</button>
+
+<!-- Reference overlay -->
+<div class="overlay" id="refOverlay" onclick="overlayClick(event)">
+  <div class="ref-panel">
+    <div class="ref-panel-header">
+      <span class="ref-panel-title">NumPy Reference Card</span>
+      <button class="ref-close" onclick="toggleRef()">&#x2715;</button>
+    </div>
+    <div class="ref-body">
+
+      <div class="ref-section">Array Creation</div>
+      <div class="ref-item">
+        <div class="ref-code">np.array([1, 2, 3])</div>
+        <div class="ref-desc">Create array from a Python list</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">np.zeros(5) &nbsp;/&nbsp; np.ones(5)</div>
+        <div class="ref-desc">Array of 0s or 1s, length 5</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">np.arange(0, 10, 2)</div>
+        <div class="ref-desc">Range [0, 2, 4, 6, 8] with step</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">np.linspace(0, 1, 5)</div>
+        <div class="ref-desc">5 evenly spaced values from 0 to 1</div>
+      </div>
+
+      <div class="ref-section">Array Attributes</div>
+      <div class="ref-item">
+        <div class="ref-code">arr.shape</div>
+        <div class="ref-desc">Dimensions tuple &mdash; (10,) or (5,2)</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">arr.dtype</div>
+        <div class="ref-desc">Data type: int64, float64, &lt;U30, etc.</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">arr.ndim &nbsp;/&nbsp; arr.size</div>
+        <div class="ref-desc">Number of dimensions / total elements</div>
+      </div>
+
+      <div class="ref-section">Indexing &amp; Slicing (1D)</div>
+      <div class="ref-item">
+        <div class="ref-code">arr[0] &nbsp;/&nbsp; arr[-1]</div>
+        <div class="ref-desc">First / last element</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">arr[1:4]</div>
+        <div class="ref-desc">Elements at index 1, 2, 3 (stop is exclusive)</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">arr[:3] &nbsp;/&nbsp; arr[3:]</div>
+        <div class="ref-desc">First 3 elements / index 3 to end</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">arr[::2]</div>
+        <div class="ref-desc">Every other element (step of 2)</div>
+      </div>
+
+      <div class="ref-section">Indexing (2D)</div>
+      <div class="ref-item">
+        <div class="ref-code">arr[2, 1]</div>
+        <div class="ref-desc">Row 2, column 1</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">arr[2] &nbsp;or&nbsp; arr[2, :]</div>
+        <div class="ref-desc">Entire row 2</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">arr[:, 0]</div>
+        <div class="ref-desc">Column 0 across all rows</div>
+      </div>
+
+      <div class="ref-section">Boolean Indexing</div>
+      <div class="ref-item">
+        <div class="ref-code">arr[arr &gt; 5]</div>
+        <div class="ref-desc">Elements greater than 5</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">arr[(arr &gt; 2) &amp; (arr &lt; 8)]</div>
+        <div class="ref-desc">Multiple conditions &mdash; use &amp; not and</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">arr[(arr &lt; 1) | (arr &gt; 9)]</div>
+        <div class="ref-desc">Either condition &mdash; use | not or</div>
+      </div>
+
+      <div class="ref-section">Fancy Indexing</div>
+      <div class="ref-item">
+        <div class="ref-code">arr[[0, 3, 1]]</div>
+        <div class="ref-desc">Elements at indices 0, 3, 1 in that order</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">idx = [2, 5, 0]; arr[idx]</div>
+        <div class="ref-desc">Use a variable as the index list</div>
+      </div>
+
+      <div class="ref-section">Vectorized Math</div>
+      <div class="ref-item">
+        <div class="ref-code">arr * 2 &nbsp;/&nbsp; arr + 10 &nbsp;/&nbsp; arr ** 2</div>
+        <div class="ref-desc">Applied to every element &mdash; no loop needed</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">arr1 + arr2</div>
+        <div class="ref-desc">Element-wise addition of two arrays</div>
+      </div>
+
+      <div class="ref-section">Statistical Methods</div>
+      <div class="ref-item">
+        <div class="ref-code">np.mean(arr) &nbsp;/&nbsp; np.median(arr)</div>
+        <div class="ref-desc">Mean and median</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">np.std(arr) &nbsp;/&nbsp; np.var(arr)</div>
+        <div class="ref-desc">Standard deviation and variance</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">np.max(arr) &nbsp;/&nbsp; np.min(arr)</div>
+        <div class="ref-desc">Maximum and minimum value</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">np.sum(arr)</div>
+        <div class="ref-desc">Sum of all elements</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">np.percentile(arr, 75)</div>
+        <div class="ref-desc">75th percentile</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-code">np.sort(arr) &nbsp;/&nbsp; np.argsort(arr)</div>
+        <div class="ref-desc">Sorted values / indices that would sort it</div>
+      </div>
+
+      <div class="ref-section">Display Tip</div>
+      <div class="ref-item">
+        <div class="ref-code">np.set_printoptions(linewidth=200)</div>
+        <div class="ref-desc">Prevent arrays from wrapping to multiple lines</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================================================
+// CHALLENGE DEFINITIONS
+// ===================================================
+const CHALLENGES = [
+  {
+    accent: '#a78bfa',
+    tag: 'Array Creation & Basics',
+    title: 'Build the Plays Array',
+    desc: `You have a plain Python list of stream counts (in thousands). Convert it to a NumPy array called <code>plays</code>, then print the array and its <code>.shape</code>.`,
+    starter: `import numpy as np
+np.set_printoptions(linewidth=200)
+
+plays_list = [847, 623, 1205, 934, 782, 1089, 2341, 1876, 543, 698]
+
+# Convert plays_list to a NumPy array called 'plays'
+plays =
+
+# Print the array, then print its shape
+print(plays)
+print(plays.shape)`,
+    expected: '[ 847  623 1205  934  782 1089 2341 1876  543  698]\n(10,)',
+    why: `<code>np.array()</code> wraps a Python list into a NumPy structure. Unlike a list, <code>plays</code> now supports vectorized math, slicing shortcuts, and statistical methods - no loops needed.`,
+    hint: `The pattern is <code>plays = np.array(plays_list)</code>. NumPy wraps your list and gives it superpowers.`
+  },
+  {
+    accent: '#34d399',
+    tag: 'Indexing & Slicing',
+    title: 'Slice the 2D Array',
+    desc: `<code>plays_2d</code> has one row per artist and two columns (one per song). Print Tuple Shakur's play counts (row index 3), then print the first song of every artist (column 0).`,
+    starter: `import numpy as np
+np.set_printoptions(linewidth=200)
+
+plays_2d = np.array([
+    [ 847,  623],   # Bayesian Rhapsody
+    [1205,  934],   # Regression to the Mean
+    [ 782, 1089],   # Sigmoid Freud
+    [2341, 1876],   # Tuple Shakur
+    [ 543,  698]    # Feature Engineers
+])
+
+# Print Tuple Shakur's row (index 3)
+print(plays_2d[3])
+
+# Print the first song of every artist (column 0)
+print(plays_2d[:, 0])`,
+    expected: '[2341 1876]\n[ 847 1205  782 2341  543]',
+    why: `<code>arr[3]</code> grabs an entire row. <code>arr[:, 0]</code> means "all rows, column 0" - the colon selects everything along that axis. This kind of 2D slicing is fundamental to any tabular data work.`,
+    hint: `Row 3 is <code>plays_2d[3]</code>. For column 0 across all rows: <code>plays_2d[:, 0]</code> - the colon means "every row".`
+  },
+  {
+    accent: '#fbbf24',
+    tag: 'Vectorization',
+    title: 'Calculate Revenue',
+    desc: `Each stream earns $0.004. The <code>plays</code> array is in thousands, so multiply by 1000 first. Calculate revenue for every song at once - no loop allowed. Store in <code>revenue</code> and print it.`,
+    starter: `import numpy as np
+np.set_printoptions(linewidth=200)
+
+plays = np.array([847, 623, 1205, 934, 782, 1089, 2341, 1876, 543, 698])
+# plays = streams in thousands | rate = $0.004 per stream
+
+# Calculate revenue for each song (plays * 1000 * 0.004)
+# Store in 'revenue' and print it
+revenue =
+print(revenue)`,
+    expected: '[3388. 2492. 4820. 3736. 3128. 4356. 9364. 7504. 2172. 2792.]',
+    why: `<code>plays * 1000 * 0.004</code> applies the math to every element simultaneously. The same operation over a plain Python list would need a for-loop. NumPy's vectorized operations are typically 10-100x faster on large datasets.`,
+    hint: `<code>revenue = plays * 1000 * 0.004</code>. NumPy applies the multiplication to every element at once - no loop needed.`
+  },
+  {
+    accent: '#f87171',
+    tag: 'Statistical Methods',
+    title: 'Analyze the Ratings',
+    desc: `Use NumPy's built-in statistical functions on the <code>ratings</code> array. Print the mean (rounded to 2 decimal places), the max rating, and the standard deviation (rounded to 2 decimal places) - one per line.`,
+    starter: `import numpy as np
+
+ratings = np.array([4.2, 3.8, 4.7, 4.1, 3.9, 4.5, 4.9, 4.6, 3.5, 4.0])
+
+# Print the mean rating, rounded to 2 decimal places
+print(round(np.mean(ratings), 2))
+
+# Print the max rating
+print(np.max(ratings))
+
+# Print the standard deviation, rounded to 2 decimal places
+print(round(np.std(ratings), 2))`,
+    expected: '4.22\n4.9\n0.42',
+    why: `<code>np.mean()</code>, <code>np.max()</code>, and <code>np.std()</code> each scan the entire array in one call - no manual summing, no tracking maximums. These are the first functions you reach for in any exploratory data analysis.`,
+    hint: `The three calls are <code>np.mean(ratings)</code>, <code>np.max(ratings)</code>, and <code>np.std(ratings)</code>. Wrap mean and std in <code>round(..., 2)</code>.`
+  },
+  {
+    accent: '#60a5fa',
+    tag: 'Boolean Indexing',
+    title: 'Filter the Hits',
+    desc: `Find the songs with more than 1000 (thousand) plays AND a rating above 4.3. Create a boolean <code>mask</code> combining both conditions using <code>&amp;</code>, then print the filtered play counts and ratings.`,
+    starter: `import numpy as np
+np.set_printoptions(linewidth=200)
+
+plays = np.array([847, 623, 1205, 934, 782, 1089, 2341, 1876, 543, 698])
+ratings = np.array([4.2, 3.8, 4.7, 4.1, 3.9, 4.5, 4.9, 4.6, 3.5, 4.0])
+
+# Create a boolean mask: plays > 1000 AND rating > 4.3
+# Use & to combine conditions (not 'and')
+mask =
+
+# Print the play counts and ratings for matching songs
+print(plays[mask])
+print(ratings[mask])`,
+    expected: '[1205 1089 2341 1876]\n[4.7 4.5 4.9 4.6]',
+    why: `<code>mask</code> is a True/False array - one value per song. Passing it into <code>arr[mask]</code> returns only where the mask is True. This replaces nested if-statements and applies simultaneously across both arrays.`,
+    hint: `<code>mask = (plays > 1000) & (ratings > 4.3)</code>. Use <code>&</code> not <code>and</code> - NumPy needs element-wise comparison, not Python's short-circuit operator.`
+  },
+  {
+    accent: '#fb923c',
+    tag: 'Fancy Indexing',
+    title: 'Build a Playlist',
+    desc: `Use fancy indexing to pull specific songs out of order. Retrieve the songs at positions <code>[6, 2, 7, 5]</code> from both the <code>songs</code> array and the <code>plays</code> array, then print each.`,
+    starter: `import numpy as np
+np.set_printoptions(linewidth=200)
+
+songs = np.array([
+    'Prior Engagement', 'Posterior Dreams',
+    'Ordinary Least Squares', 'Line of Best Fit',
+    'The Activation Function', 'Dreams of Convergence',
+    'All Eyez on Data', 'Head Up (Gradient)',
+    'Drop the Column', 'Scale My Heart'
+])
+plays = np.array([847, 623, 1205, 934, 782, 1089, 2341, 1876, 543, 698])
+
+# Use fancy indexing to get songs at positions [6, 2, 7, 5]
+playlist_idx = [6, 2, 7, 5]
+print(songs[playlist_idx])
+print(plays[playlist_idx])`,
+    expected: "['All Eyez on Data' 'Ordinary Least Squares' 'Head Up (Gradient)' 'Dreams of Convergence']\n[2341 1205 1876 1089]",
+    why: `Fancy indexing lets you retrieve elements in any order using a list of indices. Unlike slicing, you are not limited to a contiguous range - you can cherry-pick and reorder in a single operation, which is essential for sorting or building playlists.`,
+    hint: `<code>songs[playlist_idx]</code> and <code>plays[playlist_idx]</code> - passing a list of indices retrieves those elements in that exact order.`
+  }
+];
+
+// ===================================================
+// STATE
+// ===================================================
+let currentIdx = 0;
+let scores   = [0, 0, 0, 0, 0, 0];
+let attempts = [0, 0, 0, 0, 0, 0];
+let solved   = [false, false, false, false, false, false];
+let pyodide  = null;
+
+// ===================================================
+// NORMALIZE OUTPUT FOR COMPARISON
+// ===================================================
+function normalize(s) {
+  return s.trim().split('\n')
+    .map(line => line.trim().replace(/\s+/g, ' '))
+    .join('\n');
+}
+
+// ===================================================
+// BUILD UI
+// ===================================================
+function buildCards() {
+  const panel = document.getElementById('rightPanel');
+  const finalScreen = document.getElementById('finalScreen');
+
+  CHALLENGES.forEach((c, i) => {
+    const card = document.createElement('div');
+    card.className = 'challenge-card' + (i === 0 ? ' active' : '');
+    card.id = `card-${i}`;
+    card.innerHTML = `
+      <div class="card-top" style="border-top-color:${c.accent}">
+        <span class="card-num">Challenge ${i+1} of 6</span>
+        <div class="card-tag" style="color:${c.accent};background:${c.accent}18">${c.tag}</div>
+        <div class="card-title">${c.title}</div>
+        <div class="card-desc">${c.desc}</div>
+      </div>
+      <div class="card-editor">
+        <div class="editor-row">
+          <span class="editor-label">Your Code</span>
+          <span class="attempt-count">Attempts: <strong id="att-${i}">0</strong></span>
+        </div>
+        <textarea class="editor" id="ed-${i}" spellcheck="false">${c.starter}</textarea>
+        <div class="btn-row">
+          <button class="btn btn-run" id="run-${i}" style="background:${c.accent}" onclick="runCode(${i})">Run</button>
+          <button class="btn btn-hint" id="hint-${i}" onclick="showHint(${i})">Hint</button>
+        </div>
+        <div class="output-wrap">
+          <div class="output-label">Output</div>
+          <div class="output-box" id="out-${i}"></div>
+        </div>
+        <div class="feedback" id="fb-${i}"></div>
+        <div class="nav-row" id="nav-${i}">
+          <button class="btn-next" id="next-${i}" style="--accent-color:${c.accent}" onclick="goNext(${i})">
+            ${i < 5 ? 'Next Challenge &rarr;' : 'See My Results &rarr;'}
+          </button>
+        </div>
+      </div>
+    `;
+    panel.insertBefore(card, finalScreen);
+  });
+
+  buildDots();
+}
+
+function buildDots() {
+  const container = document.getElementById('dots');
+  CHALLENGES.forEach((c, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot';
+    d.id = `dot-${i}`;
+    d.title = `Challenge ${i+1}: ${c.title}`;
+    d.style.background = i === 0 ? c.accent : 'var(--surface3)';
+    d.onclick = () => goTo(i);
+    container.appendChild(d);
+  });
+}
+
+function refreshDots() {
+  CHALLENGES.forEach((c, i) => {
+    const d = document.getElementById(`dot-${i}`);
+    if (i === currentIdx) {
+      d.style.background = c.accent;
+      d.style.opacity = '1';
+    } else if (solved[i]) {
+      d.style.background = c.accent;
+      d.style.opacity = '0.45';
+    } else {
+      d.style.background = 'var(--surface3)';
+      d.style.opacity = '1';
+    }
+  });
+}
+
+function refreshScore() {
+  document.getElementById('scoreEl').textContent = scores.reduce((a,b)=>a+b,0);
+}
+
+// ===================================================
+// NAVIGATION
+// ===================================================
+function goTo(idx) {
+  document.getElementById(`card-${currentIdx}`).classList.remove('active');
+  document.getElementById('finalScreen').classList.remove('active');
+  currentIdx = idx;
+  const card = document.getElementById(`card-${idx}`);
+  card.classList.add('active');
+  document.getElementById('statusLabel').textContent = `Challenge ${idx+1} of 6`;
+  document.getElementById('rightPanel').scrollTop = 0;
+  refreshDots();
+}
+
+function goNext(idx) {
+  if (idx >= 5) { showFinal(); } else { goTo(idx + 1); }
+}
+
+// ===================================================
+// RUN CODE
+// ===================================================
+async function runCode(idx) {
+  if (!pyodide) return;
+
+  const runBtn = document.getElementById(`run-${idx}`);
+  const outEl  = document.getElementById(`out-${idx}`);
+  const fbEl   = document.getElementById(`fb-${idx}`);
+
+  runBtn.disabled = true;
+  runBtn.textContent = 'Running...';
+  outEl.textContent = '';
+  fbEl.className = 'feedback';
+
+  const code = document.getElementById(`ed-${idx}`).value;
+  let stdout = '', errMsg = '';
+
+  try {
+    pyodide.setStdout({ batched: t => { stdout += t + '\n'; } });
+    pyodide.setStderr({ batched: t => { errMsg  += t + '\n'; } });
+    await pyodide.runPythonAsync(code);
+  } catch (e) {
+    errMsg = e.message || String(e);
+  }
+
+  runBtn.disabled = false;
+  runBtn.textContent = 'Run';
+
+  if (errMsg.trim()) {
+    outEl.textContent = errMsg.trim();
+    outEl.className = 'output-box err';
+    fbEl.className = 'feedback fail';
+    fbEl.innerHTML = `<div class="feedback-head">Python error</div>Fix the error above and try again.`;
+    return;
+  }
+
+  outEl.className = 'output-box';
+  outEl.textContent = stdout.trim();
+
+  if (solved[idx]) return;
+
+  attempts[idx]++;
+  document.getElementById(`att-${idx}`).textContent = attempts[idx];
+
+  const expected = normalize(CHALLENGES[idx].expected);
+  const actual   = normalize(stdout);
+
+  if (expected === actual) {
+    // Correct
+    const pts = attempts[idx] === 1 ? 3 : attempts[idx] === 2 ? 2 : 1;
+    scores[idx] = pts;
+    solved[idx] = true;
+
+    const label = attempts[idx] === 1 ? 'First try!' : attempts[idx] === 2 ? 'Got it on attempt 2.' : 'Got it!';
+    fbEl.className = 'feedback pass';
+    fbEl.innerHTML = `<div class="feedback-head">+${pts} point${pts !== 1 ? 's' : ''} &mdash; ${label}</div>${CHALLENGES[idx].why}`;
+
+    document.getElementById(`nav-${idx}`).style.display = 'flex';
+    document.getElementById(`run-${idx}`).disabled = true;
+    document.getElementById(`ed-${idx}`).readOnly = true;
+
+    refreshScore();
+    refreshDots();
+  } else {
+    // Wrong
+    const remaining = attempts[idx] >= 2 ? 1 : 3 - attempts[idx];
+    fbEl.className = 'feedback fail';
+    fbEl.innerHTML = `<div class="feedback-head">Not quite. ${remaining} point${remaining !== 1 ? 's' : ''} still possible.</div>Your output doesn't match the expected result. Check for extra characters, wrong variable names, or missing prints.`;
+
+    if (attempts[idx] >= 3) {
+      document.getElementById(`hint-${idx}`).textContent = 'Show Answer';
+    }
+  }
+}
+
+// ===================================================
+// HINT / ANSWER
+// ===================================================
+function showHint(idx) {
+  const fbEl  = document.getElementById(`fb-${idx}`);
+  const hBtn  = document.getElementById(`hint-${idx}`);
+  const c     = CHALLENGES[idx];
+
+  if (attempts[idx] >= 3 || hBtn.textContent === 'Show Answer') {
+    fbEl.className = 'feedback info';
+    fbEl.innerHTML = `<div class="feedback-head">Answer</div>${c.hint}<div class="expected-out">Expected output:\n${c.expected}</div>`;
+    document.getElementById(`nav-${idx}`).style.display = 'flex';
+    hBtn.textContent = 'Show Answer';
+  } else {
+    fbEl.className = 'feedback info';
+    fbEl.innerHTML = `<div class="feedback-head">Hint</div>${c.hint}`;
+  }
+}
+
+// ===================================================
+// FINAL SCREEN
+// ===================================================
+function showFinal() {
+  document.getElementById(`card-${currentIdx}`).classList.remove('active');
+  document.getElementById('finalScreen').classList.add('active');
+  document.getElementById('statusLabel').textContent = 'Complete!';
+
+  const total = scores.reduce((a,b)=>a+b,0);
+  try { localStorage.setItem('dtsc520_charttoppers', JSON.stringify({ completed: true, score: total })); } catch(e) {}
+  const pct = total / 18;
+
+  let emoji, title;
+  if      (pct >= 0.889) { emoji = '🏆'; title = 'Platinum Artist'; }
+  else if (pct >= 0.667) { emoji = '🥇'; title = 'Gold Record';     }
+  else if (pct >= 0.444) { emoji = '🥈'; title = 'Silver Pressing'; }
+  else                   { emoji = '🎵'; title = 'Keep Practicing'; }
+
+  document.getElementById('finalEmoji').textContent = emoji;
+  document.getElementById('finalTitle').textContent = title;
+  document.getElementById('finalScore').textContent = `${total} / 18`;
+
+  const names = ['Arrays', 'Indexing', 'Vectorize', 'Statistics', 'Boolean', 'Fancy Idx'];
+  document.getElementById('breakdown').innerHTML = CHALLENGES.map((c,i) => `
+    <div class="b-cell">
+      <div class="b-label" style="color:${c.accent}">${names[i]}</div>
+      <div class="b-score" style="color:${c.accent}">${scores[i]} / 3</div>
+    </div>
+  `).join('');
+}
+
+function restartSim() {
+  scores   = [0,0,0,0,0,0];
+  attempts = [0,0,0,0,0,0];
+  solved   = [false,false,false,false,false,false];
+
+  CHALLENGES.forEach((c,i) => {
+    document.getElementById(`ed-${i}`).value = c.starter;
+    document.getElementById(`ed-${i}`).readOnly = false;
+    document.getElementById(`out-${i}`).textContent = '';
+    document.getElementById(`out-${i}`).className = 'output-box';
+    document.getElementById(`fb-${i}`).className = 'feedback';
+    document.getElementById(`run-${i}`).disabled = false;
+    document.getElementById(`run-${i}`).textContent = 'Run';
+    document.getElementById(`hint-${i}`).textContent = 'Hint';
+    document.getElementById(`att-${i}`).textContent = '0';
+    document.getElementById(`nav-${i}`).style.display = 'none';
+  });
+
+  refreshScore();
+  goTo(0);
+}
+
+// ===================================================
+// LANDING
+// ===================================================
+function startSim() {
+  document.getElementById('landingOverlay').style.display = 'none';
+}
+
+// ===================================================
+// REFERENCE PANEL
+// ===================================================
+function toggleRef() {
+  document.getElementById('refOverlay').classList.toggle('open');
+}
+function overlayClick(e) {
+  if (e.target === document.getElementById('refOverlay')) toggleRef();
+}
+
+// ===================================================
+// TAB KEY IN TEXTAREAS
+// ===================================================
+document.addEventListener('keydown', e => {
+  if (e.key === 'Tab' && document.activeElement.tagName === 'TEXTAREA') {
+    e.preventDefault();
+    const ta = document.activeElement;
+    const s = ta.selectionStart, end = ta.selectionEnd;
+    ta.value = ta.value.substring(0, s) + '    ' + ta.value.substring(end);
+    ta.selectionStart = ta.selectionEnd = s + 4;
+  }
+});
+
+// ===================================================
+// INIT
+// ===================================================
+async function init() {
+  buildCards();
+  try {
+    pyodide = await loadPyodide();
+    await pyodide.loadPackage('numpy');
+    document.getElementById('loadingOverlay').style.display = 'none';
+  } catch(e) {
+    document.querySelector('.loading-text').textContent = 'Failed to load Python. Please refresh the page.';
+  }
+}
+
+init();
+</script>
+</body>
+</html>

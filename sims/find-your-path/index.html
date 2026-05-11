@@ -1467,6 +1467,7 @@ function showResults() {
   const resultScreen = document.getElementById('screen-result');
   resultScreen.innerHTML = resultHTML;
   showScreen('screen-result');
+  try { localStorage.setItem('dtsc520_findyourpath', JSON.stringify({ completed: true, role: role })); } catch(e) {}
 
   // Typewrite the guide comment
   const guideEl = document.getElementById('guideText');
