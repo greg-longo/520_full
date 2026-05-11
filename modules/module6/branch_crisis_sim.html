@@ -714,13 +714,134 @@
       flex-shrink: 0;
     }
 
-    @media (max-width: 740px) {
-      .main-layout { grid-template-columns: 1fr; }
-      .git-panel { display: none; }
+    /* ===== LANDING OVERLAY ===== */
+    .landing-overlay {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; align-items: flex-start; justify-content: center;
+      z-index: 600;
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+    .landing-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      width: 100%; max-width: 680px;
+      overflow: hidden;
+      margin: auto;
+    }
+    .landing-stripe {
+      height: 4px;
+      background: linear-gradient(90deg, var(--green-light), var(--blue-light), var(--orange-light), var(--maroon-light));
+    }
+    .landing-body { padding: 2rem 2.25rem 1.75rem; }
+    .landing-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--text-dim); margin-bottom: 0.35rem;
+    }
+    .landing-title { font-family: 'Zilla Slab', serif; font-size: 26px; font-weight: 700; color: var(--text-bright); margin-bottom: 0.2rem; }
+    .landing-sub { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--green-light); margin-bottom: 1.5rem; }
+    .landing-prose { font-size: 14.5px; color: var(--text-dim); line-height: 1.75; margin-bottom: 1.1rem; }
+    .landing-prose code { font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: var(--bg-card2); padding: 1px 5px; border-radius: 3px; color: var(--term-green); }
+    .landing-scoring {
+      display: flex; gap: 0.6rem; margin: 1.25rem 0;
+    }
+    .scoring-pip {
+      flex: 1; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.6rem 0.5rem; text-align: center;
+    }
+    .scoring-pip-pts { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600; margin-bottom: 2px; }
+    .scoring-pip-label { font-size: 11px; color: var(--text-dim); }
+    .landing-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 1.1rem; border-top: 1px solid var(--border);
+    }
+    .landing-note { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); }
+    .btn-start {
+      font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600;
+      padding: 10px 24px; background: var(--maroon); color: #fff;
+      border: none; border-radius: 4px; cursor: pointer; transition: filter 0.15s;
+    }
+    .btn-start:hover { filter: brightness(1.12); }
+    .landing-copyright {
+      margin-top: 0.9rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.63rem;
+      color: var(--text-dim); text-align: center;
+    }
+    .landing-copyright a { color: var(--text-dim); text-decoration: none; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 860px) {
+      .main-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      .git-panel {
+        position: static;
+        height: 220px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .scenario-panel { overflow-y: auto; }
+    }
+    @media (max-width: 600px) {
+      .landing-body { padding: 1.5rem 1.25rem 1.25rem; }
+      .landing-title { font-size: 21px; }
+      .landing-scoring { flex-wrap: wrap; }
+      .scoring-pip { min-width: calc(50% - 0.35rem); }
+      .landing-footer { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
+      .btn-start { width: 100%; text-align: center; }
+      .intro-inner { padding: 1.25rem; }
     }
   </style>
 </head>
 <body>
+
+  <!-- LANDING OVERLAY -->
+  <div class="landing-overlay" id="landingOverlay">
+    <div class="landing-card">
+      <div class="landing-stripe"></div>
+      <div class="landing-body">
+        <div class="landing-eyebrow">DTSC 520 &middot; Module 6 &middot; Git &amp; GitHub</div>
+        <div class="landing-title">The Branch Crisis</div>
+        <div class="landing-sub">A Git workflow simulation</div>
+
+        <p class="landing-prose">It's 9:14 AM at StatDeck Analytics. Someone pushed directly to <code>main</code> with a broken import, the pipeline is down, and the Eagles' front office dashboard has been dark since 8 AM. Jonah needs someone to take point. That's you.</p>
+
+        <p class="landing-prose">You'll work through 5 situations that cover the core Git workflow: diagnosing what went wrong, creating a fix branch, committing changes cleanly, resolving a merge conflict, and opening a pull request before the 11 AM standup. The live git graph on the left updates as you make decisions so you can see the branch structure change in real time.</p>
+
+        <div class="landing-scoring">
+          <div class="scoring-pip">
+            <div class="scoring-pip-pts" style="color:var(--green-light)">4 pts</div>
+            <div class="scoring-pip-label">best answer</div>
+          </div>
+          <div class="scoring-pip">
+            <div class="scoring-pip-pts" style="color:var(--orange-light)">2 pts</div>
+            <div class="scoring-pip-label">partial credit</div>
+          </div>
+          <div class="scoring-pip">
+            <div class="scoring-pip-pts" style="color:var(--red-light)">0 pts</div>
+            <div class="scoring-pip-label">wrong approach</div>
+          </div>
+          <div class="scoring-pip">
+            <div class="scoring-pip-pts" style="color:var(--text-dim)">20</div>
+            <div class="scoring-pip-label">points total</div>
+          </div>
+        </div>
+
+        <p class="landing-prose">Each decision shows the Git command that goes with it after you choose, so you leave with real syntax, not just intuition.</p>
+
+        <div class="landing-footer">
+          <div class="landing-note">5 decisions &middot; live git graph</div>
+          <button class="btn-start" onclick="closeLanding()">Take Point &rarr;</button>
+        </div>
+        <div class="landing-copyright">
+          Built for DTSC 520 &mdash; Eastern University &bull; <a href="../../index.html">Course Home</a><br>
+          &copy; Eastern University. All rights reserved.
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- TOP BAR -->
   <div class="topbar">
@@ -1156,6 +1277,10 @@
   // ============================================================
   //  INTERACTIONS
   // ============================================================
+  function closeLanding() {
+    document.getElementById('landingOverlay').style.display = 'none';
+  }
+
   function startSim() {
     hideAllScreens();
     currentChallenge = 0;

@@ -386,6 +386,29 @@
     @media (max-width: 800px) {
       .sim-split { grid-template-columns: 1fr; }
       .lbox h1 { font-size: 1.85rem; }
+      .topbar { padding: 0 1rem; }
+      .tb-sub { display: none; }
+      .lbox { padding: 2rem 1.25rem; }
+    }
+
+    @media (max-width: 600px) {
+      .topbar { height: auto; min-height: 50px; flex-wrap: wrap; padding: 0.5rem 1rem; gap: 0.4rem; }
+      .topbar-right { gap: 0.75rem; flex-wrap: wrap; }
+      .tb-title { font-size: 0.68rem; }
+      .tb-score { font-size: 0.65rem; }
+      .tb-time { display: none; }
+      .tb-pips { display: none; }
+      .tb-back { font-size: 0.65rem; }
+      .lbox h1 { font-size: 1.5rem; }
+      .lbox { padding: 1.5rem 1rem; }
+      .lmeta { flex-wrap: wrap; gap: 0.5rem; }
+      .lmeta-item { min-width: calc(50% - 0.5rem); }
+      #sim { padding: 0; }
+      .sit-header { padding: 0.65rem 1rem; }
+      .sit-msg { font-size: 0.85rem; }
+      .diag-col { padding: 0.75rem; }
+      .choice { padding: 0.65rem 0.75rem; }
+      .ch-text { font-size: 0.83rem; }
     }
   </style>
 </head>

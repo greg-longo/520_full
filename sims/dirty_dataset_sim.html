@@ -1463,6 +1463,7 @@ function buildFinalScreen() {
     return sum + Math.max(...Object.values(d.answers).map(a => a.points));
   }, 0);
   const pct = Math.round((state.points / maxPossible) * 100);
+  try { localStorage.setItem('dtsc520_dirtydataset', JSON.stringify({ completed: true, score: pct })); } catch(e) {}
   const scoreNum = document.getElementById('final-score-num');
   const badge    = document.getElementById('final-badge');
   scoreNum.textContent = pct + '%';

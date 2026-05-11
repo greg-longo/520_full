@@ -257,6 +257,7 @@ body {
   display: flex;
   flex: 1;
   overflow: hidden;
+  min-height: 0;
 }
 
 /* ===== LEFT PANEL ===== */
@@ -350,6 +351,7 @@ body {
 .right-panel {
   flex: 1;
   overflow-y: auto;
+  min-height: 0;
   padding: 1.25rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -690,6 +692,54 @@ textarea.editor:read-only { opacity: 0.7; cursor: default; }
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 860px) {
+  body {
+    height: auto;
+    overflow: auto;
+  }
+  .main-layout {
+    flex-direction: column;
+    overflow: visible;
+    min-height: 0;
+  }
+  .left-panel {
+    width: 100%;
+    min-width: 0;
+    max-height: 320px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .right-panel {
+    overflow-y: visible;
+    min-height: 0;
+    padding: 1rem;
+  }
+  .status-bar { gap: 0.75rem; }
+  .status-label { display: none; }
+  .ref-fab { bottom: 1rem; right: 1rem; }
+}
+
+@media (max-width: 600px) {
+  .header { padding: 0 1rem; }
+  .header-title { font-size: 11px; }
+  .status-bar { padding: 0 1rem; }
+  .dot { width: 20px; }
+  .left-panel { max-height: 260px; }
+  .landing-body { padding: 1.5rem 1.25rem 1.25rem; }
+  .landing-title { font-size: 22px; }
+  .landing-scoring { flex-wrap: wrap; }
+  .scoring-pip { min-width: calc(50% - 0.35rem); }
+  .landing-artists { font-size: 9.5px; }
+  .card-top { padding: 0.85rem 1rem 0.75rem; }
+  .card-editor { padding: 0.85rem 1rem; }
+  .card-title { font-size: 17px; }
+  textarea.editor { height: 240px; font-size: 11px; }
+  .breakdown { grid-template-columns: repeat(2, 1fr); }
+  .ref-panel { width: 100vw; }
+}
 </style>
 </head>
 <body>
@@ -761,7 +811,7 @@ textarea.editor:read-only { opacity: 0.7; cursor: default; }
     <div class="header-icon">🎵</div>
     <div class="header-title">Chart <span>Toppers</span> — NumPy Lab</div>
   </div>
-  <div class="header-module">DTSC 520 &middot; Module 3</div>
+  <a href="../../index.html" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-muted);text-decoration:none;border:1px solid var(--border);padding:5px 11px;border-radius:4px;transition:all 0.15s;" onmouseover="this.style.color='#f0ece6';this.style.borderColor='#7a7268'" onmouseout="this.style.color='';this.style.borderColor=''">&#8592; Course Home</a>
 </div>
 
 <!-- Status bar -->
