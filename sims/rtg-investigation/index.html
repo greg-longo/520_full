@@ -745,6 +745,105 @@
     .mini-table tr:last-child td { border-bottom: none; }
     .mini-table .ellipsis { color: var(--text-dim); font-style: italic; }
 
+    .expand-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.55rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .expand-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Modal */
+    .tbl-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .tbl-modal-overlay.open { display: flex; }
+    .tbl-modal {
+      background: var(--bg-card);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 4px;
+      max-width: 900px;
+      width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .tbl-modal-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .tbl-modal-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gold);
+    }
+    .tbl-modal-meta {
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      margin-left: 0.75rem;
+    }
+    .tbl-modal-close {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      border-radius: 2px;
+      padding: 0.25rem 0.65rem;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .tbl-modal-close:hover { border-color: var(--gold); color: var(--gold); }
+    .tbl-modal-body {
+      overflow: auto;
+      padding: 1rem 1.25rem 1.5rem;
+      flex: 1;
+    }
+    .full-table {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      border-collapse: collapse;
+      width: 100%;
+      min-width: max-content;
+    }
+    .full-table th {
+      text-align: left;
+      padding: 0.35rem 1rem 0.35rem 0;
+      color: var(--gold);
+      border-bottom: 1px solid rgba(201,168,76,0.3);
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    .full-table td {
+      padding: 0.28rem 1rem 0.28rem 0;
+      color: var(--text);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      white-space: nowrap;
+    }
+    .full-table tr:last-child td { border-bottom: none; }
+    .full-table td.nan { color: var(--text-dim); font-style: italic; }
+    .full-table td.dup { color: rgba(212,122,122,0.7); }
+
     /* ── Hint system ─────────────────────────────────────────────── */
     .ch-hint-btn {
       font-family: 'IBM Plex Mono', monospace;
@@ -990,7 +1089,10 @@
 
       <!-- orders -->
       <div class="table-card">
-        <div class="table-card-name">orders</div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.2rem;">
+          <div class="table-card-name">orders</div>
+          <button class="expand-btn" onclick="openModal('orders')">Expand &#8599;</button>
+        </div>
         <div class="table-card-meta">62 rows &middot; 6 columns</div>
         <div class="mini-table-wrap">
           <table class="mini-table">
@@ -1006,7 +1108,10 @@
 
       <!-- menu -->
       <div class="table-card">
-        <div class="table-card-name">menu</div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.2rem;">
+          <div class="table-card-name">menu</div>
+          <button class="expand-btn" onclick="openModal('menu')">Expand &#8599;</button>
+        </div>
         <div class="table-card-meta">8 rows &middot; 6 columns</div>
         <div class="mini-table-wrap">
           <table class="mini-table">
@@ -1025,7 +1130,10 @@
 
       <!-- suppliers -->
       <div class="table-card">
-        <div class="table-card-name">suppliers</div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.2rem;">
+          <div class="table-card-name">suppliers</div>
+          <button class="expand-btn" onclick="openModal('suppliers')">Expand &#8599;</button>
+        </div>
         <div class="table-card-meta">4 rows &middot; 5 columns</div>
         <div class="mini-table-wrap">
           <table class="mini-table">
@@ -1040,7 +1148,10 @@
 
       <!-- ratings -->
       <div class="table-card">
-        <div class="table-card-name">ratings</div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.2rem;">
+          <div class="table-card-name">ratings</div>
+          <button class="expand-btn" onclick="openModal('ratings')">Expand &#8599;</button>
+        </div>
         <div class="table-card-meta">60 rows (raw) &middot; 5 columns</div>
         <div class="mini-table-wrap">
           <table class="mini-table">
@@ -1751,6 +1862,160 @@ function restartSim() {
   document.getElementById('btnCheck').disabled = false;
   renderChallenge();
 }
+</script>
+
+<!-- ══ TABLE MODAL ═══════════════════════════════════════════════ -->
+<div class="tbl-modal-overlay" id="tblModalOverlay" onclick="closeModalOutside(event)">
+  <div class="tbl-modal">
+    <div class="tbl-modal-header">
+      <div>
+        <span class="tbl-modal-title" id="modalTitle">-</span>
+        <span class="tbl-modal-meta" id="modalMeta">-</span>
+      </div>
+      <button class="tbl-modal-close" onclick="closeModal()">Close &#10005;</button>
+    </div>
+    <div class="tbl-modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ══ Table modal data ══════════════════════════════════════════════
+const TABLE_DATA = {
+  orders: {
+    title: 'orders', meta: '62 rows · 6 columns',
+    cols: ['order_id','customer_id','dish_id','order_date','order_total','server_id'],
+    rows: [
+      [1001,3,1,'2024-09-05',14.99,2],[1002,7,1,'2024-09-15',14.99,3],[1003,11,1,'2024-10-02',14.99,1],
+      [1004,2,1,'2024-10-12',14.99,4],[1005,8,1,'2024-10-25',14.99,2],[1006,14,1,'2024-11-03',14.99,5],
+      [1007,6,1,'2024-11-17',14.99,1],[1008,1,1,'2024-11-30',14.99,3],[1009,9,1,'2024-12-08',14.99,2],
+      [1010,13,1,'2024-12-20',14.99,4],[1011,5,1,'2025-01-06',14.99,1],[1012,10,1,'2025-01-18',14.99,3],
+      [1013,4,2,'2024-09-08',11.99,2],[1014,12,2,'2024-09-22',11.99,5],[1015,2,2,'2024-10-06',11.99,3],
+      [1016,7,2,'2024-10-19',11.99,1],[1017,15,2,'2024-11-05',11.99,4],[1018,3,2,'2024-11-19',11.99,2],
+      [1019,8,2,'2024-12-03',11.99,5],[1020,11,2,'2024-12-17',11.99,1],[1021,6,2,'2025-01-04',11.99,3],
+      [1022,14,2,'2025-01-22',11.99,2],[1023,5,3,'2024-09-14',8.99,4],[1024,9,3,'2024-09-28',8.99,1],
+      [1025,13,3,'2024-10-11',8.99,3],[1026,1,3,'2024-10-28',8.99,5],[1027,4,3,'2024-11-12',8.99,2],
+      [1028,10,3,'2024-11-26',8.99,4],[1029,7,3,'2024-12-10',8.99,1],[1030,2,3,'2025-01-08',8.99,3],
+      [1031,15,4,'2024-09-18',13.99,5],[1032,6,4,'2024-10-01',13.99,2],[1033,11,4,'2024-10-15',13.99,4],
+      [1034,3,4,'2024-10-30',13.99,1],[1035,8,4,'2024-11-14',13.99,3],[1036,13,4,'2024-11-28',13.99,5],
+      [1037,1,4,'2024-12-12',13.99,2],[1038,9,4,'2025-01-02',13.99,4],[1039,4,4,'2025-01-16',13.99,1],
+      [1040,12,5,'2024-09-09',7.99,3],[1041,5,5,'2024-09-24',7.99,5],[1042,14,5,'2024-10-08',7.99,2],
+      [1043,2,5,'2024-10-22',7.99,4],[1044,7,5,'2024-11-06',7.99,1],[1045,11,5,'2024-11-20',7.99,3],
+      [1046,4,5,'2024-12-04',7.99,5],[1047,9,5,'2024-12-18',7.99,2],[1048,1,6,'2024-09-11',13.49,4],
+      [1049,6,6,'2024-10-04',13.49,1],[1050,13,6,'2024-10-20',13.49,3],[1051,3,6,'2024-11-08',13.49,5],
+      [1052,10,6,'2024-11-22',13.49,2],[1053,7,6,'2024-12-06',13.49,4],[1054,14,6,'2025-01-14',13.49,1],
+      [1055,2,7,'2024-09-22',11.49,3],[1056,8,7,'2024-10-16',11.49,5],[1057,12,7,'2024-11-15',11.49,2],
+      [1058,5,7,'2024-12-09',11.49,4],[1059,15,7,'2025-01-20',11.49,1],[1060,6,8,'2024-10-08',5.99,3],
+      [1061,11,8,'2024-11-25',5.99,5],[1062,3,8,'2024-12-28',5.99,2]
+    ]
+  },
+  menu: {
+    title: 'menu', meta: '8 rows · 6 columns',
+    cols: ['dish_id','dish_name','price','uses_cooper_sharp','supplier_id','category'],
+    rows: [
+      [1,'Philly Cheesesteak',14.99,'True',1,'Sandwiches'],
+      [2,'Cheesesteak Egg Rolls',11.99,'True',1,'Appetizers'],
+      [3,'Cooper Sharp Dip',8.99,'True',1,'Appetizers'],
+      [4,'Cheesesteak Bowl',13.99,'True',1,'Bowls'],
+      [5,'Soft Pretzel Bites',7.99,'False',3,'Appetizers'],
+      [6,'Reading Burger',13.49,'False',2,'Burgers'],
+      [7,'Italian Hoagie',11.49,'False',2,'Sandwiches'],
+      [8,'Terminal Fries',5.99,'False',4,'Sides']
+    ]
+  },
+  suppliers: {
+    title: 'suppliers', meta: '4 rows · 5 columns',
+    cols: ['supplier_id','supplier_name','ingredient','contract_start','contract_end'],
+    rows: [
+      [1,'Penn Dairy Co.','Cooper Sharp American','2022-01-01','2024-10-31'],
+      [2,'Eastern Provisions LLC','Cheddar Blend','2024-11-01','—'],
+      [3,'Amoroso Bakery','Pretzel Dough','2022-01-01','—'],
+      [4,'Liberty Fresh Produce','Produce','2022-01-01','—']
+    ]
+  },
+  ratings: {
+    title: 'ratings (raw)', meta: '60 rows · 5 columns — includes 5 NaN rows (italic) and 5 duplicates (red)',
+    cols: ['dish_id','dish_name','rating','review_date','reviewer_id'],
+    // clean rows 1-50, then 5 dupes, then 5 NaN
+    rows: [
+      [1,'Philly Cheesesteak',4.3,'2024-09-05',1],[1,'Philly Cheesesteak',4.5,'2024-09-12',2],
+      [1,'Philly Cheesesteak',4.5,'2024-10-02',3],[1,'Philly Cheesesteak',4.7,'2024-10-18',4],
+      [2,'Cheesesteak Egg Rolls',4.3,'2024-09-08',5],[2,'Cheesesteak Egg Rolls',4.5,'2024-09-20',6],
+      [2,'Cheesesteak Egg Rolls',4.5,'2024-10-05',7],[2,'Cheesesteak Egg Rolls',4.7,'2024-10-22',8],
+      [3,'Cooper Sharp Dip',4.3,'2024-09-14',9],[3,'Cooper Sharp Dip',4.5,'2024-09-28',10],
+      [3,'Cooper Sharp Dip',4.5,'2024-10-10',11],[3,'Cooper Sharp Dip',4.7,'2024-10-25',12],
+      [4,'Cheesesteak Bowl',4.3,'2024-09-18',13],[4,'Cheesesteak Bowl',4.5,'2024-10-01',14],
+      [4,'Cheesesteak Bowl',4.5,'2024-10-14',15],[4,'Cheesesteak Bowl',4.7,'2024-10-29',16],
+      [5,'Soft Pretzel Bites',4.1,'2024-09-05',1],[5,'Soft Pretzel Bites',4.2,'2024-10-12',2],
+      [5,'Soft Pretzel Bites',4.3,'2024-10-25',3],[6,'Reading Burger',3.9,'2024-09-10',4],
+      [6,'Reading Burger',4.1,'2024-10-03',5],[6,'Reading Burger',4.3,'2024-10-20',6],
+      [7,'Italian Hoagie',4.0,'2024-09-22',7],[7,'Italian Hoagie',4.2,'2024-10-15',8],
+      [8,'Terminal Fries',4.0,'2024-10-08',9],
+      [1,'Philly Cheesesteak',2.8,'2024-11-05',10],[1,'Philly Cheesesteak',3.0,'2024-11-19',11],
+      [1,'Philly Cheesesteak',3.0,'2024-12-03',12],[1,'Philly Cheesesteak',3.2,'2024-12-17',13],
+      [2,'Cheesesteak Egg Rolls',2.8,'2024-11-08',14],[2,'Cheesesteak Egg Rolls',3.0,'2024-11-22',15],
+      [2,'Cheesesteak Egg Rolls',3.0,'2024-12-06',16],[2,'Cheesesteak Egg Rolls',3.2,'2024-12-20',17],
+      [3,'Cooper Sharp Dip',2.8,'2024-11-11',18],[3,'Cooper Sharp Dip',3.0,'2024-11-25',19],
+      [3,'Cooper Sharp Dip',3.0,'2024-12-09',20],[3,'Cooper Sharp Dip',3.2,'2025-01-03',1],
+      [4,'Cheesesteak Bowl',2.8,'2024-11-14',2],[4,'Cheesesteak Bowl',3.0,'2024-11-28',3],
+      [4,'Cheesesteak Bowl',3.0,'2024-12-12',4],[4,'Cheesesteak Bowl',3.2,'2025-01-07',5],
+      [5,'Soft Pretzel Bites',4.0,'2024-11-15',6],[5,'Soft Pretzel Bites',4.1,'2024-12-01',7],
+      [5,'Soft Pretzel Bites',4.3,'2024-12-28',8],[6,'Reading Burger',3.9,'2024-11-18',9],
+      [6,'Reading Burger',4.0,'2024-12-02',10],[6,'Reading Burger',4.2,'2024-12-30',11],
+      [7,'Italian Hoagie',4.1,'2024-11-20',12],[7,'Italian Hoagie',4.2,'2025-01-10',13],
+      [8,'Terminal Fries',4.0,'2024-12-14',14],
+      // duplicates (rows 51-55, marked dup)
+      {dup:true, d:[1,'Philly Cheesesteak',4.3,'2024-09-05',1]},
+      {dup:true, d:[1,'Philly Cheesesteak',4.5,'2024-09-12',2]},
+      {dup:true, d:[1,'Philly Cheesesteak',4.5,'2024-10-02',3]},
+      {dup:true, d:[1,'Philly Cheesesteak',4.7,'2024-10-18',4]},
+      {dup:true, d:[2,'Cheesesteak Egg Rolls',4.3,'2024-09-08',5]},
+      // NaN rows (rows 56-60, marked nan)
+      {nan:true, d:[1,'Philly Cheesesteak','NaN','2024-09-07',20]},
+      {nan:true, d:[2,'Cheesesteak Egg Rolls','NaN','2024-10-10',18]},
+      {nan:true, d:[3,'Cooper Sharp Dip','NaN','2024-11-15',19]},
+      {nan:true, d:[5,'Soft Pretzel Bites','NaN','2024-09-30',17]},
+      {nan:true, d:[6,'Reading Burger','NaN','2024-12-01',16]}
+    ]
+  }
+};
+
+function openModal(key) {
+  const tbl  = TABLE_DATA[key];
+  document.getElementById('modalTitle').textContent = tbl.title;
+  document.getElementById('modalMeta').textContent  = tbl.meta;
+
+  let html = '<table class="full-table"><tr>';
+  tbl.cols.forEach(c => { html += `<th>${c}</th>`; });
+  html += '</tr>';
+
+  tbl.rows.forEach((row, i) => {
+    const isDup = row && row.dup;
+    const isNan = row && row.nan;
+    const cells = isDup ? row.d : isNan ? row.d : row;
+    html += '<tr>';
+    cells.forEach((v, ci) => {
+      const cls = isNan && v === 'NaN' ? ' class="nan"' : isDup ? ' class="dup"' : '';
+      html += `<td${cls}>${v}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  html += '</table>';
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('tblModalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('tblModalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('tblModalOverlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
 
 </body>
