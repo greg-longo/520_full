@@ -43,9 +43,8 @@
       padding: 3rem 2rem;
       position: relative;
       background:
-        radial-gradient(circle at 20% 80%, rgba(201,168,76,0.04) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(201,168,76,0.04) 0%, transparent 50%),
-        var(--bg);
+        linear-gradient(rgba(13,11,9,0.72), rgba(13,11,9,0.82)),
+        url('ReadingGrill.png') center center / cover no-repeat;
     }
 
     .landing-inner {
@@ -747,15 +746,27 @@
     .mini-table .ellipsis { color: var(--text-dim); font-style: italic; }
 
     /* sim footer */
-    .sim-footer {
-      border-top: 1px solid var(--border);
-      padding: 0.75rem 2.5rem;
-      font-size: 0.58rem;
+    .sim-back {
+      font-size: 0.62rem;
       color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .sim-back:hover { color: var(--gold); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 0.85rem 1.5rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.63rem;
+      color: var(--text-dim);
+      text-align: center;
       flex-shrink: 0;
     }
-    .sim-footer a { color: var(--text-dim); text-decoration: none; }
-    .sim-footer a:hover { color: var(--text); }
+    footer a { color: var(--text-dim); text-decoration: none; }
+    footer a:hover { color: var(--text); }
 
     /* ── Responsive ──────────────────────────────────────────────── */
     @media (max-width: 900px) {
@@ -809,7 +820,7 @@
     <button class="landing-btn" onclick="showNarrative()">Open the File &nbsp;&#8594;</button>
   </div>
   <div class="landing-footer">
-    <a href="../../index.html">&#8592; Course Home</a> &nbsp;&middot;&nbsp; Eastern University &middot; DTSC 520
+    <a href="../../modules/module4/index.html">&#8592; Module 4</a> &nbsp;&middot;&nbsp; <a href="../../index.html">Course Home</a> &nbsp;&middot;&nbsp; Eastern University &middot; DTSC 520
   </div>
 </div>
 
@@ -839,6 +850,8 @@
 
   <!-- topbar -->
   <div class="sim-topbar">
+    <a href="../../modules/module4/index.html" class="sim-back">&#8592; Module 4</a>
+    <span class="sim-topbar-sep">|</span>
     <span class="sim-topbar-title">RTG Investigation</span>
     <span class="sim-topbar-sep">|</span>
     <span class="sim-ch-indicator" id="chIndicator">Challenge 1 of 5</span>
@@ -987,10 +1000,10 @@
     </div><!-- /sim-locker -->
   </div><!-- /sim-wrap -->
 
-  <div class="sim-footer">
-    Eastern University &middot; DTSC 520 &nbsp;&middot;&nbsp;
-    <a href="../../index.html">&#8592; Course Home</a>
-  </div>
+  <footer>
+    This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.<br>
+    <a href="../../index.html">Course Home</a> &bull; <a href="../../modules/module4/index.html">Module 4 Notes</a>
+  </footer>
 </div><!-- /screen-sim -->
 
 <script>
@@ -1491,25 +1504,32 @@ async function runCode() {
   state.codes[state.current] = code;
 
   const outEl = document.getElementById('chOutput');
-  outEl.textContent = '';
+  const btnRun = document.getElementById('btnRun');
+  outEl.textContent = 'Running...';
+  outEl.classList.add('show');
   outEl.classList.remove('err-out');
+  btnRun.disabled = true;
 
-  // capture stdout
+  // Redirect stdout via sys.stdout = io.StringIO()
   let captured = '';
-  pyodide.setStdout({ batched: (s) => { captured += s + '\n'; } });
-
   try {
+    pyodide.runPython(`
+import sys as _sys, io as _io
+_stdout_buf = _io.StringIO()
+_sys.stdout = _stdout_buf
+`);
     await pyodide.runPythonAsync(code);
+    captured = pyodide.runPython('_stdout_buf.getvalue()').trim();
+    pyodide.runPython('_sys.stdout = _sys.__stdout__');
   } catch(e) {
+    try { pyodide.runPython('_sys.stdout = _sys.__stdout__'); } catch(_) {}
     captured = 'Error: ' + e.message;
     outEl.classList.add('err-out');
   }
 
-  pyodide.setStdout(null);
-  captured = captured.trim();
+  btnRun.disabled = false;
   state.outputs[state.current] = captured;
   outEl.textContent = captured || '(no output)';
-  outEl.classList.add('show');
   saveState();
 }
 
