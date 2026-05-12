@@ -6,6 +6,7 @@
   <title>Reading Terminal Grill - DTSC 520</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
   <style>
     /* ── Variables ───────────────────────────────────────────────── */
     :root {
@@ -41,7 +42,6 @@
       justify-content: center;
       padding: 3rem 2rem;
       position: relative;
-      /* subtle noise texture via radial gradient dots */
       background:
         radial-gradient(circle at 20% 80%, rgba(201,168,76,0.04) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(201,168,76,0.04) 0%, transparent 50%),
@@ -59,7 +59,6 @@
       position: relative;
     }
 
-    /* corner accents */
     .landing-inner::before,
     .landing-inner::after {
       content: '';
@@ -68,14 +67,8 @@
       border-color: var(--gold);
       border-style: solid;
     }
-    .landing-inner::before {
-      top: -1px; left: -1px;
-      border-width: 2px 0 0 2px;
-    }
-    .landing-inner::after {
-      bottom: -1px; right: -1px;
-      border-width: 0 2px 2px 0;
-    }
+    .landing-inner::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .landing-inner::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
 
     .landing-module-tag {
       font-size: 0.58rem;
@@ -84,14 +77,12 @@
       color: var(--gold);
       margin-bottom: 1.75rem;
     }
-
     .landing-ornament {
       font-size: 0.9rem;
       color: rgba(201,168,76,0.4);
       letter-spacing: 0.5em;
       margin-bottom: 1.25rem;
     }
-
     .landing-title {
       font-family: 'Zilla Slab', serif;
       font-size: clamp(2rem, 5vw, 3rem);
@@ -100,7 +91,6 @@
       line-height: 1.12;
       margin-bottom: 0.4rem;
     }
-
     .landing-subtitle {
       font-family: 'Lora', serif;
       font-style: italic;
@@ -108,28 +98,23 @@
       color: var(--gold);
       margin-bottom: 1.75rem;
     }
-
     .landing-divider {
-      width: 40px;
-      height: 1px;
+      width: 40px; height: 1px;
       background: rgba(201,168,76,0.35);
       margin: 0 auto 1.75rem;
     }
-
     .landing-desc {
       font-size: 0.8rem;
       color: var(--text-dim);
       line-height: 1.75;
       margin-bottom: 2rem;
     }
-
     .landing-stats {
       display: flex;
       gap: 2rem;
       justify-content: center;
       margin-bottom: 2.25rem;
     }
-
     .landing-stat-num {
       display: block;
       font-size: 1.4rem;
@@ -138,14 +123,12 @@
       line-height: 1;
       margin-bottom: 0.2rem;
     }
-
     .landing-stat-label {
       font-size: 0.58rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--text-dim);
     }
-
     .landing-btn {
       display: inline-block;
       padding: 0.8rem 2.25rem;
@@ -182,11 +165,9 @@
       background: var(--parchment);
       color: var(--ink);
     }
-
     .narrative-topbar {
       position: sticky;
-      top: 0;
-      z-index: 20;
+      top: 0; z-index: 20;
       background: var(--parchment);
       border-bottom: 1px solid rgba(42,31,14,0.12);
       padding: 0.85rem 1.75rem;
@@ -194,7 +175,6 @@
       align-items: center;
       justify-content: space-between;
     }
-
     .narrative-topbar-label {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.58rem;
@@ -202,7 +182,6 @@
       text-transform: uppercase;
       color: var(--ink-faint);
     }
-
     .narrative-skip {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.65rem;
@@ -224,12 +203,7 @@
       align-items: center;
       padding: 4rem 2rem 5rem;
     }
-
-    .narrative-col {
-      max-width: 580px;
-      width: 100%;
-    }
-
+    .narrative-col { max-width: 580px; width: 100%; }
     .narrative-chapter {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.58rem;
@@ -239,14 +213,8 @@
       text-align: center;
       margin-bottom: 2.75rem;
     }
-
-    /* chapter rule with ornament */
-    .narrative-chapter::before,
-    .narrative-chapter::after {
-      content: '——  ';
-      letter-spacing: 0;
-    }
-    .narrative-chapter::after { content: '  ——'; }
+    .narrative-chapter::before { content: '\2014  '; letter-spacing: 0; }
+    .narrative-chapter::after  { content: '  \2014'; }
 
     #typeContainer {
       font-family: 'Lora', serif;
@@ -254,7 +222,6 @@
       line-height: 1.9;
       color: var(--ink);
     }
-
     .type-para {
       margin-bottom: 1.6rem;
       font-style: italic;
@@ -266,17 +233,13 @@
 
     .type-cursor {
       display: inline-block;
-      width: 1.5px;
-      height: 0.95em;
+      width: 1.5px; height: 0.95em;
       background: var(--ink);
       vertical-align: text-bottom;
       margin-left: 1px;
       animation: blink 0.65s step-end infinite;
     }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
+    @keyframes blink { 0%, 100% { opacity:1; } 50% { opacity:0; } }
 
     .narrative-cta {
       text-align: center;
@@ -286,7 +249,6 @@
       display: none;
     }
     .narrative-cta.show { display: block; }
-
     .narrative-cta-label {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.6rem;
@@ -295,7 +257,6 @@
       color: var(--ink-faint);
       margin-bottom: 1rem;
     }
-
     .narrative-cta-btn {
       display: inline-block;
       padding: 0.8rem 2.25rem;
@@ -325,35 +286,498 @@
     .narrative-footer a:hover { color: var(--ink-dim); }
 
     /* ═══════════════════════════════════════════════════════════════
-       SIM SCREEN (placeholder)
+       SIM SCREEN
     ═══════════════════════════════════════════════════════════════ */
     #screen-sim {
+      background: var(--bg);
+      align-items: stretch;
+      justify-content: flex-start;
+      min-height: 100vh;
+    }
+
+    /* topbar */
+    .sim-topbar {
+      position: sticky;
+      top: 0; z-index: 30;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-shrink: 0;
+    }
+    .sim-topbar-title {
+      font-family: 'Zilla Slab', serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+    .sim-topbar-sep { color: var(--border); }
+    .sim-ch-indicator {
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .sim-topbar-score {
+      margin-left: auto;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+    .sim-topbar-score strong {
+      color: var(--gold);
+      font-size: 0.88rem;
+    }
+    .sim-locker-toggle {
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+      display: none;
+    }
+    .sim-locker-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* body layout */
+    .sim-wrap {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* main column */
+    .sim-main {
+      flex: 1;
+      min-width: 0;
+      overflow-y: auto;
+      padding: 2rem 2.5rem 4rem;
+    }
+
+    /* challenge card */
+    .ch-card {
+      max-width: 720px;
+    }
+
+    .ch-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .ch-num {
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .ch-title {
+      font-family: 'Zilla Slab', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+    .ch-concept {
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.22rem 0.65rem;
+      border: 1px solid rgba(201,168,76,0.35);
+      color: var(--gold);
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    .ch-context {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      padding-left: 1rem;
+      border-left: 2px solid rgba(201,168,76,0.2);
+    }
+
+    .ch-task-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.5rem;
+    }
+    .ch-task {
+      font-size: 0.85rem;
+      color: var(--text-bright);
+      line-height: 1.65;
+      margin-bottom: 1.25rem;
+    }
+
+    .ch-vars {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1.25rem;
+    }
+    .ch-var-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      align-self: center;
+    }
+    .ch-var {
+      font-size: 0.68rem;
+      padding: 0.18rem 0.55rem;
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      color: var(--gold-light);
+      border-radius: 2px;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .ch-editor-wrap { position: relative; margin-bottom: 0.75rem; }
+    textarea.ch-code {
+      width: 100%;
+      min-height: 140px;
+      background: #080706;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: #e2d9cc;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.65;
+      padding: 1rem 1.1rem;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    textarea.ch-code:focus { border-color: rgba(201,168,76,0.4); }
+
+    .ch-btns {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.9rem;
+      flex-wrap: wrap;
+    }
+    .ch-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.25rem;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .ch-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .ch-btn-run  { background: var(--bg-card2); color: var(--text); border: 1px solid var(--border); }
+    .ch-btn-run:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+    .ch-btn-check { background: var(--gold); color: #0d0b09; }
+    .ch-btn-check:hover:not(:disabled) { background: var(--gold-light); }
+
+    .ch-output {
+      background: #080706;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.75rem 1rem;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: #a8d8a8;
+      min-height: 42px;
+      margin-bottom: 0.9rem;
+      font-family: 'IBM Plex Mono', monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+      display: none;
+    }
+    .ch-output.show { display: block; }
+    .ch-output.err-out { color: #d47a7a; }
+
+    .ch-feedback {
+      font-size: 0.78rem;
+      padding: 0.7rem 1rem;
+      border-radius: 3px;
+      border: 1px solid transparent;
+      display: none;
+      line-height: 1.55;
+    }
+    .ch-feedback.show { display: block; }
+    .ch-feedback.correct {
+      background: rgba(126,207,160,0.07);
+      border-color: rgba(126,207,160,0.3);
+      color: #7ecfa0;
+    }
+    .ch-feedback.wrong {
+      background: rgba(212,122,122,0.07);
+      border-color: rgba(212,122,122,0.3);
+      color: #d47a7a;
+    }
+
+    .ch-attempts {
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      margin-top: 0.5rem;
+    }
+
+    .ch-nav {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .ch-nav-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.25rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .ch-nav-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+    .ch-nav-btn:disabled { opacity: 0.3; cursor: default; }
+    .ch-nav-btn.primary {
+      background: var(--bg-card2);
+      color: var(--text);
+      border-color: rgba(255,255,255,0.12);
+    }
+    .ch-nav-btn.primary:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+
+    /* loading state */
+    .sim-loading {
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: var(--bg);
+      min-height: 60vh;
+      gap: 1rem;
     }
-
-    .sim-placeholder {
-      text-align: center;
+    .sim-loading-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    .sim-loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .sim-loading-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes pulse { 0%,80%,100%{opacity:0.2;transform:scale(0.8);} 40%{opacity:1;transform:scale(1);} }
+    .sim-loading-text {
+      font-size: 0.72rem;
       color: var(--text-dim);
-      font-size: 0.85rem;
-      line-height: 1.7;
+      letter-spacing: 0.08em;
     }
+    .sim-loading-dots { display: flex; gap: 6px; }
 
-    .sim-placeholder strong {
-      display: block;
+    /* results screen */
+    .sim-results {
+      max-width: 560px;
+      padding: 3rem 0 4rem;
+    }
+    .results-title {
       font-family: 'Zilla Slab', serif;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
+      font-weight: 700;
       color: var(--text-bright);
       margin-bottom: 0.5rem;
     }
+    .results-subtitle {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      color: var(--gold);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+    .results-score-big {
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .results-score-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 2rem;
+    }
+    .results-breakdown {
+      width: 100%;
+      border-top: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .results-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.78rem;
+    }
+    .results-row-name { color: var(--text); }
+    .results-row-pts { color: var(--gold); font-weight: 600; }
+    .results-verdict {
+      font-family: 'Zilla Slab', serif;
+      font-size: 1.05rem;
+      color: var(--text-bright);
+      margin-bottom: 0.4rem;
+    }
+    .results-verdict-sub {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    .results-restart {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.65rem 1.5rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      margin-right: 0.75rem;
+    }
+    .results-restart:hover { border-color: var(--gold); color: var(--gold); }
+    .results-home {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-decoration: none;
+    }
+    .results-home:hover { color: var(--gold); }
+
+    /* ── Evidence Locker ────────────────────────────────────────── */
+    .sim-locker {
+      width: 330px;
+      flex-shrink: 0;
+      border-left: 1px solid var(--border);
+      background: var(--bg-card);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .locker-header {
+      padding: 1rem 1.25rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: var(--bg-card);
+      z-index: 5;
+    }
+    .locker-title {
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .locker-sub {
+      font-size: 0.58rem;
+      color: var(--text-dim);
+    }
+
+    .table-card {
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.25rem;
+    }
+    .table-card-name {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 0.2rem;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .table-card-meta {
+      font-size: 0.58rem;
+      color: var(--text-dim);
+      margin-bottom: 0.75rem;
+    }
+    .table-card-cols {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      margin-bottom: 0.5rem;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .mini-table-wrap { overflow-x: auto; }
+    .mini-table {
+      font-size: 0.6rem;
+      font-family: 'IBM Plex Mono', monospace;
+      border-collapse: collapse;
+      width: 100%;
+      min-width: max-content;
+    }
+    .mini-table th {
+      text-align: left;
+      padding: 0.2rem 0.5rem 0.2rem 0;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .mini-table td {
+      padding: 0.2rem 0.5rem 0.2rem 0;
+      color: var(--text);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      white-space: nowrap;
+    }
+    .mini-table tr:last-child td { border-bottom: none; }
+    .mini-table .ellipsis { color: var(--text-dim); font-style: italic; }
+
+    /* sim footer */
+    .sim-footer {
+      border-top: 1px solid var(--border);
+      padding: 0.75rem 2.5rem;
+      font-size: 0.58rem;
+      color: var(--text-dim);
+      flex-shrink: 0;
+    }
+    .sim-footer a { color: var(--text-dim); text-decoration: none; }
+    .sim-footer a:hover { color: var(--text); }
 
     /* ── Responsive ──────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .sim-locker {
+        display: none;
+        position: fixed;
+        top: 52px; right: 0; bottom: 0;
+        z-index: 40;
+        box-shadow: -4px 0 24px rgba(0,0,0,0.4);
+      }
+      .sim-locker.open { display: flex; }
+      .sim-locker-toggle { display: block; }
+      .sim-main { padding: 1.5rem 1.25rem 4rem; }
+    }
     @media (max-width: 600px) {
       .landing-inner { padding: 2.25rem 1.5rem 2rem; }
       .landing-stats { gap: 1.5rem; }
       .narrative-scroll { padding: 2.5rem 1.25rem 4rem; }
       #typeContainer { font-size: 0.97rem; }
+      .sim-topbar { padding: 0 1rem; gap: 0.75rem; }
+      .sim-topbar-title { font-size: 0.78rem; }
+      .ch-header { flex-wrap: wrap; gap: 0.5rem; }
     }
   </style>
 </head>
@@ -367,7 +791,7 @@
     <h1 class="landing-title">Reading Terminal<br>Grill</h1>
     <p class="landing-subtitle">Something changed. The data will tell you what.</p>
     <div class="landing-divider"></div>
-    <p class="landing-desc">A Philly restaurant started getting complaints. Nobody could say exactly what was different. You have four data tables and a set of pandas tools. Your job is to find out what actually changed — and prove it.</p>
+    <p class="landing-desc">A Philly restaurant started getting complaints. Nobody could say exactly what was different. You have four data tables and a set of pandas tools. Your job is to find out what actually changed - and prove it.</p>
     <div class="landing-stats">
       <div>
         <span class="landing-stat-num">5</span>
@@ -391,12 +815,10 @@
 
 <!-- ══ NARRATIVE ════════════════════════════════════════════════════ -->
 <div id="screen-narrative" class="screen">
-
   <div class="narrative-topbar">
     <span class="narrative-topbar-label">Reading Terminal Grill &nbsp;&middot;&nbsp; Background</span>
     <button class="narrative-skip" onclick="skipToEnd()">Skip &#8594;</button>
   </div>
-
   <div class="narrative-scroll" id="narrativeScroll">
     <div class="narrative-col">
       <div class="narrative-chapter">How It Started</div>
@@ -407,151 +829,791 @@
       </div>
     </div>
   </div>
-
   <div class="narrative-footer">
     Eastern University &middot; DTSC 520 &nbsp;&middot;&nbsp; <a href="../../index.html">Course Home</a>
   </div>
-
 </div>
 
-<!-- ══ SIM (placeholder) ════════════════════════════════════════════ -->
+<!-- ══ SIM ══════════════════════════════════════════════════════════ -->
 <div id="screen-sim" class="screen">
-  <div class="sim-placeholder">
-    <strong>Challenges loading...</strong>
-    The sim is being built. Check back soon.
+
+  <!-- topbar -->
+  <div class="sim-topbar">
+    <span class="sim-topbar-title">RTG Investigation</span>
+    <span class="sim-topbar-sep">|</span>
+    <span class="sim-ch-indicator" id="chIndicator">Challenge 1 of 5</span>
+    <button class="sim-locker-toggle" id="lockerToggle" onclick="toggleLocker()">Tables &#8660;</button>
+    <div class="sim-topbar-score">Score: <strong id="scoreDisplay">0</strong> / 20</div>
   </div>
-</div>
+
+  <div class="sim-wrap">
+
+    <!-- main area -->
+    <div class="sim-main">
+
+      <!-- loading state -->
+      <div class="sim-loading" id="simLoading">
+        <div class="sim-loading-dots">
+          <div class="sim-loading-dot"></div>
+          <div class="sim-loading-dot"></div>
+          <div class="sim-loading-dot"></div>
+        </div>
+        <div class="sim-loading-text">Loading Python environment...</div>
+      </div>
+
+      <!-- challenge card (hidden until loaded) -->
+      <div class="ch-card" id="chCard" style="display:none">
+
+        <div class="ch-header">
+          <span class="ch-num" id="chNum">Challenge 1</span>
+          <span class="ch-title" id="chTitle">-</span>
+          <span class="ch-concept" id="chConcept">-</span>
+        </div>
+
+        <p class="ch-context" id="chContext">-</p>
+
+        <div class="ch-task-label">Your Task</div>
+        <div class="ch-task" id="chTask">-</div>
+
+        <div class="ch-vars" id="chVars"></div>
+
+        <div class="ch-editor-wrap">
+          <textarea class="ch-code" id="chCode" spellcheck="false"></textarea>
+        </div>
+
+        <div class="ch-btns">
+          <button class="ch-btn ch-btn-run"   id="btnRun"   onclick="runCode()">Run Code</button>
+          <button class="ch-btn ch-btn-check" id="btnCheck" onclick="checkAnswer()">Check Answer</button>
+        </div>
+
+        <pre class="ch-output" id="chOutput"></pre>
+        <div class="ch-feedback" id="chFeedback"></div>
+        <div class="ch-attempts" id="chAttempts"></div>
+
+        <div class="ch-nav">
+          <button class="ch-nav-btn" id="btnPrev" onclick="navChallenge(-1)">&#8592; Prev</button>
+          <button class="ch-nav-btn primary" id="btnNext" onclick="navChallenge(1)">Next &#8594;</button>
+        </div>
+      </div>
+
+      <!-- results (shown when all done) -->
+      <div class="sim-results" id="simResults" style="display:none">
+        <div class="results-title">Investigation Complete</div>
+        <div class="results-subtitle" id="resultsSubtitle">-</div>
+        <div class="results-score-big" id="resultsBig">-</div>
+        <div class="results-score-label">out of 20 points</div>
+        <div class="results-breakdown" id="resultsBreakdown"></div>
+        <div class="results-verdict" id="resultsVerdict">-</div>
+        <div class="results-verdict-sub" id="resultsVerdictSub">-</div>
+        <button class="results-restart" onclick="restartSim()">Restart</button>
+        <a class="results-home" href="../../index.html">&#8592; Course Home</a>
+      </div>
+
+    </div><!-- /sim-main -->
+
+    <!-- evidence locker -->
+    <div class="sim-locker" id="simLocker">
+      <div class="locker-header">
+        <span class="locker-title">Evidence Locker</span>
+        <span class="locker-sub">4 tables</span>
+      </div>
+
+      <!-- orders -->
+      <div class="table-card">
+        <div class="table-card-name">orders</div>
+        <div class="table-card-meta">62 rows &middot; 6 columns</div>
+        <div class="mini-table-wrap">
+          <table class="mini-table">
+            <tr><th>order_id</th><th>customer_id</th><th>dish_id</th><th>order_date</th><th>order_total</th><th>server_id</th></tr>
+            <tr><td>1001</td><td>3</td><td>1</td><td>2024-09-05</td><td>14.99</td><td>2</td></tr>
+            <tr><td>1002</td><td>7</td><td>1</td><td>2024-09-15</td><td>14.99</td><td>3</td></tr>
+            <tr><td>1003</td><td>11</td><td>1</td><td>2024-10-02</td><td>14.99</td><td>1</td></tr>
+            <tr><td>1004</td><td>2</td><td>1</td><td>2024-10-12</td><td>14.99</td><td>4</td></tr>
+            <tr><td class="ellipsis" colspan="6">... 58 more rows</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- menu -->
+      <div class="table-card">
+        <div class="table-card-name">menu</div>
+        <div class="table-card-meta">8 rows &middot; 6 columns</div>
+        <div class="mini-table-wrap">
+          <table class="mini-table">
+            <tr><th>dish_id</th><th>dish_name</th><th>price</th><th>uses_cs</th><th>supplier_id</th><th>category</th></tr>
+            <tr><td>1</td><td>Philly Cheesesteak</td><td>14.99</td><td>True</td><td>1</td><td>Sandwiches</td></tr>
+            <tr><td>2</td><td>Cheesesteak Egg Rolls</td><td>11.99</td><td>True</td><td>1</td><td>Appetizers</td></tr>
+            <tr><td>3</td><td>Cooper Sharp Dip</td><td>8.99</td><td>True</td><td>1</td><td>Appetizers</td></tr>
+            <tr><td>4</td><td>Cheesesteak Bowl</td><td>13.99</td><td>True</td><td>1</td><td>Bowls</td></tr>
+            <tr><td>5</td><td>Soft Pretzel Bites</td><td>7.99</td><td>False</td><td>3</td><td>Appetizers</td></tr>
+            <tr><td>6</td><td>Reading Burger</td><td>13.49</td><td>False</td><td>2</td><td>Burgers</td></tr>
+            <tr><td>7</td><td>Italian Hoagie</td><td>11.49</td><td>False</td><td>2</td><td>Sandwiches</td></tr>
+            <tr><td>8</td><td>Terminal Fries</td><td>5.99</td><td>False</td><td>4</td><td>Sides</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- suppliers -->
+      <div class="table-card">
+        <div class="table-card-name">suppliers</div>
+        <div class="table-card-meta">4 rows &middot; 5 columns</div>
+        <div class="mini-table-wrap">
+          <table class="mini-table">
+            <tr><th>id</th><th>supplier_name</th><th>ingredient</th><th>start</th><th>end</th></tr>
+            <tr><td>1</td><td>Penn Dairy Co.</td><td>Cooper Sharp</td><td>2022-01-01</td><td>2024-10-31</td></tr>
+            <tr><td>2</td><td>Eastern Provisions</td><td>Cheddar Blend</td><td>2024-11-01</td><td>-</td></tr>
+            <tr><td>3</td><td>Amoroso Bakery</td><td>Pretzel Dough</td><td>2022-01-01</td><td>-</td></tr>
+            <tr><td>4</td><td>Liberty Fresh</td><td>Produce</td><td>2022-01-01</td><td>-</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- ratings -->
+      <div class="table-card">
+        <div class="table-card-name">ratings</div>
+        <div class="table-card-meta">60 rows (raw) &middot; 5 columns</div>
+        <div class="mini-table-wrap">
+          <table class="mini-table">
+            <tr><th>dish_id</th><th>dish_name</th><th>rating</th><th>review_date</th><th>reviewer_id</th></tr>
+            <tr><td>1</td><td>Philly Cheesesteak</td><td>4.3</td><td>2024-09-05</td><td>1</td></tr>
+            <tr><td>1</td><td>Philly Cheesesteak</td><td>4.5</td><td>2024-09-12</td><td>2</td></tr>
+            <tr><td>2</td><td>Cheesesteak Egg Rolls</td><td>4.3</td><td>2024-09-08</td><td>5</td></tr>
+            <tr><td>1</td><td>Philly Cheesesteak</td><td>NaN</td><td>2024-09-07</td><td>20</td></tr>
+            <tr><td class="ellipsis" colspan="5">... 56 more rows (includes dupes)</td></tr>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /sim-locker -->
+  </div><!-- /sim-wrap -->
+
+  <div class="sim-footer">
+    Eastern University &middot; DTSC 520 &nbsp;&middot;&nbsp;
+    <a href="../../index.html">&#8592; Course Home</a>
+  </div>
+</div><!-- /screen-sim -->
 
 <script>
-  // ── Screen helpers ────────────────────────────────────────────────
-  function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    window.scrollTo(0, 0);
+// ══ Screen helpers ════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+function showNarrative() {
+  showScreen('screen-narrative');
+  startTypewriter();
+}
+function showSim() {
+  showScreen('screen-sim');
+  if (!pyodideReady) initPyodide();
+}
+function toggleLocker() {
+  document.getElementById('simLocker').classList.toggle('open');
+}
+
+// ══ Typewriter ════════════════════════════════════════════════════
+const PARAGRAPHS = [
+  "Friday night. You've been looking forward to this all week.",
+  "You take your usual seat at Reading Terminal Grill and order what you always order: the cheesesteak, with soft pretzel bites on the side. The pretzel bites arrive first - warm, lightly salted, fine. But something is slightly off. Not enough to send back. Just enough to notice.",
+  "Then the cheesesteak. The texture is different. The flavor is flatter. You finish it, but you leave unsatisfied, sitting with a feeling you can't quite name.",
+  "The next day you text a friend from high school. She was there two weeks ago - also got the cheesesteak. \"Honestly? I didn't want to say anything, but something felt a little different. I don't know. The whole meal just felt a little off.\"",
+  "You ping an acquaintance from college. He was there last month, ordered the cheesesteak egg rolls. \"Yeah - they were not the same. Kind of flat. I thought it was just me.\"",
+  "Three separate visits. A handful of dishes. The same vague, hard-to-place feeling that something had shifted.",
+  "The restaurant posted about a kitchen change in the fall - a new head chef. Everyone assumes that's it. But you've looked at enough data to know that assuming isn't knowing. A chef change affects everything. A supply change affects only what changed.",
+  "You pull the records. Time to find out what actually happened."
+];
+
+let paraIdx = 0, isTyping = false, skipFlag = false, typeTimer = null;
+const SPEED = 22, PAUSE = 560;
+
+function startTypewriter() {
+  paraIdx = 0; isTyping = false; skipFlag = false;
+  if (typeTimer) clearTimeout(typeTimer);
+  document.getElementById('typeContainer').innerHTML = '';
+  document.getElementById('narrativeCta').classList.remove('show');
+  typeNextPara();
+}
+
+function typeNextPara() {
+  if (skipFlag) { renderRemaining(); return; }
+  if (paraIdx >= PARAGRAPHS.length) { finishNarrative(); return; }
+  const p = document.createElement('p');
+  p.className = 'type-para';
+  const cursor = document.createElement('span');
+  cursor.className = 'type-cursor';
+  p.appendChild(cursor);
+  document.getElementById('typeContainer').appendChild(p);
+  requestAnimationFrame(() => requestAnimationFrame(() => p.classList.add('visible')));
+  isTyping = true;
+  const text = PARAGRAPHS[paraIdx];
+  let ci = 0;
+  function tick() {
+    if (skipFlag) { p.textContent = text; renderRemaining(); return; }
+    if (ci < text.length) {
+      p.textContent = text.slice(0, ci + 1);
+      p.appendChild(cursor);
+      ci++;
+      typeTimer = setTimeout(tick, SPEED);
+    } else {
+      if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
+      isTyping = false;
+      paraIdx++;
+      p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      typeTimer = setTimeout(typeNextPara, PAUSE);
+    }
   }
+  tick();
+}
 
-  function showNarrative() {
-    showScreen('screen-narrative');
-    startTypewriter();
+function renderRemaining() {
+  if (typeTimer) clearTimeout(typeTimer);
+  const container = document.getElementById('typeContainer');
+  const cur = container.querySelector('.type-cursor');
+  if (cur) cur.remove();
+  const existing = container.querySelectorAll('.type-para');
+  if (existing.length && paraIdx > 0) {
+    existing[existing.length - 1].textContent = PARAGRAPHS[paraIdx - 1];
   }
-
-  function showSim() {
-    showScreen('screen-sim');
-  }
-
-  // ── Narrative paragraphs ──────────────────────────────────────────
-  const PARAGRAPHS = [
-    "Friday night. You've been looking forward to this all week.",
-
-    "You take your usual seat at Reading Terminal Grill and order what you always order: the cheesesteak, with soft pretzel bites on the side. The pretzel bites arrive first — warm, lightly salted, fine. But something is slightly off. Not enough to send back. Just enough to notice.",
-
-    "Then the cheesesteak. The texture is different. The flavor is flatter. You finish it, but you leave unsatisfied, sitting with a feeling you can't quite name.",
-
-    "The next day you text a friend from high school. She was there two weeks ago — also got the cheesesteak. \"Honestly? I didn't want to say anything, but something felt a little different. I don't know. The whole meal just felt a little off.\"",
-
-    "You ping an acquaintance from college. He was there last month, ordered the cheesesteak egg rolls. \"Yeah — they were not the same. Kind of flat. I thought it was just me.\"",
-
-    "Three separate visits. A handful of dishes. The same vague, hard-to-place feeling that something had shifted.",
-
-    "The restaurant posted about a kitchen change in the fall — a new head chef. Everyone assumes that's it. But you've looked at enough data to know that assuming isn't knowing. A chef change affects everything. A supply change affects only what changed.",
-
-    "You pull the records. Time to find out what actually happened."
-  ];
-
-  let paraIdx    = 0;
-  let isTyping   = false;
-  let skipFlag   = false;
-  let typeTimer  = null;
-  const SPEED    = 22;   // ms per character
-  const PAUSE    = 560;  // ms between paragraphs
-
-  function startTypewriter() {
-    paraIdx   = 0;
-    isTyping  = false;
-    skipFlag  = false;
-    if (typeTimer) clearTimeout(typeTimer);
-    document.getElementById('typeContainer').innerHTML = '';
-    document.getElementById('narrativeCta').classList.remove('show');
-    typeNextPara();
-  }
-
-  function typeNextPara() {
-    if (skipFlag)              { renderRemaining(); return; }
-    if (paraIdx >= PARAGRAPHS.length) { finishNarrative(); return; }
-
+  for (let i = paraIdx; i < PARAGRAPHS.length; i++) {
     const p = document.createElement('p');
-    p.className = 'type-para';
+    p.className = 'type-para visible';
+    p.textContent = PARAGRAPHS[i];
+    container.appendChild(p);
+  }
+  paraIdx = PARAGRAPHS.length; isTyping = false;
+  finishNarrative();
+}
 
-    const cursor = document.createElement('span');
-    cursor.className = 'type-cursor';
+function finishNarrative() {
+  document.getElementById('narrativeCta').classList.add('show');
+  setTimeout(() => {
+    document.getElementById('narrativeCta').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 300);
+}
 
-    p.appendChild(cursor);
-    document.getElementById('typeContainer').appendChild(p);
+function skipToEnd() {
+  skipFlag = true;
+  if (!isTyping) renderRemaining();
+}
 
-    // fade in
-    requestAnimationFrame(() => requestAnimationFrame(() => p.classList.add('visible')));
+// ══ Challenge data ════════════════════════════════════════════════
+const CHALLENGES = [
+  {
+    id: 1,
+    title: 'Scrub the Records',
+    concept: 'Data Cleaning',
+    context: 'The ratings data was exported directly from the review platform. Before you can analyze anything, you need to clean it up. The raw table has 60 rows - some are missing ratings, and a few entries got duplicated during the export.',
+    task: 'Clean the <code>ratings</code> table by (1) removing rows where <code>rating</code> is null, then (2) removing any exact duplicate rows. Store the result as <code>clean</code>. How many rows remain?',
+    vars: ['ratings'],
+    starter: `clean = ratings.dropna(subset=['rating']).drop_duplicates()
+print(len(clean))`,
+    expected: '50'
+  },
+  {
+    id: 2,
+    title: 'Connect the Tables',
+    concept: 'Merge',
+    context: 'The orders table tracks what was sold and when, but it only has dish IDs - no names, no attributes. The menu table has everything else: dish names, prices, and crucially, which dishes use Cooper Sharp cheese. To analyze orders by dish type, you need to join them.',
+    task: 'Merge <code>orders</code> with <code>menu</code> on <code>dish_id</code> (default inner join). Store the result as <code>merged</code>. What is its shape?',
+    vars: ['orders', 'menu'],
+    starter: `merged = orders.merge(menu, on='dish_id')
+print(merged.shape)`,
+    expected: '(62, 11)'
+  },
+  {
+    id: 3,
+    title: 'Before the Change',
+    concept: 'Filter + Mean',
+    context: "Complaints started arriving in late fall 2024. To understand what changed, you first need a baseline - what did customers think of the flagship dish before anything happened? The supplier contract ended October 31st, so November 1st is the dividing line.",
+    task: 'Using <code>r_menu</code> (ratings joined with menu attributes, already set up for you), filter for <code>Philly Cheesesteak</code> reviews with <code>review_date</code> before <code>2024-11-01</code>. Print the mean rating rounded to 1 decimal.',
+    vars: ['r_menu'],
+    starter: `result = r_menu[
+    (r_menu['dish_name'] == 'Philly Cheesesteak') &
+    (r_menu['review_date'] < '2024-11-01')
+]['rating'].mean().round(1)
+print(result)`,
+    expected: '4.5'
+  },
+  {
+    id: 4,
+    title: 'After the Change',
+    concept: 'Filter + Mean',
+    context: 'Penn Dairy Co. supplied Cooper Sharp American cheese until October 31st. A new supplier - Eastern Provisions LLC - took over on November 1st with a Cheddar Blend. The menu column <code>uses_cooper_sharp</code> flags every dish that uses it. What happened to those dishes after the switch?',
+    task: 'Using <code>r_menu</code>, filter for rows where <code>uses_cooper_sharp</code> is <code>True</code> and <code>review_date</code> is on or after <code>2024-11-01</code>. Print the mean rating rounded to 1 decimal.',
+    vars: ['r_menu'],
+    starter: `result = r_menu[
+    (r_menu['uses_cooper_sharp'] == True) &
+    (r_menu['review_date'] >= '2024-11-01')
+]['rating'].mean().round(1)
+print(result)`,
+    expected: '3.0'
+  },
+  {
+    id: 5,
+    title: 'The Drop',
+    concept: 'Comparison',
+    context: "You have the before. You have the after. Now put them together and compute the actual drop - the number the restaurant owner is going to stare at. This is how data analysis becomes a finding: not a vague feeling that something changed, but a specific, defensible number.",
+    task: 'Using <code>r_menu</code>, compute the mean rating for Cooper Sharp dishes before <em>and</em> after <code>2024-11-01</code>. Subtract after from before, round to 1 decimal, and print the result.',
+    vars: ['r_menu'],
+    starter: `before = r_menu[
+    (r_menu['uses_cooper_sharp'] == True) &
+    (r_menu['review_date'] < '2024-11-01')
+]['rating'].mean().round(1)
 
-    isTyping = true;
-    const text = PARAGRAPHS[paraIdx];
-    let ci = 0;
+after = r_menu[
+    (r_menu['uses_cooper_sharp'] == True) &
+    (r_menu['review_date'] >= '2024-11-01')
+]['rating'].mean().round(1)
 
-    function tick() {
-      if (skipFlag) { p.textContent = text; renderRemaining(); return; }
+result = round(before - after, 1)
+print(result)`,
+    expected: '1.5'
+  }
+];
 
-      if (ci < text.length) {
-        p.textContent = text.slice(0, ci + 1);
-        p.appendChild(cursor);
-        ci++;
-        typeTimer = setTimeout(tick, SPEED);
-      } else {
-        // paragraph done
-        if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
-        isTyping = false;
-        paraIdx++;
-        // gently scroll the new paragraph into view
-        p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        typeTimer = setTimeout(typeNextPara, PAUSE);
-      }
+// ══ State ═════════════════════════════════════════════════════════
+const LS_KEY = 'dtsc520_rtginvestigation';
+
+let state = {
+  current: 0,
+  attempts: [0, 0, 0, 0, 0],
+  scores:   [null, null, null, null, null],
+  outputs:  ['', '', '', '', ''],
+  codes:    ['', '', '', '', ''],
+  done:     [false, false, false, false, false]
+};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(LS_KEY);
+    if (saved) {
+      const s = JSON.parse(saved);
+      Object.assign(state, s);
     }
-    tick();
+  } catch(e) {}
+}
+
+function saveState() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function totalScore() {
+  return state.scores.reduce((s, v) => s + (v || 0), 0);
+}
+
+function pointsForAttempt(n) {
+  if (n === 1) return 4;
+  if (n === 2) return 2;
+  return 1;
+}
+
+// ══ Pyodide ═══════════════════════════════════════════════════════
+let pyodide = null;
+let pyodideReady = false;
+
+const BOOTSTRAP = `
+import pandas as pd
+from io import StringIO
+
+orders_csv = """order_id,customer_id,dish_id,order_date,order_total,server_id
+1001,3,1,2024-09-05,14.99,2
+1002,7,1,2024-09-15,14.99,3
+1003,11,1,2024-10-02,14.99,1
+1004,2,1,2024-10-12,14.99,4
+1005,8,1,2024-10-25,14.99,2
+1006,14,1,2024-11-03,14.99,5
+1007,6,1,2024-11-17,14.99,1
+1008,1,1,2024-11-30,14.99,3
+1009,9,1,2024-12-08,14.99,2
+1010,13,1,2024-12-20,14.99,4
+1011,5,1,2025-01-06,14.99,1
+1012,10,1,2025-01-18,14.99,3
+1013,4,2,2024-09-08,11.99,2
+1014,12,2,2024-09-22,11.99,5
+1015,2,2,2024-10-06,11.99,3
+1016,7,2,2024-10-19,11.99,1
+1017,15,2,2024-11-05,11.99,4
+1018,3,2,2024-11-19,11.99,2
+1019,8,2,2024-12-03,11.99,5
+1020,11,2,2024-12-17,11.99,1
+1021,6,2,2025-01-04,11.99,3
+1022,14,2,2025-01-22,11.99,2
+1023,5,3,2024-09-14,8.99,4
+1024,9,3,2024-09-28,8.99,1
+1025,13,3,2024-10-11,8.99,3
+1026,1,3,2024-10-28,8.99,5
+1027,4,3,2024-11-12,8.99,2
+1028,10,3,2024-11-26,8.99,4
+1029,7,3,2024-12-10,8.99,1
+1030,2,3,2025-01-08,8.99,3
+1031,15,4,2024-09-18,13.99,5
+1032,6,4,2024-10-01,13.99,2
+1033,11,4,2024-10-15,13.99,4
+1034,3,4,2024-10-30,13.99,1
+1035,8,4,2024-11-14,13.99,3
+1036,13,4,2024-11-28,13.99,5
+1037,1,4,2024-12-12,13.99,2
+1038,9,4,2025-01-02,13.99,4
+1039,4,4,2025-01-16,13.99,1
+1040,12,5,2024-09-09,7.99,3
+1041,5,5,2024-09-24,7.99,5
+1042,14,5,2024-10-08,7.99,2
+1043,2,5,2024-10-22,7.99,4
+1044,7,5,2024-11-06,7.99,1
+1045,11,5,2024-11-20,7.99,3
+1046,4,5,2024-12-04,7.99,5
+1047,9,5,2024-12-18,7.99,2
+1048,1,6,2024-09-11,13.49,4
+1049,6,6,2024-10-04,13.49,1
+1050,13,6,2024-10-20,13.49,3
+1051,3,6,2024-11-08,13.49,5
+1052,10,6,2024-11-22,13.49,2
+1053,7,6,2024-12-06,13.49,4
+1054,14,6,2025-01-14,13.49,1
+1055,2,7,2024-09-22,11.49,3
+1056,8,7,2024-10-16,11.49,5
+1057,12,7,2024-11-15,11.49,2
+1058,5,7,2024-12-09,11.49,4
+1059,15,7,2025-01-20,11.49,1
+1060,6,8,2024-10-08,5.99,3
+1061,11,8,2024-11-25,5.99,5
+1062,3,8,2024-12-28,5.99,2"""
+
+menu_csv = """dish_id,dish_name,price,uses_cooper_sharp,supplier_id,category
+1,Philly Cheesesteak,14.99,True,1,Sandwiches
+2,Cheesesteak Egg Rolls,11.99,True,1,Appetizers
+3,Cooper Sharp Dip,8.99,True,1,Appetizers
+4,Cheesesteak Bowl,13.99,True,1,Bowls
+5,Soft Pretzel Bites,7.99,False,3,Appetizers
+6,Reading Burger,13.49,False,2,Burgers
+7,Italian Hoagie,11.49,False,2,Sandwiches
+8,Terminal Fries,5.99,False,4,Sides"""
+
+suppliers_csv = """supplier_id,supplier_name,ingredient,contract_start,contract_end
+1,Penn Dairy Co.,Cooper Sharp American,2022-01-01,2024-10-31
+2,Eastern Provisions LLC,Cheddar Blend,2024-11-01,
+3,Amoroso Bakery,Pretzel Dough,2022-01-01,
+4,Liberty Fresh Produce,Produce,2022-01-01,"""
+
+ratings_csv = """dish_id,dish_name,rating,review_date,reviewer_id
+1,Philly Cheesesteak,4.3,2024-09-05,1
+1,Philly Cheesesteak,4.5,2024-09-12,2
+1,Philly Cheesesteak,4.5,2024-10-02,3
+1,Philly Cheesesteak,4.7,2024-10-18,4
+2,Cheesesteak Egg Rolls,4.3,2024-09-08,5
+2,Cheesesteak Egg Rolls,4.5,2024-09-20,6
+2,Cheesesteak Egg Rolls,4.5,2024-10-05,7
+2,Cheesesteak Egg Rolls,4.7,2024-10-22,8
+3,Cooper Sharp Dip,4.3,2024-09-14,9
+3,Cooper Sharp Dip,4.5,2024-09-28,10
+3,Cooper Sharp Dip,4.5,2024-10-10,11
+3,Cooper Sharp Dip,4.7,2024-10-25,12
+4,Cheesesteak Bowl,4.3,2024-09-18,13
+4,Cheesesteak Bowl,4.5,2024-10-01,14
+4,Cheesesteak Bowl,4.5,2024-10-14,15
+4,Cheesesteak Bowl,4.7,2024-10-29,16
+5,Soft Pretzel Bites,4.1,2024-09-05,1
+5,Soft Pretzel Bites,4.2,2024-10-12,2
+5,Soft Pretzel Bites,4.3,2024-10-25,3
+6,Reading Burger,3.9,2024-09-10,4
+6,Reading Burger,4.1,2024-10-03,5
+6,Reading Burger,4.3,2024-10-20,6
+7,Italian Hoagie,4.0,2024-09-22,7
+7,Italian Hoagie,4.2,2024-10-15,8
+8,Terminal Fries,4.0,2024-10-08,9
+1,Philly Cheesesteak,2.8,2024-11-05,10
+1,Philly Cheesesteak,3.0,2024-11-19,11
+1,Philly Cheesesteak,3.0,2024-12-03,12
+1,Philly Cheesesteak,3.2,2024-12-17,13
+2,Cheesesteak Egg Rolls,2.8,2024-11-08,14
+2,Cheesesteak Egg Rolls,3.0,2024-11-22,15
+2,Cheesesteak Egg Rolls,3.0,2024-12-06,16
+2,Cheesesteak Egg Rolls,3.2,2024-12-20,17
+3,Cooper Sharp Dip,2.8,2024-11-11,18
+3,Cooper Sharp Dip,3.0,2024-11-25,19
+3,Cooper Sharp Dip,3.0,2024-12-09,20
+3,Cooper Sharp Dip,3.2,2025-01-03,1
+4,Cheesesteak Bowl,2.8,2024-11-14,2
+4,Cheesesteak Bowl,3.0,2024-11-28,3
+4,Cheesesteak Bowl,3.0,2024-12-12,4
+4,Cheesesteak Bowl,3.2,2025-01-07,5
+5,Soft Pretzel Bites,4.0,2024-11-15,6
+5,Soft Pretzel Bites,4.1,2024-12-01,7
+5,Soft Pretzel Bites,4.3,2024-12-28,8
+6,Reading Burger,3.9,2024-11-18,9
+6,Reading Burger,4.0,2024-12-02,10
+6,Reading Burger,4.2,2024-12-30,11
+7,Italian Hoagie,4.1,2024-11-20,12
+7,Italian Hoagie,4.2,2025-01-10,13
+8,Terminal Fries,4.0,2024-12-14,14
+1,Philly Cheesesteak,4.3,2024-09-05,1
+1,Philly Cheesesteak,4.5,2024-09-12,2
+1,Philly Cheesesteak,4.5,2024-10-02,3
+1,Philly Cheesesteak,4.7,2024-10-18,4
+2,Cheesesteak Egg Rolls,4.3,2024-09-08,5
+1,Philly Cheesesteak,,2024-09-07,20
+2,Cheesesteak Egg Rolls,,2024-10-10,18
+3,Cooper Sharp Dip,,2024-11-15,19
+5,Soft Pretzel Bites,,2024-09-30,17
+6,Reading Burger,,2024-12-01,16"""
+
+orders    = pd.read_csv(StringIO(orders_csv))
+menu      = pd.read_csv(StringIO(menu_csv))
+suppliers = pd.read_csv(StringIO(suppliers_csv))
+ratings   = pd.read_csv(StringIO(ratings_csv))
+
+orders['order_date']     = pd.to_datetime(orders['order_date'])
+ratings['review_date']   = pd.to_datetime(ratings['review_date'])
+
+ratings_clean = ratings.dropna(subset=['rating']).drop_duplicates().reset_index(drop=True)
+r_menu = ratings_clean.merge(menu[['dish_id', 'uses_cooper_sharp']], on='dish_id')
+r_menu['review_date'] = pd.to_datetime(r_menu['review_date'])
+
+print("BOOTSTRAP_OK")
+`;
+
+async function initPyodide() {
+  try {
+    pyodide = await loadPyodide();
+    await pyodide.loadPackage('pandas');
+    const result = await pyodide.runPythonAsync(BOOTSTRAP);
+    pyodideReady = true;
+    document.getElementById('simLoading').style.display = 'none';
+    document.getElementById('chCard').style.display = 'block';
+    loadState();
+    renderChallenge();
+  } catch(e) {
+    document.getElementById('simLoading').innerHTML =
+      '<div class="sim-loading-text" style="color:#d47a7a">Failed to load Python environment. Please refresh.</div>';
+  }
+}
+
+// ══ Challenge rendering ═══════════════════════════════════════════
+function renderChallenge() {
+  const idx = state.current;
+  const ch  = CHALLENGES[idx];
+  const totalDone = state.done.filter(Boolean).length;
+
+  // topbar
+  document.getElementById('chIndicator').textContent = `Challenge ${idx + 1} of 5`;
+  document.getElementById('scoreDisplay').textContent = totalScore();
+
+  // card content
+  document.getElementById('chNum').textContent    = `Challenge ${idx + 1}`;
+  document.getElementById('chTitle').textContent  = ch.title;
+  document.getElementById('chConcept').textContent = ch.concept;
+  document.getElementById('chContext').textContent = ch.context;
+  document.getElementById('chTask').innerHTML = ch.task;
+
+  // available vars
+  const varsEl = document.getElementById('chVars');
+  varsEl.innerHTML = '<span class="ch-var-label">Available:</span>';
+  ch.vars.forEach(v => {
+    const span = document.createElement('span');
+    span.className = 'ch-var';
+    span.textContent = v;
+    varsEl.appendChild(span);
+  });
+  // always note r_menu availability for C3-C5
+  if (idx >= 2 && !ch.vars.includes('r_menu')) {
+    const span = document.createElement('span');
+    span.className = 'ch-var';
+    span.textContent = 'r_menu';
+    varsEl.appendChild(span);
   }
 
-  function renderRemaining() {
-    if (typeTimer) clearTimeout(typeTimer);
-    const container = document.getElementById('typeContainer');
-    // remove any dangling cursor
-    const cur = container.querySelector('.type-cursor');
-    if (cur) cur.remove();
-    // fix last partial paragraph
-    const existing = container.querySelectorAll('.type-para');
-    if (existing.length && paraIdx > 0) {
-      existing[existing.length - 1].textContent = PARAGRAPHS[paraIdx - 1];
+  // code area
+  const codeEl = document.getElementById('chCode');
+  codeEl.value = state.codes[idx] || ch.starter;
+
+  // output
+  const outEl = document.getElementById('chOutput');
+  if (state.outputs[idx]) {
+    outEl.textContent = state.outputs[idx];
+    outEl.classList.add('show');
+    outEl.classList.remove('err-out');
+  } else {
+    outEl.textContent = '';
+    outEl.classList.remove('show', 'err-out');
+  }
+
+  // feedback
+  const fbEl   = document.getElementById('chFeedback');
+  const attEl  = document.getElementById('chAttempts');
+  const done   = state.done[idx];
+  const score  = state.scores[idx];
+  const att    = state.attempts[idx];
+
+  if (done) {
+    fbEl.className = 'ch-feedback show correct';
+    fbEl.textContent = `Correct! +${score} pt${score !== 1 ? 's' : ''}`;
+    document.getElementById('btnCheck').disabled = true;
+    attEl.textContent = att === 1 ? 'First try!' : `${att} attempt${att > 1 ? 's' : ''}`;
+  } else if (att > 0) {
+    fbEl.className = 'ch-feedback show wrong';
+    fbEl.textContent = `Not quite. Check your output and try again.`;
+    document.getElementById('btnCheck').disabled = false;
+    attEl.textContent = `${att} attempt${att > 1 ? 's' : ''} - next correct answer worth ${pointsForAttempt(att + 1)} pt${pointsForAttempt(att+1)!==1?'s':''}`;
+  } else {
+    fbEl.className = 'ch-feedback';
+    fbEl.textContent = '';
+    document.getElementById('btnCheck').disabled = false;
+    attEl.textContent = 'First correct answer: 4 pts';
+  }
+
+  // nav
+  document.getElementById('btnPrev').disabled = idx === 0;
+  document.getElementById('btnNext').disabled = idx === CHALLENGES.length - 1;
+
+  // show results if all done
+  if (state.done.every(Boolean)) {
+    setTimeout(showResults, 400);
+  }
+}
+
+function navChallenge(dir) {
+  // save current code
+  state.codes[state.current] = document.getElementById('chCode').value;
+  saveState();
+  state.current = Math.max(0, Math.min(CHALLENGES.length - 1, state.current + dir));
+  renderChallenge();
+}
+
+// ══ Run + Check ═══════════════════════════════════════════════════
+function normalize(s) {
+  return String(s).trim().replace(/\s+/g, ' ');
+}
+
+async function runCode() {
+  if (!pyodideReady) return;
+  const code = document.getElementById('chCode').value;
+  state.codes[state.current] = code;
+
+  const outEl = document.getElementById('chOutput');
+  outEl.textContent = '';
+  outEl.classList.remove('err-out');
+
+  // capture stdout
+  let captured = '';
+  pyodide.setStdout({ batched: (s) => { captured += s + '\n'; } });
+
+  try {
+    await pyodide.runPythonAsync(code);
+  } catch(e) {
+    captured = 'Error: ' + e.message;
+    outEl.classList.add('err-out');
+  }
+
+  pyodide.setStdout(null);
+  captured = captured.trim();
+  state.outputs[state.current] = captured;
+  outEl.textContent = captured || '(no output)';
+  outEl.classList.add('show');
+  saveState();
+}
+
+async function checkAnswer() {
+  if (!pyodideReady) return;
+  await runCode();
+
+  const idx     = state.current;
+  const ch      = CHALLENGES[idx];
+  const output  = state.outputs[idx];
+  const fbEl    = document.getElementById('chFeedback');
+  const attEl   = document.getElementById('chAttempts');
+
+  state.attempts[idx]++;
+  const att = state.attempts[idx];
+
+  if (normalize(output) === normalize(ch.expected)) {
+    const pts = pointsForAttempt(att);
+    state.scores[idx] = pts;
+    state.done[idx]   = true;
+    fbEl.className = 'ch-feedback show correct';
+    fbEl.textContent = `Correct! +${pts} pt${pts !== 1 ? 's' : ''}`;
+    document.getElementById('btnCheck').disabled = true;
+    attEl.textContent = att === 1 ? 'First try!' : `${att} attempt${att > 1 ? 's' : ''}`;
+    document.getElementById('scoreDisplay').textContent = totalScore();
+    saveState();
+
+    if (state.done.every(Boolean)) {
+      setTimeout(showResults, 800);
     }
-    // append all remaining
-    for (let i = paraIdx; i < PARAGRAPHS.length; i++) {
-      const p = document.createElement('p');
-      p.className = 'type-para visible';
-      p.textContent = PARAGRAPHS[i];
-      container.appendChild(p);
-    }
-    paraIdx  = PARAGRAPHS.length;
-    isTyping = false;
-    finishNarrative();
+  } else {
+    fbEl.className = 'ch-feedback show wrong';
+    fbEl.textContent = `Not quite. Check your output and try again.`;
+    attEl.textContent = `${att} attempt${att > 1 ? 's' : ''} - next correct answer worth ${pointsForAttempt(att + 1)} pt${pointsForAttempt(att+1)!==1?'s':''}`;
+    saveState();
   }
+}
 
-  function finishNarrative() {
-    document.getElementById('narrativeCta').classList.add('show');
-    // scroll to CTA
-    setTimeout(() => {
-      document.getElementById('narrativeCta').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 300);
-  }
+// ══ Results ═══════════════════════════════════════════════════════
+function showResults() {
+  const score = totalScore();
+  document.getElementById('chCard').style.display = 'none';
+  const res = document.getElementById('simResults');
+  res.style.display = 'block';
 
-  function skipToEnd() {
-    skipFlag = true;
-    if (!isTyping) renderRemaining();
-    // if isTyping, the current tick() call catches skipFlag
+  document.getElementById('resultsBig').textContent = score;
+  document.getElementById('chIndicator').textContent = 'Complete';
+  document.getElementById('scoreDisplay').textContent = score;
+
+  // subtitle
+  const subtitles = {
+    20: 'Perfect investigation.',
+    high: 'Strong work. You found the signal.',
+    mid:  'Good progress. The data told its story.',
+    low:  'Keep digging. The method matters.'
+  };
+  const sub = score === 20 ? subtitles[20] : score >= 14 ? subtitles.high : score >= 8 ? subtitles.mid : subtitles.low;
+  document.getElementById('resultsSubtitle').textContent = sub;
+
+  // breakdown
+  const bd = document.getElementById('resultsBreakdown');
+  bd.innerHTML = '';
+  CHALLENGES.forEach((ch, i) => {
+    const row = document.createElement('div');
+    row.className = 'results-row';
+    const pts = state.scores[i] || 0;
+    row.innerHTML = `<span class="results-row-name">${ch.id}. ${ch.title}</span><span class="results-row-pts">${pts} / 4</span>`;
+    bd.appendChild(row);
+  });
+
+  // verdict
+  let verdict, vsub;
+  if (score === 20) {
+    verdict = 'Case Closed';
+    vsub = 'You traced the drop to its source with clean, precise analysis. Every challenge answered correctly on the first try. That\'s the job.';
+  } else if (score >= 15) {
+    verdict = 'Finding Confirmed';
+    vsub = 'The data trail is solid. You identified the supply change as the root cause and backed it up with numbers. A few extra attempts here and there, but the conclusion is sound.';
+  } else if (score >= 10) {
+    verdict = 'Lead Established';
+    vsub = 'You found the story in the data. The pandas skills are there - keep working on reading the output carefully and tightening your filter logic.';
+  } else {
+    verdict = 'Investigation Ongoing';
+    vsub = 'You made it through all five challenges. Review the correct outputs, revisit the pandas documentation, and try again - the pattern is learnable.';
   }
+  document.getElementById('resultsVerdict').textContent = verdict;
+  document.getElementById('resultsVerdictSub').textContent = vsub;
+}
+
+function restartSim() {
+  state = {
+    current: 0,
+    attempts: [0,0,0,0,0],
+    scores:   [null,null,null,null,null],
+    outputs:  ['','','','',''],
+    codes:    ['','','','',''],
+    done:     [false,false,false,false,false]
+  };
+  saveState();
+  document.getElementById('simResults').style.display = 'none';
+  document.getElementById('chCard').style.display = 'block';
+  document.getElementById('btnCheck').disabled = false;
+  renderChallenge();
+}
 </script>
 
 </body>
