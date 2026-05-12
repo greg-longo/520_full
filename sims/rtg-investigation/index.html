@@ -745,6 +745,57 @@
     .mini-table tr:last-child td { border-bottom: none; }
     .mini-table .ellipsis { color: var(--text-dim); font-style: italic; }
 
+    /* ── Hint system ─────────────────────────────────────────────── */
+    .ch-hint-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 0.55rem 1.1rem;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .ch-hint-btn:hover:not(:disabled) { color: var(--gold); border-color: rgba(201,168,76,0.4); }
+    .ch-hint-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .hint-box {
+      margin-top: 0.75rem;
+      background: rgba(201,168,76,0.06);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 3px;
+      padding: 0.8rem 1rem;
+      display: none;
+    }
+    .hint-box.show { display: block; }
+    .hint-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+    .hint-text {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+    }
+    .hint-text code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85em;
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1px 5px;
+      color: var(--gold-light);
+    }
+
     /* sim footer */
     .sim-back {
       font-size: 0.62rem;
@@ -897,6 +948,12 @@
         <div class="ch-btns">
           <button class="ch-btn ch-btn-run"   id="btnRun"   onclick="runCode()">Run Code</button>
           <button class="ch-btn ch-btn-check" id="btnCheck" onclick="checkAnswer()">Check Answer</button>
+          <button class="ch-hint-btn" id="btnHint" onclick="showNextHint()">Hint 1 of 2</button>
+        </div>
+
+        <div class="hint-box" id="hintBox">
+          <div class="hint-label" id="hintLabel">Hint</div>
+          <div class="hint-text"  id="hintText"></div>
         </div>
 
         <pre class="ch-output" id="chOutput"></pre>
@@ -1119,8 +1176,14 @@ const CHALLENGES = [
     context: 'The ratings data was exported directly from the review platform. Before you can analyze anything, you need to clean it up. The raw table has 60 rows - some are missing ratings, and a few entries got duplicated during the export.',
     task: 'Clean the <code>ratings</code> table by (1) removing rows where <code>rating</code> is null, then (2) removing any exact duplicate rows. Store the result as <code>clean</code>. How many rows remain?',
     vars: ['ratings'],
-    starter: `clean = ratings.dropna(subset=['rating']).drop_duplicates()
+    starter: `# Fill in the two pandas methods to clean the data
+
+clean = ratings.________(subset=['rating']).________()
 print(len(clean))`,
+    hints: [
+      'pandas has a method called <code>dropna()</code> that removes rows with missing values. Use the <code>subset</code> parameter to limit it to only the <code>rating</code> column, so rows with other missing fields are kept.',
+      'Chain <code>drop_duplicates()</code> after <code>dropna()</code> to remove rows that appear more than once. No arguments needed - it compares all columns by default. Then wrap the result in <code>len()</code>.'
+    ],
     expected: '50'
   },
   {
@@ -1130,8 +1193,13 @@ print(len(clean))`,
     context: 'The orders table tracks what was sold and when, but it only has dish IDs - no names, no attributes. The menu table has everything else: dish names, prices, and crucially, which dishes use Cooper Sharp cheese. To analyze orders by dish type, you need to join them.',
     task: 'Merge <code>orders</code> with <code>menu</code> on <code>dish_id</code> (default inner join). Store the result as <code>merged</code>. What is its shape?',
     vars: ['orders', 'menu'],
-    starter: `merged = orders.merge(menu, on='dish_id')
+    starter: `# Merge the two tables on the shared key column
+merged = orders.merge(____, on='________')
 print(merged.shape)`,
+    hints: [
+      '<code>DataFrame.merge(other, on=\'column\')</code> performs an inner join on a shared column. Both <code>orders</code> and <code>menu</code> have a column called <code>dish_id</code> - that\'s your join key.',
+      'The result keeps all rows from <code>orders</code> (62) and combines columns from both tables, minus the duplicate key. Count the columns in each table and subtract 1 for the shared key.'
+    ],
     expected: '(62, 11)'
   },
   {
@@ -1141,11 +1209,16 @@ print(merged.shape)`,
     context: "Complaints started arriving in late fall 2024. To understand what changed, you first need a baseline - what did customers think of the flagship dish before anything happened? The supplier contract ended October 31st, so November 1st is the dividing line.",
     task: 'Using <code>r_menu</code> (ratings joined with menu attributes, already set up for you), filter for <code>Philly Cheesesteak</code> reviews with <code>review_date</code> before <code>2024-11-01</code>. Print the mean rating rounded to 1 decimal.',
     vars: ['r_menu'],
-    starter: `result = r_menu[
-    (r_menu['dish_name'] == 'Philly Cheesesteak') &
-    (r_menu['review_date'] < '2024-11-01')
+    starter: `# Filter by dish name AND date, then compute the mean
+result = r_menu[
+    (r_menu['________'] == '________________') &
+    (r_menu['review_date'] < '________')
 ]['rating'].mean().round(1)
 print(result)`,
+    hints: [
+      'You need two conditions joined by <code>&</code>. The first filters on the <code>dish_name</code> column - check the Evidence Locker for the exact dish name spelling. Each condition must be wrapped in parentheses.',
+      'The date cutoff is November 1st, 2024. Use <code>\'2024-11-01\'</code> as the comparison string - pandas will handle the datetime conversion automatically.'
+    ],
     expected: '4.5'
   },
   {
@@ -1155,11 +1228,16 @@ print(result)`,
     context: 'Penn Dairy Co. supplied Cooper Sharp American cheese until October 31st. A new supplier - Eastern Provisions LLC - took over on November 1st with a Cheddar Blend. The menu column <code>uses_cooper_sharp</code> flags every dish that uses it. What happened to those dishes after the switch?',
     task: 'Using <code>r_menu</code>, filter for rows where <code>uses_cooper_sharp</code> is <code>True</code> and <code>review_date</code> is on or after <code>2024-11-01</code>. Print the mean rating rounded to 1 decimal.',
     vars: ['r_menu'],
-    starter: `result = r_menu[
-    (r_menu['uses_cooper_sharp'] == True) &
-    (r_menu['review_date'] >= '2024-11-01')
+    starter: `# Filter for Cooper Sharp dishes reviewed after the supplier switch
+result = r_menu[
+    (r_menu['________________'] == ____) &
+    (r_menu['review_date'] >= '________')
 ]['rating'].mean().round(1)
 print(result)`,
+    hints: [
+      'The column that flags Cooper Sharp dishes is <code>uses_cooper_sharp</code>. Filter where it equals <code>True</code> (Python boolean, no quotes). Check the Evidence Locker menu table to confirm the column name.',
+      'For "on or after November 1st", use <code>&gt;= \'2024-11-01\'</code>. After filtering, select <code>[\'rating\']</code>, call <code>.mean()</code>, then <code>.round(1)</code>.'
+    ],
     expected: '3.0'
   },
   {
@@ -1171,19 +1249,26 @@ print(result)`,
     vars: ['r_menu'],
     starter: `before = r_menu[
     (r_menu['uses_cooper_sharp'] == True) &
-    (r_menu['review_date'] < '2024-11-01')
+    (r_menu['review_date'] < '________')
 ]['rating'].mean().round(1)
 
 after = r_menu[
     (r_menu['uses_cooper_sharp'] == True) &
-    (r_menu['review_date'] >= '2024-11-01')
+    (r_menu['review_date'] >= '________')
 ]['rating'].mean().round(1)
 
-result = round(before - after, 1)
+result = round(____ - ____, 1)
 print(result)`,
+    hints: [
+      'Both <code>before</code> and <code>after</code> use the same <code>uses_cooper_sharp == True</code> filter - only the date changes. Use <code>\'2024-11-01\'</code> as the cutoff: <code>&lt;</code> for before, <code>&gt;=</code> for after.',
+      'Once you have both means, subtract: <code>round(before - after, 1)</code>. Use Python\'s built-in <code>round()</code> here, not a pandas method, since <code>before</code> and <code>after</code> are already plain floats.'
+    ],
     expected: '1.5'
   }
 ];
+
+// ══ Hint state (not persisted) ════════════════════════════════════
+let hintIndex = -1;
 
 // ══ State ═════════════════════════════════════════════════════════
 const LS_KEY = 'dtsc520_rtginvestigation';
@@ -1475,6 +1560,14 @@ function renderChallenge() {
     attEl.textContent = 'First correct answer: 4 pts';
   }
 
+  // hints - reset on each render
+  const btnHint = document.getElementById('btnHint');
+  const hintBox = document.getElementById('hintBox');
+  hintIndex = -1;
+  hintBox.classList.remove('show');
+  btnHint.disabled = false;
+  btnHint.textContent = 'Hint 1 of ' + ch.hints.length;
+
   // nav
   document.getElementById('btnPrev').disabled = idx === 0;
   document.getElementById('btnNext').disabled = idx === CHALLENGES.length - 1;
@@ -1490,7 +1583,31 @@ function navChallenge(dir) {
   state.codes[state.current] = document.getElementById('chCode').value;
   saveState();
   state.current = Math.max(0, Math.min(CHALLENGES.length - 1, state.current + dir));
+  hintIndex = -1;
   renderChallenge();
+}
+
+// ══ Hints ═════════════════════════════════════════════════════════
+function showNextHint() {
+  const ch      = CHALLENGES[state.current];
+  const btnHint = document.getElementById('btnHint');
+  const hintBox = document.getElementById('hintBox');
+  const hintLbl = document.getElementById('hintLabel');
+  const hintTxt = document.getElementById('hintText');
+
+  hintIndex++;
+  if (hintIndex >= ch.hints.length) return;
+
+  hintBox.classList.add('show');
+  hintLbl.textContent = 'Hint ' + (hintIndex + 1) + ' of ' + ch.hints.length;
+  hintTxt.innerHTML   = ch.hints[hintIndex];
+
+  if (hintIndex + 1 < ch.hints.length) {
+    btnHint.textContent = 'Hint ' + (hintIndex + 2) + ' of ' + ch.hints.length;
+  } else {
+    btnHint.textContent = 'No more hints';
+    btnHint.disabled = true;
+  }
 }
 
 // ══ Run + Check ═══════════════════════════════════════════════════

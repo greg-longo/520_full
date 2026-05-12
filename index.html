@@ -933,6 +933,12 @@
           <div class="sim-module-tag">Module 04 - pandas / NumPy</div>
         </a>
 
+        <a class="sim-card" href="sims/rtg-investigation/index.html" style="--accent: #c07b30;">
+          <h3>RTG Investigation</h3>
+          <p class="sim-desc">A Philly restaurant's ratings dropped after a supplier change. Use merges, filters, and groupby to trace the source.</p>
+          <div class="sim-module-tag">Module 04 - pandas / merges / groupby</div>
+        </a>
+
         <a class="sim-card" href="sims/pitch-the-viz/index.html" style="--accent: var(--teal);">
           <h3>Pitch the Viz</h3>
           <p class="sim-desc">You're live in the Volta Records committee room. Four chart decisions. One artist to sign. Make the data land before the vote.</p>
@@ -1030,13 +1036,15 @@
 
     const dirty = get('dtsc520_dirtydataset');
     const dirtyItem = dirty ? { state: 'complete', label: dirty.score + '%' } : { state: 'empty', label: '--' };
+    const rtgRaw  = get('dtsc520_rtginvestigation');
+    const rtgItem = rtgRaw && rtgRaw.done && rtgRaw.done.every(Boolean) ? { state: 'complete', label: rtgRaw.scores.reduce((a,b)=>a+(b||0),0) + '/20' } : (rtgRaw && rtgRaw.done && rtgRaw.done.some(Boolean) ? { state: 'started', label: '--' } : { state: 'empty', label: '--' });
 
-    return { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem };
+    return { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem };
   }
 
   // ── Build dashboard grid ──────────────────────────────────────────────────
   function buildDashboard() {
-    const { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem } = readProgress();
+    const { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem } = readProgress();
     const grid = document.getElementById('dashGrid');
     if (!grid) return;
 
@@ -1064,6 +1072,7 @@
       ],
       [ // mod4
         { ...dirtyItem, name: 'Dirty Dataset', href: 'sims/dirty_dataset_sim.html' },
+        { ...rtgItem,   name: 'RTG Investigation', href: 'sims/rtg-investigation/index.html' },
       ],
       [ // mod5
         { ...pitchvizItem, name: 'Pitch the Viz', href: 'sims/pitch-the-viz/index.html' },
@@ -1204,10 +1213,11 @@
             ...(charttopItem.state !== 'complete' ? [{ label: 'Chart Toppers', href: 'sims/numpy-lab/index.html' }] : []),
           ] },
         { name: 'Pandas',
-          complete: quizzes[4].state === 'complete' && dirtyItem.state === 'complete',
+          complete: quizzes[4].state === 'complete' && dirtyItem.state === 'complete' && rtgItem.state === 'complete',
           actions: [
             ...(quizzes[4].state !== 'complete' ? [{ label: 'Take M4 Quiz', href: 'modules/module4/quiz.html' }] : []),
             ...(dirtyItem.state !== 'complete'   ? [{ label: 'Dirty Dataset', href: 'sims/dirty_dataset_sim.html' }] : []),
+            ...(rtgItem.state !== 'complete'     ? [{ label: 'RTG Investigation', href: 'sims/rtg-investigation/index.html' }] : []),
           ] },
         { name: 'Visualization',
           complete: quizzes[5].state === 'complete' && pitchvizItem.state === 'complete',
@@ -1225,7 +1235,7 @@
 
       // If nothing has ever been touched, stay hidden
       const anyProgress = done > 0 || pftItems.some(p => p.state !== 'empty') ||
-        [morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem].some(x => x.state === 'complete');
+        [morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem].some(x => x.state === 'complete');
       if (!anyProgress) return;
 
       wrap.style.display = 'block';
@@ -1272,7 +1282,7 @@
      'dtsc520_quiz_m4','dtsc520_quiz_m5','dtsc520_quiz_m6',
      'pft_progress','dtsc520_debugpipeline','dtsc520_branchcrisis',
      'dtsc520_morningbrief','dtsc520_findyourpath','dtsc520_pitchtheviz','dtsc520_charttoppers',
-     'dtsc520_dirtydataset'].forEach(k => {
+     'dtsc520_dirtydataset','dtsc520_rtginvestigation'].forEach(k => {
       try { localStorage.removeItem(k); } catch(e) {}
     });
     buildDashboard();
