@@ -352,6 +352,15 @@
       transition: background 0.15s;
     }
     .sim-cta:hover { background: rgba(255,255,255,0.05); }
+    /* Board Meeting sequel - gold boardroom accent */
+    .sim-cta-board {
+      border-left-color: #d4af6a;
+      background: #1a161d;
+      box-shadow: 0 0 10px rgba(212,175,106,0.10);
+    }
+    .sim-cta-board:hover { background: #211c25; box-shadow: 0 0 16px rgba(212,175,106,0.22); }
+    .sim-cta-board .sim-cta-label { color: #d4af6a; }
+    .sim-cta-board .sim-cta-launch { color: #d4af6a; }
     .sim-cta-label {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.58rem;
@@ -1026,6 +1035,13 @@ plt.<span class="fn">show</span>()</code></pre>
       <div class="sim-cta-label">Simulation</div>
       <h3>Pitch the Viz</h3>
       <p>You're live in the Volta Records committee room. Four chart decisions. One artist to sign. Make the data land.</p>
+      <div class="sim-cta-launch">Open Simulation &rarr;</div>
+    </a>
+
+    <a class="sim-cta sim-cta-board" href="../../sims/board-meeting/index.html">
+      <div class="sim-cta-label">Sequel &middot; Live Coding</div>
+      <h3>The Board Meeting</h3>
+      <p>Six months later: Luz is a hit and the board wants charts. Write real matplotlib and watch your slides render live on the boardroom projector.</p>
       <div class="sim-cta-launch">Open Simulation &rarr;</div>
     </a>
 

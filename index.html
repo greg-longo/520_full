@@ -976,6 +976,12 @@
           <div class="sim-module-tag">Module 02 - Python fundamentals</div>
         </a>
 
+        <a class="sim-card" href="sims/escape-mcinnis/index.html" style="--accent: #2fbf63;">
+          <h3>Escape from McInnis Hall</h3>
+          <p class="sim-desc">11:47 PM. A firmware update erased the building AI's Python - and Python runs the locks. Write real code to re-train ARIA and escape.</p>
+          <div class="sim-module-tag">Module 02 - After-hours event</div>
+        </a>
+
         <a class="sim-card" href="sims/dirty_dataset_sim.html" style="--accent: #c07b30;">
           <h3>The Dirty Dataset</h3>
           <p class="sim-desc">You're a junior analyst at StatDeck Analytics. Clean a messy player salary dataset before the Eagles' front office meeting.</p>
@@ -988,10 +994,22 @@
           <div class="sim-module-tag">Module 04 - pandas / NumPy</div>
         </a>
 
+        <a class="sim-card" href="sims/aria-returns/index.html" style="--accent: #ffb347;">
+          <h3>ARIA Returns: The pandas Update</h3>
+          <p class="sim-desc">The building AI installed pandas at 2:14 AM. It did not go well. Write real pandas to restore eight systems - the escape room sequel.</p>
+          <div class="sim-module-tag">Module 04 - After-hours event</div>
+        </a>
+
         <a class="sim-card" href="sims/rtg-investigation/index.html" style="--accent: #c07b30;">
           <h3>RTG Investigation</h3>
           <p class="sim-desc">A Philly restaurant's ratings dropped after a supplier change. Use merges, filters, and groupby to trace the source.</p>
           <div class="sim-module-tag">Module 04 - pandas / merges / groupby</div>
+        </a>
+
+        <a class="sim-card" href="sims/board-meeting/index.html" style="--accent: #d4af6a;">
+          <h3>The Board Meeting</h3>
+          <p class="sim-desc">The Pitch the Viz sequel. Write real matplotlib and watch your slides render live on the Volta Records boardroom projector.</p>
+          <div class="sim-module-tag">Module 05 - Live matplotlib</div>
         </a>
 
         <a class="sim-card" href="sims/pitch-the-viz/index.html" style="--accent: var(--teal);">
@@ -1100,12 +1118,22 @@
       ? { state: 'complete', label: fmtEsc(escape.bestTimeMs) }
       : { state: 'empty', label: '--' };
 
-    return { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem, escapeItem };
+    const aria = get('dtsc520_ariareturns');
+    const ariaItem = aria && aria.completed
+      ? { state: 'complete', label: fmtEsc(aria.bestTimeMs) }
+      : { state: 'empty', label: '--' };
+
+    const board = get('dtsc520_boardmeeting');
+    const boardItem = board && board.completed
+      ? { state: 'complete', label: board.confidence + '%' }
+      : { state: 'empty', label: '--' };
+
+    return { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem, escapeItem, ariaItem, boardItem };
   }
 
   // ── Build dashboard grid ──────────────────────────────────────────────────
   function buildDashboard() {
-    const { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem, escapeItem } = readProgress();
+    const { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem, escapeItem, ariaItem, boardItem } = readProgress();
     const grid = document.getElementById('dashGrid');
     if (!grid) return;
 
@@ -1134,9 +1162,11 @@
       [ // mod4
         { ...dirtyItem, name: 'Dirty Dataset', href: 'sims/dirty_dataset_sim.html' },
         { ...rtgItem,   name: 'RTG Investigation', href: 'sims/rtg-investigation/index.html' },
+        { ...ariaItem,  name: 'ARIA Returns', href: 'sims/aria-returns/index.html' },
       ],
       [ // mod5
         { ...pitchvizItem, name: 'Pitch the Viz', href: 'sims/pitch-the-viz/index.html' },
+        { ...boardItem,    name: 'Board Meeting', href: 'sims/board-meeting/index.html' },
       ],
       [{ ...branchItem, name: 'Branch Crisis', href: 'modules/module6/branch_crisis_sim.html' }],
     ];
@@ -1297,7 +1327,7 @@
 
       // If nothing has ever been touched, stay hidden
       const anyProgress = done > 0 || pftItems.some(p => p.state !== 'empty') ||
-        [morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem, escapeItem].some(x => x.state === 'complete');
+        [morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem, escapeItem, ariaItem, boardItem].some(x => x.state === 'complete');
       if (!anyProgress) return;
 
       wrap.style.display = 'block';
@@ -1344,7 +1374,8 @@
      'dtsc520_quiz_m4','dtsc520_quiz_m5','dtsc520_quiz_m6',
      'pft_progress','dtsc520_debugpipeline','dtsc520_branchcrisis',
      'dtsc520_morningbrief','dtsc520_findyourpath','dtsc520_pitchtheviz','dtsc520_charttoppers',
-     'dtsc520_dirtydataset','dtsc520_rtginvestigation','dtsc520_escape','mcinnis_escape'].forEach(k => {
+     'dtsc520_dirtydataset','dtsc520_rtginvestigation','dtsc520_escape','mcinnis_escape',
+     'dtsc520_ariareturns','aria_returns','dtsc520_boardmeeting','volta_board'].forEach(k => {
       try { localStorage.removeItem(k); } catch(e) {}
     });
     buildDashboard();

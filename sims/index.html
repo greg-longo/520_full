@@ -541,6 +541,24 @@
         </div>
       </a>
 
+      <a class="sim-card m4" href="aria-returns/index.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m4">After-Hours Event</div>
+              <div class="sim-title">ARIA Returns: The pandas Update</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="aria" title="Loading..."></div>
+          </div>
+          <div class="sim-desc">One semester after the escape, ARIA installed the pandas update at 2:14 AM. It did not go well. Write real pandas - Series, filtering, groupby, merge - to restore eight building systems.</div>
+          <div class="sim-type">&#128274; Escape room sequel (live pandas)</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M4 &bull; pandas</span>
+          <span class="sim-launch m4">Launch &rarr;</span>
+        </div>
+      </a>
+
     </div>
   </div>
 
@@ -549,7 +567,7 @@
     <div class="mod-group-header">
       <span class="mod-badge m5">Module 5</span>
       <h2 class="mod-group-title">Matplotlib &amp; Seaborn</h2>
-      <span class="mod-group-count">1 sim</span>
+      <span class="mod-group-count">2 sims</span>
     </div>
     <div class="sim-grid">
 
@@ -564,6 +582,24 @@
           </div>
           <div class="sim-desc">You're live in the Volta Records committee room. Four chart decisions. One artist to sign. Pick the right visualization for each data question before the vote closes.</div>
           <div class="sim-type">&#128202; Chart challenge</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M5 &bull; Visualization</span>
+          <span class="sim-launch m5">Launch &rarr;</span>
+        </div>
+      </a>
+
+      <a class="sim-card m5" href="board-meeting/index.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m5">Sequel &middot; Live Coding</div>
+              <div class="sim-title">The Board Meeting</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="board" title="Loading..."></div>
+          </div>
+          <div class="sim-desc">Six months after the committee room, Luz is a hit and the board wants charts. Write real matplotlib and watch your slides render live on the boardroom projector - including the axis Hartley wants you to truncate.</div>
+          <div class="sim-type">&#128200; Live coding (matplotlib)</div>
         </div>
         <div class="sim-footer">
           <span class="sim-tag">M5 &bull; Visualization</span>
@@ -645,6 +681,10 @@
   const rtg    = get('dtsc520_rtginvestigation');
   const escape = get('dtsc520_escape');
   const escapeRun = get('mcinnis_escape');
+  const aria   = get('dtsc520_ariareturns');
+  const ariaRun = get('aria_returns');
+  const board  = get('dtsc520_boardmeeting');
+  const boardRun = get('volta_board');
 
   // pft overall: complete if all 3 training modules complete, partial if any started
   function pftState() {
@@ -675,6 +715,8 @@
     'terminal':       'empty',    // no tracking
     'branch':         branch && branch.completed ? 'complete' : 'empty',
     'escape':         escape && escape.completed ? 'complete' : (escapeRun && escapeRun.completed && escapeRun.completed.length ? 'partial' : 'empty'),
+    'aria':           aria && aria.completed ? 'complete' : (ariaRun && ariaRun.completed && ariaRun.completed.length ? 'partial' : 'empty'),
+    'board':          board && board.completed ? 'complete' : (boardRun && boardRun.completed && boardRun.completed.length ? 'partial' : 'empty'),
     'rtg':            rtg && rtg.done && rtg.done.every(Boolean) ? 'complete' : (rtg && rtg.done && rtg.done.some(Boolean) ? 'partial' : 'empty'),
   };
 

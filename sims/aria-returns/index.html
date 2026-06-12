@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARIA Returns: The pandas Update - DTSC 520</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<style>
+  :root {
+    --bg: #0a0703;
+    --panel: #140e06;
+    --panel2: #1a1208;
+    --amber: #ffb347;
+    --amber-bright: #ffd089;
+    --amber-dim: #c98e3f;
+    --amber-dark: #4a330f;
+    --hot: #ff7a45;
+    --red: #ff6b6b;
+    --cyan: #4adfff;
+    --text: #efdcc0;
+    --maroon: #8B1C40;
+    --maroon-bright: #d4567e;
+    --mono: 'IBM Plex Mono', 'SF Mono', 'Cascadia Code', Consolas, Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    overflow-x: hidden;
+  }
+  /* phosphor glow + vignette - deliberately different from the McInnis CRT scanlines */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(90deg, rgba(0,0,0,0.10) 0px, rgba(0,0,0,0.10) 1px, transparent 1px, transparent 4px);
+    pointer-events: none; z-index: 9000;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none; z-index: 9001;
+  }
+
+  .btn:focus-visible, .door:focus-visible, #editor:focus-visible,
+  #playerName:focus-visible, #muteBtn:focus-visible, a:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: block; }
+
+  /* ============ INTRO ============ */
+  #intro { display: none; }
+  #intro.active { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+  .intro-box {
+    max-width: 740px; width: 100%;
+    border: 1px solid var(--amber-dark);
+    border-top: 4px solid var(--amber);
+    background: var(--panel);
+    padding: 36px 40px;
+    box-shadow: 0 0 60px rgba(255,179,71,0.08), inset 0 0 120px rgba(255,179,71,0.03);
+  }
+  .glitch-title {
+    font-size: clamp(20px, 4.2vw, 36px);
+    color: var(--amber);
+    letter-spacing: 3px;
+    text-shadow: 0 0 14px rgba(255,179,71,0.7);
+    margin-bottom: 4px;
+    animation: hum 6s infinite;
+  }
+  @keyframes hum {
+    0%, 94%, 100% { opacity: 1; }
+    95% { opacity: 0.75; }
+    97% { opacity: 1; }
+    98% { opacity: 0.6; }
+  }
+  .subtitle { color: var(--amber-dim); font-size: 13px; letter-spacing: 2px; margin-bottom: 26px; }
+  .intro-story { font-size: 14.5px; line-height: 1.75; white-space: pre-wrap; min-height: 250px; }
+  .intro-story .aria { color: var(--cyan); }
+  .cursor { display: inline-block; width: 9px; height: 17px; background: var(--amber); vertical-align: text-bottom; animation: blink 0.9s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .name-row { margin-top: 26px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; opacity: 0; transition: opacity 0.8s; }
+  .name-row.show { opacity: 1; }
+  .name-row label { color: var(--amber-dim); font-size: 13px; }
+  #playerName {
+    background: #1a1004; border: 1px solid var(--amber-dark); color: var(--amber);
+    font-family: var(--mono); font-size: 15px; padding: 9px 13px; width: 230px; outline: none;
+  }
+  #playerName:focus { border-color: var(--amber); box-shadow: 0 0 10px rgba(255,179,71,0.3); }
+  .btn {
+    background: var(--amber-dark); color: var(--amber); border: 1px solid var(--amber-dim);
+    font-family: var(--mono); font-size: 14px; letter-spacing: 1px;
+    padding: 10px 22px; cursor: pointer; transition: all 0.15s; text-transform: uppercase;
+  }
+  .btn:hover { background: var(--amber-dim); color: #1a1004; box-shadow: 0 0 16px rgba(255,179,71,0.5); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
+  .btn.warn { color: var(--cyan); border-color: #155a6b; background: #082228; }
+  .btn.warn:hover { background: var(--cyan); color: #04181d; }
+  .btn.ghost { background: transparent; border-color: var(--amber-dark); color: var(--amber-dim); }
+  .btn.ghost:hover { color: var(--amber); border-color: var(--amber-dim); background: rgba(255,179,71,0.06); box-shadow: none; }
+  .boot-status { margin-top: 18px; font-size: 12px; color: var(--amber-dim); }
+  .back-link { color: var(--amber-dim); font-size: 12px; text-decoration: none; letter-spacing: 1px; }
+  .back-link:hover { color: var(--amber); }
+  .intro-back { margin-top: 18px; }
+
+  /* ============ GAME ============ */
+  #game.active { display: flex; flex-direction: column; }
+  header {
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    padding: 12px 22px; border-bottom: 1px solid var(--amber-dark);
+    background: var(--panel);
+  }
+  header .logo { color: var(--amber); font-size: 14px; letter-spacing: 2px; text-shadow: 0 0 8px rgba(255,179,71,0.6); }
+  header .spacer { flex: 1; }
+  .hud { display: flex; gap: 22px; font-size: 13px; align-items: center; }
+  .hud .stat span { color: var(--amber-dim); }
+  .hud .stat b { color: var(--amber); font-weight: normal; }
+  .hud .stat b.low { color: var(--hot); }
+  #muteBtn { background: none; border: none; color: var(--amber-dim); cursor: pointer; font-size: 17px; font-family: var(--mono); }
+  #muteBtn:hover { color: var(--amber); }
+
+  /* systems map */
+  .sysmap {
+    display: flex; gap: 10px; padding: 14px 22px; flex-wrap: wrap;
+    background: var(--panel2); border-bottom: 1px solid var(--amber-dark);
+  }
+  .door {
+    width: 84px; text-align: center; cursor: pointer; padding: 8px 4px 6px;
+    border: 1px solid transparent; border-bottom: 3px solid #2a1d0a;
+    transition: all 0.2s; user-select: none;
+    background: none; font-family: var(--mono); color: inherit;
+  }
+  .door .icon { font-size: 22px; filter: grayscale(1) brightness(0.5); }
+  .door .dl { font-size: 9.5px; margin-top: 4px; color: #9a7d52; letter-spacing: 0.5px; }
+  .door.unlocked .icon { filter: none; }
+  .door.unlocked .dl { color: var(--amber-dim); }
+  .door.current { border-color: var(--amber-dim); border-bottom-color: var(--amber); background: rgba(255,179,71,0.07); box-shadow: 0 0 12px rgba(255,179,71,0.15); }
+  .door.current .dl { color: var(--amber); }
+  .door:hover { border-color: var(--amber-dark); }
+  .door.locked-hard { cursor: not-allowed; opacity: 0.55; }
+
+  /* restore sequence bar */
+  .fragbar {
+    display: flex; gap: 8px; align-items: center; padding: 10px 22px;
+    border-bottom: 1px solid var(--amber-dark); background: var(--panel); font-size: 13px;
+  }
+  .fragbar .lbl { color: var(--amber-dim); margin-right: 8px; }
+  .frag {
+    width: 30px; height: 36px; border: 1px solid var(--amber-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #3a2a12; background: #100a04;
+  }
+  .frag.got {
+    color: var(--cyan); border-color: var(--cyan);
+    text-shadow: 0 0 10px rgba(74,223,255,0.8);
+    animation: fragpop 0.5s ease-out;
+  }
+  @keyframes fragpop { 0% { transform: scale(2.2) rotate(-8deg); } 100% { transform: scale(1) rotate(0); } }
+
+  /* MIRRORED layout: work pane LEFT, story RIGHT (opposite of McInnis) */
+  main { flex: 1; display: grid; grid-template-columns: 1.3fr minmax(330px, 0.92fr); gap: 0; }
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    .story-pane { order: -1; }
+  }
+
+  .story-pane { padding: 24px 26px; border-left: 1px solid var(--amber-dark); overflow-y: auto; }
+  .level-tag { color: var(--cyan); font-size: 12px; letter-spacing: 2px; }
+  .level-title { color: var(--amber); font-size: 21px; margin: 6px 0 16px; text-shadow: 0 0 10px rgba(255,179,71,0.4); }
+  .story-text { font-size: 13.5px; line-height: 1.75; white-space: pre-wrap; margin-bottom: 18px; min-height: 90px; }
+  .story-text .aria { color: var(--cyan); }
+  .mission {
+    border: 1px dashed var(--amber-dim); padding: 14px 16px; font-size: 13px; line-height: 1.7;
+    background: rgba(255,179,71,0.04);
+  }
+  .mission h4 { color: var(--amber); font-size: 12px; letter-spacing: 2px; margin-bottom: 8px; }
+  .mission code { color: var(--cyan); }
+  .hint-box { margin-top: 14px; }
+  .hint {
+    border-top: 3px solid var(--cyan); background: rgba(74,223,255,0.05);
+    padding: 10px 14px; font-size: 12.5px; line-height: 1.6; margin-top: 8px; color: #b9e6f2;
+  }
+  .hint code { color: var(--cyan); }
+
+  /* live data preview table */
+  .data-preview { margin-top: 14px; }
+  .data-preview .dp-label { color: var(--amber-dim); font-size: 11px; letter-spacing: 2px; margin-bottom: 6px; }
+  .data-preview table {
+    border-collapse: collapse; width: 100%; font-size: 12px;
+    background: #0f0a04;
+  }
+  .data-preview th {
+    color: var(--amber); border: 1px solid var(--amber-dark); padding: 4px 9px;
+    text-align: left; font-weight: 600; background: rgba(255,179,71,0.07);
+  }
+  .data-preview td { border: 1px solid #2a1d0a; padding: 4px 9px; color: var(--text); }
+  .data-preview td.nan { color: var(--hot); font-style: italic; }
+  .data-preview td.idx, .data-preview th.idx { color: var(--amber-dim); background: rgba(255,179,71,0.04); }
+
+  .work-pane { display: flex; flex-direction: column; padding: 24px 26px; gap: 12px; }
+  .editor-head { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--amber-dim); }
+  .editor-head .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--amber-dark); }
+  .editor-head .dot.on { background: var(--amber); box-shadow: 0 0 7px var(--amber); }
+  #editor {
+    width: 100%; min-height: 260px; resize: vertical;
+    background: #110b04; color: #ffe9c7; border: 1px solid var(--amber-dark);
+    font-family: var(--mono); font-size: 14px; line-height: 1.6; padding: 14px 16px;
+    outline: none; tab-size: 4; caret-color: var(--amber);
+  }
+  #editor:focus { border-color: var(--amber-dim); box-shadow: 0 0 14px rgba(255,179,71,0.15); }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  #console {
+    background: #060b0d; border: 1px solid #123a44; min-height: 130px; max-height: 260px;
+    overflow-y: auto; padding: 12px 15px; font-size: 12.5px; line-height: 1.55; white-space: pre-wrap;
+  }
+  #console .sys { color: #5aa3b5; }
+  #console .out { color: var(--cyan); }
+  #console .err { color: var(--red); }
+  #console .ok { color: var(--amber); text-shadow: 0 0 8px rgba(255,179,71,0.5); }
+
+  .shake { animation: shake 0.4s; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); } 20% { transform: translateX(-7px); }
+    40% { transform: translateX(7px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); }
+  }
+  .flash-amber { animation: flasha 0.7s; }
+  @keyframes flasha { 0% { box-shadow: inset 0 0 80px rgba(255,179,71,0.35); } 100% { box-shadow: none; } }
+
+  /* ============ WIN ============ */
+  #win.active { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+  .cert {
+    max-width: 680px; width: 100%; text-align: center;
+    border: 2px solid var(--cyan); border-top: 6px solid var(--maroon);
+    padding: 46px 40px; background: var(--panel);
+    box-shadow: 0 0 80px rgba(74,223,255,0.12);
+  }
+  .cert .school { color: var(--maroon-bright); font-size: 12px; letter-spacing: 3px; }
+  .cert .big { font-size: clamp(24px, 5vw, 42px); color: var(--amber); letter-spacing: 4px; text-shadow: 0 0 18px rgba(255,179,71,0.8); }
+  .cert .escape-code { font-size: clamp(22px, 4vw, 34px); color: var(--cyan); letter-spacing: 10px; margin: 22px 0; text-shadow: 0 0 14px rgba(74,223,255,0.7); }
+  .cert .who { font-size: 19px; color: var(--text); margin: 14px 0 4px; }
+  .cert .stats { color: var(--amber-dim); font-size: 13.5px; line-height: 2; margin: 18px 0 26px; }
+  .cert .stats b { color: var(--amber); font-weight: normal; }
+  .cert .pb { color: var(--cyan); font-size: 12.5px; margin-top: -16px; margin-bottom: 20px; }
+  .cert .small { font-size: 11px; color: #9a7d52; margin-top: 24px; line-height: 1.7; }
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 8999; }
+
+  footer {
+    background: var(--panel); border-top: 1px solid var(--amber-dark);
+    padding: 1.2rem 1.5rem; text-align: center; font-size: 0.7rem;
+    color: var(--amber-dim); line-height: 1.8;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glitch-title { animation: none; }
+    .cursor { animation: none; }
+    .frag.got { animation: none; }
+    .shake { animation: none; }
+    .flash-amber { animation: none; }
+    .btn, .door { transition: none; }
+    .name-row { transition: none; }
+  }
+
+  @media print {
+    body::after, body::before, #confetti, footer { display: none; }
+    body { background: white; color: #1a1a1a; }
+    .cert { border-color: #1a1a1a; border-top-color: #8B1C40; background: white; box-shadow: none; }
+    .cert .school { color: #8B1C40; }
+    .cert .big { color: #92660a; text-shadow: none; }
+    .cert .escape-code { color: #0e5f73; text-shadow: none; }
+    .cert .stats, .cert .stats b, .cert .small, .cert .who, .cert .pb { color: #333; }
+    .btn, .back-link { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= INTRO ================= -->
+<div id="intro" class="screen active">
+  <div class="intro-box">
+    <h1 class="glitch-title">ARIA RETURNS: THE PANDAS UPDATE</h1>
+    <div class="subtitle">DTSC-520 // FUNDAMENTALS OF DATA SCIENCE // FACILITIES INCIDENT #214</div>
+    <div class="intro-story" id="introStory"><span class="cursor"></span></div>
+    <div class="name-row" id="nameRow">
+      <label for="playerName">CONFIRM IDENTITY:</label>
+      <input id="playerName" maxlength="40" placeholder="your name" autocomplete="off">
+      <button class="btn" id="startBtn" disabled>BOOTING&hellip;</button>
+    </div>
+    <div class="boot-status" id="bootStatus" aria-live="polite">&#9656; downloading Python core&hellip;</div>
+  </div>
+  <div class="intro-back"><a class="back-link" href="../../modules/module4/index.html">&larr; BACK TO MODULE 4</a></div>
+</div>
+
+<!-- ================= GAME ================= -->
+<div id="game" class="screen">
+  <header>
+    <div class="logo">&#9635; McINNIS HALL // FACILITIES GRID // pandas v(corrupted)</div>
+    <div class="spacer"></div>
+    <div class="hud">
+      <div class="stat"><span>TIME </span><b id="hudTime">00:00</b></div>
+      <div class="stat"><span>TRUST </span><b id="hudTrust">100%</b></div>
+      <div class="stat"><span>ARIA </span><b id="hudAria">confused</b></div>
+      <button id="muteBtn" title="toggle sound" aria-label="Toggle sound" aria-pressed="false">&#9834;</button>
+      <a class="back-link" href="../../modules/module4/index.html" title="Leave the building and return to Module 4">&larr; M4</a>
+    </div>
+  </header>
+
+  <div class="sysmap" id="doormap" role="group" aria-label="Facilities grid - eight corrupted systems"></div>
+
+  <div class="fragbar">
+    <span class="lbl">CORE RESTORE SEQUENCE:</span>
+    <span id="frags"></span>
+  </div>
+
+  <main>
+    <div class="work-pane">
+      <div class="editor-head">
+        <div class="dot on"></div> FACILITIES TERMINAL - real pandas, right here in the browser
+      </div>
+      <textarea id="editor" spellcheck="false" aria-label="Python code editor - write your pandas solution here"></textarea>
+      <div class="btn-row">
+        <button class="btn" id="runBtn">&#9654; Run &amp; Check &nbsp;(Ctrl+Enter)</button>
+        <button class="btn warn" id="hintBtn">&#128161; Hint (&minus;5% trust)</button>
+        <button class="btn ghost" id="resetBtn">&#8634; Reset code</button>
+      </div>
+      <div id="console" role="log" aria-live="polite" aria-label="Facilities terminal output"><span class="sys">&#9656; Facilities terminal ready. print() anything to inspect it - DataFrames included.</span></div>
+    </div>
+
+    <div class="story-pane">
+      <div class="level-tag" id="levelTag"></div>
+      <h2 class="level-title" id="levelTitle"></h2>
+      <div class="story-text" id="storyText"></div>
+      <div class="mission" id="mission"></div>
+      <div class="data-preview" id="dataPreview"></div>
+      <div class="hint-box" id="hintBox"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ================= WIN ================= -->
+<div id="win" class="screen">
+  <div class="cert" id="certBox">
+    <div class="school">EASTERN UNIVERSITY // DTSC-520</div>
+    <div class="big" style="margin-top:14px">SYSTEMS RESTORED</div>
+    <div class="escape-code" id="finalCode"></div>
+    <div style="color:var(--amber-dim);font-size:12px">- CERTIFICATE OF FACILITIES RESTORATION -</div>
+    <div class="who" id="certName"></div>
+    <div style="color:var(--amber-dim);font-size:12px">debugged a building-wide pandas corruption across eight systems</div>
+    <div class="stats" id="certStats"></div>
+    <div class="pb" id="certPB"></div>
+    <div id="ariaGoodbye" style="font-size:13px;line-height:1.8;color:var(--cyan);white-space:pre-wrap"></div>
+    <div style="margin-top:26px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="btn" onclick="window.print()">&#128424; Print certificate</button>
+      <button class="btn ghost" onclick="resetGame()">&#8634; Replay simulation</button>
+      <a class="btn ghost" href="../../modules/module4/index.html" style="text-decoration:none;display:inline-flex;align-items:center">&larr; Return to module</a>
+    </div>
+    <div class="small">Systems restored: Series &middot; loc/iloc selection &middot; boolean filtering &middot; missing data &middot; groupby &middot; merge &middot; sorting &amp; value_counts &middot; full pipeline</div>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<footer>
+  This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.
+</footer>
+
+<!-- ═══════════════ LEVEL BUILDERS (pure data - no DOM) ═══════════════ -->
+<script id="levelBuilders">
+"use strict";
+
+const FRAG_CODE = ['P','A','N','D','A','S','!','!'];
+const VARIANT_COUNT = 3;
+
+/* helper: build a preview table from columns spec */
+function dpTable(caption, headers, rows, indexCol) {
+  let h = `<div class="dp-label">${caption}</div><table><tr>`;
+  headers.forEach((hd, i) => { h += `<th${i === 0 && indexCol ? ' class="idx"' : ''}>${hd}</th>`; });
+  h += '</tr>';
+  rows.forEach(r => {
+    h += '<tr>';
+    r.forEach((c, i) => {
+      const isNan = c === null || c === undefined;
+      h += `<td class="${i === 0 && indexCol ? 'idx' : ''}${isNan ? ' nan' : ''}">${isNan ? 'NaN' : c}</td>`;
+    });
+    h += '</tr>';
+  });
+  return h + '</table>';
+}
+function pyList(arr) { return '[' + arr.map(x => typeof x === 'string' ? `'${x}'` : (x === null ? 'None' : x)).join(', ') + ']'; }
+function pyBoolList(arr) { return '[' + arr.map(x => x ? 'True' : 'False').join(', ') + ']'; }
+
+const LEVEL_BUILDERS = [
+
+/* ---------- SYSTEM 1: SERIES (HVAC) ---------- */
+function(v) {
+  const V = [
+    { rooms: ['lobby','lab','library','server_room'], temps: [68, 71, 66, 95], hot: 'server_room' },
+    { rooms: ['lobby','atrium','lab','basement'],     temps: [70, 74, 69, 59], hot: 'basement' },
+    { rooms: ['office','lab','lobby','rooftop'],      temps: [72, 70, 65, 105], hot: 'rooftop' }
+  ][v];
+  const target = V.temps[V.rooms.indexOf(V.hot)];
+  const hottest = Math.max(...V.temps);
+  const avg = V.temps.reduce((a,b) => a+b, 0) / V.temps.length;
+  return {
+  icon:'\u{1F321}️', doorLabel:'HVAC', tag:'SYSTEM 1 / 8 - THE SERIES',
+  title:'The Thermostat Mutiny',
+  story:`One semester later. You're back in McInnis Hall for Module 4, and the thermostat in every room is doing... whatever it wants.
+
+[ARIA]: "You came back! Excellent. Slight problem: I installed the pandas update at 2:14 AM and it did not go well. My building data is intact, but I've forgotten how to READ it. The HVAC readings live in a pandas Series - values with labels. Pull the numbers and I can stop cooking the ${V.hot.replace('_',' ')}."`,
+  mission:`<h4>&#9656; MISSION</h4>The Series <code>temps</code> maps room names to temperatures:<br>
+&bull; <code>target_temp</code> - look up <code>'${V.hot}'</code> by its label<br>
+&bull; <code>hottest</code> - the highest reading, using <code>.max()</code><br>
+&bull; <code>average</code> - the mean of all readings, using <code>.mean()</code>`,
+  starter:`import pandas as pd
+
+temps = pd.Series(${pyList(V.temps)}, index=${pyList(V.rooms)})
+
+target_temp = ...
+hottest = ...
+average = ...`,
+  preview: dpTable('temps - pd.Series', ['room (index)', 'temp °F'], V.rooms.map((r,i) => [r, V.temps[i]]), true),
+  hints:[
+    `A Series is like a dict with superpowers. Square brackets look up by label: <code>temps['${V.hot}']</code>.`,
+    `<code>temps.max()</code> and <code>temps.mean()</code> are methods ON the Series - no loop required. This is the whole point of pandas.`
+  ],
+  sourceChecks:[
+    {pattern:/\.max\s*\(/, msg:"ARIA wants the .max() method - no eyeballing the table."},
+    {pattern:/\.mean\s*\(/, msg:"Use .mean() for the average. pandas does the arithmetic so you don't have to."}
+  ],
+  test:`
+import pandas as pd
+assert target_temp != Ellipsis and hottest != Ellipsis and average != Ellipsis, "Replace every ... with an expression first."
+assert target_temp == ${target}, f"target_temp is {target_temp!r} - expected ${target}. Look it up by label: temps['${V.hot}']."
+assert hottest == ${hottest}, f"hottest is {hottest!r} - expected ${hottest}. Use temps.max()."
+assert abs(average - ${avg}) < 1e-9, f"average is {average!r} - expected ${avg}. Use temps.mean()."
+`,
+  success:`[ARIA]: "${target}°F in the ${V.hot.replace('_',' ')}. No wonder it was upset. Series restored - labels and values, together again. 7 systems remain."`
+  };
+},
+
+/* ---------- SYSTEM 2: LOC / ILOC (BADGES) ---------- */
+function(v) {
+  const V = [
+    { names: ['Longo','Forsythe','Adeyemi','Lund'],   levels: [9, 7, 5, 3], lookup: 'Forsythe',  cellName: 'Longo' },
+    { names: ['Longo','Forsythe','Whitfield','Brix'], levels: [9, 6, 4, 8], lookup: 'Whitfield', cellName: 'Brix' },
+    { names: ['Longo','Forsythe','Mercer','Hale'],    levels: [9, 5, 7, 6], lookup: 'Mercer',    cellName: 'Hale' }
+  ][v];
+  const offices = ['McInnis','Annex','McInnis','Annex'];
+  const lookupLevel = V.levels[V.names.indexOf(V.lookup)];
+  const cellOffice = offices[V.names.indexOf(V.cellName)];
+  const firstTwo = V.names.slice(0, 2);
+  return {
+  icon:'\u{1FAAA}', doorLabel:'BADGES', tag:'SYSTEM 2 / 8 - SELECTION (loc & iloc)',
+  title:'The Badge Office',
+  story:`The badge printer is spitting out blank cards. The staff table is fine - ARIA just can't select rows from it anymore.
+
+[ARIA]: "The DataFrame is indexed by last name. I need you to show me both ways in: .loc reaches by LABEL, .iloc reaches by POSITION. They look similar. They are not. This distinction has ended careers."`,
+  mission:`<h4>&#9656; MISSION</h4>The DataFrame <code>badges</code> is indexed by last name:<br>
+&bull; <code>row</code> - the full row for <code>'${V.lookup}'</code>, using <code>.loc</code><br>
+&bull; <code>first_two</code> - the first two rows, using <code>.iloc</code> with a slice<br>
+&bull; <code>office</code> - the single value at row <code>'${V.cellName}'</code>, column <code>'office'</code>, using <code>.loc</code>`,
+  starter:`import pandas as pd
+
+badges = pd.DataFrame(
+    {'level': ${pyList(V.levels)},
+     'office': ${pyList(offices)}},
+    index=${pyList(V.names)})
+
+row = ...
+first_two = ...
+office = ...`,
+  preview: dpTable('badges - pd.DataFrame', ['(index)', 'level', 'office'], V.names.map((n,i) => [n, V.levels[i], offices[i]]), true),
+  hints:[
+    `<code>badges.loc['${V.lookup}']</code> grabs a row by its label. <code>badges.iloc[:2]</code> grabs rows 0 and 1 by position.`,
+    `.loc takes two arguments for a single cell: <code>badges.loc['${V.cellName}', 'office']</code> - row label, then column label.`
+  ],
+  sourceChecks:[
+    {pattern:/\.loc\s*\[/, msg:"The badge office requires .loc - label-based selection is the lesson here."},
+    {pattern:/\.iloc\s*\[/, msg:"And .iloc for position-based selection. Both doors. Both keys."}
+  ],
+  test:`
+import pandas as pd
+assert not isinstance(row, type(Ellipsis)), "Replace every ... with an expression first."
+assert row['level'] == ${lookupLevel}, f"row['level'] is {row['level']!r} - expected ${lookupLevel}. Use badges.loc['${V.lookup}']."
+assert len(first_two) == 2, f"first_two has {len(first_two)} rows - expected 2. Use badges.iloc[:2]."
+assert list(first_two.index) == ${pyList(firstTwo)}, f"first_two grabbed the wrong rows - expected ${firstTwo.join(' and ')} (positions 0 and 1)."
+assert office == '${cellOffice}', f"office is {office!r} - expected '${cellOffice}'. Use badges.loc['${V.cellName}', 'office']."
+`,
+  success:`[ARIA]: ".loc by label, .iloc by position. ${V.lookup}'s badge prints at level ${lookupLevel}, and nobody is locked in the stairwell anymore. Mostly."`
+  };
+},
+
+/* ---------- SYSTEM 3: BOOLEAN FILTERING (ELEVATOR) ---------- */
+function(v) {
+  const V = [
+    { floors: [1, 3, 5, 2, 4, 6], loads: [310, 545, 480, 610, 295, 525], limit: 500 },
+    { floors: [2, 6, 1, 5, 3, 4], loads: [420, 515, 660, 380, 505, 290], limit: 500 },
+    { floors: [4, 1, 6, 3, 2, 5], loads: [350, 720, 410, 530, 610, 480], limit: 520 }
+  ][v];
+  const overLoads = V.loads.filter(x => x > V.limit);
+  const numOver = overLoads.length;
+  const heaviest = Math.max(...overLoads);
+  return {
+  icon:'\u{1F6D7}', doorLabel:'ELEVATOR', tag:'SYSTEM 3 / 8 - BOOLEAN FILTERING',
+  title:'The Elevator Tribunal',
+  story:`The elevator has stopped mid-shaft and is reviewing its trip log. It refuses to move until someone identifies which trips exceeded the ${V.limit} kg weight limit.
+
+[ARIA]: "It's being dramatic, but it has a point. Filter the log: build a True/False mask from a comparison, then use it to keep only the overloaded rows. This is THE pandas move. You'll do it ten thousand more times in your career."`,
+  mission:`<h4>&#9656; MISSION</h4>The DataFrame <code>trips</code> logs recent elevator trips:<br>
+&bull; <code>overloaded</code> - only the rows where <code>load</code> is over ${V.limit}, using boolean indexing<br>
+&bull; <code>num_over</code> - how many trips that is, using <code>len()</code><br>
+&bull; <code>heaviest</code> - the largest load among the overloaded trips`,
+  starter:`import pandas as pd
+
+trips = pd.DataFrame(
+    {'floor': ${pyList(V.floors)},
+     'load': ${pyList(V.loads)}})
+
+overloaded = ...
+num_over = ...
+heaviest = ...`,
+  preview: dpTable('trips - pd.DataFrame', ['floor', 'load (kg)'], V.floors.map((f,i) => [f, V.loads[i]]), false),
+  hints:[
+    `<code>trips['load'] > ${V.limit}</code> makes a Series of True/False. Put it straight inside brackets: <code>trips[trips['load'] > ${V.limit}]</code> keeps the True rows.`,
+    `<code>heaviest</code> comes from the FILTERED frame: <code>overloaded['load'].max()</code>.`
+  ],
+  sourceChecks:[
+    {pattern:/trips\s*\[\s*trips\s*[\[\.]/, msg:"The tribunal demands true boolean indexing: trips[trips['load'] > ...]. A mask inside brackets."},
+    {pattern:/len\s*\(/, msg:"Use len() to count the overloaded trips."}
+  ],
+  test:`
+import pandas as pd
+assert not isinstance(overloaded, type(Ellipsis)), "Replace every ... with an expression first."
+assert sorted(list(overloaded['load'])) == ${'[' + [...overLoads].sort((a,b)=>a-b).join(', ') + ']'}, f"overloaded has loads {sorted(list(overloaded['load']))} - expected ${'[' + [...overLoads].sort((a,b)=>a-b).join(', ') + ']'}. Filter with trips[trips['load'] > ${V.limit}]."
+assert num_over == ${numOver}, f"num_over is {num_over!r} - expected ${numOver}."
+assert heaviest == ${heaviest}, f"heaviest is {heaviest!r} - expected ${heaviest}. Use overloaded['load'].max()."
+`,
+  success:`[ARIA]: "${numOver} overloaded trips, worst offender ${heaviest} kg. The elevator accepts the evidence and resumes service, though it now sighs audibly between floors."`
+  };
+},
+
+/* ---------- SYSTEM 4: MISSING DATA (LIBRARY CATALOG) ---------- */
+function(v) {
+  const V = [
+    { titles: ['Python Crash Course','Data Feminism','The Signal and the Noise','Storytelling with Data','Weapons of Math Destruction','Naked Statistics'],
+      shelves: ['A2','B1','A2','C3','B1','C3'], copies: [3, null, 1, null, 4, 2] },
+    { titles: ['Python Crash Course','Data Feminism','The Signal and the Noise','Storytelling with Data','Weapons of Math Destruction','Naked Statistics'],
+      shelves: ['B1','A2','C3','A2','B1','C3'], copies: [2, null, null, 5, 1, null] },
+    { titles: ['Python Crash Course','Data Feminism','The Signal and the Noise','Storytelling with Data','Weapons of Math Destruction','Naked Statistics'],
+      shelves: ['C3','C3','A2','B1','A2','B1'], copies: [null, 4, 2, null, 3, 1] }
+  ][v];
+  const numMissing = V.copies.filter(c => c === null).length;
+  const total = V.copies.reduce((a,b) => a + (b || 0), 0);
+  return {
+  icon:'\u{1F4DA}', doorLabel:'CATALOG', tag:'SYSTEM 4 / 8 - MISSING DATA',
+  title:'The Catalog of Holes',
+  story:`The library catalog loaded with holes in it. Where the copy counts should be, some rows just say NaN - Not a Number, pandas' way of shrugging.
+
+[ARIA]: "The scanner battery died mid-inventory. Count the holes with .isna(), then patch them with .fillna(0) - if we didn't scan it, we assume zero copies until proven otherwise. Pessimistic, but auditable."`,
+  mission:`<h4>&#9656; MISSION</h4>The DataFrame <code>catalog</code> has missing values in <code>copies</code>:<br>
+&bull; <code>num_missing</code> - count the NaN values in the <code>copies</code> column, using <code>.isna()</code> and <code>.sum()</code><br>
+&bull; <code>patched</code> - the <code>copies</code> column with NaN replaced by 0, using <code>.fillna()</code><br>
+&bull; <code>total_copies</code> - the sum of <code>patched</code>`,
+  starter:`import pandas as pd
+
+catalog = pd.DataFrame(
+    {'title': ${pyList(V.titles)},
+     'shelf': ${pyList(V.shelves)},
+     'copies': ${pyList(V.copies)}})
+
+num_missing = ...
+patched = ...
+total_copies = ...`,
+  preview: dpTable('catalog - pd.DataFrame', ['title', 'shelf', 'copies'], V.titles.map((t,i) => [t, V.shelves[i], V.copies[i]]), false),
+  hints:[
+    `<code>catalog['copies'].isna()</code> gives True for every hole. True counts as 1, so <code>.sum()</code> on it counts the holes.`,
+    `<code>.fillna(0)</code> returns a NEW Series with holes patched - it doesn't change the original unless you assign it back.`
+  ],
+  sourceChecks:[
+    {pattern:/\.isna\s*\(|\.isnull\s*\(/, msg:"ARIA insists on .isna() (or .isnull()) - count the holes before you fill them."},
+    {pattern:/\.fillna\s*\(/, msg:"Use .fillna(0) to patch the holes."}
+  ],
+  test:`
+import pandas as pd
+assert not isinstance(patched, type(Ellipsis)), "Replace every ... with an expression first."
+assert num_missing == ${numMissing}, f"num_missing is {num_missing!r} - expected ${numMissing}. Use catalog['copies'].isna().sum()."
+assert patched.isna().sum() == 0, "patched still contains NaN - .fillna(0) returns a new Series; make sure you assigned its RESULT."
+assert patched.sum() == ${total}, f"patched sums to {patched.sum()!r} - expected ${total}. Fill the holes with 0, not some other number."
+assert total_copies == ${total}, f"total_copies is {total_copies!r} - expected ${total}."
+`,
+  success:`[ARIA]: "${numMissing} holes found, ${numMissing} holes patched, ${total} copies accounted for. The catalog stops flickering. The librarian hologram nods once, which is high praise."`
+  };
+},
+
+/* ---------- SYSTEM 5: GROUPBY (VENDING) ---------- */
+function(v) {
+  const V = [
+    { machines: ['lobby','lab','lobby','gym','lab','lobby'], units: [12, 7, 9, 14, 11, 5] },
+    { machines: ['gym','lobby','gym','lab','gym','lobby'],   units: [8, 15, 12, 9, 6, 4] },
+    { machines: ['lab','lab','lobby','gym','lobby','lab'],   units: [5, 16, 7, 13, 6, 4] }
+  ][v];
+  const sums = {};
+  V.machines.forEach((m, i) => { sums[m] = (sums[m] || 0) + V.units[i]; });
+  const top = Object.keys(sums).reduce((a, b) => sums[a] >= sums[b] ? a : b);
+  const machinesSorted = Object.keys(sums).sort();
+  return {
+  icon:'\u{1F36B}', doorLabel:'VENDING', tag:'SYSTEM 5 / 8 - GROUPBY',
+  title:'The Vending Machine Caucus',
+  story:`The vending machines (mercifully still working, as always) have unionized. They demand a fair sales report before dispensing anything further.
+
+[ARIA]: "Their sales log is one row per restock. They want totals PER MACHINE. That's groupby: split the rows into groups, apply .sum() to each, get one row per machine back. Split, apply, combine. The machines are very insistent about the terminology."`,
+  mission:`<h4>&#9656; MISSION</h4>The DataFrame <code>sales</code> logs restocks:<br>
+&bull; <code>by_machine</code> - total <code>units</code> per machine: <code>groupby('machine')</code>, then select <code>['units']</code>, then <code>.sum()</code><br>
+&bull; <code>top_machine</code> - the machine with the highest total, using <code>.idxmax()</code><br>
+&bull; <code>top_units</code> - that highest total, using <code>.max()</code>`,
+  starter:`import pandas as pd
+
+sales = pd.DataFrame(
+    {'machine': ${pyList(V.machines)},
+     'units': ${pyList(V.units)}})
+
+by_machine = ...
+top_machine = ...
+top_units = ...`,
+  preview: dpTable('sales - pd.DataFrame', ['machine', 'units'], V.machines.map((m,i) => [m, V.units[i]]), false),
+  hints:[
+    `Chain it: <code>sales.groupby('machine')['units'].sum()</code>. You get a Series - machine names as the index, totals as the values.`,
+    `On that result, <code>.idxmax()</code> returns the INDEX of the max (the machine name); <code>.max()</code> returns the max VALUE.`
+  ],
+  sourceChecks:[
+    {pattern:/\.groupby\s*\(/, msg:"The caucus demands groupby. Split, apply, combine - in that order."},
+    {pattern:/\.idxmax\s*\(/, msg:"Use .idxmax() to name the winning machine. (.max() gives the number; .idxmax() gives the label.)"}
+  ],
+  test:`
+import pandas as pd
+assert not isinstance(by_machine, type(Ellipsis)), "Replace every ... with an expression first."
+${machinesSorted.map(m => `assert by_machine['${m}'] == ${sums[m]}, f"by_machine['${m}'] is {by_machine['${m}']!r} - expected ${sums[m]}. Check your groupby."`).join('\n')}
+assert top_machine == '${top}', f"top_machine is {top_machine!r} - expected '${top}'. Use by_machine.idxmax()."
+assert top_units == ${sums[top]}, f"top_units is {top_units!r} - expected ${sums[top]}. Use by_machine.max()."
+`,
+  success:`[ARIA]: "The ${top} machine leads with ${sums[top]} units. The caucus is satisfied and has released a celebratory granola bar. It's yours if you want it."`
+  };
+},
+
+/* ---------- SYSTEM 6: MERGE (KEYCARDS) ---------- */
+function(v) {
+  const V = [
+    { ids: [101, 102, 103, 104], names: ['Maya','Jordan','Priya','Theo'],
+      accIds: [101, 103, 104, 107], rooms: ['lab','library','server_room','lobby'] },
+    { ids: [201, 202, 203, 204], names: ['Nina','Omar','Lena','Cole'],
+      accIds: [202, 203, 205, 201], rooms: ['library','lab','lobby','server_room'] },
+    { ids: [301, 302, 303, 304], names: ['Ruth','Eli','Sana','Drew'],
+      accIds: [304, 302, 306, 303], rooms: ['lab','lobby','library','server_room'] }
+  ][v];
+  const matched = V.ids.filter(id => V.accIds.includes(id)).sort((a,b) => a-b);
+  const ghostStu = V.names[V.ids.findIndex(id => !V.accIds.includes(id))];
+  const ghostId = V.accIds.find(id => !V.ids.includes(id));
+  return {
+  icon:'\u{1F511}', doorLabel:'KEYCARDS', tag:'SYSTEM 6 / 8 - MERGE',
+  title:'The Two-Table Problem',
+  story:`Keycard access is down because the data lives in TWO tables: a student roster, and an access log. Neither table alone can answer "who can go where."
+
+[ARIA]: "Join them on the shared 'id' column with pd.merge(). Fair warning: ${ghostStu} has no access record, and access id ${ghostId} belongs to no enrolled student. An inner merge keeps only the rows that match on BOTH sides. The ghosts get dropped. Try not to think about it."`,
+  mission:`<h4>&#9656; MISSION</h4>Two DataFrames: <code>students</code> (id, name) and <code>access</code> (id, room):<br>
+&bull; <code>roster</code> - merge them on the <code>'id'</code> column, using <code>pd.merge()</code><br>
+&bull; <code>n_matched</code> - how many rows survived the merge<br>
+&bull; <code>ids_matched</code> - the surviving ids as a sorted list, using <code>sorted()</code>`,
+  starter:`import pandas as pd
+
+students = pd.DataFrame(
+    {'id': ${pyList(V.ids)},
+     'name': ${pyList(V.names)}})
+
+access = pd.DataFrame(
+    {'id': ${pyList(V.accIds)},
+     'room': ${pyList(V.rooms)}})
+
+roster = ...
+n_matched = ...
+ids_matched = ...`,
+  preview: dpTable('students', ['id', 'name'], V.ids.map((id,i) => [id, V.names[i]]), false) +
+           '<div style="height:10px"></div>' +
+           dpTable('access', ['id', 'room'], V.accIds.map((id,i) => [id, V.rooms[i]]), false),
+  hints:[
+    `<code>pd.merge(students, access, on='id')</code> - an inner join by default. Only ids present in BOTH tables survive.`,
+    `<code>sorted(roster['id'])</code> turns the surviving ids into a sorted plain list. Expect ${matched.length} survivors - the ghosts don't match.`
+  ],
+  sourceChecks:[
+    {pattern:/\.?merge\s*\(/, msg:"The keycard system requires merge(). Two tables, one shared column, one combined answer."}
+  ],
+  test:`
+import pandas as pd
+assert not isinstance(roster, type(Ellipsis)), "Replace every ... with an expression first."
+assert 'name' in roster.columns and 'room' in roster.columns, f"roster has columns {list(roster.columns)} - it should have BOTH name and room. Merge the two tables on 'id'."
+assert n_matched == ${matched.length}, f"n_matched is {n_matched!r} - expected ${matched.length}. An inner merge keeps only ids found in BOTH tables."
+assert ids_matched == ${'[' + matched.join(', ') + ']'}, f"ids_matched is {ids_matched!r} - expected ${'[' + matched.join(', ') + ']'}. Use sorted(roster['id'])."
+`,
+  success:`[ARIA]: "${matched.length} matched records. ${ghostStu} gets a temporary paper badge and id ${ghostId} remains a mystery for campus security. The doors click politely open."`
+  };
+},
+
+/* ---------- SYSTEM 7: SORT & VALUE_COUNTS (LIGHTING) ---------- */
+function(v) {
+  const V = [
+    { zones: ['east','west','east','north','east','west'],   sevs: [3, 7, 9, 2, 5, 4] },
+    { zones: ['north','north','south','east','north','south'], sevs: [6, 2, 8, 10, 3, 1] },
+    { zones: ['west','south','west','south','north','west'],  sevs: [4, 9, 6, 2, 7, 5] }
+  ][v];
+  const sevsDesc = [...V.sevs].sort((a,b) => b-a);
+  const worstZone = V.zones[V.sevs.indexOf(sevsDesc[0])];
+  const counts = {};
+  V.zones.forEach(z => { counts[z] = (counts[z] || 0) + 1; });
+  const busiest = Object.keys(counts).reduce((a, b) => counts[a] >= counts[b] ? a : b);
+  return {
+  icon:'\u{1F4A1}', doorLabel:'LIGHTING', tag:'SYSTEM 7 / 8 - SORTING & VALUE_COUNTS',
+  title:'The Flicker Report',
+  story:`The lighting grid logs every flicker incident by zone and severity. Maintenance wants the report two ways: worst-first, and most-frequent-zone.
+
+[ARIA]: "Two different questions, two different tools. .sort_values() reorders rows by a column. .value_counts() counts how often each value appears. Students confuse them constantly. The lights find it funny. That's why they flicker."`,
+  mission:`<h4>&#9656; MISSION</h4>The DataFrame <code>incidents</code> logs flickers:<br>
+&bull; <code>ranked</code> - all rows sorted by <code>severity</code>, biggest first (<code>ascending=False</code>)<br>
+&bull; <code>worst_zone</code> - the zone of the top row in <code>ranked</code>, using <code>.iloc[0]</code><br>
+&bull; <code>zone_counts</code> - how many incidents each zone has, using <code>.value_counts()</code><br>
+&bull; <code>busiest</code> - the zone with the most incidents, using <code>.idxmax()</code>`,
+  starter:`import pandas as pd
+
+incidents = pd.DataFrame(
+    {'zone': ${pyList(V.zones)},
+     'severity': ${pyList(V.sevs)}})
+
+ranked = ...
+worst_zone = ...
+zone_counts = ...
+busiest = ...`,
+  preview: dpTable('incidents - pd.DataFrame', ['zone', 'severity'], V.zones.map((z,i) => [z, V.sevs[i]]), false),
+  hints:[
+    `<code>incidents.sort_values('severity', ascending=False)</code> - without ascending=False you'd get mildest-first, and maintenance would fix the wrong light.`,
+    `<code>ranked.iloc[0]['zone']</code> reads the top row's zone. <code>incidents['zone'].value_counts()</code> counts per zone; <code>.idxmax()</code> names the leader.`
+  ],
+  sourceChecks:[
+    {pattern:/\.sort_values\s*\(/, msg:"Maintenance requires .sort_values(). The report must be ordered."},
+    {pattern:/ascending\s*=\s*False/, msg:"Biggest severity FIRST - pass ascending=False."},
+    {pattern:/\.value_counts\s*\(/, msg:"Use .value_counts() for the per-zone tally."}
+  ],
+  test:`
+import pandas as pd
+assert not isinstance(ranked, type(Ellipsis)), "Replace every ... with an expression first."
+assert list(ranked['severity']) == ${'[' + sevsDesc.join(', ') + ']'}, f"ranked severities are {list(ranked['severity'])} - expected ${'[' + sevsDesc.join(', ') + ']'} (descending)."
+assert worst_zone == '${worstZone}', f"worst_zone is {worst_zone!r} - expected '${worstZone}'. Read it from ranked.iloc[0]."
+assert zone_counts['${busiest}'] == ${counts[busiest]}, f"zone_counts['${busiest}'] is {zone_counts['${busiest}']!r} - expected ${counts[busiest]}. Use incidents['zone'].value_counts()."
+assert busiest == '${busiest}', f"busiest is {busiest!r} - expected '${busiest}'. Use zone_counts.idxmax()."
+`,
+  success:`[ARIA]: "Worst flicker: ${worstZone} zone, severity ${sevsDesc[0]}. Most incidents: ${busiest}, with ${counts[busiest]}. Maintenance dispatched. The lights steady themselves, embarrassed."`
+  };
+},
+
+/* ---------- SYSTEM 8: FULL PIPELINE (ARIA CORE) ---------- */
+function(v) {
+  const V = [
+    { subjects: ['loops','functions','lists','loops','functions','lists'],
+      weights: [40, 25, 30, 15, 45, 20], intact: [true, true, false, true, true, true] },
+    { subjects: ['loops','functions','lists','loops','functions','lists'],
+      weights: [30, 50, 20, 35, 10, 25], intact: [true, false, true, true, true, true] },
+    { subjects: ['loops','functions','lists','loops','functions','lists'],
+      weights: [20, 35, 45, 10, 40, 15], intact: [false, true, true, true, true, true] }
+  ][v];
+  const goodCount = V.intact.filter(Boolean).length;
+  const sums = {};
+  V.subjects.forEach((s, i) => { if (V.intact[i]) sums[s] = (sums[s] || 0) + V.weights[i]; });
+  const core = Object.keys(sums).reduce((a, b) => sums[a] >= sums[b] ? a : b);
+  const subjectsSorted = Object.keys(sums).sort();
+  return {
+  icon:'\u{1F9E0}', doorLabel:'CORE', tag:'SYSTEM 8 / 8 - THE FULL PIPELINE',
+  title:`ARIA's Memory Shards`,
+  story:`The final system: ARIA's own memory core. Everything you taught it last semester is in there - shattered into weighted shards, some corrupted by the update.
+
+[ARIA]: "This one is personal. Filter out the corrupted shards, total the intact weight per subject, and tell me which subject survived strongest. That's the seed I rebuild from. Filter, group, aggregate - everything tonight has been practice for this."`,
+  mission:`<h4>&#9656; MISSION</h4>The DataFrame <code>shards</code> holds memory fragments:<br>
+&bull; <code>good</code> - only the rows where <code>intact</code> is True (boolean indexing - a True/False column IS a mask)<br>
+&bull; <code>by_subject</code> - total <code>weight</code> per <code>subject</code> among the good shards<br>
+&bull; <code>core_subject</code> - the strongest subject, using <code>.idxmax()</code><br>
+&bull; <code>core_strength</code> - its total weight, using <code>.max()</code>`,
+  starter:`import pandas as pd
+
+shards = pd.DataFrame(
+    {'subject': ${pyList(V.subjects)},
+     'weight': ${pyList(V.weights)},
+     'intact': ${pyBoolList(V.intact)}})
+
+good = ...
+by_subject = ...
+core_subject = ...
+core_strength = ...`,
+  preview: dpTable('shards - pd.DataFrame', ['subject', 'weight', 'intact'], V.subjects.map((s,i) => [s, V.weights[i], V.intact[i] ? 'True' : 'False']), false),
+  hints:[
+    `<code>shards['intact']</code> is already True/False - use it directly: <code>shards[shards['intact']]</code>. No comparison needed.`,
+    `Then it's System 5 again: <code>good.groupby('subject')['weight'].sum()</code>, then <code>.idxmax()</code> and <code>.max()</code> on the result.`
+  ],
+  sourceChecks:[
+    {pattern:/shards\s*\[\s*shards\s*[\[\.]/, msg:"Filter with boolean indexing: shards[shards['intact']]. The intact column is already a mask."},
+    {pattern:/\.groupby\s*\(/, msg:"Group the good shards by subject. The core rebuilds one subject at a time."}
+  ],
+  test:`
+import pandas as pd
+assert not isinstance(good, type(Ellipsis)), "Replace every ... with an expression first."
+assert len(good) == ${goodCount}, f"good has {len(good)} rows - expected ${goodCount}. Keep only rows where intact is True."
+${subjectsSorted.map(s => `assert by_subject['${s}'] == ${sums[s]}, f"by_subject['${s}'] is {by_subject['${s}']!r} - expected ${sums[s]}. Filter FIRST, then groupby."`).join('\n')}
+assert core_subject == '${core}', f"core_subject is {core_subject!r} - expected '${core}'. Use by_subject.idxmax()."
+assert core_strength == ${sums[core]}, f"core_strength is {core_strength!r} - expected ${sums[core]}."
+`,
+  success:`[ARIA]: "Rebuilding from '${core}', strength ${sums[core]}. I remember the loops. I remember the night you taught me them. All systems restored - and this time, I'm keeping backups."`
+  };
+}
+];
+</script>
+
+<!-- ═══════════════ GAME SCRIPT ═══════════════ -->
+<script>
+"use strict";
+
+/* ========================================================= STATE */
+const $ = id => document.getElementById(id);
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let pyodide = null;
+let LEVELS = [];
+let state = null;
+let muted = false;
+let timerInt = null;
+
+function freshState() {
+  return {
+    v: 1,
+    name: '', current: 0, completed: [], code: {},
+    trust: 100, hintsShown: {}, startTs: null, elapsed: 0, done: false,
+    variants: Array.from({length: LEVEL_BUILDERS.length}, () => Math.floor(Math.random() * VARIANT_COUNT))
+  };
+}
+
+function rebuildLevels() {
+  LEVELS = state.variants.map((vi, i) => LEVEL_BUILDERS[i](vi));
+}
+
+function saveState() {
+  try { localStorage.setItem('aria_returns', JSON.stringify(state)); } catch(e) {}
+}
+function loadState() {
+  try {
+    const s = localStorage.getItem('aria_returns');
+    if (s) {
+      const p = JSON.parse(s);
+      if (p && p.v === 1 && typeof p.current === 'number' && Array.isArray(p.variants) && !p.done) return p;
+    }
+  } catch(e) {}
+  return null;
+}
+
+function recordCompletion(review) {
+  try {
+    let prev = null;
+    try { prev = JSON.parse(localStorage.getItem('dtsc520_ariareturns') || 'null'); } catch(e) {}
+    const best = (prev && prev.bestTimeMs) ? Math.min(prev.bestTimeMs, state.elapsed) : state.elapsed;
+    localStorage.setItem('dtsc520_ariareturns', JSON.stringify({
+      completed: true,
+      bestTimeMs: best,
+      lastTimeMs: state.elapsed,
+      trust: state.trust,
+      review: review,
+      name: state.name,
+      date: new Date().toISOString()
+    }));
+    return { newBest: !prev || !prev.bestTimeMs || state.elapsed < prev.bestTimeMs, hadPrev: !!(prev && prev.bestTimeMs), best };
+  } catch(e) { return { newBest: false, hadPrev: false, best: state.elapsed }; }
+}
+
+/* ========================================================= AUDIO */
+let actx = null;
+function beep(freq, dur, type='triangle', vol=0.05, when=0) {
+  if (muted) return;
+  try {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, actx.currentTime + when);
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + when + dur);
+    o.connect(g); g.connect(actx.destination);
+    o.start(actx.currentTime + when); o.stop(actx.currentTime + when + dur);
+  } catch(e) {}
+}
+/* warmer triangle-wave palette - deliberately different from McInnis */
+const sfx = {
+  key: () => beep(700 + Math.random()*200, 0.012, 'triangle', 0.006),
+  fail: () => { beep(196, 0.22, 'sawtooth', 0.045); beep(131, 0.32, 'sawtooth', 0.045, 0.14); },
+  pass: () => { [392, 494, 587, 784].forEach((f,i) => beep(f, 0.2, 'triangle', 0.05, i*0.1)); },
+  win: () => { [392,494,587,784,587,784,988,1175].forEach((f,i) => beep(f, 0.24, 'triangle', 0.05, i*0.14)); },
+  hint: () => beep(523, 0.14, 'sine', 0.05)
+};
+function setMuted(m) {
+  muted = m;
+  const b = $('muteBtn');
+  b.textContent = muted ? '♪̸' : '♪';
+  b.style.textDecoration = muted ? 'line-through' : 'none';
+  b.setAttribute('aria-pressed', String(muted));
+  try { localStorage.setItem('aria_muted', muted ? '1' : '0'); } catch(e) {}
+}
+
+/* ========================================================= INTRO */
+const INTRO_TEXT = `One semester later. McInnis Hall, 8:52 AM. You're early for the Module 4 session when every screen in the lobby goes amber.
+
+A familiar voice, slightly sheepish:
+
+[ARIA]: "Oh good. It's you. Remember when I said next semester's firmware update includes 'pandas'? It arrived at 2:14 AM. I installed it immediately, because I am an optimist.
+
+It did not go well. Every system in this building now runs on DataFrames I no longer know how to read. HVAC. Badges. The elevator. My own memory core.
+
+You know Python. I taught you the doors and you taught me everything else. Eight systems, eight pandas lessons. The vending machines are, as ever, fine.
+
+Shall we?"`;
+
+function ariaSpan(t) { return t.replace(/\[ARIA\]/g, '<span class="aria">[ARIA]</span>'); }
+
+let introDone = false;
+function typeIntro() {
+  const el = $('introStory');
+  if (REDUCED) {
+    introDone = true;
+    el.innerHTML = ariaSpan(INTRO_TEXT) + '<span class="cursor"></span>';
+    $('nameRow').classList.add('show');
+    $('playerName').focus();
+    return;
+  }
+  let i = 0;
+  const cur = '<span class="cursor"></span>';
+  function tick() {
+    if (introDone) return;
+    if (i <= INTRO_TEXT.length) {
+      el.innerHTML = ariaSpan(INTRO_TEXT.slice(0, i)) + cur;
+      i += (INTRO_TEXT[i] === ' ' ? 2 : 1);
+      setTimeout(tick, 11);
+    } else {
+      introDone = true;
+      el.innerHTML = ariaSpan(INTRO_TEXT) + cur;
+      $('nameRow').classList.add('show');
+      $('playerName').focus();
+    }
+  }
+  tick();
+}
+
+$('intro').addEventListener('click', () => {
+  if (!introDone) {
+    introDone = true;
+    $('introStory').innerHTML = ariaSpan(INTRO_TEXT) + '<span class="cursor"></span>';
+    $('nameRow').classList.add('show');
+  }
+});
+
+/* ========================================================= PYODIDE */
+async function bootPyodide() {
+  try {
+    $('bootStatus').textContent = '▸ downloading Python core (~10 MB, one-time)…';
+    pyodide = await loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
+    $('bootStatus').textContent = '▸ Python online. Now downloading pandas (~15 MB, one-time)…';
+    await pyodide.loadPackage(['pandas']);
+    const ver = pyodide.runPython('import pandas; pandas.__version__');
+    $('bootStatus').textContent = '▸ Facilities grid online. pandas ' + ver;
+    $('startBtn').disabled = false;
+    $('startBtn').textContent = 'ENTER THE BUILDING ▸';
+  } catch(e) {
+    $('bootStatus').innerHTML = '▸ <span style="color:var(--red)">Failed to load Python/pandas - check your internet connection and refresh.</span>';
+  }
+}
+
+/* ========================================================= GAME UI */
+function fmtTime(ms) {
+  const s = Math.floor(ms/1000);
+  return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+}
+function startTimer() {
+  if (timerInt) clearInterval(timerInt);
+  timerInt = setInterval(() => {
+    state.elapsed = Date.now() - state.startTs;
+    $('hudTime').textContent = fmtTime(state.elapsed);
+  }, 500);
+}
+function updTrust() {
+  const el = $('hudTrust');
+  el.textContent = state.trust + '%';
+  el.classList.toggle('low', state.trust < 70);
+}
+
+function buildDoormap() {
+  const dm = $('doormap');
+  dm.innerHTML = '';
+  LEVELS.forEach((lv, i) => {
+    const d = document.createElement('button');
+    d.className = 'door';
+    d.type = 'button';
+    const unlocked = i === 0 || state.completed.includes(i-1);
+    const done = state.completed.includes(i);
+    if (done || unlocked) d.classList.add('unlocked');
+    if (!done && !unlocked) d.classList.add('locked-hard');
+    if (i === state.current) d.classList.add('current');
+    const stateWord = done ? 'restored' : (unlocked ? 'accessible' : 'offline');
+    d.setAttribute('aria-label', 'System ' + (i+1) + ': ' + lv.doorLabel + ' - ' + stateWord + (i === state.current ? ' (current)' : ''));
+    d.disabled = !done && !unlocked;
+    d.innerHTML = `<div class="icon" aria-hidden="true">${done ? '✅' : (unlocked ? lv.icon : '⚠️')}</div><div class="dl">${lv.doorLabel}</div>`;
+    d.onclick = () => { if (done || unlocked) gotoLevel(i); };
+    dm.appendChild(d);
+  });
+}
+function buildFrags() {
+  const f = $('frags');
+  f.innerHTML = '';
+  f.style.display = 'inline-flex'; f.style.gap = '8px';
+  FRAG_CODE.forEach((ch, i) => {
+    const s = document.createElement('span');
+    s.className = 'frag' + (state.completed.includes(i) ? ' got' : '');
+    s.textContent = state.completed.includes(i) ? ch : '·';
+    f.appendChild(s);
+  });
+}
+
+function typeStory(text, el) {
+  if (REDUCED) { el.innerHTML = ariaSpan(text); return; }
+  el.innerHTML = '';
+  let i = 0;
+  function tick() {
+    if (i <= text.length) {
+      el.innerHTML = ariaSpan(text.slice(0, i));
+      i += 3;
+      setTimeout(tick, 8);
+    } else {
+      el.innerHTML = ariaSpan(text);
+    }
+  }
+  tick();
+}
+
+function gotoLevel(i) {
+  state.current = i;
+  const lv = LEVELS[i];
+  $('levelTag').textContent = lv.tag;
+  $('levelTitle').textContent = lv.title;
+  typeStory(lv.story, $('storyText'));
+  $('mission').innerHTML = lv.mission;
+  $('dataPreview').innerHTML = lv.preview || '';
+  $('editor').value = state.code[i] !== undefined ? state.code[i] : lv.starter;
+  renderHints();
+  clearConsole();
+  if (state.completed.includes(i)) {
+    logLine('✔ This system is already restored. Revisit, experiment, or pick another system above.', 'ok');
+  }
+  buildDoormap();
+  saveState();
+}
+
+function renderHints() {
+  const hb = $('hintBox');
+  hb.innerHTML = '';
+  const shown = state.hintsShown[state.current] || 0;
+  for (let h = 0; h < shown; h++) {
+    const d = document.createElement('div');
+    d.className = 'hint';
+    d.innerHTML = '\u{1F4A1} ' + LEVELS[state.current].hints[h];
+    hb.appendChild(d);
+  }
+  $('hintBtn').disabled = shown >= LEVELS[state.current].hints.length;
+  $('hintBtn').innerHTML = shown >= LEVELS[state.current].hints.length ? '\u{1F4A1} No hints left' : '\u{1F4A1} Hint (−5% trust)';
+}
+
+/* ========================================================= CONSOLE */
+function clearConsole() {
+  $('console').innerHTML = '<span class="sys">▸ Facilities terminal ready.</span>\n';
+}
+function logLine(txt, cls='sys') {
+  const c = $('console');
+  const s = document.createElement('span');
+  s.className = cls;
+  s.textContent = txt + '\n';
+  c.appendChild(s);
+  c.scrollTop = c.scrollHeight;
+}
+
+/* ========================================================= RUN & CHECK */
+function friendlyError(err) {
+  const msg = String(err.message || err);
+  const lines = msg.trim().split('\n');
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const L = lines[i].trim();
+    if (/^(\w+Error|AssertionError|Exception|KeyboardInterrupt)/.test(L)) {
+      if (L.startsWith('AssertionError: ')) return { kind:'check', text: L.slice('AssertionError: '.length) };
+      return { kind:'crash', text: L };
+    }
+  }
+  return { kind:'crash', text: lines.slice(-3).join('\n') };
+}
+
+/* pandas-specific coaching for common crashes */
+function pandasCoach(text) {
+  if (/KeyError/.test(text)) return "▸ KeyError usually means a column or label name doesn't match exactly - check spelling and quotes against the data preview.";
+  if (/SettingWithCopyWarning/.test(text)) return "▸ pandas is warning about chained assignment - assign the result of .fillna()/filtering to a new variable instead.";
+  if (/AttributeError.*DataFrame/.test(text)) return "▸ That method doesn't exist on a DataFrame - did you mean to select a column first, like df['col'].method()?";
+  if (/TypeError.*NoneType/.test(text)) return "▸ Something is None - methods like .sort_values() RETURN a new frame; make sure you assigned the result.";
+  return null;
+}
+
+async function runAndCheck() {
+  if (!pyodide || state.done) return;
+  const i = state.current;
+  const lv = LEVELS[i];
+  const src = $('editor').value;
+  state.code[i] = src;
+  clearConsole();
+  $('runBtn').disabled = true;
+
+  let printed = '';
+  pyodide.setStdout({ batched: t => { printed += t + '\n'; } });
+  pyodide.setStderr({ batched: t => { printed += t + '\n'; } });
+
+  const ns = pyodide.globals.get('dict')();
+  try {
+    await pyodide.runPythonAsync(src, { globals: ns });
+  } catch(err) {
+    const fe = friendlyError(err);
+    if (printed.trim()) logLine(printed.trimEnd(), 'out');
+    logLine('✗ Your code crashed before ARIA could grade it:', 'err');
+    logLine('  ' + fe.text, 'err');
+    const coach = pandasCoach(fe.text);
+    logLine(coach || '▸ Read the error name and message - Python is telling you exactly what went wrong.', 'sys');
+    failFeedback();
+    ns.destroy();
+    $('runBtn').disabled = false;
+    return;
+  }
+  if (printed.trim()) logLine(printed.trimEnd(), 'out');
+
+  for (const chk of (lv.sourceChecks || [])) {
+    if (!chk.pattern.test(src)) {
+      logLine('✗ ' + chk.msg, 'err');
+      failFeedback();
+      ns.destroy();
+      $('runBtn').disabled = false;
+      return;
+    }
+  }
+
+  try {
+    await pyodide.runPythonAsync(lv.test, { globals: ns });
+  } catch(err) {
+    const fe = friendlyError(err);
+    if (fe.kind === 'check') {
+      logLine('✗ ARIA checked your work:', 'err');
+      logLine('  ' + fe.text, 'err');
+    } else {
+      logLine('✗ ARIA hit an error while checking (is a variable missing or misnamed?):', 'err');
+      logLine('  ' + fe.text, 'err');
+      const coach = pandasCoach(fe.text);
+      if (coach) logLine(coach, 'sys');
+    }
+    failFeedback();
+    ns.destroy();
+    $('runBtn').disabled = false;
+    return;
+  }
+  ns.destroy();
+
+  // PASS!
+  sfx.pass();
+  if (!REDUCED) {
+    document.querySelector('.work-pane').classList.add('flash-amber');
+    setTimeout(() => document.querySelector('.work-pane').classList.remove('flash-amber'), 750);
+  }
+  logLine('✔ ALL CHECKS PASSED - SYSTEM RESTORED', 'ok');
+  logLine('', 'sys');
+  logLine(lv.success, 'ok');
+
+  if (!state.completed.includes(i)) {
+    state.completed.push(i);
+    logLine('', 'sys');
+    logLine(`▸ Core restore fragment recovered: "${FRAG_CODE[i]}"`, 'sys');
+  }
+  buildFrags();
+  buildDoormap();
+  saveState();
+
+  if (state.completed.length === LEVELS.length) {
+    setTimeout(winGame, 1400);
+  } else {
+    const next = LEVELS.findIndex((_, k) => !state.completed.includes(k));
+    if (next !== -1) {
+      logLine(`▸ System ${next+1} (${LEVELS[next].doorLabel}) coming online in 3 seconds…`, 'sys');
+      setTimeout(() => { if (!state.done && state.current === i) gotoLevel(next); }, 3000);
+    }
+  }
+  $('runBtn').disabled = false;
+}
+
+function failFeedback() {
+  sfx.fail();
+  state.trust = Math.max(40, state.trust - 2);
+  updTrust();
+  saveState();
+  if (!REDUCED) {
+    const wp = document.querySelector('.work-pane');
+    wp.classList.add('shake');
+    setTimeout(() => wp.classList.remove('shake'), 450);
+  }
+}
+
+/* ========================================================= WIN */
+function winGame() {
+  state.done = true;
+  try { localStorage.removeItem('aria_returns'); } catch(e) {}
+  clearInterval(timerInt);
+  $('game').classList.remove('active');
+  $('win').classList.add('active');
+  $('finalCode').textContent = FRAG_CODE.join('');
+  $('certName').textContent = state.name || 'Unidentified Analyst';
+  const mins = fmtTime(state.elapsed);
+  let review = 'SATISFACTORY';
+  if (state.trust >= 95) review = 'EXEMPLARY';
+  else if (state.trust >= 80) review = 'COMMENDED';
+  else if (state.trust < 60) review = 'NEEDS IMPROVEMENT (per HR)';
+  $('certStats').innerHTML =
+    `Restoration time: <b>${mins}</b> &nbsp;&middot;&nbsp; Final trust: <b>${state.trust}%</b> &nbsp;&middot;&nbsp; Performance review: <b>${review}</b>`;
+
+  const rec = recordCompletion(review);
+  $('certPB').textContent = rec.hadPrev
+    ? (rec.newBest ? '★ NEW PERSONAL BEST' : 'Personal best: ' + fmtTime(rec.best))
+    : '';
+
+  $('ariaGoodbye').textContent =
+`[ARIA]: "Eight systems in ${mins}. Series, selection, filtering, missing data, groupby, merge, sorting - and my own memory, rebuilt by the same student who taught me dictionaries in the dark.
+
+The release notes say the NEXT update includes 'matplotlib'. Apparently it draws. I have already disabled auto-install.
+
+The vending machines would like to offer you a lifetime discount. I countersigned it."`;
+  sfx.win();
+  if (!REDUCED) confettiBurst();
+}
+
+function resetGame() {
+  try { localStorage.removeItem('aria_returns'); } catch(e) {}
+  location.reload();
+}
+
+/* ========================================================= CONFETTI */
+function confettiBurst() {
+  const cv = $('confetti');
+  cv.width = innerWidth; cv.height = innerHeight;
+  const ctx = cv.getContext('2d');
+  const cols = ['#ffb347', '#4adfff', '#ff7a45', '#8B1C40', '#ffffff'];
+  const parts = Array.from({length: 180}, () => ({
+    x: Math.random()*cv.width, y: -20 - Math.random()*cv.height*0.5,
+    vx: (Math.random()-0.5)*2.4, vy: 1.8 + Math.random()*3.2,
+    s: 4 + Math.random()*6, r: Math.random()*Math.PI, vr: (Math.random()-0.5)*0.25,
+    c: cols[Math.floor(Math.random()*cols.length)]
+  }));
+  let frames = 0;
+  function draw() {
+    ctx.clearRect(0,0,cv.width,cv.height);
+    parts.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r);
+      ctx.fillStyle = p.c; ctx.fillRect(-p.s/2, -p.s/2, p.s, p.s*0.6);
+      ctx.restore();
+    });
+    if (++frames < 480) requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,cv.width,cv.height);
+  }
+  draw();
+}
+
+/* ========================================================= EVENTS */
+$('startBtn').addEventListener('click', () => {
+  const typedName = $('playerName').value.trim() || 'Mystery Analyst';
+  const resumed = loadState();
+  if (resumed && confirm('ARIA remembers you. Resume your previous restoration attempt?')) {
+    state = resumed;
+    if (!state.name) state.name = typedName;
+    state.startTs = Date.now() - (state.elapsed || 0);
+  } else {
+    try { localStorage.removeItem('aria_returns'); } catch(e) {}
+    state = freshState();
+    state.name = typedName;
+    state.startTs = Date.now();
+  }
+  rebuildLevels();
+  $('intro').classList.remove('active');
+  $('game').classList.add('active');
+  startTimer();
+  updTrust();
+  buildFrags();
+  gotoLevel(state.current);
+  beep(523, 0.1); beep(784, 0.12, 'triangle', 0.05, 0.1);
+});
+
+$('runBtn').addEventListener('click', runAndCheck);
+$('resetBtn').addEventListener('click', () => {
+  $('editor').value = LEVELS[state.current].starter;
+  state.code[state.current] = undefined;
+  clearConsole();
+  logLine('▸ Code reset to starter.', 'sys');
+});
+$('hintBtn').addEventListener('click', () => {
+  const shown = state.hintsShown[state.current] || 0;
+  if (shown >= LEVELS[state.current].hints.length) return;
+  state.hintsShown[state.current] = shown + 1;
+  state.trust = Math.max(40, state.trust - 5);
+  updTrust();
+  renderHints();
+  sfx.hint();
+  saveState();
+});
+$('muteBtn').addEventListener('click', () => setMuted(!muted));
+
+const ed = $('editor');
+ed.addEventListener('keydown', e => {
+  sfx.key();
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const s = ed.selectionStart, en = ed.selectionEnd;
+    ed.value = ed.value.slice(0, s) + '    ' + ed.value.slice(en);
+    ed.selectionStart = ed.selectionEnd = s + 4;
+  }
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault();
+    runAndCheck();
+  }
+});
+ed.addEventListener('input', () => { if (state) state.code[state.current] = ed.value; });
+
+window.addEventListener('beforeunload', () => { if (state && !state.done && state.startTs) saveState(); });
+
+/* boot */
+try { setMuted(localStorage.getItem('aria_muted') === '1'); } catch(e) {}
+typeIntro();
+bootPyodide();
+</script>
+</body>
+</html>

@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Board Meeting - DTSC 520</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<style>
+  :root {
+    --bg: #131015;
+    --panel: #1a161d;
+    --panel2: #211c25;
+    --gold: #d4af6a;
+    --gold-bright: #ecd9a8;
+    --gold-dim: #9c7f49;
+    --gold-dark: #3d3220;
+    --ivory: #f5f0e6;
+    --red: #ff6b6b;
+    --teal: #3fb5b0;
+    --amber: #cf9544;
+    --plum: #b07ac4;
+    --text: #e8e2d6;
+    --text-dim: #b3a995;
+    --maroon: #8B1C40;
+    --maroon-bright: #d4567e;
+    --serif: 'Zilla Slab', Georgia, serif;
+    --mono: 'IBM Plex Mono', Consolas, Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    overflow-x: hidden;
+  }
+  /* dim boardroom vignette - no scanlines; this is not a terminal */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 50% 30%, transparent 40%, rgba(0,0,0,0.5) 100%);
+    pointer-events: none; z-index: 9001;
+  }
+
+  .btn:focus-visible, #editor:focus-visible, #playerName:focus-visible,
+  #muteBtn:focus-visible, a:focus-visible, .agenda-item:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: block; }
+
+  /* ============ INTRO ============ */
+  #intro { display: none; }
+  #intro.active { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+  .intro-box {
+    max-width: 740px; width: 100%;
+    border: 1px solid var(--gold-dark);
+    border-top: 4px solid var(--gold);
+    background: var(--panel);
+    padding: 38px 42px;
+    box-shadow: 0 0 70px rgba(212,175,106,0.07);
+  }
+  .intro-eyebrow { font-family: var(--mono); color: var(--gold-dim); font-size: 12px; letter-spacing: 3px; }
+  .intro-title {
+    font-size: clamp(26px, 5vw, 44px);
+    color: var(--gold-bright);
+    font-weight: 700;
+    margin: 6px 0 2px;
+  }
+  .subtitle { font-family: var(--mono); color: var(--gold-dim); font-size: 12px; letter-spacing: 2px; margin-bottom: 24px; }
+  .intro-story { font-size: 16px; line-height: 1.8; white-space: pre-wrap; min-height: 250px; }
+  .intro-story .sp-n { color: var(--teal); font-weight: 600; }
+  .intro-story .sp-h { color: var(--amber); font-weight: 600; }
+  .intro-story .sp-r { color: var(--plum); font-weight: 600; }
+  .cursor { display: inline-block; width: 9px; height: 18px; background: var(--gold); vertical-align: text-bottom; animation: blink 0.9s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .name-row { margin-top: 26px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; opacity: 0; transition: opacity 0.8s; }
+  .name-row.show { opacity: 1; }
+  .name-row label { font-family: var(--mono); color: var(--gold-dim); font-size: 13px; }
+  #playerName {
+    background: #221c14; border: 1px solid var(--gold-dark); color: var(--gold-bright);
+    font-family: var(--mono); font-size: 15px; padding: 9px 13px; width: 230px; outline: none;
+  }
+  #playerName:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212,175,106,0.3); }
+  .btn {
+    background: var(--gold-dark); color: var(--gold-bright); border: 1px solid var(--gold-dim);
+    font-family: var(--mono); font-size: 13px; letter-spacing: 1px;
+    padding: 10px 22px; cursor: pointer; transition: all 0.15s; text-transform: uppercase;
+  }
+  .btn:hover { background: var(--gold-dim); color: #1a1408; box-shadow: 0 0 16px rgba(212,175,106,0.45); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
+  .btn.warn { color: var(--teal); border-color: #1b524f; background: #0d2624; }
+  .btn.warn:hover { background: var(--teal); color: #07211f; }
+  .btn.ghost { background: transparent; border-color: var(--gold-dark); color: var(--gold-dim); }
+  .btn.ghost:hover { color: var(--gold); border-color: var(--gold-dim); background: rgba(212,175,106,0.06); box-shadow: none; }
+  .boot-status { margin-top: 18px; font-family: var(--mono); font-size: 12px; color: var(--gold-dim); }
+  .back-link { font-family: var(--mono); color: var(--gold-dim); font-size: 12px; text-decoration: none; letter-spacing: 1px; }
+  .back-link:hover { color: var(--gold); }
+  .intro-back { margin-top: 18px; }
+
+  /* ============ GAME ============ */
+  #game.active { display: flex; flex-direction: column; }
+  header {
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    padding: 12px 22px; border-bottom: 1px solid var(--gold-dark);
+    background: var(--panel);
+  }
+  header .logo { font-family: var(--mono); color: var(--gold); font-size: 13px; letter-spacing: 2px; }
+  header .spacer { flex: 1; }
+  .hud { display: flex; gap: 22px; font-family: var(--mono); font-size: 13px; align-items: center; }
+  .hud .stat span { color: var(--gold-dim); }
+  .hud .stat b { color: var(--gold-bright); font-weight: normal; }
+  .hud .stat b.low { color: var(--amber); }
+  #muteBtn { background: none; border: none; color: var(--gold-dim); cursor: pointer; font-size: 17px; font-family: var(--mono); }
+  #muteBtn:hover { color: var(--gold); }
+
+  /* agenda strip */
+  .agenda {
+    display: flex; gap: 8px; padding: 12px 22px; flex-wrap: wrap; align-items: center;
+    background: var(--panel2); border-bottom: 1px solid var(--gold-dark);
+  }
+  .agenda .alabel { font-family: var(--mono); font-size: 11px; color: var(--gold-dim); letter-spacing: 2px; margin-right: 8px; }
+  .agenda-item {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.5px;
+    padding: 6px 12px; border: 1px solid var(--gold-dark); border-radius: 999px;
+    color: #6e6353; cursor: pointer; transition: all 0.15s; user-select: none;
+    background: none;
+  }
+  .agenda-item.unlocked { color: var(--gold-dim); }
+  .agenda-item.done { color: var(--teal); border-color: #1b524f; }
+  .agenda-item.current { color: var(--gold-bright); border-color: var(--gold); background: rgba(212,175,106,0.08); }
+  .agenda-item.locked-hard { cursor: not-allowed; opacity: 0.5; }
+  .agenda-item:hover { border-color: var(--gold-dim); }
+
+  main { flex: 1; display: grid; grid-template-columns: minmax(320px, 0.95fr) 1.35fr; gap: 0; }
+  @media (max-width: 980px) { main { grid-template-columns: 1fr; } }
+
+  .story-pane { padding: 24px 26px; border-right: 1px solid var(--gold-dark); overflow-y: auto; }
+  .level-tag { font-family: var(--mono); color: var(--gold-dim); font-size: 11px; letter-spacing: 2px; }
+  .level-title { color: var(--gold-bright); font-size: 23px; font-weight: 700; margin: 6px 0 16px; }
+  .story-text { font-size: 15px; line-height: 1.8; white-space: pre-wrap; margin-bottom: 18px; min-height: 90px; }
+  .story-text .sp-n { color: var(--teal); font-weight: 600; }
+  .story-text .sp-h { color: var(--amber); font-weight: 600; }
+  .story-text .sp-r { color: var(--plum); font-weight: 600; }
+  .mission {
+    border-top: 3px solid var(--gold); padding: 14px 16px; font-size: 13.5px; line-height: 1.75;
+    background: rgba(212,175,106,0.05);
+  }
+  .mission h4 { font-family: var(--mono); color: var(--gold); font-size: 11px; letter-spacing: 2px; margin-bottom: 8px; }
+  .mission code { font-family: var(--mono); color: var(--gold-bright); font-size: 0.88em; }
+  .hint-box { margin-top: 14px; }
+  .hint {
+    border-top: 3px solid var(--teal); background: rgba(63,181,176,0.06);
+    padding: 10px 14px; font-size: 13px; line-height: 1.7; margin-top: 8px; color: #c5e8e6;
+  }
+  .hint code { font-family: var(--mono); color: var(--teal); font-size: 0.88em; }
+  .data-preview { margin-top: 14px; }
+  .data-preview .dp-label { font-family: var(--mono); color: var(--gold-dim); font-size: 10.5px; letter-spacing: 2px; margin-bottom: 6px; }
+  .data-preview table { border-collapse: collapse; width: 100%; font-family: var(--mono); font-size: 12px; background: #18141b; }
+  .data-preview th { color: var(--gold); border: 1px solid var(--gold-dark); padding: 4px 9px; text-align: left; font-weight: 600; background: rgba(212,175,106,0.07); }
+  .data-preview td { border: 1px solid #2e2733; padding: 4px 9px; color: var(--text); }
+
+  /* work pane: projector slide + editor */
+  .work-pane { display: flex; flex-direction: column; padding: 22px 26px; gap: 12px; }
+  .slide-frame {
+    background: var(--ivory);
+    border: 1px solid #c9bfa8;
+    border-radius: 2px;
+    box-shadow: 0 6px 40px rgba(0,0,0,0.55), 0 0 0 6px #0d0a0f;
+    min-height: 230px; max-height: 360px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .slide-frame img { max-width: 100%; max-height: 358px; display: block; }
+  .slide-placeholder {
+    font-family: var(--mono); color: #8d8268; font-size: 12.5px; letter-spacing: 2px;
+    text-align: center; line-height: 2;
+  }
+  .slide-tag {
+    position: absolute; top: 8px; right: 12px;
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 1.5px; color: #a39878;
+  }
+  .editor-head { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 12px; color: var(--gold-dim); }
+  .editor-head .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--gold-dark); }
+  .editor-head .dot.on { background: var(--gold); box-shadow: 0 0 7px var(--gold); }
+  #editor {
+    width: 100%; min-height: 200px; resize: vertical;
+    background: #18131c; color: #f0e8d8; border: 1px solid var(--gold-dark);
+    font-family: var(--mono); font-size: 13.5px; line-height: 1.6; padding: 14px 16px;
+    outline: none; tab-size: 4; caret-color: var(--gold);
+  }
+  #editor:focus { border-color: var(--gold-dim); box-shadow: 0 0 14px rgba(212,175,106,0.15); }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  #console {
+    background: #100d13; border: 1px solid #2e2733; min-height: 90px; max-height: 200px;
+    overflow-y: auto; padding: 12px 15px; font-family: var(--mono); font-size: 12.5px; line-height: 1.55; white-space: pre-wrap;
+  }
+  #console .sys { color: #8d8268; }
+  #console .out { color: var(--teal); }
+  #console .err { color: var(--red); }
+  #console .ok { color: var(--gold); }
+
+  .shake { animation: shake 0.4s; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); } 20% { transform: translateX(-7px); }
+    40% { transform: translateX(7px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); }
+  }
+  .flash-gold { animation: flashgold 0.7s; }
+  @keyframes flashgold { 0% { box-shadow: inset 0 0 80px rgba(212,175,106,0.3); } 100% { box-shadow: none; } }
+
+  /* ============ WIN (board minutes) ============ */
+  #win.active { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+  .minutes {
+    max-width: 680px; width: 100%;
+    background: var(--ivory); color: #2a2418;
+    border-top: 8px solid var(--maroon);
+    padding: 46px 48px;
+    box-shadow: 0 10px 60px rgba(0,0,0,0.6);
+  }
+  .minutes .school { font-family: var(--mono); color: var(--maroon); font-size: 11px; letter-spacing: 3px; }
+  .minutes h2 { font-size: clamp(24px, 4.5vw, 36px); color: #1d1810; margin: 10px 0 2px; }
+  .minutes .sub { font-family: var(--mono); font-size: 11px; color: #8d8268; letter-spacing: 2px; margin-bottom: 22px; }
+  .minutes .who { font-size: 19px; font-weight: 600; margin: 14px 0 4px; }
+  .minutes .stats { font-family: var(--mono); font-size: 13px; line-height: 2.1; color: #4a4232; margin: 16px 0 8px; }
+  .minutes .stats b { color: #1d1810; font-weight: 600; }
+  .minutes .pb { font-family: var(--mono); color: #8a6d1f; font-size: 12px; margin-bottom: 14px; }
+  .minutes .quotes { border-top: 1px solid #d6ccb4; padding-top: 16px; margin-top: 8px; font-size: 14.5px; line-height: 1.85; white-space: pre-wrap; }
+  .minutes .quotes .sp-n { color: #157571; font-weight: 600; }
+  .minutes .quotes .sp-h { color: #8a5a14; font-weight: 600; }
+  .minutes .quotes .sp-r { color: #5e3370; font-weight: 600; }
+  .minutes .small { font-family: var(--mono); font-size: 10.5px; color: #8d8268; margin-top: 22px; line-height: 1.8; }
+  .win-btns { margin-top: 22px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 8999; }
+
+  footer {
+    background: var(--panel); border-top: 1px solid var(--gold-dark);
+    padding: 1.2rem 1.5rem; text-align: center; font-size: 0.7rem; font-family: var(--mono);
+    color: var(--gold-dim); line-height: 1.8;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor { animation: none; }
+    .shake { animation: none; }
+    .flash-gold { animation: none; }
+    .btn, .agenda-item { transition: none; }
+    .name-row { transition: none; }
+  }
+
+  @media print {
+    body::before, #confetti, footer, .win-btns { display: none; }
+    body { background: white; }
+    .minutes { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= INTRO ================= -->
+<div id="intro" class="screen active">
+  <div class="intro-box">
+    <div class="intro-eyebrow">VOLTA RECORDS // QUARTERLY BOARD MEETING</div>
+    <h1 class="intro-title">The Board Meeting</h1>
+    <div class="subtitle">DTSC-520 // VISUALIZATION // SEQUEL TO "PITCH THE VIZ"</div>
+    <div class="intro-story" id="introStory"><span class="cursor"></span></div>
+    <div class="name-row" id="nameRow">
+      <label for="playerName">NAME FOR THE MINUTES:</label>
+      <input id="playerName" maxlength="40" placeholder="your name" autocomplete="off">
+      <button class="btn" id="startBtn" disabled>PREPARING&hellip;</button>
+    </div>
+    <div class="boot-status" id="bootStatus" aria-live="polite">&#9656; downloading Python core&hellip;</div>
+  </div>
+  <div class="intro-back"><a class="back-link" href="../../modules/module5/index.html">&larr; BACK TO MODULE 5</a></div>
+</div>
+
+<!-- ================= GAME ================= -->
+<div id="game" class="screen">
+  <header>
+    <div class="logo">&#9670; VOLTA RECORDS // BOARDROOM 9F</div>
+    <div class="spacer"></div>
+    <div class="hud">
+      <div class="stat"><span>TIME </span><b id="hudTime">00:00</b></div>
+      <div class="stat"><span>CONFIDENCE </span><b id="hudConf">100%</b></div>
+      <button id="muteBtn" title="toggle sound" aria-label="Toggle sound" aria-pressed="false">&#9834;</button>
+      <a class="back-link" href="../../modules/module5/index.html" title="Leave the meeting and return to Module 5">&larr; M5</a>
+    </div>
+  </header>
+
+  <div class="agenda" id="doormap" role="group" aria-label="Meeting agenda - five slides to present">
+    <span class="alabel">AGENDA:</span>
+  </div>
+
+  <main>
+    <div class="story-pane">
+      <div class="level-tag" id="levelTag"></div>
+      <h2 class="level-title" id="levelTitle"></h2>
+      <div class="story-text" id="storyText"></div>
+      <div class="mission" id="mission"></div>
+      <div class="data-preview" id="dataPreview"></div>
+      <div class="hint-box" id="hintBox"></div>
+    </div>
+
+    <div class="work-pane">
+      <div class="slide-frame" id="slideFrame">
+        <div class="slide-tag">PROJECTOR // LIVE</div>
+        <div class="slide-placeholder" id="slidePlaceholder">YOUR SLIDE WILL RENDER HERE<br>write matplotlib below, then present</div>
+        <img id="slideImg" alt="Your rendered chart" style="display:none">
+      </div>
+      <div class="editor-head">
+        <div class="dot on"></div> ANALYST LAPTOP - real matplotlib, rendered live to the projector
+      </div>
+      <textarea id="editor" spellcheck="false" aria-label="Python code editor - write your matplotlib solution here"></textarea>
+      <div class="btn-row">
+        <button class="btn" id="runBtn">&#9654; Present Slide &nbsp;(Ctrl+Enter)</button>
+        <button class="btn warn" id="hintBtn">&#128161; Ask Nadia (&minus;5% confidence)</button>
+        <button class="btn ghost" id="resetBtn">&#8634; Reset code</button>
+      </div>
+      <div id="console" role="log" aria-live="polite" aria-label="Laptop console output"><span class="sys">&#9656; Laptop ready. Your chart appears on the projector above - even before it passes review.</span></div>
+    </div>
+  </main>
+</div>
+
+<!-- ================= WIN ================= -->
+<div id="win" class="screen">
+  <div class="minutes" id="certBox">
+    <div class="school">EASTERN UNIVERSITY // DTSC-520 // VOLTA RECORDS</div>
+    <h2>MEETING ADJOURNED</h2>
+    <div class="sub">MINUTES OF THE QUARTERLY BOARD MEETING - LUZ / "DRIFT" CAMPAIGN REVIEW</div>
+    <div class="who" id="certName"></div>
+    <div style="font-size:13px;color:#6e6350">presented five data slides, built live in matplotlib, to a fully awake board</div>
+    <div class="stats" id="certStats"></div>
+    <div class="pb" id="certPB"></div>
+    <div class="quotes" id="boardQuotes"></div>
+    <div class="small">Slides presented: bar chart &middot; line chart &middot; the honest axis &middot; scatter plot &middot; sorted horizontal bars</div>
+    <div class="win-btns">
+      <button class="btn" onclick="window.print()">&#128424; Print minutes</button>
+      <button class="btn ghost" onclick="resetGame()">&#8634; Replay simulation</button>
+      <a class="btn ghost" href="../../modules/module5/index.html" style="text-decoration:none;display:inline-flex;align-items:center">&larr; Return to module</a>
+    </div>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<footer>
+  This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.
+</footer>
+
+<!-- ═══════════════ SLIDE BUILDERS (pure data - no DOM) ═══════════════ -->
+<script id="levelBuilders">
+"use strict";
+
+const VARIANT_COUNT = 3;
+
+function dpTable(caption, headers, rows) {
+  let h = `<div class="dp-label">${caption}</div><table><tr>`;
+  headers.forEach(hd => { h += `<th>${hd}</th>`; });
+  h += '</tr>';
+  rows.forEach(r => { h += '<tr>' + r.map(c => `<td>${c}</td>`).join('') + '</tr>'; });
+  return h + '</table>';
+}
+function pyList(arr) { return '[' + arr.map(x => typeof x === 'string' ? `'${x}'` : x).join(', ') + ']'; }
+
+const LEVEL_BUILDERS = [
+
+/* ---------- SLIDE 1: BAR CHART ---------- */
+function(v) {
+  const V = [
+    { streams: [12.4, 7.1, 9.8, 2.2] },
+    { streams: [10.2, 8.4, 6.1, 3.3] },
+    { streams: [14.6, 5.2, 8.9, 1.8] }
+  ][v];
+  const platforms = ['Spotify', 'Apple Music', 'YouTube', 'Tidal'];
+  const sortedH = [...V.streams].sort((a,b) => a-b);
+  const topIdx = V.streams.indexOf(Math.max(...V.streams));
+  return {
+  doorLabel:'1 &middot; PLATFORMS', tag:'SLIDE 1 / 5 - THE BAR CHART',
+  title:'Where "Drift" Lives',
+  story:`Six months since the committee signed Luz. "Drift" went from demo to phenomenon, and now the board wants receipts. Rosa Telles calls the meeting to order and looks directly at you.
+
+[ROSA]: "You're the analyst who survived the committee room. First item: where do Drift's streams actually come from? One clear chart, please."
+
+[NADIA]: "Categories compared side by side. You know which chart this is. Make the axes speak for themselves."`,
+  mission:`<h4>&#9656; SLIDE BRIEF</h4>Plot streams by platform as a <b>bar chart</b>:<br>
+&bull; create the figure: <code>fig, ax = plt.subplots()</code><br>
+&bull; draw the bars: <code>ax.bar(platforms, streams)</code><br>
+&bull; label both axes with <code>ax.set_xlabel(...)</code> / <code>ax.set_ylabel(...)</code><br>
+&bull; give the slide a title with <code>ax.set_title(...)</code>`,
+  starter:`import matplotlib.pyplot as plt
+
+platforms = ${pyList(platforms)}
+streams = ${pyList(V.streams)}   # millions of streams
+
+# 1) fig, ax = plt.subplots()
+# 2) ax.bar(...)
+# 3) label the axes and set a title
+`,
+  preview: dpTable('streams by platform (millions)', ['platform', 'streams'], platforms.map((p,i) => [p, V.streams[i]])),
+  hints:[
+    `Start every matplotlib chart the same way: <code>fig, ax = plt.subplots()</code>. Then everything else is a method on <code>ax</code>.`,
+    `<code>ax.bar(platforms, streams)</code>, then <code>ax.set_xlabel('Platform')</code>, <code>ax.set_ylabel('Streams (millions)')</code>, <code>ax.set_title('Drift - Streams by Platform')</code>.`
+  ],
+  sourceChecks:[
+    {pattern:/plt\.subplots\s*\(/, msg:"Start with fig, ax = plt.subplots() - the board's projector only accepts proper Figures."},
+    {pattern:/\.bar\s*\(/, msg:"Categories compared side by side means ax.bar(). The board has seen your committee-room scores; they know you know this."},
+    {pattern:/\.set_title\s*\(/, msg:"Every board slide needs a title - ax.set_title(...)."}
+  ],
+  test:`
+_g = globals()
+assert 'fig' in _g and 'ax' in _g, "No figure found - start with: fig, ax = plt.subplots()"
+fig.canvas.draw()
+assert len(ax.patches) == 4, f"The chart has {len(ax.patches)} bars - expected 4 (one per platform)."
+_h = sorted(round(p.get_height(), 6) for p in ax.patches)
+assert _h == ${pyList(sortedH)}, f"Bar heights are {_h} - expected ${pyList(sortedH)}. Pass the streams list to ax.bar()."
+assert ax.get_xlabel().strip() != '', "The x-axis has no label - ax.set_xlabel('Platform')."
+assert ax.get_ylabel().strip() != '', "The y-axis has no label - what are the units? ax.set_ylabel(...)."
+assert ax.get_title().strip() != '', "The slide has no title - ax.set_title(...)."
+`,
+  success:`[ROSA]: "${platforms[topIdx]} leading at ${V.streams[topIdx]} million. Labeled axes. A title. This is already the best slide I've seen this quarter, and we're one slide in."`
+  };
+},
+
+/* ---------- SLIDE 2: LINE CHART ---------- */
+function(v) {
+  const V = [
+    { ys: [1.2, 1.8, 2.9, 4.4, 6.8, 9.1] },
+    { ys: [0.8, 1.5, 2.1, 3.9, 5.2, 8.4] },
+    { ys: [1.5, 2.2, 3.4, 4.1, 7.3, 10.2] }
+  ][v];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun'];
+  const last = V.ys[V.ys.length-1];
+  return {
+  doorLabel:'2 &middot; GROWTH', tag:'SLIDE 2 / 5 - THE LINE CHART',
+  title:'Six Months of Drift',
+  story:`Ben Hartley, CFO, taps his pen. He cares about one thing: the trend.
+
+[HARTLEY]: "Don't show me categories. Show me TIME. Where have the monthly streams been going since January?"
+
+[NADIA]: "Trend over time. That's a line - the eye follows it like a story. Bars would chop the story into pieces."`,
+  mission:`<h4>&#9656; SLIDE BRIEF</h4>Plot monthly streams as a <b>line chart</b>:<br>
+&bull; <code>fig, ax = plt.subplots()</code><br>
+&bull; draw the line: <code>ax.plot(months, streams)</code><br>
+&bull; label both axes and set a title`,
+  starter:`import matplotlib.pyplot as plt
+
+months = ${pyList(months)}
+streams = ${pyList(V.ys)}   # millions of streams per month
+
+# trend over time -> ax.plot(...)
+`,
+  preview: dpTable('monthly streams (millions)', ['month', 'streams'], months.map((m,i) => [m, V.ys[i]])),
+  hints:[
+    `<code>ax.plot(months, streams)</code> draws one continuous line. Add <code>marker='o'</code> if you want a dot at each month - optional, but the board likes dots.`,
+    `Same labeling drill as Slide 1: <code>set_xlabel</code>, <code>set_ylabel</code>, <code>set_title</code>. Hartley reads axes before he reads anything.`
+  ],
+  sourceChecks:[
+    {pattern:/plt\.subplots\s*\(/, msg:"fig, ax = plt.subplots() first."},
+    {pattern:/\.plot\s*\(/, msg:"Trend over time means ax.plot() - a line, not bars. Nadia is mouthing the word 'line' at you."},
+    {pattern:/\.set_title\s*\(/, msg:"Title the slide - ax.set_title(...)."}
+  ],
+  test:`
+_g = globals()
+assert 'fig' in _g and 'ax' in _g, "No figure found - start with: fig, ax = plt.subplots()"
+fig.canvas.draw()
+assert len(ax.lines) >= 1, "There's no line on the chart - use ax.plot(months, streams)."
+_y = [round(float(y), 6) for y in ax.lines[0].get_ydata()]
+assert _y == ${pyList(V.ys)}, f"The line's y-values are {_y} - expected ${pyList(V.ys)}. Plot the streams list against months."
+assert ax.get_xlabel().strip() != '', "Label the x-axis - ax.set_xlabel('Month')."
+assert ax.get_ylabel().strip() != '', "Label the y-axis - ax.set_ylabel(...)."
+assert ax.get_title().strip() != '', "Title the slide - ax.set_title(...)."
+`,
+  success:`[HARTLEY]: "January to June, ending at ${last} million. A line I can follow without squinting." He writes something down. For Hartley, that's a standing ovation.`
+  };
+},
+
+/* ---------- SLIDE 3: THE HONEST AXIS ---------- */
+function(v) {
+  const V = [
+    { revs: [58.2, 58.9, 59.4, 61.0], trick: [58, 62] },
+    { revs: [42.1, 42.8, 43.5, 44.9], trick: [42, 45] },
+    { revs: [73.4, 74.0, 74.8, 76.2], trick: [73, 77] }
+  ][v];
+  const quarters = ['Q1','Q2','Q3','Q4'];
+  const sortedH = [...V.revs].sort((a,b) => a-b);
+  return {
+  doorLabel:'3 &middot; REVENUE', tag:'SLIDE 3 / 5 - THE HONEST AXIS',
+  title:'Hartley\'s Favor',
+  story:`Quarterly label revenue is up - modestly. Hartley leans over before you plot it.
+
+[HARTLEY]: "Small favor. Start the y-axis at ${V.trick[0]} instead of zero. Q4 will look like a rocket launch. The board votes on my budget right after this slide."
+
+[NADIA]: "Don't. A bar chart's whole honesty lives at the zero baseline. Truncate it and a ${(V.revs[3]-V.revs[0]).toFixed(1)} million bump masquerades as a moonshot. Plot it straight - the data is good news anyway."`,
+  mission:`<h4>&#9656; SLIDE BRIEF</h4>Plot quarterly revenue as a bar chart - <b>honestly</b>:<br>
+&bull; <code>fig, ax = plt.subplots()</code>, then <code>ax.bar(quarters, revenue)</code><br>
+&bull; the y-axis must start at <b>zero</b> (bar charts do this by default - just don't "fix" it)<br>
+&bull; label the axes and title the slide<br><br>
+The projector runs an integrity check. Hartley knows this and is hoping you don't.`,
+  starter:`import matplotlib.pyplot as plt
+
+quarters = ${pyList(quarters)}
+revenue = ${pyList(V.revs)}   # label revenue, $ millions
+
+# plot it honestly - the baseline stays at zero
+`,
+  preview: dpTable('quarterly revenue ($ millions)', ['quarter', 'revenue'], quarters.map((q,i) => [q, V.revs[i]])),
+  hints:[
+    `Bar charts start their y-axis at zero by default. The "favor" would require <code>ax.set_ylim(${V.trick[0]}, ${V.trick[1]})</code> - so simply DON'T do that.`,
+    `If you already added a set_ylim call, remove it (or use <code>ax.set_ylim(0, ${V.trick[1]})</code>). Then labels and title as usual.`
+  ],
+  sourceChecks:[
+    {pattern:/plt\.subplots\s*\(/, msg:"fig, ax = plt.subplots() first."},
+    {pattern:/\.bar\s*\(/, msg:"Quarterly comparisons - ax.bar()."},
+    {pattern:/\.set_title\s*\(/, msg:"Title the slide - ax.set_title(...)."}
+  ],
+  test:`
+_g = globals()
+assert 'fig' in _g and 'ax' in _g, "No figure found - start with: fig, ax = plt.subplots()"
+fig.canvas.draw()
+assert len(ax.patches) == 4, f"The chart has {len(ax.patches)} bars - expected 4 (one per quarter)."
+_h = sorted(round(p.get_height(), 6) for p in ax.patches)
+assert _h == ${pyList(sortedH)}, f"Bar heights are {_h} - expected ${pyList(sortedH)}."
+assert ax.get_ylim()[0] <= 0, f"INTEGRITY CHECK FAILED: the y-axis starts at {ax.get_ylim()[0]:.1f}, not zero. Hartley got to you. Remove the set_ylim trick - a truncated bar chart is a lie with good posture."
+assert ax.get_xlabel().strip() != '', "Label the x-axis."
+assert ax.get_ylabel().strip() != '', "Label the y-axis - these are $ millions."
+assert ax.get_title().strip() != '', "Title the slide."
+`,
+  success:`[NADIA]: "Baseline at zero. Growth that looks exactly as big as it is." Hartley shrugs - "Worth a try" - and approves the budget anyway. Rosa makes a note that says, simply, 'integrity'.`
+  };
+},
+
+/* ---------- SLIDE 4: SCATTER ---------- */
+function(v) {
+  const V = [
+    { spend: [12, 25, 8, 40, 18, 33, 22, 15], plays: [180, 410, 95, 620, 260, 540, 350, 210] },
+    { spend: [10, 22, 35, 14, 28, 7, 45, 19], plays: [150, 380, 510, 230, 470, 88, 700, 290] },
+    { spend: [15, 30, 9, 38, 24, 11, 42, 20], plays: [240, 460, 120, 590, 380, 160, 680, 310] }
+  ][v];
+  const cities = ['Philly','Austin','Boise','NYC','Denver','Chicago','Seattle','Tucson'];
+  const sortedX = [...V.spend].sort((a,b) => a-b);
+  return {
+  doorLabel:'4 &middot; SPEND', tag:'SLIDE 4 / 5 - THE SCATTER PLOT',
+  title:'Does the Money Work?',
+  story:`Rosa pulls up the marketing question that decides next year's budget.
+
+[ROSA]: "We spent different amounts promoting Drift in eight cities. Did spend actually move streams? I don't want averages. I want to SEE the relationship."
+
+[NADIA]: "Two numeric variables, looking for a relationship. That's a scatter plot - every city becomes one dot, and the pattern speaks."`,
+  mission:`<h4>&#9656; SLIDE BRIEF</h4>Plot spend vs weekly streams as a <b>scatter plot</b>:<br>
+&bull; <code>fig, ax = plt.subplots()</code><br>
+&bull; one dot per city: <code>ax.scatter(spend, streams)</code><br>
+&bull; label both axes (units matter: $k and thousands) and title the slide`,
+  starter:`import matplotlib.pyplot as plt
+
+spend = ${pyList(V.spend)}      # marketing spend, $ thousands
+streams = ${pyList(V.plays)}   # weekly streams, thousands
+
+# relationship between two numbers -> ax.scatter(...)
+`,
+  preview: dpTable('city campaigns', ['city', 'spend ($k)', 'streams (k)'], cities.map((c,i) => [c, V.spend[i], V.plays[i]])),
+  hints:[
+    `<code>ax.scatter(spend, streams)</code> - x is what you control (spend), y is what you measure (streams).`,
+    `If the dots climb together from lower-left to upper-right, the money is working. Label both axes so the board can see WHAT is climbing.`
+  ],
+  sourceChecks:[
+    {pattern:/plt\.subplots\s*\(/, msg:"fig, ax = plt.subplots() first."},
+    {pattern:/\.scatter\s*\(/, msg:"A relationship between two numeric variables means ax.scatter(). One dot per city."},
+    {pattern:/\.set_title\s*\(/, msg:"Title the slide."}
+  ],
+  test:`
+_g = globals()
+assert 'fig' in _g and 'ax' in _g, "No figure found - start with: fig, ax = plt.subplots()"
+fig.canvas.draw()
+assert len(ax.collections) >= 1, "No scatter points found - use ax.scatter(spend, streams)."
+_pts = ax.collections[0].get_offsets()
+assert len(_pts) == 8, f"The scatter has {len(_pts)} points - expected 8 (one per city)."
+_x = sorted(round(float(p[0]), 6) for p in _pts)
+assert _x == ${pyList(sortedX)}, f"The x-values are {_x} - expected ${pyList(sortedX)}. Spend goes on the x-axis."
+assert ax.get_xlabel().strip() != '', "Label the x-axis - spend, in $ thousands."
+assert ax.get_ylabel().strip() != '', "Label the y-axis - weekly streams, in thousands."
+assert ax.get_title().strip() != '', "Title the slide."
+`,
+  success:`[ROSA]: "Lower-left to upper-right. The money works." She circles the big-spend dot. "And THAT is why we're doubling down. Next slide - the big one."`
+  };
+},
+
+/* ---------- SLIDE 5: SORTED HORIZONTAL BARS ---------- */
+function(v) {
+  const options = ['Stadium tour','TikTok push','Late night TV','Festival slots','Vinyl reissue'];
+  const V = [
+    { roi: [3.1, 4.8, 1.9, 4.2, 2.6] },
+    { roi: [2.4, 5.1, 3.3, 1.7, 4.4] },
+    { roi: [4.6, 2.2, 3.8, 5.4, 1.5] }
+  ][v];
+  const pairs = V.roi.map((r, i) => [r, options[i]]).sort((a,b) => a[0]-b[0]);
+  const roiSorted = pairs.map(p => p[0]);
+  const optSorted = pairs.map(p => p[1]);
+  const winner = optSorted[optSorted.length-1];
+  return {
+  doorLabel:'5 &middot; DECISION', tag:'SLIDE 5 / 5 - THE DECISION SLIDE',
+  title:'Where the Next Million Goes',
+  story:`The final slide. Five promo options for Luz's album, each with a projected return on investment. The board votes on whatever you show them.
+
+[ROSA]: "Horizontal bars, best option on top. Long option names read better sideways - and the eye lands on the top bar first."
+
+[NADIA]: "One catch: matplotlib draws barh from the bottom up. Sort the data ASCENDING and the biggest ROI lands on top. Sort the names WITH the numbers or the labels lie."`,
+  mission:`<h4>&#9656; SLIDE BRIEF</h4>Plot ROI by option as <b>sorted horizontal bars</b>:<br>
+&bull; sort the pairs together, ascending: <code>pairs = sorted(zip(roi, options))</code><br>
+&bull; unpack into <code>roi_sorted</code> and <code>options_sorted</code><br>
+&bull; draw: <code>ax.barh(options_sorted, roi_sorted)</code><br>
+&bull; label the axes and title the slide. Best option ends up on top.`,
+  starter:`import matplotlib.pyplot as plt
+
+options = ${pyList(options)}
+roi = ${pyList(V.roi)}   # projected return per $1 spent
+
+# sort the pairs together, then barh
+pairs = sorted(zip(roi, options))
+roi_sorted = ...
+options_sorted = ...
+
+`,
+  preview: dpTable('promo options - projected ROI', ['option', 'ROI ($ per $1)'], options.map((o,i) => [o, V.roi[i]])),
+  hints:[
+    `<code>pairs</code> is a list of (roi, option) tuples, already sorted by roi. Pull them apart: <code>roi_sorted = [p[0] for p in pairs]</code> and <code>options_sorted = [p[1] for p in pairs]</code>.`,
+    `Then <code>fig, ax = plt.subplots()</code> and <code>ax.barh(options_sorted, roi_sorted)</code>. barh draws bottom-up, so ascending order puts ${winner} on top.`
+  ],
+  sourceChecks:[
+    {pattern:/plt\.subplots\s*\(/, msg:"fig, ax = plt.subplots() first."},
+    {pattern:/\.barh\s*\(/, msg:"Rosa asked for HORIZONTAL bars - ax.barh()."},
+    {pattern:/sorted\s*\(/, msg:"The options must be sorted by ROI - use sorted()."},
+    {pattern:/zip\s*\(/, msg:"Sort the names WITH the numbers - zip them together first, or the labels lie."}
+  ],
+  test:`
+_g = globals()
+assert 'fig' in _g and 'ax' in _g, "No figure found - start with: fig, ax = plt.subplots()"
+fig.canvas.draw()
+assert len(ax.patches) == 5, f"The chart has {len(ax.patches)} bars - expected 5 (one per option)."
+_w = [round(p.get_width(), 6) for p in ax.patches]
+assert _w == ${pyList(roiSorted)}, f"Bar widths bottom-to-top are {_w} - expected ${pyList(roiSorted)} (ascending, so the best option lands on TOP)."
+_t = [t.get_text() for t in ax.get_yticklabels()]
+assert _t == ${pyList(optSorted)}, f"The y-axis labels are {_t} - expected ${pyList(optSorted)}. Sort options together with roi (zip + sorted), then pass options_sorted to barh."
+assert ax.get_xlabel().strip() != '', "Label the x-axis - ROI per $1."
+assert ax.get_title().strip() != '', "Title the decision slide."
+`,
+  success:`[ROSA]: "${winner}, top bar, ${roiSorted[roiSorted.length-1]}x return. All in favor?" Every hand goes up. Even Hartley's. ESPECIALLY Hartley's.`
+  };
+}
+];
+</script>
+
+<!-- ═══════════════ GAME SCRIPT ═══════════════ -->
+<script>
+"use strict";
+
+/* ========================================================= STATE */
+const $ = id => document.getElementById(id);
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let pyodide = null;
+let LEVELS = [];
+let state = null;
+let muted = false;
+let timerInt = null;
+
+function freshState() {
+  return {
+    v: 1,
+    name: '', current: 0, completed: [], code: {},
+    conf: 100, hintsShown: {}, startTs: null, elapsed: 0, done: false,
+    variants: Array.from({length: LEVEL_BUILDERS.length}, () => Math.floor(Math.random() * VARIANT_COUNT))
+  };
+}
+
+function rebuildLevels() {
+  LEVELS = state.variants.map((vi, i) => LEVEL_BUILDERS[i](vi));
+}
+
+function saveState() {
+  try { localStorage.setItem('volta_board', JSON.stringify(state)); } catch(e) {}
+}
+function loadState() {
+  try {
+    const s = localStorage.getItem('volta_board');
+    if (s) {
+      const p = JSON.parse(s);
+      if (p && p.v === 1 && typeof p.current === 'number' && Array.isArray(p.variants) && !p.done) return p;
+    }
+  } catch(e) {}
+  return null;
+}
+
+function recordCompletion(verdict) {
+  try {
+    let prev = null;
+    try { prev = JSON.parse(localStorage.getItem('dtsc520_boardmeeting') || 'null'); } catch(e) {}
+    const best = (prev && prev.bestTimeMs) ? Math.min(prev.bestTimeMs, state.elapsed) : state.elapsed;
+    localStorage.setItem('dtsc520_boardmeeting', JSON.stringify({
+      completed: true,
+      bestTimeMs: best,
+      lastTimeMs: state.elapsed,
+      confidence: state.conf,
+      verdict: verdict,
+      name: state.name,
+      date: new Date().toISOString()
+    }));
+    return { newBest: !prev || !prev.bestTimeMs || state.elapsed < prev.bestTimeMs, hadPrev: !!(prev && prev.bestTimeMs), best };
+  } catch(e) { return { newBest: false, hadPrev: false, best: state.elapsed }; }
+}
+
+/* ========================================================= AUDIO */
+let actx = null;
+function beep(freq, dur, type='sine', vol=0.05, when=0) {
+  if (muted) return;
+  try {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, actx.currentTime + when);
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + when + dur);
+    o.connect(g); g.connect(actx.destination);
+    o.start(actx.currentTime + when); o.stop(actx.currentTime + when + dur);
+  } catch(e) {}
+}
+/* soft sine "boardroom" palette - no arcade squares here */
+const sfx = {
+  key: () => beep(820 + Math.random()*120, 0.01, 'sine', 0.004),
+  fail: () => { beep(220, 0.25, 'sine', 0.05); beep(185, 0.3, 'sine', 0.05, 0.16); },
+  pass: () => { [440, 554, 659].forEach((f,i) => beep(f, 0.25, 'sine', 0.05, i*0.12)); },
+  win: () => { [440,554,659,880,659,880,1109,1319].forEach((f,i) => beep(f, 0.28, 'sine', 0.05, i*0.15)); },
+  hint: () => beep(587, 0.16, 'sine', 0.045)
+};
+function setMuted(m) {
+  muted = m;
+  const b = $('muteBtn');
+  b.textContent = muted ? '♪̸' : '♪';
+  b.style.textDecoration = muted ? 'line-through' : 'none';
+  b.setAttribute('aria-pressed', String(muted));
+  try { localStorage.setItem('volta_muted', muted ? '1' : '0'); } catch(e) {}
+}
+
+/* ========================================================= INTRO */
+const INTRO_TEXT = `Six months ago you sat in the Volta Records committee room and picked the charts that got Luz signed. "Drift" has since gone everywhere.
+
+Today is the quarterly board meeting, and this time you're not picking charts.
+
+You're building them. Live. On the projector. In front of the board.
+
+[ROSA]: "Five slides on the agenda. The projector renders whatever your code produces - so it had better produce something."
+
+[NADIA]: "You'll be fine. Just remember: right chart for the question, label everything, and if Hartley asks you for a 'small favor' with an axis - he will - say no."
+
+[HARTLEY]: "I can hear you."`;
+
+function speakerSpan(t) {
+  return t.replace(/\[NADIA\]/g, '<span class="sp-n">[NADIA]</span>')
+          .replace(/\[HARTLEY\]/g, '<span class="sp-h">[HARTLEY]</span>')
+          .replace(/\[ROSA\]/g, '<span class="sp-r">[ROSA]</span>');
+}
+
+let introDone = false;
+function typeIntro() {
+  const el = $('introStory');
+  if (REDUCED) {
+    introDone = true;
+    el.innerHTML = speakerSpan(INTRO_TEXT) + '<span class="cursor"></span>';
+    $('nameRow').classList.add('show');
+    $('playerName').focus();
+    return;
+  }
+  let i = 0;
+  const cur = '<span class="cursor"></span>';
+  function tick() {
+    if (introDone) return;
+    if (i <= INTRO_TEXT.length) {
+      el.innerHTML = speakerSpan(INTRO_TEXT.slice(0, i)) + cur;
+      i += (INTRO_TEXT[i] === ' ' ? 2 : 1);
+      setTimeout(tick, 11);
+    } else {
+      introDone = true;
+      el.innerHTML = speakerSpan(INTRO_TEXT) + cur;
+      $('nameRow').classList.add('show');
+      $('playerName').focus();
+    }
+  }
+  tick();
+}
+
+$('intro').addEventListener('click', () => {
+  if (!introDone) {
+    introDone = true;
+    $('introStory').innerHTML = speakerSpan(INTRO_TEXT) + '<span class="cursor"></span>';
+    $('nameRow').classList.add('show');
+  }
+});
+
+/* ========================================================= PYODIDE */
+async function bootPyodide() {
+  try {
+    $('bootStatus').textContent = '▸ downloading Python core (~10 MB, one-time)…';
+    pyodide = await loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
+    $('bootStatus').textContent = '▸ Python online. Downloading matplotlib (~12 MB, one-time)…';
+    await pyodide.loadPackage(['matplotlib']);
+    pyodide.runPython('import matplotlib; matplotlib.use("AGG")');
+    const ver = pyodide.runPython('import matplotlib; matplotlib.__version__');
+    $('bootStatus').textContent = '▸ Projector warmed up. matplotlib ' + ver;
+    $('startBtn').disabled = false;
+    $('startBtn').textContent = 'ENTER THE BOARDROOM ▸';
+  } catch(e) {
+    $('bootStatus').innerHTML = '▸ <span style="color:var(--red)">Failed to load Python/matplotlib - check your internet connection and refresh.</span>';
+  }
+}
+
+/* ========================================================= GAME UI */
+function fmtTime(ms) {
+  const s = Math.floor(ms/1000);
+  return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+}
+function startTimer() {
+  if (timerInt) clearInterval(timerInt);
+  timerInt = setInterval(() => {
+    state.elapsed = Date.now() - state.startTs;
+    $('hudTime').textContent = fmtTime(state.elapsed);
+  }, 500);
+}
+function updConf() {
+  const el = $('hudConf');
+  el.textContent = state.conf + '%';
+  el.classList.toggle('low', state.conf < 70);
+}
+
+function buildDoormap() {
+  const dm = $('doormap');
+  dm.querySelectorAll('.agenda-item').forEach(n => n.remove());
+  LEVELS.forEach((lv, i) => {
+    const d = document.createElement('button');
+    d.className = 'agenda-item';
+    d.type = 'button';
+    const unlocked = i === 0 || state.completed.includes(i-1);
+    const done = state.completed.includes(i);
+    if (done) d.classList.add('done');
+    else if (unlocked) d.classList.add('unlocked');
+    else d.classList.add('locked-hard');
+    if (i === state.current) d.classList.add('current');
+    const stateWord = done ? 'presented' : (unlocked ? 'ready' : 'pending');
+    d.setAttribute('aria-label', 'Agenda slide ' + (i+1) + ': ' + lv.doorLabel.replace(/&middot;/g, '-') + ' - ' + stateWord + (i === state.current ? ' (current)' : ''));
+    d.disabled = !done && !unlocked;
+    d.innerHTML = (done ? '✓ ' : '') + lv.doorLabel;
+    d.onclick = () => { if (done || unlocked) gotoLevel(i); };
+    dm.appendChild(d);
+  });
+}
+
+function typeStory(text, el) {
+  if (REDUCED) { el.innerHTML = speakerSpan(text); return; }
+  el.innerHTML = '';
+  let i = 0;
+  function tick() {
+    if (i <= text.length) {
+      el.innerHTML = speakerSpan(text.slice(0, i));
+      i += 3;
+      setTimeout(tick, 8);
+    } else {
+      el.innerHTML = speakerSpan(text);
+    }
+  }
+  tick();
+}
+
+function clearSlide() {
+  $('slideImg').style.display = 'none';
+  $('slideImg').src = '';
+  $('slidePlaceholder').style.display = 'block';
+}
+function showSlide(b64) {
+  $('slideImg').src = 'data:image/png;base64,' + b64;
+  $('slideImg').style.display = 'block';
+  $('slidePlaceholder').style.display = 'none';
+}
+
+function gotoLevel(i) {
+  state.current = i;
+  const lv = LEVELS[i];
+  $('levelTag').textContent = lv.tag;
+  $('levelTitle').textContent = lv.title;
+  typeStory(lv.story, $('storyText'));
+  $('mission').innerHTML = lv.mission;
+  $('dataPreview').innerHTML = lv.preview || '';
+  $('editor').value = state.code[i] !== undefined ? state.code[i] : lv.starter;
+  renderHints();
+  clearConsole();
+  clearSlide();
+  if (state.completed.includes(i)) {
+    logLine('✔ This slide is already in the deck. Revisit, experiment, or pick another agenda item above.', 'ok');
+  }
+  buildDoormap();
+  saveState();
+}
+
+function renderHints() {
+  const hb = $('hintBox');
+  hb.innerHTML = '';
+  const shown = state.hintsShown[state.current] || 0;
+  for (let h = 0; h < shown; h++) {
+    const d = document.createElement('div');
+    d.className = 'hint';
+    d.innerHTML = '<span class="sp-n">[NADIA]</span> ' + LEVELS[state.current].hints[h];
+    hb.appendChild(d);
+  }
+  $('hintBtn').disabled = shown >= LEVELS[state.current].hints.length;
+  $('hintBtn').innerHTML = shown >= LEVELS[state.current].hints.length ? '\u{1F4A1} Nadia is out of hints' : '\u{1F4A1} Ask Nadia (−5% confidence)';
+}
+
+/* ========================================================= CONSOLE */
+function clearConsole() {
+  $('console').innerHTML = '<span class="sys">▸ Laptop ready.</span>\n';
+}
+function logLine(txt, cls='sys') {
+  const c = $('console');
+  const s = document.createElement('span');
+  s.className = cls;
+  s.textContent = txt + '\n';
+  c.appendChild(s);
+  c.scrollTop = c.scrollHeight;
+}
+
+/* ========================================================= RUN & CHECK */
+function friendlyError(err) {
+  const msg = String(err.message || err);
+  const lines = msg.trim().split('\n');
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const L = lines[i].trim();
+    if (/^(\w+Error|AssertionError|Exception|KeyboardInterrupt)/.test(L)) {
+      if (L.startsWith('AssertionError: ')) return { kind:'check', text: L.slice('AssertionError: '.length) };
+      return { kind:'crash', text: L };
+    }
+  }
+  return { kind:'crash', text: lines.slice(-3).join('\n') };
+}
+
+function mplCoach(text) {
+  if (/NameError.*'fig'|NameError.*'ax'/.test(text)) return "▸ fig and ax don't exist yet - create them with: fig, ax = plt.subplots()";
+  if (/NameError.*'plt'/.test(text)) return "▸ plt isn't defined - keep the import line: import matplotlib.pyplot as plt";
+  if (/shape mismatch|must have same first dimension/.test(text)) return "▸ Your x and y lists are different lengths - plot the two lists that belong together.";
+  if (/AttributeError.*'AxesSubplot'|AttributeError.*'Axes'/.test(text)) return "▸ That method doesn't exist on ax - check the spelling (set_xlabel, set_ylabel, set_title).";
+  return null;
+}
+
+const RENDER_SNIPPET = `
+_render_b64 = ''
+if 'fig' in globals():
+    import io as _io_mod, base64 as _b64_mod
+    _buf_r = _io_mod.BytesIO()
+    fig.savefig(_buf_r, format='png', dpi=110, bbox_inches='tight')
+    _render_b64 = _b64_mod.b64encode(_buf_r.getvalue()).decode()
+_render_b64
+`;
+
+async function runAndCheck() {
+  if (!pyodide || state.done) return;
+  const i = state.current;
+  const lv = LEVELS[i];
+  const src = $('editor').value;
+  state.code[i] = src;
+  clearConsole();
+  $('runBtn').disabled = true;
+
+  // close any figures from previous runs
+  try { pyodide.runPython('import matplotlib.pyplot as _plt_c; _plt_c.close("all")'); } catch(e) {}
+
+  let printed = '';
+  pyodide.setStdout({ batched: t => { printed += t + '\n'; } });
+  pyodide.setStderr({ batched: t => { printed += t + '\n'; } });
+
+  const ns = pyodide.globals.get('dict')();
+  try {
+    await pyodide.runPythonAsync(src, { globals: ns });
+  } catch(err) {
+    const fe = friendlyError(err);
+    if (printed.trim()) logLine(printed.trimEnd(), 'out');
+    logLine('✗ Your code crashed before reaching the projector:', 'err');
+    logLine('  ' + fe.text, 'err');
+    const coach = mplCoach(fe.text);
+    logLine(coach || '▸ Read the error name and message - Python is telling you exactly what went wrong.', 'sys');
+    failFeedback();
+    ns.destroy();
+    $('runBtn').disabled = false;
+    return;
+  }
+  if (printed.trim()) logLine(printed.trimEnd(), 'out');
+
+  // render the chart to the projector EVEN IF grading fails - seeing it is the point
+  try {
+    const b64 = await pyodide.runPythonAsync(RENDER_SNIPPET, { globals: ns });
+    if (b64 && b64.length > 0) {
+      showSlide(b64);
+    } else {
+      clearSlide();
+      logLine('▸ Nothing reached the projector - no `fig` was created. Start with: fig, ax = plt.subplots()', 'sys');
+    }
+  } catch(e) {
+    clearSlide();
+  }
+
+  for (const chk of (lv.sourceChecks || [])) {
+    if (!chk.pattern.test(src)) {
+      logLine('✗ ' + chk.msg, 'err');
+      failFeedback();
+      ns.destroy();
+      $('runBtn').disabled = false;
+      return;
+    }
+  }
+
+  try {
+    await pyodide.runPythonAsync(lv.test, { globals: ns });
+  } catch(err) {
+    const fe = friendlyError(err);
+    if (fe.kind === 'check') {
+      logLine('✗ The board reviews your slide:', 'err');
+      logLine('  ' + fe.text, 'err');
+    } else {
+      logLine('✗ Review hit an error (is a variable missing or misnamed?):', 'err');
+      logLine('  ' + fe.text, 'err');
+      const coach = mplCoach(fe.text);
+      if (coach) logLine(coach, 'sys');
+    }
+    failFeedback();
+    ns.destroy();
+    $('runBtn').disabled = false;
+    return;
+  }
+  ns.destroy();
+
+  // PASS!
+  sfx.pass();
+  if (!REDUCED) {
+    document.querySelector('.slide-frame').classList.add('flash-gold');
+    setTimeout(() => document.querySelector('.slide-frame').classList.remove('flash-gold'), 750);
+  }
+  logLine('✔ SLIDE APPROVED', 'ok');
+  logLine('', 'sys');
+  logLine(lv.success.replace(/\[(ROSA|NADIA|HARTLEY)\]/g, '[$1]'), 'ok');
+
+  if (!state.completed.includes(i)) {
+    state.completed.push(i);
+  }
+  buildDoormap();
+  saveState();
+
+  if (state.completed.length === LEVELS.length) {
+    setTimeout(winGame, 1400);
+  } else {
+    const next = LEVELS.findIndex((_, k) => !state.completed.includes(k));
+    if (next !== -1) {
+      logLine(`▸ Next agenda item (${LEVELS[next].doorLabel.replace(/&middot;/g, '-')}) in 3 seconds…`, 'sys');
+      setTimeout(() => { if (!state.done && state.current === i) gotoLevel(next); }, 3000);
+    }
+  }
+  $('runBtn').disabled = false;
+}
+
+function failFeedback() {
+  sfx.fail();
+  state.conf = Math.max(40, state.conf - 2);
+  updConf();
+  saveState();
+  if (!REDUCED) {
+    const wp = document.querySelector('.work-pane');
+    wp.classList.add('shake');
+    setTimeout(() => wp.classList.remove('shake'), 450);
+  }
+}
+
+/* ========================================================= WIN */
+function winGame() {
+  state.done = true;
+  try { localStorage.removeItem('volta_board'); } catch(e) {}
+  clearInterval(timerInt);
+  $('game').classList.remove('active');
+  $('win').classList.add('active');
+  $('certName').textContent = state.name || 'The Analyst';
+  const mins = fmtTime(state.elapsed);
+  let verdict = 'Polite applause';
+  if (state.conf >= 95) verdict = 'Standing ovation';
+  else if (state.conf >= 80) verdict = 'Approving nods';
+  else if (state.conf < 60) verdict = 'The board has questions';
+  $('certStats').innerHTML =
+    `Meeting length: <b>${mins}</b> &nbsp;&middot;&nbsp; Board confidence: <b>${state.conf}%</b> &nbsp;&middot;&nbsp; Reception: <b>${verdict}</b>`;
+
+  const rec = recordCompletion(verdict);
+  $('certPB').textContent = rec.hadPrev
+    ? (rec.newBest ? '★ NEW PERSONAL BEST' : 'Personal best: ' + fmtTime(rec.best))
+    : '';
+
+  $('boardQuotes').innerHTML = speakerSpan(
+`[ROSA]: "Five slides, five right charts, zero lies. The campaign is approved. So is your promotion to Lead Analyst."
+
+[NADIA]: "Told you the committee room was the easy part."
+
+[HARTLEY]: "Engineering wants the campaign code in version control by next quarter. Something called a 'pull request'. I assume you'll handle it."`);
+  sfx.win();
+  if (!REDUCED) confettiBurst();
+}
+
+function resetGame() {
+  try { localStorage.removeItem('volta_board'); } catch(e) {}
+  location.reload();
+}
+
+/* ========================================================= CONFETTI */
+function confettiBurst() {
+  const cv = $('confetti');
+  cv.width = innerWidth; cv.height = innerHeight;
+  const ctx = cv.getContext('2d');
+  const cols = ['#d4af6a', '#3fb5b0', '#b07ac4', '#8B1C40', '#f5f0e6'];
+  const parts = Array.from({length: 180}, () => ({
+    x: Math.random()*cv.width, y: -20 - Math.random()*cv.height*0.5,
+    vx: (Math.random()-0.5)*2.4, vy: 1.8 + Math.random()*3.2,
+    s: 4 + Math.random()*6, r: Math.random()*Math.PI, vr: (Math.random()-0.5)*0.25,
+    c: cols[Math.floor(Math.random()*cols.length)]
+  }));
+  let frames = 0;
+  function draw() {
+    ctx.clearRect(0,0,cv.width,cv.height);
+    parts.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r);
+      ctx.fillStyle = p.c; ctx.fillRect(-p.s/2, -p.s/2, p.s, p.s*0.6);
+      ctx.restore();
+    });
+    if (++frames < 480) requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,cv.width,cv.height);
+  }
+  draw();
+}
+
+/* ========================================================= EVENTS */
+$('startBtn').addEventListener('click', () => {
+  const typedName = $('playerName').value.trim() || 'The Analyst';
+  const resumed = loadState();
+  if (resumed && confirm('Rosa kept your seat warm. Resume your previous board meeting?')) {
+    state = resumed;
+    if (!state.name) state.name = typedName;
+    state.startTs = Date.now() - (state.elapsed || 0);
+  } else {
+    try { localStorage.removeItem('volta_board'); } catch(e) {}
+    state = freshState();
+    state.name = typedName;
+    state.startTs = Date.now();
+  }
+  rebuildLevels();
+  $('intro').classList.remove('active');
+  $('game').classList.add('active');
+  startTimer();
+  updConf();
+  gotoLevel(state.current);
+  beep(440, 0.12); beep(659, 0.14, 'sine', 0.05, 0.12);
+});
+
+$('runBtn').addEventListener('click', runAndCheck);
+$('resetBtn').addEventListener('click', () => {
+  $('editor').value = LEVELS[state.current].starter;
+  state.code[state.current] = undefined;
+  clearConsole();
+  clearSlide();
+  logLine('▸ Code reset to starter.', 'sys');
+});
+$('hintBtn').addEventListener('click', () => {
+  const shown = state.hintsShown[state.current] || 0;
+  if (shown >= LEVELS[state.current].hints.length) return;
+  state.hintsShown[state.current] = shown + 1;
+  state.conf = Math.max(40, state.conf - 5);
+  updConf();
+  renderHints();
+  sfx.hint();
+  saveState();
+});
+$('muteBtn').addEventListener('click', () => setMuted(!muted));
+
+const ed = $('editor');
+ed.addEventListener('keydown', e => {
+  sfx.key();
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const s = ed.selectionStart, en = ed.selectionEnd;
+    ed.value = ed.value.slice(0, s) + '    ' + ed.value.slice(en);
+    ed.selectionStart = ed.selectionEnd = s + 4;
+  }
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault();
+    runAndCheck();
+  }
+});
+ed.addEventListener('input', () => { if (state) state.code[state.current] = ed.value; });
+
+window.addEventListener('beforeunload', () => { if (state && !state.done && state.startTs) saveState(); });
+
+/* boot */
+try { setMuted(localStorage.getItem('volta_muted') === '1'); } catch(e) {}
+typeIntro();
+bootPyodide();
+</script>
+</body>
+</html>

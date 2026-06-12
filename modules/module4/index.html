@@ -239,6 +239,15 @@
     .sim-entry:hover { background: rgba(255,255,255,0.05); }
     .sim-entry-1 { border-left-color: var(--accent); }
     .sim-entry-2 { border-left-color: var(--maroon); }
+    .sim-entry-event {
+      border-left-color: #ffb347;
+      background: #140e06;
+      box-shadow: 0 0 10px rgba(255,179,71,0.10);
+    }
+    .sim-entry-event:hover { background: #1a1208; box-shadow: 0 0 16px rgba(255,179,71,0.22); }
+    .sim-entry-event .sim-entry-num { color: #ffb347; }
+    .sim-entry-event .sim-entry-title { color: #efdcc0; }
+    .sim-entry-event .sim-entry-desc { color: #b89a6e; }
     .sim-entry-num {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.58rem;
@@ -1198,6 +1207,12 @@ pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'<
           <div class="sim-entry-num">Sim 3</div>
           <div class="sim-entry-title">RTG Investigation</div>
           <div class="sim-entry-desc">A Philly restaurant's ratings dropped. Use merges, filters, and groupby to find out why.</div>
+          <div class="sim-entry-launch">Launch &rarr;</div>
+        </a>
+        <a class="sim-entry sim-entry-event" href="../../sims/aria-returns/index.html">
+          <div class="sim-entry-num">After-Hours Event</div>
+          <div class="sim-entry-title">ARIA Returns: The pandas Update</div>
+          <div class="sim-entry-desc">The building AI installed pandas at 2:14 AM. It did not go well. Write real pandas to restore eight systems.</div>
           <div class="sim-entry-launch">Launch &rarr;</div>
         </a>
       </div>
