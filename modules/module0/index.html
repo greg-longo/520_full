@@ -95,7 +95,7 @@
       letter-spacing: 0.1em; text-transform: uppercase;
       color: var(--accent-light); margin-bottom: 0.35rem;
     }
-    a.sim-cta h4 {
+    a.sim-cta h3 {
       font-family: 'Zilla Slab', serif; font-size: 1.05rem;
       color: var(--text-bright); margin-bottom: 0.25rem;
     }
@@ -203,7 +203,7 @@
 
     .sidebar { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 70px; max-height: calc(100vh - 80px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
     .sidebar-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1.1rem; }
-    .sidebar-card h4 {
+    .sidebar-card h3 {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
       letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.75rem;
     }
@@ -284,7 +284,62 @@
       .sidebar { position: static; }
       .action-grid { grid-template-columns: 1fr; }
     }
-  </style>
+  
+    /* ── ADA: Focus visibility (WCAG 2.1 AA) ───────────────────────
+       Keyboard users must be able to see the focused element.
+       :focus-visible targets keyboard focus only (not mouse clicks).
+    ─────────────────────────────────────────────────────────────── */
+    :focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    /* For elements that already have a border-radius we want to match */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+    }
+    /* Remove default outline only where we've supplied our own */
+    :focus:not(:focus-visible) { outline: none; }
+
+    
+    /* ── ADA: Reduced motion (WCAG 2.1 SC 2.3.3) ───────────────────
+       Users who prefer reduced motion (vestibular disorders, epilepsy)
+       should not be subjected to animations or transitions.
+    ─────────────────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration:   0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration:  0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      /* Narrative typewriter paragraphs: show immediately */
+      .type-para {
+        opacity: 1 !important;
+        transition: none !important;
+      }
+      /* Loading dots: hide animation, show static dots */
+      .sim-loading-dot {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      /* Cursor blink */
+      .type-cursor {
+        animation: none !important;
+        opacity: 1 !important;
+      }
+    }
+
+    </style>
   <link rel="stylesheet" href="../../assets/code-copy.css">
   <script src="../../assets/code-copy.js" defer></script>
 </head>
@@ -439,32 +494,32 @@
       <div class="action-grid">
         <div class="action-card">
           <div class="domain">Sports Analytics</div>
-          <h4>Player Evaluation &amp; Scouting</h4>
+          <h3>Player Evaluation &amp; Scouting</h3>
           <p>MLB teams use pandas and statistical modeling to evaluate prospects from minor league data. The Moneyball revolution (Oakland A's, 2002) showed that data could find market inefficiencies in player valuation. Today every major team employs data scientists.</p>
         </div>
         <div class="action-card">
           <div class="domain">Healthcare</div>
-          <h4>Early Disease Detection</h4>
+          <h3>Early Disease Detection</h3>
           <p>Machine learning models trained on medical imaging data can detect diabetic retinopathy, lung cancer, and skin lesions with accuracy matching or exceeding specialist physicians. NumPy and Python underpin the entire image processing pipeline.</p>
         </div>
         <div class="action-card">
           <div class="domain">Finance</div>
-          <h4>Fraud Detection</h4>
+          <h3>Fraud Detection</h3>
           <p>Credit card companies process billions of transactions daily, flagging potentially fraudulent ones in real time using anomaly detection models. The pandas cleaning and feature engineering you will learn in Module 4 is the foundation of this pipeline.</p>
         </div>
         <div class="action-card">
           <div class="domain">Retail / E-Commerce</div>
-          <h4>Recommendation Engines</h4>
+          <h3>Recommendation Engines</h3>
           <p>"Customers who bought X also bought Y." These systems are trained on purchase history matrices using collaborative filtering - a technique built on NumPy array operations. Amazon estimates 35% of its revenue comes from recommendations.</p>
         </div>
         <div class="action-card">
           <div class="domain">Climate Science</div>
-          <h4>Climate Modeling</h4>
+          <h3>Climate Modeling</h3>
           <p>Climate scientists use Python (NumPy, pandas, Matplotlib) to process satellite data, model atmospheric conditions, and communicate findings. The visualizations you see in IPCC reports are generated with the tools from Module 5.</p>
         </div>
         <div class="action-card">
           <div class="domain">Public Policy</div>
-          <h4>Predictive Policing &amp; Bias Detection</h4>
+          <h3>Predictive Policing &amp; Bias Detection</h3>
           <p>Government agencies use data science for resource allocation, but the field also grapples with ethical failures - biased training data producing discriminatory models. Critical thinking (Module 1) is as important as technical skill.</p>
         </div>
       </div>
@@ -593,7 +648,7 @@ git --version
   <aside class="sidebar">
 
 <div class="sidebar-card">
-      <h4>On This Page</h4>
+      <h3>On This Page</h3>
       <div class="toc-links" id="toc-links">
         <a href="#" data-sec="overview">Course Overview</a>
         <a href="#" data-sec="syllabus">Syllabus</a>
@@ -608,19 +663,19 @@ git --version
 
     <a class="sim-cta" href="../../sims/morning-brief/index.html">
       <div class="sim-cta-label">Simulation</div>
-      <h4>The Morning Brief</h4>
+      <h3>The Morning Brief</h3>
       <p>Step through a full data science workflow: ingest, clean, analyze, and present a real dataset.</p>
     </a>
 
 
     <div class="sidebar-card">
-      <h4>Quiz</h4>
+      <h3>Quiz</h3>
       <p style="font-size:0.85rem; color:var(--text-dim); margin:0 0 0.75rem;">Test your knowledge with 10 questions, one at a time.</p>
       <a href="quiz.html" class="quiz-cta-btn">Take the Quiz</a>
     </div>
 
     <div class="next-mod">
-      <h4>Next Module</h4>
+      <h3>Next Module</h3>
       <p>Set up? Head to Module 1 to build your mental model of the data science landscape.</p>
       <a href="../module1/index.html" class="next-mod-btn">Module 1: Intro to DS &rarr;</a>
     </div>

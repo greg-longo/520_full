@@ -60,12 +60,6 @@
     }
     .mod-banner h1 { font-size: 2.1rem; font-weight: 700; color: var(--text-bright); line-height: 1.2; margin-bottom: 0.65rem; }
     .mod-banner p { font-size: 0.95rem; color: var(--text-dim); max-width: 580px; line-height: 1.6; margin-bottom: 1.25rem; }
-    .banner-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .pill {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; padding: 0.25rem 0.6rem;
-      border-radius: 3px; background: rgba(58,143,160,0.12); color: var(--accent-light);
-      border: 1px solid rgba(58,143,160,0.25); letter-spacing: 0.04em;
-    }
 
     .section-tabs {
       display: none !important;
@@ -303,7 +297,7 @@
 
     .sidebar { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 70px; max-height: calc(100vh - 80px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
     .sidebar-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1.1rem; }
-    .sidebar-card h4 {
+    .sidebar-card h3 {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
       letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.75rem;
     }
@@ -366,7 +360,7 @@
       color: var(--text-dim);
       margin-bottom: 0.2rem;
     }
-    .sim-cta h4 {
+    .sim-cta h3 {
       font-family: 'Zilla Slab', serif;
       font-size: 0.95rem;
       font-weight: 600;
@@ -424,7 +418,72 @@
     @media (max-width: 600px) {
       .quiz-link-card { flex-direction: column; align-items: flex-start; }
     }
-  </style>
+  
+    /* ── ADA: Focus visibility (WCAG 2.1 AA) ───────────────────────
+       Keyboard users must be able to see the focused element.
+       :focus-visible targets keyboard focus only (not mouse clicks).
+    ─────────────────────────────────────────────────────────────── */
+    .objectives-list {
+      margin: 1.25rem 0 2rem 1.25rem;
+      padding: 0;
+    }
+    .objectives-list li {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 0.6rem;
+      color: var(--text-dim, #6b6156);
+    }
+    :focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    /* For elements that already have a border-radius we want to match */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+    }
+    /* Remove default outline only where we've supplied our own */
+    :focus:not(:focus-visible) { outline: none; }
+
+    
+    /* ── ADA: Reduced motion (WCAG 2.1 SC 2.3.3) ───────────────────
+       Users who prefer reduced motion (vestibular disorders, epilepsy)
+       should not be subjected to animations or transitions.
+    ─────────────────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration:   0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration:  0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      /* Narrative typewriter paragraphs: show immediately */
+      .type-para {
+        opacity: 1 !important;
+        transition: none !important;
+      }
+      /* Loading dots: hide animation, show static dots */
+      .sim-loading-dot {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      /* Cursor blink */
+      .type-cursor {
+        animation: none !important;
+        opacity: 1 !important;
+      }
+    }
+
+    </style>
   <link rel="stylesheet" href="../../assets/code-copy.css">
   <script src="../../assets/code-copy.js" defer></script>
 </head>
@@ -447,18 +506,12 @@
     <div class="banner-eyebrow">Module 05 - Data Visualization</div>
     <h1>Matplotlib &amp; Seaborn: Communicating with Charts</h1>
     <p>Data without visualization is just numbers. Learn to build clear, accurate, and compelling charts using Matplotlib and Seaborn - and more importantly, learn when each chart type earns its place.</p>
-    <div class="banner-pills">
-      <span class="pill">Chart Types</span>
-      <span class="pill">Matplotlib Basics</span>
-      <span class="pill">Seaborn</span>
-      <span class="pill">Subplots</span>
-      <span class="pill">Styling</span>
-      <span class="pill">Viz Best Practices</span>
-    </div>
+
   </div>
 </div>
 
 <nav class="section-tabs">
+  <a class="tab-link" data-section="overview">Overview</a>
   <a class="tab-link" data-section="chart-types">Chart Types</a>
   <a class="tab-link" data-section="matplotlib">Matplotlib</a>
   <a class="tab-link" data-section="seaborn">Seaborn</a>
@@ -475,38 +528,57 @@
   <div class="content-col">
 
     <!-- CHART TYPES -->
+
+    <!-- OVERVIEW / LANDING -->
+    <section id="overview" class="content-section">
+      <h2>Learning Objectives</h2>
+      <ol class="objectives-list">
+          <li>Select the appropriate chart type based on the structure of data and the question being answered</li>
+          <li>Build line, bar, scatter, histogram, and box plots using Matplotlib's pyplot API</li>
+          <li>Create statistical visualizations with Seaborn, including distribution and categorical plots</li>
+          <li>Arrange multiple related charts using Matplotlib subplots and figure layouts</li>
+          <li>Apply labels, titles, annotations, and consistent styling to produce presentation-ready visuals</li>
+          <li>Generate plots directly from pandas DataFrames using built-in plotting methods</li>
+      </ol>
+      <div class="subpage-nav">
+        <span class="subpage-nav-btn invisible"></span>
+        <span></span>
+        <button class="subpage-nav-btn" onclick="showSection('chart-types')">Chart Types &rarr;</button>
+      </div>
+    </section>
+
     <section id="chart-types" class="content-section">
       <h2>Choosing the Right Chart</h2>
       <p>The most common visualization mistake is choosing a chart type based on aesthetics rather than the structure of your data and the question you are answering. Every chart type has a job. Using the wrong one obscures the truth; using the right one makes it obvious.</p>
 
       <div class="chart-grid">
         <div class="chart-card">
-          <h4>Line Chart</h4>
+          <h3>Line Chart</h3>
           <div class="use-when">Use when: showing change over time or continuous data.</div>
           <p>Emphasizes trends and continuity. Ideal for time series - batting average over a season, daily ticket sales. The connected line implies the values between points exist and matter.</p>
         </div>
         <div class="chart-card">
-          <h4>Bar Chart</h4>
+          <h3>Bar Chart</h3>
           <div class="use-when">Use when: comparing discrete categories.</div>
           <p>Each bar represents one category. The eye compares heights (or lengths in a horizontal bar). Good for: HR counts by player, revenue by region. Always start the y-axis at zero.</p>
         </div>
         <div class="chart-card">
-          <h4>Scatter Plot</h4>
+          <h3>Scatter Plot</h3>
           <div class="use-when">Use when: showing relationship between two continuous variables.</div>
           <p>Each point is one observation. Reveals correlation, clusters, and outliers. Classic use: batting average vs. on-base percentage. Add color or size for a third variable.</p>
         </div>
         <div class="chart-card">
-          <h4>Histogram</h4>
+          <h3>Histogram</h3>
           <div class="use-when">Use when: showing distribution of a single variable.</div>
           <p>Groups continuous values into bins and counts how many observations fall in each bin. Shows skew, modality, and spread. Essential for EDA - always plot your distributions before modeling.</p>
         </div>
         <div class="chart-card">
-          <h4>Box Plot</h4>
+          <h3>Box Plot</h3>
           <div class="use-when">Use when: comparing distributions across categories.</div>
           <p>Shows median, quartiles, and outliers in a compact form. Excellent for "salary distribution by position" or "batting avg distribution by team." More informative than a mean-only bar chart.</p>
         </div>
         <div class="chart-card">
-          <h4>Heatmap</h4>
+          <h3>Heatmap</h3>
           <div class="use-when">Use when: showing values in a matrix (correlations, co-occurrences).</div>
           <p>Encodes values as color intensity. Most common use: correlation matrix of numeric features. Reveals which variables move together - essential before building any model.</p>
         </div>
@@ -935,7 +1007,7 @@ plt.<span class="fn">show</span>()</code></pre>
   <aside class="sidebar">
 
 <div class="sidebar-card">
-      <h4>Topics</h4>
+      <h3>Topics</h3>
       <div class="toc-links" id="tocLinks">
         <a onclick="showSection('chart-types')">Chart Types</a>
         <a onclick="showSection('matplotlib')">Matplotlib</a>
@@ -952,20 +1024,20 @@ plt.<span class="fn">show</span>()</code></pre>
 
     <a class="sim-cta" href="../../sims/pitch-the-viz/index.html">
       <div class="sim-cta-label">Simulation</div>
-      <h4>Pitch the Viz</h4>
+      <h3>Pitch the Viz</h3>
       <p>You're live in the Volta Records committee room. Four chart decisions. One artist to sign. Make the data land.</p>
       <div class="sim-cta-launch">Open Simulation &rarr;</div>
     </a>
 
 
     <div class="sidebar-card">
-      <h4>Quiz</h4>
+      <h3>Quiz</h3>
       <p style="font-size:0.85rem; color:var(--text-dim); margin:0 0 0.75rem;">Test your knowledge with 10 questions, one at a time.</p>
       <a href="quiz.html" class="quiz-cta-btn">Take the Quiz</a>
     </div>
 
     <div class="next-mod">
-      <h4>Next Module</h4>
+      <h3>Next Module</h3>
       <p>Learn Git version control - branching, merging, and pull requests in Module 6.</p>
       <a href="../module6/index.html" class="next-mod-btn">Module 6: Git &amp; GitHub &rarr;</a>
     </div>
@@ -1184,7 +1256,7 @@ plt.<span class="fn">show</span>()</code></pre>
 
 
 <script>
-const SECTIONS = ['chart-types', 'matplotlib', 'seaborn', 'subplots', 'styling', 'plotting-pandas', 'annotations', 'best-practices'];
+const SECTIONS = ['overview', 'chart-types', 'matplotlib', 'seaborn', 'subplots', 'styling', 'plotting-pandas', 'annotations', 'best-practices'];
 function showSection(id, noScroll, noHash) {
   SECTIONS.forEach(function(s) { var el = document.getElementById(s); if (el) el.classList.remove('active'); });
   var target = document.getElementById(id);

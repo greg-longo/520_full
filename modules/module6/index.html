@@ -200,7 +200,7 @@
       padding: 1.25rem;
     }
 
-    .sidebar-card h4 {
+    .sidebar-card h3 {
       font-family: 'IBM Plex Sans', sans-serif;
       font-size: 0.75rem;
       font-weight: 600;
@@ -268,7 +268,7 @@
       margin-bottom: 0.4rem;
     }
 
-    .sim-cta h4 {
+    .sim-cta h3 {
       font-family: 'Zilla Slab', serif;
       font-size: 1rem;
       font-weight: 600;
@@ -331,7 +331,7 @@
       margin-bottom: 2rem;
     }
 
-    .objectives h3 {
+    .objectives h2 {
       font-family: 'IBM Plex Sans', sans-serif;
       font-size: 0.75rem;
       font-weight: 600;
@@ -431,7 +431,7 @@
       padding: 1rem;
     }
 
-    .concept-box h4 {
+    .concept-box h3 {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.8rem;
       font-weight: 500;
@@ -747,7 +747,72 @@
     :root.theme-light .section-tabs .tab-link.active { color: #0d0c0a; border-bottom-color: var(--maroon); }
     :root.theme-light .subpage-nav-btn { background: #fff; border-color: #d4cfc9; color: #646469; }
     :root.theme-light .subpage-nav-btn:hover { color: var(--maroon); border-color: var(--maroon); }
-  </style>
+  
+    /* ── ADA: Focus visibility (WCAG 2.1 AA) ───────────────────────
+       Keyboard users must be able to see the focused element.
+       :focus-visible targets keyboard focus only (not mouse clicks).
+    ─────────────────────────────────────────────────────────────── */
+    .objectives-list {
+      margin: 1.25rem 0 2rem 1.25rem;
+      padding: 0;
+    }
+    .objectives-list li {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 0.6rem;
+      color: var(--text-dim, #6b6156);
+    }
+    :focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    /* For elements that already have a border-radius we want to match */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+    }
+    /* Remove default outline only where we've supplied our own */
+    :focus:not(:focus-visible) { outline: none; }
+
+    
+    /* ── ADA: Reduced motion (WCAG 2.1 SC 2.3.3) ───────────────────
+       Users who prefer reduced motion (vestibular disorders, epilepsy)
+       should not be subjected to animations or transitions.
+    ─────────────────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration:   0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration:  0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      /* Narrative typewriter paragraphs: show immediately */
+      .type-para {
+        opacity: 1 !important;
+        transition: none !important;
+      }
+      /* Loading dots: hide animation, show static dots */
+      .sim-loading-dot {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      /* Cursor blink */
+      .type-cursor {
+        animation: none !important;
+        opacity: 1 !important;
+      }
+    }
+
+    </style>
   <link rel="stylesheet" href="../../assets/code-copy.css">
   <script src="../../assets/code-copy.js" defer></script>
 </head>
@@ -791,19 +856,27 @@
     <!-- CONTENT -->
     <div class="content">
 
-      <div class="objectives">
-        <h3>Learning Objectives</h3>
-        <ol>
-          <li>Explain what version control is and why it matters for data science work</li>
-          <li>Distinguish between local and remote repositories</li>
-          <li>Use the core Git workflow: <code>add</code>, <code>commit</code>, <code>push</code>, <code>pull</code></li>
-          <li>Create and switch between branches to isolate work</li>
-          <li>Merge branches and resolve conflicts when they arise</li>
-          <li>Open and review a Pull Request on GitHub</li>
-        </ol>
-      </div>
 
       <!-- SECTION 1: VERSION CONTROL -->
+
+      <!-- OVERVIEW / LANDING -->
+      <section id="overview" class="content-section">
+        <h2>Learning Objectives</h2>
+        <ol class="objectives-list">
+            <li>Explain what version control is and why it matters for data science work</li>
+            <li>Distinguish between local and remote repositories</li>
+            <li>Use the core Git workflow: <code>add</code>, <code>commit</code>, <code>push</code>, <code>pull</code></li>
+            <li>Create and switch between branches to isolate work</li>
+            <li>Merge branches and resolve conflicts when they arise</li>
+            <li>Open and review a Pull Request on GitHub</li>
+        </ol>
+        <div class="subpage-nav">
+          <span class="subpage-nav-btn invisible"></span>
+          <span></span>
+          <button class="subpage-nav-btn" onclick="showSection('version-control')">What is Version Control? &rarr;</button>
+        </div>
+      </section>
+
       <section id="version-control" class="content-section">
         <h2>What is Version Control?</h2>
 
@@ -840,15 +913,15 @@
 
         <div class="concept-grid" style="grid-template-columns: 1fr 1fr 1fr; margin: 0.75rem 0 1.25rem;">
           <div class="concept-box">
-            <h4>Mac - Terminal (zsh)</h4>
+            <h3>Mac - Terminal (zsh)</h3>
             <p>macOS ships with the Terminal app running zsh. You can also use iTerm2 as a more feature-rich alternative. All commands in this course work on Mac Terminal.</p>
           </div>
           <div class="concept-box">
-            <h4>Windows - Git Bash</h4>
+            <h3>Windows - Git Bash</h3>
             <p>Windows uses PowerShell or CMD by default, but <strong>Git Bash</strong> (installed with Git for Windows) gives you a Bash shell that uses the same commands as Mac and Linux.</p>
           </div>
           <div class="concept-box">
-            <h4>VS Code - Integrated Terminal</h4>
+            <h3>VS Code - Integrated Terminal</h3>
             <p>VS Code has a built-in terminal (View > Terminal or <code>Ctrl+`</code>) that opens in your project folder. This is the most convenient option when you're already working in VS Code.</p>
           </div>
         </div>
@@ -857,11 +930,11 @@
 
         <div class="concept-grid" style="grid-template-columns: 1fr 1fr; margin: 0.5rem 0 1.25rem;">
           <div class="concept-box">
-            <h4>On a Mac</h4>
+            <h3>On a Mac</h3>
             <p>Press <code>Cmd + Space</code> to open Spotlight, type <strong>Terminal</strong>, and press Enter. Or find it in Applications > Utilities > Terminal. Your prompt will look like: <code>intern@macbook ~ %</code></p>
           </div>
           <div class="concept-box">
-            <h4>On Windows</h4>
+            <h3>On Windows</h3>
             <p>Download and install <strong>Git for Windows</strong> from git-scm.com. Once installed, right-click any folder and choose "Open Git Bash here", or search for Git Bash in the Start menu.</p>
           </div>
         </div>
@@ -877,7 +950,7 @@
 
         <a class="sim-cta" href="../../sims/terminal-trainer/index.html" style="display:block; margin:1.25rem 0;">
           <div class="sim-cta-label">Simulation</div>
-          <h4>Terminal Trainer</h4>
+          <h3>Terminal Trainer</h3>
           <p>Fourteen command-line challenges in a live fake terminal. Navigate directories, read files, and create your workspace - all from the command line.</p>
         </a>
 
@@ -912,19 +985,19 @@
 
         <div class="concept-grid">
           <div class="concept-box">
-            <h4>Working Directory</h4>
+            <h3>Working Directory</h3>
             <p>Your actual files on disk. When you edit a notebook or Python script, the changes live here until you stage them.</p>
           </div>
           <div class="concept-box">
-            <h4>Staging Area</h4>
+            <h3>Staging Area</h3>
             <p>A holding zone for changes you're about to commit. You choose which changes to include - not every edit has to go into the same commit.</p>
           </div>
           <div class="concept-box">
-            <h4>Repository</h4>
+            <h3>Repository</h3>
             <p>The committed history. Once changes are committed, Git permanently records a snapshot. This is your undo history.</p>
           </div>
           <div class="concept-box">
-            <h4>Remote (GitHub)</h4>
+            <h3>Remote (GitHub)</h3>
             <p>A copy of your repository hosted on GitHub. Push to share your commits with others; pull to receive theirs.</p>
           </div>
         </div>
@@ -1136,7 +1209,7 @@
 
       <a class="sim-cta" href="../../sims/terminal-trainer/index.html" style="display:block; margin:1.25rem 0;">
         <div class="sim-cta-label">Simulation &middot; Part 3</div>
-        <h4>Terminal Trainer - Git in Action</h4>
+        <h3>Terminal Trainer - Git in Action</h3>
         <p>Branch, edit, diff, stage, commit, and push - eleven challenges using the Git commands from this module against a real bug in the StatDeck analytics pipeline.</p>
       </a>
 
@@ -1163,8 +1236,9 @@
     <aside class="sidebar">
 
       <div class="sidebar-card">
-        <h4>Topics</h4>
+        <h3>Topics</h3>
         <div class="toc-links" id="tocLinks">
+          <a onclick="showSection('overview')">Overview</a>
           <a onclick="showSection('version-control')">Version Control</a>
           <a onclick="showSection('terminal-intro')">Terminal Setup</a>
           <a onclick="showSection('three-states')">Three States</a>
@@ -1180,24 +1254,24 @@
 
       <a class="sim-cta" href="../../sims/terminal-trainer/index.html">
         <div class="sim-cta-label">Simulation</div>
-        <h4>Terminal Trainer</h4>
+        <h3>Terminal Trainer</h3>
         <p>Eight command-line challenges in a live fake terminal. Start here before Git.</p>
       </a>
 
       <a class="sim-cta" href="branch_crisis_sim.html">
         <div class="sim-cta-label">Simulation</div>
-        <h4>The Branch Crisis</h4>
+        <h3>The Branch Crisis</h3>
         <p>A bad merge just hit the StatDeck repo. Work through the fallout - branching, conflicts, and pull requests under pressure.</p>
       </a>
 
       <div class="sidebar-card">
-        <h4>Quiz</h4>
+        <h3>Quiz</h3>
         <p style="font-size:0.85rem; color:var(--text-dim); margin:0 0 0.75rem;">Test your knowledge with 10 questions, one at a time.</p>
         <a href="quiz.html" class="quiz-cta-btn">Take the Quiz</a>
       </div>
 
       <div class="sidebar-card">
-        <h4>Key Commands</h4>
+        <h3>Key Commands</h3>
         <ul class="toc-list">
           <li><a onclick="showSection('basic-workflow')" style="cursor:pointer;"><code>git add</code> / <code>git commit</code></a></li>
           <li><a onclick="showSection('basic-workflow')" style="cursor:pointer;"><code>git push</code> / <code>git pull</code></a></li>
@@ -1246,7 +1320,7 @@
 
 <script>
 (function() {
-  var SECTIONS = ['version-control','terminal-intro','three-states','basic-workflow','repos','branching','merging','pull-requests','sim-return'];
+  var SECTIONS = ['overview', 'version-control','terminal-intro','three-states','basic-workflow','repos','branching','merging','pull-requests','sim-return'];
 
   window.showSection = function(id, noScroll) {
     SECTIONS.forEach(function(s) {
@@ -1484,7 +1558,7 @@
   :root.theme-light .callout.warn .callout-title { color: #8a5020 !important; }
   :root.theme-light .callout p           { color: #5a5550 !important; }
   :root.theme-light .concept-box         { background: #fff !important; border-color: #d4cfc9 !important; }
-  :root.theme-light .concept-box h4      { color: #8B1C40 !important; }
+  :root.theme-light .concept-box h3      { color: #8B1C40 !important; }
   :root.theme-light .concept-box p       { color: #5a5550 !important; }
   :root.theme-light .objectives          { background: #fff !important; border-color: #d4cfc9 !important; border-top-color: #8B1C40 !important; }
   :root.theme-light .objectives h3       { color: #8B1C40 !important; }
@@ -1496,7 +1570,7 @@
 
   /* ── Sidebar ── */
   :root.theme-light .sidebar-card        { background: #fff !important; border-color: #d4cfc9 !important; }
-  :root.theme-light .sidebar-card h4     { color: #8a8078 !important; }
+  :root.theme-light .sidebar-card h3     { color: #8a8078 !important; }
   :root.theme-light .toc-list a          { color: #5a5550 !important; }
   :root.theme-light .toc-list a:hover    { background: rgba(0,0,0,0.04) !important; color: #1a1715 !important; }
   :root.theme-light .toc-list a.active   { color: #8B1C40 !important; background: rgba(139,28,64,0.08) !important; border-left-color: #8B1C40 !important; }

@@ -696,7 +696,62 @@
       .progress-bar-wrap { width: 100px; }
       .dashboard-wrap { padding: 0 1rem 1.5rem; }
     }
-  </style>
+  
+    /* ── ADA: Focus visibility (WCAG 2.1 AA) ───────────────────────
+       Keyboard users must be able to see the focused element.
+       :focus-visible targets keyboard focus only (not mouse clicks).
+    ─────────────────────────────────────────────────────────────── */
+    :focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    /* For elements that already have a border-radius we want to match */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+    }
+    /* Remove default outline only where we've supplied our own */
+    :focus:not(:focus-visible) { outline: none; }
+
+    
+    /* ── ADA: Reduced motion (WCAG 2.1 SC 2.3.3) ───────────────────
+       Users who prefer reduced motion (vestibular disorders, epilepsy)
+       should not be subjected to animations or transitions.
+    ─────────────────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration:   0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration:  0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      /* Narrative typewriter paragraphs: show immediately */
+      .type-para {
+        opacity: 1 !important;
+        transition: none !important;
+      }
+      /* Loading dots: hide animation, show static dots */
+      .sim-loading-dot {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      /* Cursor blink */
+      .type-cursor {
+        animation: none !important;
+        opacity: 1 !important;
+      }
+    }
+
+    </style>
 </head>
 <body>
 
@@ -1039,12 +1094,18 @@
     const rtgRaw  = get('dtsc520_rtginvestigation');
     const rtgItem = rtgRaw && rtgRaw.done && rtgRaw.done.every(Boolean) ? { state: 'complete', label: rtgRaw.scores.reduce((a,b)=>a+(b||0),0) + '/20' } : (rtgRaw && rtgRaw.done && rtgRaw.done.some(Boolean) ? { state: 'started', label: '--' } : { state: 'empty', label: '--' });
 
-    return { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem };
+    const escape = get('dtsc520_escape');
+    const fmtEsc = ms => { const s = Math.floor(ms/1000); return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); };
+    const escapeItem = escape && escape.completed
+      ? { state: 'complete', label: fmtEsc(escape.bestTimeMs) }
+      : { state: 'empty', label: '--' };
+
+    return { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem, escapeItem };
   }
 
   // ── Build dashboard grid ──────────────────────────────────────────────────
   function buildDashboard() {
-    const { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem } = readProgress();
+    const { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem, escapeItem } = readProgress();
     const grid = document.getElementById('dashGrid');
     if (!grid) return;
 
@@ -1083,6 +1144,7 @@
     // Fix pft hrefs properly
     const pftHrefs = ['sims/python_sim/module1.html','sims/python_sim/module2.html','sims/python_sim/module3.html','sims/python_sim/finale.html'];
     simsByMod[2] = pftItems.map((item, i) => ({ ...item, href: pftHrefs[i] }));
+    simsByMod[2].push({ ...escapeItem, name: 'Escape McInnis', href: 'sims/escape-mcinnis/index.html' });
 
     grid.innerHTML = '';
 
@@ -1235,7 +1297,7 @@
 
       // If nothing has ever been touched, stay hidden
       const anyProgress = done > 0 || pftItems.some(p => p.state !== 'empty') ||
-        [morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem].some(x => x.state === 'complete');
+        [morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem, escapeItem].some(x => x.state === 'complete');
       if (!anyProgress) return;
 
       wrap.style.display = 'block';
@@ -1282,7 +1344,7 @@
      'dtsc520_quiz_m4','dtsc520_quiz_m5','dtsc520_quiz_m6',
      'pft_progress','dtsc520_debugpipeline','dtsc520_branchcrisis',
      'dtsc520_morningbrief','dtsc520_findyourpath','dtsc520_pitchtheviz','dtsc520_charttoppers',
-     'dtsc520_dirtydataset','dtsc520_rtginvestigation'].forEach(k => {
+     'dtsc520_dirtydataset','dtsc520_rtginvestigation','dtsc520_escape','mcinnis_escape'].forEach(k => {
       try { localStorage.removeItem(k); } catch(e) {}
     });
     buildDashboard();

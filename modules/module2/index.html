@@ -139,17 +139,6 @@
       flex-wrap: wrap;
     }
 
-    .pill {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.65rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: 3px;
-      background: rgba(122,95,181,0.12);
-      color: var(--accent-light);
-      border: 1px solid rgba(122,95,181,0.25);
-      letter-spacing: 0.04em;
-    }
-
     /* ---- SECTION TABS ---- */
     .section-tabs {
       display: none !important;
@@ -293,6 +282,17 @@
 
     .sim-cta:hover { background: var(--accent-light); }
 
+    /* After-hours event CTA - deliberate CRT skin, always dark */
+    .sim-cta.event {
+      background: #0b120b;
+      border: 1px solid #1fa552;
+      box-shadow: 0 0 14px rgba(57,255,122,0.12);
+    }
+    .sim-cta.event:hover { background: #0e1a0e; box-shadow: 0 0 22px rgba(57,255,122,0.28); }
+    .sim-cta.event .sim-cta-label { color: #39ff7a; }
+    .sim-cta.event h3 { color: #c8efd4; }
+    .sim-cta.event p { color: #8fbf9f; }
+
     .sim-cta-label {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.62rem;
@@ -302,7 +302,7 @@
       margin-bottom: 0.35rem;
     }
 
-    .sim-cta h4 {
+    .sim-cta h3 {
       font-family: 'Zilla Slab', serif;
       font-size: 0.95rem;
       font-weight: 600;
@@ -496,7 +496,7 @@
       padding: 0.9rem 1rem;
     }
 
-    .concept-box h4 {
+    .concept-box h3 {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.78rem;
       color: var(--accent-light);
@@ -544,7 +544,7 @@
       margin-bottom: 2.5rem;
     }
 
-    .objectives h3 {
+    .objectives h2 {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.67rem;
       text-transform: uppercase;
@@ -709,7 +709,72 @@
       .concept-grid { grid-template-columns: 1fr; }
       .mod-banner::after { display: none; }
     }
-  </style>
+  
+    /* ── ADA: Focus visibility (WCAG 2.1 AA) ───────────────────────
+       Keyboard users must be able to see the focused element.
+       :focus-visible targets keyboard focus only (not mouse clicks).
+    ─────────────────────────────────────────────────────────────── */
+    .objectives-list {
+      margin: 1.25rem 0 2rem 1.25rem;
+      padding: 0;
+    }
+    .objectives-list li {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 0.6rem;
+      color: var(--text-dim, #6b6156);
+    }
+    :focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    /* For elements that already have a border-radius we want to match */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+    }
+    /* Remove default outline only where we've supplied our own */
+    :focus:not(:focus-visible) { outline: none; }
+
+    
+    /* ── ADA: Reduced motion (WCAG 2.1 SC 2.3.3) ───────────────────
+       Users who prefer reduced motion (vestibular disorders, epilepsy)
+       should not be subjected to animations or transitions.
+    ─────────────────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration:   0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration:  0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      /* Narrative typewriter paragraphs: show immediately */
+      .type-para {
+        opacity: 1 !important;
+        transition: none !important;
+      }
+      /* Loading dots: hide animation, show static dots */
+      .sim-loading-dot {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      /* Cursor blink */
+      .type-cursor {
+        animation: none !important;
+        opacity: 1 !important;
+      }
+    }
+
+    </style>
   <!-- CodeMirror 5 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/theme/material-darker.min.css">
@@ -741,28 +806,20 @@
       <div class="banner-eyebrow">Module 02 &nbsp;·&nbsp; DTSC 520</div>
       <h1>Introduction to Python</h1>
       <p>From your first print statement to custom functions and data structures. Learn to think like a programmer and write Python code that actually runs - with exercises throughout.</p>
-      <div class="banner-pills">
-        <span class="pill">Getting Started</span>
-        <span class="pill">Variables &amp; Types</span>
-        <span class="pill">Strings</span>
-        <span class="pill">Conditions</span>
-        <span class="pill">Loops</span>
-        <span class="pill">Data Structures</span>
-        <span class="pill">Functions</span>
-        <span class="pill">10-question quiz</span>
-      </div>
+
     </div>
   </div>
 
   <!-- SECTION TABS -->
   <div class="section-tabs">
-    <a class="tab-link" href="#getting-started">Getting Started</a>
-    <a class="tab-link" href="#variables">Variables &amp; Types</a>
-    <a class="tab-link" href="#strings">Strings</a>
-    <a class="tab-link" href="#conditions">Conditions</a>
-    <a class="tab-link" href="#loops">Loops</a>
-    <a class="tab-link" href="#data-structures">Data Structures</a>
-    <a class="tab-link" href="#functions">Functions</a>
+    <a class="tab-link" data-section="overview">Overview</a>
+    <a class="tab-link" data-section="getting-started">Getting Started</a>
+    <a class="tab-link" data-section="variables">Variables &amp; Types</a>
+    <a class="tab-link" data-section="strings">Strings</a>
+    <a class="tab-link" data-section="conditions">Conditions</a>
+    <a class="tab-link" data-section="loops">Loops</a>
+    <a class="tab-link" data-section="data-structures">Data Structures</a>
+    <a class="tab-link" data-section="functions">Functions</a>
     <a class="tab-link quiz-tab-link" href="quiz.html">Quiz</a>
   </div>
 
@@ -771,20 +828,28 @@
     <!-- CONTENT -->
     <div class="content">
 
-      <div class="objectives">
-        <h3>Learning Objectives</h3>
-        <ol>
+
+      <!-- GETTING STARTED -->
+  
+    <!-- OVERVIEW / LANDING -->
+    <section id="overview" class="content-section">
+      <h2>Learning Objectives</h2>
+      <ol class="objectives-list">
           <li>Write and run basic Python programs using print statements, variables, and expressions</li>
           <li>Use Python's core data types: int, float, string, and boolean</li>
           <li>Control program flow with if, elif, else, while, and for statements</li>
           <li>Store and manipulate collections of data using lists, tuples, and dictionaries</li>
           <li>Define and call custom functions with parameters and return values</li>
           <li>Read and interpret common Python error messages</li>
-        </ol>
+      </ol>
+      <div class="subpage-nav">
+        <span class="subpage-nav-btn invisible"></span>
+        <span></span>
+        <button class="subpage-nav-btn" onclick="showSection('getting-started')">Getting Started &rarr;</button>
       </div>
+    </section>
 
-      <!-- GETTING STARTED -->
-      <section id="getting-started" class="content-section">
+    <section id="getting-started" class="content-section">
         <h2><span class="sec-num">01</span> Getting Started</h2>
 
         <p>Python programs run line by line, top to bottom. The most basic program you can write is a single <code>print()</code> call - it displays output to the screen.</p>
@@ -866,19 +931,19 @@ Batting average: <span class="out-num">0.287</span>
 
         <div class="concept-grid">
           <div class="concept-box">
-            <h4>int</h4>
+            <h3>int</h3>
             <p>Whole numbers. <code>14</code>, <code>-3</code>, <code>0</code>. No decimal point.</p>
           </div>
           <div class="concept-box">
-            <h4>float</h4>
+            <h3>float</h3>
             <p>Decimal numbers. <code>0.287</code>, <code>3.14</code>, <code>-1.5</code>.</p>
           </div>
           <div class="concept-box">
-            <h4>str</h4>
+            <h3>str</h3>
             <p>Text in quotes. <code>"Marcus"</code>, <code>'StatDeck'</code>. Immutable.</p>
           </div>
           <div class="concept-box">
-            <h4>bool</h4>
+            <h3>bool</h3>
             <p>Either <code>True</code> or <code>False</code>. Used in conditions.</p>
           </div>
         </div>
@@ -1130,19 +1195,19 @@ games = <span class="num">120</span>
 
         <div class="concept-grid">
           <div class="concept-box">
-            <h4>list</h4>
+            <h3>list</h3>
             <p>Ordered, mutable. Use for sequences you'll modify. <code>[1, 2, 3]</code></p>
           </div>
           <div class="concept-box">
-            <h4>tuple</h4>
+            <h3>tuple</h3>
             <p>Ordered, immutable. Use for fixed data. <code>(1, 2, 3)</code></p>
           </div>
           <div class="concept-box">
-            <h4>dict</h4>
+            <h3>dict</h3>
             <p>Key-value pairs, mutable. Use for labeled data. <code>{"avg": 0.287}</code></p>
           </div>
           <div class="concept-box">
-            <h4>set</h4>
+            <h3>set</h3>
             <p>Unordered, unique values. Use to deduplicate. <code>{1, 2, 3}</code></p>
           </div>
         </div>
@@ -1311,7 +1376,7 @@ result = <span class="fn">calc_ops</span>(<span class="num">400</span>, <span cl
     <aside class="sidebar">
 
       <div class="sidebar-card">
-        <h4>Topics</h4>
+        <h3>Topics</h3>
         <div class="toc-links" id="tocLinks">
         <a onclick="showSection('getting-started')">Getting Started</a>
         <a onclick="showSection('variables')">Variables & Types</a>
@@ -1326,8 +1391,14 @@ result = <span class="fn">calc_ops</span>(<span class="num">400</span>, <span cl
 
       <a class="sim-cta" href="../../sims/python_sim/index.html">
         <div class="sim-cta-label">Simulation</div>
-        <h4>Python Field Training</h4>
+        <h3>Python Field Training</h3>
         <p>Run real Python in your browser. Scout players for the Eagles using variables, lists, and loops.</p>
+      </a>
+
+      <a class="sim-cta event" href="../../sims/escape-mcinnis/index.html">
+        <div class="sim-cta-label">&#9635; After-Hours Event</div>
+        <h3>Escape from McInnis Hall</h3>
+        <p>11:47 PM. The building AI just lost its Python. Write real code to re-train it - eight locked doors between you and the exit.</p>
       </a>
 
       <div class="sidebar-card">
@@ -1754,7 +1825,7 @@ result = <span class="fn">calc_ops</span>(<span class="num">400</span>, <span cl
 
 
 <script>
-const SECTIONS = ['getting-started', 'variables', 'strings', 'conditions', 'loops', 'data-structures', 'functions'];
+const SECTIONS = ['overview', 'getting-started', 'variables', 'strings', 'conditions', 'loops', 'data-structures', 'functions'];
 function showSection(id, noScroll, noHash) {
   SECTIONS.forEach(function(s) { var el = document.getElementById(s); if (el) el.classList.remove('active'); });
   var target = document.getElementById(id);

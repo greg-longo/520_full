@@ -59,12 +59,6 @@
     }
     .mod-banner h1 { font-size: 2.1rem; font-weight: 700; color: var(--text-bright); line-height: 1.2; margin-bottom: 0.65rem; }
     .mod-banner p { font-size: 0.95rem; color: var(--text-dim); max-width: 580px; line-height: 1.6; margin-bottom: 1.25rem; }
-    .banner-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .pill {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; padding: 0.25rem 0.6rem;
-      border-radius: 3px; background: rgba(74,143,107,0.12); color: var(--accent-light);
-      border: 1px solid rgba(74,143,107,0.25); letter-spacing: 0.04em;
-    }
 
     .section-tabs {
       display: none !important;
@@ -174,7 +168,7 @@
 
     .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
     .concept-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.1rem; }
-    .concept-card h4 {
+    .concept-card h3 {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em;
       text-transform: uppercase; color: var(--accent-light); margin-bottom: 0.6rem;
     }
@@ -233,7 +227,7 @@
 
     .sidebar { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 70px; max-height: calc(100vh - 80px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
     .sidebar-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1.1rem; }
-    .sidebar-card h4 {
+    .sidebar-card h3 {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
       letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.75rem;
     }
@@ -305,7 +299,7 @@
       color: var(--text-dim);
       margin-bottom: 0.2rem;
     }
-    .sim-cta h4 {
+    .sim-cta h3 {
       font-family: 'Zilla Slab', serif;
       font-size: 0.95rem;
       font-weight: 600;
@@ -363,7 +357,72 @@
     @media (max-width: 600px) {
       .quiz-link-card { flex-direction: column; align-items: flex-start; }
     }
-  </style>
+  
+    /* ── ADA: Focus visibility (WCAG 2.1 AA) ───────────────────────
+       Keyboard users must be able to see the focused element.
+       :focus-visible targets keyboard focus only (not mouse clicks).
+    ─────────────────────────────────────────────────────────────── */
+    .objectives-list {
+      margin: 1.25rem 0 2rem 1.25rem;
+      padding: 0;
+    }
+    .objectives-list li {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 0.6rem;
+      color: var(--text-dim, #6b6156);
+    }
+    :focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    /* For elements that already have a border-radius we want to match */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+    }
+    /* Remove default outline only where we've supplied our own */
+    :focus:not(:focus-visible) { outline: none; }
+
+    
+    /* ── ADA: Reduced motion (WCAG 2.1 SC 2.3.3) ───────────────────
+       Users who prefer reduced motion (vestibular disorders, epilepsy)
+       should not be subjected to animations or transitions.
+    ─────────────────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration:   0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration:  0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      /* Narrative typewriter paragraphs: show immediately */
+      .type-para {
+        opacity: 1 !important;
+        transition: none !important;
+      }
+      /* Loading dots: hide animation, show static dots */
+      .sim-loading-dot {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      /* Cursor blink */
+      .type-cursor {
+        animation: none !important;
+        opacity: 1 !important;
+      }
+    }
+
+    </style>
   <!-- CodeMirror 5 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/theme/material-darker.min.css">
@@ -393,18 +452,12 @@
     <div class="banner-eyebrow">Module 03 - Numerical Computing</div>
     <h1>NumPy: Arrays and Vectorized Operations</h1>
     <p>Learn how NumPy replaces slow Python loops with fast, vectorized array operations. The foundation of scientific Python - and the engine that powers pandas, scikit-learn, and virtually every other data science library.</p>
-    <div class="banner-pills">
-      <span class="pill">ndarray</span>
-      <span class="pill">Indexing &amp; Slicing</span>
-      <span class="pill">Vectorization</span>
-      <span class="pill">Statistical Methods</span>
-      <span class="pill">Boolean Indexing</span>
-      <span class="pill">Fancy Indexing</span>
-    </div>
+
   </div>
 </div>
 
 <nav class="section-tabs">
+  <a class="tab-link" data-section="overview">Overview</a>
   <a class="tab-link" data-section="arrays">Arrays</a>
   <a class="tab-link" data-section="indexing">Indexing</a>
   <a class="tab-link" data-section="vectorization">Vectorization</a>
@@ -422,6 +475,25 @@
   <div class="content-col">
 
     <!-- ARRAYS -->
+
+    <!-- OVERVIEW / LANDING -->
+    <section id="overview" class="content-section">
+      <h2>Learning Objectives</h2>
+      <ol class="objectives-list">
+          <li>Create and manipulate NumPy arrays (ndarrays) from Python lists, ranges, and built-in constructors</li>
+          <li>Index, slice, and reshape arrays to extract and reorganize data efficiently</li>
+          <li>Apply vectorized operations to replace slow Python loops with fast array arithmetic</li>
+          <li>Use NumPy's built-in statistical functions to compute summaries across datasets</li>
+          <li>Filter arrays using boolean indexing and conditional logic</li>
+          <li>Combine and restructure arrays using stacking, splitting, and fancy indexing</li>
+      </ol>
+      <div class="subpage-nav">
+        <span class="subpage-nav-btn invisible"></span>
+        <span></span>
+        <button class="subpage-nav-btn" onclick="showSection('arrays')">Arrays &rarr;</button>
+      </div>
+    </section>
+
     <section id="arrays" class="content-section">
       <h2>The ndarray: NumPy's Core Object</h2>
       <p>NumPy's central data structure is the <strong>ndarray</strong> (n-dimensional array) - a fixed-type, fixed-size grid of values. Unlike a Python list, every element in a NumPy array is the same data type, and they are stored contiguously in memory. This is what makes NumPy so fast.</p>
@@ -561,12 +633,12 @@ stats[:2, :2]    &rarr;  [[<span class="out-num">0.312  4.</span>]
 
       <div class="concept-grid">
         <div class="concept-card">
-          <h4>Python loop (slow)</h4>
+          <h3>Python loop (slow)</h3>
           <p>Iterates in the Python interpreter. Each element requires a separate Python object operation.</p>
           <p>For 1 million elements, this creates 1 million Python overhead events.</p>
         </div>
         <div class="concept-card">
-          <h4>NumPy vectorized (fast)</h4>
+          <h3>NumPy vectorized (fast)</h3>
           <p>Passes the entire array to a C routine. The loop runs at C speed with no Python object overhead.</p>
           <p>For 1 million elements, this is typically 10-100x faster.</p>
         </div>
@@ -943,7 +1015,7 @@ first_half, second_half = np.<span class="fn">split</span>(monthly_sales, [<span
   <aside class="sidebar">
 
 <div class="sidebar-card">
-      <h4>Topics</h4>
+      <h3>Topics</h3>
       <div class="toc-links" id="tocLinks">
         <a onclick="showSection('arrays')">Arrays</a>
         <a onclick="showSection('indexing')">Indexing</a>
@@ -961,20 +1033,20 @@ first_half, second_half = np.<span class="fn">split</span>(monthly_sales, [<span
 
     <a class="sim-cta" href="../../sims/debug-pipeline/index.html">
       <div class="sim-cta-label">Simulation</div>
-      <h4>Debug the Pipeline</h4>
+      <h3>Debug the Pipeline</h3>
       <p>A data pipeline is broken. Diagnose each stage using NumPy fundamentals and fix it before the deadline.</p>
       <div class="sim-cta-launch">Open Simulation &rarr;</div>
     </a>
 
 
     <div class="sidebar-card">
-      <h4>Quiz</h4>
+      <h3>Quiz</h3>
       <p style="font-size:0.85rem; color:var(--text-dim); margin:0 0 0.75rem;">Test your knowledge with 10 questions, one at a time.</p>
       <a href="quiz.html" class="quiz-cta-btn">Take the Quiz</a>
     </div>
 
     <div class="next-mod">
-      <h4>Next Module</h4>
+      <h3>Next Module</h3>
       <p>NumPy arrays power pandas DataFrames. Put these skills to work with real tabular data in Module 4.</p>
       <a href="../module4/index.html" class="next-mod-btn">Module 4: Pandas &rarr;</a>
     </div>
@@ -1401,7 +1473,7 @@ first_half, second_half = np.<span class="fn">split</span>(monthly_sales, [<span
 
 <script>
 // ── Section routing ───────────────────────────────────────────────────────────
-const SECTIONS = ['arrays','indexing','vectorization','stats','boolean','fancy','random','conditional','combining'];
+const SECTIONS = ['overview', 'arrays','indexing','vectorization','stats','boolean','fancy','random','conditional','combining'];
 
 function showSection(id, noScroll, noHash) {
   // Hide all sections

@@ -266,7 +266,62 @@
       nav .nav-links { display: none; }
       .hero-stats { gap: 2rem; }
     }
-  </style>
+  
+    /* ── ADA: Focus visibility (WCAG 2.1 AA) ───────────────────────
+       Keyboard users must be able to see the focused element.
+       :focus-visible targets keyboard focus only (not mouse clicks).
+    ─────────────────────────────────────────────────────────────── */
+    :focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    /* For elements that already have a border-radius we want to match */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+    }
+    /* Remove default outline only where we've supplied our own */
+    :focus:not(:focus-visible) { outline: none; }
+
+    
+    /* ── ADA: Reduced motion (WCAG 2.1 SC 2.3.3) ───────────────────
+       Users who prefer reduced motion (vestibular disorders, epilepsy)
+       should not be subjected to animations or transitions.
+    ─────────────────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration:   0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration:  0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      /* Narrative typewriter paragraphs: show immediately */
+      .type-para {
+        opacity: 1 !important;
+        transition: none !important;
+      }
+      /* Loading dots: hide animation, show static dots */
+      .sim-loading-dot {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      /* Cursor blink */
+      .type-cursor {
+        animation: none !important;
+        opacity: 1 !important;
+      }
+    }
+
+    </style>
 </head>
 <body>
 
@@ -398,6 +453,24 @@
         </div>
         <div class="sim-footer">
           <span class="sim-tag">M2 &bull; Capstone</span>
+          <span class="sim-launch m2">Launch &rarr;</span>
+        </div>
+      </a>
+
+      <a class="sim-card m2" href="escape-mcinnis/index.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m2">After-Hours Event</div>
+              <div class="sim-title">Escape from McInnis Hall</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="escape" title="Loading..."></div>
+          </div>
+          <div class="sim-desc">11:47 PM. A firmware update just erased the building AI's Python knowledge - and Python runs the locks. Write real code to re-train ARIA, one subject per door, eight doors to the exit.</div>
+          <div class="sim-type">&#128274; Escape room (live Python)</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M2 &bull; Python fundamentals</span>
           <span class="sim-launch m2">Launch &rarr;</span>
         </div>
       </a>
@@ -569,6 +642,9 @@
   const pft    = get('pft_progress') || {};
   const debug  = get('dtsc520_debugpipeline');
   const branch = get('dtsc520_branchcrisis');
+  const rtg    = get('dtsc520_rtginvestigation');
+  const escape = get('dtsc520_escape');
+  const escapeRun = get('mcinnis_escape');
 
   // pft overall: complete if all 3 training modules complete, partial if any started
   function pftState() {
@@ -598,6 +674,8 @@
     'pitch':          'empty',    // no tracking
     'terminal':       'empty',    // no tracking
     'branch':         branch && branch.completed ? 'complete' : 'empty',
+    'escape':         escape && escape.completed ? 'complete' : (escapeRun && escapeRun.completed && escapeRun.completed.length ? 'partial' : 'empty'),
+    'rtg':            rtg && rtg.done && rtg.done.every(Boolean) ? 'complete' : (rtg && rtg.done && rtg.done.some(Boolean) ? 'partial' : 'empty'),
   };
 
   // Apply dots

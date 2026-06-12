@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Terminal Trainer - DTSC 520</title>
+<title>Terminal Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ── ROOT VARIABLES ── */
@@ -563,20 +563,11 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
 </head>
 <body>
 
-<!-- Course Nav -->
-<nav id="coursenav">
-  <a href="../../index.html">DTSC 520</a>
-  <span class="cn-sep">/</span>
-  <a href="../../modules/module6/index.html">Module 6: Git &amp; GitHub</a>
-  <span class="cn-sep">/</span>
-  <span class="cn-cur">Terminal Trainer</span>
-</nav>
-
 <!-- ══ SCREEN: LANDING ══ -->
 <div id="screen-landing">
   <div class="landing-wrap">
     <div class="landing-masthead">
-      <div class="landing-eyebrow">Eastern University &middot; DTSC 520 &middot; Module 6</div>
+      <div class="landing-eyebrow">Interactive Terminal Simulation</div>
       <h1 class="landing-title">Terminal Trainer</h1>
       <p class="landing-subtitle">Before you can run Git commands, you need to be comfortable in a terminal. Two parts. No prior experience needed.</p>
     </div>
@@ -612,17 +603,12 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
     <div id="resumeCard" style="display:none; margin-top:1.75rem; background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--accent); border-radius:8px; padding:1.25rem 1.5rem; text-align:center;">
       <div style="font-family:var(--mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent-light); margin-bottom:0.4rem;">Progress Saved</div>
       <div style="font-family:var(--serif); font-size:1.05rem; font-weight:600; color:var(--text-bright); margin-bottom:0.5rem;">Parts 1 &amp; 2 Complete</div>
-      <p style="font-size:0.82rem; color:var(--text-dim); margin-bottom:1rem; line-height:1.55;">You've finished the terminal basics. If you've worked through the Git content in Module 6, choose your platform below to jump straight into Part 3.</p>
+      <p style="font-size:0.82rem; color:var(--text-dim); margin-bottom:1rem; line-height:1.55;">You've finished the terminal basics. If you're ready for Part 3, choose your platform below.</p>
       <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
         <button onclick="resumePart3('mac')" style="background:var(--accent); color:#fff; border:none; border-radius:6px; padding:0.6rem 1.4rem; font-family:var(--serif); font-size:0.9rem; font-weight:600; cursor:pointer;">Resume on Mac &rarr;</button>
         <button onclick="resumePart3('pc')" style="background:var(--surface2); border:1px solid var(--border); color:var(--text-dim); border-radius:6px; padding:0.6rem 1.4rem; font-family:var(--serif); font-size:0.9rem; cursor:pointer;">Resume on PC (Git Bash) &rarr;</button>
       </div>
     </div>
-
-    <p style="text-align:center; margin-top:1.25rem; font-size:0.8rem; color:var(--text-dim);">
-      Haven't opened a terminal yet?
-      <a href="../../modules/module6/index.html#terminal-intro" style="color:var(--accent-light); text-decoration:none;">See the setup guide in Module 6 &rarr;</a>
-    </p>
   </div>
 </div>
 
@@ -759,11 +745,8 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
       <div class="between-icon">&#10003;</div>
       <div class="between-title">Parts 1 &amp; 2 Complete</div>
       <p class="between-body">You can navigate the file system, read code, and use terminal shortcuts. Terminal training done.<br><br>
-        Before Part 3, you need to know the Git commands you'll be using. Head back to <strong>Module 6</strong> and work through the Git content - the Three States, Core Workflow, branching, and committing. When you're done, come back here to put it all into practice.
+        Before Part 3, make sure you are familiar with Git basics - branching, committing, staging, and pushing. When you're ready, click below to continue.
       </p>
-      <a href="../../modules/module6/index.html#three-states" class="between-btn" style="display:inline-block; text-decoration:none; text-align:center;">
-        Return to Module 6 to Learn Git &rarr;
-      </a>
       <p style="margin-top:1.1rem; font-size:0.8rem; color:var(--text-dim); text-align:center;">
         Already read the module? <button onclick="beginPart(3)" style="background:none;border:none;color:var(--accent-light);font-size:0.8rem;cursor:pointer;padding:0;font-family:inherit;">Start Part 3 now &rarr;</button>
       </p>
@@ -789,7 +772,6 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
       <div class="completion-score-label">Challenges Completed</div>
       <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:0.25rem;">
         <button class="completion-btn" style="background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);" onclick="openFlashcards()">Review Command Reference</button>
-        <a href="../../modules/module6/index.html#branching" class="completion-btn">Continue to Branching &rarr;</a>
       </div>
     </div>
 
@@ -822,7 +804,7 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
 <!-- ══ END FLASHCARD DRAWER ══ -->
 
 <footer>
-  This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.
+  This tool was developed with AI assistance. All course content, learning objectives, and AI assisted activities were designed by the instructor.
 </footer>
 
 <!-- ══ MAIN SCRIPT ══ -->

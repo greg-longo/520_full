@@ -16,14 +16,14 @@
       --border:   rgba(255,255,255,0.08);
       --text:     #d8cfc4;
       --text-bright: #f0e8dc;
-      --text-dim: #8a7e72;
+      --text-dim: #978b7f; /* was #8a7e72 — WCAG AA fix for bg-card2 */
       --gold:       #c9a84c;
       --gold-light: #e0be72;
       --gold-dim:   rgba(201,168,76,0.12);
       --parchment:  #f5edd8;
       --ink:        #2a1f0e;
       --ink-dim:    #6b5c42;
-      --ink-faint:  #a09070;
+      --ink-faint:  #6e5c3a; /* was #a09070 — WCAG AA fix on parchment */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -346,6 +346,135 @@
     }
     .sim-locker-toggle:hover { border-color: var(--gold); color: var(--gold); }
 
+    /* ── Settings button + panel ─────────────────────────────────── */
+    .sim-settings-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      border-radius: 2px;
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: border-color 0.15s, color 0.15s;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .sim-settings-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    .sim-settings-panel {
+      display: none;
+      position: absolute;
+      top: 52px; right: 1rem;
+      z-index: 100;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      min-width: 220px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    }
+    .sim-settings-panel.open { display: block; }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.9rem;
+    }
+    .settings-row:last-child { margin-bottom: 0; }
+    .settings-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* toggle switch */
+    .settings-toggle {
+      position: relative;
+      width: 36px; height: 20px;
+      flex-shrink: 0;
+    }
+    .settings-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .settings-toggle-track {
+      position: absolute; inset: 0;
+      background: var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .settings-toggle input:checked ~ .settings-toggle-track { background: var(--gold); }
+    .settings-toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 14px; height: 14px;
+      background: var(--text);
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .settings-toggle input:checked ~ .settings-toggle-track::after { transform: translateX(16px); }
+
+    /* font-size buttons */
+    .settings-size-btns {
+      display: flex;
+      gap: 0.3rem;
+    }
+    .settings-size-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      border-radius: 2px;
+      padding: 0.2rem 0.55rem;
+      cursor: pointer;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .settings-size-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .settings-size-btn.active { background: var(--gold); border-color: var(--gold); color: #0d0b09; }
+
+    /* ── Light mode (sim screen only) ───────────────────────────── */
+    body.light-mode #screen-sim {
+      --bg:       #f4f1ec;
+      --bg-card:  #ffffff;
+      --bg-card2: #eae6df;
+      --border:   rgba(0,0,0,0.1);
+      --text:     #1a1714;
+      --text-bright: #0d0b09;
+      --text-dim: #6b6156;
+      background: var(--bg);
+      color: var(--text);
+    }
+    body.light-mode #screen-sim .sim-topbar {
+      background: var(--bg-card);
+    }
+    body.light-mode #screen-sim .sim-settings-panel {
+      background: var(--bg-card);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    body.light-mode #screen-sim .ch-output {
+      background: #eae6df;
+      color: #1a1714;
+    }
+    body.light-mode #screen-sim .hint-box {
+      background: #eae6df;
+    }
+
+    /* ── Font size scale ─────────────────────────────────────────── */
+    body.font-lg #screen-sim { font-size: 105%; }
+    body.font-xl #screen-sim { font-size: 115%; }
+    body.font-lg #screen-sim .ch-title      { font-size: 1.15rem; }
+    body.font-xl #screen-sim .ch-title      { font-size: 1.28rem; }
+    body.font-lg #screen-sim .ch-prompt     { font-size: 0.92rem; }
+    body.font-xl #screen-sim .ch-prompt     { font-size: 1.02rem; }
+    body.font-lg #screen-sim .ch-output     { font-size: 0.88rem; }
+    body.font-xl #screen-sim .ch-output     { font-size: 0.96rem; }
+    body.font-lg #screen-sim #chCode        { font-size: 0.88rem; }
+    body.font-xl #screen-sim #chCode        { font-size: 0.96rem; }
+
     /* body layout */
     .sim-wrap {
       display: flex;
@@ -526,6 +655,97 @@
       font-size: 0.62rem;
       color: var(--text-dim);
       margin-top: 0.5rem;
+    }
+
+    /* ── Qualitative question ─────────────────────────────────────── */
+    .qual-section {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+    .qual-section.show { display: block; }
+    .qual-eyebrow {
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.6rem;
+    }
+    .qual-question {
+      font-size: 0.88rem;
+      color: var(--text-bright);
+      line-height: 1.65;
+      margin-bottom: 1rem;
+      font-family: 'Zilla Slab', serif;
+    }
+    .qual-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .qual-opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      padding: 0.6rem 0.85rem;
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s, background 0.15s;
+      width: 100%;
+    }
+    .qual-opt:hover:not(:disabled) { border-color: rgba(201,168,76,0.4); background: rgba(201,168,76,0.04); }
+    .qual-opt:disabled { cursor: default; }
+    .qual-opt.selected-correct {
+      border-color: rgba(126,207,160,0.5);
+      background: rgba(126,207,160,0.06);
+    }
+    .qual-opt.selected-wrong {
+      border-color: rgba(212,122,122,0.4);
+      background: rgba(212,122,122,0.05);
+    }
+    .qual-opt.reveal-correct {
+      border-color: rgba(126,207,160,0.3);
+      background: rgba(126,207,160,0.03);
+    }
+    .qual-key {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      min-width: 18px;
+      color: var(--text-dim);
+      padding-top: 1px;
+    }
+    .qual-opt.selected-correct .qual-key { color: #7ecfa0; }
+    .qual-opt.selected-wrong   .qual-key { color: #d47a7a; }
+    .qual-opt.reveal-correct   .qual-key { color: #7ecfa0; }
+    .qual-opt-text {
+      font-size: 0.8rem;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .qual-feedback {
+      font-size: 0.78rem;
+      line-height: 1.6;
+      padding: 0.7rem 1rem;
+      border-radius: 3px;
+      border: 1px solid transparent;
+      display: none;
+    }
+    .qual-feedback.show { display: block; }
+    .qual-feedback.correct {
+      background: rgba(126,207,160,0.07);
+      border-color: rgba(126,207,160,0.3);
+      color: #7ecfa0;
+    }
+    .qual-feedback.wrong {
+      background: rgba(212,122,122,0.07);
+      border-color: rgba(212,122,122,0.3);
+      color: #d47a7a;
     }
 
     .ch-nav {
@@ -940,7 +1160,62 @@
       .sim-topbar-title { font-size: 0.78rem; }
       .ch-header { flex-wrap: wrap; gap: 0.5rem; }
     }
-  </style>
+  
+    /* ── ADA: Focus visibility (WCAG 2.1 AA) ───────────────────────
+       Keyboard users must be able to see the focused element.
+       :focus-visible targets keyboard focus only (not mouse clicks).
+    ─────────────────────────────────────────────────────────────── */
+    :focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    /* For elements that already have a border-radius we want to match */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+    }
+    /* Remove default outline only where we've supplied our own */
+    :focus:not(:focus-visible) { outline: none; }
+
+    
+    /* ── ADA: Reduced motion (WCAG 2.1 SC 2.3.3) ───────────────────
+       Users who prefer reduced motion (vestibular disorders, epilepsy)
+       should not be subjected to animations or transitions.
+    ─────────────────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration:   0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration:  0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      /* Narrative typewriter paragraphs: show immediately */
+      .type-para {
+        opacity: 1 !important;
+        transition: none !important;
+      }
+      /* Loading dots: hide animation, show static dots */
+      .sim-loading-dot {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      /* Cursor blink */
+      .type-cursor {
+        animation: none !important;
+        opacity: 1 !important;
+      }
+    }
+
+    </style>
 </head>
 <body>
 
@@ -1007,6 +1282,26 @@
     <span class="sim-ch-indicator" id="chIndicator">Challenge 1 of 5</span>
     <button class="sim-locker-toggle" id="lockerToggle" onclick="toggleLocker()">Tables &#8660;</button>
     <div class="sim-topbar-score">Score: <strong id="scoreDisplay">0</strong> / 20</div>
+    <button class="sim-settings-btn" id="settingsBtn" onclick="toggleSettings()" aria-label="Settings" title="Settings">&#9881;</button>
+  </div>
+
+  <!-- settings panel (positioned relative to topbar) -->
+  <div class="sim-settings-panel" id="settingsPanel" role="dialog" aria-label="Display settings">
+    <div class="settings-row">
+      <span class="settings-label">Light mode</span>
+      <label class="settings-toggle">
+        <input type="checkbox" id="lightToggle" onchange="applyLightMode(this.checked)">
+        <span class="settings-toggle-track"></span>
+      </label>
+    </div>
+    <div class="settings-row">
+      <span class="settings-label">Text size</span>
+      <div class="settings-size-btns">
+        <button class="settings-size-btn active" id="sizeNormal" onclick="applyFontSize('normal')">A</button>
+        <button class="settings-size-btn" id="sizeLg"     onclick="applyFontSize('lg')">A+</button>
+        <button class="settings-size-btn" id="sizeXl"     onclick="applyFontSize('xl')">A++</button>
+      </div>
+    </div>
   </div>
 
   <div class="sim-wrap">
@@ -1041,7 +1336,7 @@
         <div class="ch-vars" id="chVars"></div>
 
         <div class="ch-editor-wrap">
-          <textarea class="ch-code" id="chCode" spellcheck="false"></textarea>
+          <textarea class="ch-code" id="chCode" spellcheck="false" aria-label="Python code editor — write your solution here"></textarea>
         </div>
 
         <div class="ch-btns">
@@ -1058,6 +1353,14 @@
         <pre class="ch-output" id="chOutput"></pre>
         <div class="ch-feedback" id="chFeedback"></div>
         <div class="ch-attempts" id="chAttempts"></div>
+
+        <!-- Qualitative question — appears after code challenge is correct -->
+        <div class="qual-section" id="qualSection">
+          <div class="qual-eyebrow">Interpret the Result</div>
+          <div class="qual-question" id="qualQuestion"></div>
+          <div class="qual-options" id="qualOptions"></div>
+          <div class="qual-feedback" id="qualFeedback"></div>
+        </div>
 
         <div class="ch-nav">
           <button class="ch-nav-btn" id="btnPrev" onclick="navChallenge(-1)">&#8592; Prev</button>
@@ -1187,11 +1490,63 @@ function showNarrative() {
 }
 function showSim() {
   showScreen('screen-sim');
-  if (!pyodideReady) initPyodide();
+  if (pyodideReady) {
+    const loadingEl = document.getElementById('simLoading');
+    if (loadingEl) loadingEl.style.display = 'none';
+    const card = document.getElementById('chCard');
+    if (card) card.style.display = 'block';
+    loadState();
+    renderChallenge();
+  } else {
+    initPyodide();
+  }
 }
 function toggleLocker() {
   document.getElementById('simLocker').classList.toggle('open');
 }
+
+// ── Settings panel ────────────────────────────────────────────────
+function toggleSettings() {
+  document.getElementById('settingsPanel').classList.toggle('open');
+}
+// Close panel when clicking outside
+document.addEventListener('click', e => {
+  const panel = document.getElementById('settingsPanel');
+  const btn   = document.getElementById('settingsBtn');
+  if (panel && panel.classList.contains('open') &&
+      !panel.contains(e.target) && !btn.contains(e.target)) {
+    panel.classList.remove('open');
+  }
+});
+
+function applyLightMode(on) {
+  document.body.classList.toggle('light-mode', on);
+  localStorage.setItem('rtg_lightMode', on ? '1' : '0');
+}
+
+function applyFontSize(size) {
+  document.body.classList.remove('font-lg', 'font-xl');
+  if (size === 'lg') document.body.classList.add('font-lg');
+  if (size === 'xl') document.body.classList.add('font-xl');
+  localStorage.setItem('rtg_fontSize', size);
+  // update button states
+  ['normal','lg','xl'].forEach(s => {
+    document.getElementById('size' + s.charAt(0).toUpperCase() + s.slice(1))
+      .classList.toggle('active', s === size);
+  });
+}
+
+function restoreDisplayPrefs() {
+  const light = localStorage.getItem('rtg_lightMode') === '1';
+  if (light) {
+    document.body.classList.add('light-mode');
+    const tog = document.getElementById('lightToggle');
+    if (tog) tog.checked = true;
+  }
+  const fs = localStorage.getItem('rtg_fontSize') || 'normal';
+  applyFontSize(fs);
+}
+restoreDisplayPrefs();
 
 // ══ Typewriter ════════════════════════════════════════════════════
 const PARAGRAPHS = [
@@ -1206,7 +1561,8 @@ const PARAGRAPHS = [
 ];
 
 let paraIdx = 0, isTyping = false, skipFlag = false, typeTimer = null;
-const SPEED = 22, PAUSE = 560;
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SPEED = prefersReducedMotion ? 0 : 22, PAUSE = prefersReducedMotion ? 0 : 560;
 
 function startTypewriter() {
   paraIdx = 0; isTyping = false; skipFlag = false;
@@ -1295,6 +1651,17 @@ print(len(clean))`,
       'pandas has a method called <code>dropna()</code> that removes rows with missing values. Use the <code>subset</code> parameter to limit it to only the <code>rating</code> column, so rows with other missing fields are kept.',
       'Chain <code>drop_duplicates()</code> after <code>dropna()</code> to remove rows that appear more than once. No arguments needed - it compares all columns by default. Then wrap the result in <code>len()</code>.'
     ],
+    qual: {
+      question: 'You found 5 null values and 5 duplicate rows in the raw export. What does this suggest about working with data from external platforms?',
+      options: [
+        'The review platform has a critical bug that should be reported before any analysis proceeds.',
+        'Raw data from external sources almost always requires cleaning - nulls and duplicates are normal and expected.',
+        'The 10 removed rows represent real customers whose opinions were unfairly excluded.',
+        'A cleaned dataset of 50 rows is too small to draw any meaningful conclusions.'
+      ],
+      correct: 1,
+      feedback: 'Correct. Data from APIs, exports, and third-party platforms routinely arrives with missing values, duplicates, and formatting inconsistencies. Cleaning is not a special case - it is a standard first step in any real analysis pipeline.'
+    },
     expected: '50'
   },
   {
@@ -1311,6 +1678,17 @@ print(merged.shape)`,
       '<code>DataFrame.merge(other, on=\'column\')</code> performs an inner join on a shared column. Both <code>orders</code> and <code>menu</code> have a column called <code>dish_id</code> - that\'s your join key.',
       'The result keeps all rows from <code>orders</code> (62) and combines columns from both tables, minus the duplicate key. Count the columns in each table and subtract 1 for the shared key.'
     ],
+    qual: {
+      question: 'The merge returned all 62 rows - no orders were dropped. What does this tell you about the orders data?',
+      options: [
+        'The orders table contains duplicates that inflate the row count.',
+        'Every order references a dish_id that exists in the menu - the data is internally consistent on this key.',
+        'The menu table must also have 62 rows to produce this result.',
+        'An inner join always preserves all rows from the left table regardless of matches.'
+      ],
+      correct: 1,
+      feedback: 'Correct. In an inner join, rows are only kept when a match exists in both tables. The fact that all 62 rows survived means every order\'s dish_id has a corresponding entry in the menu - a sign of good referential integrity in this dataset.'
+    },
     expected: '(62, 11)'
   },
   {
@@ -1330,6 +1708,17 @@ print(result)`,
       'You need two conditions joined by <code>&</code>. The first filters on the <code>dish_name</code> column - check the Evidence Locker for the exact dish name spelling. Each condition must be wrapped in parentheses.',
       'The date cutoff is November 1st, 2024. Use <code>\'2024-11-01\'</code> as the comparison string - pandas will handle the datetime conversion automatically.'
     ],
+    qual: {
+      question: 'The Philly Cheesesteak averaged 4.5 stars before November. Why is establishing this baseline the right first step before looking at post-change ratings?',
+      options: [
+        'A 4.5 average proves the dish was flawless, so any drop must be the restaurant\'s fault.',
+        'Without a pre-change baseline, you cannot tell whether a later rating is a drop or just normal variation.',
+        'Averages above 4.0 are statistically significant, which validates the rest of the analysis.',
+        'The baseline tells you which dishes are most popular so you can focus your investigation.'
+      ],
+      correct: 1,
+      feedback: 'Correct. A baseline is the reference point that makes change visible. If you only had a post-change rating of 3.0, you wouldn\'t know if that was a decline or just how the dish always rated. Comparing before and after is what turns a number into a finding.'
+    },
     expected: '4.5'
   },
   {
@@ -1349,6 +1738,17 @@ print(result)`,
       'The column that flags Cooper Sharp dishes is <code>uses_cooper_sharp</code>. Filter where it equals <code>True</code> (Python boolean, no quotes). Check the Evidence Locker menu table to confirm the column name.',
       'For "on or after November 1st", use <code>&gt;= \'2024-11-01\'</code>. After filtering, select <code>[\'rating\']</code>, call <code>.mean()</code>, then <code>.round(1)</code>.'
     ],
+    qual: {
+      question: 'Cooper Sharp dishes averaged 3.0 stars after November. A colleague suggests the new head chef (announced in the fall) is responsible. What is the strongest counterargument?',
+      options: [
+        'Head chefs never affect dish quality - only ingredient sourcing does.',
+        'A chef change would likely affect all dishes, not just the ones that share a specific ingredient.',
+        'The 3.0 average is actually within an acceptable range for casual dining.',
+        'There were not enough post-November reviews to make this comparison reliable.'
+      ],
+      correct: 1,
+      feedback: 'Correct. This is the key analytical distinction. A chef change is a global factor - it would plausibly affect every dish on the menu. A supplier change affecting one ingredient would only impact the dishes that use that ingredient. The pattern in the data (CS dishes drop, others hold steady) fits the supplier hypothesis much better than the chef hypothesis.'
+    },
     expected: '3.0'
   },
   {
@@ -1374,6 +1774,17 @@ print(result)`,
       'Both <code>before</code> and <code>after</code> use the same <code>uses_cooper_sharp == True</code> filter - only the date changes. Use <code>\'2024-11-01\'</code> as the cutoff: <code>&lt;</code> for before, <code>&gt;=</code> for after.',
       'Once you have both means, subtract: <code>round(before - after, 1)</code>. Use Python\'s built-in <code>round()</code> here, not a pandas method, since <code>before</code> and <code>after</code> are already plain floats.'
     ],
+    qual: {
+      question: 'You found a 1.5-point drop specifically in Cooper Sharp dishes, with no comparable drop in other items. If you were presenting this finding to the restaurant owner, which statement is most analytically defensible?',
+      options: [
+        'The new cheese supplier is definitely causing the drop - the restaurant should switch back immediately.',
+        'The data shows a 1.5-point rating decline in Cooper Sharp dishes coinciding with the supplier change. Non-CS dishes show no comparable decline. This warrants further investigation of the ingredient change.',
+        'Customer tastes change over time, so this drop is likely unrelated to anything the restaurant did.',
+        'A 1.5-point drop is within the normal margin of error for online ratings and should be ignored.'
+      ],
+      correct: 1,
+      feedback: 'Correct. Good data analysis supports conclusions, it doesn\'t overstate them. Option A overclaims certainty - correlation in a dataset isn\'t proof of causation. Option B is the right framing: it describes what the data shows, names the pattern (CS-specific decline), and recommends action without asserting more than the evidence can support.'
+    },
     expected: '1.5'
   }
 ];
@@ -1386,11 +1797,13 @@ const LS_KEY = 'dtsc520_rtginvestigation';
 
 let state = {
   current: 0,
-  attempts: [0, 0, 0, 0, 0],
-  scores:   [null, null, null, null, null],
-  outputs:  ['', '', '', '', ''],
-  codes:    ['', '', '', '', ''],
-  done:     [false, false, false, false, false]
+  attempts:  [0, 0, 0, 0, 0],
+  scores:    [null, null, null, null, null],
+  outputs:   ['', '', '', '', ''],
+  codes:     ['', '', '', '', ''],
+  done:      [false, false, false, false, false],
+  qualDone:  [false, false, false, false, false],
+  qualPick:  [null, null, null, null, null]
 };
 
 function loadState() {
@@ -1420,6 +1833,7 @@ function pointsForAttempt(n) {
 // ══ Pyodide ═══════════════════════════════════════════════════════
 let pyodide = null;
 let pyodideReady = false;
+let pyodideLoading = false;
 
 const BOOTSTRAP = `
 import pandas as pd
@@ -1583,17 +1997,31 @@ print("BOOTSTRAP_OK")
 `;
 
 async function initPyodide() {
+  if (pyodideLoading || pyodideReady) return;
+  pyodideLoading = true;
+  const loadingEl = document.getElementById('simLoading');
+  const msgEl = loadingEl ? loadingEl.querySelector('.sim-loading-text') : null;
+  function setMsg(txt) { if (msgEl) msgEl.textContent = txt; }
   try {
+    setMsg('Loading Python environment...');
     pyodide = await loadPyodide();
+    setMsg('Loading pandas...');
     await pyodide.loadPackage('pandas');
-    const result = await pyodide.runPythonAsync(BOOTSTRAP);
+    setMsg('Setting up datasets...');
+    await pyodide.runPythonAsync(BOOTSTRAP);
     pyodideReady = true;
-    document.getElementById('simLoading').style.display = 'none';
-    document.getElementById('chCard').style.display = 'block';
-    loadState();
-    renderChallenge();
+    pyodideLoading = false;
+    // Only update UI if sim screen is currently active
+    if (document.getElementById('screen-sim').classList.contains('active')) {
+      if (loadingEl) loadingEl.style.display = 'none';
+      const card = document.getElementById('chCard');
+      if (card) card.style.display = 'block';
+      loadState();
+      renderChallenge();
+    }
   } catch(e) {
-    document.getElementById('simLoading').innerHTML =
+    pyodideLoading = false;
+    if (loadingEl) loadingEl.innerHTML =
       '<div class="sim-loading-text" style="color:#d47a7a">Failed to load Python environment. Please refresh.</div>';
   }
 }
@@ -1683,6 +2111,9 @@ function renderChallenge() {
   document.getElementById('btnPrev').disabled = idx === 0;
   document.getElementById('btnNext').disabled = idx === CHALLENGES.length - 1;
 
+  // qualitative question
+  renderQual();
+
   // show results if all done
   if (state.done.every(Boolean)) {
     setTimeout(showResults, 400);
@@ -1696,6 +2127,59 @@ function navChallenge(dir) {
   state.current = Math.max(0, Math.min(CHALLENGES.length - 1, state.current + dir));
   hintIndex = -1;
   renderChallenge();
+}
+
+// ══ Qualitative question ══════════════════════════════════════════
+function renderQual() {
+  const idx  = state.current;
+  const ch   = CHALLENGES[idx];
+  const sec  = document.getElementById('qualSection');
+  const done = state.done[idx];
+
+  if (!done) { sec.classList.remove('show'); return; }
+
+  sec.classList.add('show');
+  document.getElementById('qualQuestion').textContent = ch.qual.question;
+
+  const keys = ['A', 'B', 'C', 'D'];
+  const picked = state.qualPick[idx];
+  const qdone  = state.qualDone[idx];
+
+  let html = '';
+  ch.qual.options.forEach((opt, i) => {
+    let cls = 'qual-opt';
+    if (qdone) {
+      if (i === ch.qual.correct)               cls += ' reveal-correct';
+      if (picked === i && i === ch.qual.correct) cls = 'qual-opt selected-correct';
+      if (picked === i && i !== ch.qual.correct) cls += ' selected-wrong';
+    }
+    html += `<button class="${cls}" onclick="answerQual(${i})" ${qdone ? 'disabled' : ''}>
+      <span class="qual-key">${keys[i]}</span>
+      <span class="qual-opt-text">${opt}</span>
+    </button>`;
+  });
+  document.getElementById('qualOptions').innerHTML = html;
+
+  const fbEl = document.getElementById('qualFeedback');
+  if (qdone) {
+    const correct = picked === ch.qual.correct;
+    fbEl.className = 'qual-feedback show ' + (correct ? 'correct' : 'wrong');
+    fbEl.textContent = correct
+      ? ch.qual.feedback
+      : 'Not the best answer. ' + ch.qual.feedback;
+  } else {
+    fbEl.className = 'qual-feedback';
+    fbEl.textContent = '';
+  }
+}
+
+function answerQual(optIdx) {
+  const idx = state.current;
+  if (state.qualDone[idx]) return;
+  state.qualPick[idx] = optIdx;
+  state.qualDone[idx] = true;
+  saveState();
+  renderQual();
 }
 
 // ══ Hints ═════════════════════════════════════════════════════════
@@ -1784,9 +2268,10 @@ async function checkAnswer() {
     attEl.textContent = att === 1 ? 'First try!' : `${att} attempt${att > 1 ? 's' : ''}`;
     document.getElementById('scoreDisplay').textContent = totalScore();
     saveState();
+    renderQual();
 
     if (state.done.every(Boolean)) {
-      setTimeout(showResults, 800);
+      setTimeout(showResults, 1200);
     }
   } else {
     fbEl.className = 'ch-feedback show wrong';
@@ -1850,11 +2335,13 @@ function showResults() {
 function restartSim() {
   state = {
     current: 0,
-    attempts: [0,0,0,0,0],
-    scores:   [null,null,null,null,null],
-    outputs:  ['','','','',''],
-    codes:    ['','','','',''],
-    done:     [false,false,false,false,false]
+    attempts:  [0,0,0,0,0],
+    scores:    [null,null,null,null,null],
+    outputs:   ['','','','',''],
+    codes:     ['','','','',''],
+    done:      [false,false,false,false,false],
+    qualDone:  [false,false,false,false,false],
+    qualPick:  [null,null,null,null,null]
   };
   saveState();
   document.getElementById('simResults').style.display = 'none';
@@ -1862,17 +2349,26 @@ function restartSim() {
   document.getElementById('btnCheck').disabled = false;
   renderChallenge();
 }
+
+// Start preloading Pyodide 2 seconds after page load —
+// well before the student reaches the sim, and completely
+// decoupled from the narrative typewriter animation.
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (!pyodideReady && !pyodideLoading) initPyodide();
+  }, 2000);
+});
 </script>
 
 <!-- ══ TABLE MODAL ═══════════════════════════════════════════════ -->
-<div class="tbl-modal-overlay" id="tblModalOverlay" onclick="closeModalOutside(event)">
-  <div class="tbl-modal">
+<div class="tbl-modal-overlay" id="tblModalOverlay" onclick="closeModalOutside(event)" role="presentation">
+  <div class="tbl-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" id="tblModalDialog">
     <div class="tbl-modal-header">
       <div>
         <span class="tbl-modal-title" id="modalTitle">-</span>
         <span class="tbl-modal-meta" id="modalMeta">-</span>
       </div>
-      <button class="tbl-modal-close" onclick="closeModal()">Close &#10005;</button>
+      <button class="tbl-modal-close" id="modalCloseBtn" onclick="closeModal()">Close &#10005;</button>
     </div>
     <div class="tbl-modal-body" id="modalBody"></div>
   </div>
@@ -1979,6 +2475,8 @@ const TABLE_DATA = {
   }
 };
 
+let _modalOpener = null; // element that triggered the modal, for focus return
+
 function openModal(key) {
   const tbl  = TABLE_DATA[key];
   document.getElementById('modalTitle').textContent = tbl.title;
@@ -2004,18 +2502,46 @@ function openModal(key) {
   document.getElementById('modalBody').innerHTML = html;
   document.getElementById('tblModalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+  _modalOpener = document.activeElement;
+  // Move focus into modal
+  requestAnimationFrame(() => document.getElementById('modalCloseBtn').focus());
 }
 
 function closeModal() {
   document.getElementById('tblModalOverlay').classList.remove('open');
   document.body.style.overflow = '';
+  // Return focus to the element that opened the modal
+  if (_modalOpener) { _modalOpener.focus(); _modalOpener = null; }
 }
 
 function closeModalOutside(e) {
   if (e.target === document.getElementById('tblModalOverlay')) closeModal();
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+// Focus trap inside modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('tblModalOverlay').classList.contains('open')) closeModal();
+    if (document.getElementById('settingsPanel').classList.contains('open')) {
+      document.getElementById('settingsPanel').classList.remove('open');
+      document.getElementById('settingsBtn').focus();
+    }
+    return;
+  }
+  if (e.key === 'Tab' && document.getElementById('tblModalOverlay').classList.contains('open')) {
+    const dialog = document.getElementById('tblModalDialog');
+    const focusable = Array.from(dialog.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )).filter(el => !el.disabled);
+    if (!focusable.length) { e.preventDefault(); return; }
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus();
+    }
+  }
+});
 </script>
 
 </body>

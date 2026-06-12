@@ -62,12 +62,6 @@
     }
     .mod-banner h1 { font-size: 2.1rem; font-weight: 700; color: var(--text-bright); line-height: 1.2; margin-bottom: 0.65rem; }
     .mod-banner p { font-size: 0.95rem; color: var(--text-dim); max-width: 580px; line-height: 1.6; margin-bottom: 1.25rem; }
-    .banner-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .pill {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; padding: 0.25rem 0.6rem;
-      border-radius: 3px; background: rgba(192,123,48,0.12); color: var(--accent-light);
-      border: 1px solid rgba(192,123,48,0.25); letter-spacing: 0.04em;
-    }
 
     .section-tabs {
       display: none !important;
@@ -166,7 +160,7 @@
 
     .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
     .concept-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.1rem; }
-    .concept-card h4 {
+    .concept-card h3 {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; letter-spacing: 0.06em;
       text-transform: uppercase; color: var(--accent-light); margin-bottom: 0.6rem;
     }
@@ -225,7 +219,7 @@
 
     .sidebar { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 70px; max-height: calc(100vh - 80px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
     .sidebar-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1.1rem; }
-    .sidebar-card h4 {
+    .sidebar-card h3 {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
       letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.75rem;
     }
@@ -333,7 +327,72 @@
     @media (max-width: 600px) {
       .quiz-link-card { flex-direction: column; align-items: flex-start; }
     }
-  </style>
+  
+    /* ── ADA: Focus visibility (WCAG 2.1 AA) ───────────────────────
+       Keyboard users must be able to see the focused element.
+       :focus-visible targets keyboard focus only (not mouse clicks).
+    ─────────────────────────────────────────────────────────────── */
+    .objectives-list {
+      margin: 1.25rem 0 2rem 1.25rem;
+      padding: 0;
+    }
+    .objectives-list li {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 0.6rem;
+      color: var(--text-dim, #6b6156);
+    }
+    :focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    /* For elements that already have a border-radius we want to match */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+    }
+    /* Remove default outline only where we've supplied our own */
+    :focus:not(:focus-visible) { outline: none; }
+
+    
+    /* ── ADA: Reduced motion (WCAG 2.1 SC 2.3.3) ───────────────────
+       Users who prefer reduced motion (vestibular disorders, epilepsy)
+       should not be subjected to animations or transitions.
+    ─────────────────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration:   0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration:  0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      /* Narrative typewriter paragraphs: show immediately */
+      .type-para {
+        opacity: 1 !important;
+        transition: none !important;
+      }
+      /* Loading dots: hide animation, show static dots */
+      .sim-loading-dot {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      /* Cursor blink */
+      .type-cursor {
+        animation: none !important;
+        opacity: 1 !important;
+      }
+    }
+
+    </style>
   <!-- CodeMirror 5 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/theme/material-darker.min.css">
@@ -363,18 +422,12 @@
     <div class="banner-eyebrow">Module 04 - Data Wrangling</div>
     <h1>Pandas: DataFrames for Data Science</h1>
     <p>Master the pandas library for structured data manipulation. Load, inspect, select, filter, clean, and aggregate tabular data - the everyday workflow of a working data scientist.</p>
-    <div class="banner-pills">
-      <span class="pill">Series</span>
-      <span class="pill">DataFrames</span>
-      <span class="pill">Selection &amp; Filtering</span>
-      <span class="pill">Data Cleaning</span>
-      <span class="pill">Aggregation</span>
-      <span class="pill">GroupBy</span>
-    </div>
+
   </div>
 </div>
 
 <nav class="section-tabs">
+  <a class="tab-link" data-section="overview">Overview</a>
   <a class="tab-link" data-section="series">Series</a>
   <a class="tab-link" data-section="dataframes">DataFrames</a>
   <a class="tab-link" data-section="selection">Selection</a>
@@ -397,6 +450,25 @@
   <div class="content-col">
 
     <!-- SERIES -->
+
+    <!-- OVERVIEW / LANDING -->
+    <section id="overview" class="content-section">
+      <h2>Learning Objectives</h2>
+      <ol class="objectives-list">
+          <li>Create and inspect pandas Series and DataFrames from a variety of data sources</li>
+          <li>Select rows and columns using .loc[], .iloc[], and direct column access</li>
+          <li>Filter DataFrames using boolean conditions and multiple criteria</li>
+          <li>Clean datasets by identifying and handling missing values, duplicates, and type mismatches</li>
+          <li>Aggregate and summarize data using groupby, agg, and descriptive statistics methods</li>
+          <li>Reshape and combine DataFrames using merge, concat, and pivot operations</li>
+      </ol>
+      <div class="subpage-nav">
+        <span class="subpage-nav-btn invisible"></span>
+        <span></span>
+        <button class="subpage-nav-btn" onclick="showSection('series')">Series &rarr;</button>
+      </div>
+    </section>
+
     <section id="series" class="content-section">
       <h2>Series: The 1D Building Block</h2>
       <p>A <strong>Series</strong> is pandas' one-dimensional labeled array. Think of it as a single column from a spreadsheet - every value has an index label alongside it. Series are the atoms from which DataFrames are built.</p>
@@ -511,14 +583,14 @@ roster = pd.<span class="fn">read_csv</span>(
       <p>Pandas gives you multiple ways to pull out rows, columns, or individual cells. The two main tools are <code>.loc[]</code> (label-based) and <code>.iloc[]</code> (integer position-based). Getting these right is one of the most important pandas fundamentals.</p>
       <div class="concept-grid">
         <div class="concept-card">
-          <h4>.loc[ ] - Label-based</h4>
+          <h3>.loc[ ] - Label-based</h3>
           <p>Uses actual index labels and column names. Inclusive on both ends of slices.</p>
           <p><code>df.loc[0, 'avg']</code> - single cell</p>
           <p><code>df.loc[:, 'avg']</code> - entire column</p>
           <p><code>df.loc[0:2, 'avg':'hr']</code> - slice of rows and cols</p>
         </div>
         <div class="concept-card">
-          <h4>.iloc[ ] - Position-based</h4>
+          <h3>.iloc[ ] - Position-based</h3>
           <p>Uses integer positions (0-indexed). Exclusive on the end of slices, like Python lists.</p>
           <p><code>df.iloc[0, 1]</code> - row 0, column 1</p>
           <p><code>df.iloc[:, 2]</code> - entire 3rd column</p>
@@ -1086,7 +1158,7 @@ pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'<
   <aside class="sidebar">
 
 <div class="sidebar-card">
-      <h4>Topics</h4>
+      <h3>Topics</h3>
       <div class="toc-links" id="tocLinks">
         <a onclick="showSection('series')">Series</a>
         <a onclick="showSection('dataframes')">DataFrames</a>
@@ -1108,7 +1180,7 @@ pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'<
 
 
     <div class="sidebar-card">
-      <h4>Simulations</h4>
+      <h3>Simulations</h3>
       <div class="sim-pair">
         <a class="sim-entry sim-entry-1" href="../../sims/dirty_dataset_sim.html">
           <div class="sim-entry-num">Sim 1</div>
@@ -1133,7 +1205,7 @@ pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'<
 
 
     <div class="sidebar-card">
-      <h4>Quiz</h4>
+      <h3>Quiz</h3>
       <p style="font-size:0.85rem; color:var(--text-dim); margin:0 0 0.75rem;">Test your knowledge with 10 questions, one at a time.</p>
       <a href="quiz.html" class="quiz-cta-btn">Take the Quiz</a>
     </div>
@@ -1559,7 +1631,7 @@ pd.<span class="fn">pivot_table</span>(sales, values=<span class="st">'revenue'<
 
 
 <script>
-const SECTIONS = ['series', 'dataframes', 'selection', 'filtering', 'cleaning', 'aggregation', 'groupby', 'index-objects', 'arithmetic', 'descriptive-stats', 'unique-values', 'multiindex', 'combining', 'pivot-tables'];
+const SECTIONS = ['overview', 'series', 'dataframes', 'selection', 'filtering', 'cleaning', 'aggregation', 'groupby', 'index-objects', 'arithmetic', 'descriptive-stats', 'unique-values', 'multiindex', 'combining', 'pivot-tables'];
 function showSection(id, noScroll, noHash) {
   SECTIONS.forEach(function(s) { var el = document.getElementById(s); if (el) el.classList.remove('active'); });
   var target = document.getElementById(id);

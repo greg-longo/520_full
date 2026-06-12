@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Morning Brief - DTSC 520 Simulation</title>
+<title>The Morning Brief</title>
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -538,13 +538,6 @@
 </head>
 <body>
 
-<!-- COURSE NAV -->
-<div id="coursenav">
-  <a href="../../index.html">- Course Home</a>
-  <span class="cn-sep">/</span>
-  <span class="cn-cur">The Morning Brief</span>
-</div>
-
 <!-- STATUS BAR -->
 <div id="statusbar">
   <div class="sb-inner">
@@ -588,7 +581,7 @@
 <!-- ══ SCREEN 0: LANDING ══ -->
 <div id="screen-0" class="fade-in">
   <div class="landing-masthead">
-    <div class="landing-eyebrow">Eastern University &middot; DTSC 520 &middot; Interactive Simulation</div>
+    <div class="landing-eyebrow">Interactive Simulation</div>
     <div class="landing-title">The Morning Brief</div>
     <div class="landing-subtitle">A data science lifecycle simulation</div>
     <div class="landing-badge-row">
@@ -1567,12 +1560,12 @@ ward_check = df_clean[df_clean[<span class="st">'followup_scheduled'</span>] == 
       </div>
 
       <div style="text-align:center;margin-top:16px;" class="fade-in">
-        <button class="continue-btn" onclick="location.href='../../index.html'">Course Home</button>
+        <button class="continue-btn" onclick="location.reload()">Restart</button>
         <button class="replay-btn" onclick="location.reload()">Try Again</button>
       </div>
 
       <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:40px;font-family:var(--mono);">
-        This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.
+        This tool was developed with AI assistance. All course content, learning objectives, and AI assisted activities were designed by the instructor.
       </p>
     `;
   }

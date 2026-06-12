@@ -59,12 +59,6 @@
     }
     .mod-banner h1 { font-size: 2.1rem; font-weight: 700; color: var(--text-bright); line-height: 1.2; margin-bottom: 0.65rem; }
     .mod-banner p { font-size: 0.95rem; color: var(--text-dim); max-width: 580px; line-height: 1.6; margin-bottom: 1.25rem; }
-    .banner-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .pill {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; padding: 0.25rem 0.6rem;
-      border-radius: 3px; background: rgba(42,113,149,0.12); color: var(--accent-light);
-      border: 1px solid rgba(42,113,149,0.25); letter-spacing: 0.04em;
-    }
 
     .section-tabs {
       display: none !important;
@@ -212,7 +206,7 @@
     /* sidebar */
     .sidebar { display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 70px; max-height: calc(100vh - 80px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
     .sidebar-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 1.1rem; }
-    .sidebar-card h4 {
+    .sidebar-card h3 {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
       letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.75rem;
     }
@@ -305,7 +299,7 @@
       text-transform: uppercase;
       margin-bottom: 0.35rem;
     }
-    .sim-cta h4 {
+    .sim-cta h3 {
       font-family: 'Zilla Slab', serif;
       font-size: 0.95rem;
       font-weight: 600;
@@ -329,7 +323,62 @@
       .sidebar { position: static; }
       .role-grid, .tool-grid { grid-template-columns: 1fr; }
     }
-  </style>
+  
+    /* ── ADA: Focus visibility (WCAG 2.1 AA) ───────────────────────
+       Keyboard users must be able to see the focused element.
+       :focus-visible targets keyboard focus only (not mouse clicks).
+    ─────────────────────────────────────────────────────────────── */
+    :focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    /* For elements that already have a border-radius we want to match */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2.5px solid #c9a84c;
+      outline-offset: 3px;
+    }
+    /* Remove default outline only where we've supplied our own */
+    :focus:not(:focus-visible) { outline: none; }
+
+    
+    /* ── ADA: Reduced motion (WCAG 2.1 SC 2.3.3) ───────────────────
+       Users who prefer reduced motion (vestibular disorders, epilepsy)
+       should not be subjected to animations or transitions.
+    ─────────────────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration:   0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration:  0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      /* Narrative typewriter paragraphs: show immediately */
+      .type-para {
+        opacity: 1 !important;
+        transition: none !important;
+      }
+      /* Loading dots: hide animation, show static dots */
+      .sim-loading-dot {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      /* Cursor blink */
+      .type-cursor {
+        animation: none !important;
+        opacity: 1 !important;
+      }
+    }
+
+    </style>
   <link rel="stylesheet" href="../../assets/code-copy.css">
   <script src="../../assets/code-copy.js" defer></script>
 </head>
@@ -351,15 +400,7 @@
     <div class="banner-eyebrow">Module 01 - Foundations</div>
     <h1>Introduction to Data Science &amp; Analytics</h1>
     <p>What is data science, who does it, and why does Python dominate the field? Build your mental model of the DS landscape before writing a single line of code.</p>
-    <div class="banner-pills">
-      <span class="pill">What is Data Science?</span>
-      <span class="pill">DS vs. Analytics</span>
-      <span class="pill">Careers &amp; Roles</span>
-      <span class="pill">Key Tools</span>
-      <span class="pill">Why Python</span>
-      <span class="pill">Critical Thinking</span>
-      <span class="pill">Pseudocode</span>
-    </div>
+
   </div>
 </div>
 
@@ -460,27 +501,27 @@
 
       <div class="role-grid">
         <div class="role-card">
-          <h4>Data Analyst</h4>
+          <h3>Data Analyst</h3>
           <p>Turns business questions into SQL queries and visualizations. Communicates trends to non-technical stakeholders. Often the best entry-level path for career changers. Median salary ~$70-90k.</p>
         </div>
         <div class="role-card">
-          <h4>Data Scientist</h4>
+          <h3>Data Scientist</h3>
           <p>Builds predictive models, designs experiments (A/B tests), and develops data products. Requires stronger Python and statistics skills. Median salary ~$110-140k.</p>
         </div>
         <div class="role-card">
-          <h4>Data Engineer</h4>
+          <h3>Data Engineer</h3>
           <p>Designs and maintains the pipelines that collect, store, and move data. Heavy focus on SQL, cloud platforms (AWS/GCP/Azure), and distributed systems. Median salary ~$120-150k.</p>
         </div>
         <div class="role-card">
-          <h4>ML Engineer</h4>
+          <h3>ML Engineer</h3>
           <p>Takes models from prototype to production. Focuses on model serving, monitoring, and MLOps infrastructure. Requires the most software engineering depth. Median salary ~$140-180k.</p>
         </div>
         <div class="role-card">
-          <h4>Business Intelligence (BI) Developer</h4>
+          <h3>Business Intelligence (BI) Developer</h3>
           <p>Builds and maintains dashboards and reporting infrastructure (Tableau, Power BI, Looker). Bridges the gap between raw data and business decision-makers.</p>
         </div>
         <div class="role-card">
-          <h4>Research Scientist</h4>
+          <h3>Research Scientist</h3>
           <p>Conducts original research, often in academia or large tech R&amp;D labs. Requires deep statistics and often a PhD. Publishes findings and advances the state of the art.</p>
         </div>
       </div>
@@ -654,12 +695,12 @@
       <p>Before writing a single line of Python, effective data scientists work through the problem systematically. This six-step framework builds the habit of thinking before coding - which saves far more time than it costs.</p>
 
       <div class="concept-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-        <div class="concept-box"><h4>1. Understand</h4><p>Comprehend requirements and constraints. Identify the inputs, outputs, and any specific rules or conditions that must be met.</p></div>
-        <div class="concept-box"><h4>2. Plan</h4><p>Consider the logical flow. Make a general outline of the major steps. Think about which data structures or algorithms might be suitable.</p></div>
-        <div class="concept-box"><h4>3. Break It Down</h4><p>Divide the plan into smaller, more manageable sub-problems. Each sub-problem should be solvable independently.</p></div>
-        <div class="concept-box"><h4>4. Pseudocode</h4><p>Write a human-friendly description of what the program should do - without worrying about Python syntax yet.</p></div>
-        <div class="concept-box"><h4>5. Code Each Part</h4><p>Implement each sub-problem in Python. You don't always have to start at the beginning - tackle the parts you understand first.</p></div>
-        <div class="concept-box"><h4>6. Test &amp; Debug</h4><p>Check that your solution works on expected inputs and edge cases. Learn to read error messages as instructions, not failures.</p></div>
+        <div class="concept-box"><h3>1. Understand</h3><p>Comprehend requirements and constraints. Identify the inputs, outputs, and any specific rules or conditions that must be met.</p></div>
+        <div class="concept-box"><h3>2. Plan</h3><p>Consider the logical flow. Make a general outline of the major steps. Think about which data structures or algorithms might be suitable.</p></div>
+        <div class="concept-box"><h3>3. Break It Down</h3><p>Divide the plan into smaller, more manageable sub-problems. Each sub-problem should be solvable independently.</p></div>
+        <div class="concept-box"><h3>4. Pseudocode</h3><p>Write a human-friendly description of what the program should do - without worrying about Python syntax yet.</p></div>
+        <div class="concept-box"><h3>5. Code Each Part</h3><p>Implement each sub-problem in Python. You don't always have to start at the beginning - tackle the parts you understand first.</p></div>
+        <div class="concept-box"><h3>6. Test &amp; Debug</h3><p>Check that your solution works on expected inputs and edge cases. Learn to read error messages as instructions, not failures.</p></div>
       </div>
 
       <h2>Pseudocode: Thinking Before Coding</h2>
@@ -740,7 +781,7 @@ roster = [
   <aside class="sidebar">
 
 <div class="sidebar-card">
-      <h4>Topics</h4>
+      <h3>Topics</h3>
       <div class="toc-links" id="tocLinks">
         <a onclick="showSection('what-is-ds')">What is Data Science?</a>
         <a onclick="showSection('ds-vs-analytics')">DS vs. Analytics</a>
@@ -756,19 +797,19 @@ roster = [
 
     <a class="sim-cta" href="../../sims/morning-brief/index.html">
       <div class="sim-cta-label">Simulation 1</div>
-      <h4>The Morning Brief</h4>
+      <h3>The Morning Brief</h3>
       <p>Walk the full DS lifecycle on a real-world case — from business question to model to recommendation.</p>
     </a>
 
     <a class="sim-cta sim-cta-2" href="../../sims/find-your-path/index.html">
       <div class="sim-cta-label">Simulation 2</div>
-      <h4>Find Your Path</h4>
+      <h3>Find Your Path</h3>
       <p>Eight questions. One honest answer each. Map your instincts to the data role that actually fits you.</p>
     </a>
 
 
     <div class="next-mod">
-      <h4>Next Module</h4>
+      <h3>Next Module</h3>
       <p>Ready to start coding? Module 2 covers Python fundamentals - variables, loops, and data structures.</p>
       <a href="../module2/index.html" class="next-mod-btn">Module 2: Python &rarr;</a>
     </div>

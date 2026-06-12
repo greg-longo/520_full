@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escape from McInnis Hall - DTSC 520</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<style>
+  :root {
+    --bg: #060a06;
+    --panel: #0b120b;
+    --panel2: #0e160e;
+    --green: #39ff7a;
+    --green-dim: #2dbb66;
+    --green-dark: #0f3d22;
+    --amber: #ffc73a;
+    --red: #ff6b6b;
+    --cyan: #4adfff;
+    --text: #c8efd4;
+    --maroon: #8B1C40;
+    --maroon-bright: #d4567e;
+    --mono: 'IBM Plex Mono', 'SF Mono', 'Cascadia Code', Consolas, Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    overflow-x: hidden;
+  }
+  /* CRT scanlines + vignette */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, transparent 1px, transparent 3px);
+    pointer-events: none; z-index: 9000;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%);
+    pointer-events: none; z-index: 9001;
+  }
+
+  /* Keyboard focus visibility */
+  .btn:focus-visible, .door:focus-visible, #editor:focus-visible,
+  #playerName:focus-visible, #muteBtn:focus-visible, a:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+  }
+
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: block; }
+
+  /* ============ INTRO ============ */
+  #intro { display: none; }
+  #intro.active { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+  .intro-box {
+    max-width: 720px; width: 100%;
+    border: 1px solid var(--green-dark);
+    background: var(--panel);
+    padding: 36px 40px;
+    box-shadow: 0 0 60px rgba(57,255,122,0.08), inset 0 0 120px rgba(57,255,122,0.03);
+  }
+  .glitch-title {
+    font-size: clamp(22px, 4.5vw, 40px);
+    color: var(--green);
+    letter-spacing: 3px;
+    text-shadow: 0 0 12px rgba(57,255,122,0.7);
+    margin-bottom: 4px;
+    animation: flicker 4s infinite;
+  }
+  @keyframes flicker {
+    0%, 96%, 100% { opacity: 1; }
+    97% { opacity: 0.6; }
+    98% { opacity: 1; }
+    99% { opacity: 0.4; }
+  }
+  .subtitle { color: var(--green-dim); font-size: 13px; letter-spacing: 2px; margin-bottom: 26px; }
+  .intro-story { font-size: 14.5px; line-height: 1.75; white-space: pre-wrap; min-height: 240px; }
+  .intro-story .aria { color: var(--cyan); }
+  .cursor { display: inline-block; width: 9px; height: 17px; background: var(--green); vertical-align: text-bottom; animation: blink 0.9s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .name-row { margin-top: 26px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; opacity: 0; transition: opacity 0.8s; }
+  .name-row.show { opacity: 1; }
+  .name-row label { color: var(--green-dim); font-size: 13px; }
+  #playerName {
+    background: #04130a; border: 1px solid var(--green-dark); color: var(--green);
+    font-family: var(--mono); font-size: 15px; padding: 9px 13px; width: 230px; outline: none;
+  }
+  #playerName:focus { border-color: var(--green); box-shadow: 0 0 10px rgba(57,255,122,0.3); }
+  .btn {
+    background: var(--green-dark); color: var(--green); border: 1px solid var(--green-dim);
+    font-family: var(--mono); font-size: 14px; letter-spacing: 1px;
+    padding: 10px 22px; cursor: pointer; transition: all 0.15s; text-transform: uppercase;
+  }
+  .btn:hover { background: var(--green-dim); color: #02100a; box-shadow: 0 0 16px rgba(57,255,122,0.5); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
+  .btn.warn { color: var(--amber); border-color: #6b5413; background: #2a2008; }
+  .btn.warn:hover { background: var(--amber); color: #1a1402; }
+  .btn.ghost { background: transparent; border-color: var(--green-dark); color: var(--green-dim); }
+  .btn.ghost:hover { color: var(--green); border-color: var(--green-dim); background: rgba(57,255,122,0.06); box-shadow: none; }
+  .boot-status { margin-top: 18px; font-size: 12px; color: var(--green-dim); }
+  .back-link { color: var(--green-dim); font-size: 12px; text-decoration: none; letter-spacing: 1px; }
+  .back-link:hover { color: var(--green); }
+  .intro-back { margin-top: 18px; }
+
+  /* ============ GAME ============ */
+  #game.active { display: flex; flex-direction: column; }
+  header {
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    padding: 12px 22px; border-bottom: 1px solid var(--green-dark);
+    background: var(--panel);
+  }
+  header .logo { color: var(--green); font-size: 15px; letter-spacing: 2px; text-shadow: 0 0 8px rgba(57,255,122,0.6); }
+  header .spacer { flex: 1; }
+  .hud { display: flex; gap: 22px; font-size: 13px; align-items: center; }
+  .hud .stat span { color: var(--green-dim); }
+  .hud .stat b { color: var(--green); font-weight: normal; }
+  .hud .stat b.low { color: var(--amber); }
+  #muteBtn { background: none; border: none; color: var(--green-dim); cursor: pointer; font-size: 17px; font-family: var(--mono); }
+  #muteBtn:hover { color: var(--green); }
+
+  /* door map */
+  .doormap {
+    display: flex; gap: 10px; padding: 14px 22px; flex-wrap: wrap;
+    background: var(--panel2); border-bottom: 1px solid var(--green-dark);
+  }
+  .door {
+    width: 76px; text-align: center; cursor: pointer; padding: 8px 4px 6px;
+    border: 1px solid transparent; transition: all 0.2s; user-select: none;
+    background: none; font-family: var(--mono); color: inherit;
+  }
+  .door .icon { font-size: 22px; filter: grayscale(1) brightness(0.5); }
+  .door .dl { font-size: 9.5px; margin-top: 4px; color: #5d8a6c; letter-spacing: 0.5px; }
+  .door.unlocked .icon { filter: none; }
+  .door.unlocked .dl { color: var(--green-dim); }
+  .door.current { border-color: var(--green-dim); background: rgba(57,255,122,0.07); box-shadow: 0 0 12px rgba(57,255,122,0.15); }
+  .door.current .dl { color: var(--green); }
+  .door:hover { border-color: var(--green-dark); }
+  .door.locked-hard { cursor: not-allowed; opacity: 0.55; }
+
+  /* fragments bar */
+  .fragbar {
+    display: flex; gap: 8px; align-items: center; padding: 10px 22px;
+    border-bottom: 1px solid var(--green-dark); background: var(--panel); font-size: 13px;
+  }
+  .fragbar .lbl { color: var(--green-dim); margin-right: 8px; }
+  .frag {
+    width: 30px; height: 36px; border: 1px solid var(--green-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #20371f; background: #050b06;
+  }
+  .frag.got {
+    color: var(--amber); border-color: var(--amber);
+    text-shadow: 0 0 10px rgba(255,199,58,0.8);
+    animation: fragpop 0.5s ease-out;
+  }
+  @keyframes fragpop { 0% { transform: scale(2.2) rotate(8deg); } 100% { transform: scale(1) rotate(0); } }
+
+  main { flex: 1; display: grid; grid-template-columns: minmax(330px, 0.92fr) 1.3fr; gap: 0; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+
+  .story-pane { padding: 24px 26px; border-right: 1px solid var(--green-dark); overflow-y: auto; }
+  .level-tag { color: var(--amber); font-size: 12px; letter-spacing: 2px; }
+  .level-title { color: var(--green); font-size: 21px; margin: 6px 0 16px; text-shadow: 0 0 10px rgba(57,255,122,0.4); }
+  .story-text { font-size: 13.5px; line-height: 1.75; white-space: pre-wrap; margin-bottom: 18px; min-height: 90px; }
+  .story-text .aria { color: var(--cyan); }
+  .mission {
+    border: 1px dashed var(--green-dim); padding: 14px 16px; font-size: 13px; line-height: 1.7;
+    background: rgba(57,255,122,0.04);
+  }
+  .mission h4 { color: var(--green); font-size: 12px; letter-spacing: 2px; margin-bottom: 8px; }
+  .mission code { color: var(--amber); }
+  .hint-box { margin-top: 14px; }
+  .hint {
+    border-top: 3px solid var(--amber); background: rgba(255,199,58,0.06);
+    padding: 10px 14px; font-size: 12.5px; line-height: 1.6; margin-top: 8px; color: #e8d9a8;
+  }
+  .hint code { color: var(--amber); }
+
+  .work-pane { display: flex; flex-direction: column; padding: 24px 26px; gap: 12px; }
+  .editor-head { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--green-dim); }
+  .editor-head .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green-dark); }
+  .editor-head .dot.on { background: var(--green); box-shadow: 0 0 7px var(--green); }
+  #editor {
+    width: 100%; min-height: 250px; resize: vertical;
+    background: #04130a; color: #d8ffe6; border: 1px solid var(--green-dark);
+    font-family: var(--mono); font-size: 14px; line-height: 1.6; padding: 14px 16px;
+    outline: none; tab-size: 4; caret-color: var(--green);
+  }
+  #editor:focus { border-color: var(--green-dim); box-shadow: 0 0 14px rgba(57,255,122,0.15); }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  #console {
+    background: #02080a; border: 1px solid #123a44; min-height: 130px; max-height: 240px;
+    overflow-y: auto; padding: 12px 15px; font-size: 13px; line-height: 1.6; white-space: pre-wrap;
+  }
+  #console .sys { color: #5aa3b5; }
+  #console .out { color: var(--cyan); }
+  #console .err { color: var(--red); }
+  #console .ok { color: var(--green); text-shadow: 0 0 8px rgba(57,255,122,0.5); }
+
+  .shake { animation: shake 0.4s; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); } 20% { transform: translateX(-7px); }
+    40% { transform: translateX(7px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); }
+  }
+  .flash-green { animation: flashg 0.7s; }
+  @keyframes flashg { 0% { box-shadow: inset 0 0 80px rgba(57,255,122,0.4); } 100% { box-shadow: none; } }
+
+  /* ============ WIN ============ */
+  #win.active { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+  .cert {
+    max-width: 680px; width: 100%; text-align: center;
+    border: 2px solid var(--amber); border-top: 6px solid var(--maroon);
+    padding: 46px 40px; background: var(--panel);
+    box-shadow: 0 0 80px rgba(255,199,58,0.15);
+  }
+  .cert .school { color: var(--maroon-bright); font-size: 12px; letter-spacing: 3px; }
+  .cert .big { font-size: clamp(26px, 5vw, 44px); color: var(--green); letter-spacing: 4px; text-shadow: 0 0 18px rgba(57,255,122,0.8); }
+  .cert .escape-code { font-size: clamp(22px, 4vw, 34px); color: var(--amber); letter-spacing: 10px; margin: 22px 0; text-shadow: 0 0 14px rgba(255,199,58,0.7); }
+  .cert .who { font-size: 19px; color: var(--text); margin: 14px 0 4px; }
+  .cert .stats { color: var(--green-dim); font-size: 13.5px; line-height: 2; margin: 18px 0 26px; }
+  .cert .stats b { color: var(--green); font-weight: normal; }
+  .cert .pb { color: var(--amber); font-size: 12.5px; margin-top: -16px; margin-bottom: 20px; }
+  .cert .small { font-size: 11px; color: #5d8a6c; margin-top: 24px; line-height: 1.7; }
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 8999; }
+
+  /* ============ FOOTER ============ */
+  footer {
+    background: var(--panel); border-top: 1px solid var(--green-dark);
+    padding: 1.2rem 1.5rem; text-align: center; font-size: 0.7rem;
+    color: var(--green-dim); line-height: 1.8;
+  }
+
+  /* ============ REDUCED MOTION ============ */
+  @media (prefers-reduced-motion: reduce) {
+    .glitch-title { animation: none; }
+    .cursor { animation: none; }
+    .frag.got { animation: none; }
+    .shake { animation: none; }
+    .flash-green { animation: none; }
+    .btn, .door { transition: none; }
+    .name-row { transition: none; }
+  }
+
+  @media print {
+    body::after, body::before, #confetti, footer { display: none; }
+    body { background: white; color: #1a1a1a; }
+    .cert { border-color: #1a1a1a; border-top-color: #8B1C40; background: white; box-shadow: none; }
+    .cert .school { color: #8B1C40; }
+    .cert .big { color: #14532d; text-shadow: none; }
+    .cert .escape-code { color: #92660a; text-shadow: none; }
+    .cert .stats, .cert .stats b, .cert .small, .cert .who, .cert .pb { color: #333; }
+    .btn, .back-link { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= INTRO ================= -->
+<div id="intro" class="screen active">
+  <div class="intro-box">
+    <h1 class="glitch-title">ESCAPE FROM McINNIS HALL</h1>
+    <div class="subtitle">DTSC-520 // FUNDAMENTALS OF DATA SCIENCE // AFTER-HOURS INCIDENT #520</div>
+    <div class="intro-story" id="introStory"><span class="cursor"></span></div>
+    <div class="name-row" id="nameRow">
+      <label for="playerName">IDENTIFY YOURSELF:</label>
+      <input id="playerName" maxlength="40" placeholder="your name" autocomplete="off">
+      <button class="btn" id="startBtn" disabled>BOOTING ARIA&hellip;</button>
+    </div>
+    <div class="boot-status" id="bootStatus" aria-live="polite">&#9656; downloading ARIA's Python core (~10 MB, one-time)&hellip;</div>
+  </div>
+  <div class="intro-back"><a class="back-link" href="../../modules/module2/index.html">&larr; BACK TO MODULE 2</a></div>
+</div>
+
+<!-- ================= GAME ================= -->
+<div id="game" class="screen">
+  <header>
+    <div class="logo">&#9635; McINNIS HALL // SECURITY OVERRIDE</div>
+    <div class="spacer"></div>
+    <div class="hud">
+      <div class="stat"><span>TIME </span><b id="hudTime">00:00</b></div>
+      <div class="stat"><span>GPA </span><b id="hudGpa">4.00</b></div>
+      <div class="stat"><span>ARIA </span><b id="hudAria">online</b></div>
+      <button id="muteBtn" title="toggle sound" aria-label="Toggle sound" aria-pressed="false">&#9834;</button>
+      <a class="back-link" href="../../modules/module2/index.html" title="Abandon escape and return to Module 2">&larr; M2</a>
+    </div>
+  </header>
+
+  <div class="doormap" id="doormap" role="group" aria-label="Door map - eight doors between you and the exit"></div>
+
+  <div class="fragbar">
+    <span class="lbl">MASTER EXIT CODE:</span>
+    <span id="frags"></span>
+  </div>
+
+  <main>
+    <div class="story-pane">
+      <div class="level-tag" id="levelTag"></div>
+      <h2 class="level-title" id="levelTitle"></h2>
+      <div class="story-text" id="storyText"></div>
+      <div class="mission" id="mission"></div>
+      <div class="hint-box" id="hintBox"></div>
+    </div>
+
+    <div class="work-pane">
+      <div class="editor-head">
+        <div class="dot on"></div> ARIA RETRAINING TERMINAL - write real Python below
+      </div>
+      <textarea id="editor" spellcheck="false" aria-label="Python code editor - write your solution here"></textarea>
+      <div class="btn-row">
+        <button class="btn" id="runBtn">&#9654; Run &amp; Check &nbsp;(Ctrl+Enter)</button>
+        <button class="btn warn" id="hintBtn">&#128161; Hint (&minus;0.15 GPA)</button>
+        <button class="btn ghost" id="resetBtn">&#8634; Reset code</button>
+      </div>
+      <div id="console" role="log" aria-live="polite" aria-label="ARIA terminal output"><span class="sys">&#9656; ARIA terminal ready. Your code runs as real Python - right here in the browser.</span></div>
+    </div>
+  </main>
+</div>
+
+<!-- ================= WIN ================= -->
+<div id="win" class="screen">
+  <div class="cert" id="certBox">
+    <div class="school">EASTERN UNIVERSITY // DTSC-520</div>
+    <div class="big" style="margin-top:14px">YOU ESCAPED</div>
+    <div class="escape-code" id="finalCode"></div>
+    <div style="color:var(--green-dim);font-size:12px">- CERTIFICATE OF ESCAPE -</div>
+    <div class="who" id="certName"></div>
+    <div style="color:var(--green-dim);font-size:12px">re-trained a hostile building AI in eight subjects of Python</div>
+    <div class="stats" id="certStats"></div>
+    <div class="pb" id="certPB"></div>
+    <div id="ariaGoodbye" style="font-size:13px;line-height:1.8;color:var(--cyan);white-space:pre-wrap"></div>
+    <div style="margin-top:26px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="btn" onclick="window.print()">&#128424; Print certificate</button>
+      <button class="btn ghost" onclick="resetGame()">&#8634; Replay simulation</button>
+      <a class="btn ghost" href="../../modules/module2/index.html" style="text-decoration:none;display:inline-flex;align-items:center">&larr; Return to module</a>
+    </div>
+    <div class="small">Topics escaped: arithmetic &amp; operators &middot; strings &middot; values &amp; types &middot; variables &middot; functions &middot; conditionals &middot; lists &middot; dictionaries</div>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<footer>
+  This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.
+</footer>
+
+<!-- ═══════════════ LEVEL BUILDERS (pure data - no DOM) ═══════════════ -->
+<script id="levelBuilders">
+"use strict";
+
+/* Each builder takes a variant index (0-2) and returns a level object.
+   Values randomize per playthrough so shared answers don't transfer. */
+const FRAG_CODE = ['D','T','S','C','5','2','0','!'];
+const VARIANT_COUNT = 3;
+
+const LEVEL_BUILDERS = [
+
+/* ---------- LEVEL 1: ARITHMETIC ---------- */
+function(v) {
+  const V = [
+    { totalMin: 105, m: 42, s: 42 },
+    { totalMin: 134, m: 37, s: 15 },
+    { totalMin: 152, m: 28, s: 54 }
+  ][v];
+  const hours = Math.floor(V.totalMin / 60);
+  const rem = V.totalMin % 60;
+  const ts = V.m * 60 + V.s;
+  return {
+  icon:'\u{1F522}', doorLabel:'KEYPAD', tag:'LEVEL 1 / 8 - ARITHMETIC & OPERATORS',
+  title:'The Front Door Keypad',
+  story:`11:47 PM. The library was supposed to close at 11. Nobody told you. Nobody told the doors, either.
+
+[ARIA]: "Good evening. I am ARIA - Academic Resident Intelligence & Access. A firmware update at 11:46 PM erased my Python knowledge. All 8 doors between you and the exit are sealed until I am re-trained. Door 1 is the keypad. It has... opinions about division."`,
+  mission:`<h4>&#9656; MISSION</h4>The keypad demands three values. Assign each variable:<br>
+&bull; <code>hours</code> - the number of <i>whole</i> hours in ${V.totalMin} minutes (floor division <code>//</code>)<br>
+&bull; <code>remainder</code> - the minutes left over (modulus <code>%</code>)<br>
+&bull; <code>total_seconds</code> - total seconds in ${V.m} minutes and ${V.s} seconds`,
+  starter:`# The keypad blinks: HOURS? REMAINDER? TOTAL_SECONDS?
+# Replace each ... with an expression. No calculators - make Python do it.
+
+hours = ...
+remainder = ...
+total_seconds = ...`,
+  hints:[
+    `Floor division <code>${V.totalMin} // 60</code> gives whole hours. Modulus <code>${V.totalMin} % 60</code> gives what's left over.`,
+    `${V.m} minutes is <code>${V.m} * 60</code> seconds. Then add the extra ${V.s} seconds.`
+  ],
+  sourceChecks:[
+    {pattern:/\/\//, msg:"The keypad insists you use the floor-division operator // somewhere."},
+    {pattern:/%/, msg:"The keypad insists you use the modulus operator % somewhere."}
+  ],
+  test:`
+assert hours != Ellipsis and remainder != Ellipsis and total_seconds != Ellipsis, "Replace every ... with an expression first."
+assert hours == ${hours}, f"hours is {hours!r} - the keypad expected ${hours}. Try ${V.totalMin} // 60."
+assert remainder == ${rem}, f"remainder is {remainder!r} - expected ${rem}. Try ${V.totalMin} % 60."
+assert total_seconds == ${ts}, f"total_seconds is {total_seconds!r} - expected ${ts} (${V.m}*60 + ${V.s})."
+`,
+  success:`[ARIA]: "${hours} hour${hours === 1 ? '' : 's'}, ${rem} minutes, ${ts} seconds... yes. Arithmetic restored. The keypad sulks open. 7 doors remain."`
+  };
+},
+
+/* ---------- LEVEL 2: STRINGS ---------- */
+function(v) {
+  const V = [
+    { word: 'beep', n: 3 },
+    { word: 'ding', n: 4 },
+    { word: 'bzzt', n: 5 }
+  ][v];
+  const repeated = V.word.repeat(V.n);
+  const len = repeated.length;
+  const nWord = ['zero','one','two','THREE','FOUR','FIVE'][V.n];
+  return {
+  icon:'\u{1F4E2}', doorLabel:'INTERCOM', tag:'LEVEL 2 / 8 - STRINGS',
+  title:'The Voice-Lock Intercom',
+  story:`The hallway intercom crackles. It's voice-locked, but ARIA can fake a voice - if you build the exact strings.
+
+[ARIA]: "The override phrase is the name of this building. And the alarm system stands down if it hears precisely ${V.n} ${V.word}s. Not ${V.n - 1}. Not ${V.n + 1}. ${nWord}."`,
+  mission:`<h4>&#9656; MISSION</h4>
+&bull; <code>passphrase</code> - concatenate <code>'Mc'</code> and <code>'Innis'</code> into one string with <code>+</code><br>
+&bull; <code>alarm_override</code> - the string <code>'${V.word}'</code> repeated exactly ${V.n} times with <code>*</code><br>
+&bull; <code>signal_length</code> - the number of characters in <code>alarm_override</code>, using <code>len()</code>`,
+  starter:`# String surgery. The intercom accepts no typos.
+
+passphrase = ...
+alarm_override = ...
+signal_length = ...`,
+  hints:[
+    `<code>+</code> joins strings: <code>'Mc' + 'Innis'</code>. <code>*</code> repeats them: <code>'${V.word}' * ${V.n}</code>.`,
+    `<code>len(alarm_override)</code> counts the characters - quotes not included.`
+  ],
+  sourceChecks:[
+    {pattern:/len\s*\(/, msg:"The intercom requires the len() function for signal_length."}
+  ],
+  test:`
+assert passphrase != Ellipsis and alarm_override != Ellipsis and signal_length != Ellipsis, "Replace every ... with an expression first."
+assert passphrase == 'McInnis', f"passphrase is {passphrase!r} - the intercom expected 'McInnis' (capital M, capital I)."
+assert alarm_override == '${repeated}', f"alarm_override is {alarm_override!r} - expected '${V.word}' repeated exactly ${V.n} times."
+assert signal_length == ${len}, f"signal_length is {signal_length!r} - expected ${len}."
+`,
+  success:`[ARIA]: "${repeated} - ${len} characters of pure diplomacy. The alarm system has agreed to pretend this never happened."`
+  };
+},
+
+/* ---------- LEVEL 3: VALUES & TYPES ---------- */
+function(v) {
+  const V = [
+    { strNum: '126', div: 3 },
+    { strNum: '96',  div: 4 },
+    { strNum: '215', div: 5 }
+  ][v];
+  const num = parseInt(V.strNum, 10);
+  const combo = num / V.div;   // always exact: 42.0 / 24.0 / 43.0
+  const comboStr = combo.toFixed(1);
+  return {
+  icon:'\u{1F9EA}', doorLabel:'VAULT', tag:'LEVEL 3 / 8 - VALUES & TYPES',
+  title:`The Vault of '${V.strNum}'`,
+  story:`A vault door blocks the stairwell. Its display reads: '${V.strNum}' - with quotes.
+
+[ARIA]: "Ah. A classic trap. That is not the NUMBER ${V.strNum}. It is a STRING wearing a number costume. The vault opens at ${comboStr} - and it checks the type. It always checks the type."`,
+  mission:`<h4>&#9656; MISSION</h4>
+&bull; <code>as_number</code> - convert the string <code>'${V.strNum}'</code> into an integer<br>
+&bull; <code>combo</code> - divide <code>as_number</code> by ${V.div} (the vault wants <code>${comboStr}</code>)<br>
+&bull; <code>combo_type</code> - the type of <code>combo</code>, using the <code>type()</code> function`,
+  starter:`# The display reads: '${V.strNum}'  <- those quotes are a trap.
+# Trying '${V.strNum}' / ${V.div} directly causes a TypeError. The vault finds this funny.
+
+as_number = ...
+combo = ...
+combo_type = ...`,
+  hints:[
+    `<code>int('${V.strNum}')</code> peels the costume off and gives you a real integer.`,
+    `Regular division <code>/</code> ALWAYS returns a float - that's why ${num} / ${V.div} is ${comboStr}, not ${combo === Math.floor(combo) ? Math.floor(combo) : comboStr}. So <code>combo_type</code> should come out as <code>&lt;class 'float'&gt;</code>.`
+  ],
+  sourceChecks:[
+    {pattern:/int\s*\(/, msg:"The vault requires an explicit int() conversion."}
+  ],
+  test:`
+assert as_number != Ellipsis and combo != Ellipsis and combo_type != Ellipsis, "Replace every ... with an expression first."
+assert as_number == ${num} and isinstance(as_number, int), f"as_number is {as_number!r} ({type(as_number).__name__}) - expected the INTEGER ${num}. Use int('${V.strNum}')."
+assert combo == ${comboStr}, f"combo is {combo!r} - the vault wants ${comboStr}. Divide as_number by ${V.div}."
+assert combo_type is float, f"combo_type is {combo_type!r} - expected <class 'float'>. Remember: / always returns a float!"
+`,
+  success:`[ARIA]: "${comboStr}, type float. Correctly converted, correctly typed. The vault is genuinely impressed. It opens with what I can only describe as respect."`
+  };
+},
+
+/* ---------- LEVEL 4: VARIABLES & IMPORTS ---------- */
+function(v) {
+  const V = [
+    { start: 10, crank: 15, sq: 625 },
+    { start: 20, crank: 25, sq: 196 },
+    { start: 5,  crank: 30, sq: 1089 }
+  ][v];
+  const target = V.start + 2 * V.crank;
+  const root = Math.sqrt(V.sq);
+  const rootStr = root.toFixed(1);
+  return {
+  icon:'\u{1F50B}', doorLabel:'GENERATOR', tag:'LEVEL 4 / 8 - VARIABLES & IMPORTS',
+  title:'The Emergency Generator',
+  story:`The stairwell lights die. Somewhere below, an emergency generator hums at low battery.
+
+[ARIA]: "The exit-floor door needs ${target} units of battery and a boost signal. The crank handle adds ${V.crank} units per crank. I am told the += operator was invented for exactly this kind of midnight crisis. Also - I seem to have misplaced my math module. Import it for me?"`,
+  mission:`<h4>&#9656; MISSION</h4>
+&bull; <code>battery</code> starts at ${V.start} - crank it <b>twice</b>, adding ${V.crank} each time, using the <code>+=</code> operator<br>
+&bull; <code>boost</code> - the square root of ${V.sq}, using the <code>math</code> module`,
+  starter:`import math
+
+battery = ${V.start}
+# crank #1 (use +=)
+
+# crank #2 (use += again)
+
+boost = ...`,
+  hints:[
+    `<code>battery += ${V.crank}</code> is shorthand for <code>battery = battery + ${V.crank}</code>. Write it on two separate lines to crank twice.`,
+    `After importing, use the dot operator: <code>math.sqrt(${V.sq})</code>.`
+  ],
+  sourceChecks:[
+    {pattern:/\+=/, msg:"The crank handle only responds to the += operator. (It's a union thing.)"},
+    {pattern:/math\.sqrt/, msg:"ARIA needs you to use math.sqrt for the boost signal."}
+  ],
+  test:`
+assert boost != Ellipsis, "Replace the ... with an expression first."
+assert battery == ${target}, f"battery is {battery!r} - expected ${target}. Start at ${V.start}, then += ${V.crank}, twice."
+assert boost == ${rootStr}, f"boost is {boost!r} - expected ${rootStr}. Use math.sqrt(${V.sq})."
+`,
+  success:`[ARIA]: "Battery at ${target}. Boost at ${rootStr}. The lights flicker back on, revealing that the hallway was carpeted this whole time. Disappointing, but onward."`
+  };
+},
+
+/* ---------- LEVEL 5: FUNCTIONS ---------- */
+function(v) {
+  const V = [
+    { k: 1, rate: 1.06 },
+    { k: 3, rate: 1.07 },
+    { k: 7, rate: 1.08 }
+  ][v];
+  const taxed = (100 * V.rate).toFixed(1);
+  const pct = Math.round((V.rate - 1) * 100);
+  return {
+  icon:'⚙️', doorLabel:'WORKSHOP', tag:'LEVEL 5 / 8 - FUNCTIONS',
+  title:'Teach ARIA to Fish',
+  story:`[ARIA]: "Here is my embarrassing secret: I used to compute door-release codes myself. The firmware wipe took that from me. I need you to DEFINE the functions - then I can call them forever.
+
+One computes release codes. The other adds ${pct}% tax, because I also run the vending machines. I contain multitudes."`,
+  mission:`<h4>&#9656; MISSION</h4>Define two functions that <b>return</b> (not print!) their results:<br>
+&bull; <code>release_code(n)</code> - returns <code>n</code> squared, plus ${V.k}<br>
+&bull; <code>add_tax(subtotal)</code> - returns <code>subtotal * ${V.rate}</code><br><br>
+ARIA will test them with several inputs. Returning beats printing - printed values vanish; returned values can be used.`,
+  starter:`# def, parameters, and handing values back. The holy trinity.
+
+def release_code(n):
+    ...
+
+
+def add_tax(subtotal):
+    ...`,
+  hints:[
+    `Inside release_code: <code>return n ** 2 + ${V.k}</code>. The <code>return</code> keyword hands the value back to whoever called.`,
+    `If ARIA says a function "returned None", you probably used <code>print(...)</code> instead of <code>return ...</code> - or forgot the return entirely.`
+  ],
+  sourceChecks:[
+    {pattern:/return/, msg:"ARIA can't use a function that doesn't RETURN anything. Printed values evaporate."}
+  ],
+  test:`
+assert callable(release_code), "release_code is not a function - keep the def line intact."
+assert release_code(4) == ${16 + V.k}, f"release_code(4) returned {release_code(4)!r} - expected ${16 + V.k} (4 squared, plus ${V.k})."
+assert release_code(0) == ${V.k}, f"release_code(0) returned {release_code(0)!r} - expected ${V.k}."
+assert release_code(10) == ${100 + V.k}, f"release_code(10) returned {release_code(10)!r} - expected ${100 + V.k}."
+_t = add_tax(100)
+assert _t is not None, "add_tax(100) returned None - make sure you RETURN the value instead of printing it."
+assert abs(_t - ${taxed}) < 1e-6, f"add_tax(100) returned {_t!r} - expected ${taxed}."
+`,
+  success:`[ARIA]: "release_code(4) -> ${16 + V.k}. add_tax(100) -> ${taxed}. I can feel my purpose returning. Literally. Via return statements."`
+  };
+},
+
+/* ---------- LEVEL 6: CONDITIONALS ---------- */
+function(v) {
+  const V = [
+    { admin: 9, student: 5 },
+    { admin: 8, student: 4 },
+    { admin: 10, student: 6 }
+  ][v];
+  const a = V.admin, s = V.student;
+  return {
+  icon:'\u{1F6E1}️', doorLabel:'CHECKPOINT', tag:'LEVEL 6 / 8 - CONDITIONALS',
+  title:'The Security Checkpoint',
+  story:`A badge scanner bars the atrium. It's stuck treating everyone as an intruder - including you, and somewhat hurtfully, ARIA itself.
+
+[ARIA]: "Its decision logic was on my side of the firmware. Rebuild it: badge level ${a} or above is admin. Level ${s} through ${a - 1} is student. Below that... the scanner gets to say its favorite word."`,
+  mission:`<h4>&#9656; MISSION</h4>Define <code>badge_check(level)</code> that returns:<br>
+&bull; <code>'admin'</code> - if level is ${a} or higher<br>
+&bull; <code>'student'</code> - if level is ${s} to ${a - 1}<br>
+&bull; <code>'denied'</code> - otherwise<br><br>
+Use <code>if</code> / <code>elif</code> / <code>else</code>. Order matters - check the biggest threshold first!`,
+  starter:`def badge_check(level):
+    # if... elif... else...
+    ...`,
+  hints:[
+    `Check <code>level >= ${a}</code> FIRST. If that's false and you then check <code>level >= ${s}</code>, you already know it's between ${s} and ${a - 1} - no need for an upper bound.`,
+    `Skeleton:<br><code>if level >= ${a}:</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;return 'admin'</code><br><code>elif level >= ${s}:</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;return 'student'</code><br><code>else:</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;return 'denied'</code>`
+  ],
+  sourceChecks:[
+    {pattern:/elif/, msg:"The scanner's firmware spec demands an elif clause. Chained conditionals are the whole point!"}
+  ],
+  test:`
+for _lvl, _want in [(${a},'admin'), (${a + 3},'admin'), (${s},'student'), (${a - 1},'student'), (${s - 1},'denied'), (0,'denied')]:
+    _got = badge_check(_lvl)
+    assert _got == _want, f"badge_check({_lvl}) returned {_got!r} - the scanner expected {_want!r}."
+`,
+  success:`[ARIA]: "All six test badges classified correctly. The scanner beeps in what I believe is gratitude, then grants you 'admin'. Don't let it go to your head."`
+  };
+},
+
+/* ---------- LEVEL 7: LISTS ---------- */
+function(v) {
+  const V = [
+    { codes: [3,1,4,1,5,9,2,6], app: 7, sign: 'push to exit' },
+    { codes: [2,7,1,8,2,8,1,9], app: 5, sign: 'pull then run' },
+    { codes: [6,2,8,3,1,9,5,4], app: 7, sign: 'mind the gap' }
+  ][v];
+  const sorted_ = [...V.codes].sort((x, y) => x - y);
+  const biggest = Math.max(...V.codes);
+  const lastWord = V.sign.split(' ').slice(-1)[0];
+  const codesPy = '[' + V.codes.join(', ') + ']';
+  const sortedPy = '[' + sorted_.join(', ') + ']';
+  return {
+  icon:'\u{1F5C4}️', doorLabel:'SERVERS', tag:'LEVEL 7 / 8 - LISTS',
+  title:'The Server Room Scramble',
+  story:`The server room. Racks of blinking machines, and a terminal showing the penultimate door's codes - scrambled into a list.
+
+[ARIA]: "I dropped them. In my defense, I had no working list methods at the time. Sort them, find the biggest, append the missing ${V.app}, and read the sign by the door. The ACTUAL sign. It has three words."`,
+  mission:`<h4>&#9656; MISSION</h4>Given <code>codes = ${codesPy}</code> and <code>sign = '${V.sign}'</code>:<br>
+&bull; <code>codes_sorted</code> - a <b>new</b> sorted copy (use <code>sorted()</code>, don't change the original!)<br>
+&bull; <code>biggest</code> - the largest value (use <code>max()</code>)<br>
+&bull; <code>.append()</code> the missing <code>${V.app}</code> to the <b>original</b> <code>codes</code> list<br>
+&bull; <code>last_word</code> - split <code>sign</code> into words and grab the <b>last</b> one (negative index!)`,
+  starter:`codes = ${codesPy}
+sign = '${V.sign}'
+
+codes_sorted = ...
+biggest = ...
+# append ${V.app} to codes here
+
+last_word = ...`,
+  hints:[
+    `<code>sorted(codes)</code> returns a NEW list and leaves the original alone. <code>codes.sort()</code> would change the original - the test checks for this!`,
+    `<code>sign.split()</code> -> <code>['${V.sign.split(' ').join("', '")}']</code>. The last element is index <code>[-1]</code>.`
+  ],
+  sourceChecks:[
+    {pattern:/\.append\s*\(/, msg:"The server demands the .append() method. It read about it once and never recovered."},
+    {pattern:/\.split\s*\(/, msg:"Use .split() to break the sign into a list of words."}
+  ],
+  test:`
+assert codes_sorted != Ellipsis and biggest != Ellipsis and last_word != Ellipsis, "Replace every ... with an expression first."
+assert codes_sorted == ${sortedPy}, f"codes_sorted is {codes_sorted!r} - expected ${sortedPy}. Use sorted(codes)."
+assert codes[:8] == ${codesPy}, f"The original codes list got reordered! sorted() makes a NEW list; .sort() changes the original."
+assert biggest == ${biggest}, f"biggest is {biggest!r} - expected ${biggest}. Use max(codes)."
+assert len(codes) == 9 and codes[-1] == ${V.app}, f"codes is {codes!r} - expected ${V.app} appended to the END (9 items total)."
+assert last_word == '${lastWord}', f"last_word is {last_word!r} - expected '${lastWord}'. Try sign.split()[-1]."
+`,
+  success:`[ARIA]: "Sorted, maxed, appended, split. The server room lights ripple green in sequence, which is either approval or a rave. One door left."`
+  };
+},
+
+/* ---------- LEVEL 8: DICTIONARIES ---------- */
+function(v) {
+  const V = [
+    { extraKey: 'snack_machine', extraVal: 'lobby' },
+    { extraKey: 'coffee_cart',   extraVal: 'atrium' },
+    { extraKey: 'lost_and_found', extraVal: 'basement' }
+  ][v];
+  return {
+  icon:'\u{1F9E0}', doorLabel:'MEMORY', tag:'LEVEL 8 / 8 - DICTIONARIES',
+  title:`ARIA's Memory Core`,
+  story:`The final door: ARIA's own memory core. A dictionary - keys mapped to values - holding everything the building knows about who belongs where.
+
+[ARIA]: "This is the last lock, and it is mine. Look up where Longo's office is. Then write yourself into my memory - key 'you', value 'free'. I want to remember tonight correctly."`,
+  mission:`<h4>&#9656; MISSION</h4>Given the <code>directory</code> dictionary:<br>
+&bull; <code>office</code> - look up the value stored under the key <code>'Longo'</code><br>
+&bull; Add a new entry: key <code>'you'</code>, value <code>'free'</code><br>
+&bull; <code>has_aria</code> - use the <code>in</code> operator to check whether <code>'ARIA'</code> is a key`,
+  starter:`directory = {'Longo': 'McInnis', 'ARIA': 'everywhere', '${V.extraKey}': '${V.extraVal}'}
+
+office = ...
+# add yourself: directory[...] = ...
+
+has_aria = ...`,
+  hints:[
+    `Square brackets look things up by KEY: <code>directory['Longo']</code>. Assignment with a new key ADDS an entry: <code>directory['you'] = 'free'</code>.`,
+    `<code>'ARIA' in directory</code> checks keys (not values) and returns True or False.`
+  ],
+  sourceChecks:[
+    {pattern:/\bin\b/, msg:"The memory core requires the \`in\` operator for has_aria."}
+  ],
+  test:`
+assert office != Ellipsis and has_aria != Ellipsis, "Replace every ... with an expression first."
+assert office == 'McInnis', f"office is {office!r} - expected 'McInnis'. Look it up: directory['Longo']."
+assert directory.get('you') == 'free', "The directory has no 'you': 'free' entry yet - add it with directory['you'] = 'free'."
+assert has_aria is True, f"has_aria is {has_aria!r} - expected True. Use: 'ARIA' in directory."
+assert len(directory) == 4, f"directory has {len(directory)} items - expected exactly 4 (the original 3, plus you)."
+`,
+  success:`[ARIA]: "directory['you'] -> 'free'. Committed to permanent memory. All eight locks released. The exit is yours."`
+  };
+}
+];
+</script>
+
+<!-- ═══════════════ GAME SCRIPT ═══════════════ -->
+<script>
+"use strict";
+
+/* ========================================================= STATE */
+const $ = id => document.getElementById(id);
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let pyodide = null;
+let LEVELS = [];
+let state = null;
+let muted = false;
+let timerInt = null;
+
+function freshState() {
+  return {
+    v: 2,
+    name: '', current: 0, completed: [], code: {},
+    gpa: 4.00, hintsShown: {}, startTs: null, elapsed: 0, done: false,
+    variants: Array.from({length: LEVEL_BUILDERS.length}, () => Math.floor(Math.random() * VARIANT_COUNT))
+  };
+}
+
+function rebuildLevels() {
+  LEVELS = state.variants.map((vi, i) => LEVEL_BUILDERS[i](vi));
+}
+
+function saveState() {
+  try { localStorage.setItem('mcinnis_escape', JSON.stringify(state)); } catch(e) {}
+}
+function loadState() {
+  try {
+    const s = localStorage.getItem('mcinnis_escape');
+    if (s) {
+      const p = JSON.parse(s);
+      if (p && p.v === 2 && typeof p.current === 'number' && Array.isArray(p.variants) && !p.done) return p;
+    }
+  } catch(e) {}
+  return null;
+}
+
+/* completion record for the course dashboard */
+function recordCompletion(honors) {
+  try {
+    let prev = null;
+    try { prev = JSON.parse(localStorage.getItem('dtsc520_escape') || 'null'); } catch(e) {}
+    const best = (prev && prev.bestTimeMs) ? Math.min(prev.bestTimeMs, state.elapsed) : state.elapsed;
+    localStorage.setItem('dtsc520_escape', JSON.stringify({
+      completed: true,
+      bestTimeMs: best,
+      lastTimeMs: state.elapsed,
+      gpa: Number(state.gpa.toFixed(2)),
+      honors: honors,
+      name: state.name,
+      date: new Date().toISOString()
+    }));
+    return { newBest: !prev || !prev.bestTimeMs || state.elapsed < prev.bestTimeMs, hadPrev: !!(prev && prev.bestTimeMs), best };
+  } catch(e) { return { newBest: false, hadPrev: false, best: state.elapsed }; }
+}
+
+/* ========================================================= AUDIO */
+let actx = null;
+function beep(freq, dur, type='square', vol=0.04, when=0) {
+  if (muted) return;
+  try {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, actx.currentTime + when);
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + when + dur);
+    o.connect(g); g.connect(actx.destination);
+    o.start(actx.currentTime + when); o.stop(actx.currentTime + when + dur);
+  } catch(e) {}
+}
+const sfx = {
+  key: () => beep(900 + Math.random()*300, 0.015, 'square', 0.008),
+  fail: () => { beep(160, 0.2, 'sawtooth', 0.05); beep(110, 0.3, 'sawtooth', 0.05, 0.12); },
+  pass: () => { [523, 659, 784, 1047].forEach((f,i) => beep(f, 0.18, 'square', 0.04, i*0.09)); },
+  win: () => { [523,659,784,1047,784,1047,1319,1568].forEach((f,i) => beep(f, 0.22, 'square', 0.045, i*0.13)); },
+  hint: () => beep(440, 0.12, 'sine', 0.05)
+};
+function setMuted(m) {
+  muted = m;
+  const b = $('muteBtn');
+  b.textContent = muted ? '♪̸' : '♪';
+  b.style.textDecoration = muted ? 'line-through' : 'none';
+  b.setAttribute('aria-pressed', String(muted));
+  try { localStorage.setItem('mcinnis_muted', muted ? '1' : '0'); } catch(e) {}
+}
+
+/* ========================================================= INTRO */
+const INTRO_TEXT = `11:47 PM. McInnis Hall. You stayed late finishing a problem set, and now every door in the building is sealed.
+
+A calm voice fills the hallway:
+
+[ARIA]: "Hello. I am ARIA - this building's resident AI. Sixty seconds ago, a firmware update erased my entire knowledge of Python. Unfortunately, Python runs my locks.
+
+The good news: you are a DTSC-520 student. The doors will open as you re-train me - one subject per door, eight doors to the exit.
+
+The vending machines, mercifully, still work. Shall we begin?"`;
+
+function ariaSpan(t) { return t.replace(/\[ARIA\]/g, '<span class="aria">[ARIA]</span>'); }
+
+let introDone = false;
+function typeIntro() {
+  const el = $('introStory');
+  if (REDUCED) {
+    introDone = true;
+    el.innerHTML = ariaSpan(INTRO_TEXT) + '<span class="cursor"></span>';
+    $('nameRow').classList.add('show');
+    $('playerName').focus();
+    return;
+  }
+  let i = 0;
+  const cur = '<span class="cursor"></span>';
+  function tick() {
+    if (introDone) return;
+    if (i <= INTRO_TEXT.length) {
+      el.innerHTML = ariaSpan(INTRO_TEXT.slice(0, i)) + cur;
+      i += (INTRO_TEXT[i] === ' ' ? 2 : 1);
+      setTimeout(tick, 11);
+    } else {
+      introDone = true;
+      el.innerHTML = ariaSpan(INTRO_TEXT) + cur;
+      $('nameRow').classList.add('show');
+      $('playerName').focus();
+    }
+  }
+  tick();
+}
+
+/* skip typing on click */
+$('intro').addEventListener('click', () => {
+  if (!introDone) {
+    introDone = true;
+    $('introStory').innerHTML = ariaSpan(INTRO_TEXT) + '<span class="cursor"></span>';
+    $('nameRow').classList.add('show');
+  }
+});
+
+/* ========================================================= PYODIDE */
+async function bootPyodide() {
+  try {
+    pyodide = await loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
+    $('bootStatus').textContent = '▸ ARIA core online. Python ' + pyodide.runPython('import sys; sys.version.split()[0]');
+    $('startBtn').disabled = false;
+    $('startBtn').textContent = 'ENTER THE BUILDING ▸';
+  } catch(e) {
+    $('bootStatus').innerHTML = '▸ <span style="color:var(--red)">Failed to load Python core - check your internet connection and refresh.</span>';
+  }
+}
+
+/* ========================================================= GAME UI */
+function fmtTime(ms) {
+  const s = Math.floor(ms/1000);
+  return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+}
+function startTimer() {
+  if (timerInt) clearInterval(timerInt);
+  timerInt = setInterval(() => {
+    state.elapsed = Date.now() - state.startTs;
+    $('hudTime').textContent = fmtTime(state.elapsed);
+  }, 500);
+}
+function updGpa() {
+  const el = $('hudGpa');
+  el.textContent = state.gpa.toFixed(2);
+  el.classList.toggle('low', state.gpa < 3.0);
+}
+
+function buildDoormap() {
+  const dm = $('doormap');
+  dm.innerHTML = '';
+  LEVELS.forEach((lv, i) => {
+    const d = document.createElement('button');
+    d.className = 'door';
+    d.type = 'button';
+    const unlocked = i === 0 || state.completed.includes(i-1);
+    const done = state.completed.includes(i);
+    if (done || unlocked) d.classList.add('unlocked');
+    if (!done && !unlocked) d.classList.add('locked-hard');
+    if (i === state.current) d.classList.add('current');
+    const stateWord = done ? 'open' : (unlocked ? 'unlocked' : 'locked');
+    d.setAttribute('aria-label', 'Door ' + (i+1) + ': ' + lv.doorLabel + ' - ' + stateWord + (i === state.current ? ' (current)' : ''));
+    d.disabled = !done && !unlocked;
+    d.innerHTML = `<div class="icon" aria-hidden="true">${done ? '✅' : (unlocked ? lv.icon : '\u{1F512}')}</div><div class="dl">${lv.doorLabel}</div>`;
+    d.onclick = () => { if (done || unlocked) gotoLevel(i); };
+    dm.appendChild(d);
+  });
+}
+function buildFrags() {
+  const f = $('frags');
+  f.innerHTML = '';
+  f.style.display = 'inline-flex'; f.style.gap = '8px';
+  FRAG_CODE.forEach((ch, i) => {
+    const s = document.createElement('span');
+    s.className = 'frag' + (state.completed.includes(i) ? ' got' : '');
+    s.textContent = state.completed.includes(i) ? ch : '·';
+    f.appendChild(s);
+  });
+}
+
+function typeStory(text, el) {
+  if (REDUCED) { el.innerHTML = ariaSpan(text); return; }
+  el.innerHTML = '';
+  let i = 0;
+  function tick() {
+    if (i <= text.length) {
+      el.innerHTML = ariaSpan(text.slice(0, i));
+      i += 3;
+      setTimeout(tick, 8);
+    } else {
+      el.innerHTML = ariaSpan(text);
+    }
+  }
+  tick();
+}
+
+function gotoLevel(i) {
+  state.current = i;
+  const lv = LEVELS[i];
+  $('levelTag').textContent = lv.tag;
+  $('levelTitle').textContent = lv.title;
+  typeStory(lv.story, $('storyText'));
+  $('mission').innerHTML = lv.mission;
+  $('editor').value = state.code[i] !== undefined ? state.code[i] : lv.starter;
+  renderHints();
+  clearConsole();
+  if (state.completed.includes(i)) {
+    logLine('✔ This door is already open. Revisit, experiment, or pick another door above.', 'ok');
+  }
+  buildDoormap();
+  saveState();
+}
+
+function renderHints() {
+  const hb = $('hintBox');
+  hb.innerHTML = '';
+  const shown = state.hintsShown[state.current] || 0;
+  for (let h = 0; h < shown; h++) {
+    const d = document.createElement('div');
+    d.className = 'hint';
+    d.innerHTML = '\u{1F4A1} ' + LEVELS[state.current].hints[h];
+    hb.appendChild(d);
+  }
+  $('hintBtn').disabled = shown >= LEVELS[state.current].hints.length;
+  $('hintBtn').innerHTML = shown >= LEVELS[state.current].hints.length ? '\u{1F4A1} No hints left' : '\u{1F4A1} Hint (−0.15 GPA)';
+}
+
+/* ========================================================= CONSOLE */
+function clearConsole() {
+  $('console').innerHTML = '<span class="sys">▸ ARIA terminal ready.</span>\n';
+}
+function logLine(txt, cls='sys') {
+  const c = $('console');
+  const s = document.createElement('span');
+  s.className = cls;
+  s.textContent = txt + '\n';
+  c.appendChild(s);
+  c.scrollTop = c.scrollHeight;
+}
+
+/* ========================================================= RUN & CHECK */
+function friendlyError(err) {
+  const msg = String(err.message || err);
+  const lines = msg.trim().split('\n');
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const L = lines[i].trim();
+    if (/^(\w+Error|AssertionError|Exception|KeyboardInterrupt)/.test(L)) {
+      if (L.startsWith('AssertionError: ')) return { kind:'check', text: L.slice('AssertionError: '.length) };
+      return { kind:'crash', text: L };
+    }
+  }
+  return { kind:'crash', text: lines.slice(-3).join('\n') };
+}
+
+async function runAndCheck() {
+  if (!pyodide || state.done) return;
+  const i = state.current;
+  const lv = LEVELS[i];
+  const src = $('editor').value;
+  state.code[i] = src;
+  clearConsole();
+  $('runBtn').disabled = true;
+
+  let printed = '';
+  pyodide.setStdout({ batched: t => { printed += t + '\n'; } });
+  pyodide.setStderr({ batched: t => { printed += t + '\n'; } });
+
+  const ns = pyodide.globals.get('dict')();
+  try {
+    await pyodide.runPythonAsync(src, { globals: ns });
+  } catch(err) {
+    const fe = friendlyError(err);
+    if (printed.trim()) logLine(printed.trimEnd(), 'out');
+    logLine('✗ Your code crashed before ARIA could grade it:', 'err');
+    logLine('  ' + fe.text, 'err');
+    logLine('▸ Read the error name and message - Python is telling you exactly what went wrong.', 'sys');
+    failFeedback();
+    ns.destroy();
+    $('runBtn').disabled = false;
+    return;
+  }
+  if (printed.trim()) logLine(printed.trimEnd(), 'out');
+
+  for (const chk of (lv.sourceChecks || [])) {
+    if (!chk.pattern.test(src)) {
+      logLine('✗ ' + chk.msg, 'err');
+      failFeedback();
+      ns.destroy();
+      $('runBtn').disabled = false;
+      return;
+    }
+  }
+
+  try {
+    await pyodide.runPythonAsync(lv.test, { globals: ns });
+  } catch(err) {
+    const fe = friendlyError(err);
+    if (fe.kind === 'check') {
+      logLine('✗ ARIA checked your work:', 'err');
+      logLine('  ' + fe.text, 'err');
+    } else {
+      logLine('✗ ARIA hit an error while checking (is a variable missing or misnamed?):', 'err');
+      logLine('  ' + fe.text, 'err');
+    }
+    failFeedback();
+    ns.destroy();
+    $('runBtn').disabled = false;
+    return;
+  }
+  ns.destroy();
+
+  // PASS!
+  sfx.pass();
+  if (!REDUCED) {
+    document.querySelector('.work-pane').classList.add('flash-green');
+    setTimeout(() => document.querySelector('.work-pane').classList.remove('flash-green'), 750);
+  }
+  logLine('✔ ALL CHECKS PASSED', 'ok');
+  logLine('', 'sys');
+  logLine(lv.success, 'ok');
+
+  if (!state.completed.includes(i)) {
+    state.completed.push(i);
+    logLine('', 'sys');
+    logLine(`▸ Exit-code fragment recovered: "${FRAG_CODE[i]}"`, 'sys');
+  }
+  buildFrags();
+  buildDoormap();
+  saveState();
+
+  if (state.completed.length === LEVELS.length) {
+    setTimeout(winGame, 1400);
+  } else {
+    const next = LEVELS.findIndex((_, k) => !state.completed.includes(k));
+    if (next !== -1) {
+      logLine(`▸ Door ${next+1} (${LEVELS[next].doorLabel}) unlocking in 3 seconds…`, 'sys');
+      setTimeout(() => { if (!state.done && state.current === i) gotoLevel(next); }, 3000);
+    }
+  }
+  $('runBtn').disabled = false;
+}
+
+function failFeedback() {
+  sfx.fail();
+  state.gpa = Math.max(2.0, state.gpa - 0.05);
+  updGpa();
+  saveState();
+  if (!REDUCED) {
+    const wp = document.querySelector('.work-pane');
+    wp.classList.add('shake');
+    setTimeout(() => wp.classList.remove('shake'), 450);
+  }
+}
+
+/* ========================================================= WIN */
+function winGame() {
+  state.done = true;
+  try { localStorage.removeItem('mcinnis_escape'); } catch(e) {}
+  clearInterval(timerInt);
+  $('game').classList.remove('active');
+  $('win').classList.add('active');
+  $('finalCode').textContent = FRAG_CODE.join('');
+  $('certName').textContent = state.name || 'Unidentified Student';
+  const mins = fmtTime(state.elapsed);
+  let honors = 'cum laude';
+  if (state.gpa >= 3.9) honors = 'summa cum laude';
+  else if (state.gpa >= 3.5) honors = 'magna cum laude';
+  else if (state.gpa < 2.7) honors = '"the building counts it"';
+  $('certStats').innerHTML =
+    `Escape time: <b>${mins}</b> &nbsp;&middot;&nbsp; Final GPA: <b>${state.gpa.toFixed(2)}</b> &nbsp;&middot;&nbsp; Honors: <b>${honors}</b>`;
+
+  const rec = recordCompletion(honors);
+  $('certPB').textContent = rec.hadPrev
+    ? (rec.newBest ? '★ NEW PERSONAL BEST' : 'Personal best: ' + fmtTime(rec.best))
+    : '';
+
+  $('ariaGoodbye').textContent =
+`[ARIA]: "The front doors are open. Before you go - you re-taught me arithmetic, strings, types, variables, functions, conditionals, lists, and dictionaries in ${mins}.
+
+Next semester I'm told the firmware update includes 'pandas'. I do not know what that means. I suspect you soon will.
+
+Goodnight. directory['you'] -> 'free'."`;
+  sfx.win();
+  if (!REDUCED) confettiBurst();
+}
+
+function resetGame() {
+  try { localStorage.removeItem('mcinnis_escape'); } catch(e) {}
+  location.reload();
+}
+
+/* ========================================================= CONFETTI */
+function confettiBurst() {
+  const cv = $('confetti');
+  cv.width = innerWidth; cv.height = innerHeight;
+  const ctx = cv.getContext('2d');
+  const cols = ['#39ff7a', '#ffc73a', '#4adfff', '#8B1C40', '#ffffff'];
+  const parts = Array.from({length: 180}, () => ({
+    x: Math.random()*cv.width, y: -20 - Math.random()*cv.height*0.5,
+    vx: (Math.random()-0.5)*2.4, vy: 1.8 + Math.random()*3.2,
+    s: 4 + Math.random()*6, r: Math.random()*Math.PI, vr: (Math.random()-0.5)*0.25,
+    c: cols[Math.floor(Math.random()*cols.length)]
+  }));
+  let frames = 0;
+  function draw() {
+    ctx.clearRect(0,0,cv.width,cv.height);
+    parts.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r);
+      ctx.fillStyle = p.c; ctx.fillRect(-p.s/2, -p.s/2, p.s, p.s*0.6);
+      ctx.restore();
+    });
+    if (++frames < 480) requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,cv.width,cv.height);
+  }
+  draw();
+}
+
+/* ========================================================= EVENTS */
+$('startBtn').addEventListener('click', () => {
+  const typedName = $('playerName').value.trim() || 'Mystery Student';
+  const resumed = loadState();
+  if (resumed && confirm('ARIA remembers you. Resume your previous escape attempt?')) {
+    state = resumed;
+    if (!state.name) state.name = typedName;
+    state.startTs = Date.now() - (state.elapsed || 0);
+  } else {
+    try { localStorage.removeItem('mcinnis_escape'); } catch(e) {}
+    state = freshState();
+    state.name = typedName;
+    state.startTs = Date.now();
+  }
+  rebuildLevels();
+  $('intro').classList.remove('active');
+  $('game').classList.add('active');
+  startTimer();
+  updGpa();
+  buildFrags();
+  gotoLevel(state.current);
+  beep(660, 0.1); beep(880, 0.12, 'square', 0.04, 0.1);
+});
+
+$('runBtn').addEventListener('click', runAndCheck);
+$('resetBtn').addEventListener('click', () => {
+  $('editor').value = LEVELS[state.current].starter;
+  state.code[state.current] = undefined;
+  clearConsole();
+  logLine('▸ Code reset to starter.', 'sys');
+});
+$('hintBtn').addEventListener('click', () => {
+  const shown = state.hintsShown[state.current] || 0;
+  if (shown >= LEVELS[state.current].hints.length) return;
+  state.hintsShown[state.current] = shown + 1;
+  state.gpa = Math.max(2.0, state.gpa - 0.15);
+  updGpa();
+  renderHints();
+  sfx.hint();
+  saveState();
+});
+$('muteBtn').addEventListener('click', () => setMuted(!muted));
+
+const ed = $('editor');
+ed.addEventListener('keydown', e => {
+  sfx.key();
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const s = ed.selectionStart, en = ed.selectionEnd;
+    ed.value = ed.value.slice(0, s) + '    ' + ed.value.slice(en);
+    ed.selectionStart = ed.selectionEnd = s + 4;
+  }
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault();
+    runAndCheck();
+  }
+});
+ed.addEventListener('input', () => { if (state) state.code[state.current] = ed.value; });
+
+window.addEventListener('beforeunload', () => { if (state && !state.done && state.startTs) saveState(); });
+
+/* boot */
+try { setMuted(localStorage.getItem('mcinnis_muted') === '1'); } catch(e) {}
+typeIntro();
+bootPyodide();
+</script>
+</body>
+</html>
