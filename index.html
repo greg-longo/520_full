@@ -1012,12 +1012,6 @@
           <div class="sim-module-tag">Module 05 - Live matplotlib</div>
         </a>
 
-        <a class="sim-card" href="sims/pitch-the-viz/index.html" style="--accent: var(--teal);">
-          <h3>Pitch the Viz</h3>
-          <p class="sim-desc">You're live in the Volta Records committee room. Four chart decisions. One artist to sign. Make the data land before the vote.</p>
-          <div class="sim-module-tag">Module 05 - Visualization</div>
-        </a>
-
         <a class="sim-card" href="sims/terminal-trainer/index.html" style="--accent: var(--maroon);">
           <h3>Terminal Trainer</h3>
           <p class="sim-desc">Eight command-line challenges in a live fake terminal. Navigate directories, read files, and create your workspace before you touch Git.</p>
@@ -1165,7 +1159,6 @@
         { ...ariaItem,  name: 'ARIA Returns', href: 'sims/aria-returns/index.html' },
       ],
       [ // mod5
-        { ...pitchvizItem, name: 'Pitch the Viz', href: 'sims/pitch-the-viz/index.html' },
         { ...boardItem,    name: 'Board Meeting', href: 'sims/board-meeting/index.html' },
       ],
       [{ ...branchItem, name: 'Branch Crisis', href: 'modules/module6/branch_crisis_sim.html' }],
@@ -1312,10 +1305,10 @@
             ...(rtgItem.state !== 'complete'     ? [{ label: 'RTG Investigation', href: 'sims/rtg-investigation/index.html' }] : []),
           ] },
         { name: 'Visualization',
-          complete: quizzes[5].state === 'complete' && pitchvizItem.state === 'complete',
+          complete: quizzes[5].state === 'complete' && boardItem.state === 'complete',
           actions: [
             ...(quizzes[5].state !== 'complete'    ? [{ label: 'Take M5 Quiz', href: 'modules/module5/quiz.html' }] : []),
-            ...(pitchvizItem.state !== 'complete'  ? [{ label: 'Pitch the Viz', href: 'sims/pitch-the-viz/index.html' }] : []),
+            ...(boardItem.state !== 'complete'  ? [{ label: 'The Board Meeting', href: 'sims/board-meeting/index.html' }] : []),
           ] },
         { name: 'Git & GitHub',
           complete: quizzes[6].state === 'complete' && branchItem.state === 'complete',
@@ -1327,7 +1320,7 @@
 
       // If nothing has ever been touched, stay hidden
       const anyProgress = done > 0 || pftItems.some(p => p.state !== 'empty') ||
-        [morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem, escapeItem, ariaItem, boardItem].some(x => x.state === 'complete');
+        [morningItem, findpathItem, charttopItem, dirtyItem, rtgItem, escapeItem, ariaItem, boardItem].some(x => x.state === 'complete');
       if (!anyProgress) return;
 
       wrap.style.display = 'block';

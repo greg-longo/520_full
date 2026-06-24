@@ -543,6 +543,79 @@
 </head>
 <body>
 
+<!-- JUICE: confetti canvas + mute toggle (shared engine) -->
+<canvas id="juiceConfetti" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998;display:none;"></canvas>
+<button id="juiceMute" aria-pressed="false" aria-label="Toggle sound effects"
+  style="position:fixed;bottom:14px;right:14px;z-index:9999;width:38px;height:38px;border-radius:50%;border:1px solid #3a4a44;background:#10211b;color:#7fe0a8;font-size:16px;cursor:pointer;line-height:1;">&#9834;</button>
+<script>
+/* ============ Reusable juice engine (sfx + confetti + shake) ============ */
+(function(){
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let muted = false, actx = null;
+  function tone(freq, dur, type='square', vol=0.04, when=0) {
+    if (muted) return;
+    try {
+      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type; o.frequency.value = freq;
+      g.gain.setValueAtTime(vol, actx.currentTime + when);
+      g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + when + dur);
+      o.connect(g); g.connect(actx.destination);
+      o.start(actx.currentTime + when); o.stop(actx.currentTime + when + dur);
+    } catch(e){}
+  }
+  window.sfx = {
+    key:  () => tone(900 + Math.random()*300, 0.015, 'square', 0.008),
+    fail: () => { tone(160,0.2,'sawtooth',0.05); tone(110,0.3,'sawtooth',0.05,0.12); },
+    pass: () => { [523,659,784,1047].forEach((f,i)=>tone(f,0.18,'square',0.04,i*0.09)); },
+    win:  () => { [523,659,784,1047,784,1047,1319,1568].forEach((f,i)=>tone(f,0.22,'square',0.045,i*0.13)); },
+    hint: () => tone(440,0.12,'sine',0.05)
+  };
+  function setMuted(m){
+    muted = m;
+    const b = document.getElementById('juiceMute');
+    if (b){ b.textContent = muted ? '♪̸' : '♪'; b.style.textDecoration = muted ? 'line-through':'none'; b.setAttribute('aria-pressed', String(muted)); }
+    try { localStorage.setItem('dtsc520_muted', muted ? '1':'0'); } catch(e){}
+  }
+  window.setMuted = setMuted;
+  document.getElementById('juiceMute').addEventListener('click', () => setMuted(!muted));
+  try { setMuted(localStorage.getItem('dtsc520_muted') === '1'); } catch(e){}
+
+  window.screenShake = function(){
+    if (REDUCED) return;
+    const el = document.body;
+    el.animate(
+      [{transform:'translate(0,0)'},{transform:'translate(-6px,2px)'},{transform:'translate(5px,-3px)'},{transform:'translate(-4px,1px)'},{transform:'translate(0,0)'}],
+      {duration:260, easing:'ease-in-out'}
+    );
+  };
+
+  window.confettiBurst = function(){
+    if (REDUCED) return;
+    const cv = document.getElementById('juiceConfetti');
+    cv.style.display = 'block';
+    cv.width = innerWidth; cv.height = innerHeight;
+    const ctx = cv.getContext('2d');
+    const cols = ['#3e8a58','#5fc77f','#4adfff','#8B1C40','#ffc73a','#ffffff'];
+    const parts = Array.from({length:170}, () => ({
+      x: Math.random()*cv.width, y: -20 - Math.random()*cv.height*0.5,
+      vx:(Math.random()-0.5)*2.4, vy:1.8+Math.random()*3.2,
+      s:4+Math.random()*6, r:Math.random()*Math.PI, vr:(Math.random()-0.5)*0.25,
+      c: cols[Math.floor(Math.random()*cols.length)]
+    }));
+    let frames = 0;
+    (function draw(){
+      ctx.clearRect(0,0,cv.width,cv.height);
+      parts.forEach(p => { p.x+=p.vx; p.y+=p.vy; p.r+=p.vr;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r);
+        ctx.fillStyle=p.c; ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore(); });
+      if (++frames < 460) requestAnimationFrame(draw);
+      else { ctx.clearRect(0,0,cv.width,cv.height); cv.style.display='none'; }
+    })();
+  };
+})();
+</script>
+
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-left">
@@ -1302,6 +1375,7 @@ function handleChoice(btn, ch, s) {
   // Disable all choices while showing feedback
   document.querySelectorAll('.choice-btn').forEach(b => { b.disabled = true; });
   btn.classList.add(isCorrect ? 'chosen-correct' : 'chosen-wrong');
+  try { isCorrect ? window.sfx.pass() : (window.sfx.fail(), window.screenShake()); } catch(e) {}
 
   // Feedback
   const fb = document.getElementById('fbBox');
@@ -1544,6 +1618,7 @@ async function runFix() {
     fcLine('✗ Your code crashed before it could be checked:', 'fc-err');
     fcLine('  ' + fe.text, 'fc-err');
     const coach = pandasCoach(fe.text); if (coach) fcLine(coach, 'fc-sys');
+    try { window.sfx.fail(); window.screenShake(); } catch(e) {}
     ns.destroy(); runBtn.disabled = false; return;
   }
   if (printed.trim()) fcLine(printed.trimEnd(), 'fc-out');
@@ -1563,6 +1638,7 @@ async function runFix() {
       fcLine('  ' + fe.text, 'fc-err');
       const coach = pandasCoach(fe.text); if (coach) fcLine(coach, 'fc-sys');
     }
+    try { window.sfx.fail(); window.screenShake(); } catch(e) {}
     ns.destroy(); runBtn.disabled = false; return;
   }
   ns.destroy();
@@ -1580,6 +1656,8 @@ async function runFix() {
   const s = stages[current];
   const terminal = document.getElementById('ppTerminal');
   terminal.innerHTML = s.terminalFixed.replace(/{TABLE_FIXED[^}]*}/, s.tableHtmlFixed);
+  const lastStage = current >= stages.length - 1;
+  try { (lastStage ? window.sfx.win : window.sfx.pass)(); window.confettiBurst(); } catch(e) {}
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     terminal.classList.add('flash-good');
     setTimeout(() => terminal.classList.remove('flash-good'), 700);
@@ -1623,7 +1701,8 @@ document.addEventListener('DOMContentLoaded', () => {
   bootPyodide();
   const ed = document.getElementById('fixEditor');
   if (ed) ed.addEventListener('keydown', e => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runFix(); }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runFix(); return; }
+    if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Enter') { try { window.sfx.key(); } catch(_){} }
   });
 });
 </script>
