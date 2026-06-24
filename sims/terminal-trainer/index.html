@@ -613,6 +613,15 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
       <p>Your manager left a note: <em>"Complete both parts of the terminal training, then come find me and we'll get you set up with Git."</em></p>
     </div>
     <div class="landing-prompt">Choose your platform to begin</div>
+
+    <div style="display:flex; justify-content:center; gap:0.5rem; margin-bottom:1.25rem;">
+      <div class="mode-toggle" role="group" aria-label="Choose run mode">
+        <button class="mode-btn active" id="run-practice" onclick="setRunMode('practice')" aria-pressed="true">Practice</button>
+        <button class="mode-btn" id="run-speedrun" onclick="setRunMode('speedrun')" aria-pressed="false">Speedrun &#9201;</button>
+      </div>
+    </div>
+    <p id="runModeNote" style="text-align:center; margin:-0.5rem 0 1.25rem; font-size:0.78rem; color:var(--text-dim);">Practice mode: take your time, no clock.</p>
+
     <div class="platform-cards">
       <button class="platform-card" onclick="startSim('mac')">
         <div class="platform-card-preview">
@@ -734,6 +743,7 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
     <div class="progress-row">
       <span class="progress-label" id="progressPartLabel">PART 1</span>
       <div class="progress-dots" id="progressDots"></div>
+      <span class="progress-label" id="speedClock" style="display:none; font-family:var(--mono); color:var(--accent-light);" aria-live="off">0:00.0</span>
       <span class="progress-label" id="progressText">1 / 8</span>
     </div>
 
@@ -742,9 +752,16 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
       <div class="challenge-num" id="challengeNum">Challenge 1</div>
       <div class="challenge-title" id="challengeTitle"></div>
       <div class="challenge-instruction" id="challengeInstruction"></div>
-      <div class="challenge-hint-box">
+      <div class="challenge-hint-box" id="challengeHintBox">
         <span class="challenge-hint-label">Type:</span>
         <span class="challenge-hint-cmd" id="challengeHint"></span>
+      </div>
+      <div id="speedrunHintRow" style="display:none; margin-top:0.8rem;">
+        <button id="revealCmdBtn" onclick="revealCommand()" style="background:none; border:none; padding:0; cursor:pointer; font-family:var(--mono); font-size:0.72rem; color:var(--text-dim); text-decoration:underline; text-underline-offset:2px;">Stuck? Reveal the command</button>
+        <div class="challenge-hint-box" id="revealedHintBox" style="display:none;">
+          <span class="challenge-hint-label">Type:</span>
+          <span class="challenge-hint-cmd" id="revealedHint"></span>
+        </div>
       </div>
     </div>
 
@@ -815,6 +832,15 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
       <p class="completion-body">You navigated the file system, read code, and ran a complete Git workflow. That's the real thing - branch, edit, stage, commit, push. You're ready to work on a real repo.</p>
       <div class="completion-score" id="completionScore">25/25</div>
       <div class="completion-score-label">Challenges Completed</div>
+
+      <div id="speedResult" style="display:none; margin:-0.75rem auto 1.75rem; max-width:440px;">
+        <div style="border-top:1px solid var(--border); padding-top:1.25rem;">
+          <div id="speedNewBest" style="display:none; font-family:var(--mono); font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent-light); margin-bottom:0.4rem;">&#9889; New personal best!</div>
+          <div style="font-family:var(--mono); font-size:2rem; font-weight:700; color:var(--accent-light);" id="speedFinalTime">0:00.0</div>
+          <div class="completion-score-label" style="margin-bottom:0;" id="speedBestLine">Speedrun time</div>
+        </div>
+      </div>
+
       <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:0.25rem;">
         <button class="completion-btn" style="background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);" onclick="openFlashcards()">Review Command Reference</button>
         <a href="../../modules/module6/index.html#branching" class="completion-btn">Continue to Branching &rarr;</a>
@@ -865,18 +891,37 @@ var HOME = '/home/intern';
 var cwd  = HOME;
 
 var vfs = {
-  '/home/intern': { type: 'dir', children: ['projects', 'documents', 'welcome.txt'] },
+  '/home/intern': { type: 'dir', children: ['projects', 'documents', 'downloads', 'reports', 'welcome.txt'] },
   '/home/intern/welcome.txt': {
     type: 'file',
     content: 'Hi, intern! Welcome to StatDeck Analytics.\nYour username is: intern\nToday\'s task: learn to navigate the file system,\n              then come back for Git training.\nYou\'ve got this. - IT Team'
   },
-  '/home/intern/documents': { type: 'dir', children: ['readme.txt'] },
+  '/home/intern/documents': { type: 'dir', children: ['readme.txt', 'onboarding.md'] },
   '/home/intern/documents/readme.txt': {
     type: 'file',
     content: 'StatDeck Analytics - Project Documentation\nAsk your supervisor for access to the main data stores.'
   },
-  '/home/intern/projects': { type: 'dir', children: ['statdeck', 'practice'] },
+  '/home/intern/documents/onboarding.md': {
+    type: 'file',
+    content: '# Intern Onboarding\n- Set up your terminal\n- Clone the team repo\n- Read the data dictionary before touching the pipeline'
+  },
+  '/home/intern/downloads': { type: 'dir', children: ['roster_2025.csv', 'notes.txt'] },
+  '/home/intern/downloads/roster_2025.csv': {
+    type: 'file',
+    content: 'player_id,name,position\n1,J. Rodriguez,OF\n2,S. Chen,IF\n3,N. Kim,IF'
+  },
+  '/home/intern/downloads/notes.txt': {
+    type: 'file',
+    content: 'Reminder: the salary column in the raw export is a string - needs cleaning.'
+  },
+  '/home/intern/reports': { type: 'dir', children: ['summary.txt'] },
+  '/home/intern/reports/summary.txt': {
+    type: 'file',
+    content: 'Q2 scouting summary - 3 prospects flagged for follow-up.'
+  },
+  '/home/intern/projects': { type: 'dir', children: ['statdeck', 'practice', 'sandbox'] },
   '/home/intern/projects/practice': { type: 'dir', children: [] },
+  '/home/intern/projects/sandbox': { type: 'dir', children: [] },
   '/home/intern/projects/statdeck': { type: 'dir', children: ['analysis.py', 'data.csv'] },
   '/home/intern/projects/statdeck/analysis.py': {
     type: 'file',
@@ -964,6 +1009,107 @@ var part1 = [
     success: "Back in ~/projects."
   }
 ];
+
+/* ────────────────────────────────────────────
+   SPEEDRUN PART 1 GENERATOR
+   Same skills as the fixed part1, but the targets (which folder to enter,
+   which file to read, what to name a new directory) and the order of the
+   independent inspection steps are randomized each run - so a memorized
+   command list no longer works. Pulls real targets from the vfs above, so
+   every generated challenge is solvable. Used only in speedrun mode.
+──────────────────────────────────────────── */
+function ttRng(a){ return a[Math.floor(Math.random() * a.length)]; }
+function ttShuffle(a){ a = a.slice(); for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function ttKids(p){ return (vfs[p] && vfs[p].children) || []; }
+function ttDirsIn(p){ return ttKids(p).filter(function(c){ return vfs[p + '/' + c] && vfs[p + '/' + c].type === 'dir'; }); }
+function ttFilesIn(p){ return ttKids(p).filter(function(c){ return vfs[p + '/' + c] && vfs[p + '/' + c].type === 'file'; }); }
+function reEsc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+function genSpeedrunPart1() {
+  var targetDir  = ttRng(ttDirsIn(HOME));
+  var homeFile   = ttRng(ttFilesIn(HOME));
+  var newDir     = ttRng(['my_work', 'scratch', 'workspace', 'notes', 'tmp_' + (Math.floor(Math.random() * 90) + 10)]);
+  var innerFiles = ttFilesIn(HOME + '/' + targetDir);
+  var innerFile  = innerFiles.length ? ttRng(innerFiles) : null;
+
+  var seq = [];
+
+  /* 1. orient (always first) */
+  seq.push({
+    title: 'Find your footing',
+    instruction: "First day at StatDeck, fresh terminal. Before anything else, find out where you are in the file system.",
+    hint: 'pwd',
+    check: function (cmd) { return cmd === 'pwd'; },
+    success: "You're in /home/intern - your home directory."
+  });
+
+  /* 2-3. inspect home (independent - shuffled) */
+  var homeGroup = ttShuffle([
+    {
+      title: "See what's here",
+      instruction: 'List the contents of your home directory so you know what you have to work with.',
+      hint: 'ls',
+      check: function (cmd) { return /^ls(\s|$)/.test(cmd); },
+      success: 'Now you know what you have.'
+    },
+    {
+      title: 'Read a file',
+      instruction: 'There is a file called ' + homeFile + ' in your home directory. Read its contents.',
+      hint: 'cat ' + homeFile,
+      check: (function (f) { return function (cmd) { return cmd === 'cat ' + f; }; })(homeFile),
+      success: 'Good - you read ' + homeFile + '.'
+    }
+  ]);
+  homeGroup.forEach(function (s) { seq.push(s); });
+
+  /* 4. navigate into a random folder */
+  seq.push({
+    title: 'Go exploring',
+    instruction: 'Move into the ' + targetDir + ' directory.',
+    hint: 'cd ' + targetDir,
+    check: (function (d) { return function (cmd) { return new RegExp('^cd\\s+(\\./)?' + reEsc(d) + '/?$').test(cmd); }; })(targetDir),
+    success: "You're now inside ~/" + targetDir + '.'
+  });
+
+  /* 5..(inside - independent, shuffled): ls, and cat a file if one exists */
+  var insideGroup = [{
+    title: 'Look around',
+    instruction: "You're in " + targetDir + ". List what's here.",
+    hint: 'ls',
+    check: function (cmd) { return /^ls(\s|$)/.test(cmd); },
+    success: 'Now you can see the contents.'
+  }];
+  if (innerFile) {
+    insideGroup.push({
+      title: 'Inspect a file',
+      instruction: 'Read the file ' + innerFile + ' in this directory.',
+      hint: 'cat ' + innerFile,
+      check: (function (f) { return function (cmd) { return cmd === 'cat ' + f; }; })(innerFile),
+      success: 'You read ' + innerFile + '.'
+    });
+  }
+  ttShuffle(insideGroup).forEach(function (s) { seq.push(s); });
+
+  /* make a workspace directory (random name) */
+  seq.push({
+    title: 'Create a workspace',
+    instruction: 'Make a new directory called ' + newDir + ' here. This is where you would keep your own files.',
+    hint: 'mkdir ' + newDir,
+    check: (function (n) { return function (cmd) { return new RegExp('^mkdir\\s+' + reEsc(n) + '/?$').test(cmd); }; })(newDir),
+    success: 'Directory ' + newDir + ' created.'
+  });
+
+  /* step back up */
+  seq.push({
+    title: 'Step back',
+    instruction: 'Navigate back up one level toward your home directory.',
+    hint: 'cd ..',
+    check: function (cmd) { return /^cd\s+\.\.\/?$/.test(cmd); },
+    success: 'Back up one level.'
+  });
+
+  return seq;
+}
 
 var part2 = [
   {
@@ -1100,6 +1246,60 @@ var idx        = 0;
 var completed  = 0;
 var cmdHistory = [];
 var histIdx    = -1;
+
+/* ────────────────────────────────────────────
+   SPEEDRUN STATE
+──────────────────────────────────────────── */
+var runMode    = 'practice';   /* 'practice' | 'speedrun' */
+var runStartMs = 0;
+var runTimerId = null;
+var BEST_KEY   = 'dtsc520_tt_besttime';
+
+window.setRunMode = function (m) {
+  runMode = m;
+  document.getElementById('run-practice').classList.toggle('active', m === 'practice');
+  document.getElementById('run-speedrun').classList.toggle('active', m === 'speedrun');
+  document.getElementById('run-practice').setAttribute('aria-pressed', String(m === 'practice'));
+  document.getElementById('run-speedrun').setAttribute('aria-pressed', String(m === 'speedrun'));
+  var note = document.getElementById('runModeNote');
+  if (m === 'speedrun') {
+    var best = getBestTime();
+    note.innerHTML = 'Speedrun: a clock runs from your first command to the last.' +
+      (best != null ? ' Your best: <strong style="color:var(--accent-light)">' + fmtTime(best) + '</strong>' : ' Set your first time!');
+  } else {
+    note.textContent = 'Practice mode: take your time, no clock.';
+  }
+};
+
+function fmtTime(ms) {
+  var totalSec = Math.floor(ms / 1000);
+  var m = Math.floor(totalSec / 60);
+  var s = totalSec % 60;
+  var cs = Math.floor((ms % 1000) / 100);      /* one-digit tenths/centi */
+  return m + ':' + (s < 10 ? '0' : '') + s + '.' + cs;
+}
+function getBestTime() {
+  try { var v = localStorage.getItem(BEST_KEY); return v == null ? null : parseInt(v, 10); }
+  catch (e) { return null; }
+}
+function startSpeedClock() {
+  if (runMode !== 'speedrun') return;
+  runStartMs = Date.now();
+  var clock = document.getElementById('speedClock');
+  clock.style.display = '';
+  function tick() {
+    clock.textContent = fmtTime(Date.now() - runStartMs);
+    runTimerId = requestAnimationFrame(tick);
+  }
+  cancelAnimationFrame(runTimerId);
+  tick();
+}
+function stopSpeedClock() {
+  cancelAnimationFrame(runTimerId);
+  runTimerId = null;
+  if (runMode !== 'speedrun' || !runStartMs) return 0;
+  return Date.now() - runStartMs;
+}
 
 /* ────────────────────────────────────────────
    FLASHCARD DATA
@@ -1571,6 +1771,17 @@ function loadChallenge(i) {
   document.getElementById('challengeTitle').textContent = ch.title;
   document.getElementById('challengeInstruction').textContent = ch.instruction;
   document.getElementById('challengeHint').textContent = ch.hint;
+  /* Speedrun is a test: hide the "Type: <cmd>" giveaway, offer an on-demand reveal. */
+  if (runMode === 'speedrun') {
+    document.getElementById('challengeHintBox').style.display = 'none';
+    document.getElementById('speedrunHintRow').style.display = 'block';
+    document.getElementById('revealCmdBtn').style.display = '';
+    document.getElementById('revealedHintBox').style.display = 'none';
+    document.getElementById('revealedHint').textContent = ch.hint;
+  } else {
+    document.getElementById('challengeHintBox').style.display = '';
+    document.getElementById('speedrunHintRow').style.display = 'none';
+  }
   document.getElementById('progressText').textContent = (i + 1) + ' / ' + challenges.length;
   var dots = document.querySelectorAll('.progress-dot');
   dots.forEach(function (d, n) {
@@ -1581,6 +1792,14 @@ function loadChallenge(i) {
   updateToc();
   document.getElementById('termInput').focus();
 }
+
+/* Speedrun: reveal the command on demand (the student chose to peek). */
+window.revealCommand = function () {
+  document.getElementById('revealCmdBtn').style.display = 'none';
+  document.getElementById('revealedHintBox').style.display = '';
+  document.getElementById('termInput').focus();
+  try { window.sfx.hint(); } catch (e) {}
+};
 
 function showBetween() {
   document.getElementById('challengeCard').style.display = 'none';
@@ -1618,7 +1837,22 @@ function showCompletion() {
   document.getElementById('challengeCard').style.display = 'none';
   document.getElementById('completionScore').textContent = completed + '/' + (part1.length + part2.length + part3.length);
   document.getElementById('completionPanel').classList.add('show');
-  try { window.sfx.win(); window.confettiBurst(); } catch(e){}
+
+  /* Speedrun: finalize time, compare to personal best */
+  var newBest = false;
+  if (runMode === 'speedrun' && runStartMs) {
+    var elapsed = stopSpeedClock();
+    var prevBest = getBestTime();
+    newBest = (prevBest == null || elapsed < prevBest);
+    if (newBest) { try { localStorage.setItem(BEST_KEY, String(elapsed)); } catch(e){} }
+    document.getElementById('speedResult').style.display = 'block';
+    document.getElementById('speedFinalTime').textContent = fmtTime(elapsed);
+    document.getElementById('speedNewBest').style.display = newBest ? 'block' : 'none';
+    document.getElementById('speedBestLine').textContent =
+      newBest ? 'Speedrun time' : 'Your time  (best: ' + fmtTime(prevBest) + ')';
+  }
+
+  try { window.sfx.win(); window.confettiBurst(); if (newBest) setTimeout(window.confettiBurst, 350); } catch(e){}
   document.querySelectorAll('.progress-dot').forEach(function (d) { d.classList.remove('current'); d.classList.add('done'); });
   document.getElementById('feedbackFlash').classList.remove('show');
   /* mark all items done in TOC */
@@ -1641,13 +1875,14 @@ window.beginPart = function (p) {
     document.getElementById('screen-overview').style.display = 'none';
     document.getElementById('screen-sim').style.display = 'block';
     part       = 1;
-    challenges = part1;
+    challenges = (runMode === 'speedrun') ? genSpeedrunPart1() : part1;
     idx        = 0;
     buildToc();
     document.getElementById('partBadge').textContent = 'Part 1: Navigation';
     document.getElementById('progressPartLabel').textContent = 'PART 1';
-    buildDots(part1.length);
+    buildDots(challenges.length);
     loadChallenge(0);
+    startSpeedClock();
     termOutput.innerHTML = '';
     appendLine('<span class="c-dim">StatDeck Analytics - Intern Onboarding Terminal</span>');
     appendLine('<span class="c-dim">Part 1 of 2: Navigation. Type <span class="c-out">help</span> for commands.</span>');
