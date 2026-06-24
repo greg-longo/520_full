@@ -829,6 +829,28 @@ roster.<span class="fn">groupby</span>(<span class="st">'position'</span>)[<span
         </table></div>
       </div>
 
+      <h3>Function Application: apply and map</h3>
+      <p>Often you need to run your own function over a column or table rather than a built-in aggregation. Pandas gives you three tools: <code>map()</code> transforms each value of a <strong>Series</strong>, <code>apply()</code> runs a function down each column (or across each row) of a <strong>DataFrame</strong>, and a dictionary passed to <code>map()</code> acts as a lookup table.</p>
+      <pre><code><span class="cm"># map(): element-wise transform of a single Series</span>
+roster[<span class="st">'avg'</span>].<span class="fn">map</span>(<span class="kw">lambda</span> x: <span class="fn">round</span>(x * <span class="nm">1000</span>))   <span class="cm"># .312 -&gt; 312 (points)</span>
+
+<span class="cm"># map() with a dict = a lookup/recode table</span>
+labels = {<span class="st">'OF'</span>: <span class="st">'Outfield'</span>, <span class="st">'IF'</span>: <span class="st">'Infield'</span>}
+roster[<span class="st">'position'</span>].<span class="fn">map</span>(labels)        <span class="cm"># 'OF' -&gt; 'Outfield'</span>
+
+<span class="cm"># apply() on a DataFrame: function runs once per column (axis=0 default)</span>
+roster[[<span class="st">'avg'</span>, <span class="st">'hr'</span>]].<span class="fn">apply</span>(<span class="kw">lambda</span> col: col.<span class="fn">max</span>() - col.<span class="fn">min</span>())
+
+<span class="cm"># apply() across rows with axis=1: build a value from several columns</span>
+<span class="kw">def</span> <span class="fn">summary</span>(row):
+    <span class="kw">return</span> <span class="kw">f</span><span class="st">"{row['player']}: {row['hr']} HR"</span>
+
+roster.<span class="fn">apply</span>(summary, axis=<span class="nm">1</span>)   <span class="cm"># 'Rivera: 4 HR', 'Chen: 2 HR', ...</span></code></pre>
+      <div class="callout">
+        <div class="callout-label">map vs apply</div>
+        Reach for <code>Series.map()</code> when you are recoding or transforming one column value-by-value (it is the natural fit for a dictionary lookup). Reach for <code>DataFrame.apply()</code> when your function needs a whole column or a whole row at once. If you only need a built-in reduction like sum or mean, skip both and call the method directly - it is faster.
+      </div>
+
       <h3>Sorting and ranking</h3>
       <pre><code><span class="cm"># Sort by batting average, descending</span>
 roster.<span class="fn">sort_values</span>(<span class="st">'avg'</span>, ascending=<span class="kw">False</span>)
@@ -850,6 +872,11 @@ roster[<span class="st">'avg_rank'</span>] = roster[<span class="st">'avg'</span
             <tr><td class="idx-col">3</td><td style="text-align:left"><span class="out-str">Kim</span></td><td><span class="out-num">0.268</span></td><td><span class="out-num">1</span></td><td><span class="out-num">760000</span></td><td style="text-align:left"><span class="out-str">IF</span></td><td><span class="out-num">4.0</span></td></tr>
           </tbody>
         </table></div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">rank() vs sort_values()</div>
+        <code>sort_values()</code> reorders the rows; <code>rank()</code> keeps the rows in place and instead returns each value's <em>position</em> in the ordering. Use <code>rank()</code> when you want a rank column you can keep alongside the data (e.g. "5th in the league"). Ties are averaged by default - two players tied for 2nd both get <code>2.5</code> - but you can pass <code>method='min'</code>, <code>'dense'</code>, or <code>'first'</code> to control how ties are broken.
       </div>
 
       <div class="callout">

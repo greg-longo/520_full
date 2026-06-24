@@ -900,7 +900,12 @@
           <div class="callout-title">How to watch the videos</div>
           <p>Don't watch passively - have a notebook open and try every example yourself as you go. Pause and re-run anything you don't understand. Check the Python docs when a function surprises you.</p>
         </div>
-    
+
+        <div class="callout">
+          <div class="callout-label">Style matters: PEP 8</div>
+          Python cares about <strong>whitespace</strong> - indentation defines which lines belong together, so it isn't optional like it is in other languages. Beyond what Python requires, the community follows a style guide called <strong>PEP 8</strong>: 4 spaces per indent level, spaces around operators (<code>x = 1</code>, not <code>x=1</code>), and clear lowercase names. Readable code is easier to debug and easier for others (and future you) to follow.
+        </div>
+
       <div class="subpage-nav">
         <span class="subpage-nav-btn invisible">prev</span>
         <span class="subpage-nav-center">1 / 7</span>
@@ -1101,7 +1106,19 @@ games = <span class="num">120</span>
           <div class="callout-title">= vs ==</div>
           <p><code>=</code> assigns a value to a variable. <code>==</code> compares two values. Using <code>=</code> inside an <code>if</code> condition is one of the most common beginner mistakes.</p>
         </div>
-    
+
+        <h3>Getting input from the user</h3>
+        <p>The built-in <code>input()</code> function pauses your program and waits for the user to type something. It always returns a <strong>string</strong>, so if you need a number you have to convert it with <code>int()</code> or <code>float()</code> first.</p>
+<pre><code>name = <span class="fn">input</span>(<span class="str">"Enter player name: "</span>)
+avg = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Enter batting average: "</span>))  <span class="cmt"># convert text to a number</span>
+
+<span class="kw">if</span> avg >= <span class="num">0.300</span>:
+    <span class="fn">print</span>(<span class="str">f"</span>{name}<span class="str"> is hitting over .300!"</span>)</code></pre>
+        <div class="callout">
+          <div class="callout-label">Run this one in a notebook</div>
+          <code>input()</code> needs a keyboard prompt, which the in-browser sandboxes on this site can't provide. To try it, paste the code into <a href="https://colab.research.google.com/" target="_blank" rel="noopener">Google Colab</a> or a Jupyter notebook, where a prompt box appears for you to type into. Everything else in this module runs fine in the browser - <code>input()</code> is the one exception.
+        </div>
+
       <div class="subpage-nav">
         <button class="subpage-nav-btn" onclick="showSection('strings')">&larr; Strings</button>
         <span class="subpage-nav-center">4 / 7</span>
@@ -1179,7 +1196,30 @@ games = <span class="num">120</span>
 <span class="out-str">Santos</span>
 <span class="out-str">Patel</span>
         </div>
-    
+
+        <h3>Nested loops</h3>
+        <p>A loop can live inside another loop. The <strong>inner</strong> loop runs all the way through for <em>each</em> pass of the <strong>outer</strong> loop. This is how you work through grids, tables, or every pairing between two lists.</p>
+<pre><code>teams = [<span class="str">"Eagles"</span>, <span class="str">"Hawks"</span>]
+innings = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+
+<span class="kw">for</span> team <span class="kw">in</span> teams:           <span class="cmt"># outer loop: runs twice</span>
+    <span class="kw">for</span> inning <span class="kw">in</span> innings:    <span class="cmt"># inner loop: runs 3x per team</span>
+        <span class="fn">print</span>(<span class="str">f"</span>{team}<span class="str"> - inning </span>{inning}<span class="str">"</span>)</code></pre>
+
+        <div class="output-block">
+          <div class="output-block-label">output &mdash; nested loop (2 x 3 = 6 lines)</div>
+<span class="out-str">Eagles - inning 1</span>
+<span class="out-str">Eagles - inning 2</span>
+<span class="out-str">Eagles - inning 3</span>
+<span class="out-str">Hawks - inning 1</span>
+<span class="out-str">Hawks - inning 2</span>
+<span class="out-str">Hawks - inning 3</span>
+        </div>
+        <div class="callout">
+          <div class="callout-label">Watch the count</div>
+          The total number of inner runs is the outer count <em>times</em> the inner count. Two teams and three innings means six lines. Nested loops are powerful but get expensive fast, so keep an eye on how big each list is.
+        </div>
+
       <div class="subpage-nav">
         <button class="subpage-nav-btn" onclick="showSection('conditions')">&larr; Conditions</button>
         <span class="subpage-nav-center">5 / 7</span>

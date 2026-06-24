@@ -676,6 +676,23 @@ stats * weights      &rarr;  [[<span class="out-num">31.2   4.</span>]
                             [<span class="out-num">28.7   2.</span>]]
       </div>
 
+      <h3>Proving it's faster: %timeit</h3>
+      <p>"Dramatically faster" is easy to claim - so measure it. In a Jupyter or Colab notebook, the <code>%timeit</code> magic runs a line many times and reports the average. Compare a plain Python loop against the vectorized version on a million numbers and the gap is not subtle.</p>
+      <pre><code>import numpy as np
+data = np.<span class="fn">arange</span>(<span class="nm">1_000_000</span>)
+
+<span class="cm"># Python loop - element by element in the interpreter</span>
+%timeit [x * <span class="nm">2</span> <span class="kw">for</span> x <span class="kw">in</span> data]
+<span class="cm"># ~120 ms per loop</span>
+
+<span class="cm"># NumPy vectorized - the loop runs in compiled C</span>
+%timeit data * <span class="nm">2</span>
+<span class="cm"># ~1.2 ms per loop  ->  roughly 100x faster</span></code></pre>
+      <div class="callout">
+        <div class="callout-label">See it for yourself</div>
+        The <strong>NumPy Lab</strong> simulation at the bottom of this module runs this exact race live in your browser - your loop versus NumPy, timed head-to-head with a drag-race bar. It is the fastest way to <em>feel</em> why vectorization matters.
+      </div>
+
       <h3>Aggregating along axes</h3>
       <pre><code>stats = np.<span class="fn">array</span>([
     [<span class="nm">.312</span>, <span class="nm">4</span>, <span class="nm">22</span>],
@@ -784,6 +801,22 @@ mask = avgs &gt; .295         &rarr;  [<span class="out-num"> True  False   True
 avgs[mask]                  &rarr;  [<span class="out-num">0.312  0.301</span>]
 avgs[(avgs&gt;.285)&amp;(avgs&lt;.310)] &rarr;  [<span class="out-num">0.287  0.301  0.295</span>]
 players[avgs &gt; .295]        &rarr;  [<span class="out-str">'Rivera'  'Walker'</span>]
+      </div>
+
+      <h3>Methods for boolean arrays: any() and all()</h3>
+      <p>Once you have a boolean array, two methods let you ask array-wide questions. <code>any()</code> returns True if <em>at least one</em> element is True; <code>all()</code> returns True only if <em>every</em> element is True. Because Python treats True as 1 and False as 0, calling <code>sum()</code> on a boolean array <em>counts</em> how many are True.</p>
+      <pre><code>avgs = np.<span class="fn">array</span>([<span class="nm">.312</span>, <span class="nm">.287</span>, <span class="nm">.301</span>, <span class="nm">.268</span>, <span class="nm">.295</span>])
+
+(avgs &gt; <span class="nm">.300</span>).<span class="fn">any</span>()   <span class="cm"># True  - is anyone over .300?</span>
+(avgs &gt; <span class="nm">.250</span>).<span class="fn">all</span>()   <span class="cm"># True  - is everyone over .250?</span>
+(avgs &gt; <span class="nm">.300</span>).<span class="fn">sum</span>()   <span class="cm"># 2     - how many are over .300?</span>
+
+<span class="cm"># Works along an axis on 2D arrays too</span>
+stats = np.<span class="fn">array</span>([[<span class="nm">.312</span>, <span class="nm">4</span>], [<span class="nm">.287</span>, <span class="nm">2</span>]])
+(stats &gt; <span class="nm">0</span>).<span class="fn">all</span>(axis=<span class="nm">1</span>)   <span class="cm"># [True, True] - every row all-positive?</span></code></pre>
+      <div class="callout">
+        <div class="callout-label">A quick data-quality check</div>
+        <code>any()</code> and <code>all()</code> are the fastest way to validate data before you trust it. <code>np.isnan(salaries).any()</code> tells you in one line whether any salary is missing; <code>(salaries &gt; 0).all()</code> confirms every value is positive. No loop required.
       </div>
 
       <div class="callout">
@@ -1030,6 +1063,13 @@ first_half, second_half = np.<span class="fn">split</span>(monthly_sales, [<span
       </div>
     </div>
 
+
+    <a class="sim-cta" href="../../sims/numpy-lab/index.html">
+      <div class="sim-cta-label">Simulation &middot; Live Code</div>
+      <h3>NumPy Lab</h3>
+      <p>Write real NumPy in your browser, then race a Python loop against a vectorized operation head-to-head and watch the drag-race bar prove why NumPy wins.</p>
+      <div class="sim-cta-launch">Open Simulation &rarr;</div>
+    </a>
 
     <a class="sim-cta" href="../../sims/debug-pipeline/index.html">
       <div class="sim-cta-label">Simulation</div>

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 <style>
 :root {
   --maroon:       #8B1C40;
@@ -612,6 +612,61 @@ textarea.editor:read-only { opacity: 0.7; cursor: default; }
 }
 .btn-restart:hover { filter: brightness(1.12); }
 
+/* ===== VECTORIZATION SPEED RACE ===== */
+.race-box {
+  width: 100%; max-width: 560px;
+  margin: 0 auto 1.75rem;
+  background: var(--surface2, #161311);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--blue);
+  border-radius: 6px;
+  padding: 1.1rem 1.25rem 1.25rem;
+  text-align: left;
+}
+.race-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--blue-light); margin-bottom: 0.25rem;
+}
+.race-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 0.15rem; }
+.race-sub { font-size: 12.5px; color: var(--text-dim); margin-bottom: 1rem; line-height: 1.5; }
+.race-lane { margin-bottom: 0.9rem; }
+.race-lane-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: var(--text-dim); margin-bottom: 0.3rem;
+}
+.race-lane-name { color: var(--text); font-weight: 600; }
+.race-time { color: var(--text-muted); }
+.race-track {
+  height: 22px; background: #0e0c0b;
+  border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+}
+.race-fill {
+  height: 100%; width: 0%;
+  border-radius: 0;
+  transition: width 1.1s cubic-bezier(.22,.61,.36,1);
+}
+.race-fill.loop  { background: linear-gradient(90deg, #7a3a52, var(--maroon-light)); }
+.race-fill.numpy { background: linear-gradient(90deg, #2A7195, var(--blue-light)); }
+.race-verdict {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px; font-weight: 600; color: var(--blue-light);
+  text-align: center; min-height: 1.2em; margin-top: 0.5rem;
+}
+.btn-race {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; font-weight: 600;
+  padding: 9px 22px; margin-top: 0.4rem;
+  background: var(--blue); color: #fff; border: none;
+  border-radius: 4px; cursor: pointer; display: block; width: 100%;
+}
+.btn-race:hover { filter: brightness(1.12); }
+.btn-race:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
+@media (prefers-reduced-motion: reduce) {
+  .race-fill { transition: none; }
+}
+
 /* ===== REFERENCE MODAL ===== */
 .ref-fab {
   position: fixed;
@@ -994,6 +1049,32 @@ textarea.editor:read-only { opacity: 0.7; cursor: default; }
       <div class="final-title" id="finalTitle">Platinum Artist</div>
       <div class="final-score" id="finalScore">18 / 18</div>
       <div class="breakdown" id="breakdown"></div>
+
+      <div class="race-box">
+        <div class="race-eyebrow">Bonus &middot; Live Benchmark</div>
+        <div class="race-title">The Vectorization Speed Race</div>
+        <div class="race-sub">Same job, two ways: a plain Python <code>for</code> loop versus one vectorized NumPy operation, doubling every number in a one-million-element array. Both run for real in your browser. Press start and watch the gap.</div>
+
+        <div class="race-lane">
+          <div class="race-lane-head">
+            <span class="race-lane-name">Python loop</span>
+            <span class="race-time" id="raceTimeLoop">--</span>
+          </div>
+          <div class="race-track"><div class="race-fill loop" id="raceFillLoop"></div></div>
+        </div>
+
+        <div class="race-lane">
+          <div class="race-lane-head">
+            <span class="race-lane-name">NumPy vectorized</span>
+            <span class="race-time" id="raceTimeNumpy">--</span>
+          </div>
+          <div class="race-track"><div class="race-fill numpy" id="raceFillNumpy"></div></div>
+        </div>
+
+        <div class="race-verdict" id="raceVerdict"></div>
+        <button class="btn-race" id="raceBtn" onclick="runRace()">&#9654; Start the race</button>
+      </div>
+
       <button class="btn-restart" onclick="restartSim()">Try Again</button>
     </div>
   </div>
@@ -1530,7 +1611,95 @@ function showFinal() {
   `).join('');
 }
 
+// ===================================================
+// VECTORIZATION SPEED RACE (live benchmark in Pyodide)
+// ===================================================
+let raceDone = false;
+async function runRace() {
+  if (!pyodide || raceDone) return;
+  const btn = document.getElementById('raceBtn');
+  const verdict = document.getElementById('raceVerdict');
+  btn.disabled = true;
+  btn.textContent = 'Running both methods...';
+  verdict.textContent = '';
+
+  // Reset bars
+  document.getElementById('raceFillLoop').style.width = '0%';
+  document.getElementById('raceFillNumpy').style.width = '0%';
+  document.getElementById('raceTimeLoop').textContent = '--';
+  document.getElementById('raceTimeNumpy').textContent = '--';
+
+  let loopMs, numpyMs;
+  try {
+    const code = `
+import time, numpy as np
+N = 1_000_000
+data = np.arange(N)
+
+# Python loop: build a doubled list element by element
+t0 = time.perf_counter()
+_ = [x * 2 for x in data]
+loop_s = time.perf_counter() - t0
+
+# NumPy vectorized: one operation on the whole array
+# averaged over a few runs so the number is stable
+t0 = time.perf_counter()
+for _ in range(5):
+    _ = data * 2
+numpy_s = (time.perf_counter() - t0) / 5
+
+(loop_s, numpy_s)
+`;
+    const res = await pyodide.runPythonAsync(code);
+    loopMs  = res.get(0) * 1000;
+    numpyMs = res.get(1) * 1000;
+    res.destroy && res.destroy();
+  } catch (e) {
+    verdict.textContent = 'Race could not run - try refreshing.';
+    btn.disabled = false;
+    btn.textContent = '▶ Start the race';
+    return;
+  }
+
+  // Bars are proportional to time: the slowest method fills the track,
+  // the faster one fills relative to it (so the gap is the whole point).
+  const slowest = Math.max(loopMs, numpyMs);
+  const loopPct  = Math.max(2, (loopMs  / slowest) * 100);
+  const numpyPct = Math.max(2, (numpyMs / slowest) * 100);
+
+  const fmt = ms => ms >= 1 ? ms.toFixed(1) + ' ms' : (ms * 1000).toFixed(0) + ' µs';
+
+  // Animate loop first, then NumPy, then the verdict
+  requestAnimationFrame(() => {
+    document.getElementById('raceFillLoop').style.width = loopPct + '%';
+    document.getElementById('raceTimeLoop').textContent = fmt(loopMs);
+  });
+  setTimeout(() => {
+    document.getElementById('raceFillNumpy').style.width = numpyPct + '%';
+    document.getElementById('raceTimeNumpy').textContent = fmt(numpyMs);
+  }, 450);
+  setTimeout(() => {
+    const x = loopMs / numpyMs;
+    verdict.textContent = `NumPy was ~${x >= 10 ? Math.round(x) : x.toFixed(1)}x faster ⚡`;
+    btn.textContent = 'Race complete';
+    raceDone = true;
+    try {
+      const k = 'dtsc520_charttoppers';
+      const cur = JSON.parse(localStorage.getItem(k) || '{}');
+      cur.raceSpeedup = Math.round(x);
+      localStorage.setItem(k, JSON.stringify(cur));
+    } catch(e) {}
+  }, 1700);
+}
+
 function restartSim() {
+  raceDone = false;
+  const rb = document.getElementById('raceBtn');
+  if (rb) { rb.disabled = false; rb.textContent = '▶ Start the race'; }
+  ['raceFillLoop','raceFillNumpy'].forEach(id => { const el = document.getElementById(id); if (el) el.style.width = '0%'; });
+  ['raceTimeLoop','raceTimeNumpy'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '--'; });
+  const rv = document.getElementById('raceVerdict'); if (rv) rv.textContent = '';
+
   scores   = [0,0,0,0,0,0];
   attempts = [0,0,0,0,0,0];
   solved   = [false,false,false,false,false,false];

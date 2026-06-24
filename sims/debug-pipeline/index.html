@@ -153,7 +153,7 @@
     /* Main split */
     .sim-split {
       display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
-      flex: 1; min-height: 0;
+      align-items: start; min-height: 0;
     }
 
     /* Left: pipeline state panel */
@@ -313,9 +313,11 @@
       font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
       letter-spacing: 0.06em; text-transform: uppercase;
       padding: 0.55rem 1.4rem; cursor: pointer; transition: background 0.15s;
+      position: relative; z-index: 9100;   /* stay clickable above the floating gear / back-to-top */
     }
     .next-btn.show { display: block; }
-    .next-btn:hover { background: var(--orange-light); }
+    .next-btn:hover:not(:disabled) { background: var(--orange-light); }
+    .next-btn:disabled { background: var(--bg-card2); color: var(--text-dim); cursor: not-allowed; opacity: 0.75; }
 
     /* Try again button */
     .try-again-btn {
@@ -465,7 +467,79 @@
       }
     }
 
+    /* ── FIX-IT PHASE (live pandas) ─────────────────────────────── */
+    .tb-py {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 0.05em;
+      color: var(--text-dim);
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 999px;
+      padding: 0.2rem 0.55rem;
+      white-space: nowrap;
+    }
+    .tb-py.ready { color: #6cc08f; border-color: rgba(108,192,143,0.5); }
+    .tb-py.failed { color: #d08770; border-color: rgba(208,135,112,0.5); }
+    #fixRegion { margin-top: 1rem; }
+    .fix-panel { display: none; }
+    .fix-panel.show { display: block; }
+    .fix-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: stretch;
+      margin-top: 0.6rem;
+    }
+    .fix-editor-col { display: flex; flex-direction: column; min-width: 0; }
+    @media (max-width: 800px) { .fix-grid { grid-template-columns: 1fr; } }
+    .fix-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #c9a84c; margin-bottom: 0.45rem;
+    }
+    .fix-intro { font-size: 0.82rem; color: var(--text-dim); line-height: 1.55; margin-bottom: 0.55rem; }
+    #fixEditor {
+      width: 100%; min-height: 150px; flex: 1; resize: vertical;
+      background: var(--bg-code); color: var(--text);
+      border: 1px solid rgba(201,168,76,0.4); border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; line-height: 1.65;
+      padding: 0.7rem 0.8rem; outline: none; tab-size: 4; caret-color: #c9a84c;
+    }
+    #fixEditor:focus { border-color: #c9a84c; }
+    .fix-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.55rem; }
+    .fix-run-btn, .fix-reset-btn, .fix-sol-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.05em;
+      padding: 0.5rem 0.9rem; border-radius: 4px; cursor: pointer;
+      border: 1px solid rgba(201,168,76,0.5);
+      background: rgba(201,168,76,0.12); color: #c9a84c;
+      transition: background 0.15s;
+    }
+    .fix-run-btn:hover { background: rgba(201,168,76,0.25); }
+    .fix-reset-btn, .fix-sol-btn { background: transparent; color: var(--text-dim); border-color: rgba(255,255,255,0.15); }
+    .fix-reset-btn:hover, .fix-sol-btn:hover { color: var(--text); }
+    .fix-run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .fix-console {
+      min-height: 188px; max-height: 320px; overflow-y: auto;
+      background: var(--bg-code); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.74rem; line-height: 1.55;
+      padding: 0.55rem 0.7rem; white-space: pre-wrap;
+    }
+    .fix-console:empty::before {
+      content: 'Output and checks appear here after you run.';
+      color: var(--text-dim); opacity: 0.6; font-size: 0.72rem;
+    }
+    .fix-console .fc-err { color: #d08770; }
+    .fix-console .fc-ok { color: #6cc08f; }
+    .fix-console .fc-sys { color: var(--text-dim); }
+    .fix-console .fc-out { color: #7fb4ca; }
+    .term-live { color: #9fd4a8; }
+    :root.theme-light .fix-console .fc-out { color: #2a6f95; }
+    :root.theme-light .term-live { color: #2a7a45; }
+    @keyframes flashGood {
+      0%   { box-shadow: inset 0 0 0 0 rgba(108,192,143,0); }
+      30%  { box-shadow: inset 0 0 0 2px rgba(108,192,143,0.65); }
+      100% { box-shadow: inset 0 0 0 0 rgba(108,192,143,0); }
+    }
+    .pp-terminal.flash-good { animation: flashGood 0.7s ease; }
+
     </style>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 </head>
 <body>
 
@@ -479,6 +553,7 @@
   <div class="topbar-right">
     <div class="tb-pips" id="tbPips"></div>
     <div class="tb-score">Score: <strong id="tbScore">0</strong>/20</div>
+    <div class="tb-py" id="pyStatus" title="Live Python engine status">py: idle</div>
     <div class="tb-time" id="tbTime">7:13 AM</div>
     <a href="../../index.html" class="tb-back">&#8592; Course Home</a>
   </div>
@@ -493,6 +568,7 @@
       <div class="situation-who">6:47 AM - StatDeck Analytics, Eagles Office</div>
       <p>Your phone goes off before your coffee is done. It's Jonah, the lead analyst: <em>"The pre-game stat pipeline failed overnight. Coach needs the lineup report by 8 AM or we're dark for the first series."</em></p>
       <p>You pull up the terminal. Five things are broken in the pipeline. You have 73 minutes. The data doesn't lie - but right now, it's lying about everything.</p>
+      <p><em>New this season:</em> diagnosing each bug isn't enough. After every correct diagnosis you edit the actual broken line and re-run it - real pandas, right in your browser - and watch the data heal before the next step unlocks.</p>
     </div>
     <div class="lmeta">
       <div class="lmeta-item"><span class="lmeta-label">Bugs to find</span><span class="lmeta-val">5</span></div>
@@ -501,6 +577,7 @@
       <div class="lmeta-item"><span class="lmeta-label">Skills</span><span class="lmeta-val">pandas / NumPy</span></div>
     </div>
     <button class="start-btn" onclick="startSim()">Open Terminal</button>
+    <p style="font-family:'IBM Plex Mono',monospace;font-size:0.62rem;color:#525a6a;margin-top:0.8rem;">First run downloads Python + pandas (~25 MB, one-time) so your fixes execute for real. If it can't load, the sim falls back to diagnosis-only mode.</p>
   </div>
 </div>
 
@@ -538,10 +615,29 @@
         <div class="fb-title" id="fbTitle"></div>
         <div id="fbText"></div>
       </div>
-      <div class="btn-row">
-        <button class="try-again-btn" id="tryAgainBtn" onclick="tryAgain()">&#8635; Try Again</button>
-        <button class="next-btn" id="nextBtn" onclick="nextStage()"></button>
+      <button class="try-again-btn" id="tryAgainBtn" onclick="tryAgain()">&#8635; Try Again</button>
+    </div>
+  </div>
+
+  <!-- Full-width fix-it region (uses the space below the split) -->
+  <div id="fixRegion">
+    <div class="fix-panel" id="fixPanel">
+      <div class="fix-label">&#9881; Diagnosis confirmed - now fix it for real</div>
+      <div class="fix-intro" id="fixIntro"></div>
+      <div class="fix-grid">
+        <div class="fix-editor-col">
+          <textarea id="fixEditor" spellcheck="false" aria-label="Python code editor - edit the broken pipeline code"></textarea>
+          <div class="fix-btns">
+            <button class="fix-run-btn" id="fixRunBtn" onclick="runFix()">&#9654; Run Fix (Ctrl+Enter)</button>
+            <button class="fix-reset-btn" onclick="resetFix()">&#8634; Reset</button>
+            <button class="fix-sol-btn" id="fixSolBtn" onclick="showSolution()">Show solution</button>
+          </div>
+        </div>
+        <div class="fix-console" id="fixConsole" role="log" aria-live="polite"></div>
       </div>
+    </div>
+    <div class="btn-row" id="fixBtnRow">
+      <button class="next-btn" id="nextBtn" onclick="nextStage()"></button>
     </div>
   </div>
 </div>
@@ -651,9 +747,9 @@ roster = pd.<span class="fn">read_csv</span>(<span class="st">'eagles_roster.csv
 <span class="term-out">Running: print(roster.dtypes)</span>
 
 <span class="term-out">player     object</span>
-<span class="term-out">avg        <span class="term-warn">object</span>   &lt;-- should be float64</span>
-<span class="term-out">hr         <span class="term-warn">object</span>   &lt;-- should be int64</span>
-<span class="term-out">salary     <span class="term-warn">object</span>   &lt;-- should be int64</span>
+<span class="term-out">avg        <span class="term-warn">object</span>   &lt;-- should be a float</span>
+<span class="term-out">hr         <span class="term-warn">object</span>   &lt;-- should be an integer</span>
+<span class="term-out">salary     <span class="term-warn">object</span>   &lt;-- should be an integer</span>
 <span class="term-out">dtype: object</span>
 
 <span class="term-warn">Next step: roster['avg'].mean() will fail or return NaN</span>`,
@@ -685,14 +781,14 @@ roster[<span class="st">'avg'</span>]    = roster[<span class="st">'avg'</span>]
 roster[<span class="st">'hr'</span>]     = roster[<span class="st">'hr'</span>].<span class="fn">astype</span>(<span class="nm">int</span>)
 roster[<span class="st">'salary'</span>] = roster[<span class="st">'salary'</span>].<span class="fn">astype</span>(<span class="nm">int</span>)
 
-<span class="cmt"># Now roster.dtypes shows float64, int64, int64</span>`,
+<span class="cmt"># Now roster.dtypes shows a float and two integer columns</span>`,
     terminalFixed: `<span class="term-good">Fix applied: .astype() conversions</span>
 <span class="term-out">Running: print(roster.dtypes)</span>
 
 <span class="term-good">player     object</span>
 <span class="term-good">avg        float64</span>
-<span class="term-good">hr         int64</span>
-<span class="term-good">salary     int64</span>
+<span class="term-good">hr         int32</span>
+<span class="term-good">salary     int32</span>
 <span class="term-good">dtype: object</span>
 
 <span class="term-good">Numeric columns ready. Calculations will work.</span>`,
@@ -816,14 +912,14 @@ active[<span class="st">'salary'</span>] = active[<span class="st">'salary'</spa
 
 <span class="df-out">{TABLE_FIXED}</span>
 
-<span class="term-good">Jones salary filled with team mean (17200). Others unchanged.</span>`,
+<span class="term-good">Jones salary filled with team mean (16800). Others unchanged.</span>`,
     tableHtmlFixed: buildTable(
       ['idx','player','salary'],
       [
         ['0',{v:'Rivera',c:'v-str'},{v:'16800',c:'v-num'}],
         ['1',{v:'Chen',c:'v-str'},{v:'14400',c:'v-num'}],
-        ['3',{v:'Walker',c:'v-str'},{v:'19200',c:'v-num'}],
-        ['4',{v:'Jones',c:'v-str'},{v:'17200',c:'v-fix'}],
+        ['2',{v:'Walker',c:'v-str'},{v:'19200',c:'v-num'}],
+        ['3',{v:'Jones',c:'v-str'},{v:'16800',c:'v-fix'}],
       ],
       "active[['player','salary']] &mdash; only missing value filled"
     ),
@@ -848,7 +944,7 @@ active[<span class="st">'salary'</span>] = active[<span class="st">'salary'</spa
     tableHtml: buildTable(
       ['position','avg_avg','total_hr'],
       [
-        [{v:'IF',c:'v-str'},{v:'NaN',c:'v-nan'},{v:'3',c:'v-num'}],
+        [{v:'IF',c:'v-str'},{v:'NaN',c:'v-nan'},{v:'6',c:'v-num'}],
         [{v:'OF',c:'v-str'},{v:'NaN',c:'v-nan'},{v:'10',c:'v-num'}],
       ],
       'by_pos &mdash; groupby result'
@@ -862,8 +958,8 @@ active[<span class="st">'salary'</span>] = active[<span class="st">'salary'</spa
       { key:'D', text:"Use .mean() directly on the column instead of .agg() - groupby agg does not support 'mean' for decimal columns.", pts:0 },
     ],
     feedback: {
-      correct: "Exactly. <code>hr</code> is an integer column so <code>sum</code> worked fine. But <code>avg</code> is still <code>object</code> dtype in the active subset &mdash; when you filtered from roster, the type conversion from step 2 was not carried through correctly. <code>.mean()</code> on a column of strings returns NaN silently. Fix: apply <code>active['avg'] = active['avg'].astype(float)</code> before the groupby, then the mean computes correctly.",
-      wrong: "The clue is that <code>hr</code> (integer) worked and <code>avg</code> (supposed float) returned NaN. That asymmetry points to a data type issue: <code>avg</code> is still stored as <code>object</code> (strings) in the active DataFrame. <code>.mean()</code> on strings returns NaN silently &mdash; no error, just missing results. Apply <code>active['avg'] = active['avg'].astype(float)</code> before the groupby."
+      correct: "Exactly. <code>hr</code> is an integer column so <code>sum</code> worked fine. But <code>avg</code> is still <code>object</code> dtype in the active subset &mdash; when you filtered from roster, the type conversion from step 2 was not carried through correctly. Averaging a column of strings fails &mdash; older pandas returns NaN, newer pandas raises a TypeError. Fix: apply <code>active['avg'] = active['avg'].astype(float)</code> before the groupby, then the mean computes correctly.",
+      wrong: "The clue is that <code>hr</code> (integer) worked and <code>avg</code> (supposed float) did not. That asymmetry points to a data type issue: <code>avg</code> is still stored as <code>object</code> (strings) in the active DataFrame. Averaging strings fails &mdash; older pandas gives NaN, newer pandas raises a TypeError. Apply <code>active['avg'] = active['avg'].astype(float)</code> before the groupby."
     },
     fixCode: `<span class="cmt"># Ensure avg is numeric in the active subset</span>
 active[<span class="st">'avg'</span>] = active[<span class="st">'avg'</span>].<span class="fn">astype</span>(<span class="nm">float</span>)  <span class="fix"># fix dtype before aggregating</span>
@@ -882,11 +978,177 @@ by_pos = active.<span class="fn">groupby</span>(<span class="st">'position'</spa
     tableHtmlFixed: buildTable(
       ['position','avg_avg','total_hr'],
       [
-        [{v:'IF',c:'v-str'},{v:'0.288',c:'v-fix'},{v:'3',c:'v-num'}],
-        [{v:'OF',c:'v-str'},{v:'0.303',c:'v-fix'},{v:'10',c:'v-num'}],
+        [{v:'IF',c:'v-str'},{v:'0.300',c:'v-fix'},{v:'6',c:'v-num'}],
+        [{v:'OF',c:'v-str'},{v:'0.298',c:'v-fix'},{v:'10',c:'v-num'}],
       ],
       'by_pos &mdash; pipeline complete'
     ),
+  }
+];
+
+// ── Live fix-it data ──
+// Each cell has hidden `setup` (defines the data) + a short editable
+// `starter`/`solution` (just the line(s) to fix). runFix() runs
+// setup + editor together, so the data can't be accidentally deleted.
+const FIX = [
+
+  // STAGE 1 — read_csv header
+  {
+    intro: "The loader used <code>header=None</code>. Edit the read line so pandas uses the real first row as column names, then run it.",
+    setup:
+`import pandas as pd, io
+csv = """player,avg,hr,salary
+Rivera,.312,4,16800
+Chen,.287,2,14400
+Walker,.301,7,19200
+Kim,.268,1,760000
+Jones,.295,3,15600
+Diaz,.279,5,15000"""`,
+    starter:
+`# BUG: header=None makes pandas read the header row as data.
+roster = pd.read_csv(io.StringIO(csv), header=None)
+print(roster.head())`,
+    solution:
+`roster = pd.read_csv(io.StringIO(csv))
+print(roster.head())`,
+    explain: "Dropping header=None lets pandas use the first CSV row as the column names, so you get player/avg/hr/salary and 6 data rows instead of numbered columns.",
+    sourceChecks: [
+      { pattern: /header\s*=\s*None/, absent: true, msg: "header=None is still in the read line - remove that argument so pandas reads the first row as the header." }
+    ],
+    test:
+`assert list(roster.columns) == ['player','avg','hr','salary'], f"Columns are {list(roster.columns)} - expected ['player','avg','hr','salary']. Remove header=None."
+assert len(roster) == 6, f"roster has {len(roster)} rows - expected 6. With header=None the header line was counted as data."`
+  },
+
+  // STAGE 2 — dtypes / astype
+  {
+    intro: "Every numeric column loaded as text (<code>object</code>). Convert each one to its correct type with <code>.astype()</code>, then run it.",
+    setup:
+`import pandas as pd
+roster = pd.DataFrame({
+    'player': ['Rivera','Chen','Walker','Kim','Jones','Diaz'],
+    'avg':    ['.312','.287','.301','.268','.295','.279'],
+    'hr':     ['4','2','7','1','3','5'],
+    'salary': ['16800','14400','19200','760000','15600','15000'],
+})`,
+    starter:
+`# BUG: these columns are text. Convert each one to a number.
+roster['avg']    = roster['avg']
+roster['hr']     = roster['hr']
+roster['salary'] = roster['salary']
+print(roster.dtypes)`,
+    solution:
+`roster['avg']    = roster['avg'].astype(float)
+roster['hr']     = roster['hr'].astype(int)
+roster['salary'] = roster['salary'].astype(int)
+print(roster.dtypes)`,
+    explain: ".astype(float) and .astype(int) convert the text values into real numbers, so avg becomes float64 and hr/salary become int64 - and calculations like .mean() work.",
+    sourceChecks: [
+      { pattern: /\.astype\s*\(/, msg: "Use .astype() to convert the columns - for example roster['avg'].astype(float)." }
+    ],
+    test:
+`assert str(roster['avg'].dtype).startswith('float'), f"avg is {roster['avg'].dtype} - expected a float type. Use roster['avg'].astype(float)."
+assert str(roster['hr'].dtype).startswith('int'), f"hr is {roster['hr'].dtype} - expected an integer type. Use roster['hr'].astype(int)."
+assert str(roster['salary'].dtype).startswith('int'), f"salary is {roster['salary'].dtype} - expected an integer type. Use roster['salary'].astype(int)."`
+  },
+
+  // STAGE 3 — = vs == in boolean filter
+  {
+    intro: "The filter used a single <code>=</code>, which Python reads as assignment. Make it a comparison so it returns True/False per row, then run it.",
+    setup:
+`import pandas as pd
+roster = pd.DataFrame({
+    'player': ['Rivera','Chen','Kim','Walker','Jones'],
+    'avg':    [0.312,0.287,0.268,0.301,0.295],
+    'hr':     [4,2,1,7,3],
+    'salary': [16800,14400,760000,19200,15600],
+    'status': ['active','active','rehab','active','active'],
+})`,
+    starter:
+`# BUG: a single = is assignment, not a comparison.
+active = roster[roster['status'] = 'active']
+print(active)`,
+    solution:
+`active = roster[roster['status'] == 'active']
+print(active)`,
+    explain: "Inside a filter pandas needs a True/False mask, which == (comparison) produces for each row. A single = is assignment and isn't valid there, so Python raises a SyntaxError.",
+    sourceChecks: [
+      { pattern: /\[\s*roster\s*\[\s*['"]status['"]\s*\]\s*==/, msg: "The filter still isn't a comparison - use roster[roster['status'] == 'active']." }
+    ],
+    test:
+`assert len(active) == 4, f"active has {len(active)} rows - expected 4 (everyone except Kim, who is on rehab)."
+assert (active['status'] == 'active').all(), "active still contains a non-active player - filter on roster['status'] == 'active'."`
+  },
+
+  // STAGE 4 — fillna with mean, targeted to one column
+  {
+    intro: "One salary is missing. Filling it with <code>0</code> wrecks every stat - fill just the salary column with its mean instead, then run it.",
+    setup:
+`import pandas as pd
+import numpy as np
+active = pd.DataFrame({
+    'player': ['Rivera','Chen','Walker','Jones'],
+    'avg':    [0.312, 0.287, 0.301, 0.295],
+    'salary': [16800.0, 14400.0, 19200.0, np.nan],
+})`,
+    starter:
+`# BUG: filling with 0 drops a fake salary into the data.
+active['salary'] = active['salary'].fillna(0)
+print(active)`,
+    solution:
+`active['salary'] = active['salary'].fillna(active['salary'].mean())
+print(active)`,
+    explain: "Filling the one missing salary with the column mean keeps the team's statistics realistic. Filling with 0 invents a $0 salary that drags every average down.",
+    sourceChecks: [
+      { pattern: /fillna\s*\(\s*0\s*\)/, absent: true, msg: "You're still filling with 0 - a zero salary distorts the team's stats. Fill with the mean instead." },
+      { pattern: /\.mean\s*\(/, msg: "Use the column mean as the fill value: active['salary'].fillna(active['salary'].mean())." }
+    ],
+    test:
+`assert active['salary'].isna().sum() == 0, "There's still a missing salary - fill it."
+jones = active.loc[active['player'] == 'Jones', 'salary'].iloc[0]
+assert jones != 0, "Jones' salary was filled with 0 - that fake zero distorts every statistic. Fill with the mean instead."
+expected = (16800 + 14400 + 19200) / 3
+assert abs(jones - expected) < 1, f"Jones' salary is {jones} - expected about {expected:.0f} (the mean of the three known salaries)."`
+  },
+
+  // STAGE 5 — astype(float) before groupby
+  {
+    intro: "<code>avg</code> is still text, so its group mean comes back NaN. Add a line that converts <code>avg</code> to float <em>before</em> the groupby, then run it.",
+    setup:
+`import pandas as pd
+active = pd.DataFrame({
+    'player':   ['Rivera','Chen','Walker','Jones'],
+    'position': ['IF','IF','OF','OF'],
+    'avg':      ['0.312','0.287','0.301','0.295'],
+    'hr':       [4, 2, 7, 3],
+})`,
+    starter:
+`# BUG: avg is still text, so its group mean is NaN.
+# Add a line here that converts avg to float BEFORE the groupby.
+by_pos = active.groupby('position').agg(
+    avg_avg=('avg', 'mean'),
+    total_hr=('hr', 'sum'),
+)
+print(by_pos)`,
+    solution:
+`active['avg'] = active['avg'].astype(float)
+
+by_pos = active.groupby('position').agg(
+    avg_avg=('avg', 'mean'),
+    total_hr=('hr', 'sum'),
+)
+print(by_pos)`,
+    explain: "avg was stored as text, so pandas couldn't average it - the group mean came back NaN (or errored). Converting avg to float before the groupby lets pandas compute a real mean per position.",
+    sourceChecks: [
+      { pattern: /\.astype\s*\(\s*float\s*\)/, msg: "Convert avg with .astype(float) before the groupby." }
+    ],
+    test:
+`assert not by_pos['avg_avg'].isna().any(), "avg_avg is still NaN - convert active['avg'] to float with .astype(float) BEFORE the groupby."
+if_avg = by_pos.loc['IF','avg_avg']
+of_avg = by_pos.loc['OF','avg_avg']
+assert abs(if_avg - 0.2995) < 0.001, f"IF avg_avg is {if_avg} - expected ~0.2995 (mean of .312 and .287)."
+assert abs(of_avg - 0.298) < 0.001, f"OF avg_avg is {of_avg} - expected ~0.298 (mean of .301 and .295)."
+assert int(by_pos.loc['IF','total_hr']) == 6 and int(by_pos.loc['OF','total_hr']) == 10, "total_hr per position is off - expected IF=6, OF=10."`
   }
 ];
 
@@ -994,6 +1256,11 @@ function renderStage() {
   document.getElementById('crReveal').innerHTML = '';
   document.getElementById('crReveal').className = 'code-reveal cr';
 
+  // Reset live fix-it phase
+  document.getElementById('fixPanel').classList.remove('show');
+  document.getElementById('fixEditor').value = '';
+  clearFixConsole();
+
   // Diagnosis panel
   document.getElementById('diagLabel').textContent = 'Stage ' + (current+1) + ' of ' + stages.length + ' - Diagnose the problem';
   document.getElementById('symptomText').innerHTML = s.symptom;
@@ -1019,6 +1286,7 @@ function renderStage() {
   document.getElementById('fbText').innerHTML = '';
   const nb = document.getElementById('nextBtn');
   nb.className = 'next-btn';
+  nb.disabled = false;
   nb.textContent = current < stages.length-1 ? 'Next Stage ->' : 'See Results ->';
   document.getElementById('tryAgainBtn').className = 'try-again-btn';
 
@@ -1044,22 +1312,39 @@ function handleChoice(btn, ch, s) {
   if (isCorrect) {
     answered = true;
     scores[current] = ch.pts;
-    const total = scores.reduce((a,b)=>a+b,0);
-    document.getElementById('tbScore').textContent = total;
+    document.getElementById('tbScore').textContent = scores.reduce((a,b)=>a+b,0);
 
     // Reveal correct highlight on all buttons (redundant but clean)
     document.querySelectorAll('.choice-btn').forEach(b => {
       if (b.dataset.correct === 'true') b.classList.add('reveal-correct');
     });
 
-    // Show fix + updated terminal
-    document.getElementById('crLabel').className = 'cr-label show';
-    document.getElementById('crReveal').innerHTML = s.fixCode;
-    document.getElementById('crReveal').className = 'code-reveal cr show';
-    const terminal = document.getElementById('ppTerminal');
-    terminal.innerHTML = s.terminalFixed.replace(/{TABLE_FIXED[^}]*}/, s.tableHtmlFixed);
-
-    document.getElementById('nextBtn').classList.add('show');
+    if (pyFailed || !FIX[current]) {
+      // Fallback: diagnosis-only static reveal (engine unavailable)
+      document.getElementById('crLabel').className = 'cr-label show';
+      document.getElementById('crReveal').innerHTML = s.fixCode;
+      document.getElementById('crReveal').className = 'code-reveal cr show';
+      const terminal = document.getElementById('ppTerminal');
+      terminal.innerHTML = s.terminalFixed.replace(/{TABLE_FIXED[^}]*}/, s.tableHtmlFixed);
+      document.getElementById('nextBtn').classList.add('show');
+    } else {
+      // Live fix-it phase — Next is shown but DISABLED until the fix passes,
+      // so it is always visible (never "missing") while it is gated.
+      const fx = FIX[current];
+      document.getElementById('fixIntro').innerHTML = fx.intro;
+      const ed = document.getElementById('fixEditor');
+      ed.value = fx.starter;
+      clearFixConsole();
+      document.getElementById('fixPanel').classList.add('show');
+      const rb = document.getElementById('fixRunBtn');
+      if (pyReady) { rb.disabled = false; rb.innerHTML = '&#9654; Run Fix (Ctrl+Enter)'; }
+      else { rb.disabled = true; rb.innerHTML = 'Loading Python…'; }
+      const nb = document.getElementById('nextBtn');
+      nb.classList.add('show');
+      nb.disabled = true;
+      nb.textContent = 'Fix the code to continue';
+      setTimeout(() => { try { ed.focus(); } catch(e){} }, 60);
+    }
     document.getElementById('tryAgainBtn').className = 'try-again-btn'; // hide try again
   } else {
     // Wrong — show Try Again, keep Next hidden
@@ -1130,20 +1415,217 @@ function showResults() {
 function startSim() {
   document.getElementById('landing').style.display = 'none';
   document.getElementById('sim').classList.add('active');
-  current = 0; scores = []; answered = false;
+  current = 0; scores = []; answered = false; fixUsedSolution = [];
   buildPips();
   renderStage();
 }
 
 function restartSim() {
   clearInterval(clockInterval);
-  current = 0; scores = []; answered = false;
+  current = 0; scores = []; answered = false; fixUsedSolution = [];
   document.getElementById('results').classList.remove('active');
   document.getElementById('tbScore').textContent = '0';
   document.getElementById('sim').classList.add('active');
   buildPips();
   renderStage();
 }
+
+/* ════════════ LIVE PANDAS ENGINE ════════════ */
+let pyodide = null, pyReady = false, pyFailed = false;
+let fixUsedSolution = [];
+
+function setPyStatus(txt, cls) {
+  const el = document.getElementById('pyStatus');
+  if (!el) return;
+  el.textContent = 'py: ' + txt;
+  el.className = 'tb-py' + (cls ? ' ' + cls : '');
+}
+
+async function bootPyodide() {
+  if (typeof loadPyodide === 'undefined') { pyFailed = true; setPyStatus('offline', 'failed'); return; }
+  try {
+    setPyStatus('loading…');
+    pyodide = await loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
+    setPyStatus('loading pandas…');
+    await pyodide.loadPackage(['pandas']);
+    pyodide.runPython('import pandas, numpy, io');
+    pyReady = true;
+    setPyStatus('ready', 'ready');
+    // If a fix panel is already on screen, enable its Run button now
+    const fp = document.getElementById('fixPanel');
+    const rb = document.getElementById('fixRunBtn');
+    if (rb && fp && fp.classList.contains('show')) {
+      rb.disabled = false;
+      rb.innerHTML = '&#9654; Run Fix (Ctrl+Enter)';
+    }
+  } catch (e) {
+    pyFailed = true;
+    setPyStatus('offline', 'failed');
+    // If a fix panel is already open, drop back to the static reveal so nobody is stuck.
+    const fp = document.getElementById('fixPanel');
+    if (fp && fp.classList.contains('show') && answered) {
+      const s = stages[current];
+      fp.classList.remove('show');
+      document.getElementById('crLabel').className = 'cr-label show';
+      document.getElementById('crReveal').innerHTML = s.fixCode;
+      document.getElementById('crReveal').className = 'code-reveal cr show';
+      document.getElementById('ppTerminal').innerHTML =
+        s.terminalFixed.replace(/{TABLE_FIXED[^}]*}/, s.tableHtmlFixed);
+      document.getElementById('nextBtn').classList.add('show');
+    }
+  }
+}
+
+function clearFixConsole() {
+  const c = document.getElementById('fixConsole');
+  if (c) c.innerHTML = '';
+}
+function fcLine(txt, cls) {
+  const c = document.getElementById('fixConsole');
+  if (!c) return;
+  const s = document.createElement('span');
+  s.className = cls || 'fc-sys';
+  s.textContent = txt + '\n';
+  c.appendChild(s);
+  c.scrollTop = c.scrollHeight;
+}
+
+function friendlyError(err) {
+  const msg = String((err && err.message) || err);
+  const lines = msg.trim().split('\n');
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const L = lines[i].trim();
+    if (/^(\w+Error|AssertionError|Exception|KeyboardInterrupt)/.test(L)) {
+      if (L.startsWith('AssertionError: ')) return { kind: 'check', text: L.slice(16) };
+      return { kind: 'crash', text: L };
+    }
+  }
+  return { kind: 'crash', text: lines.slice(-3).join('\n') };
+}
+function pandasCoach(text) {
+  if (/SyntaxError/.test(text)) return "Tip: Python couldn't parse the line — check your operators (= vs ==) and brackets.";
+  if (/KeyError/.test(text)) return "Tip: a KeyError means a column or label name doesn't match exactly — check spelling and quotes.";
+  if (/could not convert|invalid literal|ValueError/.test(text)) return "Tip: a value couldn't convert to that type — check the column you're casting with .astype().";
+  if (/AttributeError/.test(text)) return "Tip: that method may not exist on this object — try selecting a column first, e.g. df['col'].method().";
+  if (/NameError/.test(text)) return "Tip: a name isn't defined — make sure you didn't rename or delete a variable the rest of the cell needs.";
+  return null;
+}
+
+async function runFix() {
+  if (pyFailed) return;
+  if (!pyReady) { fcLine('Engine still loading — one moment…', 'fc-sys'); return; }
+  const fx = FIX[current];
+  const src = document.getElementById('fixEditor').value;
+  const runBtn = document.getElementById('fixRunBtn');
+
+  // Guard: nudge if they run the starter without editing it.
+  if (src.trim() === (fx.starter || '').trim()) {
+    clearFixConsole();
+    fcLine('⚠ You haven\'t changed the code yet — edit the line marked "# BUG", then run again.', 'fc-err');
+    return;
+  }
+
+  runBtn.disabled = true;
+  clearFixConsole();
+
+  let printed = '';
+  pyodide.setStdout({ batched: t => { printed += t + '\n'; } });
+  pyodide.setStderr({ batched: t => { printed += t + '\n'; } });
+
+  const ns = pyodide.globals.get('dict')();
+
+  // 1) Run the hidden setup + the student's edited code together
+  const fullCode = (fx.setup ? fx.setup + '\n' : '') + src;
+  try {
+    await pyodide.runPythonAsync(fullCode, { globals: ns });
+  } catch (err) {
+    if (printed.trim()) fcLine(printed.trimEnd(), 'fc-out');
+    const fe = friendlyError(err);
+    fcLine('✗ Your code crashed before it could be checked:', 'fc-err');
+    fcLine('  ' + fe.text, 'fc-err');
+    const coach = pandasCoach(fe.text); if (coach) fcLine(coach, 'fc-sys');
+    ns.destroy(); runBtn.disabled = false; return;
+  }
+  if (printed.trim()) fcLine(printed.trimEnd(), 'fc-out');
+
+  // 2) Assert tests against the resulting data — THIS is the gate.
+  //    If the data comes out correct, the fix is accepted, regardless of
+  //    which valid pandas approach was used.
+  try {
+    await pyodide.runPythonAsync(fx.test, { globals: ns });
+  } catch (err) {
+    const fe = friendlyError(err);
+    if (fe.kind === 'check') {
+      fcLine('✗ Not quite — the data isn\'t fixed yet:', 'fc-err');
+      fcLine('  ' + fe.text, 'fc-err');
+    } else {
+      fcLine('✗ Error while checking (a variable may be missing or misnamed):', 'fc-err');
+      fcLine('  ' + fe.text, 'fc-err');
+      const coach = pandasCoach(fe.text); if (coach) fcLine(coach, 'fc-sys');
+    }
+    ns.destroy(); runBtn.disabled = false; return;
+  }
+  ns.destroy();
+
+  // 3) Method tips — informational only. These NEVER block a correct result.
+  //    Comments are stripped so hint text in the starter isn't matched.
+  const codeOnly = src.replace(/#.*$/gm, '');
+  for (const chk of (fx.sourceChecks || [])) {
+    const hit = chk.pattern.test(codeOnly);
+    if (chk.absent ? hit : !hit) fcLine('Note: ' + chk.msg, 'fc-sys');
+  }
+
+  // PASS — heal the pipeline panel and unlock Next
+  fcLine('✔ Checks passed — pipeline step repaired.', 'fc-ok');
+  const s = stages[current];
+  const terminal = document.getElementById('ppTerminal');
+  terminal.innerHTML = s.terminalFixed.replace(/{TABLE_FIXED[^}]*}/, s.tableHtmlFixed);
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    terminal.classList.add('flash-good');
+    setTimeout(() => terminal.classList.remove('flash-good'), 700);
+  }
+  const nb = document.getElementById('nextBtn');
+  nb.classList.add('show');
+  nb.disabled = false;
+  nb.textContent = current < stages.length - 1 ? 'Next Stage ->' : 'See Results ->';
+  fcLine('Step repaired — the "' + nb.textContent + '" button is now active.', 'fc-ok');
+  nb.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  runBtn.disabled = false;
+}
+
+function resetFix() {
+  if (!FIX[current]) return;
+  document.getElementById('fixEditor').value = FIX[current].starter;
+  clearFixConsole();
+}
+
+async function showSolution() {
+  if (!FIX[current]) return;
+  const fx = FIX[current];
+  document.getElementById('fixEditor').value = fx.solution;
+  if (!fixUsedSolution[current]) {
+    fixUsedSolution[current] = true;
+    scores[current] = Math.max(0, (scores[current] || 0) - 2);
+    document.getElementById('tbScore').textContent = scores.reduce((a, b) => a + b, 0);
+  }
+  // Run the correct solution so the data heals and Next unlocks,
+  // then explain WHY it works (the actually-helpful part).
+  await runFix();
+  if (fx.explain) {
+    fcLine('', 'fc-sys');
+    fcLine('Why this works: ' + fx.explain, 'fc-ok');
+    fcLine('(Used Show solution: −2 points for this step.)', 'fc-sys');
+  }
+}
+
+// Boot the engine eagerly + wire Ctrl/Cmd+Enter in the editor
+document.addEventListener('DOMContentLoaded', () => {
+  bootPyodide();
+  const ed = document.getElementById('fixEditor');
+  if (ed) ed.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runFix(); }
+  });
+});
 </script>
 
 <!-- ═══════════════ SETTINGS WIDGET ═══════════════ -->
