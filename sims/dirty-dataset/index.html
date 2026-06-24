@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Dirty Dataset - DTSC 520</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<style>
+  :root {
+    --bg:        #12100f;
+    --surface:   #1c1917;
+    --surface2:  #211d1a;
+    --bg-code:   #0e0c0b;
+    --maroon:    #8B1C40;
+    --maroon-l:  #b02454;
+    --blue:      #2A7195;
+    --blue-l:    #3a9cc4;
+    --green:     #3a9e6e;
+    --green-l:   #54c78d;
+    --yellow:    #c9a24a;
+    --red:       #c0556a;
+    --text:      #f0ece6;
+    --text-dim:  #b8b0a6;
+    --muted:     #8a837a;
+    --border:    #3a3530;
+    --font:      'Zilla Slab', Georgia, serif;
+    --mono:      'IBM Plex Mono', 'Courier New', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text); font-family: var(--font);
+    font-size: 17px; line-height: 1.6; min-height: 100vh;
+  }
+  a { color: var(--blue-l); }
+  code { font-family: var(--mono); font-size: 0.9em; }
+
+  /* ---- top bar ---- */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(18,16,15,0.92); backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 18px;
+  }
+  .tb-icon {
+    width: 30px; height: 30px; border-radius: 6px;
+    background: var(--maroon); color: #fff; font-weight: 700;
+    display: grid; place-items: center; font-family: var(--mono);
+  }
+  .tb-title { font-weight: 600; font-size: 16px; }
+  .tb-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .tb-spacer { flex: 1; }
+  .tb-metric { font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
+  .tb-metric b { color: var(--green-l); }
+
+  /* ---- step strip ---- */
+  #stepstrip {
+    display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+    padding: 10px 18px; border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .ss-step {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 20px; border: 1px solid transparent;
+  }
+  .ss-step.active { color: var(--text); border-color: var(--maroon); }
+  .ss-step.done { color: var(--green-l); }
+  .ss-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: 0.6; }
+  .ss-step.active .ss-dot, .ss-step.done .ss-dot { opacity: 1; }
+
+  /* ---- layout ---- */
+  .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
+  .screen-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; }
+  .screen-title { font-size: 26px; font-weight: 700; }
+  .screen-badge {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+    border: 1px solid var(--border); border-radius: 4px; padding: 3px 8px;
+  }
+  .scene { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--blue); border-radius: 6px; padding: 16px 18px; margin-bottom: 18px; }
+  .scene p { color: var(--text-dim); margin-bottom: 10px; }
+  .scene p:last-child { margin-bottom: 0; }
+  .timestamp { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+
+  .artifact { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 18px; overflow: hidden; }
+  .artifact-header { background: #15110f; font-family: var(--mono); font-size: 12px; color: var(--text-dim); padding: 8px 14px; border-bottom: 1px solid var(--border); }
+  .artifact-body { padding: 12px 14px; }
+  .sender { font-family: var(--mono); font-size: 12px; color: var(--blue-l); margin-bottom: 4px; }
+  .artifact-body p { color: var(--text-dim); font-size: 15px; }
+
+  /* ---- decisions ---- */
+  .decision-block { margin-bottom: 18px; }
+  .decision-label { font-family: var(--mono); font-size: 11px; color: var(--maroon-l); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+  .decision-question { font-size: 18px; font-weight: 600; margin-bottom: 14px; }
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice-btn {
+    text-align: left; background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px 14px 44px;
+    position: relative; cursor: pointer; font-family: var(--font); font-size: 15.5px; line-height: 1.5;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--maroon-l); background: var(--surface2); }
+  .choice-btn:focus-visible { outline: 2px solid var(--blue-l); outline-offset: 2px; }
+  .choice-btn:disabled { cursor: default; opacity: 0.85; }
+  .choice-letter {
+    position: absolute; left: 12px; top: 13px;
+    width: 22px; height: 22px; border-radius: 4px; background: var(--bg-code);
+    color: var(--muted); font-family: var(--mono); font-size: 13px; font-weight: 600;
+    display: grid; place-items: center;
+  }
+  .choice-sub { display: block; font-size: 12.5px; color: var(--muted); margin-top: 6px; font-style: italic; }
+  .choice-btn.picked-good { border-color: var(--green); background: rgba(58,158,110,0.1); }
+  .choice-btn.picked-good .choice-letter { background: rgba(58,158,110,0.3); color: var(--green-l); }
+  .choice-btn.picked-warn { border-color: var(--yellow); background: rgba(201,162,74,0.1); }
+  .choice-btn.picked-warn .choice-letter { background: rgba(201,162,74,0.3); color: var(--yellow); }
+  .choice-btn.picked-bad { border-color: var(--red); background: rgba(192,85,106,0.1); }
+  .choice-btn.picked-bad .choice-letter { background: rgba(192,85,106,0.3); color: var(--red); }
+
+  /* ---- outcome card ---- */
+  .outcome-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px 18px; margin-top: 16px; }
+  .outcome-card.good { border-top: 3px solid var(--green); }
+  .outcome-card.warn { border-top: 3px solid var(--yellow); }
+  .outcome-card.bad  { border-top: 3px solid var(--red); }
+  .outcome-title { font-family: var(--mono); font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+  .outcome-card.good .outcome-title { color: var(--green-l); }
+  .outcome-card.warn .outcome-title { color: var(--yellow); }
+  .outcome-card.bad  .outcome-title { color: var(--red); }
+  .outcome-card p { font-size: 14.5px; color: var(--text-dim); margin-bottom: 8px; }
+
+  /* ---- live pandas panel ---- */
+  .runlab { margin-top: 18px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .runlab-head { background: #15110f; padding: 9px 14px; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+  .runlab-head .dotr { width: 9px; height: 9px; border-radius: 50%; background: var(--maroon-l); }
+  .runlab-body { padding: 14px; }
+  .runlab-task { font-size: 14.5px; color: var(--text-dim); margin-bottom: 10px; }
+  textarea.code-editor {
+    width: 100%; min-height: 118px; resize: vertical;
+    background: var(--bg-code); color: #e8e4dc; border: 1px solid var(--border); border-radius: 5px;
+    font-family: var(--mono); font-size: 13.5px; line-height: 1.55; padding: 12px;
+    tab-size: 4;
+  }
+  textarea.code-editor:focus-visible { outline: 2px solid var(--blue-l); outline-offset: 1px; }
+  .runlab-btns { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .btn {
+    font-family: var(--mono); font-size: 12.5px; font-weight: 600;
+    padding: 9px 18px; border: none; border-radius: 5px; cursor: pointer;
+  }
+  .btn-run { background: var(--maroon); color: #fff; }
+  .btn-run:hover { filter: brightness(1.12); }
+  .btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+  .console {
+    margin-top: 12px; background: var(--bg-code); border: 1px solid var(--border); border-radius: 5px;
+    font-family: var(--mono); font-size: 13px; padding: 12px; min-height: 40px;
+    white-space: pre-wrap; color: var(--text-dim); overflow-x: auto;
+  }
+  .console .fc-ok  { color: var(--green-l); }
+  .console .fc-err { color: var(--red); }
+  .console .fc-sys { color: var(--blue-l); }
+
+  /* ---- rendered df table ---- */
+  .df-tbl { border-collapse: collapse; font-family: var(--mono); font-size: 12px; margin-top: 4px; }
+  .df-tbl th, .df-tbl td { border: 1px solid var(--border); padding: 4px 9px; text-align: right; }
+  .df-tbl th { background: #15110f; color: var(--text-dim); }
+  .df-tbl td.k { text-align: left; color: var(--muted); }
+  .df-hl { color: var(--maroon-l); font-weight: 600; }
+
+  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+  .btn-next { background: var(--blue); color: #fff; font-family: var(--mono); font-size: 13px; font-weight: 600; padding: 11px 22px; border: none; border-radius: 5px; cursor: pointer; }
+  .btn-next:hover { filter: brightness(1.12); }
+  .btn-next:disabled { opacity: 0.4; cursor: not-allowed; }
+  .gate-note { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  /* ---- intro / final ---- */
+  .intro-card, .final-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 28px; text-align: center; }
+  .intro-card h1 { font-size: 30px; margin-bottom: 8px; }
+  .intro-eyebrow { font-family: var(--mono); font-size: 12px; color: var(--maroon-l); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; }
+  .intro-card p { color: var(--text-dim); font-size: 16px; max-width: 620px; margin: 0 auto 14px; text-align: left; }
+  .btn-start { background: var(--maroon); color: #fff; font-family: var(--mono); font-size: 14px; font-weight: 600; padding: 13px 30px; border: none; border-radius: 6px; cursor: pointer; margin-top: 14px; }
+  .btn-start:hover { filter: brightness(1.12); }
+  .final-badge { font-size: 46px; margin-bottom: 8px; }
+  .final-score { font-family: var(--mono); font-size: 30px; color: var(--green-l); margin-bottom: 6px; }
+  .breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 10px; margin: 22px 0; }
+  .b-cell { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 10px; }
+  .b-label { font-size: 12px; color: var(--muted); }
+  .b-score { font-family: var(--mono); font-weight: 600; }
+
+  /* ---- loading ---- */
+  #loading { position: fixed; inset: 0; background: var(--bg); z-index: 200; display: grid; place-items: center; text-align: center; }
+  .spinner { width: 38px; height: 38px; border: 3px solid var(--border); border-top-color: var(--maroon-l); border-radius: 50%; animation: spin 0.9s linear infinite; margin: 0 auto 16px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .load-text { font-family: var(--mono); font-size: 13px; color: var(--text-dim); }
+  .load-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+  .hidden { display: none !important; }
+  .flash-good { animation: flashg 0.7s ease; }
+  @keyframes flashg { 0%,100% { background: var(--surface2); } 30% { background: rgba(58,158,110,0.25); } }
+
+  footer { border-top: 1px solid var(--border); padding: 14px 18px; font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: center; }
+  footer a { color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spinner { animation: none; }
+    .flash-good { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- JUICE: confetti + mute (shared engine) -->
+<canvas id="juiceConfetti" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998;display:none;"></canvas>
+<button id="juiceMute" aria-pressed="false" aria-label="Toggle sound effects"
+  style="position:fixed;bottom:14px;right:14px;z-index:9999;width:38px;height:38px;border-radius:50%;border:1px solid #5a3a48;background:#1a1012;color:#d68aa0;font-size:16px;cursor:pointer;line-height:1;">&#9834;</button>
+
+<!-- LOADING -->
+<div id="loading">
+  <div>
+    <div class="spinner" id="loadSpinner"></div>
+    <div class="load-text" id="loadText">Loading Python and pandas...</div>
+    <div class="load-sub">One-time ~25 MB download. It caches after this.</div>
+  </div>
+</div>
+
+<div class="topbar">
+  <div class="tb-icon">D</div>
+  <span class="tb-title">The Dirty Dataset</span>
+  <span class="tb-sub">DTSC 520</span>
+  <span class="tb-spacer"></span>
+  <span class="tb-metric">Score <b id="tbScore">0</b> / 11</span>
+</div>
+
+<div id="stepstrip">
+  <div class="ss-step" id="ss-1"><span class="ss-dot"></span>Missing values</div>
+  <div class="ss-step" id="ss-2"><span class="ss-dot"></span>Duplicates</div>
+  <div class="ss-step" id="ss-3"><span class="ss-dot"></span>Data types</div>
+  <div class="ss-step" id="ss-4"><span class="ss-dot"></span>Outliers</div>
+  <div class="ss-step" id="ss-5"><span class="ss-dot"></span>Column names</div>
+</div>
+
+<div class="wrap" id="app"></div>
+
+<footer>
+  This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.<br>
+  <a href="../../index.html">Course Home</a> &middot; <a href="../../modules/module4/index.html">Module 4</a>
+</footer>
+
+<script>
+/* ============ Reusable juice engine (sfx + confetti + shake) ============ */
+(function(){
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let muted = false, actx = null;
+  function tone(freq, dur, type='square', vol=0.04, when=0) {
+    if (muted) return;
+    try {
+      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type; o.frequency.value = freq;
+      g.gain.setValueAtTime(vol, actx.currentTime + when);
+      g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + when + dur);
+      o.connect(g); g.connect(actx.destination);
+      o.start(actx.currentTime + when); o.stop(actx.currentTime + when + dur);
+    } catch(e){}
+  }
+  window.sfx = {
+    key:  () => tone(900 + Math.random()*300, 0.015, 'square', 0.008),
+    fail: () => { tone(160,0.2,'sawtooth',0.05); tone(110,0.3,'sawtooth',0.05,0.12); },
+    pass: () => { [523,659,784,1047].forEach((f,i)=>tone(f,0.18,'square',0.04,i*0.09)); },
+    win:  () => { [523,659,784,1047,784,1047,1319,1568].forEach((f,i)=>tone(f,0.22,'square',0.045,i*0.13)); },
+    hint: () => tone(440,0.12,'sine',0.05)
+  };
+  function setMuted(m){
+    muted = m;
+    const b = document.getElementById('juiceMute');
+    if (b){ b.textContent = muted ? '♪̸' : '♪'; b.style.textDecoration = muted ? 'line-through':'none'; b.setAttribute('aria-pressed', String(muted)); }
+    try { localStorage.setItem('dtsc520_muted', muted ? '1':'0'); } catch(e){}
+  }
+  window.setMuted = setMuted;
+  document.getElementById('juiceMute').addEventListener('click', () => setMuted(!muted));
+  try { setMuted(localStorage.getItem('dtsc520_muted') === '1'); } catch(e){}
+  window.screenShake = function(){
+    if (REDUCED) return;
+    document.body.animate(
+      [{transform:'translate(0,0)'},{transform:'translate(-6px,2px)'},{transform:'translate(5px,-3px)'},{transform:'translate(-4px,1px)'},{transform:'translate(0,0)'}],
+      {duration:260, easing:'ease-in-out'}
+    );
+  };
+  window.confettiBurst = function(){
+    if (REDUCED) return;
+    const cv = document.getElementById('juiceConfetti');
+    cv.style.display = 'block';
+    cv.width = innerWidth; cv.height = innerHeight;
+    const ctx = cv.getContext('2d');
+    const cols = ['#3a9e6e','#54c78d','#2A7195','#8B1C40','#c9a24a','#ffffff'];
+    const parts = Array.from({length:170}, () => ({
+      x: Math.random()*cv.width, y: -20 - Math.random()*cv.height*0.5,
+      vx:(Math.random()-0.5)*2.4, vy:1.8+Math.random()*3.2,
+      s:4+Math.random()*6, r:Math.random()*Math.PI, vr:(Math.random()-0.5)*0.25,
+      c: cols[Math.floor(Math.random()*cols.length)]
+    }));
+    let frames = 0;
+    (function draw(){
+      ctx.clearRect(0,0,cv.width,cv.height);
+      parts.forEach(p => { p.x+=p.vx; p.y+=p.vy; p.r+=p.vr;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r);
+        ctx.fillStyle=p.c; ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore(); });
+      if (++frames < 460) requestAnimationFrame(draw);
+      else { ctx.clearRect(0,0,cv.width,cv.height); cv.style.display='none'; }
+    })();
+  };
+})();
+</script>
+
+<script>
+// ===================================================================
+// THE DIRTY DATASET 2.0 — decision + live pandas on the real Eagles roster
+// ===================================================================
+let pyodide = null;
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// The real (dirty) St. Davids Eagles roster, embedded as Python.
+// 18 players + 2 exact duplicates = 20 rows. Numbers fact-checked in Python.
+const ROSTER_PY = `
+import pandas as pd, numpy as np
+_rows = [
+    ('E01','Marcus Rivera','OF',24,0.312,4,'$16,800',98),
+    ('E02','Diego Chen','IF',22,0.287,2,'$14,400',95),
+    ('E03','Tyler Walker','OF',26,0.301,7,'$19,200',102),
+    ('E04','Noah Kim','IF',23,0.268,1,'$760,000',88),
+    ('E05','Chris Park','3B',25,0.244,-3,'$15,600',79),
+    ('E06','Sam Boateng','C',28,0.259,5,'$18,000',91),
+    ('E07','Luis Ortiz','OF',21,np.nan,0,'$14,400',12),
+    ('E08','Andre Foster','P',27,np.nan,0,'$15,200',np.nan),
+    ('E09','Kenji Watanabe','IF',np.nan,0.276,3,'$16,400',84),
+    ('E10','Owen Mills','OF',24,0.293,6,'$17,600',97),
+    ('E11','Jamal Bryant','P',29,np.nan,0,'$15,200',np.nan),
+    ('E12','Eli Sandoval','C',26,0.255,4,'$17,200',88),
+    ('E13','Ryan Cole','IF',22,0.281,2,'$14,800',90),
+    ('E14','Victor Reyes','OF',25,0.299,8,'$18,800',101),
+    ('E15','Hunter Diaz','3B',np.nan,0.262,3,'$16,000',83),
+    ('E16','Caleb Nguyen','P',28,np.nan,1,'$15,600',np.nan),
+    ('E17','Mason Lee','IF',23,0.274,2,'$15,200',86),
+    ('E18','Gabriel Santos','OF',24,0.288,5,'$17,200',94),
+]
+_cols = ['player_id','name','position','age','batting avg','Home Runs','salary','games played']
+df = pd.DataFrame(_rows, columns=_cols)
+df = pd.concat([df, df.iloc[[0]], df.iloc[[5]]], ignore_index=True)
+`;
+
+// ---- State ----
+const state = { idx: 0, picked: {}, points: 0, ran: {} };
+const MAX_POINTS = 11; // 3+2+2+2+2
+
+// ---- Stage definitions (decision copy preserved from the original sim) ----
+const STAGES = [
+ {
+  n: 1, key: 'Missing Values', badge: 'Decision 1 of 5',
+  ts: 'Monday, 9:14 AM &middot; The missing values problem',
+  scene: `<p>You have missing data in three key columns: <strong>batting avg</strong> (4 nulls), <strong>age</strong> (2 nulls), and <strong>games played</strong> (3 nulls). The model will crash if it sees NaN values.</p><p>Jonah messages you on Slack:</p>`,
+  slack: `How bad is it? Batting avg nulls are probably pitchers - they don't bat in Single-A most of the time. Age nulls might just be sloppy data entry from the front office. Don't delete rows unless you have a real reason to.`,
+  q: `How do you handle the missing values in batting avg, age, and games played?`,
+  choices: [
+    { k:'A', text:`Drop any row that has <em>any</em> null value - keeps the dataset clean and simple.`, sub:`Removes ~7 rows from a 20-row dataset`, q:'warn' },
+    { k:'B', text:`Impute missing values: fill each column with its median.`, sub:`Preserves all rows; median is robust to outliers`, q:'good' },
+    { k:'C', text:`Fill all nulls with zero - it's a number, so the model won't crash.`, sub:`Fast, but 0 batting average means something specific in baseball`, q:'bad' },
+    { k:'D', text:`Impute age and games played with median, but for batting avg add a boolean flag column marking it missing, then impute.`, sub:`Preserves the information that the value was unknown`, q:'good' },
+  ],
+  outcomes: {
+    A: { pts:1, q:'warn', title:'⚠ Aggressive - you lost a chunk of your data',
+         body:`Dropping any row with <em>any</em> null removes ~7 of 20 rows. More importantly, Jonah told you the batting-avg nulls are probably pitchers - a meaningful subgroup. Dropping them biases your model toward position players.` },
+    B: { pts:2, q:'good', title:'✓ Solid - median imputation preserves your rows',
+         body:`Median imputation is a standard, defensible choice. Unlike the mean, the median isn't pulled by outliers (like Kim's $760K MLB salary). You keep every row. The downside is imputed values aren't real observations - acceptable for a small share of nulls.` },
+    C: { pts:0, q:'bad', title:'✗ Incorrect - zero is not "unknown"',
+         body:`Filling with 0 tells the model a player has a .000 batting average - that they never got a hit. That's false information, not missing information. The model will treat those players as extraordinarily bad hitters. A classic beginner mistake.` },
+    D: { pts:3, q:'good', title:'★ Excellent - you preserved the missingness itself',
+         body:`The most sophisticated approach. A <code>batting_avg_missing</code> flag lets the model learn that certain players (likely pitchers) don't have batting stats - a signal in itself. You impute to prevent errors, but keep the fact that the value was unknown. Jonah would be impressed.` },
+  },
+  // live step shown for good answers (B and D)
+  lab: {
+    task: `Run the optimal fix live: add a missingness flag for <code>batting avg</code>, then median-impute all three columns. The console should confirm zero remaining nulls.`,
+    starter:
+`# df is the dirty roster, already loaded
+df['batting_avg_missing'] = df['batting avg'].isna().astype(int)
+for col in ['batting avg', 'age', 'games played']:
+    df[col] = df[col].fillna(df[col].median())
+
+print("remaining nulls:", int(df[['batting avg','age','games played']].isna().sum().sum()))
+print("pitchers flagged:", int(df['batting_avg_missing'].sum()))`,
+    test:
+`assert df[['batting avg','age','games played']].isna().sum().sum() == 0, "There are still missing values - did you impute all three columns?"
+assert 'batting_avg_missing' in df.columns, "Add the batting_avg_missing flag column before imputing."
+assert int(df['batting_avg_missing'].sum()) == 4, "The flag should mark the 4 players whose batting avg was missing."`,
+    solutionNote: `Flag first (while the NaNs still exist), then impute. If you impute before flagging, the flag is all zeros.`
+  }
+ },
+ {
+  n: 2, key: 'Duplicate Rows', badge: 'Decision 2 of 5',
+  ts: 'Monday, 9:31 AM &middot; Duplicate rows',
+  scene: `<p>You run <code>df.duplicated().sum()</code> and confirm <strong>2 exact duplicate rows</strong> - same player_id, same stats, everything identical. Probably a data-export glitch.</p><p>If you leave them in, the model sees those players twice and weights them too heavily.</p>`,
+  slack: null,
+  q: `How do you handle the duplicate rows?`,
+  choices: [
+    { k:'A', text:`Drop the duplicates with <code>df.drop_duplicates()</code>, keeping the first occurrence.`, sub:`Standard practice - one copy of each record`, q:'good' },
+    { k:'B', text:`Leave the duplicates - more data is always better for training.`, sub:`Each duplicate is still a valid data point`, q:'bad' },
+    { k:'C', text:`Average the values across duplicates and keep one row per player_id.`, sub:`Treats duplicates as separate measurements`, q:'warn' },
+  ],
+  outcomes: {
+    A: { pts:2, q:'good', title:'✓ Correct - the standard approach',
+         body:`<code>drop_duplicates()</code> keeps the first occurrence and removes the rest. With 2 duplicates you go from 20 to 18 rows. The <code>subset</code> parameter lets you define "duplicate" by specific columns when you need to.` },
+    B: { pts:0, q:'bad', title:'✗ Incorrect - more duplicates ≠ more data',
+         body:`"More data is better" only holds if the data is <em>independent</em>. Duplicate rows aren't new information - they're the same record counted twice. The model overfits to those players. It's photocopying a page and calling it two sources.` },
+    C: { pts:1, q:'warn', title:'~ Unnecessary - averaging identical rows changes nothing',
+         body:`Since these are <em>exact</em> duplicates, averaging produces the same number as either row. Averaging makes sense when you have differing measurements for the same player. For exact dupes, just drop them.` },
+  },
+  lab: {
+    task: `Run it live: drop the exact duplicates and confirm the row count drops from 20 to 18.`,
+    starter:
+`before = len(df)
+df = df.drop_duplicates().reset_index(drop=True)
+print("rows:", before, "->", len(df))
+print("duplicates remaining:", int(df.duplicated().sum()))`,
+    test:
+`assert len(df) == 18, "Expected 18 rows after dropping the 2 exact duplicates."
+assert int(df.duplicated().sum()) == 0, "There are still duplicate rows."`,
+    solutionNote: `df.drop_duplicates() returns a new frame - reassign it (df = ...). reset_index keeps the row numbers tidy.`
+  }
+ },
+ {
+  n: 3, key: 'Data Types', badge: 'Decision 3 of 5',
+  ts: 'Monday, 10:05 AM &middot; The salary column',
+  scene: `<p>The salary column came in like <code>"$16,800"</code>, <code>"$760,000"</code>. Because of the dollar sign and comma, pandas read it as <strong>strings (object dtype)</strong> - you can't do math on it, and your model can't use it.</p>`,
+  slack: null,
+  q: `The salary column is dtype <code>object</code> due to "$" and "," characters. How do you make it numeric?`,
+  choices: [
+    { k:'A', text:`Strip the "$" and "," with string methods, then cast to float with <code>.astype(float)</code>.`, sub:`Removes formatting, preserves the value`, q:'good' },
+    { k:'B', text:`Use <code>pd.to_numeric(df['salary'], errors='coerce')</code> directly, without stripping first.`, sub:`Coerces unparseable values to NaN - you'd lose the column`, q:'bad' },
+    { k:'C', text:`Drop the salary column - salary isn't a performance stat anyway.`, sub:`The model may still need it for budget analysis`, q:'warn' },
+  ],
+  outcomes: {
+    A: { pts:2, q:'good', title:'✓ Correct - strip, then cast',
+         body:`Use string methods to strip "$" and ",", then <code>.astype(float)</code>. The chained string operations are idiomatic pandas and scale cleanly.` },
+    B: { pts:0, q:'bad', title:'✗ Incorrect - to_numeric coerces everything to NaN',
+         body:`<code>pd.to_numeric(errors='coerce')</code> parses each value as a number. Since every value contains "$" and ",", none parse, and they all become NaN. You'd end up with a salary column full of nulls. Clean the strings first.` },
+    C: { pts:1, q:'warn', title:'~ Hasty - salary is a useful feature',
+         body:`Dropping salary is defensible only if it's irrelevant. But the Eagles care about budget - roster decisions are about performance per dollar. A $760K MLB contract versus a $17K Single-A rate is a very different cost calculation. Fix it first, then decide.` },
+  },
+  lab: {
+    task: `Run it live: strip the formatting characters and cast to float. The console should show the salary dtype is now numeric and Kim's value is 760000.0.`,
+    starter:
+`df['salary'] = (df['salary']
+    .str.replace('$', '', regex=False)
+    .str.replace(',', '', regex=False)
+    .astype(float))
+print("dtype:", df['salary'].dtype)
+print("Kim's salary:", df.loc[df['name']=='Noah Kim','salary'].iloc[0])`,
+    test:
+`assert str(df['salary'].dtype).startswith('float'), "salary should be a float dtype now."
+assert df.loc[df['name']=='Noah Kim','salary'].iloc[0] == 760000.0, "Kim's salary should parse to 760000.0"`,
+    solutionNote: `Use regex=False so '$' is treated as a literal, not a regex anchor. Strip both characters before casting.`
+  }
+ },
+ {
+  n: 4, key: 'Outliers & Invalid Values', badge: 'Decision 4 of 5',
+  ts: 'Monday, 10:44 AM &middot; Two flags on your list',
+  scene: `<p>Two related problems remain.</p><p><strong>Problem A:</strong> Chris Park has <code>Home Runs = -3</code>. Home runs cannot be negative - a data entry error.</p><p><strong>Problem B:</strong> Noah Kim has a salary of <code>$760,000</code>. Everyone else is ~$14K-$19K. You check: the median salary is about $16,600, but the mean is dragged up to about $53,600. Kim's value is ~46x the median.</p><p>Jonah sends another message:</p>`,
+  slack: `Hey - I heard back from the Eagles front office. Kim's salary is correct. He's on a rehab assignment from their MLB affiliate - his 40-man roster contract pays the MLB minimum ($760,000 in 2025), and that travels with him to Single-A. The rest are on standard Single-A deals. The -3 home runs is definitely wrong though - a system bug on their end.`,
+  q: `How do you handle the invalid home run value AND the legitimate salary outlier?`,
+  choices: [
+    { k:'A', text:`Set <em>Home Runs = -3</em> to NaN, then impute with the median. Keep Kim's salary as-is since it's confirmed accurate.`, sub:`Correct for bad data; respects real data even when unusual`, q:'good' },
+    { k:'B', text:`Drop both rows - the -3 is clearly wrong and the outlier will skew the model.`, sub:`Loses a valid player (Kim) your client cares about`, q:'bad' },
+    { k:'C', text:`Cap all outliers with IQR clipping - handles the -3 and Kim's salary in one pass.`, sub:`Valid technique, but overrides confirmed-accurate data`, q:'warn' },
+    { k:'D', text:`Set the -3 to NaN and impute. Log-transform salary so the outlier has less influence.`, sub:`Preserves all data; log scaling handles skew well`, q:'good' },
+  ],
+  outcomes: {
+    A: { pts:2, q:'good', title:'✓ Good - you treated bad data and real data differently',
+         body:`Correct. The -3 home runs is impossible - convert to NaN and impute. Kim's $760K is confirmed real (a 40-man rehab assignment), so you leave it. Treating them differently shows outlier handling takes judgment, not a blanket rule.` },
+    B: { pts:0, q:'bad', title:'✗ Incorrect - you dropped a valid player on a hunch',
+         body:`Dropping Kim throws away a confirmed-accurate record your client specifically cares about. Outliers aren't automatically errors. The -3 is an error; Kim's salary is real. Same action for both is the wrong instinct.` },
+    C: { pts:1, q:'warn', title:'~ Defensible technique, wrong target',
+         body:`IQR/winsorization is a real method, but here you'd be clipping a value you <em>know</em> is accurate. You'd distort Kim's real salary to fix a problem he doesn't have. Use clipping when you can't verify outliers - not when the front office already confirmed them.` },
+    D: { pts:2, q:'good', title:'✓ Also strong - log scaling tames the skew',
+         body:`Fixing the -3 and log-transforming salary is a solid path: you keep every real value, and the log compresses the huge MLB-vs-Single-A gap so it doesn't dominate the model. Just remember to interpret coefficients on the log scale afterward.` },
+  },
+  lab: {
+    task: `Run it live: turn the negative home-run value into NaN, impute it, and confirm no negative home runs remain - while Kim's salary stays untouched. Watch the mean-vs-median gap that proves why you don't blindly clip.`,
+    starter:
+`# salary is numeric from the previous step; reload+clean defensively
+df['salary'] = (df['salary'].astype(str)
+    .str.replace('$','',regex=False).str.replace(',','',regex=False).astype(float))
+
+# Fix the impossible value only
+df.loc[df['Home Runs'] < 0, 'Home Runs'] = np.nan
+df['Home Runs'] = df['Home Runs'].fillna(df['Home Runs'].median())
+
+print("min home runs:", int(df['Home Runs'].min()))
+print("salary median:", round(df['salary'].median()))
+print("salary mean:  ", round(df['salary'].mean()))
+print("Kim still here:", bool((df['name']=='Noah Kim').any()))`,
+    test:
+`assert (df['Home Runs'] >= 0).all(), "There is still a negative home-run value."
+assert (df['name']=='Noah Kim').any(), "Don't drop Kim - his salary is confirmed accurate."
+assert df.loc[df['name']=='Noah Kim','salary'].iloc[0] == 760000.0, "Kim's salary should be untouched at 760000.0"`,
+    solutionNote: `Use df.loc[mask, col] = np.nan to target only the bad value, then impute. Leave Kim's salary alone.`
+  }
+ },
+ {
+  n: 5, key: 'Column Names', badge: 'Decision 5 of 5',
+  ts: 'Monday, 11:20 AM &middot; The last thing',
+  scene: `<p>Almost done. Your column names: <code>['player_id', 'name', 'position', 'age', 'batting avg', 'Home Runs', 'salary', 'games played']</code>. Mixed capitalization and spaces. <code>df.Home Runs</code> won't work - you'd need bracket notation every time, and inconsistent names make code harder to maintain.</p>`,
+  slack: null,
+  q: `How do you standardize the column names?`,
+  choices: [
+    { k:'A', text:`Use <code>df.columns = df.columns.str.lower().str.replace(' ', '_')</code> - lowercase with underscores.`, sub:`The pandas standard - enables dot notation, consistent`, q:'good' },
+    { k:'B', text:`Use <code>df.rename()</code> to manually fix only the columns with spaces.`, sub:`Works, but misses capitalization and is error-prone at scale`, q:'warn' },
+    { k:'C', text:`Leave them - always use bracket notation like <code>df['Home Runs']</code>.`, sub:`Technically works, but adds friction for everyone`, q:'warn' },
+  ],
+  outcomes: {
+    A: { pts:2, q:'good', title:'✓ Correct - the pandas standard',
+         body:`<code>df.columns.str.lower().str.replace(' ', '_')</code> makes every name lowercase with underscores in one line. You get consistent, readable, dot-accessible columns across the whole frame.` },
+    B: { pts:1, q:'warn', title:'~ Works, but partial',
+         body:`<code>rename()</code> is fine for a few targeted changes, but doing it by hand misses the capitalization issues (<code>Home Runs</code>) and gets error-prone as tables grow. The vectorized string approach is cleaner here.` },
+    C: { pts:1, q:'warn', title:'~ Technically fine, practically friction',
+         body:`Bracket notation always works, but messy names slow everyone down and invite typos. A one-line normalization pays for itself immediately.` },
+  },
+  lab: {
+    task: `Run it live: lowercase every column name and replace spaces with underscores. The console should show the cleaned column list.`,
+    starter:
+`df.columns = df.columns.str.lower().str.replace(' ', '_')
+print(list(df.columns))`,
+    test:
+`cols = list(df.columns)
+assert 'home_runs' in cols and 'batting_avg' in cols and 'games_played' in cols, "Columns should be lowercase with underscores."
+assert not any(' ' in c or c != c.lower() for c in cols), "No spaces or capitals should remain in column names."`,
+    solutionNote: `df.columns is an Index - chain .str.lower() then .str.replace(' ', '_') and assign it back.`
+  }
+ }
+];
+
+// ===================================================================
+// RENDER
+// ===================================================================
+const app = () => document.getElementById('app');
+
+function renderIntro() {
+  app().innerHTML = `
+    <div class="intro-card">
+      <div class="intro-eyebrow">StatDeck Analytics &middot; Module 4</div>
+      <h1>The Dirty Dataset</h1>
+      <p>The St. Davids Eagles handed you a roster export to feed your model. It's a mess: missing values, duplicate rows, a salary column pandas read as text, an impossible stat, and sloppy column names.</p>
+      <p>For each problem you'll <strong>make the call</strong> a real analyst makes - then <strong>run the actual pandas live</strong> on the real roster and watch the fix land before you move on. Senior analyst Jonah Reyes is on Slack if you need context.</p>
+      <p style="color:var(--muted);font-size:13px;">Five decisions. Real pandas in your browser. Pick well - then prove it runs.</p>
+      <button class="btn-start" onclick="startSim()">Open the dataset</button>
+    </div>`;
+}
+
+function setStrip() {
+  for (let i=1;i<=5;i++){
+    const el = document.getElementById('ss-'+i);
+    el.classList.remove('active','done');
+    if (i-1 < state.idx) el.classList.add('done');
+    else if (i-1 === state.idx) el.classList.add('active');
+  }
+}
+
+function renderStage() {
+  const s = STAGES[state.idx];
+  setStrip();
+  const slackHtml = s.slack ? `
+    <div class="artifact">
+      <div class="artifact-header">&#128172; Slack &middot; #eagles-project</div>
+      <div class="artifact-body">
+        <div class="sender">jonah.reyes</div>
+        <p>${s.slack}</p>
+      </div>
+    </div>` : '';
+  app().innerHTML = `
+    <div class="screen-header">
+      <div class="screen-title">${s.key}</div>
+      <div class="screen-badge">${s.badge}</div>
+    </div>
+    <div class="scene">
+      <div class="timestamp">${s.ts}</div>
+      ${s.scene}
+    </div>
+    ${slackHtml}
+    <div class="decision-block">
+      <div class="decision-label">⟩ Decision ${s.n}</div>
+      <div class="decision-question">${s.q}</div>
+      <div class="choices" id="choices">
+        ${s.choices.map(c => `
+          <button class="choice-btn" id="ch-${c.k}" onclick="pick('${c.k}')">
+            <span class="choice-letter">${c.k}</span>
+            ${c.text}
+            <span class="choice-sub">${c.sub}</span>
+          </button>`).join('')}
+      </div>
+    </div>
+    <div id="outcomeSlot"></div>
+    <div id="labSlot"></div>
+    <div class="nav-row">
+      <span class="gate-note" id="gateNote"></span>
+      <button class="btn-next" id="nextBtn" disabled onclick="goNext()">${state.idx < 4 ? 'Next decision →' : 'See results →'}</button>
+    </div>`;
+}
+
+// ===================================================================
+// DECISION + LIVE LAB
+// ===================================================================
+function pick(k) {
+  const s = STAGES[state.idx];
+  if (state.picked[state.idx]) return; // lock after first pick
+  state.picked[state.idx] = k;
+  const oc = s.outcomes[k];
+
+  // lock choices, mark chosen
+  document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+  const btn = document.getElementById('ch-'+k);
+  btn.classList.add('picked-' + oc.q);
+  try { (oc.q === 'good') ? window.sfx.pass() : (oc.q === 'bad' ? (window.sfx.fail(), window.screenShake()) : window.sfx.hint()); } catch(e){}
+
+  // score
+  state.points += oc.pts;
+  document.getElementById('tbScore').textContent = state.points;
+
+  // outcome card
+  document.getElementById('outcomeSlot').innerHTML = `
+    <div class="outcome-card ${oc.q}">
+      <div class="outcome-title">${oc.title} &middot; +${oc.pts} pt${oc.pts!==1?'s':''}</div>
+      <p>${oc.body}</p>
+    </div>`;
+
+  // For correct/optimal answers, unlock the live pandas lab.
+  // For weaker answers, still let them run the CORRECT fix to learn it.
+  renderLab(s);
+}
+
+function renderLab(s) {
+  const lab = s.lab;
+  document.getElementById('labSlot').innerHTML = `
+    <div class="runlab" id="runlab">
+      <div class="runlab-head"><span class="dotr"></span> Live pandas &middot; the real Eagles roster</div>
+      <div class="runlab-body">
+        <div class="runlab-task">${lab.task}</div>
+        <textarea class="code-editor" id="codeEd" spellcheck="false" aria-label="Python code editor">${lab.starter}</textarea>
+        <div class="runlab-btns">
+          <button class="btn btn-run" id="runBtn" onclick="runLab()">▶ Run (Ctrl+Enter)</button>
+          <button class="btn btn-ghost" onclick="resetLab()">Reset</button>
+          <button class="btn btn-ghost" onclick="showSolutionNote()">Hint</button>
+        </div>
+        <div class="console" id="console" aria-live="polite"></div>
+      </div>
+    </div>`;
+  const ed = document.getElementById('codeEd');
+  ed.addEventListener('keydown', e => {
+    if ((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); runLab(); return; }
+    if (e.key==='Tab'){ e.preventDefault(); const st=ed.selectionStart; ed.value=ed.value.slice(0,st)+'    '+ed.value.slice(ed.selectionEnd); ed.selectionStart=ed.selectionEnd=st+4; }
+    if (e.key.length===1||e.key==='Backspace'){ try{ window.sfx.key(); }catch(_){} }
+  });
+  document.getElementById('gateNote').textContent = 'Run the fix to unlock the next step.';
+}
+
+function cline(el, text, cls) {
+  const span = document.createElement('span');
+  if (cls) span.className = cls;
+  span.textContent = text + '\n';
+  el.appendChild(span);
+}
+
+async function runLab() {
+  if (!pyodide) return;
+  const s = STAGES[state.idx];
+  const con = document.getElementById('console');
+  const runBtn = document.getElementById('runBtn');
+  con.innerHTML = ''; runBtn.disabled = true;
+  const src = document.getElementById('codeEd').value;
+
+  // fresh roster namespace each run
+  const ns = pyodide.globals.get('dict')();
+  let printed = '';
+  pyodide.setStdout({ batched: t => { printed += t + '\n'; } });
+  pyodide.setStderr({ batched: t => { printed += t + '\n'; } });
+  try {
+    await pyodide.runPythonAsync(ROSTER_PY, { globals: ns });
+    await pyodide.runPythonAsync(src, { globals: ns });
+  } catch (err) {
+    if (printed.trim()) cline(con, printed.trimEnd(), 'fc-out');
+    cline(con, '✗ ' + friendlyError(err), 'fc-err');
+    try { window.sfx.fail(); window.screenShake(); } catch(e){}
+    ns.destroy(); runBtn.disabled = false; return;
+  }
+  if (printed.trim()) cline(con, printed.trimEnd());
+
+  // grade
+  try {
+    await pyodide.runPythonAsync(s.lab.test, { globals: ns });
+  } catch (err) {
+    cline(con, '✗ Not quite: ' + friendlyError(err), 'fc-err');
+    try { window.sfx.fail(); window.screenShake(); } catch(e){}
+    ns.destroy(); runBtn.disabled = false; return;
+  }
+  ns.destroy();
+
+  cline(con, '✔ Checks passed - this step is clean.', 'fc-ok');
+  document.getElementById('runlab').classList.add('flash-good');
+  setTimeout(()=>document.getElementById('runlab').classList.remove('flash-good'),700);
+  state.ran[state.idx] = true;
+  try { window.sfx.pass(); window.confettiBurst(); } catch(e){}
+  const nb = document.getElementById('nextBtn');
+  nb.disabled = false;
+  document.getElementById('gateNote').textContent = 'Step verified.';
+  nb.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+}
+
+function resetLab() {
+  document.getElementById('codeEd').value = STAGES[state.idx].lab.starter;
+  document.getElementById('console').innerHTML = '';
+}
+function showSolutionNote() {
+  const con = document.getElementById('console');
+  cline(con, '💡 ' + STAGES[state.idx].lab.solutionNote, 'fc-sys');
+  try { window.sfx.hint(); } catch(e){}
+}
+
+function friendlyError(err) {
+  const msg = (err && err.message) ? err.message : String(err);
+  const lines = msg.trim().split('\n');
+  let last = lines[lines.length-1] || msg;
+  if (last.startsWith('AssertionError')) return last.replace('AssertionError:', '').trim() || 'A check failed.';
+  if (last.includes('KeyError')) return 'A column name was not found - check spelling and capitalization: ' + last.split('KeyError:').pop().trim();
+  if (last.includes('NameError')) return 'A name is undefined - did you mean df? ' + last.split('NameError:').pop().trim();
+  if (last.includes('AttributeError')) return last.split('AttributeError:').pop().trim();
+  return last;
+}
+
+function goNext() {
+  if (state.idx < STAGES.length - 1) { state.idx++; renderStage(); window.scrollTo(0,0); }
+  else renderFinal();
+}
+
+// ===================================================================
+// FINAL
+// ===================================================================
+function renderFinal() {
+  for (let i=1;i<=5;i++){ const el=document.getElementById('ss-'+i); el.classList.remove('active'); el.classList.add('done'); }
+  const pct = state.points / MAX_POINTS;
+  let badge, title;
+  if (pct >= 0.9)      { badge='🏆'; title='Lead Data Scientist'; }
+  else if (pct >= 0.7) { badge='🥇'; title='Strong Analyst'; }
+  else if (pct >= 0.5) { badge='🥈'; title='Getting There'; }
+  else                 { badge='📋'; title='Review the Outcomes'; }
+
+  try { localStorage.setItem('dtsc520_dirtydataset', JSON.stringify({ completed:true, points: state.points, max: MAX_POINTS, score: Math.round(pct*100), date: new Date().toISOString() })); } catch(e){}
+  try { window.sfx.win(); window.confettiBurst(); } catch(e){}
+
+  const rows = STAGES.map((s,i) => {
+    const k = state.picked[i];
+    const oc = k ? s.outcomes[k] : null;
+    return `<div class="b-cell"><div class="b-label">${s.key}</div><div class="b-score" style="color:${oc&&oc.q==='good'?'var(--green-l)':oc&&oc.q==='bad'?'var(--red)':'var(--yellow)'}">${oc?oc.pts:'-'} pt${oc&&oc.pts!==1?'s':''}</div></div>`;
+  }).join('');
+
+  app().innerHTML = `
+    <div class="final-card">
+      <div class="final-badge">${badge}</div>
+      <div style="font-size:22px;font-weight:700;margin-bottom:4px;">${title}</div>
+      <div class="final-score">${state.points} / ${MAX_POINTS}</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--muted);">Data quality score &middot; every fix run live on the real roster</div>
+      <div class="breakdown">${rows}</div>
+      <p style="color:var(--text-dim);max-width:560px;margin:0 auto 18px;text-align:left;">You exported the cleaned dataframe and pinged Jonah. <em>"Good work. Let's see how it looks."</em> The difference between a working model and a broken one usually lives in steps exactly like these.</p>
+      <button class="btn-start" onclick="restart()">Replay simulation</button>
+      <a href="../../modules/module4/index.html" style="display:inline-block;margin-left:10px;font-family:var(--mono);font-size:13px;">Return to Module 4</a>
+    </div>`;
+  window.scrollTo(0,0);
+}
+
+function restart() {
+  state.idx = 0; state.picked = {}; state.points = 0; state.ran = {};
+  document.getElementById('tbScore').textContent = '0';
+  renderStage();
+  window.scrollTo(0,0);
+}
+
+// ===================================================================
+// BOOT
+// ===================================================================
+function startSim() { renderStage(); }
+
+async function bootPyodide() {
+  try {
+    pyodide = await loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
+    document.getElementById('loadText').textContent = 'Loading pandas...';
+    await pyodide.loadPackage('pandas');
+    document.getElementById('loading').classList.add('hidden');
+    renderIntro();
+  } catch (e) {
+    document.getElementById('loadSpinner').style.display = 'none';
+    document.getElementById('loadText').textContent = 'Could not load Python. Please refresh.';
+  }
+}
+bootPyodide();
+</script>
+</body>
+</html>

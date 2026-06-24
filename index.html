@@ -982,10 +982,10 @@
           <div class="sim-module-tag">Module 02 - After-hours event</div>
         </a>
 
-        <a class="sim-card" href="sims/dirty_dataset_sim.html" style="--accent: #c07b30;">
+        <a class="sim-card" href="sims/dirty-dataset/index.html" style="--accent: #c07b30;">
           <h3>The Dirty Dataset</h3>
-          <p class="sim-desc">You're a junior analyst at StatDeck Analytics. Clean a messy player salary dataset before the Eagles' front office meeting.</p>
-          <div class="sim-module-tag">Module 04 - pandas / data cleaning</div>
+          <p class="sim-desc">Junior analyst at StatDeck. Make each cleaning call, then run real pandas live on the Eagles roster to prove the fix.</p>
+          <div class="sim-module-tag">Module 04 - pandas / live cleaning</div>
         </a>
 
         <a class="sim-card" href="sims/debug-pipeline/index.html" style="--accent: #c07b30;">
@@ -1154,7 +1154,7 @@
         { ...charttopItem, name: 'Chart Toppers',  href: 'sims/numpy-lab/index.html' },
       ],
       [ // mod4
-        { ...dirtyItem, name: 'Dirty Dataset', href: 'sims/dirty_dataset_sim.html' },
+        { ...dirtyItem, name: 'Dirty Dataset', href: 'sims/dirty-dataset/index.html' },
         { ...rtgItem,   name: 'RTG Investigation', href: 'sims/rtg-investigation/index.html' },
         { ...ariaItem,  name: 'ARIA Returns', href: 'sims/aria-returns/index.html' },
       ],
@@ -1301,7 +1301,7 @@
           complete: quizzes[4].state === 'complete' && dirtyItem.state === 'complete' && rtgItem.state === 'complete',
           actions: [
             ...(quizzes[4].state !== 'complete' ? [{ label: 'Take M4 Quiz', href: 'modules/module4/quiz.html' }] : []),
-            ...(dirtyItem.state !== 'complete'   ? [{ label: 'Dirty Dataset', href: 'sims/dirty_dataset_sim.html' }] : []),
+            ...(dirtyItem.state !== 'complete'   ? [{ label: 'Dirty Dataset', href: 'sims/dirty-dataset/index.html' }] : []),
             ...(rtgItem.state !== 'complete'     ? [{ label: 'RTG Investigation', href: 'sims/rtg-investigation/index.html' }] : []),
           ] },
         { name: 'Visualization',
