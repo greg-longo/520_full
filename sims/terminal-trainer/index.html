@@ -527,6 +527,19 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
     /* Remove default outline only where we've supplied our own */
     :focus:not(:focus-visible) { outline: none; }
 
+    /* Terminal input: the chunky offset ring looks wrong on the prompt line.
+       Give it a subtle focus cue that fits the terminal instead - still clearly
+       visible for keyboard users (WCAG), just not a highlighter box. */
+    .term-input:focus-visible,
+    .term-input:focus {
+      outline: none;
+      box-shadow: none;
+    }
+    .terminal-window:focus-within {
+      border-color: var(--green);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.45), 0 0 0 1px var(--green);
+    }
+
     
     /* ── ADA: Reduced motion (WCAG 2.1 SC 2.3.3) ───────────────────
        Users who prefer reduced motion (vestibular disorders, epilepsy)
