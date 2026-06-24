@@ -817,6 +817,9 @@ textarea.editor:read-only { opacity: 0.7; cursor: default; }
     }
     /* Remove default outline only where we've supplied our own */
     :focus:not(:focus-visible) { outline: none; }
+    /* Code editors have their own border-tint focus style; the chunky offset
+       ring looks wrong wrapping a big textarea, so suppress it here only. */
+    textarea.editor:focus-visible, textarea.editor:focus { outline: none; }
 
     
     /* ── ADA: Reduced motion (WCAG 2.1 SC 2.3.3) ───────────────────

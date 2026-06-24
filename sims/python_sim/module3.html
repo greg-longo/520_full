@@ -187,6 +187,9 @@
     }
     /* Remove default outline only where we've supplied our own */
     :focus:not(:focus-visible) { outline: none; }
+    /* Code editor has its own border-tint focus; suppress the chunky offset
+       ring on it only (it looks wrong wrapping a big textarea). */
+    textarea.code-editor:focus-visible, textarea.code-editor:focus { outline: none; }
 
     
     /* ── ADA: Reduced motion (WCAG 2.1 SC 2.3.3) ───────────────────
