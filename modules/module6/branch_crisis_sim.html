@@ -852,6 +852,76 @@
 </head>
 <body>
 
+<!-- JUICE: confetti + mute (shared engine) -->
+<canvas id="juiceConfetti" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998;display:none;"></canvas>
+<button id="juiceMute" aria-pressed="false" aria-label="Toggle sound effects"
+  style="position:fixed;bottom:14px;right:14px;z-index:9999;width:38px;height:38px;border-radius:50%;border:1px solid #5a3a3a;background:#1a1010;color:#e0a0a0;font-size:16px;cursor:pointer;line-height:1;">&#9834;</button>
+<script>
+/* ============ Reusable juice engine (sfx + confetti + shake) ============ */
+(function(){
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let muted = false, actx = null;
+  function tone(freq, dur, type='square', vol=0.04, when=0) {
+    if (muted) return;
+    try {
+      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type; o.frequency.value = freq;
+      g.gain.setValueAtTime(vol, actx.currentTime + when);
+      g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + when + dur);
+      o.connect(g); g.connect(actx.destination);
+      o.start(actx.currentTime + when); o.stop(actx.currentTime + when + dur);
+    } catch(e){}
+  }
+  window.sfx = {
+    key:  () => tone(900 + Math.random()*300, 0.015, 'square', 0.008),
+    fail: () => { tone(160,0.2,'sawtooth',0.05); tone(110,0.3,'sawtooth',0.05,0.12); },
+    pass: () => { [523,659,784,1047].forEach((f,i)=>tone(f,0.18,'square',0.04,i*0.09)); },
+    win:  () => { [523,659,784,1047,784,1047,1319,1568].forEach((f,i)=>tone(f,0.22,'square',0.045,i*0.13)); },
+    hint: () => tone(440,0.12,'sine',0.05)
+  };
+  function setMuted(m){
+    muted = m;
+    const b = document.getElementById('juiceMute');
+    if (b){ b.textContent = muted ? '♪̸' : '♪'; b.style.textDecoration = muted ? 'line-through':'none'; b.setAttribute('aria-pressed', String(muted)); }
+    try { localStorage.setItem('dtsc520_muted', muted ? '1':'0'); } catch(e){}
+  }
+  window.setMuted = setMuted;
+  document.getElementById('juiceMute').addEventListener('click', () => setMuted(!muted));
+  try { setMuted(localStorage.getItem('dtsc520_muted') === '1'); } catch(e){}
+  window.screenShake = function(){
+    if (REDUCED) return;
+    document.body.animate(
+      [{transform:'translate(0,0)'},{transform:'translate(-6px,2px)'},{transform:'translate(5px,-3px)'},{transform:'translate(-4px,1px)'},{transform:'translate(0,0)'}],
+      {duration:260, easing:'ease-in-out'}
+    );
+  };
+  window.confettiBurst = function(){
+    if (REDUCED) return;
+    const cv = document.getElementById('juiceConfetti');
+    cv.style.display = 'block';
+    cv.width = innerWidth; cv.height = innerHeight;
+    const ctx = cv.getContext('2d');
+    const cols = ['#3e8a58','#5fc77f','#4adfff','#8B1C40','#c9a24a','#ffffff'];
+    const parts = Array.from({length:170}, () => ({
+      x: Math.random()*cv.width, y: -20 - Math.random()*cv.height*0.5,
+      vx:(Math.random()-0.5)*2.4, vy:1.8+Math.random()*3.2,
+      s:4+Math.random()*6, r:Math.random()*Math.PI, vr:(Math.random()-0.5)*0.25,
+      c: cols[Math.floor(Math.random()*cols.length)]
+    }));
+    let frames = 0;
+    (function draw(){
+      ctx.clearRect(0,0,cv.width,cv.height);
+      parts.forEach(p => { p.x+=p.vx; p.y+=p.vy; p.r+=p.vr;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r);
+        ctx.fillStyle=p.c; ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); ctx.restore(); });
+      if (++frames < 460) requestAnimationFrame(draw);
+      else { ctx.clearRect(0,0,cv.width,cv.height); cv.style.display='none'; }
+    })();
+  };
+})();
+</script>
+
   <!-- LANDING OVERLAY -->
   <div class="landing-overlay" id="landingOverlay">
     <div class="landing-card">
@@ -1023,10 +1093,10 @@
       question: 'What should your first move be to understand the scope of the problem?',
       maxPts: 4,
       choices: [
-        { key: 'A', text: 'Immediately rewrite the fetch_roster function from scratch — you remember its general shape and can have it running again faster than any diagnosis would take', sub: 'Skip diagnosis, go straight to fixing', pts: 1 },
-        { key: 'B', text: 'Email the team asking who broke it and wait for someone to respond before touching anything', sub: 'Diagnose socially, not technically', pts: 1 },
+        { key: 'A', text: 'Immediately rewrite the fetch_roster function from scratch — you remember its general shape and can have it running again faster than any diagnosis would take', sub: 'Rewrite from memory', pts: 1 },
+        { key: 'B', text: 'Email the team asking who broke it and wait for someone to respond before touching anything', sub: 'Ask the team, then wait', pts: 1 },
         { key: 'C', text: 'Run git diff HEAD~1 HEAD to see exactly what changed in the last commit', sub: 'git diff HEAD~1 HEAD', pts: 4, correct: true },
-        { key: 'D', text: 'Delete the utils.py file and start fresh', sub: 'Nuclear option', pts: 0 },
+        { key: 'D', text: 'Delete the utils.py file and start fresh', sub: 'rm utils.py, rewrite it', pts: 0 },
       ],
       feedback: {
         correct: 'Correct. Before writing any code, you need to understand what actually changed. <code>git diff HEAD~1 HEAD</code> shows you exactly which lines were added or removed in the last commit - making the <code>fetch_roster</code> removal immediately obvious.',
@@ -1051,7 +1121,7 @@
       question: 'What\'s the right way to set up your workspace before making the fix?',
       maxPts: 4,
       choices: [
-        { key: 'A', text: 'Edit utils.py directly on main and commit immediately — it\'s a one-line restore and the pipeline is down, so speed matters more than process right now', sub: 'Push fix straight to main', pts: 1 },
+        { key: 'A', text: 'Edit utils.py directly on main and commit immediately — it\'s a one-line restore and the pipeline is down, so speed matters more than process right now', sub: 'Edit + commit on main', pts: 1 },
         { key: 'B', text: 'Create a new branch called hotfix/restore-fetch-roster and work there', sub: 'git checkout -b hotfix/restore-fetch-roster', pts: 4, correct: true },
         { key: 'C', text: 'Fork the entire repository to your own GitHub account so you have a clean copy to work from without risking the shared repo', sub: 'Create a fork on GitHub', pts: 0 },
         { key: 'D', text: 'Stash your working directory and create the branch later', sub: 'git stash', pts: 2 },
@@ -1079,10 +1149,10 @@
       question: 'How should you stage and commit the fix?',
       maxPts: 4,
       choices: [
-        { key: 'A', text: 'git add . to stage all modified files, then git commit -m "fix" — short and to the point, everyone on the team will know what it means', sub: 'Stage everything', pts: 2 },
-        { key: 'B', text: 'git push origin hotfix/restore-fetch-roster without committing first', sub: 'Try to push without committing', pts: 0 },
-        { key: 'C', text: 'git commit -am "Restored the missing function — pipeline is running again" — the -a flag handles staging automatically so you can skip git add', sub: '-a stages all tracked files automatically', pts: 2 },
-        { key: 'D', text: 'git add utils.py then git commit -m "Restore fetch_roster deleted in WIP refactor"', sub: 'Stage the specific file, write a descriptive message', pts: 4, correct: true },
+        { key: 'A', text: 'git add . to stage all modified files, then git commit -m "fix" — short and to the point, everyone on the team will know what it means', sub: 'git add . && commit -m "fix"', pts: 2 },
+        { key: 'B', text: 'git push origin hotfix/restore-fetch-roster without committing first', sub: 'git push (no commit yet)', pts: 0 },
+        { key: 'C', text: 'git commit -am "Restored the missing function — pipeline is running again" — the -a flag handles staging automatically so you can skip git add', sub: 'git commit -am "..."', pts: 2 },
+        { key: 'D', text: 'git add utils.py then git commit -m "Restore fetch_roster deleted in WIP refactor"', sub: 'git add utils.py, then commit', pts: 4, correct: true },
       ],
       feedback: {
         correct: 'Perfect. Staging only the file you changed is precise and intentional. The commit message is specific enough that anyone reading the log three months from now will understand exactly what happened and why - no detective work required.',
@@ -1139,10 +1209,10 @@
       question: 'What\'s the best way to write your Pull Request title and description?',
       maxPts: 4,
       choices: [
-        { key: 'A', text: 'Title: "fix" | Description: "fixed it"', sub: 'git commit -style message', pts: 0 },
-        { key: 'B', text: 'Title: "Hotfix: Restore fetch_roster deleted in WIP refactor" | Description: "Root cause: fetch_roster removed in commit a3f9d21 during refactor. Restored original function. Ran pipeline against full roster - 25 players processed clean."', sub: 'Specific title + root cause + verification', pts: 4, correct: true },
-        { key: 'C', text: 'Skip the PR entirely — merge directly into main from the command line since it\'s a production outage and the review process adds unnecessary delay when every minute counts', sub: 'git merge hotfix/restore-fetch-roster', pts: 1 },
-        { key: 'D', text: 'Title: "Hotfix: restore fetch_roster" | Description: "Restored the function. Pipeline is working again."', sub: 'Reasonable title, thin description', pts: 2 },
+        { key: 'A', text: 'Title: "fix" | Description: "fixed it"', sub: 'Minimal title and description', pts: 0 },
+        { key: 'B', text: 'Title: "Hotfix: Restore fetch_roster deleted in WIP refactor" | Description: "Root cause: fetch_roster removed in commit a3f9d21 during refactor. Restored original function. Ran pipeline against full roster - 25 players processed clean."', sub: 'Detailed title and description', pts: 4, correct: true },
+        { key: 'C', text: 'Skip the PR entirely — merge directly into main from the command line since it\'s a production outage and the review process adds unnecessary delay when every minute counts', sub: 'Merge to main, skip the PR', pts: 1 },
+        { key: 'D', text: 'Title: "Hotfix: restore fetch_roster" | Description: "Restored the function. Pipeline is working again."', sub: 'Short title, brief description', pts: 2 },
       ],
       feedback: {
         correct: 'Excellent. A great PR has a specific title that makes the log readable, and a description that gives reviewers everything they need: what broke, what you changed, and how you verified the fix. Even in an emergency, a one-minute description saves your reviewer five minutes of archaeology.',
@@ -1361,6 +1431,14 @@
     const isCorrect = btn.dataset.correct === 'true';
     btn.classList.add(isCorrect ? 'chosen-correct' : 'chosen-wrong');
 
+    // Juice: best answer celebrates; a reasonable-but-suboptimal answer nudges;
+    // a zero-point answer buzzes. (Judgment sim - don't punish the "2pt" calls harshly.)
+    try {
+      if (isCorrect) { window.sfx.pass(); window.confettiBurst(); }
+      else if (pts > 0) { window.sfx.hint(); }
+      else { window.sfx.fail(); window.screenShake(); }
+    } catch(e){}
+
     // Feedback
     const fb = document.getElementById('fb-' + idx);
     fb.innerHTML = `<div class="fb-title">${isCorrect ? 'Good call' : 'Not the best move'}</div><p>${isCorrect ? c.feedback.correct : c.feedback.wrong}</p>`;
@@ -1409,6 +1487,7 @@
 
     const pct = Math.round((totalScore / 20) * 100);
     document.getElementById('finalScoreDisplay').textContent = pct + '%';
+    try { window.sfx.win(); if (pct >= 75) window.confettiBurst(); } catch(e){}
 
     let title, tagline, verdict, sub;
     if (pct === 100) {
