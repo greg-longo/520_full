@@ -6,40 +6,38 @@
   font-size: 13px;
 }
 
-/* Fixed top-right placement so the chip floats consistently on every page.
-   Pages opt in by giving the slot the `auth-slot-fixed` class. */
+/* ── Auth bar: a full-width strip pinned to the very top of every page, ABOVE
+   the page's own nav. The chip lives at its right end. Because it's its own
+   bar and the page is pushed down to make room (see body padding below), it
+   can never overlap any page's nav at any width or in any chip state. */
 #auth-slot.auth-slot-fixed {
   position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 9999;
-  /* Solid backing so the chip always reads clearly on top of page nav. */
-  background: var(--bg, #0f0e0d);
-  border-radius: 6px;
-  padding: 4px;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--auth-bar-h, 40px);
+  z-index: 100001;          /* above page nav AND above the gate overlay's page */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 14px;
+  background: #0b0a09;
+  border-bottom: 1px solid rgba(139, 28, 64, 0.45);
+  box-sizing: border-box;
 }
 
-/* The chip floats fixed in the top-right corner. Most pages have a top nav
-   whose right-aligned content (menu links, "← Back" link) ends at that same
-   corner and collides with the chip. Reserve room on the right edge of the
-   nav so its content stops before the chip. Applies wherever the fixed chip
-   is present (every live page). The chip is ~210px wide at full size. */
+/* Push every page's content down by the bar height so nothing hides behind it.
+   Applied to <html> so it works regardless of the page's own body styles. */
+html:has(#auth-slot.auth-slot-fixed) {
+  scroll-padding-top: var(--auth-bar-h, 40px);
+}
+body:has(#auth-slot.auth-slot-fixed) {
+  padding-top: var(--auth-bar-h, 40px);
+}
+/* Page navs that are sticky/fixed to top:0 must sit BELOW the auth bar. */
 body:has(#auth-slot.auth-slot-fixed) > nav,
-body:has(#auth-slot.auth-slot-fixed) > header > nav,
 body:has(#auth-slot.auth-slot-fixed) > header {
-  /* Clears the widest chip state: signed-in "Name / Sign out" (~170px).
-     Signed-out is just "Sign in" (~70px), so this is comfortably clear. */
-  padding-right: 190px;
-}
-
-/* On narrow screens many of these navs hide their links and the chip wraps,
-   so the large reserve isn't needed (and would look lopsided). */
-@media (max-width: 640px) {
-  body:has(#auth-slot.auth-slot-fixed) > nav,
-  body:has(#auth-slot.auth-slot-fixed) > header > nav,
-  body:has(#auth-slot.auth-slot-fixed) > header {
-    padding-right: 1rem;
-  }
+  top: var(--auth-bar-h, 40px);
 }
 
 .auth-signin {
