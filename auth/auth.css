@@ -19,13 +19,25 @@
   padding: 4px;
 }
 
-/* Small right-edge padding on auth-required page nav so its "← Back" link
-   nudges clear of the floating chip. Scoped so it never disturbs pages
-   without this collision. */
-body[data-auth-required] > nav,
-body[data-auth-required] .nav,
-body[data-auth-required] header > nav {
-  padding-right: 24px;
+/* The chip floats fixed in the top-right corner. Most pages have a top nav
+   whose right-aligned content (menu links, "← Back" link) ends at that same
+   corner and collides with the chip. Reserve room on the right edge of the
+   nav so its content stops before the chip. Applies wherever the fixed chip
+   is present (every live page). The chip is ~210px wide at full size. */
+body:has(#auth-slot.auth-slot-fixed) > nav,
+body:has(#auth-slot.auth-slot-fixed) > header > nav,
+body:has(#auth-slot.auth-slot-fixed) > header {
+  padding-right: 220px;
+}
+
+/* On narrow screens many of these navs hide their links and the chip wraps,
+   so the large reserve isn't needed (and would look lopsided). */
+@media (max-width: 640px) {
+  body:has(#auth-slot.auth-slot-fixed) > nav,
+  body:has(#auth-slot.auth-slot-fixed) > header > nav,
+  body:has(#auth-slot.auth-slot-fixed) > header {
+    padding-right: 1rem;
+  }
 }
 
 .auth-signin {
