@@ -1544,6 +1544,7 @@ function showResults() {
   resultScreen.innerHTML = resultHTML;
   showScreen('screen-result');
   try { localStorage.setItem('dtsc520_findyourpath', JSON.stringify({ completed: true, role: role })); } catch(e) {}
+  try { if (typeof logEvent === 'function') logEvent('sim_complete', 'find_your_path', 1, 1); } catch(e) {}
 
   // Typewrite the guide comment
   const guideEl = document.getElementById('guideText');

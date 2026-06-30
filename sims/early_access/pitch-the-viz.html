@@ -2391,6 +2391,7 @@ function showDebrief() {
 
   const pct = Math.round((totalScore / 12) * 100);
   try { localStorage.setItem('dtsc520_pitchtheviz', JSON.stringify({ completed: true, score: totalScore, pct: pct })); } catch(e) {}
+  try { if (typeof logEvent === 'function') logEvent('sim_complete', 'pitch_the_viz_ea', totalScore, 12); } catch(e) {}
 
   let verdict, verdictBody;
   if (pct === 100) {

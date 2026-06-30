@@ -1844,6 +1844,7 @@ function showCompletion() {
 
   /* Full-completion key (all 3 parts incl. the git workflow) for the capstone gate */
   try { localStorage.setItem('dtsc520_terminaltrainer', JSON.stringify({ completed: true, date: new Date().toISOString() })); } catch(e) {}
+  try { if (typeof logEvent === 'function') logEvent('sim_complete', 'terminal_trainer', completed, part1.length + part2.length + part3.length); } catch(e) {}
 
   /* Speedrun: finalize time, compare to personal best */
   var newBest = false;

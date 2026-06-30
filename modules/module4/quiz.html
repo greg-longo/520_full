@@ -1281,6 +1281,7 @@
 
       // Save score to localStorage
       localStorage.setItem('dtsc520_quiz_m4', JSON.stringify({ score, total, percent, completedAt: new Date().toISOString() }));
+      try { if (typeof logEvent === 'function') logEvent('quiz_complete', 'm4_quiz', score, total); } catch(e) {}
     }
 
     function retake() {

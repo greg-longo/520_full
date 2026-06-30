@@ -757,6 +757,7 @@ function renderFinal() {
   else                 { badge='📋'; title='Review the Outcomes'; }
 
   try { localStorage.setItem('dtsc520_dirtydataset', JSON.stringify({ completed:true, points: state.points, max: MAX_POINTS, score: Math.round(pct*100), date: new Date().toISOString() })); } catch(e){}
+  try { if (typeof logEvent === 'function') logEvent('sim_complete', 'dirty_dataset', state.points, MAX_POINTS); } catch(e) {}
   try { window.sfx.win(); window.confettiBurst(); } catch(e){}
 
   const rows = STAGES.map((s,i) => {

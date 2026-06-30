@@ -1124,6 +1124,7 @@ function showResults() {
 
   document.getElementById('results').classList.add('active');
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify({score:total, ts:Date.now()})); } catch(e) {}
+  try { if (typeof logEvent === 'function') logEvent('sim_complete', 'debug_pipeline_ea', total, 20); } catch(e) {}
 }
 
 function startSim() {

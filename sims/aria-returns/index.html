@@ -878,6 +878,7 @@ function recordCompletion(review) {
       name: state.name,
       date: new Date().toISOString()
     }));
+    try { if (typeof logEvent === 'function') logEvent('sim_complete', 'aria_returns', 1, 1); } catch(e) {}
     return { newBest: !prev || !prev.bestTimeMs || state.elapsed < prev.bestTimeMs, hadPrev: !!(prev && prev.bestTimeMs), best };
   } catch(e) { return { newBest: false, hadPrev: false, best: state.elapsed }; }
 }

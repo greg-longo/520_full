@@ -1597,6 +1597,7 @@ function showFinal() {
 
   const total = scores.reduce((a,b)=>a+b,0);
   try { localStorage.setItem('dtsc520_charttoppers', JSON.stringify({ completed: true, score: total })); } catch(e) {}
+  try { if (typeof logEvent === 'function') logEvent('sim_complete', 'numpy_lab', total, 18); } catch(e) {}
   const pct = total / 18;
 
   let emoji, title;
