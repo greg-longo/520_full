@@ -181,9 +181,56 @@
     })[c]);
   }
 
+  // ── AUTH GATE ──────────────────────────────────────────────────────────────
+  // On pages whose <body> has the `data-auth-required` attribute, show a
+  // full-screen blocking overlay until a valid eastern.edu session exists.
+  // This guarantees no quiz or sim can be started — and therefore none can be
+  // completed — without being signed in, so every completion is logged.
+  const GATE_ID = 'auth-gate';
+
+  function buildGate() {
+    const gate = document.createElement('div');
+    gate.id = GATE_ID;
+    gate.setAttribute('role', 'dialog');
+    gate.setAttribute('aria-modal', 'true');
+    gate.setAttribute('aria-label', 'Sign in required');
+    gate.innerHTML =
+      '<div class="auth-gate-card">' +
+        '<div class="auth-gate-title">Sign in required</div>' +
+        '<p class="auth-gate-msg">You must sign in with your <strong>@eastern.edu</strong> ' +
+        'Google account to access this activity. Your completion is recorded for ' +
+        'academic-activity reporting.</p>' +
+        '<button type="button" class="auth-gate-btn">Sign in with Eastern Google</button>' +
+        '<p class="auth-gate-hint">Trouble signing in? Contact your instructor.</p>' +
+      '</div>';
+    gate.querySelector('.auth-gate-btn').addEventListener('click', signIn);
+    return gate;
+  }
+
+  function applyGate(user) {
+    const required = document.body && document.body.hasAttribute('data-auth-required');
+    if (!required) return;
+    let gate = document.getElementById(GATE_ID);
+    const signedIn = !!user;            // user is null when signed out / expired
+    if (!signedIn) {
+      if (!gate) {
+        gate = buildGate();
+        document.body.appendChild(gate);
+      }
+      gate.style.display = 'flex';
+      document.body.classList.add('auth-gated');   // lock scroll via CSS
+    } else if (gate) {
+      gate.style.display = 'none';
+      document.body.classList.remove('auth-gated');
+    }
+  }
+
   // ── BOOT ─────────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
     renderSlot();
+    // onChange fires immediately with the current user, then on every change —
+    // so this both gates on load and reacts to later sign-in / sign-out.
+    window.Auth.onChange(applyGate);
     // Pre-load GIS so the popup is instant when the user clicks.
     ensureGsiLoaded(() => {});
   });
