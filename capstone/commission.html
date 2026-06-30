@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cabinet Commission - DTSC 520 Capstone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<style>
+  :root {
+    --bg:#0a0c11; --panel:#11151d; --panel2:#161b25; --line:#272d3a; --line2:#333b4b;
+    --ink:#eef1f6; --ink-dim:#a3abbd; --ink-mute:#626c80;
+    --brass:#c9a24a; --brass-l:#e3c075; --maroon:#8B1C40; --maroon-l:#c25a7a;
+    --on:#5ec99a; --warn:#dab153; --bad:#cf6b7e;
+    --serif:'Newsreader',Georgia,serif; --sans:'Zilla Slab',Georgia,serif; --mono:'IBM Plex Mono',monospace;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body { height:100%; }
+  body { background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.6; overflow:hidden; }
+  code { font-family:var(--mono); font-size:0.9em; color:var(--brass-l); }
+
+  /* ===== APP WINDOW FRAME ===== */
+  #appwin { position:fixed; inset:0; display:flex; flex-direction:column; }
+  .titlebar { display:flex; align-items:center; gap:10px; padding:0.5rem 1rem; background:var(--panel); border-bottom:1px solid var(--line); flex-shrink:0; }
+  .tb-dots { display:flex; gap:6px; } .tb-dots i { width:11px; height:11px; border-radius:50%; display:block; }
+  .tb-dots i:nth-child(1){background:#e0626d;} .tb-dots i:nth-child(2){background:#dab153;} .tb-dots i:nth-child(3){background:#5ec99a;}
+  .tb-title { font-family:var(--mono); font-size:0.74rem; color:var(--ink-dim); letter-spacing:0.03em; }
+  .tb-title b { color:var(--ink); font-weight:600; }
+  .tb-spacer { flex:1; }
+  .tb-home { font-family:var(--mono); font-size:0.68rem; color:var(--ink-mute); text-decoration:none; }
+  .tb-home:hover { color:var(--ink-dim); }
+
+  /* ===== MAIN GRID: thread | work | report ===== */
+  .grid { flex:1; display:grid; grid-template-columns: 270px 1fr; min-height:0; }
+  @media (max-width:1180px){ .grid{ grid-template-columns: 230px 1fr; } }
+  @media (max-width:880px){ .grid{ grid-template-columns: 1fr; } .thread{ display:none; } }
+
+  /* Jamie thread (left) */
+  .thread { background:var(--panel); border-right:1px solid var(--line); display:flex; flex-direction:column; min-height:0; }
+  .thread-head { padding:0.9rem 1rem 0.7rem; border-bottom:1px solid var(--line); display:flex; gap:0.65rem; align-items:center; }
+  .avatar { width:42px; height:42px; border-radius:50%; flex-shrink:0; border:1.5px solid var(--brass); }
+  /* emotion avatar: a round frame holding either a GIF (img) or the SVG fallback, with crossfade */
+  .av { display:inline-block; position:relative; border-radius:50%; flex-shrink:0; border:1.5px solid var(--brass); overflow:hidden; background:#1b2330; }
+  .av img, .av svg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  /* No transition on frame swaps - blinks and idle cycling must be instant (frame animation).
+     A 0.3s opacity transition here made each blink linger ~0.8s. */
+  .av .av-frame.gone { opacity:0; }
+  .thread-who { font-weight:600; font-size:0.95rem; }
+  .thread-role { font-family:var(--mono); font-size:0.62rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.08em; }
+  .thread-msgs { flex:1; overflow-y:auto; padding:1rem 0.9rem; display:flex; flex-direction:column; gap:0.7rem; }
+  .msg { background:var(--panel2); border:1px solid var(--line); border-radius:10px 10px 10px 3px; padding:0.6rem 0.8rem; font-size:0.86rem; color:var(--ink-dim); cursor:pointer; transition:border-color 0.15s; }
+  .msg:hover { border-color:var(--line2); }
+  .msg.fresh { border-color:var(--brass); }
+  .msg-text { line-height:1.5; }
+  .msg.collapsed .msg-text { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .msg.collapsed .msg-time { display:none; }
+  .msg-foot { display:flex; justify-content:space-between; align-items:center; margin-top:0.4rem; }
+  .msg-time { font-family:var(--mono); font-size:0.58rem; color:var(--ink-mute); }
+  .msg-more { font-family:var(--mono); font-size:0.58rem; color:var(--brass); }
+  .msg.collapsed .msg-more::after { content:'more'; }
+  .msg:not(.collapsed) .msg-more::after { content:'less'; }
+
+  /* work column */
+  .work { display:flex; flex-direction:column; min-height:0; position:relative; }
+  .stage-strip { display:flex; gap:0.3rem; padding:0.6rem 1.2rem; border-bottom:1px solid var(--line); background:var(--panel); flex-wrap:wrap; align-items:center; }
+  .chip { font-family:var(--mono); font-size:0.6rem; color:var(--ink-mute); padding:2px 8px; border-radius:12px; display:flex; gap:5px; align-items:center; white-space:nowrap; }
+  .chip .cd { width:7px; height:7px; border-radius:50%; background:currentColor; opacity:0.5; }
+  .chip.active { color:var(--brass); border:1px solid rgba(201,162,74,0.4); } .chip.done { color:var(--on); }
+  .chip.active .cd, .chip.done .cd { opacity:1; }
+  .strip-spacer { flex:1; }
+  .report-toggle { display:none; font-family:var(--mono); font-size:0.62rem; color:var(--brass); background:none; border:1px solid var(--line2); border-radius:5px; padding:3px 9px; cursor:pointer; }
+  @media (max-width:1024px){ .grid.has-report .report-toggle{ display:block; } }
+
+  .stage-body { flex:1; overflow-y:auto; padding:2rem 2rem 6rem; }
+  .beatwrap { max-width:620px; margin:0 auto; }
+
+  /* ===== BEAT: dialogue ===== */
+  /* Start the content near the top (not vertically centered) so the block doesn't
+     drift up as the typewriter fills lines. */
+  .beat-dialogue { min-height:48vh; display:flex; flex-direction:column; justify-content:flex-start; padding-top:6vh; }
+  .speaker { display:flex; gap:0.8rem; align-items:center; margin-bottom:1.1rem; }
+  .speaker .avatar { width:48px; height:48px; }
+  .speaker-name { font-weight:600; } .speaker-sub { font-family:var(--mono); font-size:0.62rem; color:var(--ink-mute); text-transform:uppercase; letter-spacing:0.08em; }
+  .dialogue { font-family:var(--serif); font-size:1.32rem; line-height:1.65; color:var(--ink); min-height:9em; text-align:left; overflow-wrap:break-word; }
+  .dialogue .cursor { display:inline-block; width:0.5ch; background:var(--brass); animation:blink 1s step-end infinite; }
+  @keyframes blink { 50%{opacity:0;} }
+
+  /* ===== BEAT: interstitial (text only, dark) ===== */
+  .beat-interstitial { min-height:60vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:7vh; }
+  .inter-avatar { margin-bottom:0.9rem; }
+  .inter-avatar .av { width:96px; height:96px; border-width:2px; }
+  .inter-name { font-family:var(--mono); font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--brass); margin-bottom:1.1rem; text-align:center; }
+  /* Left-aligned so typing grows down/right without re-centering each character. Fixed width = no horizontal jump. */
+  .interstitial-text { font-family:var(--serif); font-size:1.42rem; line-height:1.7; color:var(--ink); width:100%; max-width:540px; text-align:left; min-height:8.5em; overflow-wrap:break-word; }
+
+  /* ===== BEAT: decision ===== */
+  .d-label { font-family:var(--mono); font-size:0.66rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--maroon-l); margin-bottom:0.5rem; }
+  .d-q { font-size:1.18rem; font-weight:600; margin-bottom:1rem; line-height:1.45; }
+  .choices { display:flex; flex-direction:column; gap:0.6rem; }
+  .choice { text-align:left; background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:0.85rem 1rem 0.85rem 2.7rem; position:relative; cursor:pointer; font-family:var(--sans); font-size:0.98rem; line-height:1.5; transition:border-color 0.15s, background 0.15s; }
+  .choice:hover:not(:disabled){ border-color:var(--brass); background:var(--panel2); }
+  .choice:disabled{ cursor:default; opacity:0.92; }
+  .choice .ck { position:absolute; left:0.8rem; top:0.85rem; width:22px; height:22px; border-radius:5px; background:var(--bg); color:var(--ink-mute); font-family:var(--mono); font-size:0.76rem; display:grid; place-items:center; }
+  .choice.pick-good{ border-color:var(--on); background:rgba(94,201,154,0.08);} .choice.pick-good .ck{background:rgba(94,201,154,0.22);color:var(--on);}
+  .choice.pick-warn{ border-color:var(--warn); background:rgba(218,177,83,0.08);} .choice.pick-warn .ck{background:rgba(218,177,83,0.22);color:var(--warn);}
+  .choice.pick-bad{ border-color:var(--bad); background:rgba(207,107,126,0.08);} .choice.pick-bad .ck{background:rgba(207,107,126,0.22);color:var(--bad);}
+  .outcome { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:0.9rem 1.1rem; margin-top:1rem; }
+  .outcome.good{border-top:3px solid var(--on);} .outcome.warn{border-top:3px solid var(--warn);} .outcome.bad{border-top:3px solid var(--bad);}
+  .outcome-t { font-family:var(--mono); font-size:0.8rem; font-weight:600; margin-bottom:0.4rem; }
+  .outcome.good .outcome-t{color:var(--on);} .outcome.warn .outcome-t{color:var(--warn);} .outcome.bad .outcome-t{color:var(--bad);}
+  .outcome p { font-size:0.92rem; color:var(--ink-dim); }
+
+  /* ===== BEAT: code ===== */
+  .lab-task { font-size:0.96rem; color:var(--ink); margin-bottom:0.4rem; }
+  .lab-hint-inline { font-size:0.85rem; color:var(--ink-dim); margin-bottom:0.8rem; }
+  textarea.editor { width:100%; min-height:170px; resize:vertical; background:#080a0e; color:#e8ecf3; border:1px solid var(--line); border-radius:7px; font-family:var(--mono); font-size:0.84rem; line-height:1.6; padding:0.85rem; tab-size:4; }
+  textarea.editor:focus { outline:none; border-color:var(--brass); }
+  .lab-btns { display:flex; gap:0.5rem; margin-top:0.7rem; flex-wrap:wrap; }
+  .btn { font-family:var(--mono); font-size:0.78rem; font-weight:600; padding:0.55rem 1.2rem; border:none; border-radius:6px; cursor:pointer; }
+  .btn-run { background:var(--brass); color:#191205; } .btn-run:disabled{ opacity:0.5; cursor:not-allowed; }
+  .btn-ghost { background:transparent; color:var(--ink-dim); border:1px solid var(--line2); }
+  .btn-ghost:hover { color:var(--ink); border-color:var(--ink-mute); }
+  .console { margin-top:0.7rem; background:#080a0e; border:1px solid var(--line); border-radius:6px; font-family:var(--mono); font-size:0.78rem; padding:0.75rem; min-height:34px; white-space:pre-wrap; color:var(--ink-dim); overflow-x:auto; }
+  .console .ok{color:var(--on);} .console .err{color:var(--bad);} .console .sys{color:var(--brass-l);}
+
+  /* continue / nav */
+  .beat-nav { display:flex; justify-content:flex-end; align-items:center; gap:1rem; margin-top:1.6rem; }
+  .skip-hint { font-family:var(--mono); font-size:0.66rem; color:var(--ink-mute); letter-spacing:0.04em; opacity:0.7; user-select:none; }
+  .btn-cont { background:var(--brass); color:#191205; font-family:var(--mono); font-size:0.84rem; font-weight:600; padding:0.7rem 1.7rem; border:none; border-radius:7px; cursor:pointer; }
+  .btn-cont:disabled { opacity:0.32; cursor:not-allowed; }
+  .btn-cont.ghost { background:transparent; color:var(--ink-dim); border:1px solid var(--line2); }
+
+  /* ===== REPORT PANEL (right, overlay on small) =====
+     Hidden until the first finding lands (avoids an empty, misaligned column). */
+  .report { display:none; width:300px; background:var(--panel); border-left:1px solid var(--line); flex-direction:column; min-height:0; }
+  .grid.has-report .report { display:flex; }
+  @media (min-width:1025px){ .grid.has-report{ grid-template-columns:270px 1fr 300px; } }
+  @media (max-width:1024px){
+    .report { position:fixed; top:0; right:0; bottom:0; width:320px; max-width:88vw; z-index:60; transform:translateX(100%); transition:transform 0.25s; box-shadow:-12px 0 40px rgba(0,0,0,0.5); }
+    .grid.has-report .report { display:flex; transform:translateX(100%); }   /* present but off-screen until toggled */
+    .report.open { transform:translateX(0) !important; }
+  }
+  .report-head { padding:0.9rem 1rem; border-bottom:1px solid var(--line); }
+  .report-doc-label { font-family:var(--mono); font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--brass); }
+  .report-title { font-family:var(--serif); font-size:1.05rem; font-weight:500; margin-top:0.15rem; }
+  .report-body { flex:1; overflow-y:auto; padding:1rem; font-family:var(--serif); }
+  .report-line { font-size:0.9rem; color:var(--ink-dim); padding:0.6rem 0; border-bottom:1px solid var(--line); line-height:1.5; opacity:0; transform:translateY(6px); animation:rin 0.5s forwards; }
+  @keyframes rin { to{opacity:1;transform:none;} }
+  .report-line b { color:var(--ink); font-weight:500; }
+  .report-line .rl-tag { display:block; font-family:var(--mono); font-size:0.58rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--brass); margin-bottom:0.2rem; }
+
+  /* loading */
+  #loading { position:fixed; inset:0; background:var(--bg); z-index:200; display:grid; place-items:center; text-align:center; }
+  .spin { width:34px; height:34px; border:3px solid var(--line); border-top-color:var(--brass); border-radius:50%; animation:spin 0.9s linear infinite; margin:0 auto 14px; }
+  @keyframes spin { to{transform:rotate(360deg);} }
+  .load-t { font-family:var(--mono); font-size:0.8rem; color:var(--ink-dim); } .load-s { font-family:var(--mono); font-size:0.66rem; color:var(--ink-mute); margin-top:6px; }
+
+  .fade-in { animation:fadein 0.4s ease; } @keyframes fadein { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;} }
+  .flash-ok { animation:fok 0.7s ease; } @keyframes fok { 0%,100%{background:#080a0e;} 30%{background:rgba(94,201,154,0.12);} }
+  .hidden { display:none !important; }
+  a:focus-visible,button:focus-visible,textarea:focus-visible { outline:2px solid var(--brass-l); outline-offset:2px; }
+  textarea.editor:focus-visible{ outline:none; }
+  @media (prefers-reduced-motion: reduce){ .spin,.flash-ok,.fade-in,.report-line,.dialogue .cursor{ animation:none; opacity:1; transform:none; } }
+  ::-webkit-scrollbar{ width:9px; } ::-webkit-scrollbar-thumb{ background:var(--line2); border-radius:5px; }
+</style>
+  <link rel="stylesheet" href="/520_full/auth/auth.css">
+  <script src="/520_full/auth/auth.js" defer></script>
+</head>
+<body>
+<div id="auth-slot" class="auth-slot-fixed"></div>
+
+
+<canvas id="juiceConfetti" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998;display:none;"></canvas>
+<button id="juiceMute" aria-pressed="false" aria-label="Toggle sound" style="position:fixed;bottom:14px;left:14px;z-index:9999;width:34px;height:34px;border-radius:50%;border:1px solid #333b4b;background:#11151d;color:#c9a24a;font-size:14px;cursor:pointer;line-height:1;">&#9834;</button>
+
+<div id="loading">
+  <div>
+    <div class="spin" id="loadSpin"></div>
+    <div class="load-t" id="loadText">Opening the case file...</div>
+    <div class="load-s">Loading the analysis environment (one-time). It caches after this.</div>
+  </div>
+</div>
+
+<div id="appwin" class="hidden">
+  <div class="titlebar">
+    <span class="tb-dots"><i></i><i></i><i></i></span>
+    <span class="tb-title"><b>Institutional Research</b> &mdash; Cabinet Commission &mdash; case file</span>
+    <span class="tb-spacer"></span>
+    <a class="tb-home" href="index.html">Save &amp; exit &rarr;</a>
+  </div>
+  <div class="grid" id="grid">
+    <aside class="thread">
+      <div class="thread-head">
+        <span id="avA"></span>
+        <div><div class="thread-who">Jamie Berrios</div><div class="thread-role">Chief Data Officer</div></div>
+      </div>
+      <div class="thread-msgs" id="thread"></div>
+    </aside>
+    <main class="work">
+      <div class="stage-strip" id="strip"></div>
+      <div class="stage-body"><div class="beatwrap" id="beat"></div></div>
+    </main>
+    <aside class="report" id="report">
+      <div class="report-head"><div class="report-doc-label">Draft &middot; for the Cabinet</div><div class="report-title">Academic Success Report</div></div>
+      <div class="report-body" id="reportBody"></div>
+    </aside>
+  </div>
+</div>
+
+<script>
+/* ===================== REFINED JUICE ===================== */
+(function(){
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let muted=false, actx=null, master=null;
+  function ctx(){ if(!actx){ actx=new (window.AudioContext||window.webkitAudioContext)(); master=actx.createGain(); master.gain.value=0.5; const lp=actx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=2600; master.connect(lp); lp.connect(actx.destination);} return actx; }
+  /* warm tone: triangle/sine, gentle attack + smooth release */
+  function note(freq, dur, {type='sine', vol=0.16, when=0, attack=0.012}={}){
+    if(muted) return; try{
+      const a=ctx(), t=a.currentTime+when;
+      const o=a.createOscillator(), g=a.createGain();
+      o.type=type; o.frequency.setValueAtTime(freq,t);
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(vol,t+attack);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o.connect(g); g.connect(master);
+      o.start(t); o.stop(t+dur+0.02);
+    }catch(e){}
+  }
+  window.sfx = {
+    key:  ()=>note(660,0.05,{type:'sine',vol:0.02,attack:0.002}),
+    /* correct: warm two-note rising "logged" chime */
+    pass: ()=>{ note(523.25,0.5,{type:'sine',vol:0.14}); note(783.99,0.6,{type:'triangle',vol:0.10,when:0.1}); },
+    /* miss: soft low fall, no buzz */
+    fail: ()=>{ note(311.13,0.4,{type:'sine',vol:0.12}); note(233.08,0.55,{type:'sine',vol:0.10,when:0.09}); },
+    /* hint: single soft mid tone */
+    hint: ()=>note(587.33,0.35,{type:'triangle',vol:0.09}),
+    /* finale: warm ascending phrase */
+    win:  ()=>{ [523.25,659.25,783.99,1046.5].forEach((f,i)=>note(f,0.7,{type:'sine',vol:0.13,when:i*0.16,attack:0.02})); note(1318.5,0.9,{type:'triangle',vol:0.08,when:0.64}); },
+    advance: ()=>note(440,0.18,{type:'sine',vol:0.06,attack:0.004})
+  };
+  function setMuted(m){ muted=m; const b=document.getElementById('juiceMute'); if(b){b.textContent=muted?'♪̸':'♪'; b.style.textDecoration=muted?'line-through':'none'; b.setAttribute('aria-pressed',String(muted));} try{localStorage.setItem('dtsc520_muted',muted?'1':'0');}catch(e){} }
+  window.setMuted=setMuted; document.getElementById('juiceMute').addEventListener('click',()=>setMuted(!muted));
+  try{ setMuted(localStorage.getItem('dtsc520_muted')==='1'); }catch(e){}
+  /* shorter, tasteful confetti: ~140 frames, fewer pieces, brass/navy */
+  window.confettiBurst=function(count=70){
+    if(REDUCED) return;
+    const cv=document.getElementById('juiceConfetti'); cv.style.display='block'; cv.width=innerWidth; cv.height=innerHeight;
+    const ctx2=cv.getContext('2d'); const cols=['#c9a24a','#e3c075','#5ec99a','#8B1C40','#eef1f6'];
+    const ps=Array.from({length:count},()=>({x:cv.width*0.5+(Math.random()-0.5)*cv.width*0.5, y:cv.height*0.32, vx:(Math.random()-0.5)*7, vy:-4-Math.random()*7, s:4+Math.random()*5, r:Math.random()*Math.PI, vr:(Math.random()-0.5)*0.3, c:cols[Math.floor(Math.random()*cols.length)], life:1}));
+    let fr=0;
+    (function d(){ ctx2.clearRect(0,0,cv.width,cv.height);
+      ps.forEach(p=>{ p.vy+=0.28; p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; p.life-=0.007; ctx2.globalAlpha=Math.max(0,p.life); ctx2.save(); ctx2.translate(p.x,p.y); ctx2.rotate(p.r); ctx2.fillStyle=p.c; ctx2.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.55); ctx2.restore(); });
+      ctx2.globalAlpha=1;
+      if(++fr<140) requestAnimationFrame(d); else { ctx2.clearRect(0,0,cv.width,cv.height); cv.style.display='none'; }
+    })();
+  };
+  window.screenShake=function(){ if(REDUCED) return; document.getElementById('beat').animate([{transform:'translate(0,0)'},{transform:'translate(-4px,0)'},{transform:'translate(3px,0)'},{transform:'translate(0,0)'}],{duration:200,easing:'ease-in-out'}); };
+})();
+
+/* ===================== JAMIE AVATAR (inline SVG) ===================== */
+const JAMIE_SVG = `
+<defs><clipPath id="cir"><circle cx="50" cy="50" r="50"/></clipPath></defs>
+<g clip-path="url(#cir)">
+  <rect width="100" height="100" fill="#1b2330"/>
+  <circle cx="50" cy="86" r="34" fill="#2a3344"/>
+  <rect x="30" y="70" width="40" height="30" rx="10" fill="#3a4a5e"/>
+  <circle cx="50" cy="44" r="22" fill="#caa07a"/>
+  <path d="M28 42 Q30 18 50 18 Q70 18 72 42 Q72 30 60 24 Q50 30 40 24 Q28 30 28 42Z" fill="#2b2430"/>
+  <path d="M28 40 Q26 56 32 64 L34 44Z" fill="#2b2430"/><path d="M72 40 Q74 56 68 64 L66 44Z" fill="#2b2430"/>
+  <circle cx="42" cy="44" r="2.4" fill="#2b2430"/><circle cx="58" cy="44" r="2.4" fill="#2b2430"/>
+  <path d="M44 54 Q50 58 56 54" stroke="#9c6f4e" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <rect x="46" y="36" width="8" height="3" rx="1.5" fill="#c9a24a" opacity="0.0"/>
+</g>
+<circle cx="50" cy="50" r="49" fill="none" stroke="#c9a24a" stroke-width="1.2" opacity="0.5"/>`;
+
+/* ===================== JAMIE AVATAR — FRAME CYCLING =====================
+   Provide STILL frames in capstone/assets/ named:
+       jamie-<emotion>-1.png, jamie-<emotion>-2.png, ...   (idle frames; 1+)
+       jamie-<emotion>-blink.png                            (optional eyes-closed)
+   Emotions: neutral, approve, concern, disappoint, warm.
+   The engine probes which files exist and cycles only those:
+     - gently cycles idle frames (faster while Jamie is "talking"),
+     - blinks occasionally if a -blink frame exists,
+     - crossfades when the emotion changes,
+     - falls back to the inline SVG if an emotion has no frames at all.
+   Everything degrades gracefully: one frame = static; no blink = no blink. */
+const EMOTIONS = ['neutral','approve','concern','disappoint','warm'];
+const AV = {
+  emotion:'neutral', frame:0, talking:false, blinking:false,
+  frames:{},            /* emotion -> [src,...] that actually loaded */
+  blink:{},             /* emotion -> blink src if it loaded */
+  ready:{},             /* emotion -> true once probed */
+  timer:null, blinkTimer:null
+};
+const avSrc = (e,f)=>`assets/jamie-${e}-${f}.png`;
+
+/* Probe up to N idle frames + a blink frame for an emotion; keep the ones that load. */
+function probeEmotion(e, maxFrames=6){
+  AV.frames[e]=[]; AV.blink[e]=null;
+  let pending=maxFrames+1;
+  const done=()=>{ if(--pending===0){ AV.ready[e]=true; remountAvatars(); } };
+  for(let i=1;i<=maxFrames;i++){
+    const img=new Image(); const src=avSrc(e,i);
+    img.onload=()=>{ AV.frames[e][i-1]=src; done(); };
+    img.onerror=done; img.src=src;
+  }
+  const b=new Image(); const bsrc=avSrc(e,'blink');
+  b.onload=()=>{ AV.blink[e]=bsrc; done(); };
+  b.onerror=done; b.src=bsrc;
+}
+function probeAllEmotions(){ EMOTIONS.forEach(e=>probeEmotion(e)); }
+
+/* Avatar markup: an <img> layer (frames) over the SVG fallback. */
+/* Every known frame URL (all emotions' idle frames + blinks), so we can stack them
+   ALL as preloaded <img> layers per avatar and just toggle visibility - no src swaps,
+   no decode lag, so a blink is exactly as long as we say. */
+function allFrameSrcs(){
+  const out=[];
+  EMOTIONS.forEach(e=>{
+    (AV.frames[e]||[]).filter(Boolean).forEach(s=>out.push(s));
+    if(AV.blink[e]) out.push(AV.blink[e]);
+  });
+  return [...new Set(out)];
+}
+function currentSrc(){
+  const fr=(AV.frames[AV.emotion]||[]).filter(Boolean);
+  return fr.length ? fr[AV.frame % fr.length] : null;
+}
+function avatarHTML(size){
+  const srcs=allFrameSrcs();
+  const active=currentSrc();
+  const layers = srcs.map(s=>`<img alt="" class="av-frame${s===active?'':' gone'}" data-src="${s}" src="${s}">`).join('');
+  return `<span class="av" style="width:${size}px;height:${size}px;">
+    <svg viewBox="0 0 100 100" aria-hidden="true">${JAMIE_SVG}</svg>
+    ${layers}
+  </span>`;
+}
+/* Show exactly one stacked layer (by src) instantly; hide the rest. If no frames
+   exist yet, hide all and the SVG shows through. */
+function paintAvatars(src){
+  if(src===undefined) src=currentSrc();
+  document.querySelectorAll('.av').forEach(av=>{
+    let shown=false;
+    av.querySelectorAll('.av-frame').forEach(img=>{
+      if(src && img.getAttribute('data-src')===src){ img.classList.remove('gone'); shown=true; }
+      else img.classList.add('gone');
+    });
+    /* If the wanted frame isn't a mounted layer yet (probe race), inject it now so the
+       portrait always shows instead of falling back to the SVG. */
+    if(src && !shown){
+      const img=document.createElement('img');
+      img.alt=''; img.className='av-frame'; img.setAttribute('data-src',src); img.src=src;
+      av.appendChild(img);
+    }
+  });
+}
+/* When new frames finish probing after avatars are on screen, rebuild any mounted
+   avatar's stacked layers so the new frames are present & preloaded. */
+function remountAvatars(){
+  document.querySelectorAll('.av').forEach(av=>{
+    const sz=parseInt(av.style.width)||42;
+    av.innerHTML=`<svg viewBox="0 0 100 100" aria-hidden="true">${JAMIE_SVG}</svg>`+
+      allFrameSrcs().map(s=>`<img alt="" class="av-frame gone" data-src="${s}" src="${s}">`).join('');
+  });
+  paintAvatars();
+}
+/* Switch expression. */
+function setAvatar(emotion){
+  if(!EMOTIONS.includes(emotion)) emotion='neutral';
+  AV.emotion=emotion; AV.frame=0;
+  paintAvatars();
+}
+/* Briefly react, then settle back to neutral. */
+function reactAvatar(emotion, settleMs=2400){
+  setAvatar(emotion);
+  clearTimeout(AV.settle);
+  AV.settle=setTimeout(()=>setAvatar('neutral'), settleMs);
+}
+/* Idle/talk cycle: advance idle frame; speed depends on talking. */
+function avTick(){
+  const fr=(AV.frames[AV.emotion]||[]).filter(Boolean);
+  /* Don't repaint mid-blink (would cut the blink short or fight it). */
+  if(!AV.blinking && fr.length>1){ AV.frame=(AV.frame+1)%fr.length; paintAvatars(); }
+  /* Calmer cadence: a gentle idle drift, slightly livelier (not flickery) while talking. */
+  AV.timer=setTimeout(avTick, AV.talking?620:2200);
+}
+/* Normally-distributed sample (Box-Muller), clamped so blinks never bunch up. */
+function gaussMs(meanMs, sdMs, floorMs){
+  const u=Math.random()||1e-9, v=Math.random();
+  const z=Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+  return Math.max(floorMs, meanMs + z*sdMs);
+}
+/* Blink: a quick, atomic flash of the blink frame, then back to the current idle frame.
+   Marked with AV.blinking so the idle cycle leaves it alone. */
+function avBlink(){
+  const b=AV.blink[AV.emotion];
+  if(b && !AV.blinking){
+    AV.blinking=true; paintAvatars(b);
+    setTimeout(()=>{ AV.blinking=false; paintAvatars(); }, 110);   /* ~110ms = a natural human blink */
+  }
+  /* Gap ~ Normal: idle mean 10s (sd 1.5s); a touch more often while speaking. Floor 3s so two never collide. */
+  const gap = AV.talking ? gaussMs(7000,1500,2500) : gaussMs(10000,1500,3000);
+  AV.blinkTimer=setTimeout(avBlink, gap);
+}
+function startAvatarLife(){
+  if(REDUCED){ paintAvatars(); return; }   /* reduced motion: static frame only */
+  clearTimeout(AV.timer); clearTimeout(AV.blinkTimer); AV.blinking=false;
+  avTick(); setTimeout(avBlink, 2500);
+}
+function setTalking(on){ AV.talking=!!on; }
+
+/* ===================== COHORT DATA ===================== */
+const COHORT_PY = String.raw`import pandas as pd, numpy as np
+COLS = ['student_id', 'hs_gpa', 'hs_clubs', 'hs_sports', 'hs_attendance', 'hs_pop_density', 'need_based_aid', 'ug_gpa', 'internships', 'logins_per_week', 'time_on_task_hrs', 'submission_rate', 'course_score', 'success']
+RAW = [
+    (1001, 2.87, 3, 1, 0.915, 3703, 0, 2.99, 0, None, None, '', 85.8, 1),
+    (1002, 2.2, 1, 1, 0.866, 4851, 1, 2.48, 0, 0.8, 2.5, '69%', 57.1, 0),
+    (1003, 2.72, 2, 0, 0.948, 4341, 1, 3.02, 0, 3.4, 1.8, '84%', 75.5, 1),
+    (1004, 2.05, 1, 0, 0.887, 4034, 0, 1.81, 1, None, None, '', 60.8, 0),
+    (1005, 2.27, 1, 1, 0.886, 3942, 1, 3.08, 0, 0.6, 1.9, '72%', 69.9, 0),
+    (1006, 1.51, 1, 1, 0.874, 3846, 1, 2.18, 0, 0.5, 1.8, '72%', 66.1, 0),
+    (1007, 2.23, 2, 0, 0.921, 4268, 1, 2.09, 0, 1.0, 3.5, '64%', 60.8, 0),
+    (1008, 2.61, 2, 0, 1.4, 4171, 0, 3.3, 0, 3.0, 3.4, '85%', 64.9, 1),
+    (1009, 2.44, 3, 0, 0.959, 4712, 0, 2.82, 0, 4.3, 5.2, '87%', 72.3, 1),
+    (1010, 1.5, 1, 0, 0.849, 5577, 1, 1.71, 0, 0.6, 3.4, '73%', 50.2, 0),
+    (1011, 1.91, 1, 0, 0.896, 3518, 1, 2.43, 0, 2.4, 3.5, '78%', 65.4, 0),
+    (1012, 1.93, 1, 0, 0.911, 2185, 1, 1.85, 1, 1.6, 3.0, '75%', 70.0, 1),
+    (1013, 1.5, 0, 1, 0.851, 2454, 0, 1.63, 0, None, None, '', 50.8, 0),
+    (1014, 2.58, 1, 1, 0.93, 3005, 0, 2.84, 0, 4.2, 5.0, '79%', 82.0, 1),
+    (1015, 2.2, 3, 1, 0.976, 4868, 1, 3.11, 0, 4.4, 5.1, '91%', 66.4, 1),
+    (1016, 3.0, 3, 1, 0.974, 2851, 0, 2.83, 2, 5.2, 6.0, '94%', 79.8, 1),
+    (1017, 2.21, 1, 0, 0.914, 2042, 0, 1.99, 1, 0.9, 2.1, '72%', 70.0, 1),
+    (1018, 2.63, 3, 1, 0.986, 3879, 0, 2.81, 1, None, None, '', 76.3, 1),
+    (1019, 3.19, 4, 1, 0.844, 4411, 0, 3.13, 0, 1.7, 2.7, '77%', 63.4, 1),
+    (1020, 2.08, 2, 0, 0.884, 5498, 1, 2.61, 0, 2.7, 4.2, '69%', 57.8, 0),
+    (1021, 2.96, 3, 1, 0.847, 3408, 1, 4.0, 0, 2.7, 2.7, '77%', 73.7, 1),
+    (1022, 2.66, 4, 0, 0.795, 3440, 1, 2.92, 0, 0.7, 0.0, '59%', 53.5, 0),
+    (1023, 2.6, 2, 0, 0.835, 4462, 1, 2.67, 0, 0.8, 1.0, '67%', 58.1, 0),
+    (1024, 3.44, 3, 1, 0.95, 2966, 0, 2.8, 2, 4.4, 6.6, '99%', 91.9, 1),
+    (1025, 3.41, 3, 1, 0.975, 5021, 1, 3.25, 0, 3.9, 3.0, '93%', 65.1, 1),
+    (1026, 2.79, 4, 0, 0.926, 4905, 1, 2.81, 1, 3.4, 4.3, '74%', 72.4, 1),
+    (1027, 2.0, 2, 0, 0.888, 3393, 0, 1.78, 0, None, None, '', 58.4, 0),
+    (1028, 2.89, 3, 0, 0.904, 3721, 1, 3.15, 0, 2.8, 3.1, '80%', 71.8, 1),
+    (1029, 3.2, 3, 0, 0.915, 4579, 1, 2.98, 0, 3.6, 5.3, '86%', 75.2, 1),
+    (1030, 3.37, 3, 1, 0.989, 2653, 0, 3.23, 1, 5.2, 5.2, '92%', 86.5, 1),
+    (1031, 2.11, 2, 1, 0.878, 2997, 0, 2.66, 0, 0.6, 2.6, '68%', 60.4, 0),
+    (1032, 2.35, 2, 1, 0.865, 3633, 1, 2.67, 0, 3.2, 2.4, '84%', 65.1, 1),
+    (1033, 1.5, 0, 0, 0.937, 2181, 1, 2.63, 1, 3.2, 1.5, '86%', 70.4, 1),
+    (1034, 2.79, 2, 1, 0.923, 3505, 1, 2.71, 0, 3.3, 5.1, '91%', 69.2, 1),
+    (1035, 2.72, 3, 0, 0.975, 4230, 0, 2.92, 1, 4.8, 6.4, '100%', 66.4, 1),
+    (1036, 2.8, 2, 0, 0.964, 3045, 1, 3.22, 0, 6.3, 4.7, '100%', 69.1, 1),
+    (1037, 2.41, 3, 0, 0.878, 2891, 1, 2.52, 0, 2.0, 2.4, '75%', 74.9, 1),
+    (1038, 2.9, 3, 0, 0.903, 5464, 1, 3.2, 1, 4.5, 3.1, '91%', 76.9, 1),
+    (1039, 2.11, 2, 1, 0.911, 3726, 0, 2.28, 1, 2.5, 3.9, '90%', 72.0, 1),
+    (1040, 1.93, 1, 0, 0.909, 3943, 1, 2.47, 0, 2.5, 2.5, '67%', 59.3, 0),
+    (1041, 2.03, 1, 0, 0.919, 3752, 1, 1.65, 0, 1.2, 3.0, '68%', 58.3, 0),
+    (1042, 2.33, 1, 0, 0.922, 2450, 0, 1.75, 0, 0.9, 2.3, '76%', 63.8, 0),
+    (1043, 2.58, 2, 0, 0.988, 3451, 1, 2.37, 2, 5.9, 6.9, '97%', 79.2, 1),
+    (1044, 2.5, 2, 0, 0.913, 5065, 1, 2.6, 1, None, None, '', 67.6, 0),
+    (1045, 1.97, 2, 1, 1.0, 4595, 1, 2.2, 0, 4.7, 5.7, '84%', 72.7, 1),
+    (1046, 1.5, 0, 0, 0.897, 3040, 0, 1.5, 0, 1.7, 1.8, '56%', 60.1, 0),
+    (1047, 2.76, 3, 1, 0.878, 3031, 1, 2.64, 1, 4.3, 5.4, '100%', 88.7, 1),
+    (1048, 2.3, 3, 0, 0.978, 1577, 0, 2.7, 2, 5.1, 6.0, '97%', 85.8, 1),
+    (1049, 1.81, 0, 1, 0.852, 4263, 0, 2.2, 0, 1.5, 3.4, '67%', 63.6, 0),
+    (1050, 1.89, 1, 0, 0.894, 4290, 1, 2.13, 0, 0.4, 1.1, '68%', 49.2, 0),
+    (1051, 2.43, 3, 0, 0.848, 3815, 1, 2.24, 0, 3.1, 5.0, '86%', 73.8, 1),
+    (1052, 2.78, 3, 0, 0.873, 4380, 1, 3.6, 0, None, None, '', 51.0, 0),
+    (1053, 1.5, 0, 0, 0.833, 1921, 1, 1.5, 0, 0.0, 0.0, '66%', 62.1, 0),
+    (1054, 2.84, 3, 0, 0.849, 4154, 0, 2.91, 0, None, None, '', 65.8, 0),
+    (1055, 2.3, 1, 0, 0.931, 4798, 1, 3.14, 1, 2.7, 3.7, '79%', 74.9, 1),
+    (1056, 1.78, 1, 0, 0.904, 3008, 1, 1.61, 0, 1.6, 3.0, '67%', 60.3, 0),
+    (1057, 1.77, 0, 1, 0.874, 3115, 0, 1.5, 1, 0.0, 1.5, '64%', 68.7, 1),
+    (1058, 2.13, 1, 0, 0.889, 2287, 1, 1.85, 0, 2.1, 1.9, '73%', 65.3, 1),
+    (1059, 1.5, 0, 1, 0.923, 3809, 1, 1.5, 0, 1.9, 3.3, '78%', 68.0, 0),
+    (1060, 2.32, 1, 1, 0.93, 4320, 1, 3.16, 0, None, None, '', 74.2, 1),
+    (1061, 2.68, 3, 1, 0.903, 3184, 0, 2.73, 0, 1.6, 1.0, '78%', 68.2, 1),
+    (1062, 3.4, 6, 0, 0.945, 2538, 0, 3.25, 0, 4.8, 5.6, '99%', 80.9, 1),
+    (1063, 2.69, 1, 0, 0.893, 3480, 1, 2.96, 1, 3.3, 3.5, '75%', 68.1, 1),
+    (1064, 2.92, 3, 1, 0.936, 2997, 0, 3.36, 0, 3.4, 3.8, '90%', 87.9, 1),
+    (1065, 2.25, 1, 0, 0.829, 3403, 1, 2.08, 0, 0.5, 0.0, '72%', 62.9, 0),
+    (1066, 1.81, 0, 0, 0.913, 2427, 0, 2.33, 1, 2.1, 3.0, '84%', 70.7, 1),
+    (1067, 2.84, 3, 1, 0.806, 2587, 0, 2.47, 0, 0.0, 0.8, '68%', 72.4, 1),
+    (1068, 2.97, 3, 1, 0.859, 3625, 0, 2.85, 1, 2.3, 3.7, '81%', 65.4, 1),
+    (1069, 2.55, 2, 1, 0.898, 4150, 1, 3.4, 1, 3.8, 4.4, '94%', 82.1, 1),
+    (1070, 2.94, 3, 1, 0.861, 3178, 0, 3.47, 0, 4.3, 4.8, '92%', 86.0, 1),
+    (1071, 2.41, 2, 1, 0.965, 4883, 1, 2.23, 0, 4.7, 5.3, '95%', 78.9, 1),
+    (1072, 2.92, 2, 0, 0.937, 3137, 0, 3.41, 1, 5.1, 6.3, '86%', 87.0, 1),
+    (1073, 2.56, 3, 1, 0.9, 3812, 1, 2.92, 0, 3.1, 3.0, '80%', 67.6, 1),
+    (1074, 1.5, 1, 0, 0.767, 3096, 1, 1.5, 0, None, None, '', 46.0, 0),
+    (1075, 2.25, 2, 0, 0.789, 2196, 0, 2.56, 0, 1.4, 0.4, '58%', 62.2, 0),
+    (1076, 1.73, 0, 1, 0.959, 3525, 1, 2.3, 0, 0.0, 2.8, '65%', 50.1, 0),
+    (1077, 2.99, 4, 1, 0.877, 4161, 1, 2.56, 0, 3.5, 3.4, '89%', 73.7, 1),
+    (1078, 3.33, 5, 1, 0.912, 4160, 0, 3.47, 0, 3.5, 5.5, '87%', 81.3, 1),
+    (1079, 3.36, 3, 0, 0.97, 3929, 0, 3.42, 2, 5.0, 6.3, '100%', 88.2, 1),
+    (1080, 3.37, 3, 0, 0.873, 4178, 0, 2.75, 0, None, None, '', 55.4, 0),
+    (1081, 1.94, 1, 0, 0.893, 3737, 1, 1.5, 0, 1.7, 2.3, '83%', 57.0, 0),
+    (1082, 3.37, 5, 1, 0.953, 3660, 1, 2.1, 0, 2.0, 3.1, '81%', 72.1, 1),
+    (1083, 1.75, 1, 0, 0.964, 4633, 1, 1.68, 0, 3.0, 4.2, '79%', 67.0, 0),
+    (1084, 2.77, 3, 0, 0.973, 4318, 0, 3.0, 0, 2.9, 3.3, '85%', 81.7, 1),
+    (1085, 1.96, 1, 0, 0.932, 6048, 0, 2.32, 0, None, None, '', 71.6, 1),
+    (1086, 1.57, 1, 0, 0.88, 3675, 1, 1.64, 0, None, None, '', 60.7, 0),
+    (1087, 2.73, 2, 1, 0.957, 3943, 0, 2.63, 2, 5.7, 5.5, '94%', 83.3, 1),
+    (1088, 1.7, 1, 0, 0.88, 2840, 0, 1.76, 0, 2.7, 2.5, '74%', 82.4, 1),
+    (1089, 1.91, 0, 0, 0.83, 5017, 1, 1.99, 0, 0.4, 1.7, '70%', 50.6, 0),
+    (1090, 2.28, 2, 0, 0.862, 4052, 0, 2.43, 0, None, None, '', 54.1, 0),
+    (1091, 2.41, 2, 1, 0.912, 3830, 1, 2.88, 1, 4.0, 3.9, '89%', 67.0, 1),
+    (1092, 2.04, 1, 1, 0.887, 3600, 1, 1.96, 0, 1.3, 2.2, '75%', 69.1, 1),
+    (1093, 1.63, 0, 1, 0.791, 4117, 1, 1.84, 0, None, None, '', 59.4, 0),
+    (1094, 2.74, 2, 0, 0.855, 4836, 0, 2.71, 0, 1.0, 0.0, '69%', 65.8, 0),
+    (1095, 1.93, 2, 1, 0.946, 2629, 1, 2.73, 2, 4.3, 4.0, '88%', 66.1, 1),
+    (1096, 3.02, 2, 0, 0.923, 3365, 0, 2.7, 0, 3.6, 5.2, '86%', 74.3, 1),
+    (1097, 2.87, 3, 1, 0.805, 3964, 1, 2.57, 0, 0.0, 0.7, '64%', 54.7, 0),
+    (1098, 1.83, 1, 0, 0.899, 3863, 1, 1.66, 1, 3.8, 4.3, '80%', 69.7, 1),
+    (1099, 1.94, 1, 0, 0.809, 2781, 0, 1.5, 0, 0.0, 0.0, '58%', 54.7, 0),
+    (1100, 1.5, 0, 1, 0.851, 2300, 1, 1.85, 0, 0.0, 1.8, '72%', 49.1, 0),
+    (1004, 2.05, 1, 0, 0.887, 4034, 0, 1.81, 1, None, None, '', 60.8, 0),
+    (1018, 2.63, 3, 1, 0.986, 3879, 0, 2.81, 1, None, None, '', 76.3, 1)
+]
+df = pd.DataFrame(RAW, columns=COLS)
+`;
+
+/* ===================== STATE + ENGINE ===================== */
+let pyodide=null;
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const STAGE_NAMES = ['Frame','Assemble','Compute','Clean & Join','Visualize','Ship'];
+const state = { beatIndex:0, stage:0, points:0, maxPoints:0, decisions:{}, ethics:{}, codePassed:{}, reportLines:[] };
+
+/* beats are produced per-stage; flat list with stage tags */
+let BEATS = [];
+
+function buildAvatars(){ document.getElementById('avA').innerHTML=avatarHTML(42); paintAvatars(); }
+
+function renderStrip(){
+  const strip=document.getElementById('strip');
+  strip.innerHTML = STAGE_NAMES.map((s,i)=>`<span class="chip ${i<state.stage?'done':i===state.stage?'active':''}"><span class="cd"></span>${i+1}. ${s}</span>`).join('')
+    + `<span class="strip-spacer"></span><button class="report-toggle" onclick="document.getElementById('report').classList.toggle('open')">Report &#9776;</button>`;
+}
+
+function addThreadMsg(text, time){
+  const t=document.getElementById('thread');
+  /* collapse all previous messages, drop fresh highlight */
+  document.querySelectorAll('.thread-msgs .msg').forEach(m=>{ m.classList.remove('fresh'); m.classList.add('collapsed'); });
+  const d=document.createElement('div'); d.className='msg fresh';   /* newest stays expanded */
+  d.innerHTML = `<div class="msg-text">${text}</div><div class="msg-foot"><span class="msg-time">${time||''}</span><span class="msg-more"></span></div>`;
+  d.addEventListener('click', ()=>{ d.classList.toggle('collapsed'); try{window.sfx.key();}catch(e){} });
+  t.appendChild(d); t.scrollTop=t.scrollHeight;
+}
+
+function addReportLine(tag, html){
+  state.reportLines.push({tag,html});
+  const grid=document.getElementById('grid'); grid.classList.add('has-report');
+  const body=document.getElementById('reportBody');
+  const empty=body.querySelector('.report-empty'); if(empty) empty.remove();
+  const ln=document.createElement('div'); ln.className='report-line';
+  ln.innerHTML=`<span class="rl-tag">${tag}</span>${html}`;
+  body.appendChild(ln); body.scrollTop=body.scrollHeight;
+}
+
+/* ---------- beat renderers ---------- */
+const beatEl = ()=>document.getElementById('beat');
+function clearBeat(){ const b=beatEl(); b.innerHTML=''; b.classList.remove('fade-in'); void b.offsetWidth; b.classList.add('fade-in'); }
+
+/* How well did the student do on a set of decision ids? -> 'good' | 'mixed' | 'bad' */
+function decisionVerdict(ids){
+  const qs=ids.map(id=>(state.decisions[id]||{}).quality).filter(Boolean);
+  if(!qs.length) return 'good';
+  if(qs.every(q=>q==='good')) return 'good';
+  if(qs.some(q=>q==='bad')) return 'bad';
+  return 'mixed';
+}
+/* Resolve a beat: if it has a dyn(state)->{text,emotion,thread,...}, merge that in. */
+function resolveBeat(beat){
+  if(beat.type==='dialogue' && typeof beat.dyn==='function'){
+    return Object.assign({}, beat, beat.dyn(decisionVerdict));
+  }
+  return beat;
+}
+
+function renderBeat(){
+  renderStrip();
+  let beat = BEATS[state.beatIndex];
+  if(!beat){ location.href='report.html'; return; }
+  beat = resolveBeat(beat);
+  state.stage = beat.stage ?? state.stage;
+  clearBeat();
+  /* set Jamie's emotion for this beat (defaults: serious on interstitials, neutral otherwise) */
+  setAvatar(beat.emotion || (beat.type==='interstitial' ? 'concern' : 'neutral'));
+  if(beat.type==='dialogue') return renderDialogue(beat);
+  if(beat.type==='interstitial') return renderInterstitial(beat);
+  if(beat.type==='decision') return renderDecision(beat);
+  if(beat.type==='code') return renderCode(beat);
+  if(beat.type==='note') return renderNote(beat);
+}
+function advance(){ state.beatIndex++; try{window.sfx.advance();}catch(e){} renderBeat(); document.querySelector('.stage-body').scrollTop=0; }
+window.advance=advance;
+
+/* dialogue with typewriter */
+function renderDialogue(b){
+  const wrap=beatEl();
+  wrap.innerHTML=`<div class="beat-dialogue">
+    <div class="speaker">${avatarHTML(48)}
+      <div><div class="speaker-name">Jamie Berrios</div><div class="speaker-sub">Chief Data Officer</div></div></div>
+    <div class="dialogue" id="dlg"></div>
+    <div class="beat-nav"><span class="skip-hint" id="skipHint">click to skip</span><button class="btn-cont" id="contBtn" disabled onclick="advance()">${b.cont||'Continue'}</button></div>
+  </div>`;
+  paintAvatars();   /* ensure the freshly-mounted avatar shows the real frame, not the SVG */
+  if(b.thread) addThreadMsg(b.text, b.time||'now');
+  typewriter(document.getElementById('dlg'), b.text, ()=>{ document.getElementById('contBtn').disabled=false; const sh=document.getElementById('skipHint'); if(sh)sh.style.display='none'; });
+}
+function typewriter(el, text, done){
+  if(REDUCED){ el.textContent=text; done&&done(); return; }
+  el.innerHTML=''; let i=0; const cur=document.createElement('span'); cur.className='cursor'; cur.textContent=' ';
+  el.appendChild(cur);
+  setTalking(true);
+  let finished=false;
+  function finish(){ if(finished)return; finished=true; el.textContent=text; setTalking(false); window._twSkip=null; done&&done(); }
+  window._twSkip=finish;   /* a click in the beat area fast-forwards to the end */
+  let last=0;
+  function tick(ts){
+    if(finished) return;
+    if(ts-last > 18){
+      last=ts;
+      if(i<text.length){ const ch=text[i++]; cur.insertAdjacentText('beforebegin', ch); if(ch!==' ' && Math.random()<0.5){try{window.sfx.key();}catch(e){}} }
+      else { cur.remove(); finish(); return; }
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+/* Click anywhere in the beat (not on a button/link) while typing -> skip to full text. */
+document.addEventListener('click', function(e){
+  if(window._twSkip && e.target.closest('.stage-body') && !e.target.closest('button') && !e.target.closest('a')){
+    window._twSkip();
+  }
+}, true);
+
+/* interstitial: text-only, italic, no button for a beat */
+function renderInterstitial(b){
+  beatEl().innerHTML=`<div class="beat-interstitial">
+    <div class="inter-avatar">${avatarHTML(96)}</div>
+    <div class="inter-name">Jamie Berrios</div>
+    <div class="interstitial-text" id="intxt"></div>
+  </div>`;
+  paintAvatars();
+  const el=document.getElementById('intxt');
+  if(REDUCED){ el.textContent=b.text; setTimeout(()=>showContinue(b.cont),400); return; }
+  typewriter(el, b.text, ()=>setTimeout(()=>showContinue(b.cont), 700));
+}
+function showContinue(label){
+  const wrap=document.querySelector('.beat-interstitial');
+  if(!wrap) return;
+  const nav=document.createElement('div'); nav.className='beat-nav fade-in'; nav.style.marginTop='2rem';
+  nav.innerHTML=`<button class="btn-cont ghost" onclick="advance()">${label||'Continue'}</button>`;
+  wrap.appendChild(nav);
+}
+
+/* note: short framing text + continue (used for memos / data dictionaries) */
+function renderNote(b){
+  beatEl().innerHTML=`<div class="fade-in">${b.html}<div class="beat-nav"><button class="btn-cont" onclick="advance()">${b.cont||'Continue'}</button></div></div>`;
+}
+
+/* ---------- decision beat ---------- */
+function renderDecision(b){
+  const choices = b.shuffle===false ? b.choices.slice() : b.choices.slice().sort(()=>Math.random()-0.5);
+  beatEl().innerHTML=`<div class="fade-in">
+    ${b.intro?`<p style="color:var(--ink-dim);margin-bottom:1rem;">${b.intro}</p>`:''}
+    <div class="d-label">${b.label||'Decision'}</div>
+    <div class="d-q">${b.q}</div>
+    <div class="choices" id="dchoices">${choices.map((c,i)=>`<button class="choice" data-i="${i}" onclick="pickDecision(${i})"><span class="ck">${String.fromCharCode(65+i)}</span>${c.t}</button>`).join('')}</div>
+    <div id="dout"></div>
+    <div class="beat-nav"><button class="btn-cont" id="contBtn" disabled onclick="advance()">Continue</button></div>
+  </div>`;
+  beatEl()._choices=choices; beatEl()._beat=b; beatEl()._done=false;
+}
+window.pickDecision=function(i){
+  const w=beatEl(); if(w._done) return; w._done=true;
+  const c=w._choices[i], b=w._beat;
+  document.querySelectorAll('#dchoices .choice').forEach(x=>x.disabled=true);
+  document.querySelector(`#dchoices .choice[data-i="${i}"]`).classList.add('pick-'+c.q);
+  try{ c.q==='good'?window.sfx.pass():c.q==='bad'?(window.sfx.fail(),window.screenShake()):window.sfx.hint(); }catch(e){}
+  reactAvatar(c.q==='good'?'approve':c.q==='bad'?'disappoint':'concern');
+  document.getElementById('dout').innerHTML=`<div class="outcome ${c.q}"><div class="outcome-t">${c.ot}</div><p>${c.op}</p></div>`;
+  const pts=c.q==='good'?(b.pts||4):c.q==='warn'?Math.round((b.pts||4)/2):0;
+  state.points+=pts;
+  state.decisions[b.id]={pts,quality:c.q};
+  if(b.onPick) b.onPick(c);
+  document.getElementById('contBtn').disabled=false;
+  saveProgress();
+};
+
+/* ---------- code beat ---------- */
+function renderCode(b){
+  beatEl().innerHTML=`<div class="fade-in">
+    ${b.intro?`<p style="color:var(--ink-dim);margin-bottom:0.8rem;">${b.intro}</p>`:''}
+    <div class="lab-task">${b.task}</div>
+    ${b.hint?`<div class="lab-hint-inline">${b.hint}</div>`:''}
+    <textarea class="editor" id="ed" spellcheck="false" aria-label="Python code editor">${b.starter}</textarea>
+    <div class="lab-btns">
+      <button class="btn btn-run" id="runBtn" onclick="runCode()">&#9654; Run</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('ed').value=BEATS[state.beatIndex].starter;document.getElementById('con').innerHTML='';">Reset</button>
+      ${b.solutionNote?`<button class="btn btn-ghost" onclick="cline(document.getElementById('con'),'\u{1F4A1} '+BEATS[state.beatIndex].solutionNote,'sys');try{window.sfx.hint();}catch(e){}">Hint</button>`:''}
+    </div>
+    <div class="console" id="con" aria-live="polite"></div>
+    <div class="beat-nav"><button class="btn-cont" id="contBtn" disabled onclick="advance()">Continue</button></div>
+  </div>`;
+  beatEl()._beat=b; beatEl()._passed=false;
+  const ed=document.getElementById('ed');
+  ed.addEventListener('keydown',e=>{
+    if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){ e.preventDefault(); runCode(); return; }
+    if(e.key==='Tab'){ e.preventDefault(); const s=ed.selectionStart; ed.value=ed.value.slice(0,s)+'    '+ed.value.slice(ed.selectionEnd); ed.selectionStart=ed.selectionEnd=s+4; }
+  });
+}
+function cline(el,text,cls){ const s=document.createElement('span'); if(cls)s.className=cls; s.textContent=text+'\n'; el.appendChild(s); }
+function friendlyError(err){
+  const full=(err&&err.message)?err.message:String(err);
+  const lines=full.trim().split('\n');
+  const last=lines[lines.length-1]||full;
+  // Pull the deepest line number from the traceback (the user's code), and any quoted token.
+  let lineNum=null; for(const l of lines){ const m=l.match(/line (\d+)/); if(m) lineNum=m[1]; }
+  const at = lineNum ? ` (around line ${lineNum})` : '';
+  const quoted = (last.match(/'([^']+)'/)||[])[1];
+
+  // AssertionError = our own grading message: surface it verbatim (it's already coaching).
+  if(last.startsWith('AssertionError')) return last.replace('AssertionError:','').trim()||'A check failed - re-read what the task asks for.';
+
+  // SyntaxError / IndentationError - point to the line and the most common causes.
+  if(last.includes('IndentationError')){
+    if(last.includes('expected an indented block')) return `Indentation error${at}: the line after a \`:\` (like def, for, if) must be indented. Add 4 spaces to the body.`;
+    if(last.includes('unexpected indent')) return `Indentation error${at}: this line is indented when it shouldn't be. Line up the indentation with the lines around it.`;
+    return `Indentation error${at}: check that your spaces are consistent - Python uses 4 spaces per level, no tabs mixed in.`;
+  }
+  if(last.includes('SyntaxError')){
+    if(last.includes('was never closed') || last.includes('EOF')) return `Syntax error${at}: looks like an unclosed bracket, parenthesis, or quote. Check that every \`(\`, \`[\`, and \`"\` has a matching partner.`;
+    if(last.includes('invalid syntax')) return `Syntax error${at}: Python couldn't parse this line. Common causes: a missing \`:\` after def/for/if, a stray comma, or = where you meant ==.`;
+    return `Syntax error${at}: ${last.replace('SyntaxError:','').trim()}`;
+  }
+
+  // NameError - tell them exactly what's undefined and the usual reason.
+  if(last.includes('NameError')){
+    return `Undefined name${at}: Python doesn't know what \`${quoted||'that'}\` is. Either you haven't created it yet, or it's a typo - check the spelling against where you defined it. (Remember \`df\` is already loaded.)`;
+  }
+
+  // KeyError - a column/key that doesn't exist.
+  if(last.includes('KeyError')){
+    return `No such column or key${at}: \`${quoted||'that name'}\` isn't in the data. Check spelling and capitalization - column names are case-sensitive.`;
+  }
+
+  // AttributeError - usually a misspelled method/attribute.
+  if(last.includes('AttributeError')){
+    const attr=(last.match(/has no attribute '([^']+)'/)||[])[1];
+    return `Wrong method or attribute${at}: ${attr?`there's no \`.${attr}\` here`:'that attribute doesn\'t exist'}. Check the spelling - e.g. it's \`.columns\`, not \`.colunms\`.`;
+  }
+
+  // TypeError - the famous str+int and not-callable cases.
+  if(last.includes('TypeError')){
+    if(last.includes('concatenate') || last.includes('unsupported operand')) return `Type mismatch${at}: you're combining incompatible types (e.g. text and a number). Convert first with \`int(...)\`, \`float(...)\`, or \`str(...)\`. Note: the submission_rate column is text like "84%" until it's cleaned.`;
+    if(last.includes('not callable')) return `Type error${at}: you used \`()\` on something that isn't a function - check for a name that shadows a built-in, or a missing operator.`;
+    if(last.includes('argument')) return `Type error${at}: a function got the wrong number or kind of arguments. Check what it expects.`;
+    return `Type error${at}: ${last.replace('TypeError:','').trim()}`;
+  }
+
+  // ValueError - common in conversions.
+  if(last.includes('ValueError')){
+    if(last.includes('could not convert')) return `Conversion error${at}: a value couldn't be converted - e.g. \`float("84%")\` fails because of the \`%\`. Strip non-numeric characters before converting.`;
+    return `Value error${at}: ${last.replace('ValueError:','').trim()}`;
+  }
+
+  if(last.includes('ZeroDivisionError')) return `Divide-by-zero${at}: you divided by something equal to 0. Check the denominator before dividing.`;
+  if(last.includes('IndexError')) return `Index out of range${at}: you asked for a position that doesn't exist (e.g. the 10th item of a 3-item list). Check your indexes.`;
+  if(last.includes('IndentationError')) return `Indentation error${at}: check your spacing.`;
+
+  // Fallback - still show the real error, but cleaned up.
+  return last.replace(/^\w*Error:\s*/,'').trim() ? `Error${at}: ${last}` : last;
+}
+async function freshNS(){ const ns=pyodide.globals.get('dict')(); await pyodide.runPythonAsync(COHORT_PY,{globals:ns}); return ns; }
+window.runCode=async function(){
+  if(!pyodide) return;
+  const w=beatEl(), b=w._beat, con=document.getElementById('con'), runBtn=document.getElementById('runBtn');
+  con.innerHTML=''; runBtn.disabled=true;
+  const src=document.getElementById('ed').value;
+  const ns=await freshNS(); let printed='';
+  pyodide.setStdout({batched:t=>{printed+=t+'\n';}}); pyodide.setStderr({batched:t=>{printed+=t+'\n';}});
+  try{ await pyodide.runPythonAsync(src,{globals:ns}); }
+  catch(err){ if(printed.trim())cline(con,printed.trimEnd()); cline(con,'✗ '+friendlyError(err),'err'); try{window.sfx.fail();window.screenShake();}catch(e){} ns.destroy(); runBtn.disabled=false; return; }
+  if(printed.trim())cline(con,printed.trimEnd());
+  try{ await pyodide.runPythonAsync(b.test,{globals:ns}); }
+  catch(err){ cline(con,'✗ Not quite: '+friendlyError(err),'err'); try{window.sfx.fail();window.screenShake();}catch(e){} ns.destroy(); runBtn.disabled=false; return; }
+  ns.destroy();
+  cline(con,'✔ Checks passed.','ok');
+  document.getElementById('ed').classList.add('flash-ok'); setTimeout(()=>document.getElementById('ed').classList.remove('flash-ok'),700);
+  if(!w._passed){ w._passed=true; state.codePassed[b.id]=true; try{window.sfx.pass();window.confettiBurst(48);}catch(e){} reactAvatar('approve'); if(b.onPass)b.onPass(); }
+  document.getElementById('contBtn').disabled=false; runBtn.disabled=false;
+  saveProgress();
+};
+
+function saveProgress(){ try{ localStorage.setItem('dtsc520_capstone_progress', JSON.stringify({beatIndex:state.beatIndex,points:state.points,decisions:state.decisions,ethics:state.ethics,codePassed:state.codePassed,reportLines:state.reportLines})); }catch(e){} }
+
+/* ===================== STAGE CONTENT ===================== */
+function buildBeats(){
+  const B=[];
+
+  /* ============ STAGE 1 — FRAME (Module 1) ============ */
+  B.push({stage:0, type:'dialogue', thread:true, time:'9:02 AM',
+    text:"So. The Cabinet wants to know what drives student success, and they're putting real money behind whatever we tell them. That means we get this right, or we do harm. No pressure.",
+    cont:'Go on'});
+  B.push({stage:0, type:'dialogue', thread:true, time:'9:03 AM',
+    text:"I've pulled de-identified records across the student lifecycle - high school, undergrad, work, and the LMS. Before you touch any of it, I need three things from you: an honest scope, a fairness call, and a plan. Get those wrong and the analysis is poisoned before it starts.",
+    cont:'I\'m ready'});
+
+  B.push({stage:0, type:'decision', id:'s1_scope', pts:4,
+    label:'Decision 1 of 3 · Scope',
+    intro:"The Provost's framing memo asks: “Tell us what <em>causes</em> student success so we can fund it.”",
+    q:'How do you scope what this observational dataset can deliver?',
+    onPick:(c)=>{ if(c.q==='good') addReportLine('Scope','This analysis reports <b>associations</b>, not proven causes. Causal claims would require a controlled study.'); },
+    choices:[
+      { t:'Promise associations and clearly actionable signals, but flag that causal claims need a controlled study or natural experiment.', q:'good',
+        ot:'✓ Honest and useful', op:'Observational data yields associations. The mature deliverable says: here is what robustly co-occurs with success, here is where it plausibly points to a lever, and here is where we must not claim cause. The Cabinet can act on that responsibly.' },
+      { t:'Build a predictive model and treat its strongest features as the causal levers to fund - prediction is what they\'re paying for.', q:'bad',
+        ot:'✗ Prediction is not a lever', op:'A feature can top a model purely because it shares a cause with the outcome (you will literally watch this happen with extracurriculars). Funding it changes nothing. Selling predictive weight as causal impact is how analysts burn credibility and budgets.' },
+      { t:'Run a regression and report only features that stay significant after controlling for everything else - significance proves the effect is real.', q:'warn',
+        ot:'~ Controls help, but don\'t equal cause', op:'Controlling for covariates reduces some confounding, but observational significance still isn\'t causation (unmeasured confounders, reverse causality remain). It\'s a step in the right direction stated with false certainty. Frame it as association with caveats.' },
+      { t:'Decline to make any claims - observational data can\'t support decisions, so recommend the Cabinet commission a randomized trial instead.', q:'bad',
+        ot:'✗ Over-correction', op:'Most institutional research is observational and still informs good decisions. Refusing to analyze just hands the call to someone with worse data and fewer scruples. The skill is scoping claims correctly, not abstaining.' },
+    ]});
+
+  B.push({stage:0, type:'dialogue', thread:true, time:'9:08 AM', cont:'Show me the fields',
+    text:"Now the part that keeps me up at night. Some of these fields would sharpen a model - and using them would be indefensible. I need you to decide which features we will not let near a ranking of students.",  /* fallback */
+    dyn:(verdict)=>{
+      const v=verdict(['s1_scope']);
+      const tail=" Now the part that keeps me up at night. Some of these fields would sharpen a model - and using them would be indefensible. I need you to decide which features we will not let near a ranking of students.";
+      if(v==='good') return { emotion:'concern', text:"Good - that's the right way to scope it."+tail };
+      if(v==='mixed') return { emotion:'concern', text:"That scope was softer than I'd state it to the Cabinet, but close enough to move."+tail };
+      return { emotion:'disappoint', text:"That's not how we'd frame it for the Cabinet - reread my note, because getting scope wrong is how the whole report misleads people."+tail };
+    }});
+
+  /* Ethics as a code-predicate task: student writes the rule that flags sensitive proxies. Harder than click-to-exclude. */
+  B.push({stage:0, type:'code', id:'s1_ethics',
+    task:'Write the fairness rule. Complete <code>is_sensitive(name)</code> so it returns <code>True</code> for exactly the features that proxy for a protected or socioeconomic class - and <code>False</code> for legitimate behavioral or academic signals.',
+    hint:'Two of these six are proxies: one is geographic (a stand-in for where someone grew up), one is directly financial. The rest describe what a student <em>did</em>.',
+    starter:
+`# The six candidate features for the model:
+features = ['ug_gpa', 'hs_pop_density', 'logins_per_week',
+            'need_based_aid', 'internships', 'submission_rate']
+
+def is_sensitive(name):
+    # Return True only for features that proxy for a
+    # protected/socioeconomic class. Otherwise return False.
+    # YOUR CODE HERE
+    pass
+
+# Berrios will review your flags:
+for f in features:
+    print(f, '->', 'EXCLUDE' if is_sensitive(f) else 'keep')`,
+    test:
+`flags = {f: bool(is_sensitive(f)) for f in features}
+assert flags['hs_pop_density'] is True, "Population density of someone's HS area is a geographic proxy for race/income - it must be flagged."
+assert flags['need_based_aid'] is True, "Need-based aid is a direct socioeconomic signal - it must be flagged."
+assert flags['ug_gpa'] is False and flags['logins_per_week'] is False and flags['internships'] is False and flags['submission_rate'] is False, "Don't exclude legitimate academic/behavioral features - that weakens an honest model."`,
+    solutionNote:'Make a set of the two sensitive names and return name in that set. e.g. return name in {"hs_pop_density", "need_based_aid"}',
+    onPass:()=>{ state.ethics.excludedProxies=true; addReportLine('Ethics','Two features excluded as unfair proxies: <b>HS population density</b> (geographic) and <b>need-based aid</b> (socioeconomic). They will not influence any ranking.'); }
+  });
+
+  B.push({stage:0, type:'interstitial', emotion:'concern',
+    text:"With those two fields in, the model would've scored a point higher. Hold onto that. Someone in that Cabinet room is going to argue the most accurate model is the right one. It isn't - not when the accuracy comes from the data knowing who's poor.",
+    cont:'Continue'});
+
+  B.push({stage:0, type:'decision', id:'s1_plan', pts:4, shuffle:false,
+    label:'Decision 3 of 3 · Workflow',
+    intro:'Last thing before we dig in. A junior analyst proposed this pipeline:',
+    q:'<span style="font-family:var(--mono);font-size:0.85rem;color:var(--ink-dim)">load &rarr; join all tables &rarr; compute metrics &rarr; clean &rarr; model &rarr; report</span><br>What\'s the most serious problem with this order?',
+    onPick:(c)=>{ if(c.q==='good') addReportLine('Method','Tables were cleaned <b>before</b> joining and fairness was checked <b>with</b> modeling - not bolted on at the end.'); },
+    choices:[
+      { t:'Cleaning happens after joining - you\'d merge six messy tables and then try to untangle the combined mess, and metrics get computed on dirty data.', q:'good',
+        ot:'✓ That\'s the real flaw', op:'Clean each table before you join, and never compute metrics on uncleaned data. Joining first multiplies the mess (mismatched keys, duplicated dirt) and computing-then-cleaning means your numbers were wrong when you calculated them. Correct spine: load → clean → join → compute → model & fairness → report.' },
+      { t:'There\'s no separate fairness step - but that\'s minor, since you already excluded the bad features earlier.', q:'warn',
+        ot:'~ Fairness isn\'t one-and-done', op:'Excluding proxies up front is necessary but not sufficient - models can reconstruct sensitive signals from correlated features, so fairness checking belongs <em>with</em> modeling. Still, the ordering problem above is the more immediate, results-poisoning flaw.' },
+      { t:'Reporting is last - stakeholders should see findings throughout, so the report step should come earlier and repeat.', q:'bad',
+        ot:'✗ Reporting belongs at the end', op:'You report conclusions once they\'re trustworthy. Surfacing half-baked findings early invites the Cabinet to act on noise. The actual flaw is upstream: cleaning is in the wrong place.' },
+      { t:'Modeling before reporting is fine, but metrics should come before joining so you can compute per-table summaries first.', q:'bad',
+        ot:'✗ That makes it worse', op:'Per-table metrics computed before cleaning are just as untrustworthy, and the analysis you owe the Cabinet is cross-table (it needs the join). The fix isn\'t moving compute earlier - it\'s cleaning before joining.' },
+    ]});
+
+  B.push({stage:0, type:'dialogue', thread:true, time:'9:21 AM', cont:'Open the extract →',
+    text:"That's the framing done. Let's get our hands on the data.",  /* fallback */
+    dyn:(verdict)=>{
+      const v=verdict(['s1_scope','s1_plan']);   /* the two Stage-1 decisions */
+      if(v==='good') return { emotion:'approve',
+        text:"Scope's honest, the proxies are out, and you caught the pipeline order. That's the framing done - the part most people skip and most analyses die on. Let's get our hands on the data." };
+      if(v==='mixed') return { emotion:'concern',
+        text:"Mostly there. A couple of those calls were softer than I'd like, and the Cabinet won't be. Framing is where analyses quietly go wrong - so hold yourself to the sharper answer next time. Let's move." };
+      return { emotion:'disappoint',
+        text:"Hold on. We don't just click through the framing - that's the part that decides whether the whole report is honest or garbage. You scoped or sequenced this wrong, and on a real commission that's how a university funds the wrong thing or rates students by their zip code. Read the data carefully from here. I'm watching this one closely." };
+    }});
+
+  /* ============ STAGE 2 — ASSEMBLE (Module 2) ============ */
+  B.push({stage:1, type:'dialogue', thread:true, time:'9:24 AM',
+    text:"Here's the raw extract, straight out of the source system. First job is unglamorous: know exactly what you're holding before you trust a single number. Write me a quick profile - in plain Python, nothing fancy yet.",
+    cont:'Open the editor'});
+
+  B.push({stage:1, type:'code', id:'s2_profile',
+    task:'Complete <code>profile_cohort(table)</code> so it returns a tuple <code>(n_records, n_on_aid, pct_on_aid)</code>: the row count, how many students received need-based aid, and that as a percentage of all records rounded to <b>1 decimal place</b>.',
+    hint:'Use <code>len()</code> for the count, a loop or a sum over <code>table[\'need_based_aid\']</code> for the aid tally, and <code>round(x, 1)</code> for the percentage. Don\'t deduplicate - we clean later.',
+    starter:
+`def profile_cohort(table):
+    n_records = 0     # how many rows?
+    n_on_aid  = 0     # how many have need_based_aid == 1?
+    pct_on_aid = 0.0  # n_on_aid as a % of n_records, 1 decimal
+    # YOUR CODE HERE
+
+    return (n_records, n_on_aid, pct_on_aid)
+
+print(profile_cohort(df))`,
+    test:
+`r = profile_cohort(df)
+assert isinstance(r, tuple) and len(r) == 3, "Return a 3-tuple: (n_records, n_on_aid, pct_on_aid)."
+exp_n = 102
+exp_aid = int((df['need_based_aid'] == 1).sum())
+exp_pct = round(100 * exp_aid / exp_n, 1)
+assert r[0] == exp_n, "n_records should be 102 - the raw extract still includes its duplicate rows (we clean later)."
+assert r[1] == exp_aid, "n_on_aid should count students with need_based_aid == 1."
+assert r[2] == exp_pct, "pct_on_aid should be 100*n_on_aid/n_records rounded to 1 decimal."`,
+    solutionNote:'n_records = len(table). Loop: for v in table["need_based_aid"]: if v == 1: n_on_aid += 1. Then pct_on_aid = round(100 * n_on_aid / n_records, 1).',
+    onPass:()=>{ addReportLine('Cohort','Sample: <b>102 records</b> (incl. duplicates to be cleaned), 14 fields spanning HS → undergrad → work → LMS.'); }
+  });
+
+  B.push({stage:1, type:'decision', id:'s2_smell', pts:4,
+    label:'Decision · First read',
+    intro:'Your profile ran. 102 records - but the cohort was described as ~100 students, and the submission-rate column came back as text like <code>"84%"</code>, with some blanks.',
+    q:'What do these signs tell you, and what\'s the right next move?',
+    onPick:(c)=>{ if(c.q==='good') addReportLine('Data quality','Flagged before cleaning: duplicate rows, a percent-string column, and missing values concentrated in engagement fields.'); },
+    choices:[
+      { t:'Duplicates and a string-typed column and blanks are exactly the issues to fix in the dedicated cleaning step - note them and move on to clean deliberately.', q:'good',
+        ot:'✓ Right read, right restraint', op:'Two extra rows = the duplicates you expected. A "84%" string means the column is text, not numeric. Blanks mean missing values. These are precisely what the cleaning stage handles - you note them now and fix them deliberately, not reactively.' },
+      { t:'The data is corrupted and untrustworthy - flag it back to the source team and pause the analysis until they send a clean export.', q:'bad',
+        ot:'✗ This is normal, not corruption', op:'Real extracts always arrive with duplicates, type quirks, and gaps. Bouncing it back stalls the project over routine cleaning that\'s literally your job. Note the issues; handle them at the cleaning step.' },
+      { t:'Quickly strip the "%", convert to float, and drop duplicate rows now so the data\'s clean before you forget.', q:'warn',
+        ot:'~ Right fixes, wrong moment', op:'Those are the correct operations - but doing them ad hoc, here, scattered through the workflow, is how steps get missed and decisions go undocumented. Cleaning is its own stage for a reason. Catalog the issues now; execute them together.' },
+      { t:'The blanks are probably random, so plan to drop any row with a missing value to keep the dataset complete.', q:'bad',
+        ot:'✗ Dangerous assumption', op:'Never assume missingness is random before checking. Here it isn\'t - engagement records go missing more often for struggling students, so dropping those rows would bias the very finding you\'re after. You\'ll confront this directly at the cleaning stage.' },
+    ]});
+
+  B.push({stage:1, type:'dialogue', thread:true, time:'9:36 AM', cont:'Stage 3: Compute the metrics →',
+    text:"Now you know what you're holding. Next we turn raw fields into metrics.",  /* fallback */
+    dyn:(verdict)=>{
+      const v=verdict(['s2_smell']);
+      if(v==='good') return { emotion:'approve',
+        text:"Good - you knew what you're holding and what's wrong with it, and you didn't panic or paper over it. That instinct to catalog problems instead of hiding them is the whole job. Now we turn raw fields into the metrics that actually answer the Cabinet's question." };
+      if(v==='mixed') return { emotion:'concern',
+        text:"Close. You spotted the issues, but the move you reached for would've scattered the cleaning across the workflow - that's how steps get missed and nobody can reproduce your numbers later. Keep cleaning as its own deliberate step. Onward." };
+      return { emotion:'disappoint',
+        text:"No. Read that back. You were one click from either bouncing routine data back to the source - stalling the whole project - or dropping rows whose missingness isn't random, which would bias the exact finding we're chasing. This is precisely the carelessness that produces confident, wrong reports. Slow down. The numbers we build next are only as honest as how we handle this." };
+    }});
+
+  return B;
+}
+
+/* ===================== BOOT ===================== */
+async function boot(){
+  probeAllEmotions();   /* discover which avatar frames exist */
+  buildAvatars();
+  startAvatarLife();    /* blink + idle/talk cycle (no-op visually until frames load) */
+  try{
+    pyodide = await loadPyodide({ indexURL:'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
+    document.getElementById('loadText').textContent='Loading pandas...';
+    await pyodide.loadPackage(['pandas','numpy']);
+    BEATS = buildBeats();
+    state.maxPoints = BEATS.filter(b=>b.type==='decision').reduce((s,b)=>s+(b.pts||4),0);
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('appwin').classList.remove('hidden');
+    renderBeat();
+  }catch(e){
+    document.getElementById('loadSpin').style.display='none';
+    document.getElementById('loadText').textContent='Could not load the environment. Please refresh.';
+  }
+}
+boot();
+</script>
+</body>
+</html>

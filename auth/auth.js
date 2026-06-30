@@ -16,8 +16,8 @@
   'use strict';
 
   // ── CONFIG (edit these two values after deploying) ────────────────────────
-  const CLIENT_ID  = 'PASTE_OAUTH_CLIENT_ID_HERE.apps.googleusercontent.com';
-  const SCRIPT_URL = 'PASTE_APPS_SCRIPT_WEB_APP_URL_HERE';
+  const CLIENT_ID  = '200825489748-dikns9eltmg8dsv3p72o3aj5v14bed2n.apps.googleusercontent.com';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyDxN2eYN4hqs2eDycxzo1evJQgACDwSSsGS0XtV61GHUhqiNYJRJy_R8tXD7UGHScIhQ/exec';
 
   // ── STATE ────────────────────────────────────────────────────────────────
   const SESSION_KEY = 'dtsc520_auth';

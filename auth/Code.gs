@@ -23,7 +23,7 @@
  */
 
 // ── CONFIG ──────────────────────────────────────────────────────────────────
-const CLIENT_ID = 'PASTE_OAUTH_CLIENT_ID_HERE.apps.googleusercontent.com';
+const CLIENT_ID = '200825489748-dikns9eltmg8dsv3p72o3aj5v14bed2n.apps.googleusercontent.com';
 const ALLOWED_HD = 'eastern.edu';
 const ADMIN_EMAILS = ['gregory.longo@eastern.edu'];
 const EVENTS_SHEET = 'Events';

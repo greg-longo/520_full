@@ -6,6 +6,15 @@
   font-size: 13px;
 }
 
+/* Fixed top-right placement so the chip floats consistently on every page.
+   Pages opt in by giving the slot the `auth-slot-fixed` class. */
+#auth-slot.auth-slot-fixed {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 9999;
+}
+
 .auth-signin {
   background: #8B1C40;
   color: #fff;
