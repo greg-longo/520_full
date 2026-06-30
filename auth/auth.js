@@ -126,7 +126,8 @@
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'auth-signin';
-      btn.textContent = 'Sign in with Eastern Google';
+      btn.textContent = 'Sign in';
+      btn.title = 'Sign in with your @eastern.edu Google account';
       btn.addEventListener('click', signIn);
       slot.appendChild(btn);
     }

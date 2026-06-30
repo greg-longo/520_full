@@ -27,7 +27,9 @@
 body:has(#auth-slot.auth-slot-fixed) > nav,
 body:has(#auth-slot.auth-slot-fixed) > header > nav,
 body:has(#auth-slot.auth-slot-fixed) > header {
-  padding-right: 220px;
+  /* Clears the widest chip state: signed-in "Name / Sign out" (~170px).
+     Signed-out is just "Sign in" (~70px), so this is comfortably clear. */
+  padding-right: 190px;
 }
 
 /* On narrow screens many of these navs hide their links and the chip wraps,
@@ -65,7 +67,7 @@ body:has(#auth-slot.auth-slot-fixed) > header {
   color: #e7e5e2;
   font-weight: 500;
   white-space: nowrap;
-  max-width: 220px;
+  max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
