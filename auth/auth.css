@@ -13,6 +13,19 @@
   top: 12px;
   right: 12px;
   z-index: 9999;
+  /* Solid backing so the chip always reads clearly on top of page nav. */
+  background: var(--bg, #0f0e0d);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+/* Small right-edge padding on auth-required page nav so its "← Back" link
+   nudges clear of the floating chip. Scoped so it never disturbs pages
+   without this collision. */
+body[data-auth-required] > nav,
+body[data-auth-required] .nav,
+body[data-auth-required] header > nav {
+  padding-right: 24px;
 }
 
 .auth-signin {
