@@ -788,7 +788,13 @@ const SEED_CATALOG = [
   ['item', 'pc_black', 'Midnight Workstation', 'Full tower, full CRT, full send', 'epic', 400, 'pc', '', '', true],
   // legendary
   ['item', 'pc_white', 'Arctic Workstation', 'The quiz champions choice', 'legendary', 550, 'pc', 'ach_quiz_sweep', '', true],
-  ['item', 'pc_beige', 'The Beige Battlestation', 'Peak 1996 computing. You earned this', 'legendary', 700, 'pc', 'ach_full_clear', '', true]
+  ['item', 'pc_beige', 'The Beige Battlestation', 'Peak 1996 computing. You earned this', 'legendary', 700, 'pc', 'ach_full_clear', '', true],
+  // recolor line (Eastern spirit + achievement exclusives)
+  ['item', 'binder_maroon', 'Eastern Binder', 'School colors, alphabetized', 'common', 100, 'desk', '', '', true],
+  ['item', 'lamp_maroon', 'Eastern Lamp', 'Maroon glow for late-night merges', 'rare', 250, 'lighting', '', '', true],
+  ['item', 'phone_maroon', 'The Eastern Hotline', 'Direct line to the registrar, allegedly', 'rare', 300, 'desk', '', '', true],
+  ['item', 'plant_purple', 'Royal Plant', 'It grew like this after 7 straight days of study', 'epic', 300, 'floor', 'ach_streak7', '', true],
+  ['item', 'mug_gold', 'The Summa Mug', 'Gold plated. They still misprinted it', 'legendary', 400, 'desk', 'ach_summa_any', '', true]
 ];
 
 // Item ids from the v1 seed (pre-sprite placeholder art). Run
