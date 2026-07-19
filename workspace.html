@@ -47,14 +47,66 @@
     }
     #signin-note b { color: var(--text); }
 
+    /* ── THE SCENE ─────────────────────────────────────────────────────── */
     .scene-wrap {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 0.8rem;
-      position: relative;
     }
-    #scene { display: block; width: 100%; height: auto; border-radius: 8px; }
+    #stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 8px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, #2a2430 0%, #241f28 55%, #241f28 62%, #17120e 62%, #211a13 100%);
+    }
+    /* subtle retro wall panelling + window glow */
+    #stage::before {
+      content: '';
+      position: absolute; inset: 0 0 38% 0;
+      background:
+        repeating-linear-gradient(90deg, transparent 0 119px, rgba(255,255,255,0.025) 119px 121px),
+        radial-gradient(ellipse at 78% 10%, rgba(201,162,74,0.07), transparent 55%);
+      pointer-events: none;
+    }
+    /* floor sheen */
+    #stage::after {
+      content: '';
+      position: absolute; left: 0; right: 0; bottom: 0; height: 38%;
+      background:
+        repeating-linear-gradient(90deg, transparent 0 88px, rgba(0,0,0,0.18) 88px 90px),
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 40%);
+      pointer-events: none;
+    }
+    .sprite { position: absolute; transform: translateX(-50%); user-select: none; -webkit-user-drag: none; pointer-events: none; }
+    .sprite img { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35)); }
+
+    .hotspot {
+      position: absolute; transform: translateX(-50%);
+      border: 2px dashed rgba(255,255,255,0.22);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.4);
+      font: 600 18px 'IBM Plex Sans', sans-serif;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    }
+    .hotspot:hover, .hotspot:focus-visible, .hotspot.selected {
+      border-color: var(--gold);
+      background: rgba(201,162,74,0.08);
+      box-shadow: 0 0 14px rgba(201,162,74,0.25);
+      color: var(--gold);
+    }
+    .hotspot.filled { border-color: transparent; background: transparent; color: transparent; }
+    .hotspot.filled:hover, .hotspot.filled:focus-visible, .hotspot.filled.selected {
+      border-color: var(--gold); background: rgba(201,162,74,0.06);
+    }
+    .hotspot:focus-visible { outline: 2.5px solid #c9a84c; outline-offset: 2px; }
+
     .scene-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 0.6rem; gap: 0.8rem; flex-wrap: wrap; }
     .scene-hint { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--text-dim); }
     .btn {
@@ -66,85 +118,67 @@
     }
     .btn:hover, .btn:focus-visible { background: rgba(139,28,64,0.3); box-shadow: 0 0 12px rgba(139,28,64,0.4); }
 
-    /* anchor hotspots (SVG) */
-    .anchor { cursor: pointer; }
-    .anchor .hotspot {
-      fill: rgba(255,255,255,0.03);
-      stroke: rgba(255,255,255,0.18);
-      stroke-dasharray: 4 4;
-      transition: stroke 0.15s, fill 0.15s;
-    }
-    .anchor:hover .hotspot, .anchor:focus .hotspot, .anchor.selected .hotspot {
-      stroke: var(--gold); fill: rgba(201,162,74,0.10);
-    }
-    .anchor .plus { fill: rgba(255,255,255,0.3); font: 600 20px 'IBM Plex Sans', sans-serif; pointer-events: none; }
-    .anchor.filled .hotspot { stroke: transparent; fill: transparent; }
-    .anchor.filled:hover .hotspot, .anchor.filled:focus .hotspot, .anchor.filled.selected .hotspot {
-      stroke: var(--gold); fill: rgba(201,162,74,0.07);
-    }
-    .anchor.filled .plus { display: none; }
-    .anchor:focus { outline: none; }
-
-    /* picker */
+    /* ── PICKER ────────────────────────────────────────────────────────── */
     #picker {
       display: none; margin-top: 0.8rem; background: var(--bg-card);
       border: 1px solid var(--gold); border-radius: 10px; padding: 0.9rem 1rem;
     }
     #picker.open { display: block; }
     #picker h3 { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.6rem; font-weight: 500; }
-    .pick-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .pick-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
     .pick-item {
-      font-family: 'IBM Plex Sans', sans-serif; font-size: 0.8rem;
-      padding: 0.4rem 0.75rem; border-radius: 7px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+      width: 92px; padding: 0.5rem 0.4rem; border-radius: 8px; cursor: pointer;
       background: rgba(255,255,255,0.04); color: var(--text);
       border: 1px solid var(--border);
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 0.66rem; text-align: center;
     }
+    .pick-item img { width: 52px; height: 52px; object-fit: contain; }
     .pick-item:hover, .pick-item:focus-visible { border-color: var(--gold); }
     .pick-item.current { border-color: var(--gold); background: rgba(201,162,74,0.12); }
 
-    /* store */
+    /* ── STORE ─────────────────────────────────────────────────────────── */
     .store-head { display: flex; align-items: baseline; gap: 0.9rem; margin: 2rem 0 0.9rem; }
     .store-head h2 { font-family: 'IBM Plex Mono', monospace; font-size: 0.74rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); font-weight: 500; }
     #store-balance { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--gold); }
-    .store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.8rem; }
+    .store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.8rem; }
     .item-card {
       background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid var(--border);
       border-radius: 10px; padding: 0.85rem 1rem;
-      display: flex; flex-direction: column; gap: 0.3rem;
+      display: flex; gap: 0.85rem;
+    }
+    .item-card .thumb {
+      width: 64px; height: 64px; object-fit: contain; flex-shrink: 0; align-self: center;
+      filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4));
     }
     .item-card.r-common { border-left-color: var(--r-common); }
     .item-card.r-rare { border-left-color: var(--r-rare); }
     .item-card.r-epic { border-left-color: var(--r-epic); }
     .item-card.r-legendary { border-left-color: var(--r-legendary); box-shadow: 0 0 12px rgba(201,162,74,0.12); }
+    .item-body { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
     .item-name { font-family: 'Zilla Slab', serif; font-size: 1rem; font-weight: 600; }
-    .item-desc { font-size: 0.78rem; color: var(--text-dim); line-height: 1.4; }
-    .item-meta { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.35rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .item-desc { font-size: 0.76rem; color: var(--text-dim); line-height: 1.35; }
+    .item-meta { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.2rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase; }
     .item-rarity.r-common { color: var(--r-common); } .item-rarity.r-rare { color: var(--r-rare); }
     .item-rarity.r-epic { color: var(--r-epic); } .item-rarity.r-legendary { color: var(--r-legendary); }
     .item-price { color: var(--gold); }
-    .item-actions { margin-top: 0.5rem; }
+    .item-actions { margin-top: 0.35rem; }
     .buy-btn {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; padding: 0.35rem 0.8rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; padding: 0.32rem 0.8rem;
       border-radius: 6px; cursor: pointer; border: 1px solid var(--gold);
       background: rgba(201,162,74,0.12); color: var(--gold);
     }
     .buy-btn:hover:not(:disabled), .buy-btn:focus-visible { background: rgba(201,162,74,0.25); }
     .buy-btn:disabled { opacity: 0.45; cursor: not-allowed; }
     .owned-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: #3fa06a; }
-    .gate-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; color: var(--r-epic); }
+    .gate-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.64rem; color: var(--r-epic); }
 
     footer {
       text-align: center; padding: 2rem; color: var(--text-dim); font-size: 0.78rem;
       font-family: 'IBM Plex Sans', sans-serif; border-top: 1px solid var(--border); margin-top: 2rem;
     }
-
-    @media (prefers-reduced-motion: reduce) {
-      .disco-spin, .lava-blob, .duck-disco-shimmer { animation: none !important; }
-    }
-    @keyframes discoSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes lavaRise { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
-    .disco-spin { animation: discoSpin 14s linear infinite; transform-origin: center; transform-box: fill-box; }
-    .lava-blob { animation: lavaRise 6s ease-in-out infinite; }
+    footer a { color: var(--text-dim); }
+    @media (prefers-reduced-motion: reduce) { .hotspot { transition: none; } }
   </style>
   <link rel="stylesheet" href="/520_full/auth/auth.css">
   <link rel="stylesheet" href="/520_full/assets/shell.css">
@@ -158,7 +192,7 @@
   <div class="hero">
     <div class="hero-tag">DTSC 520 &middot; Your Workspace</div>
     <h1>The Desk</h1>
-    <p class="hero-sub">Spend the credits you earn on ducks, lighting, and questionable decor. Click a slot to decorate.</p>
+    <p class="hero-sub">Your corner of the StatDeck office, 1996. Spend earned credits, click a slot, decorate.</p>
   </div>
 
   <main>
@@ -168,9 +202,9 @@
     </div>
 
     <div class="scene-wrap">
-      <svg id="scene" viewBox="0 0 900 560" role="img" aria-label="Your workspace scene"></svg>
+      <div id="stage" role="group" aria-label="Your workspace scene"></div>
       <div class="scene-actions">
-        <span class="scene-hint" id="scene-hint">Click a dashed slot to place an item you own.</span>
+        <span class="scene-hint">Click a dashed slot to place an item you own.</span>
         <button class="btn" id="share-btn" type="button">Download desk card</button>
       </div>
     </div>
@@ -181,167 +215,100 @@
     </div>
 
     <div class="store-head">
-      <h2>The Store</h2>
+      <h2>The Supply Closet</h2>
       <span id="store-balance"></span>
     </div>
     <div class="store-grid" id="store"></div>
   </main>
 
   <footer>
-    This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.
+    This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.<br>
+    Prop artwork from <a href="https://crazydrpants.itch.io/90s-retro-office-pack">"90s Retro Office Pack" by CrazyDrPants</a>, CC BY 4.0.
   </footer>
 
 <script>
 (function () {
   'use strict';
 
-  var NS = 'http://www.w3.org/2000/svg';
-  var state = null;          // latest player state
-  var layout = {};           // anchors -> itemId
+  var ASSETS = '/520_full/assets/desk/';
+  var state = null;
+  var layout = {};
   var selectedAnchor = null;
 
-  // ── Anchors: where things can go ────────────────────────────────────────
-  var ANCHORS = [
-    { id: 'window',    label: 'Window view',  x: 95,  y: 70,  w: 220, h: 150, only: ['bg_mcinnis', 'bg_philly', 'bg_space'] },
-    { id: 'wallpaint', label: 'Wall color',   x: 840, y: 20,  w: 40,  h: 40,  only: ['wall_maroon'] },
-    { id: 'walldecor', label: 'Wall decor',   x: 390, y: 90,  w: 130, h: 70,  only: ['eagles_pennant'] },
-    { id: 'lightceiling', label: 'Ceiling',   x: 620, y: 20,  w: 70,  h: 90,  only: ['disco_ball', 'string_lights'] },
-    { id: 'lightwall', label: 'Wall light',   x: 390, y: 180, w: 130, h: 60,  only: ['neon_sign', 'string_lights'] },
-    { id: 'lightdesk', label: 'Desk light',   x: 128, y: 288, w: 60,  h: 72,  only: ['lamp_desk', 'lava_lamp'] },
-    { id: 'desk1', label: 'Desk spot', x: 205, y: 300, w: 55, h: 60, slot: 'desk' },
-    { id: 'desk2', label: 'Desk spot', x: 270, y: 300, w: 55, h: 60, slot: 'desk' },
-    { id: 'desk3', label: 'Desk spot', x: 480, y: 300, w: 55, h: 60, slot: 'desk' },
-    { id: 'desk4', label: 'Desk spot', x: 545, y: 300, w: 55, h: 60, slot: 'desk' },
-    { id: 'shelf1', label: 'Shelf spot', x: 655, y: 155, w: 55, h: 48, slot: 'shelf' },
-    { id: 'shelf2', label: 'Shelf spot', x: 715, y: 155, w: 55, h: 48, slot: 'shelf' },
-    { id: 'shelf3', label: 'Shelf spot', x: 775, y: 155, w: 55, h: 48, slot: 'shelf' },
-    { id: 'shelf4', label: 'Shelf spot', x: 655, y: 245, w: 55, h: 48, slot: 'shelf' },
-    { id: 'shelf5', label: 'Shelf spot', x: 715, y: 245, w: 55, h: 48, slot: 'shelf' },
-    { id: 'shelf6', label: 'Shelf spot', x: 775, y: 245, w: 55, h: 48, slot: 'shelf' },
-    { id: 'floor1', label: 'Floor (center)', x: 300, y: 480, w: 180, h: 55, only: ['rug_maroon'] },
-    { id: 'floor2', label: 'Floor (side)',   x: 715, y: 430, w: 110, h: 100, only: ['beanbag'] }
+  // ── Base furniture: always present, not purchasable ─────────────────────
+  // x = center %, b = bottom %, w = width %, z = stacking
+  var FURNITURE = [
+    { img: 'furn_cubicle', x: 76, b: 34, w: 34, z: 1 },
+    { img: 'furn_cabinet', x: 88, b: 20, w: 12, z: 3 },
+    { img: 'furn_desk',    x: 38, b: 14, w: 40, z: 4 },
+    { img: 'furn_chair',   x: 15, b: 6,  w: 15, z: 6 }
   ];
+
+  // ── Anchors ─────────────────────────────────────────────────────────────
+  var ANCHORS = [
+    { id: 'pcspot',   label: 'Computer spot',  x: 38, b: 43, w: 16, h: 26, slot: 'pc',       z: 5 },
+    { id: 'lightdesk',label: 'Desk light',     x: 23, b: 43, w: 7,  h: 18, slot: 'lighting', z: 5 },
+    { id: 'desk1',    label: 'Desk spot',      x: 30, b: 43, w: 6,  h: 10, slot: 'desk',     z: 5 },
+    { id: 'desk2',    label: 'Desk spot',      x: 49, b: 43, w: 7,  h: 10, slot: 'desk',     z: 5 },
+    { id: 'desk3',    label: 'Desk spot',      x: 55, b: 43, w: 6,  h: 10, slot: 'desk',     z: 5 },
+    { id: 'wall1',    label: 'Wall spot',      x: 38, b: 76, w: 8,  h: 15, slot: 'wall',     z: 2 },
+    { id: 'cab1',     label: 'Cabinet top',    x: 88, b: 57, w: 8,  h: 12, slot: 'shelf',    z: 3 },
+    { id: 'floor1',   label: 'Floor (left)',   x: 6,  b: 6,  w: 10, h: 34, slot: 'floor',    z: 4 },
+    { id: 'floor2',   label: 'Floor (center)', x: 62, b: 6,  w: 11, h: 30, slot: 'floor',    z: 5 },
+    { id: 'floor3',   label: 'Floor (right)',  x: 97, b: 6,  w: 11, h: 26, slot: 'floor',    z: 4 }
+  ];
+
+  // ── Item display sizes (width % of stage) ───────────────────────────────
+  var ITEM_W = {
+    pc_beige: 16, pc_black: 15, pc_white: 16,
+    lamp_banker: 6, lamp_black: 6, lamp_white: 6,
+    mug_cream: 3.4, mug_brown: 3.4, mug_enamel: 3.5,
+    binder_red: 6, binder_blue: 6, binder_black: 6,
+    notepad: 5, paper_memo: 5.6, phone_landline: 7,
+    clock_wall: 5.4, plant_pot: 8, fan_standing: 7.5,
+    water_cooler: 9, trash_can: 5, copier_beige: 13,
+    printer_white: 9, archive_boxes: 10, box_cardboard: 7.5
+  };
 
   function anchorAccepts(anchor, item) {
     if (anchor.only) return anchor.only.indexOf(item.id) !== -1;
     return item.slot === anchor.slot;
   }
 
-  // ── Item artwork (compact SVG fragments) ────────────────────────────────
-  function duck(color, extras) {
-    return '<g>' +
-      '<ellipse cx="26" cy="40" rx="18" ry="13" fill="' + color + '"/>' +
-      '<circle cx="38" cy="24" r="10" fill="' + color + '"/>' +
-      '<path d="M46 24 l9 3 -9 4z" fill="#e8933a"/>' +
-      '<circle cx="41" cy="21" r="1.8" fill="#1a1815"/>' +
-      '<path d="M14 40 q-5 -6 1 -9" stroke="' + color + '" stroke-width="4" fill="none"/>' +
-      (extras || '') + '</g>';
-  }
-  var ART = {
-    duck_classic: duck('#e8c832'),
-    duck_maroon:  duck('#8B1C40'),
-    duck_pirate:  duck('#e8c832',
-      '<path d="M28 12 q10 -8 20 0 l-2 6 q-8 -5 -16 0z" fill="#222"/><circle cx="41" cy="21" r="4" fill="none" stroke="#222" stroke-width="1.6"/><path d="M37 21 l-9 -3" stroke="#222" stroke-width="1.6"/>'),
-    duck_disco:   duck('url(#discoGrad)', '<circle cx="30" cy="36" r="2" fill="#fff" opacity="0.8"/><circle cx="20" cy="42" r="1.5" fill="#fff" opacity="0.6"/>'),
-    duck_grad:    duck('#e8c832',
-      '<rect x="30" y="9" width="17" height="4" fill="#222"/><rect x="34" y="4" width="9" height="6" fill="#222"/><path d="M47 11 l0 7" stroke="#c9a24a" stroke-width="1.5"/><circle cx="47" cy="19" r="1.5" fill="#c9a24a"/>'),
-    coffee_mug: '<g><path d="M14 24 h26 v22 q0 6 -6 6 h-14 q-6 0 -6 -6z" fill="#8B1C40"/><path d="M40 28 q10 2 0 12" stroke="#8B1C40" stroke-width="4" fill="none"/><path d="M20 18 q2 -5 0 -8 M28 18 q2 -5 0 -8" stroke="#a09a92" stroke-width="2" fill="none" opacity="0.7"/></g>',
-    cat_tabby: '<g><ellipse cx="28" cy="44" rx="20" ry="12" fill="#b07030"/><circle cx="42" cy="28" r="11" fill="#b07030"/><path d="M34 20 l3 -8 5 6z M50 20 l-3 -8 -5 6z" fill="#b07030"/><circle cx="39" cy="26" r="1.5" fill="#1a1815"/><circle cx="46" cy="26" r="1.5" fill="#1a1815"/><path d="M8 44 q-6 -10 4 -14" stroke="#b07030" stroke-width="4" fill="none"/><path d="M20 38 h16 M20 44 h16" stroke="#8a5522" stroke-width="2" opacity="0.6"/></g>',
-    plant_monstera: '<g><path d="M20 46 h16 l-2 10 h-12z" fill="#8B1C40"/><path d="M28 44 q-14 -8 -8 -24 q10 4 10 16 M28 44 q2 -18 16 -20 q2 14 -12 22 M28 44 q-2 -12 4 -22" stroke="#3fa06a" stroke-width="3.5" fill="none"/></g>',
-    plant_cactus: '<g><path d="M22 46 h14 l-2 8 h-10z" fill="#c07b30"/><rect x="25" y="20" width="8" height="26" rx="4" fill="#3fa06a"/><rect x="16" y="26" width="6" height="12" rx="3" fill="#3fa06a"/><rect x="36" y="30" width="6" height="10" rx="3" fill="#3fa06a"/></g>',
-    mini_terminal: '<g><rect x="10" y="16" width="38" height="28" rx="3" fill="#0b1a14" stroke="#2e5a4a"/><text x="14" y="27" font-family="monospace" font-size="7" fill="#7fe0b0">&gt; run_</text><text x="14" y="37" font-family="monospace" font-size="7" fill="#7fe0b0">ok ✓</text><rect x="22" y="44" width="14" height="6" fill="#2e2b28"/></g>',
-    aria_plush: '<g><rect x="14" y="18" width="30" height="32" rx="10" fill="#4d9fd6"/><circle cx="24" cy="30" r="3" fill="#0f0e0d"/><circle cx="34" cy="30" r="3" fill="#0f0e0d"/><path d="M24 40 q5 4 10 0" stroke="#0f0e0d" stroke-width="2" fill="none"/><path d="M29 18 l0 -6" stroke="#4d9fd6" stroke-width="2"/><circle cx="29" cy="10" r="2.5" fill="#c9a24a"/></g>',
-    trophy_shelf: '<g><rect x="8" y="40" width="44" height="5" fill="#5a4632"/><path d="M22 18 h14 v8 q0 7 -7 7 t-7 -7z" fill="#c9a24a"/><rect x="26" y="33" width="6" height="5" fill="#c9a24a"/><rect x="22" y="38" width="14" height="3" fill="#8a6d33"/></g>',
-    lamp_desk: '<g><rect x="22" y="56" width="18" height="5" rx="2" fill="#333"/><path d="M30 56 L34 34" stroke="#555" stroke-width="3"/><path d="M24 22 h22 l-6 14 h-12z" fill="#8B1C40"/><ellipse cx="34" cy="40" rx="12" ry="5" fill="#ffd98a" opacity="0.35"/></g>',
-    lava_lamp: '<g><path d="M24 8 h14 l4 40 h-22z" fill="#2a1a30" stroke="#555"/><circle class="lava-blob" cx="31" cy="38" r="5" fill="#e05fa0"/><circle class="lava-blob" cx="33" cy="26" r="3.4" fill="#e05fa0" style="animation-delay:-3s"/><rect x="22" y="48" width="18" height="6" rx="2" fill="#333"/></g>',
-    neon_sign: '<g><rect x="4" y="10" width="120" height="38" rx="8" fill="none" stroke="#e05fa0" stroke-width="2" opacity="0.9"/><text x="64" y="35" text-anchor="middle" font-family="monospace" font-size="15" fill="#e05fa0" style="filter:drop-shadow(0 0 5px #e05fa0)">df.dropna()</text></g>',
-    string_lights: '<g><path d="M2 14 q30 22 62 8 q34 -14 62 6" stroke="#5a4632" stroke-width="1.6" fill="none"/><g fill="#ffd98a"><circle cx="20" cy="22" r="3.4"/><circle cx="48" cy="24" r="3.4"/><circle cx="76" cy="17" r="3.4"/><circle cx="102" cy="17" r="3.4"/><circle cx="120" cy="24" r="3.4"/></g></g>',
-    disco_ball: '<g><path d="M33 2 v12" stroke="#888" stroke-width="2"/><g class="disco-spin"><circle cx="33" cy="34" r="20" fill="#9fb2c4"/><path d="M13 34 h40 M33 14 v40 M19 21 q14 12 28 0 M19 47 q14 -12 28 0" stroke="#e8f2ff" stroke-width="1.4" fill="none" opacity="0.8"/></g><g fill="#ffd98a" opacity="0.7"><circle cx="8" cy="60" r="2"/><circle cx="58" cy="56" r="2"/><circle cx="33" cy="66" r="2"/></g></g>',
-    rug_maroon: '<g><ellipse cx="90" cy="27" rx="88" ry="25" fill="#8B1C40" opacity="0.75"/><ellipse cx="90" cy="27" rx="64" ry="17" fill="none" stroke="#c9a24a" stroke-width="1.6" opacity="0.6"/></g>',
-    beanbag: '<g><path d="M10 78 q-6 -34 30 -40 q40 -6 44 26 q3 22 -20 26 q-40 6 -54 -12z" fill="#2A7195"/><path d="M22 46 q18 -10 44 0" stroke="#1d5470" stroke-width="3" fill="none"/></g>',
-    eagles_pennant: '<g><path d="M4 8 L124 30 L4 52z" fill="#2A7195"/><path d="M4 8 L124 30 L4 52z" fill="none" stroke="#3388b0" stroke-width="2"/><text x="14" y="35" font-family="serif" font-size="13" font-weight="bold" fill="#e8e4de">EAGLES</text></g>',
-    bg_mcinnis: '<g><rect width="220" height="150" fill="#1b1430"/><rect x="20" y="55" width="180" height="80" fill="#2b2145"/><g fill="#ffd98a"><rect x="34" y="66" width="12" height="10"/><rect x="64" y="66" width="12" height="10"/><rect x="124" y="86" width="12" height="10"/><rect x="154" y="66" width="12" height="10"/></g><rect x="95" y="105" width="26" height="30" fill="#171126"/><circle cx="180" cy="26" r="12" fill="#e8e4de" opacity="0.85"/><text x="24" y="48" font-family="monospace" font-size="9" fill="#9a8fc4">McINNIS HALL</text></g>',
-    bg_philly: '<g><rect width="220" height="150" fill="#101a2a"/><g fill="#1e3352"><rect x="12" y="60" width="24" height="90"/><rect x="44" y="34" width="30" height="116"/><rect x="82" y="50" width="24" height="100"/><rect x="112" y="20" width="34" height="130"/><rect x="154" y="44" width="26" height="106"/><rect x="186" y="66" width="22" height="84"/></g><g fill="#ffd98a" opacity="0.9"><rect x="50" y="42" width="5" height="5"/><rect x="62" y="58" width="5" height="5"/><rect x="118" y="30" width="5" height="5"/><rect x="132" y="52" width="5" height="5"/><rect x="118" y="76" width="5" height="5"/><rect x="160" y="52" width="5" height="5"/><rect x="88" y="60" width="5" height="5"/><rect x="18" y="70" width="5" height="5"/></g></g>',
-    bg_space: '<g><rect width="220" height="150" fill="#0a0a18"/><g fill="#e8f2ff"><circle cx="30" cy="30" r="1.6"/><circle cx="70" cy="18" r="1.2"/><circle cx="120" cy="40" r="1.8"/><circle cx="170" cy="22" r="1.2"/><circle cx="200" cy="60" r="1.6"/><circle cx="50" cy="80" r="1.2"/><circle cx="90" cy="110" r="1.6"/><circle cx="150" cy="90" r="1.2"/><circle cx="185" cy="120" r="1.6"/><circle cx="25" cy="120" r="1.2"/></g><circle cx="160" cy="55" r="17" fill="#c96f4a"/><ellipse cx="160" cy="55" rx="27" ry="6" fill="none" stroke="#e8c832" stroke-width="2" opacity="0.75"/></g>'
-  };
-
-  // ── Scene ───────────────────────────────────────────────────────────────
-  function baseScene() {
-    var wallColor = layout.wallpaint === 'wall_maroon' ? '#3a1622' : '#211d24';
-    return '' +
-      '<defs><linearGradient id="discoGrad" x1="0" y1="0" x2="1" y2="1">' +
-      '<stop offset="0" stop-color="#e05fa0"/><stop offset="0.5" stop-color="#4d9fd6"/><stop offset="1" stop-color="#c9a24a"/></linearGradient></defs>' +
-      '<rect width="900" height="380" fill="' + wallColor + '"/>' +               // wall
-      '<rect y="380" width="900" height="180" fill="#171310"/>' +                 // floor
-      '<rect y="376" width="900" height="6" fill="#0d0b09"/>' +                   // baseboard
-      '<rect x="88" y="62" width="234" height="166" fill="#0d0b09"/>' +           // window frame
-      '<rect x="95" y="70" width="220" height="150" fill="#131a26"/>' +           // window glass default
-      '<g id="art-window"></g>' +
-      '<rect x="203" y="145" width="4" height="75" fill="#0d0b09" opacity="0.85"/>' + // window mullion
-      '<rect x="88" y="140" width="234" height="4" fill="#0d0b09" opacity="0.85"/>' +
-      '<g id="art-walldecor"></g><g id="art-lightwall"></g><g id="art-lightceiling"></g>' +
-      '<g id="art-floor1"></g>' +
-      // desk
-      '<rect x="110" y="358" width="530" height="14" rx="3" fill="#4a3826"/>' +
-      '<rect x="130" y="372" width="16" height="108" fill="#3a2c1e"/>' +
-      '<rect x="604" y="372" width="16" height="108" fill="#3a2c1e"/>' +
-      // monitor (always present)
-      '<rect x="330" y="268" width="120" height="76" rx="5" fill="#0b0a09" stroke="#333"/>' +
-      '<rect x="338" y="276" width="104" height="60" fill="#101820"/>' +
-      '<text x="344" y="292" font-family="monospace" font-size="9" fill="#7fe0b0">import pandas as pd</text>' +
-      '<text x="344" y="306" font-family="monospace" font-size="9" fill="#5a8a9a">df = pd.read_csv(...)</text>' +
-      '<text x="344" y="320" font-family="monospace" font-size="9" fill="#c9a24a">score: A+</text>' +
-      '<rect x="378" y="344" width="24" height="12" fill="#222"/>' +
-      // keyboard
-      '<rect x="345" y="360" width="90" height="8" rx="2" fill="#26211c"/>' +
-      '<g id="art-lightdesk"></g>' +
-      '<g id="art-desk1"></g><g id="art-desk2"></g><g id="art-desk3"></g><g id="art-desk4"></g>' +
-      // shelves
-      '<rect x="645" y="203" width="195" height="8" fill="#4a3826"/>' +
-      '<rect x="645" y="293" width="195" height="8" fill="#4a3826"/>' +
-      '<g id="art-shelf1"></g><g id="art-shelf2"></g><g id="art-shelf3"></g>' +
-      '<g id="art-shelf4"></g><g id="art-shelf5"></g><g id="art-shelf6"></g>' +
-      '<g id="art-floor2"></g>' +
-      '<g id="anchors"></g>';
-  }
-
+  // ── Scene rendering ─────────────────────────────────────────────────────
   function renderScene() {
-    var svg = document.getElementById('scene');
-    svg.innerHTML = baseScene();
+    var stage = document.getElementById('stage');
+    stage.innerHTML = '';
 
-    // place items
+    FURNITURE.forEach(function (f) { addSprite(stage, f.img, f.x, f.b, f.w, f.z); });
+
     ANCHORS.forEach(function (a) {
       var itemId = layout[a.id];
-      var host = svg.querySelector('#art-' + a.id);
-      if (!host || !itemId || !ART[itemId]) return;
-      if (itemId === 'wall_maroon') return;   // handled via wall color
-      var g = document.createElementNS(NS, 'g');
-      // background views fill the window exactly; others sit at the anchor
-      if (a.id === 'window') g.setAttribute('transform', 'translate(95,70)');
-      else g.setAttribute('transform', 'translate(' + a.x + ',' + a.y + ')');
-      g.innerHTML = ART[itemId];
-      host.appendChild(g);
-    });
-
-    // anchor hotspots
-    var anchorsHost = svg.querySelector('#anchors');
-    ANCHORS.forEach(function (a) {
+      if (itemId && ITEM_W[itemId]) {
+        addSprite(stage, itemId, a.x, a.b, ITEM_W[itemId], a.z + 1);
+      }
       var owned = ownedFor(a);
-      if (!owned.length && !layout[a.id]) return;   // nothing placeable: keep the scene clean
-      var g = document.createElementNS(NS, 'g');
-      g.setAttribute('class', 'anchor' + (layout[a.id] ? ' filled' : '') + (selectedAnchor === a.id ? ' selected' : ''));
-      g.setAttribute('tabindex', '0');
-      g.setAttribute('role', 'button');
-      g.setAttribute('aria-label', a.label + (layout[a.id] ? ': ' + itemName(layout[a.id]) : ': empty'));
-      g.innerHTML =
-        '<rect class="hotspot" x="' + a.x + '" y="' + a.y + '" width="' + a.w + '" height="' + a.h + '" rx="8"/>' +
-        '<text class="plus" x="' + (a.x + a.w / 2 - 6) + '" y="' + (a.y + a.h / 2 + 7) + '">+</text>';
-      g.addEventListener('click', function () { openPicker(a); });
-      g.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPicker(a); }
-      });
-      anchorsHost.appendChild(g);
+      if (!owned.length && !itemId) return;      // nothing placeable: keep clean
+      var hs = document.createElement('button');
+      hs.type = 'button';
+      hs.className = 'hotspot' + (itemId ? ' filled' : '') + (selectedAnchor === a.id ? ' selected' : '');
+      hs.style.cssText = 'left:' + a.x + '%;bottom:' + a.b + '%;width:' + a.w + '%;height:' + a.h + '%;z-index:50;';
+      hs.setAttribute('aria-label', a.label + (itemId ? ': ' + itemName(itemId) : ': empty'));
+      if (!itemId) hs.textContent = '+';
+      hs.addEventListener('click', function () { openPicker(a); });
+      stage.appendChild(hs);
     });
+  }
+
+  function addSprite(stage, img, x, b, w, z) {
+    var d = document.createElement('div');
+    d.className = 'sprite';
+    d.style.cssText = 'left:' + x + '%;bottom:' + b + '%;width:' + w + '%;z-index:' + z + ';';
+    var i = document.createElement('img');
+    i.src = ASSETS + img + '.png';
+    i.alt = '';
+    d.appendChild(i);
+    stage.appendChild(d);
   }
 
   // ── Picker ──────────────────────────────────────────────────────────────
@@ -349,7 +316,7 @@
     if (!state) return [];
     var items = (state.catalog && state.catalog.items) || [];
     return items.filter(function (it) {
-      return state.inventory.indexOf(it.id) !== -1 && anchorAccepts(anchor, it);
+      return state.inventory.indexOf(it.id) !== -1 && ITEM_W[it.id] && anchorAccepts(anchor, it);
     });
   }
 
@@ -367,6 +334,7 @@
     host.innerHTML = '';
 
     var emptyBtn = document.createElement('button');
+    emptyBtn.type = 'button';
     emptyBtn.className = 'pick-item' + (!layout[anchor.id] ? ' current' : '');
     emptyBtn.textContent = 'Empty';
     emptyBtn.addEventListener('click', function () { place(anchor.id, null); });
@@ -374,19 +342,20 @@
 
     ownedFor(anchor).forEach(function (it) {
       var b = document.createElement('button');
+      b.type = 'button';
       b.className = 'pick-item' + (layout[anchor.id] === it.id ? ' current' : '');
-      b.textContent = it.name;
+      b.innerHTML = '<img src="' + ASSETS + it.id + '.png" alt=""><span>' + esc(it.name) + '</span>';
       b.addEventListener('click', function () { place(anchor.id, it.id); });
       host.appendChild(b);
     });
 
     picker.classList.add('open');
     renderScene();
+    try { picker.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
   }
 
   function place(anchorId, itemId) {
     if (itemId) {
-      // an item lives in one spot: clear it from anywhere else
       Object.keys(layout).forEach(function (k) { if (layout[k] === itemId) delete layout[k]; });
       layout[anchorId] = itemId;
     } else {
@@ -416,23 +385,26 @@
     document.getElementById('store-balance').textContent =
       state && typeof state.balance === 'number' ? '◈ ' + state.balance + ' credits' : '';
 
-    items.filter(function (it) { return it.active; }).forEach(function (it) {
+    items.filter(function (it) { return it.active && ITEM_W[it.id]; }).forEach(function (it) {
       var owned = state && state.inventory.indexOf(it.id) !== -1;
       var gated = it.gate_achievement && earned.indexOf(it.gate_achievement) === -1;
       var card = document.createElement('div');
       card.className = 'item-card r-' + (it.rarity || 'common');
       var gateName = gated && achById[it.gate_achievement] ? achById[it.gate_achievement].name : it.gate_achievement;
       card.innerHTML =
-        '<div class="item-name">' + esc(it.name) + '</div>' +
-        '<div class="item-desc">' + esc(it.description) + '</div>' +
-        '<div class="item-meta">' +
-          '<span class="item-rarity r-' + (it.rarity || 'common') + '">' + (it.rarity || 'common') + '</span>' +
-          '<span class="item-price">◈ ' + it.price + '</span>' +
-        '</div>' +
-        (gated ? '<div class="gate-tag">Requires: ' + esc(gateName) + '</div>' : '') +
-        '<div class="item-actions">' +
-          (owned ? '<span class="owned-tag">Owned ✓</span>'
-                 : '<button class="buy-btn" data-item="' + it.id + '"' + (gated ? ' disabled' : '') + '>Buy</button>') +
+        '<img class="thumb" src="' + ASSETS + it.id + '.png" alt="">' +
+        '<div class="item-body">' +
+          '<div class="item-name">' + esc(it.name) + '</div>' +
+          '<div class="item-desc">' + esc(it.description) + '</div>' +
+          '<div class="item-meta">' +
+            '<span class="item-rarity r-' + (it.rarity || 'common') + '">' + (it.rarity || 'common') + '</span>' +
+            '<span class="item-price">◈ ' + it.price + '</span>' +
+          '</div>' +
+          (gated ? '<div class="gate-tag">Requires: ' + esc(gateName) + '</div>' : '') +
+          '<div class="item-actions">' +
+            (owned ? '<span class="owned-tag">Owned ✓</span>'
+                   : '<button class="buy-btn" data-item="' + it.id + '"' + (gated ? ' disabled' : '') + '>Buy</button>') +
+          '</div>' +
         '</div>';
       host.appendChild(card);
     });
@@ -462,31 +434,61 @@
     });
   }
 
-  // ── Share card ──────────────────────────────────────────────────────────
+  // ── Share card (canvas composite) ───────────────────────────────────────
   function shareCard() {
-    var svg = document.getElementById('scene');
-    var clone = svg.cloneNode(true);
-    var anchors = clone.querySelector('#anchors');
-    if (anchors) anchors.remove();               // clean render, no hotspots
-    var xml = new XMLSerializer().serializeToString(clone);
-    var img = new Image();
-    img.onload = function () {
-      var c = document.createElement('canvas');
-      c.width = 1200; c.height = 630;
-      var ctx = c.getContext('2d');
-      ctx.fillStyle = '#0f0e0d';
-      ctx.fillRect(0, 0, 1200, 630);
-      ctx.drawImage(img, 150, 46, 900, 560);
+    var W = 1200, H = 630;
+    var c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    var ctx = c.getContext('2d');
+
+    // background: reproduce the stage gradients
+    var stageY = 56, stageH = H - stageY - 8, stageX = 8, stageW = W - 16;
+    ctx.fillStyle = '#0f0e0d'; ctx.fillRect(0, 0, W, H);
+    var wallH = stageH * 0.62;
+    var g = ctx.createLinearGradient(0, stageY, 0, stageY + wallH);
+    g.addColorStop(0, '#2a2430'); g.addColorStop(1, '#241f28');
+    ctx.fillStyle = g; ctx.fillRect(stageX, stageY, stageW, wallH);
+    var g2 = ctx.createLinearGradient(0, stageY + wallH, 0, stageY + stageH);
+    g2.addColorStop(0, '#17120e'); g2.addColorStop(1, '#211a13');
+    ctx.fillStyle = g2; ctx.fillRect(stageX, stageY + wallH, stageW, stageH - wallH);
+
+    // gather draws: furniture + placed items, sorted by z
+    var draws = FURNITURE.map(function (f) { return { img: f.img, x: f.x, b: f.b, w: f.w, z: f.z }; });
+    ANCHORS.forEach(function (a) {
+      var id = layout[a.id];
+      if (id && ITEM_W[id]) draws.push({ img: id, x: a.x, b: a.b, w: ITEM_W[id], z: a.z + 1 });
+    });
+    draws.sort(function (p, q) { return p.z - q.z; });
+
+    var loaded = 0;
+    var imgs = draws.map(function (dr) {
+      var im = new Image();
+      im.src = ASSETS + dr.img + '.png';
+      return im;
+    });
+    function done() {
+      draws.forEach(function (dr, i) {
+        var im = imgs[i];
+        if (!im.naturalWidth) return;
+        var w = stageW * dr.w / 100;
+        var h = w * im.naturalHeight / im.naturalWidth;
+        var x = stageX + stageW * dr.x / 100 - w / 2;
+        var y = stageY + stageH - stageH * dr.b / 100 - h;
+        ctx.drawImage(im, x, y, w, h);
+      });
       ctx.fillStyle = '#c9a24a';
       ctx.font = '600 26px Georgia, serif';
       var name = (window.Auth && window.Auth.user && window.Auth.user.name) || 'DTSC 520 student';
-      ctx.fillText(name + "'s workspace · DTSC 520", 150, 34);
+      ctx.fillText(name + "'s workspace · DTSC 520", 16, 38);
       var a = document.createElement('a');
       a.download = 'dtsc520-desk.png';
       a.href = c.toDataURL('image/png');
       a.click();
-    };
-    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+    }
+    imgs.forEach(function (im) {
+      im.onload = im.onerror = function () { if (++loaded === imgs.length) done(); };
+    });
+    if (!imgs.length) done();
   }
 
   // ── State plumbing ──────────────────────────────────────────────────────

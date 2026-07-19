@@ -760,32 +760,57 @@ const SEED_CATALOG = [
   // ── Achievements: secrets (descriptions hidden client-side until earned) ──
   ['achievement', 'ach_vending', 'Exact Change', 'Ask ARIA about the vending machines', 'rare', '', '', '', '{"type":"secret","key":"vending_machine"}', true],
   ['achievement', 'ach_early_bird', 'Morning Person', 'Log in before 8 AM', 'common', '', '', '', '{"type":"manual"}', true],
-  // ── Items: ducks (the collectible line) ──
-  ['item', 'duck_classic', 'Classic Rubber Duck', 'The debugging companion every desk needs', 'common', 100, 'desk', '', '', true],
-  ['item', 'duck_maroon', 'Eastern Maroon Duck', 'School spirit, duck form', 'common', 150, 'desk', '', '', true],
-  ['item', 'duck_pirate', 'Pirate Duck', 'Yarr. It judges your variable names', 'rare', 250, 'desk', '', '', true],
-  ['item', 'duck_disco', 'Disco Duck', 'Shimmers when the disco ball spins', 'epic', 400, 'desk', '', '', true],
-  ['item', 'duck_grad', 'Graduation Duck', 'Tiny cap. Earned, not given', 'legendary', 600, 'desk', 'ach_full_clear', '', true],
-  // ── Items: lighting ──
-  ['item', 'lamp_desk', 'Desk Lamp', 'Warm pool of light for late-night pandas', 'common', 75, 'lighting', '', '', true],
-  ['item', 'lamp_lava', 'Lava Lamp', 'Slow-motion focus fuel', 'rare', 200, 'lighting', '', '', true],
-  ['item', 'neon_sign', 'Neon Sign', 'df.dropna() in hot pink', 'rare', 300, 'lighting', '', '', true],
-  ['item', 'string_lights', 'String Lights', 'Cozy shelf glow', 'common', 125, 'lighting', '', '', true],
-  ['item', 'disco_ball', 'Disco Ball', 'Spins. Sparkles. Respects reduced motion', 'epic', 500, 'lighting', '', '', true],
-  // ── Items: backgrounds ──
-  ['item', 'bg_mcinnis', 'McInnis at Dusk', 'Window view of the building you escaped', 'rare', 250, 'background', 'ach_escape', '', true],
-  ['item', 'bg_philly', 'Philly Skyline', 'City lights past the window', 'rare', 250, 'background', '', '', true],
-  ['item', 'bg_space', 'Deep Space', 'Your desk, among the stars', 'epic', 450, 'background', '', '', true],
-  ['item', 'wall_maroon', 'Maroon Wall', 'Eastern colors', 'common', 75, 'background', '', '', true],
-  // ── Items: desk + shelf props ──
-  ['item', 'plant_monstera', 'Monstera', 'Thrives on neglect, like a cached DataFrame', 'common', 100, 'shelf', '', '', true],
-  ['item', 'plant_cactus', 'Cactus', 'Low maintenance desk friend', 'common', 75, 'shelf', '', '', true],
-  ['item', 'cat_tabby', 'Desk Cat', 'Sits on your keyboard at the worst times', 'epic', 450, 'desk', '', '', true],
-  ['item', 'mini_terminal', 'Mini Terminal', 'Scrolls fake green code forever', 'rare', 300, 'shelf', '', '', true],
-  ['item', 'coffee_mug', 'Bottomless Coffee', 'The analyst fuel', 'common', 75, 'desk', '', '', true],
-  ['item', 'eagles_pennant', 'St. Davids Eagles Pennant', 'Single-A pride', 'common', 125, 'background', '', '', true],
-  ['item', 'trophy_shelf', 'Trophy Shelf', 'Extra shelf tier for your flex items', 'rare', 350, 'shelf', '', '', true],
-  ['item', 'rug_maroon', 'Maroon Rug', 'Ties the room together', 'common', 100, 'floor', '', '', true],
-  ['item', 'beanbag', 'Beanbag Chair', 'For reading documentation, allegedly', 'rare', 250, 'floor', '', '', true],
-  ['item', 'aria_plush', 'ARIA Plush', 'The building AI, huggable at last', 'legendary', 700, 'shelf', 'ach_aria', '', true]
+  // ── Items v2: "The Supply Closet" (90s Retro Office Pack sprites) ──
+  // common
+  ['item', 'mug_cream', 'Cream Mug', 'It says YOUR DESIGN HERE. Nobody ever designed it', 'common', 75, 'desk', '', '', true],
+  ['item', 'mug_brown', 'Brown Mug', 'Holds coffee, pens, and the occasional secret', 'common', 75, 'desk', '', '', true],
+  ['item', 'mug_enamel', 'Enamel Camp Mug', 'For analysts who camp near the data', 'common', 100, 'desk', '', '', true],
+  ['item', 'binder_red', 'Red Binder', 'Q3 scouting reports, alphabetized', 'common', 75, 'desk', '', '', true],
+  ['item', 'binder_blue', 'Blue Binder', 'The backup of the backup', 'common', 75, 'desk', '', '', true],
+  ['item', 'binder_black', 'Black Binder', 'Contents unknown. Nobody opens it', 'common', 75, 'desk', '', '', true],
+  ['item', 'notepad', 'Legal Pad', 'Real analysts sketch joins by hand first', 'common', 50, 'desk', '', '', true],
+  ['item', 'paper_memo', 'Loose Memo', 'RE: RE: RE: the pipeline', 'common', 25, 'desk', '', '', true],
+  ['item', 'trash_can', 'Mesh Trash Can', 'Where bad hypotheses go', 'common', 75, 'floor', '', '', true],
+  ['item', 'box_cardboard', 'Cardboard Box', 'Still unpacked from the office move', 'common', 100, 'shelf', '', '', true],
+  // rare
+  ['item', 'lamp_banker', 'Bankers Lamp', 'Green glass glow of serious analysis', 'rare', 200, 'lighting', '', '', true],
+  ['item', 'lamp_black', 'Black Task Lamp', 'Adjustable. Moody. Dependable', 'rare', 200, 'lighting', '', '', true],
+  ['item', 'lamp_white', 'White Task Lamp', 'Bright ideas need bright light', 'rare', 200, 'lighting', '', '', true],
+  ['item', 'phone_landline', 'Landline Phone', 'It rings. You answer. That was the whole app', 'rare', 250, 'desk', '', '', true],
+  ['item', 'clock_wall', 'Wall Clock', 'Deadline awareness, analog edition', 'rare', 200, 'wall', '', '', true],
+  ['item', 'plant_pot', 'Office Plant', 'Photosynthesizing through the sprint', 'rare', 250, 'floor', '', '', true],
+  ['item', 'fan_standing', 'Standing Fan', 'Cools you AND your overheating tower', 'rare', 250, 'floor', '', '', true],
+  ['item', 'archive_boxes', 'Archive Boxes', 'The 1995 season, in triplicate', 'rare', 200, 'floor', '', '', true],
+  // epic
+  ['item', 'water_cooler', 'Water Cooler', 'Where the real scouting reports happen', 'epic', 450, 'floor', '', '', true],
+  ['item', 'printer_white', 'Flatbed Printer', 'Prints a box score in only four minutes', 'epic', 450, 'floor', '', '', true],
+  ['item', 'copier_beige', 'Office Copier', 'The most powerful machine in the building', 'epic', 500, 'floor', '', '', true],
+  ['item', 'pc_black', 'Midnight Workstation', 'Full tower, full CRT, full send', 'epic', 400, 'pc', '', '', true],
+  // legendary
+  ['item', 'pc_white', 'Arctic Workstation', 'The quiz champions choice', 'legendary', 550, 'pc', 'ach_quiz_sweep', '', true],
+  ['item', 'pc_beige', 'The Beige Battlestation', 'Peak 1996 computing. You earned this', 'legendary', 700, 'pc', 'ach_full_clear', '', true]
 ];
+
+// Item ids from the v1 seed (pre-sprite placeholder art). Run
+// deactivateLegacyItems() once from the editor after pasting this version:
+// it flips their `active` cell to FALSE in the Catalog sheet so they vanish
+// from the store without deleting any purchase history.
+const LEGACY_ITEM_IDS = ['duck_classic', 'duck_maroon', 'duck_pirate', 'duck_disco',
+  'duck_grad', 'lamp_desk', 'lamp_lava', 'neon_sign', 'string_lights', 'disco_ball',
+  'bg_mcinnis', 'bg_philly', 'bg_space', 'wall_maroon', 'plant_monstera', 'plant_cactus',
+  'cat_tabby', 'mini_terminal', 'coffee_mug', 'eagles_pennant', 'trophy_shelf',
+  'rug_maroon', 'beanbag', 'aria_plush'];
+
+function deactivateLegacyItems() {
+  const sheet = getSheet_(CATALOG_SHEET, CATALOG_HEADER);
+  const data = sheet.getDataRange().getValues();
+  let n = 0;
+  for (let i = 1; i < data.length; i++) {
+    if (LEGACY_ITEM_IDS.indexOf(String(data[i][1])) !== -1 && data[i][9] !== false) {
+      sheet.getRange(i + 1, 10).setValue(false);
+      n++;
+    }
+  }
+  CacheService.getScriptCache().remove('catalog_v1');
+  SpreadsheetApp.getActiveSpreadsheet().toast(n + ' legacy items deactivated.');
+}
