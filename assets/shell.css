@@ -1,0 +1,200 @@
+/**
+ * DTSC 520 — Game shell (Phase B, ROADMAP_3.0)
+ * HUD bar + toasts. Include with shell.js on every page:
+ *   <link rel="stylesheet" href="/520_full/assets/shell.css">
+ *   <script src="/520_full/auth/auth.js" defer></script>
+ *   <script src="/520_full/assets/player.js" defer></script>
+ *   <script src="/520_full/assets/shell.js" defer></script>
+ *
+ * The shell is chrome around the sims, never a reskin of them: it only
+ * touches the top 44px and the toast stack. Launcher look: near-black,
+ * subtle blur, maroon glow accents, IBM Plex Mono labels.
+ */
+
+:root {
+  --shell-h: 44px;
+  --shell-bg: rgba(10, 9, 11, 0.92);
+  --shell-border: rgba(255, 255, 255, 0.08);
+  --shell-text: #e8e4de;
+  --shell-dim: #9a948c;
+  --shell-maroon: #8B1C40;
+  --shell-maroon-glow: rgba(139, 28, 64, 0.45);
+  --shell-gold: #c9a24a;
+  --rarity-common: #9aa3ad;
+  --rarity-rare: #4d9fd6;
+  --rarity-epic: #a86fd6;
+  --rarity-legendary: #c9a24a;
+}
+
+body.has-shell { padding-top: var(--shell-h); }
+
+/* Pages with their own sticky nav: stick it below the shell bar, not under it */
+body.has-shell nav { top: var(--shell-h); }
+
+/* ── HUD BAR ──────────────────────────────────────────────────────────── */
+#dtsc-shell {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--shell-h);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.75rem;
+  background: var(--shell-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--shell-border);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.82rem;
+  color: var(--shell-text);
+}
+#dtsc-shell::after {              /* maroon signature line */
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--shell-maroon-glow), transparent);
+}
+
+.shell-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--shell-border);
+  border-radius: 6px;
+  color: var(--shell-text);
+  text-decoration: none;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.shell-back:hover, .shell-back:focus-visible {
+  background: rgba(139, 28, 64, 0.18);
+  border-color: var(--shell-maroon);
+  box-shadow: 0 0 12px var(--shell-maroon-glow);
+}
+.shell-back .arr { font-size: 0.85rem; line-height: 1; }
+
+.shell-crest {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--shell-dim);
+  text-decoration: none;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.shell-crest img { width: 20px; height: 20px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.75; }
+.shell-crest:hover { color: var(--shell-text); }
+
+.shell-spacer { flex: 1; }
+
+/* streak + credits pills */
+.shell-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.65rem;
+  border: 1px solid var(--shell-border);
+  border-radius: 999px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.74rem;
+  color: var(--shell-text);
+  white-space: nowrap;
+}
+.shell-pill[hidden] { display: none; }
+.shell-pill .ico { font-size: 0.8rem; line-height: 1; }
+.shell-pill.streak .ico { color: #e07b39; }
+.shell-pill.credits .ico { color: var(--shell-gold); }
+.shell-pill.credits.bump { animation: shellBump 0.45s ease; }
+@keyframes shellBump {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.12); box-shadow: 0 0 14px rgba(201, 162, 74, 0.5); }
+  100% { transform: scale(1); }
+}
+
+/* auth chip adoption: the shell hosts #auth-slot; neutralize its fixed pos */
+#dtsc-shell .auth-slot-fixed,
+#dtsc-shell #auth-slot {
+  position: static !important;
+  top: auto !important; right: auto !important;
+  margin: 0;
+}
+
+/* ── TOASTS ───────────────────────────────────────────────────────────── */
+#dtsc-toasts {
+  position: fixed;
+  top: calc(var(--shell-h) + 10px);
+  right: 12px;
+  z-index: 2100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  max-width: min(340px, calc(100vw - 24px));
+}
+
+.shell-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  background: rgba(16, 14, 17, 0.96);
+  border: 1px solid var(--shell-border);
+  border-left: 3px solid var(--rarity-common);
+  color: var(--shell-text);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transform: translateX(16px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.shell-toast.show { opacity: 1; transform: translateX(0); }
+.shell-toast .t-ico {
+  font-size: 1.3rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px currentColor);
+}
+.shell-toast .t-kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+.shell-toast .t-name { font-weight: 600; font-size: 0.95rem; }
+.shell-toast .t-sub { font-size: 0.76rem; color: var(--shell-dim); }
+
+.shell-toast.rarity-common    { border-left-color: var(--rarity-common); }
+.shell-toast.rarity-common    .t-ico, .shell-toast.rarity-common    .t-kicker { color: var(--rarity-common); }
+.shell-toast.rarity-rare      { border-left-color: var(--rarity-rare); }
+.shell-toast.rarity-rare      .t-ico, .shell-toast.rarity-rare      .t-kicker { color: var(--rarity-rare); }
+.shell-toast.rarity-epic      { border-left-color: var(--rarity-epic); box-shadow: 0 6px 24px rgba(168, 111, 214, 0.25); }
+.shell-toast.rarity-epic      .t-ico, .shell-toast.rarity-epic      .t-kicker { color: var(--rarity-epic); }
+.shell-toast.rarity-legendary { border-left-color: var(--rarity-legendary); box-shadow: 0 6px 28px rgba(201, 162, 74, 0.35); }
+.shell-toast.rarity-legendary .t-ico, .shell-toast.rarity-legendary .t-kicker { color: var(--rarity-legendary); }
+.shell-toast.credits-toast    { border-left-color: var(--shell-gold); }
+.shell-toast.credits-toast    .t-ico { color: var(--shell-gold); }
+
+/* a11y */
+.shell-back:focus-visible, .shell-crest:focus-visible {
+  outline: 2.5px solid #c9a84c;
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .shell-toast { transition: opacity 0.2s ease; transform: none; }
+  .shell-pill.credits.bump { animation: none; }
+}
+
+@media (max-width: 560px) {
+  .shell-crest span { display: none; }
+  .shell-pill { padding: 0.28rem 0.5rem; }
+}

@@ -751,9 +751,55 @@
       }
     }
 
+    /* ---- PLAYER STRIP (Phase B: credits / streak / badges from server) ---- */
+    .hero-player {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+      margin-top: 1.6rem;
+    }
+    .hero-player.on { display: flex; }
+    .hp-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.95rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+    .hp-pill .hp-ico { font-size: 0.95rem; }
+    .hp-pill.hp-credits .hp-ico { color: #c9a24a; }
+    .hp-pill.hp-streak .hp-ico { color: #e07b39; }
+    .hp-badges { display: inline-flex; align-items: center; gap: 0.35rem; }
+    .hp-badge {
+      width: 26px; height: 26px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      font-size: 0.8rem;
+    }
+    .hp-badge.r-common { color: #9aa3ad; }
+    .hp-badge.r-rare { color: #4d9fd6; border-color: rgba(77,159,214,0.4); }
+    .hp-badge.r-epic { color: #a86fd6; border-color: rgba(168,111,214,0.4); }
+    .hp-badge.r-legendary { color: #c9a24a; border-color: rgba(201,162,74,0.5); box-shadow: 0 0 8px rgba(201,162,74,0.25); }
+    .hp-badge-count {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
     </style>
   <link rel="stylesheet" href="/520_full/auth/auth.css">
+  <link rel="stylesheet" href="/520_full/assets/shell.css">
   <script src="/520_full/auth/auth.js" defer></script>
+  <script src="/520_full/assets/player.js" defer></script>
+  <script src="/520_full/assets/shell.js" defer></script>
 </head>
 <body>
 <div id="auth-slot" class="auth-slot-fixed"></div>
@@ -797,6 +843,14 @@
         <div class="hero-stat-num" id="progressPct">--</div>
         <div class="hero-stat-label">Your Progress</div>
       </div>
+    </div>
+
+    <!-- Player strip: appears once signed in, fed by server state -->
+    <div class="hero-player" id="heroPlayer" aria-label="Your player stats">
+      <span class="hp-pill hp-credits" title="Credits"><span class="hp-ico" aria-hidden="true">&#9672;</span><span id="hpCredits">0</span></span>
+      <span class="hp-pill hp-streak" title="Login streak (weekends are free)"><span class="hp-ico" aria-hidden="true">&#128293;</span><span id="hpStreak">0</span> day streak</span>
+      <span class="hp-badges" id="hpBadges" title="Latest achievements"></span>
+      <span class="hp-badge-count" id="hpBadgeCount"></span>
     </div>
   </div>
 
@@ -1069,6 +1123,20 @@
   const MOD_COLORS = ['#7a7a80','#2A7195','#7a55b5','#4a8f6b','#b07030','#a03070','#8B1C40'];
   const MOD_NAMES  = ['Intro','DS & Analytics','Python','NumPy','Pandas','Visualization','Git & GitHub'];
 
+  // ── Server progress overlay (Phase B) ─────────────────────────────────────
+  // Once signed in, player.js supplies server-verified completions keyed by
+  // event id. Anything the server knows about is marked complete even if this
+  // device's localStorage is empty — progress finally follows the student.
+  let SERVER_DONE = {};
+  function overlay(item, id) {
+    if (item.state !== 'complete' && SERVER_DONE[id]) {
+      const d = SERVER_DONE[id];
+      const label = (d.score != null && d.max) ? Math.round(100 * d.score / d.max) + '%' : 'done';
+      return Object.assign({}, item, { state: 'complete', label });
+    }
+    return item;
+  }
+
   // ── Progress data sources ─────────────────────────────────────────────────
   function readProgress() {
     const get = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e) { return null; } };
@@ -1133,7 +1201,21 @@
       ? { state: 'complete', label: board.confidence + '%' }
       : { state: 'empty', label: '--' };
 
-    return { quizzes, pftItems, debugItem, branchItem, morningItem, findpathItem, pitchvizItem, charttopItem, dirtyItem, rtgItem, escapeItem, ariaItem, boardItem };
+    return {
+      quizzes:      quizzes.map((q, n) => overlay(q, 'm' + n + '_quiz')),
+      pftItems:     pftItems.map((p, i) => i === 3 ? overlay(p, 'python_sim') : p),
+      debugItem:    overlay(debugItem, 'debug_pipeline'),
+      branchItem:   overlay(branchItem, 'branch_crisis'),
+      morningItem:  overlay(morningItem, 'morning_brief'),
+      findpathItem: overlay(findpathItem, 'find_your_path'),
+      pitchvizItem,
+      charttopItem: overlay(charttopItem, 'numpy_lab'),
+      dirtyItem:    overlay(dirtyItem, 'dirty_dataset'),
+      rtgItem:      overlay(rtgItem, 'rtg_investigation'),
+      escapeItem:   overlay(escapeItem, 'escape_mcinnis'),
+      ariaItem:     overlay(ariaItem, 'aria_returns'),
+      boardItem:    overlay(boardItem, 'board_meeting')
+    };
   }
 
   // ── Build dashboard grid ──────────────────────────────────────────────────
@@ -1386,6 +1468,50 @@
   }
 
   buildDashboard();
+
+  // ── Player strip + server sync (Phase B) ──────────────────────────────────
+  const RARITY_GLYPH = { common: '★', rare: '◆', epic: '▲', legendary: '♛' };
+
+  function renderPlayerStrip(s) {
+    const wrap = document.getElementById('heroPlayer');
+    if (!wrap || !s || typeof s.balance !== 'number') return;
+    wrap.classList.add('on');
+    document.getElementById('hpCredits').textContent = s.balance;
+    document.getElementById('hpStreak').textContent = s.streak || 0;
+
+    const byId = {};
+    ((s.catalog && s.catalog.achievements) || []).forEach(a => { byId[a.id] = a; });
+    const badges = document.getElementById('hpBadges');
+    badges.innerHTML = '';
+    (s.achievements || []).slice(-5).reverse().forEach(id => {
+      const a = byId[id];
+      const rarity = (a && a.rarity) || 'common';
+      const el = document.createElement('span');
+      el.className = 'hp-badge r-' + rarity;
+      el.textContent = RARITY_GLYPH[rarity] || RARITY_GLYPH.common;
+      el.title = a ? (a.name + ' (' + rarity + ')') : id;
+      el.setAttribute('aria-label', el.title);
+      badges.appendChild(el);
+    });
+    const count = document.getElementById('hpBadgeCount');
+    const n = (s.achievements || []).length;
+    count.textContent = n ? n + ' badge' + (n === 1 ? '' : 's') : '';
+  }
+
+  document.addEventListener('dtsc520:player', e => {
+    const s = e.detail || {};
+    renderPlayerStrip(s);
+    SERVER_DONE = s.completions || {};
+    buildDashboard();
+  });
+  if (window.Player) {
+    const s = window.Player.getState();
+    if (s) {
+      renderPlayerStrip(s);
+      SERVER_DONE = s.completions || {};
+      buildDashboard();
+    }
+  }
 
   // Auto-count sims
   const simCountEl = document.getElementById('simCount');
