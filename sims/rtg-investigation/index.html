@@ -2371,6 +2371,13 @@ function showResults() {
   res.style.display = 'block';
   try { window.sfx.win(); window.confettiBurst(); } catch(e) {}
 
+  // Server-side completion log (once per device run-through)
+  if (!state.reported) {
+    state.reported = true;
+    saveState();
+    if (typeof logEvent === 'function') logEvent('sim_complete', 'rtg_investigation', score, 20);
+  }
+
   document.getElementById('resultsBig').textContent = score;
   document.getElementById('chIndicator').textContent = 'Complete';
   document.getElementById('scoreDisplay').textContent = score;

@@ -11,6 +11,12 @@
  *
  * Only completion events go to the server. Drafts / partial progress stay
  * in localStorage.
+ *
+ * v2 (Phase A, ROADMAP_3.0): fires a once-per-day `heartbeat` after sign-in
+ * (streak fuel), and dispatches a `dtsc520:award` CustomEvent on document
+ * whenever the server reports earned credits/achievements — the shell
+ * (assets/player.js) listens and toasts. No behavior change for pages that
+ * ignore the event.
  */
 (function () {
   'use strict';
@@ -38,7 +44,7 @@
       console.warn('[auth] logEvent skipped — not signed in');
       return { ok: false, error: 'not_signed_in' };
     }
-    return post({
+    const res = await post({
       action:    'log',
       idToken:   state.idToken,
       eventType: eventType,
@@ -47,6 +53,15 @@
       maxScore:  maxScore,
       payload:   payload || null
     });
+    announceAward(res);
+    return res;
+  };
+
+  // Authenticated pass-through for player-state actions (used by player.js).
+  window.authPost = async function (payload) {
+    if (!state || isExpired(state)) return { ok: false, error: 'not_signed_in' };
+    payload.idToken = state.idToken;
+    return post(payload);
   };
 
   window.fetchProgress = async function () {
@@ -107,6 +122,7 @@
     try { localStorage.setItem(SESSION_KEY, JSON.stringify(state)); } catch (e) {}
     renderSlot();
     listeners.forEach(fn => fn(window.Auth.user));
+    maybeHeartbeat();
   }
 
   // ── RENDER ───────────────────────────────────────────────────────────────
@@ -176,6 +192,46 @@
     }
   }
 
+  // ── HEARTBEAT + AWARD EVENTS (v2) ────────────────────────────────────────
+  // One heartbeat per device per day; the server dedupes per student per day
+  // (America/New_York) regardless, so this guard just saves a network call.
+  const HB_KEY = 'dtsc520_hb';
+
+  function localDayKey() {
+    const d = new Date();
+    return d.getFullYear() + '-' +
+      String(d.getMonth() + 1).padStart(2, '0') + '-' +
+      String(d.getDate()).padStart(2, '0');
+  }
+
+  async function maybeHeartbeat() {
+    if (!state || isExpired(state)) return;
+    const today = localDayKey();
+    try { if (localStorage.getItem(HB_KEY) === today) return; } catch (e) {}
+    const res = await post({ action: 'heartbeat', idToken: state.idToken });
+    if (res && res.ok) {
+      try { localStorage.setItem(HB_KEY, today); } catch (e) {}
+      announceAward(res);
+    }
+  }
+
+  // Tell the page (player.js / future shell) about server-side awards so it
+  // can toast and refresh cached state. Fires only when something happened.
+  function announceAward(res) {
+    if (!res || !res.ok) return;
+    const hasNews = (res.newlyEarned && res.newlyEarned.length) ||
+                    (typeof res.credits_delta === 'number' && res.credits_delta !== 0);
+    if (!hasNews && typeof res.balance !== 'number') return;
+    try {
+      document.dispatchEvent(new CustomEvent('dtsc520:award', { detail: {
+        creditsDelta: res.credits_delta || 0,
+        balance: (typeof res.balance === 'number') ? res.balance : null,
+        newlyEarned: res.newlyEarned || [],
+        streak: (typeof res.streak === 'number') ? res.streak : null
+      }}));
+    } catch (e) {}
+  }
+
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -234,5 +290,7 @@
     window.Auth.onChange(applyGate);
     // Pre-load GIS so the popup is instant when the user clicks.
     ensureGsiLoaded(() => {});
+    // Already signed in from a previous page? Count today's visit.
+    maybeHeartbeat();
   });
 })();

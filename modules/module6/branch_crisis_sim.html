@@ -1543,6 +1543,7 @@
 
     // Save to localStorage
     localStorage.setItem('dtsc520_branchcrisis', JSON.stringify({ completed: true, score: pct, total: totalScore }));
+    if (typeof logEvent === 'function') logEvent('sim_complete', 'branch_crisis', pct, 100);
 
     // Dots all done
     CHALLENGES.forEach((_, i) => {

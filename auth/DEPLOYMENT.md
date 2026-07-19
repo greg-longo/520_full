@@ -2,13 +2,14 @@
 
 This walks you through standing up Google sign-in + an Apps Script logger + the LDA Lookup tab. One-time setup, ~30 minutes. After this, adding new quizzes and sims is just a `logEvent()` call.
 
-The system has three pieces:
+The system has four pieces:
 
-1. **Google Cloud OAuth client** — issues sign-in tokens, restricted to `eastern.edu`.
-2. **Google Sheet + Apps Script** — receives events, writes rows, hosts the LDA Lookup.
-3. **`auth.js` on the site** — handles sign-in and posts events.
+1. **Google Cloud OAuth client** — issues sign-in tokens, restricted to `eastern.edu`. Created once in Part 1; v2 reuses it unchanged.
+2. **Google Sheet + Apps Script** — receives events, writes rows, hosts the LDA Lookup. v2 adds the player-state tabs (Ledger/Purchases/Equipped/Catalog) to the same sheet and script.
+3. **`auth.js` on the site** — handles sign-in and posts events; v2 adds a daily heartbeat.
+4. **`assets/player.js` on the site (v2)** — fetches/caches the player state (credits, badges, streak) for the game shell.
 
-Do them in that order. Each step ends with a "verify" check so you can catch problems early.
+Parts 1–3 are the one-time v1 setup (already live). Part 4 is the v2 upgrade. Each step ends with a "verify" check so you can catch problems early.
 
 ---
 
@@ -184,3 +185,35 @@ If all four checks pass, the system is live.
 
 **Pulling everyone's history:**
 - The `Events` sheet is the source of truth. You can sort/filter/PivotTable it like any spreadsheet, or use formulas like `=COUNTIF(Events!D:D, "sim_complete")` for course-wide totals.
+
+---
+
+## Part 4 — Upgrading to v2: player state (Phase A of ROADMAP_3.0)
+
+v2 adds the gamification backbone: credits (append-only `Ledger`), achievements, streaks, purchases, and workspace layouts. The server derives all rewards from verified events — nothing new is trusted from the browser.
+
+**No OAuth changes.** v2 reuses the existing OAuth client exactly as-is: same Client ID, same non-sensitive scopes (`openid email profile`), same token verification. Skip Part 1 entirely — do NOT create a new client, touch the consent screen, or edit `CLIENT_ID`/`SCRIPT_URL` in `auth.js`. Students' existing sessions keep working through the upgrade. Everything below happens inside the Apps Script project and the site repo.
+
+**Redeploy (5 min):**
+
+1. In script.google.com, open the `DTSC 520 Activity Logger` project and replace `Code.gs` with the new `site/auth/Code.gs` from this repo. Save.
+2. Function dropdown -> `setupPlayerState` -> **Run**. This creates the `Ledger`, `Purchases`, `Equipped`, and `Catalog` tabs and seeds the Catalog with the launch achievements and store items. Safe to re-run; it skips ids that already exist.
+3. **Deploy -> Manage deployments -> existing deployment -> pencil -> Version: New version -> Deploy.** The `/exec` URL does not change; `auth.js` needs no URL edit.
+4. Push the updated site files: `auth/auth.js` (heartbeat + award events), `assets/player.js` (state client), and the two sims that now log completions (`sims/rtg-investigation/index.html`, `modules/module6/branch_crisis_sim.html`).
+
+**Verify the round trip:**
+
+1. Open the live site signed in; the console should show no auth errors, and the `Events` sheet gains one `session_start` row for you (first visit of the day).
+2. The `Ledger` gains a `daily_login` row (10 credits, more with a streak).
+3. In devtools: `await authPost({action:'state'})` — expect `ok:true` with `balance`, `streak`, `catalog` (items + achievements).
+4. Complete any quiz — `Ledger` gains a `completion` row (first completion only) and, if it is your first sim/quiz, achievement rows like `achievement:ach_...`.
+5. Buying: `await Player.purchase('duck_classic')` — expect `ok:true`; `Purchases` and `Ledger` each gain a row. A second attempt returns `already_owned`.
+
+**Editing the economy from the spreadsheet (no code):**
+
+- The `Catalog` tab is Greg-editable: add store items (`kind=item` with price/slot/rarity, optional `gate_achievement`) or achievements (`kind=achievement` with `criteria_json`). Set `active=FALSE` to retire anything. Changes go live within ~60 seconds (server-side cache).
+- Criteria types for `criteria_json` are documented above `evalCriteria_` in `Code.gs` (event, module, all_sims, all_quizzes, honors, no_hint, streak, speed, secret, count, manual).
+- Credit values (sim weights, honors bonuses, streak multiplier, rarity bonuses) live in the `ECON` block at the top of `Code.gs` — edit there and redeploy a new version.
+- Make-goods: from devtools while signed in as an admin, `await authPost({action:'admin_grant', email:'student@eastern.edu', delta:100, reason:'make-good'})` or `{action:'admin_grant', email:..., achievementId:'ach_early_bird'}`.
+
+**Testing the logic locally:** `node site/auth/test_award_logic.js` extracts the streak and achievement-criteria functions straight out of `Code.gs` and runs 30 unit tests (weekend-bridging streaks, every criteria type).
