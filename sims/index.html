@@ -349,11 +349,11 @@
   <p>Hands-on scenarios that put you inside real data science situations. Each sim maps to a course module and builds skills you'll use on the job.</p>
   <div class="hero-stats">
     <div class="hero-stat">
-      <div class="hero-stat-num">9</div>
+      <div class="hero-stat-num" id="hubSimCount">--</div>
       <div class="hero-stat-label">Simulations</div>
     </div>
     <div class="hero-stat">
-      <div class="hero-stat-num">5</div>
+      <div class="hero-stat-num" id="hubModCount">--</div>
       <div class="hero-stat-label">Modules covered</div>
     </div>
     <div class="hero-stat">
@@ -479,6 +479,36 @@
         <div class="sim-footer">
           <span class="sim-tag">M2 &bull; Python fundamentals</span>
           <span class="sim-launch m2">Launch &rarr;</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="mod-group">
+    <div class="mod-group-header">
+      <span class="mod-badge m3">Module 3</span>
+      <h2 class="mod-group-title">NumPy</h2>
+      <span class="mod-group-count">1 sim</span>
+    </div>
+    <div class="sim-grid">
+
+      <a class="sim-card m3" href="numpy-lab/index.html">
+        <div class="sim-card-inner">
+          <div class="sim-card-top">
+            <div class="sim-card-meta">
+              <div class="sim-label m3">Live Code Lab</div>
+              <div class="sim-title">NumPy Lab</div>
+            </div>
+            <div class="sim-progress-dot" data-sim="numpy" title="Loading..."></div>
+          </div>
+          <div class="sim-desc">Real NumPy in the browser: arrays, boolean masks, and vectorized stats on Eagles data - capped by the vectorization speed race, your loop vs NumPy, timed live.</div>
+          <div class="sim-type">&#9889; Live NumPy + speed race</div>
+        </div>
+        <div class="sim-footer">
+          <span class="sim-tag">M3 &bull; NumPy</span>
+          <span class="sim-launch m3">Launch &rarr;</span>
         </div>
       </a>
 
@@ -692,16 +722,22 @@
     return 'empty';
   }
 
+  const findpath = get('dtsc520_findyourpath');
+  const morning  = get('dtsc520_morningbrief');
+  const dirty    = get('dtsc520_dirtydataset');
+  const terminal = get('dtsc520_terminaltrainer');
+  const numpy    = get('dtsc520_charttoppers');
+
   // Map data-sim → state
   const simStates = {
-    'find-your-path': 'empty',    // no tracking
-    'morning-brief':  'empty',    // no tracking
+    'find-your-path': findpath ? 'complete' : 'empty',
+    'morning-brief':  morning  ? 'complete' : 'empty',
     'pft':            pftState(),
     'pft-finale':     pftFinaleState(),
     'debug':          debug  ? 'complete' : 'empty',
-    'dirty':          'empty',    // no tracking
-    'pitch':          'empty',    // no tracking
-    'terminal':       'empty',    // no tracking
+    'dirty':          dirty  ? 'complete' : 'empty',
+    'numpy':          numpy  ? 'complete' : 'empty',
+    'terminal':       terminal && terminal.completed ? 'complete' : 'empty',
     'branch':         branch && branch.completed ? 'complete' : 'empty',
     'escape':         escape && escape.completed ? 'complete' : (escapeRun && escapeRun.completed && escapeRun.completed.length ? 'partial' : 'empty'),
     'aria':           aria && aria.completed ? 'complete' : (ariaRun && ariaRun.completed && ariaRun.completed.length ? 'partial' : 'empty'),
@@ -709,27 +745,59 @@
     'rtg':            rtg && rtg.done && rtg.done.every(Boolean) ? 'complete' : (rtg && rtg.done && rtg.done.some(Boolean) ? 'partial' : 'empty'),
   };
 
-  // Apply dots
-  document.querySelectorAll('.sim-progress-dot').forEach(dot => {
-    const sim = dot.dataset.sim;
-    const state = simStates[sim] || 'empty';
-    if (state !== 'empty') dot.classList.add(state);
+  // Server overlay (Phase B): player.js supplies verified completions by
+  // event id — upgrade dots cross-device even with empty localStorage.
+  const SIM_EVENT = {
+    'find-your-path': 'find_your_path', 'morning-brief': 'morning_brief',
+    'pft': 'python_sim', 'pft-finale': 'python_sim',
+    'debug': 'debug_pipeline', 'dirty': 'dirty_dataset', 'numpy': 'numpy_lab',
+    'terminal': 'terminal_trainer', 'branch': 'branch_crisis',
+    'escape': 'escape_mcinnis', 'aria': 'aria_returns', 'board': 'board_meeting',
+    'rtg': 'rtg_investigation'
+  };
+  function applyServer(completions) {
+    if (!completions) return;
+    Object.keys(SIM_EVENT).forEach(sim => {
+      if (completions[SIM_EVENT[sim]] && simStates[sim] !== 'complete') simStates[sim] = 'complete';
+    });
+    paint();
+  }
+  document.addEventListener('dtsc520:player', e => applyServer((e.detail || {}).completions));
 
-    const labels = { 'empty': 'Not started', 'partial': 'In progress', 'complete': 'Complete' };
-    dot.title = labels[state] || '';
-  });
+  function paint() {
+    document.querySelectorAll('.sim-progress-dot').forEach(dot => {
+      const sim = dot.dataset.sim;
+      const state = simStates[sim] || 'empty';
+      dot.classList.remove('partial', 'complete');
+      if (state !== 'empty') dot.classList.add(state);
 
-  // Update hero completions count
-  const completed = Object.values(simStates).filter(s => s === 'complete').length;
-  const partial   = Object.values(simStates).filter(s => s === 'partial').length;
-  const countEl = document.getElementById('completedCount');
-  if (countEl) {
-    if (completed === 0 && partial === 0) {
-      countEl.textContent = '--';
-    } else {
-      countEl.textContent = completed + (partial > 0 ? '+' : '');
+      const labels = { 'empty': 'Not started', 'partial': 'In progress', 'complete': 'Complete' };
+      dot.title = labels[state] || '';
+    });
+
+    // Update hero completions count
+    const completed = Object.values(simStates).filter(s => s === 'complete').length;
+    const partial   = Object.values(simStates).filter(s => s === 'partial').length;
+    const countEl = document.getElementById('completedCount');
+    if (countEl) {
+      if (completed === 0 && partial === 0) {
+        countEl.textContent = '--';
+      } else {
+        countEl.textContent = completed + (partial > 0 ? '+' : '');
+      }
     }
   }
+  paint();
+  if (window.Player) {
+    const s = window.Player.getState();
+    if (s) applyServer(s.completions);
+  }
+
+  // Live hero counts (stay correct as sims are added)
+  const hubSims = document.getElementById('hubSimCount');
+  if (hubSims) hubSims.textContent = document.querySelectorAll('a.sim-card').length;
+  const hubMods = document.getElementById('hubModCount');
+  if (hubMods) hubMods.textContent = document.querySelectorAll('.mod-group').length;
 
   // Back to top
   var btn = document.getElementById('back-to-top');
