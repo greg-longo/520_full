@@ -67,7 +67,7 @@
     if (p.indexOf('/sims/') !== -1) {           // sims hub itself
       return { href: BASE + 'index.html', label: 'Mission Control' };
     }
-    if (p.indexOf('/achievements.html') !== -1) {
+    if (p.indexOf('/achievements.html') !== -1 || p.indexOf('/workspace.html') !== -1) {
       return { href: BASE + 'index.html', label: 'Mission Control' };
     }
     return null;                                 // homepage: no Back
@@ -127,6 +127,15 @@
       trophy.setAttribute('aria-label', 'Achievements');
       trophy.title = 'Achievements';
       bar.appendChild(trophy);
+    }
+    if (location.pathname.indexOf('/workspace.html') === -1) {
+      var desk = document.createElement('a');
+      desk.className = 'shell-pill desk';
+      desk.href = BASE + 'workspace.html';
+      desk.innerHTML = '<span class="ico" aria-hidden="true">&#129414;</span>';
+      desk.setAttribute('aria-label', 'Your workspace');
+      desk.title = 'Your workspace';
+      bar.appendChild(desk);
     }
 
     // Adopt (or create) the auth slot so the chip lives in the bar.
