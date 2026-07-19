@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Achievements - DTSC 520</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --maroon: #8B1C40;
+      --maroon-light: #a82050;
+      --bg: #0f0e0d;
+      --bg-card: #1a1815;
+      --text: #e8e4de;
+      --text-dim: #a09a92;
+      --border: #2e2b28;
+      --r-common: #9aa3ad;
+      --r-rare: #4d9fd6;
+      --r-epic: #a86fd6;
+      --r-legendary: #c9a24a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Zilla Slab', serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .hero {
+      background: linear-gradient(135deg, #1a1815 0%, #12100f 60%, #0f0d0c 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 3.2rem 2rem 2.4rem;
+      text-align: center;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--maroon), var(--r-legendary), var(--maroon));
+    }
+    .hero-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--r-legendary);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+    h1 { font-size: 2.4rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .hero-sub { color: var(--text-dim); font-size: 1rem; max-width: 560px; margin: 0 auto; }
+    .summary {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1.6rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+    }
+    .sum-pill {
+      padding: 0.4rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text-dim);
+    }
+    .sum-pill b { color: var(--text); font-weight: 500; }
+    .sum-pill.sr-common b { color: var(--r-common); }
+    .sum-pill.sr-rare b { color: var(--r-rare); }
+    .sum-pill.sr-epic b { color: var(--r-epic); }
+    .sum-pill.sr-legendary b { color: var(--r-legendary); }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+    #signin-note {
+      display: none;
+      text-align: center;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      color: var(--text-dim);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.95rem;
+    }
+    #signin-note b { color: var(--text); }
+
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 0.9rem;
+    }
+    .badge {
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      padding: 1rem 1.1rem;
+      border-radius: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--border);
+      font-family: 'IBM Plex Sans', sans-serif;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+    .badge .glyph {
+      font-size: 1.6rem;
+      line-height: 1;
+      width: 2.2rem;
+      text-align: center;
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+    }
+    .badge .b-name { font-family: 'Zilla Slab', serif; font-size: 1.05rem; font-weight: 600; }
+    .badge .b-desc { font-size: 0.8rem; color: var(--text-dim); margin-top: 0.2rem; line-height: 1.45; }
+    .badge .b-meta {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      margin-top: 0.45rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.64rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .badge .b-hint {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      margin-top: 0.4rem;
+      color: var(--text-dim);
+    }
+    .badge.earned.r-common    { border-left-color: var(--r-common); }
+    .badge.earned.r-rare      { border-left-color: var(--r-rare); }
+    .badge.earned.r-epic      { border-left-color: var(--r-epic); box-shadow: 0 0 14px rgba(168,111,214,0.16); }
+    .badge.earned.r-legendary { border-left-color: var(--r-legendary); box-shadow: 0 0 18px rgba(201,162,74,0.22); }
+    .badge.earned .glyph { filter: drop-shadow(0 0 6px currentColor); }
+    .r-common .glyph, .r-common .b-rarity { color: var(--r-common); }
+    .r-rare .glyph, .r-rare .b-rarity { color: var(--r-rare); }
+    .r-epic .glyph, .r-epic .b-rarity { color: var(--r-epic); }
+    .r-legendary .glyph, .r-legendary .b-rarity { color: var(--r-legendary); }
+    .badge.locked { opacity: 0.55; }
+    .badge.locked .glyph { filter: grayscale(1) brightness(0.7); }
+    .b-credits { color: var(--r-legendary); }
+    .b-earned-tag { color: #3fa06a; }
+
+    .section-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin: 2rem 0 0.9rem;
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-dim);
+      font-size: 0.78rem;
+      font-family: 'IBM Plex Sans', sans-serif;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .badge { transition: none; }
+    }
+  </style>
+  <link rel="stylesheet" href="/520_full/auth/auth.css">
+  <link rel="stylesheet" href="/520_full/assets/shell.css">
+  <script src="/520_full/auth/auth.js" defer></script>
+  <script src="/520_full/assets/player.js" defer></script>
+  <script src="/520_full/assets/shell.js" defer></script>
+</head>
+<body>
+<div id="auth-slot" class="auth-slot-fixed"></div>
+
+  <div class="hero">
+    <div class="hero-tag">DTSC 520 &middot; Trophy Room</div>
+    <h1>Achievements</h1>
+    <p class="hero-sub">Every badge is earned by doing the course. Rarer badges glow brighter.</p>
+    <div class="summary" id="summary" aria-live="polite"></div>
+  </div>
+
+  <main>
+    <div id="signin-note">
+      <b>Sign in to see your badges.</b><br>
+      Your achievements are tracked on the server, so they follow you across devices. The full catalog is shown below.
+    </div>
+    <div id="badge-sections"></div>
+  </main>
+
+  <footer>
+    This tool was developed with AI assistance for Eastern University's DTSC 520. All course content, learning objectives, and AI assisted activities were designed by the instructor.
+  </footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var GLYPH = { common: '★', rare: '◆', epic: '▲', legendary: '♛' };
+  var CREDITS = { common: 25, rare: 75, epic: 150, legendary: 300 };
+  var ORDER = ['legendary', 'epic', 'rare', 'common'];
+  var LABEL = { legendary: 'Legendary', epic: 'Epic', rare: 'Rare', common: 'Common' };
+
+  function isSecret(a) {
+    return a.criteria && (a.criteria.type === 'secret' || a.criteria.type === 'manual');
+  }
+
+  // Progress hints computed from criteria + player state (non-secret only).
+  function hintFor(a, s) {
+    var c = a.criteria;
+    if (!c || !s) return '';
+    var comp = s.completions || {};
+    function have(id) { return !!comp[id]; }
+    if (c.type === 'streak') {
+      return 'Streak: ' + (s.streak || 0) + '/' + c.days + ' days';
+    }
+    if (c.type === 'module') {
+      return null; // sims-per-module map lives server-side; skip the hint
+    }
+    if (c.type === 'all_quizzes') {
+      var q = [0,1,2,3,4,5,6].filter(function (n) { return have('m' + n + '_quiz'); }).length;
+      return 'Quizzes: ' + q + '/7';
+    }
+    if (c.type === 'event' && !have(c.id)) return 'Complete the mission to unlock';
+    return '';
+  }
+
+  function render(s) {
+    var note = document.getElementById('signin-note');
+    var signedIn = !!(window.Auth && window.Auth.user);
+    note.style.display = signedIn ? 'none' : 'block';
+
+    var catalog = (s && s.catalog && s.catalog.achievements) || [];
+    var earned = (s && s.achievements) || [];
+    var host = document.getElementById('badge-sections');
+    if (!catalog.length) {
+      if (!signedIn) host.innerHTML = '';
+      return;
+    }
+    host.innerHTML = '';
+
+    var counts = { total: 0, earned: 0 };
+    ORDER.forEach(function (r) { counts[r] = { total: 0, earned: 0 }; });
+
+    ORDER.forEach(function (rarity) {
+      var group = catalog.filter(function (a) { return a.active && (a.rarity || 'common') === rarity; });
+      if (!group.length) return;
+
+      var title = document.createElement('div');
+      title.className = 'section-title';
+      var grid = document.createElement('div');
+      grid.className = 'badge-grid';
+
+      group.forEach(function (a) {
+        var got = earned.indexOf(a.id) !== -1;
+        counts.total++; counts[rarity].total++;
+        if (got) { counts.earned++; counts[rarity].earned++; }
+
+        var hidden = isSecret(a) && !got;
+        var el = document.createElement('div');
+        el.className = 'badge r-' + rarity + (got ? ' earned' : ' locked');
+        var hint = (!got && !hidden) ? hintFor(a, s) : '';
+        el.innerHTML =
+          '<div class="glyph" aria-hidden="true">' + (hidden ? '?' : GLYPH[rarity]) + '</div>' +
+          '<div>' +
+            '<div class="b-name">' + (hidden ? '???' : esc(a.name)) + '</div>' +
+            '<div class="b-desc">' + (hidden ? 'Hidden achievement. Keep exploring.' : esc(a.description)) + '</div>' +
+            '<div class="b-meta">' +
+              '<span class="b-rarity">' + LABEL[rarity] + '</span>' +
+              '<span class="b-credits">+' + CREDITS[rarity] + ' cr</span>' +
+              (got ? '<span class="b-earned-tag">Earned</span>' : '') +
+            '</div>' +
+            (hint ? '<div class="b-hint">' + esc(hint) + '</div>' : '') +
+          '</div>';
+        el.setAttribute('aria-label',
+          (hidden ? 'Hidden achievement' : a.name) + ', ' + LABEL[rarity] + ', ' + (got ? 'earned' : 'locked'));
+        grid.appendChild(el);
+      });
+
+      title.textContent = LABEL[rarity] + ' · ' + counts[rarity].earned + '/' + counts[rarity].total;
+      host.appendChild(title);
+      host.appendChild(grid);
+    });
+
+    var sum = document.getElementById('summary');
+    sum.innerHTML =
+      '<span class="sum-pill"><b>' + counts.earned + '/' + counts.total + '</b> earned</span>' +
+      ORDER.map(function (r) {
+        return '<span class="sum-pill sr-' + r + '"><b>' + GLYPH[r] + ' ' + counts[r].earned + '/' + counts[r].total + '</b></span>';
+      }).join('');
+  }
+
+  function esc(x) {
+    return String(x).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  document.addEventListener('dtsc520:player', function (e) { render(e.detail); });
+  document.addEventListener('DOMContentLoaded', function () {
+    var s = window.Player ? window.Player.getState() : null;
+    render(s);
+  });
+})();
+</script>
+</body>
+</html>

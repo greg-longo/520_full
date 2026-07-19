@@ -109,6 +109,11 @@ body.has-shell nav { top: var(--shell-h); }
   white-space: nowrap;
 }
 .shell-pill[hidden] { display: none; }
+a.shell-pill { text-decoration: none; cursor: pointer; }
+a.shell-pill:hover, a.shell-pill:focus-visible {
+  border-color: var(--shell-maroon);
+  box-shadow: 0 0 10px var(--shell-maroon-glow);
+}
 .shell-pill .ico { font-size: 0.8rem; line-height: 1; }
 .shell-pill.streak .ico { color: #e07b39; }
 .shell-pill.credits .ico { color: var(--shell-gold); }
