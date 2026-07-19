@@ -458,7 +458,7 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
 .fc-overlay.open { display: block; }
 
 .fc-drawer {
-  position: fixed; top: 0; right: 0; bottom: 0; width: 390px;
+  position: fixed; top: var(--shell-h, 0px); right: 0; bottom: 0; width: 390px;
   z-index: 600; background: var(--surface);
   border-left: 1px solid var(--border);
   transform: translateX(100%); transition: transform 0.28s ease;
@@ -561,7 +561,10 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
 
     </style>
   <link rel="stylesheet" href="/520_full/auth/auth.css">
+  <link rel="stylesheet" href="/520_full/assets/shell.css">
   <script src="/520_full/auth/auth.js" defer></script>
+  <script src="/520_full/assets/player.js" defer></script>
+  <script src="/520_full/assets/shell.js" defer></script>
 </head>
 <body>
 <div id="auth-slot" class="auth-slot-fixed"></div>

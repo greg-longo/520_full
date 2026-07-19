@@ -137,7 +137,7 @@
   .grid.has-report .report { display:flex; }
   @media (min-width:1025px){ .grid.has-report{ grid-template-columns:270px 1fr 300px; } }
   @media (max-width:1024px){
-    .report { position:fixed; top:0; right:0; bottom:0; width:320px; max-width:88vw; z-index:60; transform:translateX(100%); transition:transform 0.25s; box-shadow:-12px 0 40px rgba(0,0,0,0.5); }
+    .report { position:fixed; top:var(--shell-h, 0px); right:0; bottom:0; width:320px; max-width:88vw; z-index:60; transform:translateX(100%); transition:transform 0.25s; box-shadow:-12px 0 40px rgba(0,0,0,0.5); }
     .grid.has-report .report { display:flex; transform:translateX(100%); }   /* present but off-screen until toggled */
     .report.open { transform:translateX(0) !important; }
   }
@@ -165,7 +165,10 @@
   ::-webkit-scrollbar{ width:9px; } ::-webkit-scrollbar-thumb{ background:var(--line2); border-radius:5px; }
 </style>
   <link rel="stylesheet" href="/520_full/auth/auth.css">
+  <link rel="stylesheet" href="/520_full/assets/shell.css">
   <script src="/520_full/auth/auth.js" defer></script>
+  <script src="/520_full/assets/player.js" defer></script>
+  <script src="/520_full/assets/shell.js" defer></script>
 </head>
 <body>
 <div id="auth-slot" class="auth-slot-fixed"></div>
