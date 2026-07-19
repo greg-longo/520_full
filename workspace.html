@@ -60,10 +60,10 @@
       aspect-ratio: 16 / 9;
       border-radius: 8px;
       overflow: hidden;
+      touch-action: none;
       background:
         linear-gradient(180deg, #2a2430 0%, #241f28 55%, #241f28 62%, #17120e 62%, #211a13 100%);
     }
-    /* subtle retro wall panelling + window glow */
     #stage::before {
       content: '';
       position: absolute; inset: 0 0 38% 0;
@@ -72,7 +72,6 @@
         radial-gradient(ellipse at 78% 10%, rgba(201,162,74,0.07), transparent 55%);
       pointer-events: none;
     }
-    /* floor sheen */
     #stage::after {
       content: '';
       position: absolute; left: 0; right: 0; bottom: 0; height: 38%;
@@ -81,34 +80,17 @@
         linear-gradient(180deg, rgba(255,255,255,0.03), transparent 40%);
       pointer-events: none;
     }
-    .sprite { position: absolute; transform: translateX(-50%); user-select: none; -webkit-user-drag: none; pointer-events: none; }
-    .sprite img { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35)); }
+    .sprite { position: absolute; transform: translateX(-50%); user-select: none; pointer-events: none; }
+    .sprite img { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35)); -webkit-user-drag: none; }
 
-    .hotspot {
-      position: absolute; transform: translateX(-50%);
-      border: 2px dashed rgba(255,255,255,0.22);
-      border-radius: 10px;
-      background: rgba(255,255,255,0.02);
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      color: rgba(255,255,255,0.4);
-      font: 600 18px 'IBM Plex Sans', sans-serif;
-      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
-    }
-    .hotspot:hover, .hotspot:focus-visible, .hotspot.selected {
-      border-color: var(--gold);
-      background: rgba(201,162,74,0.08);
-      box-shadow: 0 0 14px rgba(201,162,74,0.25);
-      color: var(--gold);
-    }
-    .hotspot.filled { border-color: transparent; background: transparent; color: transparent; }
-    .hotspot.filled:hover, .hotspot.filled:focus-visible, .hotspot.filled.selected {
-      border-color: var(--gold); background: rgba(201,162,74,0.06);
-    }
-    .hotspot:focus-visible { outline: 2.5px solid #c9a84c; outline-offset: 2px; }
+    .sprite.item { pointer-events: auto; cursor: grab; border-radius: 8px; }
+    .sprite.item:hover { outline: 2px dashed rgba(201,162,74,0.5); outline-offset: 3px; }
+    .sprite.item.selected { outline: 2.5px solid var(--gold); outline-offset: 3px; box-shadow: 0 0 16px rgba(201,162,74,0.3); }
+    .sprite.item.dragging { cursor: grabbing; opacity: 0.92; }
+    .sprite.item:focus-visible { outline: 2.5px solid #c9a84c; outline-offset: 3px; }
 
     .scene-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 0.6rem; gap: 0.8rem; flex-wrap: wrap; }
-    .scene-hint { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--text-dim); }
+    .scene-hint { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; color: var(--text-dim); line-height: 1.5; }
     .btn {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.05em;
       padding: 0.45rem 0.9rem; border-radius: 7px; cursor: pointer;
@@ -117,25 +99,29 @@
       transition: box-shadow 0.15s, background 0.15s;
     }
     .btn:hover, .btn:focus-visible { background: rgba(139,28,64,0.3); box-shadow: 0 0 12px rgba(139,28,64,0.4); }
+    #save-state { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; color: #3fa06a; min-width: 60px; }
 
-    /* ── PICKER ────────────────────────────────────────────────────────── */
-    #picker {
-      display: none; margin-top: 0.8rem; background: var(--bg-card);
-      border: 1px solid var(--gold); border-radius: 10px; padding: 0.9rem 1rem;
+    /* ── INVENTORY TRAY ────────────────────────────────────────────────── */
+    .tray-head {
+      display: flex; align-items: baseline; gap: 0.9rem; margin: 1.2rem 0 0.5rem;
     }
-    #picker.open { display: block; }
-    #picker h3 { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.6rem; font-weight: 500; }
-    .pick-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
-    .pick-item {
-      display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
-      width: 92px; padding: 0.5rem 0.4rem; border-radius: 8px; cursor: pointer;
-      background: rgba(255,255,255,0.04); color: var(--text);
-      border: 1px solid var(--border);
-      font-family: 'IBM Plex Sans', sans-serif; font-size: 0.66rem; text-align: center;
+    .tray-head h2 { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); font-weight: 500; }
+    .tray-head .sub { font-family: 'IBM Plex Mono', monospace; font-size: 0.64rem; color: var(--text-dim); opacity: 0.7; }
+    #tray {
+      display: flex; gap: 0.55rem; flex-wrap: wrap; min-height: 74px;
+      background: var(--bg-card); border: 1px dashed var(--border); border-radius: 10px;
+      padding: 0.6rem;
     }
-    .pick-item img { width: 52px; height: 52px; object-fit: contain; }
-    .pick-item:hover, .pick-item:focus-visible { border-color: var(--gold); }
-    .pick-item.current { border-color: var(--gold); background: rgba(201,162,74,0.12); }
+    .tray-item {
+      width: 68px; padding: 0.4rem 0.3rem 0.3rem; border-radius: 8px; cursor: grab;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+      font-size: 0.58rem; text-align: center; color: var(--text-dim);
+      touch-action: none;
+    }
+    .tray-item img { width: 44px; height: 44px; object-fit: contain; pointer-events: none; }
+    .tray-item:hover, .tray-item:focus-visible { border-color: var(--gold); color: var(--text); }
+    #tray .empty-note { align-self: center; color: var(--text-dim); font-size: 0.75rem; padding: 0.5rem; }
 
     /* ── STORE ─────────────────────────────────────────────────────────── */
     .store-head { display: flex; align-items: baseline; gap: 0.9rem; margin: 2rem 0 0.9rem; }
@@ -178,7 +164,8 @@
       font-family: 'IBM Plex Sans', sans-serif; border-top: 1px solid var(--border); margin-top: 2rem;
     }
     footer a { color: var(--text-dim); }
-    @media (prefers-reduced-motion: reduce) { .hotspot { transition: none; } }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    @media (prefers-reduced-motion: reduce) { .btn, .sprite.item { transition: none; } }
   </style>
   <link rel="stylesheet" href="/520_full/auth/auth.css">
   <link rel="stylesheet" href="/520_full/assets/shell.css">
@@ -192,7 +179,7 @@
   <div class="hero">
     <div class="hero-tag">DTSC 520 &middot; Your Workspace</div>
     <h1>The Desk</h1>
-    <p class="hero-sub">Your corner of the StatDeck office, 1996. Spend earned credits, click a slot, decorate.</p>
+    <p class="hero-sub">Your corner of the StatDeck office, 1996. Drag your stuff anywhere you like it.</p>
   </div>
 
   <main>
@@ -202,17 +189,19 @@
     </div>
 
     <div class="scene-wrap">
-      <div id="stage" role="group" aria-label="Your workspace scene"></div>
+      <div id="stage" role="application" aria-label="Your workspace. Drag items to move them, or select an item and use arrow keys."></div>
       <div class="scene-actions">
-        <span class="scene-hint">Click a dashed slot to place an item you own.</span>
+        <span class="scene-hint">Drag items to move them. Click to select, then arrow keys nudge (Shift = faster), Delete returns it to the tray.</span>
+        <span id="save-state" aria-live="polite"></span>
         <button class="btn" id="share-btn" type="button">Download desk card</button>
       </div>
     </div>
 
-    <div id="picker" role="dialog" aria-label="Choose an item">
-      <h3 id="picker-title">Choose an item</h3>
-      <div class="pick-row" id="picker-items"></div>
+    <div class="tray-head">
+      <h2>Item Tray</h2>
+      <span class="sub">drag onto the scene to place</span>
     </div>
+    <div id="tray"></div>
 
     <div class="store-head">
       <h2>The Supply Closet</h2>
@@ -232,11 +221,12 @@
 
   var ASSETS = '/520_full/assets/desk/';
   var state = null;
-  var layout = {};
-  var selectedAnchor = null;
+  var placed = [];              // [{id, x, b}] — x = center %, b = bottom %
+  var selectedId = null;
+  var saveTimer = null;
+  var dirty = false;            // local edits not yet confirmed by the server
 
-  // ── Base furniture: always present, not purchasable ─────────────────────
-  // x = center %, b = bottom %, w = width %, z = stacking
+  // ── Base furniture: always present, not draggable ───────────────────────
   var FURNITURE = [
     { img: 'furn_cubicle', x: 76, b: 34, w: 34, z: 1 },
     { img: 'furn_cabinet', x: 88, b: 20, w: 12, z: 3 },
@@ -244,21 +234,7 @@
     { img: 'furn_chair',   x: 15, b: 6,  w: 15, z: 6 }
   ];
 
-  // ── Anchors ─────────────────────────────────────────────────────────────
-  var ANCHORS = [
-    { id: 'pcspot',   label: 'Computer spot',  x: 38, b: 43, w: 16, h: 26, slot: 'pc',       z: 5 },
-    { id: 'lightdesk',label: 'Desk light',     x: 23, b: 43, w: 7,  h: 18, slot: 'lighting', z: 5 },
-    { id: 'desk1',    label: 'Desk spot',      x: 30, b: 43, w: 6,  h: 10, slot: 'desk',     z: 5 },
-    { id: 'desk2',    label: 'Desk spot',      x: 49, b: 43, w: 7,  h: 10, slot: 'desk',     z: 5 },
-    { id: 'desk3',    label: 'Desk spot',      x: 55, b: 43, w: 6,  h: 10, slot: 'desk',     z: 5 },
-    { id: 'wall1',    label: 'Wall spot',      x: 38, b: 76, w: 8,  h: 15, slot: 'wall',     z: 2 },
-    { id: 'cab1',     label: 'Cabinet top',    x: 88, b: 57, w: 8,  h: 12, slot: 'shelf',    z: 3 },
-    { id: 'floor1',   label: 'Floor (left)',   x: 6,  b: 6,  w: 10, h: 34, slot: 'floor',    z: 4 },
-    { id: 'floor2',   label: 'Floor (center)', x: 62, b: 6,  w: 11, h: 30, slot: 'floor',    z: 5 },
-    { id: 'floor3',   label: 'Floor (right)',  x: 97, b: 6,  w: 11, h: 26, slot: 'floor',    z: 4 }
-  ];
-
-  // ── Item display sizes (width % of stage) ───────────────────────────────
+  // ── Item display widths (% of stage) + sensible default drop spots ──────
   var ITEM_W = {
     pc_beige: 16, pc_black: 15, pc_white: 16,
     lamp_banker: 6, lamp_black: 6, lamp_white: 6,
@@ -269,108 +245,245 @@
     water_cooler: 9, trash_can: 5, copier_beige: 13,
     printer_white: 9, archive_boxes: 10, box_cardboard: 7.5
   };
+  var DEFAULT_SPOT = {
+    pc_beige: [38, 44], pc_black: [38, 44], pc_white: [38, 44],
+    clock_wall: [38, 76], water_cooler: [7, 6], fan_standing: [60, 6],
+    plant_pot: [60, 6], copier_beige: [95, 5], printer_white: [95, 5],
+    archive_boxes: [95, 5], trash_can: [55, 6], box_cardboard: [88, 57]
+  };
 
-  function anchorAccepts(anchor, item) {
-    if (anchor.only) return anchor.only.indexOf(item.id) !== -1;
-    return item.slot === anchor.slot;
-  }
+  // Legacy anchor-keyed layouts (pre drag-and-drop) migrate to coordinates.
+  var LEGACY_ANCHORS = {
+    pcspot: [38, 43], lightdesk: [23, 43], desk1: [30, 43], desk2: [49, 43],
+    desk3: [55, 43], wall1: [38, 76], cab1: [88, 57],
+    floor1: [6, 6], floor2: [62, 6], floor3: [97, 6]
+  };
 
-  // ── Scene rendering ─────────────────────────────────────────────────────
+  // ── Scene ───────────────────────────────────────────────────────────────
+  function zFor(b) { return 10 + Math.max(0, Math.round(90 - b)); }
+
   function renderScene() {
     var stage = document.getElementById('stage');
     stage.innerHTML = '';
 
-    FURNITURE.forEach(function (f) { addSprite(stage, f.img, f.x, f.b, f.w, f.z); });
+    FURNITURE.forEach(function (f) {
+      var d = mkSprite(f.img, f.x, f.b, f.w);
+      d.style.zIndex = f.z;
+      stage.appendChild(d);
+    });
 
-    ANCHORS.forEach(function (a) {
-      var itemId = layout[a.id];
-      if (itemId && ITEM_W[itemId]) {
-        addSprite(stage, itemId, a.x, a.b, ITEM_W[itemId], a.z + 1);
-      }
-      var owned = ownedFor(a);
-      if (!owned.length && !itemId) return;      // nothing placeable: keep clean
-      var hs = document.createElement('button');
-      hs.type = 'button';
-      hs.className = 'hotspot' + (itemId ? ' filled' : '') + (selectedAnchor === a.id ? ' selected' : '');
-      hs.style.cssText = 'left:' + a.x + '%;bottom:' + a.b + '%;width:' + a.w + '%;height:' + a.h + '%;z-index:50;';
-      hs.setAttribute('aria-label', a.label + (itemId ? ': ' + itemName(itemId) : ': empty'));
-      if (!itemId) hs.textContent = '+';
-      hs.addEventListener('click', function () { openPicker(a); });
-      stage.appendChild(hs);
+    placed.forEach(function (p) {
+      if (!ITEM_W[p.id]) return;
+      var d = mkSprite(p.id, p.x, p.b, ITEM_W[p.id]);
+      d.classList.add('item');
+      if (p.id === selectedId) d.classList.add('selected');
+      d.style.zIndex = zFor(p.b);
+      d.setAttribute('tabindex', '0');
+      d.setAttribute('role', 'button');
+      d.setAttribute('aria-label', itemName(p.id) + '. Drag or use arrow keys to move, Delete to remove.');
+      d.dataset.item = p.id;
+      hookDrag(d, p);
+      d.addEventListener('keydown', function (e) { keyMove(e, p); });
+      d.addEventListener('focus', function () { select(p.id); });
+      stage.appendChild(d);
     });
   }
 
-  function addSprite(stage, img, x, b, w, z) {
+  function mkSprite(img, x, b, w) {
     var d = document.createElement('div');
     d.className = 'sprite';
-    d.style.cssText = 'left:' + x + '%;bottom:' + b + '%;width:' + w + '%;z-index:' + z + ';';
+    d.style.cssText = 'left:' + x + '%;bottom:' + b + '%;width:' + w + '%;';
     var i = document.createElement('img');
     i.src = ASSETS + img + '.png';
     i.alt = '';
+    i.draggable = false;
     d.appendChild(i);
-    stage.appendChild(d);
+    return d;
   }
 
-  // ── Picker ──────────────────────────────────────────────────────────────
-  function ownedFor(anchor) {
+  function select(id) {
+    selectedId = id;
+    document.querySelectorAll('#stage .sprite.item').forEach(function (el) {
+      el.classList.toggle('selected', el.dataset.item === id);
+    });
+  }
+
+  // ── Dragging (pointer events: mouse + touch) ────────────────────────────
+  function hookDrag(el, p) {
+    el.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      select(p.id);
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.classList.add('dragging');
+      var stage = document.getElementById('stage');
+      var rect = stage.getBoundingClientRect();
+      var startX = e.clientX, startY = e.clientY;
+      var origX = p.x, origB = p.b;
+
+      function move(ev) {
+        var dx = (ev.clientX - startX) / rect.width * 100;
+        var dy = (ev.clientY - startY) / rect.height * 100;
+        p.x = clamp(origX + dx, 2, 98);
+        p.b = clamp(origB - dy, 0, 88);
+        el.style.left = p.x + '%';
+        el.style.bottom = p.b + '%';
+        el.style.zIndex = zFor(p.b);
+      }
+      function up(ev) {
+        el.classList.remove('dragging');
+        el.removeEventListener('pointermove', move);
+        el.removeEventListener('pointerup', up);
+        el.removeEventListener('pointercancel', up);
+        scheduleSave();
+      }
+      el.addEventListener('pointermove', move);
+      el.addEventListener('pointerup', up);
+      el.addEventListener('pointercancel', up);
+    });
+  }
+
+  function keyMove(e, p) {
+    var step = e.shiftKey ? 3 : 0.8;
+    var handled = true;
+    if (e.key === 'ArrowLeft') p.x = clamp(p.x - step, 2, 98);
+    else if (e.key === 'ArrowRight') p.x = clamp(p.x + step, 2, 98);
+    else if (e.key === 'ArrowUp') p.b = clamp(p.b + step, 0, 88);
+    else if (e.key === 'ArrowDown') p.b = clamp(p.b - step, 0, 88);
+    else if (e.key === 'Delete' || e.key === 'Backspace') { removeItem(p.id); scheduleSave(); return void e.preventDefault(); }
+    else if (e.key === 'Escape') { select(null); return; }
+    else handled = false;
+    if (handled) {
+      e.preventDefault();
+      var el = document.querySelector('#stage .sprite.item[data-item="' + p.id + '"]');
+      if (el) {
+        el.style.left = p.x + '%';
+        el.style.bottom = p.b + '%';
+        el.style.zIndex = zFor(p.b);
+      }
+      scheduleSave();
+    }
+  }
+
+  function removeItem(id) {
+    placed = placed.filter(function (p) { return p.id !== id; });
+    if (selectedId === id) selectedId = null;
+    renderScene();
+    renderTray();
+  }
+
+  function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
+
+  // ── Tray (owned, unplaced) ──────────────────────────────────────────────
+  function unplacedOwned() {
     if (!state) return [];
     var items = (state.catalog && state.catalog.items) || [];
     return items.filter(function (it) {
-      return state.inventory.indexOf(it.id) !== -1 && ITEM_W[it.id] && anchorAccepts(anchor, it);
+      return state.inventory.indexOf(it.id) !== -1 && ITEM_W[it.id] &&
+             !placed.some(function (p) { return p.id === it.id; });
     });
   }
 
-  function itemName(id) {
-    var items = (state && state.catalog && state.catalog.items) || [];
-    var it = items.filter(function (i) { return i.id === id; })[0];
-    return it ? it.name : id;
-  }
-
-  function openPicker(anchor) {
-    selectedAnchor = anchor.id;
-    var picker = document.getElementById('picker');
-    var host = document.getElementById('picker-items');
-    document.getElementById('picker-title').textContent = anchor.label;
-    host.innerHTML = '';
-
-    var emptyBtn = document.createElement('button');
-    emptyBtn.type = 'button';
-    emptyBtn.className = 'pick-item' + (!layout[anchor.id] ? ' current' : '');
-    emptyBtn.textContent = 'Empty';
-    emptyBtn.addEventListener('click', function () { place(anchor.id, null); });
-    host.appendChild(emptyBtn);
-
-    ownedFor(anchor).forEach(function (it) {
+  function renderTray() {
+    var tray = document.getElementById('tray');
+    tray.innerHTML = '';
+    var items = unplacedOwned();
+    if (!items.length) {
+      var note = document.createElement('span');
+      note.className = 'empty-note';
+      note.textContent = state && state.inventory && state.inventory.length
+        ? 'Everything you own is placed. Buy more below, or Delete an item on the scene to return it here.'
+        : 'Buy items in the Supply Closet below. They appear here first.';
+      tray.appendChild(note);
+      return;
+    }
+    items.forEach(function (it) {
       var b = document.createElement('button');
       b.type = 'button';
-      b.className = 'pick-item' + (layout[anchor.id] === it.id ? ' current' : '');
+      b.className = 'tray-item';
       b.innerHTML = '<img src="' + ASSETS + it.id + '.png" alt=""><span>' + esc(it.name) + '</span>';
-      b.addEventListener('click', function () { place(anchor.id, it.id); });
-      host.appendChild(b);
+      b.setAttribute('aria-label', 'Place ' + it.name + ' on the scene');
+      // click / Enter = place at the item's default spot
+      b.addEventListener('click', function () { placeDefault(it.id); });
+      // drag from tray straight onto the stage
+      b.addEventListener('pointerdown', function (e) { trayDrag(e, b, it.id); });
+      tray.appendChild(b);
     });
-
-    picker.classList.add('open');
-    renderScene();
-    try { picker.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
   }
 
-  function place(anchorId, itemId) {
-    if (itemId) {
-      Object.keys(layout).forEach(function (k) { if (layout[k] === itemId) delete layout[k]; });
-      layout[anchorId] = itemId;
-    } else {
-      delete layout[anchorId];
-    }
-    selectedAnchor = null;
-    document.getElementById('picker').classList.remove('open');
+  function placeDefault(id) {
+    var spot = DEFAULT_SPOT[id] || [30 + Math.random() * 30, 44];
+    placed.push({ id: id, x: spot[0], b: spot[1] });
     renderScene();
-    if (window.Player) {
-      window.Player.equip(layout).then(function (res) {
-        if (res && res.ok && window.shellToast) {
-          window.shellToast({ className: 'credits-toast', icon: '&#10003;', kicker: 'workspace', name: 'Saved', ms: 1600 });
-        }
-      });
+    renderTray();
+    select(id);
+    scheduleSave();
+    var el = document.querySelector('#stage .sprite.item[data-item="' + id + '"]');
+    if (el) el.focus();
+  }
+
+  function trayDrag(e, btn, id) {
+    var stage = document.getElementById('stage');
+    var rect = stage.getBoundingClientRect();
+    var started = false;
+    var startX = e.clientX, startY = e.clientY;
+    try { btn.setPointerCapture(e.pointerId); } catch (err) {}
+
+    function move(ev) {
+      if (!started && Math.hypot(ev.clientX - startX, ev.clientY - startY) < 6) return;
+      if (!started) {
+        started = true;
+        var x = clamp((ev.clientX - rect.left) / rect.width * 100, 2, 98);
+        var b = clamp((rect.bottom - ev.clientY) / rect.height * 100, 0, 88);
+        placed.push({ id: id, x: x, b: b });
+        renderScene();
+        renderTray();
+        select(id);
+      }
+      var p = placed.filter(function (q) { return q.id === id; })[0];
+      if (!p) return;
+      p.x = clamp((ev.clientX - rect.left) / rect.width * 100, 2, 98);
+      p.b = clamp((rect.bottom - ev.clientY) / rect.height * 100, 0, 88);
+      var el = document.querySelector('#stage .sprite.item[data-item="' + id + '"]');
+      if (el) {
+        el.style.left = p.x + '%';
+        el.style.bottom = p.b + '%';
+        el.style.zIndex = zFor(p.b);
+      }
     }
+    function up(ev) {
+      btn.removeEventListener('pointermove', move);
+      btn.removeEventListener('pointerup', up);
+      btn.removeEventListener('pointercancel', up);
+      if (started) {
+        // dropped outside the stage? undo
+        var inside = ev.clientX >= rect.left && ev.clientX <= rect.right &&
+                     ev.clientY >= rect.top && ev.clientY <= rect.bottom;
+        if (!inside) removeItem(id);
+        scheduleSave();
+      }
+    }
+    btn.addEventListener('pointermove', move);
+    btn.addEventListener('pointerup', up);
+    btn.addEventListener('pointercancel', up);
+  }
+
+  // ── Save (debounced) ────────────────────────────────────────────────────
+  function scheduleSave() {
+    dirty = true;
+    var el = document.getElementById('save-state');
+    el.textContent = 'saving…';
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      if (!window.Player) { el.textContent = ''; return; }
+      var layout = { placed: placed.map(function (p) {
+        return { id: p.id, x: Math.round(p.x * 10) / 10, b: Math.round(p.b * 10) / 10 };
+      }) };
+      window.Player.equip(layout).then(function (res) {
+        if (res && res.ok) dirty = false;
+        el.textContent = res && res.ok ? 'saved ✓' : 'save failed';
+        setTimeout(function () { if (el.textContent === 'saved ✓') el.textContent = ''; }, 2000);
+      });
+    }, 700);
   }
 
   // ── Store ───────────────────────────────────────────────────────────────
@@ -421,7 +534,7 @@
       if (res && res.ok) {
         if (window.shellToast) window.shellToast({
           className: 'credits-toast', icon: '&#128230;', kicker: 'purchased',
-          name: itemName(itemId), sub: 'Balance: ' + res.balance, ms: 3000
+          name: itemName(itemId), sub: 'In your tray. Drag it onto the scene.', ms: 3200
         });
       } else {
         btn.disabled = false;
@@ -434,14 +547,19 @@
     });
   }
 
-  // ── Share card (canvas composite) ───────────────────────────────────────
+  function itemName(id) {
+    var items = (state && state.catalog && state.catalog.items) || [];
+    var it = items.filter(function (i) { return i.id === id; })[0];
+    return it ? it.name : id;
+  }
+
+  // ── Share card ──────────────────────────────────────────────────────────
   function shareCard() {
     var W = 1200, H = 630;
     var c = document.createElement('canvas');
     c.width = W; c.height = H;
     var ctx = c.getContext('2d');
 
-    // background: reproduce the stage gradients
     var stageY = 56, stageH = H - stageY - 8, stageX = 8, stageW = W - 16;
     ctx.fillStyle = '#0f0e0d'; ctx.fillRect(0, 0, W, H);
     var wallH = stageH * 0.62;
@@ -452,11 +570,9 @@
     g2.addColorStop(0, '#17120e'); g2.addColorStop(1, '#211a13');
     ctx.fillStyle = g2; ctx.fillRect(stageX, stageY + wallH, stageW, stageH - wallH);
 
-    // gather draws: furniture + placed items, sorted by z
     var draws = FURNITURE.map(function (f) { return { img: f.img, x: f.x, b: f.b, w: f.w, z: f.z }; });
-    ANCHORS.forEach(function (a) {
-      var id = layout[a.id];
-      if (id && ITEM_W[id]) draws.push({ img: id, x: a.x, b: a.b, w: ITEM_W[id], z: a.z + 1 });
+    placed.forEach(function (p) {
+      if (ITEM_W[p.id]) draws.push({ img: p.id, x: p.x, b: p.b, w: ITEM_W[p.id], z: zFor(p.b) });
     });
     draws.sort(function (p, q) { return p.z - q.z; });
 
@@ -491,24 +607,44 @@
     if (!imgs.length) done();
   }
 
-  // ── State plumbing ──────────────────────────────────────────────────────
+  // ── State plumbing + layout migration ───────────────────────────────────
   function esc(x) {
     return String(x).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
 
+  function loadLayout(equipped) {
+    if (!equipped || typeof equipped !== 'object') return [];
+    // new shape: { placed: [{id,x,b}] }
+    if (Array.isArray(equipped.placed)) {
+      return equipped.placed.filter(function (p) {
+        return p && typeof p.id === 'string' && typeof p.x === 'number' && typeof p.b === 'number';
+      }).map(function (p) {
+        return { id: p.id, x: clamp(p.x, 2, 98), b: clamp(p.b, 0, 88) };
+      });
+    }
+    // legacy shape: { anchorId: itemId }
+    var out = [];
+    Object.keys(equipped).forEach(function (k) {
+      if (typeof equipped[k] === 'string' && LEGACY_ANCHORS[k]) {
+        out.push({ id: equipped[k], x: LEGACY_ANCHORS[k][0], b: LEGACY_ANCHORS[k][1] });
+      }
+    });
+    return out;
+  }
+
   function apply(s) {
     state = s;
     var signedIn = !!(window.Auth && window.Auth.user);
     document.getElementById('signin-note').style.display = signedIn ? 'none' : 'block';
-    if (s && s.equipped && typeof s.equipped === 'object' && !Array.isArray(s.equipped)) {
-      layout = {};
-      Object.keys(s.equipped).forEach(function (k) {
-        if (typeof s.equipped[k] === 'string') layout[k] = s.equipped[k];
-      });
-    }
+    if (s && !dirty) placed = loadLayout(s.equipped);   // don't clobber unsaved drags
+    // drop anything no longer owned
+    placed = placed.filter(function (p) {
+      return !s || !s.inventory || s.inventory.indexOf(p.id) !== -1;
+    });
     renderScene();
+    renderTray();
     renderStore();
   }
 
@@ -516,6 +652,10 @@
   document.addEventListener('DOMContentLoaded', function () {
     apply(window.Player ? window.Player.getState() : null);
     document.getElementById('share-btn').addEventListener('click', shareCard);
+    // click empty stage = deselect
+    document.getElementById('stage').addEventListener('pointerdown', function (e) {
+      if (e.target === e.currentTarget) select(null);
+    });
   });
 })();
 </script>
