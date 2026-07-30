@@ -1,4 +1,71 @@
+# ---------------------------------------------------------------------------
+# DTSC 520 site repo (github.com/greg-longo/520_full) -- THIS REPO IS PUBLIC.
+#
+# Source teaching material must never be pushed. It lives in 520/notebooks/,
+# which is a sibling of this directory and therefore outside the repo, so it
+# is already safe. The rules below are a second line of defence for the case
+# where something gets copied or moved in here by accident.
+#
+# If you ever legitimately need to publish a notebook, export it to HTML under
+# site/modules/ and add a narrow exception at the bottom of this file.
+# ---------------------------------------------------------------------------
+
+# OS and editor noise
 .DS_Store
 Thumbs.db
+Icon?
 *.swp
 *.swo
+*~
+
+# Dependencies -- never belongs in a repo
+node_modules/
+
+# --- teaching source material: do not publish ------------------------------
+# Notebooks in any form
+*.ipynb
+.ipynb_checkpoints/
+
+# Flattened notebook exports (tools/llm_export.py output)
+*.llm.md
+*.llm-*.md
+
+# Master and student notebook variants, whatever the extension
+*_MASTER.*
+*_STUDENT.*
+
+# Any directory named source/ or notebooks/ that lands inside the repo
+source/
+notebooks/
+
+# Google Drive shortcut stubs (they leak internal doc IDs)
+*.gdoc
+*.gslides
+*.gsheet
+
+# Exercise solutions and answer keys, wherever they appear
+*[Ss]olution*.ipynb
+*[Aa]nswer?[Kk]ey*
+Exercise?Solutions/
+
+# Instructor-only planning documents
+NOTEBOOK_REVAMP_PLAN.md
+ROADMAP*.md
+CAPSTONE_SPEC.md
+*_PLAN.md
+*_SPEC.md
+
+# Local scratch
+*.log
+.env
+.venv/
+__pycache__/
+*.py[cod]
+
+# --- narrow exceptions -----------------------------------------------------
+# Published on purpose. Add here rather than loosening the rules above.
+!README.md
+!auth/DEPLOYMENT.md
+!capstone/_data/DATA_DICTIONARY.md
+!capstone/_data/INSTRUCTOR_GUIDE.md
+!capstone/assets/README.md
