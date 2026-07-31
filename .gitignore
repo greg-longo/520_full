@@ -62,10 +62,18 @@ CAPSTONE_SPEC.md
 __pycache__/
 *.py[cod]
 
+# --- instructor-only: never publish -----------------------------------------
+# capstone/_data held the answer key, the instructor passphrase, the cohort
+# generator and the findings-verification script. None of it is loaded by any
+# page. It now lives in ../capstone_source/, outside the repo.
+capstone/_data/
+**/INSTRUCTOR_GUIDE.md
+**/verify_findings.py
+**/cohort_generator.py
+**/cohort_frozen.py
+
 # --- narrow exceptions -----------------------------------------------------
-# Published on purpose. Add here rather than loosening the rules above.
+# Published on purpose. Add here only after checking what the file contains.
 !README.md
 !auth/DEPLOYMENT.md
-!capstone/_data/DATA_DICTIONARY.md
-!capstone/_data/INSTRUCTOR_GUIDE.md
 !capstone/assets/README.md

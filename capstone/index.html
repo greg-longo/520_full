@@ -205,7 +205,7 @@ const MODULES = [
   ]},
 ];
 
-const INSTRUCTOR_HASH = '60fb9ab1';
+const INSTRUCTOR_HASH = '9b018f04';
 function djb2(s){ let h=5381; for(let i=0;i<s.length;i++){ h=((h<<5)+h)+s.charCodeAt(i); h=h&0xffffffff; } return (h>>>0).toString(16); }
 function instructorUnlocked(){ try { return localStorage.getItem('dtsc520_capstone_instructor')==='1'; } catch(e){ return false; } }
 
