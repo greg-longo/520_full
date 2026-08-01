@@ -1063,7 +1063,7 @@ textarea.editor:read-only { opacity: 0.7; cursor: default; }
       <div class="race-box">
         <div class="race-eyebrow">Bonus &middot; Live Benchmark</div>
         <div class="race-title">The Vectorization Speed Race</div>
-        <div class="race-sub">Same job, two ways: a plain Python <code>for</code> loop versus one vectorized NumPy operation, doubling every number in a one-million-element array. Both run for real in your browser. Press start and watch the gap.</div>
+        <div class="race-sub">Same job, two ways: a plain Python <code>for</code> loop over a list, versus one vectorized NumPy operation over an array. A million numbers, doubled, either way. Both run for real in your browser. The loop deliberately runs over a <em>list</em> rather than an array, because looping over an array is slower still and racing against that would flatter NumPy unfairly. Press start and watch the gap.</div>
 
         <div class="race-lane">
           <div class="race-lane-head">
@@ -1645,18 +1645,26 @@ async function runRace() {
     const code = `
 import time, numpy as np
 N = 1_000_000
-data = np.arange(N)
+
+# The same numbers twice: a plain Python list, and a NumPy array.
+# The loop MUST run over the list. Looping over a NumPy array makes Python
+# rebuild an object for every element ("unboxing"), which is a self-inflicted
+# penalty that has nothing to do with vectorization - and it would inflate this
+# race by roughly 2.5x. Module 3 teaches students to catch exactly that, so the
+# race has to be honest about its own baseline.
+data_list = list(range(N))
+data_array = np.arange(N)
 
 # Python loop: build a doubled list element by element
 t0 = time.perf_counter()
-_ = [x * 2 for x in data]
+_ = [x * 2 for x in data_list]
 loop_s = time.perf_counter() - t0
 
 # NumPy vectorized: one operation on the whole array
 # averaged over a few runs so the number is stable
 t0 = time.perf_counter()
 for _ in range(5):
-    _ = data * 2
+    _ = data_array * 2
 numpy_s = (time.perf_counter() - t0) / 5
 
 (loop_s, numpy_s)

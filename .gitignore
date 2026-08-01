@@ -77,3 +77,27 @@ capstone/_data/
 !README.md
 !auth/DEPLOYMENT.md
 !capstone/assets/README.md
+
+# --- student notebooks: published on purpose, July 30 2026 -------------------
+# Decision: students can download the notebooks the module pages teach from.
+# ONLY the *_STUDENT.ipynb variants, which strip_solutions.py produces by
+# removing every cell tagged `solution` - 14 of them in Module 4, and its
+# exercise cells read `### ENTER CODE HERE ###`. Verified empty of solution
+# cells and of saved outputs before this exception was added.
+#
+# The masters stay excluded by `*_MASTER.*` above and must remain so: they carry
+# a worked answer to every exercise.
+#
+# Git cannot re-include a file whose parent directory is excluded, so the
+# directory has to be un-excluded first - `!notebooks/` alone does nothing.
+# The final rule re-excludes anything in there that is not a student notebook
+# or its data, so dropping a master into the folder by accident does not
+# publish it.
+!notebooks/
+!notebooks/*_STUDENT.ipynb
+!notebooks/data/
+!notebooks/data/*.csv
+!notebooks/README.md
+notebooks/**/*_MASTER.*
+notebooks/**/*EXECUTED*
+notebooks/**/.ipynb_checkpoints/

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The cohort extract · DTSC 520</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:#14110f; --card:#1b1714; --card2:#221d19; --border:#332b25;
+    --text:#e6ded6; --dim:#9a8f86; --bright:#fff;
+    --accent:#7a5fb5; --accent-light:#9878d4; --warn:#d9913e; --flag:#c9553d;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:0; background:var(--bg); color:var(--text);
+         font-family:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif; line-height:1.6; }
+  .wrap { max-width:1180px; margin:0 auto; padding:2.5rem 1.5rem 4rem; }
+  h1 { font-family:'Zilla Slab',Georgia,serif; font-size:1.9rem; color:var(--bright);
+       margin:0 0 .4rem; font-weight:600; }
+  .lede { color:var(--dim); margin:0 0 1.4rem; max-width:70ch; }
+  a.back { color:var(--dim); font-size:.85rem; text-decoration:none; }
+  a.back:hover { color:var(--accent-light); }
+  code { font-family:'IBM Plex Mono',monospace; font-size:.85em; background:var(--card2);
+         padding:.08em .35em; border-radius:3px; color:var(--accent-light); }
+  strong { color:var(--bright); }
+
+  /* controls -------------------------------------------------------------- */
+  .controls { display:flex; gap:.6rem; flex-wrap:wrap; align-items:center;
+              padding:.85rem 0; border-bottom:1px solid var(--border); }
+  input[type=search] { flex:1 1 240px; min-width:180px; padding:.55rem .85rem;
+    border-radius:7px; background:#0f0d0c; color:var(--text);
+    border:1px solid var(--border); font:inherit; font-size:.9rem; }
+  input[type=search]:focus { outline:none; border-color:var(--accent); }
+  .chip { font:inherit; font-size:.78rem; padding:.32rem .75rem; border-radius:20px;
+    cursor:pointer; background:var(--card2); border:1px solid var(--border); color:var(--dim); }
+  .chip:hover { border-color:var(--accent); color:var(--text); }
+  .chip[aria-pressed=true] { background:var(--accent); border-color:var(--accent);
+                             color:#fff; font-weight:600; }
+  .chip.reveal[aria-pressed=true] { background:var(--flag); border-color:var(--flag); }
+  .tally { font-size:.8rem; color:var(--dim); margin-left:auto; }
+
+  /* table ----------------------------------------------------------------- */
+  .scroll { overflow-x:auto; margin-top:1rem; border:1px solid var(--border);
+            border-radius:8px; background:var(--card); }
+  table { border-collapse:collapse; width:100%; font-size:.8rem;
+          font-family:'IBM Plex Mono',monospace; }
+  th, td { padding:.35rem .6rem; text-align:right; white-space:nowrap;
+           border-bottom:1px solid var(--border); }
+  th:nth-child(2), td:nth-child(2) { text-align:left; }
+  thead th { position:sticky; top:0; background:var(--card2); z-index:2; cursor:pointer;
+             color:var(--dim); font-weight:500; font-size:.7rem; letter-spacing:.04em;
+             text-transform:uppercase; user-select:none; }
+  thead th:hover { color:var(--accent-light); }
+  thead th[aria-sort]:not([aria-sort=none]) { color:var(--bright); }
+  thead th .arrow { color:var(--accent-light); }
+  tbody tr:hover { background:var(--card2); }
+  tbody tr:last-child td { border-bottom:none; }
+  td.blank { color:var(--border); }
+  .id { color:var(--dim); }
+
+  /* the reveal ------------------------------------------------------------ */
+  .flagged td.f-dup { background:rgba(201,85,61,.16); }
+  .flagged tr.r-dup td:first-child { box-shadow:inset 3px 0 0 var(--flag); }
+  .flagged td.f-missing { background:rgba(217,145,62,.14); color:var(--warn); }
+  .flagged td.f-text { background:rgba(122,95,181,.18); color:var(--accent-light); }
+  .flagged td.f-impossible { background:rgba(201,85,61,.3); color:#fff; font-weight:600; }
+  .flagged tr.slice td:nth-child(2) { color:var(--accent-light); }
+
+  .panel { background:var(--card); border:1px solid var(--border);
+           border-left:3px solid var(--flag); border-radius:8px;
+           padding:1rem 1.2rem; margin-top:1.1rem; }
+  .panel h2 { font-family:'Zilla Slab',Georgia,serif; font-size:1.1rem;
+              color:var(--bright); margin:0 0 .3rem; font-weight:600; }
+  .panel .sub { color:var(--dim); font-size:.88rem; margin:0 0 .9rem; }
+  .finding { border-top:1px solid var(--border); padding-top:.75rem; margin-top:.75rem; }
+  .finding h3 { margin:0; font-size:.95rem; color:var(--bright); font-weight:600; }
+  .finding .swatch { display:inline-block; width:.7rem; height:.7rem; border-radius:2px;
+                     margin-right:.4rem; vertical-align:baseline; }
+  .finding p { margin:.3rem 0 0; font-size:.9rem; }
+  .finding .why { color:var(--dim); }
+  .finding a { color:var(--accent-light); }
+  .prompt { background:var(--card2); border-left:3px solid var(--accent);
+            border-radius:0 6px 6px 0; padding:.85rem 1rem; margin:1.2rem 0 0; font-size:.9rem; }
+  .empty { color:var(--dim); padding:2rem; text-align:center; }
+  .foot { color:var(--dim); font-size:.82rem; margin-top:1.2rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">&larr; DTSC 520</a>
+  <h1>The cohort extract</h1>
+  <p class="lede">
+    One hundred students, tracked from high school through their first data
+    science course. This is the same file Module 4 loads with
+    <code>pd.read_csv("data/cohort_extract.csv")</code> - so you can look at it
+    now, before you can write a line of code to open it.
+  </p>
+
+  <div class="controls">
+    <input type="search" id="q" placeholder="Search a name or an id&hellip;"
+           autocomplete="off" spellcheck="false" aria-label="Search the extract">
+    <button class="chip" id="sliceChip" aria-pressed="false" type="button">The ten from Module 2</button>
+    <button class="chip reveal" id="revealChip" aria-pressed="false" type="button">
+      Show me what is wrong with it
+    </button>
+    <span class="tally" id="tally"></span>
+  </div>
+
+  <div class="scroll"><table id="grid">
+    <thead><tr id="head"></tr></thead>
+    <tbody id="body"></tbody>
+  </table></div>
+
+  <div id="panel"></div>
+
+  <p class="foot" id="foot"></p>
+</div>
+
+<script src="../assets/cohort-data.js"></script>
+<script>
+"use strict";
+
+var D = window.DTSC_COHORT;
+var COLS = D.columns;
+var Q = D.quirks;
+
+var sortCol = 0, sortDir = 1, query = "", sliceOnly = false, reveal = false;
+
+var head = document.getElementById("head");
+var body = document.getElementById("body");
+var grid = document.getElementById("grid");
+var tally = document.getElementById("tally");
+
+function esc(s) {
+  return String(s).replace(/[&<>]/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c];
+  });
+}
+
+/* ---- lookups built once, so the render loop stays a loop ---------------- */
+var idIndex = COLS.indexOf("student_id");
+var nameIndex = COLS.indexOf("name");
+var dupSet = {}, missingSet = {}, sliceSet = {}, textCols = {}, impossible = {};
+Q.duplicateIds.forEach(function (id) { dupSet[id] = true; });
+Q.missingLmsIds.forEach(function (id) { missingSet[id] = true; });
+D.teachingSlice.forEach(function (id) { sliceSet[String(id)] = true; });
+Q.textNumericColumns.forEach(function (c) { textCols[c.column] = true; });
+Q.impossibleValues.forEach(function (v) { impossible[v.student_id + "|" + v.column] = true; });
+var lmsCols = {};
+Q.lmsColumns.forEach(function (c) { lmsCols[c] = true; });
+
+/* Sorting has to know which columns are numbers. Derived from the values, not
+   from a list of column names - `submission_rate` holds "84%", which IS text,
+   and sorting it as text is the honest behaviour until a student cleans it. */
+var numeric = COLS.map(function (col, i) {
+  var vals = D.rows.map(function (r) { return r[i]; }).filter(function (v) { return v !== ""; });
+  return vals.length > 0 && vals.every(function (v) { return !isNaN(parseFloat(v)) && isFinite(v); });
+});
+
+function rowsNow() {
+  var needle = query.trim().toLowerCase();
+  var out = D.rows.filter(function (r) {
+    if (sliceOnly && !sliceSet[r[idIndex]]) return false;
+    if (!needle) return true;
+    return (r[idIndex] + " " + r[nameIndex]).toLowerCase().indexOf(needle) !== -1;
+  });
+  var i = sortCol;
+  out = out.slice().sort(function (a, b) {
+    var x = a[i], y = b[i];
+    // Blanks sort last whichever way the column is pointing. A missing value is
+    // not "small"; parking 17 of them at the top of an ascending sort would
+    // imply it is.
+    if (x === "" && y === "") return 0;
+    if (x === "") return 1;
+    if (y === "") return -1;
+    if (numeric[i]) return (parseFloat(x) - parseFloat(y)) * sortDir;
+    return x.localeCompare(y) * sortDir;
+  });
+  return out;
+}
+
+function renderHead() {
+  head.innerHTML = COLS.map(function (c, i) {
+    var dir = i === sortCol ? (sortDir === 1 ? "ascending" : "descending") : "none";
+    var arrow = i === sortCol ? ' <span class="arrow">' + (sortDir === 1 ? "&uarr;" : "&darr;") + "</span>" : "";
+    return '<th data-i="' + i + '" aria-sort="' + dir + '" scope="col" tabindex="0">' +
+           esc(c) + arrow + "</th>";
+  }).join("");
+}
+
+function renderBody() {
+  var rows = rowsNow();
+  grid.classList.toggle("flagged", reveal);
+  tally.textContent = rows.length + (rows.length === 1 ? " row" : " rows")
+    + (rows.length !== D.rows.length ? " of " + D.rows.length : "");
+
+  if (!rows.length) {
+    body.innerHTML = '<tr><td class="empty" colspan="' + COLS.length +
+      '">Nobody matches that.</td></tr>';
+    return;
+  }
+
+  body.innerHTML = rows.map(function (r) {
+    var id = r[idIndex];
+    var cls = [];
+    if (dupSet[id]) cls.push("r-dup");
+    if (sliceSet[id]) cls.push("slice");
+    var cells = COLS.map(function (col, i) {
+      var v = r[i], c = [];
+      if (v === "") c.push("blank");
+      if (i === idIndex) c.push("id");
+      if (dupSet[id] && i === idIndex) c.push("f-dup");
+      if (v === "" && lmsCols[col]) c.push("f-missing");
+      if (v !== "" && textCols[col]) c.push("f-text");
+      if (impossible[id + "|" + col]) c.push("f-impossible");
+      return '<td class="' + c.join(" ") + '">' + (v === "" ? "&mdash;" : esc(v)) + "</td>";
+    }).join("");
+    return '<tr class="' + cls.join(" ") + '">' + cells + "</tr>";
+  }).join("");
+}
+
+/* ---- the reveal --------------------------------------------------------- */
+function findings() {
+  var c = Q.cost, tn = Q.textNumericColumns[0], imp = Q.impossibleValues[0];
+  var dupNames = {};
+  D.rows.forEach(function (r) { if (dupSet[r[idIndex]]) dupNames[r[idIndex]] = r[nameIndex]; });
+  var dupList = Q.duplicateIds.map(function (id) {
+    return esc(dupNames[id]) + " (<code>" + esc(id) + "</code>)";
+  }).join(" and ");
+
+  return '<div class="panel">' +
+    "<h2>Four things are wrong with this file</h2>" +
+    '<p class="sub">All four are in the data you were just looking at. None of them ' +
+    'raise an error. That is what makes them worth finding.</p>' +
+
+    '<div class="finding">' +
+      '<h3><span class="swatch" style="background:rgba(201,85,61,.5)"></span>' +
+      D.rows.length + " rows, " + (D.rows.length - Q.duplicateIds.length) + " students</h3>" +
+      "<p>" + dupList + " each appear twice, identically. " +
+      "<span class=\"why\">Every average you compute counts them double, and nothing complains.</span></p>" +
+      '<p><a href="../modules/module4/index.html#cleaning">Module 4 - Cleaning</a></p>' +
+    "</div>" +
+
+    '<div class="finding">' +
+      '<h3><span class="swatch" style="background:rgba(217,145,62,.5)"></span>' +
+      Q.missingLmsIds.length + " students have no engagement record</h3>" +
+      "<p>Their <code>" + Q.lmsColumns.join("</code>, <code>") + "</code> are all empty - " +
+      "one export missed them, so it is the same " + Q.missingLmsIds.length + " people in every column.</p>" +
+      '<p class="why"><strong>This is the one that matters.</strong> They are not a random ' +
+      Q.missingLmsIds.length + ". They average <strong>" + c.withoutRecord.meanScore +
+      "</strong> against <strong>" + c.withRecord.meanScore + "</strong> for everyone else, and " +
+      c.withoutRecord.passed + " of " + c.withoutRecord.n + " passed against " +
+      c.withRecord.passed + " of " + c.withRecord.n + ". Dropping them raises the cohort " +
+      "average and deletes most of the students the course exists to help.</p>" +
+      '<p><a href="../modules/module4/index.html#cleaning">Module 4 - The missing values</a></p>' +
+    "</div>" +
+
+    '<div class="finding">' +
+      '<h3><span class="swatch" style="background:rgba(122,95,181,.5)"></span>' +
+      "<code>" + esc(tn.column) + "</code> is text, not a number</h3>" +
+      "<p>Every value carries a percent sign - <code>" + esc(tn.example) + "</code>. " +
+      "pandas reads the whole column as <code>object</code>. " +
+      "<span class=\"why\">Sort it here and it sorts alphabetically: " +
+      "<code>100%</code> lands next to <code>10%</code>. Arithmetic on it raises a TypeError.</span></p>" +
+      '<p><a href="../modules/module4/index.html#cleaning">Module 4 - Cleaning</a></p>' +
+    "</div>" +
+
+    '<div class="finding">' +
+      '<h3><span class="swatch" style="background:rgba(201,85,61,.75)"></span>' +
+      "One value is impossible</h3>" +
+      "<p>" + esc(imp.name) + " has <code>" + esc(imp.column) + " = " + esc(imp.value) +
+      "</code>. It is a proportion, so it cannot exceed 1. " +
+      "<span class=\"why\">No tool will tell you this. Only knowing what the column means will.</span></p>" +
+      '<p><a href="../modules/module4/index.html#cleaning">Module 4 - Cleaning</a></p>' +
+    "</div>" +
+
+    '<p class="prompt">Every one of these is silent. The file loads, the ' +
+    'averages compute, the plots draw. Looking at your data before you trust it ' +
+    'is not a beginner step you grow out of - it is the job.</p>' +
+  "</div>";
+}
+
+/* ---- wiring ------------------------------------------------------------- */
+head.addEventListener("click", function (e) {
+  var th = e.target.closest ? e.target.closest("th") : null;
+  if (!th) return;
+  var i = +th.getAttribute("data-i");
+  if (i === sortCol) sortDir = -sortDir; else { sortCol = i; sortDir = 1; }
+  renderHead(); renderBody();
+});
+head.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.target.click(); }
+});
+
+document.getElementById("q").addEventListener("input", function () {
+  query = this.value; renderBody();
+});
+
+document.getElementById("sliceChip").addEventListener("click", function () {
+  sliceOnly = !sliceOnly;
+  this.setAttribute("aria-pressed", String(sliceOnly));
+  renderBody();
+});
+
+var panel = document.getElementById("panel");
+document.getElementById("revealChip").addEventListener("click", function () {
+  reveal = !reveal;
+  this.setAttribute("aria-pressed", String(reveal));
+  this.textContent = reveal ? "Hide the problems" : "Show me what is wrong with it";
+  panel.innerHTML = reveal ? findings() : "";
+  renderBody();
+});
+
+document.getElementById("foot").innerHTML =
+  D.rows.length + " rows &middot; " + COLS.length + " columns &middot; " +
+  "the same file the Module 4 exercises read. Names are invented; the cohort is synthetic.";
+
+renderHead();
+renderBody();
+</script>
+</body>
+</html>

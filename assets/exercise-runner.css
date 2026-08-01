@@ -1,0 +1,124 @@
+/* DTSC 520 - live exercise blocks on module pages.
+   Companion to assets/exercise-runner.js and the markup emitted by
+   tools/notebook_to_site.py. Uses each module page's own accent variables so
+   the blocks inherit that module's colour rather than imposing one. */
+
+.exercise-block {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  background: var(--bg-card2);
+  padding: 1rem 1.1rem 1.1rem;
+  margin: 1.8rem 0;
+}
+
+.exercise-label {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  margin-bottom: 0.7rem;
+}
+
+/* The bare textarea, shown before CodeMirror enhances it and if CodeMirror
+   fails to load. It must be usable on its own. */
+.ex-editor {
+  width: 100%;
+  min-height: 8rem;
+  font: 0.85rem/1.6 'IBM Plex Mono', monospace;
+  background: var(--bg-code);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.75rem;
+  resize: vertical;
+}
+
+.exercise-block .CodeMirror {
+  height: auto;
+  min-height: 7rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.ex-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.ex-run, .ex-reset {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.14s, background 0.14s, opacity 0.14s;
+}
+.ex-run {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.ex-run:hover:not(:disabled) { filter: brightness(1.12); }
+.ex-reset:hover { border-color: var(--accent); }
+.ex-run:disabled { opacity: 0.55; cursor: default; }
+
+.ex-status {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.76rem;
+  color: var(--text-dim);
+}
+.ex-status-busy { color: var(--text-dim); }
+.ex-status-ok   { color: #5cad84; }
+.ex-status-err  { color: #d98a8a; }
+
+.ex-output {
+  margin-top: 0.8rem;
+  padding: 0.7rem 0.85rem;
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: 0.82rem/1.55 'IBM Plex Mono', monospace;
+  color: var(--text);
+  white-space: pre-wrap;
+  overflow-x: auto;
+  max-height: 22rem;
+}
+.ex-output-err {
+  border-color: #7a3a3a;
+  color: #e3a9a9;
+}
+
+/* Worked solution, folded away until asked for */
+details.ex-solution {
+  margin-top: 0.9rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.7rem;
+}
+details.ex-solution summary {
+  cursor: pointer;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.8rem;
+  color: var(--accent-light);
+  list-style: none;
+}
+details.ex-solution summary::-webkit-details-marker { display: none; }
+details.ex-solution summary::before { content: "\25B8  "; }
+details.ex-solution[open] summary::before { content: "\25BE  "; }
+details.ex-solution pre { margin-top: 0.6rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ex-run, .ex-reset { transition: none; }
+}

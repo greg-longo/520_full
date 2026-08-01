@@ -1308,7 +1308,14 @@
 
       // Save score to localStorage
       localStorage.setItem('dtsc520_quiz_m5', JSON.stringify({ score, total, percent, completedAt: new Date().toISOString() }));
-      try { if (typeof logEvent === 'function') logEvent('quiz_complete', 'm5_quiz', score, total); } catch(e) {}
+      try { if (typeof logEvent === 'function') logEvent('quiz_complete', 'm5_quiz', score, total, {
+          // Which ITEMS were missed, so a question the whole cohort fails
+          // can be told apart from twenty students being careless. No
+          // per-student answer text, just the question numbers.
+          missed: results.map(function (r, i) { return (r && r.correct) ? null : i + 1; })
+                         .filter(function (n) { return n !== null; }),
+          items: total
+        }); } catch(e) {}
     }
 
     function retake() {

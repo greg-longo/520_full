@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>What does this error mean? · DTSC 520</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:#14110f; --card:#1b1714; --card2:#221d19; --border:#332b25;
+    --text:#e6ded6; --dim:#9a8f86; --bright:#fff;
+    --accent:#7a5fb5; --accent-light:#9878d4; --warn:#d9913e;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:0; background:var(--bg); color:var(--text);
+         font-family:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif; line-height:1.6; }
+  .wrap { max-width:820px; margin:0 auto; padding:2.5rem 1.5rem 4rem; }
+  h1 { font-family:'Zilla Slab',Georgia,serif; font-size:1.9rem; color:var(--bright);
+       margin:0 0 .4rem; font-weight:600; }
+  .lede { color:var(--dim); margin:0 0 1.75rem; }
+  h2 { font-family:'IBM Plex Mono',monospace; font-size:.7rem; letter-spacing:.12em;
+       text-transform:uppercase; color:var(--dim); margin:2.5rem 0 .8rem;
+       border-bottom:1px solid var(--border); padding-bottom:.4rem; }
+  textarea {
+    width:100%; min-height:150px; padding:.9rem 1rem; border-radius:8px;
+    background:#0f0d0c; color:var(--text); border:1px solid var(--border);
+    font-family:'IBM Plex Mono',monospace; font-size:.85rem; line-height:1.5; resize:vertical;
+  }
+  textarea:focus { outline:none; border-color:var(--accent); }
+  .row { display:flex; gap:.6rem; margin-top:.7rem; align-items:center; flex-wrap:wrap; }
+  button {
+    font:inherit; font-size:.85rem; padding:.55rem 1.1rem; border-radius:6px; cursor:pointer;
+    background:var(--accent); border:1px solid var(--accent); color:#fff; font-weight:600;
+  }
+  button:hover { filter:brightness(1.12); }
+  button.ghost { background:var(--card2); border-color:var(--border); color:var(--text); font-weight:400; }
+  button.ghost:hover { border-color:var(--accent); filter:none; }
+  .hint { color:var(--dim); font-size:.8rem; }
+  .out { margin-top:1.5rem; }
+  .card { background:var(--card); border:1px solid var(--border); border-left:3px solid var(--accent);
+          border-radius:8px; padding:1.1rem 1.25rem; margin-bottom:1rem; }
+  .card.unknown { border-left-color:var(--warn); }
+  .etype { font-family:'IBM Plex Mono',monospace; font-size:1.05rem; color:var(--accent-light);
+           font-weight:500; }
+  .emsg { font-family:'IBM Plex Mono',monospace; font-size:.8rem; color:var(--dim);
+          margin-top:.2rem; word-break:break-word; }
+  .headline { font-size:1.02rem; color:var(--bright); margin:.75rem 0 0; }
+  .cause { border-top:1px solid var(--border); padding-top:.85rem; margin-top:.85rem; }
+  .cause .what { font-weight:600; color:var(--bright); font-size:.95rem; }
+  .cause .fix { margin-top:.3rem; }
+  .cause code, .fix code, .what code, li code, p code {
+    font-family:'IBM Plex Mono',monospace; font-size:.85em;
+    background:var(--card2); padding:.08em .35em; border-radius:3px; color:var(--accent-light);
+  }
+  .where { margin-top:.9rem; font-size:.85rem; }
+  .where a { color:var(--accent-light); }
+  .also { margin-top:.8rem; font-size:.88rem; color:var(--dim); }
+  .quiet { background:var(--card); border:1px solid var(--border); border-radius:8px;
+           padding:.85rem 1rem; margin-bottom:.7rem; }
+  .quiet h3 { margin:0 0 .3rem; font-size:.95rem; color:var(--bright); font-weight:600; }
+  .quiet .tell { font-family:'IBM Plex Mono',monospace; font-size:.78rem; color:var(--warn); }
+  .quiet p { margin:.4rem 0 0; font-size:.9rem; }
+  .rule { background:var(--card2); border-left:3px solid var(--accent); border-radius:0 6px 6px 0;
+          padding:.8rem 1rem; margin:1.25rem 0; font-size:.92rem; }
+  a.back { color:var(--dim); font-size:.85rem; text-decoration:none; }
+  a.back:hover { color:var(--accent-light); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">&larr; DTSC 520</a>
+  <h1>What does this error mean?</h1>
+  <p class="lede">
+    Paste the error Python gave you. You will get this course's explanation of it,
+    and a pointer to the section that covers it.
+  </p>
+
+  <div class="rule">
+    <strong>Read a traceback from the bottom up.</strong> The last line is what
+    actually went wrong; everything above it is the route Python took to get
+    there. You can paste the whole thing - only the bottom is used.
+  </div>
+
+  <textarea id="tb" spellcheck="false"
+    placeholder="Traceback (most recent call last):&#10;  File &quot;...&quot;, line 2, in <module>&#10;NameError: name 'gpa' is not defined"></textarea>
+  <div class="row">
+    <button id="go">Explain it</button>
+    <button class="ghost" id="clear">Clear</button>
+    <span class="hint">Nothing is sent anywhere. This runs in your browser.</span>
+  </div>
+
+  <div class="out" id="out"></div>
+
+  <h2>Errors that are not errors</h2>
+  <p style="font-size:.92rem; color:var(--dim); margin-top:0;">
+    Some failures raise nothing at all and hand you a wrong answer instead.
+    They have no traceback to paste, so they are listed here.
+  </p>
+  <div id="quiet"></div>
+</div>
+
+<script src="../assets/error-kb.js"></script>
+<script src="../assets/error-lookup.js"></script>
+<script>
+"use strict";
+var tb = document.getElementById("tb");
+var out = document.getElementById("out");
+
+function esc(s) {
+  return String(s).replace(/[&<>]/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c];
+  });
+}
+// `backticks` in the knowledge base become code spans
+function md(s) {
+  return esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
+}
+function link(w) {
+  if (!w) return "";
+  return '<div class="where">Where this is taught: <a href="../modules/module' +
+    w.module + '/index.html#' + w.section + '">' + esc(w.label) + "</a></div>";
+}
+
+function explain() {
+  var text = tb.value;
+  var parsed = window.DTSCErrors.parse(text);
+  if (!parsed) {
+    out.innerHTML = '<div class="card unknown"><div class="headline">' +
+      "I could not find an error in that.</div><p>Paste the whole traceback, or " +
+      "just its last line - the one that reads like <code>SomeError: a message</code>." +
+      "</p></div>";
+    return;
+  }
+  var r = window.DTSCErrors.explain(parsed);
+  var loc = window.DTSCErrors.locate(text);
+  var html = '<div class="card' + (r.known ? "" : " unknown") + '">';
+  html += '<div class="etype">' + esc(r.type) + "</div>";
+  if (r.message) html += '<div class="emsg">' + esc(r.message) + "</div>";
+
+  if (!r.known) {
+    html += '<div class="headline">This one is not in the course list.</div>' +
+      "<p>I would rather say so than guess. Two things that work on any error: " +
+      "read the <strong>last line</strong> for what went wrong, and the line above " +
+      "the traceback for <em>where</em>. Then search for the exact message text - " +
+      "someone has hit it before.</p>" +
+      "<p>If it keeps happening, send me the whole traceback and what you ran.</p>";
+  } else {
+    html += '<div class="headline">' + md(r.headline) + "</div>";
+    r.causes.forEach(function (c) {
+      html += '<div class="cause"><div class="what">' + md(c.what) + "</div>" +
+              '<div class="fix">' + md(c.fix) + "</div></div>";
+    });
+    if (r.also && r.also.length) {
+      html += '<div class="also"><strong>If that is not it:</strong> ' +
+              md(r.also[0].fix) + "</div>";
+    }
+    html += link(r.where);
+  }
+  if (loc) {
+    html += '<div class="also">Python blamed line <code>' + esc(loc.line) +
+            "</code>. On a SyntaxError, look at the line above it too.</div>";
+  }
+  html += "</div>";
+  out.innerHTML = html;
+}
+
+document.getElementById("go").addEventListener("click", explain);
+document.getElementById("clear").addEventListener("click", function () {
+  tb.value = ""; out.innerHTML = ""; tb.focus();
+});
+tb.addEventListener("keydown", function (e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") explain();
+});
+
+(function quiet() {
+  var host = document.getElementById("quiet");
+  (window.DTSC_QUIET_FAILURES || []).forEach(function (q) {
+    var d = document.createElement("div");
+    d.className = "quiet";
+    d.innerHTML = "<h3>" + esc(q.title) + "</h3>" +
+      '<div class="tell">' + md(q.tell) + "</div>" +
+      "<p>" + md(q.what) + "</p>" +
+      "<p><strong>Fix.</strong> " + md(q.fix) + "</p>" + link(q.where);
+    host.appendChild(d);
+  });
+})();
+</script>
+</body>
+</html>
