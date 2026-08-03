@@ -163,6 +163,7 @@
   textarea.editor:focus-visible{ outline:none; }
   @media (prefers-reduced-motion: reduce){ .spin,.flash-ok,.fade-in,.report-line,.dialogue .cursor{ animation:none; opacity:1; transform:none; } }
   ::-webkit-scrollbar{ width:9px; } ::-webkit-scrollbar-thumb{ background:var(--line2); border-radius:5px; }
+  .fig-out { display:block; max-width:100%; margin:.7rem 0 .2rem; border-radius:6px; background:#fff; }
 </style>
   <link rel="stylesheet" href="/520_full/auth/auth.css">
   <link rel="stylesheet" href="/520_full/assets/shell.css">
@@ -521,6 +522,60 @@ RAW = [
     (1018, 2.63, 3, 1, 0.986, 3879, 0, 2.81, 1, None, None, '', 76.3, 1)
 ]
 df = pd.DataFrame(RAW, columns=COLS)
+
+# ---------------------------------------------------------------------------
+# The six source tables, as they arrived from the systems that own them.
+#
+# DERIVED from RAW rather than pasted in a second time: one copy of the cohort
+# means the tables cannot drift from the warehouse extract, or from the file the
+# modules teach against.
+#
+# The SHAPES are the lesson, and they are the real ones:
+#   high_school    102 rows - the registrar's export repeated two students
+#   undergraduate  100 rows - deduplicated by whoever built it
+#   lms_activity    85 rows - 15 students have NO ROW AT ALL, not a blank one
+#   outcomes       100 rows
+# So an inner join silently drops 15 people who are not a random 15, a left join
+# keeps them as NaN, and a careless merge on high_school returns 102 rows for
+# 100 students. Every one of those is a decision the student has to make.
+_dedup = df.drop_duplicates(subset='student_id', keep='first')
+
+high_school   = df[['student_id', 'hs_gpa', 'hs_clubs', 'hs_sports',
+                    'hs_attendance', 'hs_pop_density']].copy()
+undergraduate = _dedup[['student_id', 'ug_gpa', 'internships',
+                        'need_based_aid']].copy().reset_index(drop=True)
+outcomes      = _dedup[['student_id', 'course_score', 'success']].copy().reset_index(drop=True)
+
+# The LMS export simply has no row for a student it never saw.
+lms_activity  = _dedup[_dedup['logins_per_week'].notna()][
+                    ['student_id', 'logins_per_week', 'time_on_task_hrs',
+                     'submission_rate']].copy().reset_index(drop=True)
+
+TABLES = {'high_school': high_school, 'undergraduate': undergraduate,
+          'lms_activity': lms_activity, 'outcomes': outcomes}
+
+# ---------------------------------------------------------------------------
+# Arrays for the metric work in Stage 3.
+#
+# submission_rate arrives as text - '84%', or '' where the LMS had no record.
+# NOTE: this block lives inside a JS String.raw template inside a script
+# element, so two characters must never appear in it: a backtick (ends the
+# template) and a closing script tag (ends the element). Both were written here
+# by accident while adding this very warning.
+# Converting it is handed to the student rather than set as an exercise because
+# Stage 3 is about what a metric MEANS; the mechanics of cleaning a percent
+# column are Stage 4's subject, and doing them twice would blur both.
+def _to_number(col):
+    out = []
+    for v in col:
+        t = str(v).strip().rstrip('%')
+        out.append(float(t) if t not in ('', 'None', 'nan') else np.nan)
+    return np.array(out, dtype=float)
+
+logins     = df['logins_per_week'].to_numpy(dtype=float)
+time_hrs   = df['time_on_task_hrs'].to_numpy(dtype=float)
+submission = _to_number(df['submission_rate'])
+attendance = df['hs_attendance'].to_numpy(dtype=float)
 `;
 
 /* ===================== STATE + ENGINE ===================== */
@@ -583,8 +638,14 @@ function resolveBeat(beat){
 function renderBeat(){
   renderStrip();
   let beat = BEATS[state.beatIndex];
-  if(!beat){ location.href='report.html'; return; }
+  /* Running off the end used to navigate to a report page that has never
+     existed - a student who finished everything built got a 404 as their
+     reward. Stages 3-6 are not written yet (CAPSTONE_SPEC §5), so until
+     they are, say so honestly and keep their work on screen. */
+  if(!beat){ return renderEndOfBuild(); }
   beat = resolveBeat(beat);
+  logStage(beat.stage);   /* logStage dedupes; do not guard on state.stage,
+                             which starts at 0 and so hid stage 0 entirely */
   state.stage = beat.stage ?? state.stage;
   clearBeat();
   /* set Jamie's emotion for this beat (defaults: serious on interstitials, neutral otherwise) */
@@ -597,6 +658,171 @@ function renderBeat(){
 }
 function advance(){ state.beatIndex++; try{window.sfx.advance();}catch(e){} renderBeat(); document.querySelector('.stage-body').scrollTop=0; }
 window.advance=advance;
+
+/* ---------- end of what is built ----------
+   Stages 3-6 are specified but not authored. Previously this point redirected
+   to a report page that does not exist, so finishing everything available
+   produced a 404 - the worst possible response to a student who did all the
+   work. This tells them the truth, shows what they earned, and keeps their
+   report where they can read it.
+
+   Deliberately not a percentage. The capstone is built around judgement calls
+   with costs, and a progress bar nudges toward completing over deciding well. */
+function renderEndOfBuild(){
+  const built = new Set(BEATS.map(b=>b.stage)).size;
+  const decisions = Object.values(state.decisions);
+  const good = decisions.filter(d=>d.quality==='good').length;
+  const passed = Object.keys(state.codePassed).length;
+
+  /* Two different endings, and which one you get depends on whether the
+     commission is finished or merely out of authored stages. The second case
+     is kept deliberately: if stages are ever added beyond six, this still
+     tells the truth instead of congratulating someone prematurely. */
+  if(built < STAGE_NAMES.length) return renderPaused(built, decisions, good, passed);
+  return renderFinale(decisions, good, passed);
+}
+
+function renderPaused(built, decisions, good, passed){
+  capstoneLog('capstone_reached_end', 'end_of_build', state.points, state.maxPoints||state.points,
+              {stagesBuilt:built, decisions:decisions.length, goodDecisions:good, codePassed:passed});
+  clearBeat();
+  beatEl().innerHTML=`<div class="beat-dialogue">
+    <div class="speaker">${avatarHTML(48)}
+      <div><div class="speaker-name">Jamie Berrios</div><div class="speaker-sub">Chief Data Officer</div></div></div>
+    <div class="dialogue">
+      <p>That's everything I have for you today. You took this from a question
+      the Cabinet could not answer to work that will stand up when somebody
+      checks it.</p>
+      <p><strong>The commission continues in Stage ${built + 1} — ${STAGE_NAMES[built] || 'the next stage'}.</strong>
+      It isn't open yet. When it is, your work so far will still be here.</p>
+      <div class="outcome good" style="margin-top:1rem">
+        <div class="outcome-t">Where you got to</div>
+        <p>${built} of ${STAGE_NAMES.length} stages ·
+           ${good} of ${decisions.length} decisions called well ·
+           ${passed} code task${passed===1?'':'s'} passed ·
+           ${state.reportLines.length} line${state.reportLines.length===1?'':'s'} on the record.</p>
+      </div>
+    </div>
+    <div class="beat-nav">
+      <a class="btn btn-ghost" href="../modules/module6/index.html">Back to Module 6</a>
+      <a class="btn btn-cont" href="index.html">Capstone home</a>
+    </div>
+  </div>`;
+  try{ document.getElementById('report').classList.add('open'); }catch(e){}
+}
+
+/* The three ethics calls, which are graded differently from everything else.
+   D-spec: "honors tiers based on judgment + code, not just completion - the
+   values are part of the grade." So a technically strong run that took the
+   biased-feature shortcut does NOT get the top tier, and no amount of points
+   buys it back. */
+function ethicsRecord(){
+  const q = id => (state.decisions[id]||{}).quality || null;
+  return [
+    { id:'s1_ethics', label:'Excluded the two unfair proxies',
+      ok: !!state.ethics.excludedProxies, quality: state.ethics.excludedProxies ? 'good' : null },
+    { id:'s5_axis',  label:'Refused the truncated axis',       ok: q('s5_axis')==='good',  quality:q('s5_axis') },
+    { id:'s6_score', label:'Refused the per-student ranking',  ok: q('s6_score')==='good', quality:q('s6_score') },
+  ];
+}
+
+function honours(){
+  const e = ethicsRecord();
+  const tookShortcut = e.some(x => x.quality === 'bad');
+  const allEthics    = e.every(x => x.ok);
+  const ratio = state.maxPoints ? state.points / state.maxPoints : 0;
+  const allCode = Object.keys(state.codePassed).length >= BEATS.filter(b=>b.type==='code').length;
+
+  if(tookShortcut) return { tier:'Sent Back for Review', cls:'bad',
+    why:'The analysis holds up. One of the judgement calls does not, and it is the kind that '
+      + 'turns careful work into something that misleads the people acting on it. That is not a '
+      + 'detail to fix in revision - it is the finding being wrong about what it is allowed to say.' };
+  if(allEthics && allCode && ratio >= 0.8) return { tier:'Cabinet Commendation', cls:'good',
+    why:'Every ethics call made correctly, every code task passed, and the reasoning behind the '
+      + 'decisions is strong enough to survive being questioned. You told the Provost\'s office no '
+      + 'twice and gave them something better both times.' };
+  return { tier:'Approved with Revisions', cls:'warn',
+    why:'The work is sound and the conclusions stand. Some of the reasoning would need tightening '
+      + 'before this went in front of the Cabinet unaccompanied.' };
+}
+
+function renderFinale(decisions, good, passed){
+  const h = honours();
+  const e = ethicsRecord();
+  capstoneLog('capstone_complete', 'finale', state.points, state.maxPoints||state.points,
+              {tier:h.tier, decisions:decisions.length, goodDecisions:good, codePassed:passed,
+               ethicsOk:e.filter(x=>x.ok).length});
+  try{ window.confettiBurst && h.cls==='good' && window.confettiBurst(90); }catch(err){}
+  clearBeat();
+  const pct = state.maxPoints ? Math.round(100*state.points/state.maxPoints) : 0;
+  beatEl().innerHTML=`<div class="beat-dialogue">
+    <div class="speaker">${avatarHTML(48)}
+      <div><div class="speaker-name">Jamie Berrios</div><div class="speaker-sub">Chief Data Officer</div></div></div>
+    <div class="dialogue">
+      <p>The Academic Success Report went to the Cabinet this afternoon. All six
+      stages, start to finish - and I put your name on it, which I do not do
+      lightly.</p>
+
+      <div class="outcome ${h.cls}" style="margin-top:1.1rem">
+        <div class="outcome-t">${h.tier}</div>
+        <p>${h.why}</p>
+      </div>
+
+      <p style="margin-top:1.1rem"><strong>The three calls that decided it.</strong>
+      Not the code - the code was the easy part.</p>
+      <ul style="margin:.4rem 0 0; padding-left:1.1rem">
+        ${e.map(x=>`<li style="margin:.25rem 0">${x.ok?'✓':'✗'} ${x.label}</li>`).join('')}
+      </ul>
+
+      <div class="outcome" style="margin-top:1.1rem">
+        <div class="outcome-t">The commission, in numbers</div>
+        <p>${STAGE_NAMES.length} stages ·
+           ${good} of ${decisions.length} decisions called well ·
+           ${passed} code task${passed===1?'':'s'} passed ·
+           ${state.points} of ${state.maxPoints} points (${pct}%) ·
+           ${state.reportLines.length} lines on the record.</p>
+      </div>
+
+      <p style="margin-top:1.1rem">Open the <strong>Report</strong> panel to read
+      what you committed to. Every line in it is a decision you made, written
+      down at the moment you made it - which is the only form of accountability
+      that survives contact with a busy institution.</p>
+    </div>
+    <div class="beat-nav">
+      <a class="btn btn-ghost" href="index.html">Capstone home</a>
+      <a class="btn btn-cont" href="../index.html">Course home</a>
+    </div>
+  </div>`;
+  try{ document.getElementById('report').classList.add('open'); }catch(e){}
+}
+
+/* ===================== INSTRUMENTATION =====================
+   The capstone logged NOTHING to the server - `logEvent` appeared zero times in
+   either capstone file - so the course's culminating assessment was invisible in
+   the event data while every quiz and sim reported. These calls close that.
+
+   What is deliberately NOT sent: the student's code, their written report lines,
+   and any free text. Only which stage they reached, which decision they picked
+   and whether a code task passed. That is enough to see where a cohort stalls
+   and not enough to reconstruct a person's work.
+
+   Every call is wrapped: a student who is not signed in, or offline, must still
+   be able to finish the capstone. Logging is an observation of the assessment,
+   never a gate on it. */
+function capstoneLog(type, id, score, max, payload){
+  try { if (typeof logEvent === 'function') logEvent(type, id, score, max, payload || null); }
+  catch(e) { /* never let telemetry break the assessment */ }
+}
+
+let _loggedStages = {};
+function logStage(stage){
+  if(stage == null || _loggedStages[stage]) return;
+  _loggedStages[stage] = true;
+  capstoneLog('capstone_stage', 'stage_' + stage, stage + 1, STAGE_NAMES.length,
+              { stageName: STAGE_NAMES[stage] || String(stage) });
+}
+window.logStage = logStage;
+window.capstoneLog = capstoneLog;
 
 /* dialogue with typewriter */
 function renderDialogue(b){
@@ -687,6 +913,12 @@ window.pickDecision=function(i){
   const pts=c.q==='good'?(b.pts||4):c.q==='warn'?Math.round((b.pts||4)/2):0;
   state.points+=pts;
   state.decisions[b.id]={pts,quality:c.q};
+  /* Which option, and how good it was - not the text of it. `quality` is what
+     makes this useful: a decision most of a cohort gets 'bad' on is either a
+     badly written option or a genuinely missing lesson, and both are worth
+     knowing before the next term. */
+  capstoneLog('capstone_decision', b.id, pts, b.pts||4,
+              { quality:c.q, choice:i, stage:b.stage });
   if(b.onPick) b.onPick(c);
   document.getElementById('contBtn').disabled=false;
   saveProgress();
@@ -777,22 +1009,64 @@ function friendlyError(err){
   return last.replace(/^\w*Error:\s*/,'').trim() ? `Error${at}: ${last}` : last;
 }
 async function freshNS(){ const ns=pyodide.globals.get('dict')(); await pyodide.runPythonAsync(COHORT_PY,{globals:ns}); return ns; }
+
+/* Pull the most recent matplotlib figure out of Pyodide and put it on the page.
+   Same approach as the Board Meeting sim: render to PNG in memory with the AGG
+   backend and hand back base64, because there is no display to draw to.
+   Silent when the beat has no chart - most beats do not. */
+async function showFigure(con){
+  if(!pyodide) return;
+  let b64='';
+  try{
+    b64 = await pyodide.runPythonAsync(`
+import io as _io, base64 as _b64
+import matplotlib.pyplot as _plt
+_nums = _plt.get_fignums()
+_res = ''
+if _nums:
+    _f = _plt.figure(_nums[-1])
+    _buf = _io.BytesIO()
+    _f.savefig(_buf, format='png', dpi=110, bbox_inches='tight')
+    _res = _b64.b64encode(_buf.getvalue()).decode()
+_res
+`);
+  }catch(e){ return; }
+  if(!b64) return;
+  const img=document.createElement('img');
+  img.className='fig-out';
+  img.alt='Your chart';
+  img.src='data:image/png;base64,'+b64;
+  con.appendChild(img);
+}
+window.showFigure=showFigure;
+
 window.runCode=async function(){
   if(!pyodide) return;
   const w=beatEl(), b=w._beat, con=document.getElementById('con'), runBtn=document.getElementById('runBtn');
   con.innerHTML=''; runBtn.disabled=true;
   const src=document.getElementById('ed').value;
+  /* Count attempts, and log the FIRST one separately from the pass. Logging
+     only passes would make a student who never solves a task invisible, and
+     "attempted but never passed" is the single most useful thing this data can
+     tell us about a code beat. The code itself is never sent. */
+  w._attempts=(w._attempts||0)+1;
+  if(w._attempts===1) capstoneLog('capstone_code_start', b.id, 0, 1, {stage:b.stage});
   const ns=await freshNS(); let printed='';
+  /* Figures live in a global registry, not in the namespace, so a chart from a
+     previous run would otherwise reappear under the next one's output. */
+  try{ pyodide.runPython('import matplotlib.pyplot as _p; _p.close("all")'); }catch(e){}
   pyodide.setStdout({batched:t=>{printed+=t+'\n';}}); pyodide.setStderr({batched:t=>{printed+=t+'\n';}});
   try{ await pyodide.runPythonAsync(src,{globals:ns}); }
   catch(err){ if(printed.trim())cline(con,printed.trimEnd()); cline(con,'✗ '+friendlyError(err),'err'); try{window.sfx.fail();window.screenShake();}catch(e){} ns.destroy(); runBtn.disabled=false; return; }
   if(printed.trim())cline(con,printed.trimEnd());
+  await showFigure(con);
   try{ await pyodide.runPythonAsync(b.test,{globals:ns}); }
   catch(err){ cline(con,'✗ Not quite: '+friendlyError(err),'err'); try{window.sfx.fail();window.screenShake();}catch(e){} ns.destroy(); runBtn.disabled=false; return; }
   ns.destroy();
   cline(con,'✔ Checks passed.','ok');
   document.getElementById('ed').classList.add('flash-ok'); setTimeout(()=>document.getElementById('ed').classList.remove('flash-ok'),700);
-  if(!w._passed){ w._passed=true; state.codePassed[b.id]=true; try{window.sfx.pass();window.confettiBurst(48);}catch(e){} reactAvatar('approve'); if(b.onPass)b.onPass(); }
+  if(!w._passed){ w._passed=true; state.codePassed[b.id]=true; try{window.sfx.pass();window.confettiBurst(48);}catch(e){} reactAvatar('approve'); if(b.onPass)b.onPass();
+    capstoneLog('capstone_code_pass', b.id, 1, 1, {attempts:w._attempts, stage:b.stage}); }
   document.getElementById('contBtn').disabled=false; runBtn.disabled=false;
   saveProgress();
 };
@@ -955,6 +1229,481 @@ assert r[2] == exp_pct, "pct_on_aid should be 100*n_on_aid/n_records rounded to 
         text:"No. Read that back. You were one click from either bouncing routine data back to the source - stalling the whole project - or dropping rows whose missingness isn't random, which would bias the exact finding we're chasing. This is precisely the carelessness that produces confident, wrong reports. Slow down. The numbers we build next are only as honest as how we handle this." };
     }});
 
+  /* ============ STAGE 3 — COMPUTE THE METRICS (Module 3) ============ */
+  B.push({stage:2, type:'dialogue', thread:true, time:'10:05 AM', cont:'Open the editor',
+    text:"The Cabinet keeps saying \"engaged students\". Nobody has defined it. That's our job now, and it matters more than it sounds - whatever we call engagement is what they'll write the cheque for. Before we build it, check the raw material. I don't trust a metric built on fields nobody has looked at."});
+
+  B.push({stage:2, type:'code', id:'s3_quality',
+    task:'Complete <code>quality_report(logins, attendance)</code>. Return <code>(n_missing, any_missing, attendance_ok)</code>: how many <code>logins</code> values are missing, whether <b>any</b> are, and whether <b>every</b> attendance value is a valid proportion (at most 1.0).',
+    hint:'<code>np.isnan(a)</code> gives a boolean array. <code>.sum()</code> counts the Trues, <code>.any()</code> asks "at least one?", <code>.all()</code> asks "every one?". Attendance is a proportion, so anything above 1.0 is impossible.',
+    starter:
+`# logins, time_hrs, submission and attendance are already loaded as arrays.
+
+def quality_report(logins, attendance):
+    n_missing     = 0      # how many logins values are missing?
+    any_missing   = False  # is at least one missing?
+    attendance_ok = True   # is EVERY attendance value <= 1.0?
+    # YOUR CODE HERE
+
+    return (n_missing, any_missing, attendance_ok)
+
+print(quality_report(logins, attendance))`,
+    test:
+`r = quality_report(logins, attendance)
+assert isinstance(r, tuple) and len(r) == 3, "Return a 3-tuple: (n_missing, any_missing, attendance_ok)."
+assert int(r[0]) == 17, "n_missing should be 17. Count the NaNs: np.isnan(logins).sum()."
+assert bool(r[1]) is True, "any_missing should be True - use .any() on the isnan mask."
+assert bool(r[2]) is False, "attendance_ok should be False. One student has hs_attendance = 1.4, and a proportion cannot exceed 1. Finding that is exactly what .all() is for."`,
+    solutionNote:'n_missing = int(np.isnan(logins).sum()); any_missing = bool(np.isnan(logins).any()); attendance_ok = bool((attendance <= 1.0).all())',
+    onPass:()=>{ addReportLine('Data quality','Pre-metric checks: <b>17 rows</b> carry no LMS record, and one <code>hs_attendance</code> value is <b>1.4</b> - impossible for a proportion. Both logged before any metric was computed.'); }
+  });
+
+  B.push({stage:2, type:'dialogue', thread:true, time:'10:14 AM', emotion:'concern', cont:'Define the metric',
+    text:"Seventeen rows with no engagement data at all, and an attendance figure of 1.4 - somebody's export divided by the wrong denominator. Neither of those raises an error. They just sit there being wrong until a person checks. Now: define engagement."});
+
+  B.push({stage:2, type:'decision', id:'s3_metric', pts:5,
+    label:'Decision · What counts as engagement',
+    intro:"You have three LMS signals per student: <code>logins_per_week</code> (0-6.3), <code>time_on_task_hrs</code> (0-6.9) and <code>submission_rate</code> (56-100, stored as text like <code>\"84%\"</code>). The Cabinet wants one number.",
+    q:'How do you combine them into an engagement index?',
+    onPick:(c)=>{ if(c.q==='good') addReportLine('Metric','Engagement index = mean of the three LMS signals, each <b>normalized to 0-1 first</b> so no component dominates through its units alone.'); },
+    choices:[
+      { t:'Normalize each signal to 0-1 using its own range, then average the three - so each contributes on its own terms.', q:'good',
+        ot:'✓ Each signal gets a real say', op:'This is the defensible version. Normalizing first means the index reflects the three behaviours you chose, in the proportion you chose them. It is also the version you can explain to the Cabinet in one sentence, which matters more than it sounds - a metric nobody can explain is a metric nobody should fund.' },
+      { t:'Add the three columns together. It is one line, and they are all measures of engagement anyway.', q:'bad',
+        ot:'✗ You would be measuring one thing and calling it three', op:'submission_rate runs 56-100. The other two run 0-7. Sum them and submission_rate has about seven times the spread of the others, so it decides the answer almost by itself - the sum correlates <b>0.99</b> with it. You would hand the Cabinet a number labelled "engagement" that is really "submission rate", and they would fund the wrong intervention.' },
+      { t:'Use course_score as the engagement measure - it is already on a clean 0-100 scale and it is what we ultimately care about.', q:'bad',
+        ot:'✗ That is the outcome, not a predictor', op:'course_score is the thing you are trying to explain. Feeding it in as an input is target leakage: the analysis becomes spectacularly accurate and completely useless, because it has been told the answer. Worse, it launders a tautology - "students who did well did well" - into something that reads like a finding.' },
+      { t:'Rank students on each signal and average the three ranks - ranks are immune to outliers and to the units problem.', q:'warn',
+        ot:'~ Safe, but it throws away the distances', op:'Ranks do solve the units problem, and against heavy outliers this would be the better call. But rank 1 and rank 2 look identical whether they are neighbours or a mile apart, and here the gaps are the interesting part - the difference between 0.4 logins a week and 5.2 is the finding. Reach for ranks when outliers dominate. Here they do not.' },
+    ]});
+
+  B.push({stage:2, type:'dialogue', thread:true, time:'10:26 AM', cont:'Build it',
+    text:"Right. Build it, and build it vectorized - one operation across the whole cohort, not a loop.",
+    dyn:(verdict)=>{
+      const v=verdict(['s3_metric']);
+      const tail=" Build it vectorized - one operation across the whole cohort, not a loop. And leave the missing rows missing; how we handle those is a decision, not something a scoring function should quietly make on our behalf.";
+      if(v==='good') return { emotion:'approve', text:"Normalize first, then average. That's the version I can defend in the room."+tail };
+      if(v==='mixed') return { emotion:'concern', text:"I can live with that, though we would be discarding information the Cabinet is paying for."+tail };
+      return { emotion:'disappoint', text:"No. Go back and read what you picked, because a metric built that way is either measuring one column under a false name or being handed the answer outright. I will have you build the honest version anyway."+tail };
+    }});
+
+  B.push({stage:2, type:'code', id:'s3_index',
+    task:'Write <code>normalize(a)</code> - scale an array to 0-1 using its own minimum and maximum - then <code>engagement_index(...)</code>, the plain average of the three normalized signals. No loops.',
+    hint:'<code>(a - lo) / (hi - lo)</code> puts an array on 0-1. Use <code>np.nanmin</code> and <code>np.nanmax</code>, not <code>min</code>/<code>max</code>: with 17 NaNs present the plain versions return NaN, and every value computed from them becomes NaN too. Missing values must STAY missing.',
+    starter:
+`# Already loaded for you:
+#   logins, time_hrs  - floats, with np.nan where the LMS had no record
+#   submission        - submission_rate converted from "84%" to 84.0
+#
+# The whole cohort at once. No loops.
+
+def normalize(a):
+    # Scale an array to 0-1 using its own min and max, ignoring NaN.
+    # YOUR CODE HERE
+    pass
+
+def engagement_index(logins, time_hrs, submission):
+    # The plain average of the three NORMALIZED signals.
+    # YOUR CODE HERE
+    pass
+
+idx = engagement_index(logins, time_hrs, submission)
+
+if idx is None:
+    print('engagement_index returned None - a function with no return')
+    print('statement hands back None. Fill in the two bodies above.')
+else:
+    print('min', round(float(np.nanmin(idx)), 3),
+          'max', round(float(np.nanmax(idx)), 3),
+          'mean', round(float(np.nanmean(idx)), 3),
+          'missing', int(np.isnan(idx).sum()))`,
+    test:
+`_res = engagement_index(logins, time_hrs, submission)
+assert _res is not None, "engagement_index returned None. A function with no return statement hands back None - fill in the body and return the array."
+idx = np.asarray(_res, dtype=float)
+assert idx.shape == (102,), "One value per row - 102 of them. A vectorized expression keeps the shape; a single number means you reduced where you should have broadcast."
+assert int(np.isnan(idx).sum()) == 17, "The 17 rows with no LMS record must stay NaN. Filling them here would bury a decision inside a scoring function - and it is a decision with a cost, which the next stage will make you face."
+assert round(float(np.nanmin(idx)), 3) == 0.015, "Minimum should be 0.015. Normalize each component with ITS OWN min and max, via np.nanmin/np.nanmax."
+assert round(float(np.nanmax(idx)), 3) == 0.956, "Maximum should be 0.956."
+assert round(float(np.nanmean(idx)), 3) == 0.481, "Mean should be 0.481 - the plain average of the three normalized components, not a weighted one."
+_ok = ~np.isnan(idx)
+assert float(np.corrcoef(idx[_ok], submission[_ok])[0, 1]) < 0.99, "Your index tracks submission_rate almost exactly, which means the raw columns were summed. submission_rate runs 56-100 and the others run 0-7, so a raw sum is submission_rate wearing a different name."`,
+    solutionNote:'def normalize(a): lo, hi = np.nanmin(a), np.nanmax(a); return (a - lo) / (hi - lo). Then return the sum of the three normalized arrays divided by 3.',
+    onPass:()=>{ state.ethics.builtIndex=true; addReportLine('Metric','Engagement index computed across all <b>102 records</b> in one vectorized pass. Range 0.015-0.956, mean 0.481; the <b>17 records without an LMS export remain missing</b> rather than being silently filled.'); }
+  });
+
+  B.push({stage:2, type:'dialogue', thread:true, time:'10:41 AM', cont:'Stage 4: Clean and join →',
+    text:"That's a metric we can put a name to. Next, the data itself.",
+    dyn:(verdict)=>{
+      const v=verdict(['s3_metric']);
+      const tail=" One more thing before you go. That index only exists for 85 of our 102 records. Seventeen have nothing at all. Everything from here depends on what you decide to do about them - and it is a decision with a cost, whichever way you go.";
+      if(v==='good') return { emotion:'approve',
+        text:"Good. One vectorized pass, missing values still visibly missing, and a definition I can say out loud to the Cabinet: the average of three normalized behaviours."+tail };
+      return { emotion:'concern',
+        text:"The code is right, even if the reasoning that got us here was shaky. The definition holds: the average of three normalized behaviours, computed in one pass."+tail };
+    }});
+
+  /* ============ STAGE 4 — CLEAN AND JOIN (Module 4) ============ */
+  B.push({stage:3, type:'dialogue', thread:true, time:'11:10 AM', cont:'Look at the tables',
+    text:"Four tables, four systems, four teams who have never met. <b>high_school</b> from the registrar, <b>undergraduate</b> from student records, <b>outcomes</b> from the gradebook, <b>lms_activity</b> from the learning platform. Nobody agreed on anything. Before you join them, look at their shapes - the shapes are the whole story."});
+
+  B.push({stage:3, type:'decision', id:'s4_join', pts:5,
+    label:'Decision · How to assemble',
+    intro:"Row counts: <code>high_school</code> <b>102</b>, <code>undergraduate</code> <b>100</b>, <code>outcomes</code> <b>100</b>, <code>lms_activity</code> <b>85</b>. Only <code>high_school</code> has repeated <code>student_id</code> values.",
+    q:'How do you build the one analysis table?',
+    onPick:(c)=>{ if(c.q==='good') addReportLine('Assembly','Analysis table built by deduplicating <code>high_school</code>, then <b>left-joining</b> from the 100-student spine. All 100 students retained; the 15 without an LMS export carry NaN rather than disappearing.'); },
+    choices:[
+      { t:'Deduplicate high_school first, then left-join the others onto it - so all 100 students survive and missing LMS data shows up as NaN.', q:'good',
+        ot:'✓ Everyone is still in the room', op:'Deduplicate before joining, or the repeated rows multiply through every subsequent merge. Left-join, so a student with no LMS record keeps their row and gains NaN instead of vanishing. You end with 100 rows and a visible, countable gap - which is exactly what a gap should be.' },
+      { t:'Inner-join all four on student_id. An inner join keeps only complete records, which is what an analysis needs.', q:'bad',
+        ot:'✗ It will look tidy, and that is the danger', op:'You would get 85 clean rows and no warning of any kind. Fifteen students would be gone, and - because both duplicated students happen to have no LMS record - the duplicate problem would vanish too. Two separate defects, silently cancelled into a tidy-looking table. "Complete records" is not a neutral filter; it is a filter on whoever the LMS happened to capture.' },
+      { t:'Merge all four as they are and check the row count at the end. If it comes out sensible, nothing went wrong.', q:'bad',
+        ot:'✗ The end count is the one that lies', op:'Try it: high_school x undergraduate gives <b>102 rows for 100 students</b> - the duplicates have already multiplied. Join lms_activity on top and it drops back to 85, which looks reassuring. The final number is tidy because two errors cancelled. Check the row count after <em>every</em> merge, not just the last.' },
+      { t:'Outer-join everything so nothing is lost from any table, then deal with whatever missing values appear.', q:'warn',
+        ot:'~ Loses nothing, including the duplicates', op:'Outer join does preserve every student, which is the right instinct. But it carries the duplicated high_school rows straight through, and it invents rows for any id present in one table and not another. Deduplicate first and pick a deliberate spine; then you know what each row means.' },
+    ]});
+
+  B.push({stage:3, type:'code', id:'s4_assemble',
+    task:'Write <code>build_analysis(...)</code>. Return one row per student, with the columns from all four tables, and <code>submission_rate</code> converted from text like <code>"84%"</code> to a number.',
+    hint:'Deduplicate first: <code>.drop_duplicates(subset="student_id")</code>. Then chain <code>.merge(other, on="student_id", how="left")</code>. For the percent column, <code>.astype(str).str.rstrip("%")</code> then <code>.astype(float)</code> - but the blanks need to become None before the conversion, or float() will choke on an empty string.',
+    starter:
+`# high_school (102), undergraduate (100), outcomes (100), lms_activity (85)
+
+def build_analysis(high_school, undergraduate, outcomes, lms_activity):
+    # YOUR CODE HERE
+
+    pass
+
+analysis = build_analysis(high_school, undergraduate, outcomes, lms_activity)
+
+if analysis is None:
+    print('build_analysis returned None - fill in the body and return the frame.')
+else:
+    print(len(analysis), 'rows,', analysis['student_id'].nunique(), 'students,',
+          int(analysis['logins_per_week'].isna().sum()), 'without an LMS record')`,
+    test:
+`_a = build_analysis(high_school, undergraduate, outcomes, lms_activity)
+assert _a is not None, "build_analysis returned None. A function with no return statement hands back None."
+assert len(_a) == 100, "The analysis frame should have exactly 100 rows, one per student. 102 means the duplicate rows in high_school multiplied through the merge; 85 means an inner join dropped the students with no LMS record."
+assert _a['student_id'].nunique() == 100, "Every student should appear exactly once."
+assert int(_a['logins_per_week'].isna().sum()) == 15, "The 15 students with no LMS row must still be here, carrying NaN in the LMS columns. If this is 0 you used an inner join and deleted them."
+assert str(_a['submission_rate'].dtype).startswith('float'), "submission_rate must end up numeric. It arrives as text like '84%', so strip the percent sign and convert - otherwise arithmetic on it raises, and sorting it puts 100% next to 10%."
+for _c in ['hs_gpa', 'ug_gpa', 'course_score', 'logins_per_week']:
+    assert _c in _a.columns, "The analysis frame is missing " + _c + " - all four tables need to be joined in."`,
+    solutionNote:'hs = high_school.drop_duplicates(subset="student_id"), then hs.merge(undergraduate, on="student_id", how="left").merge(outcomes, ...).merge(lms_activity, ...). Then convert submission_rate with .astype(str).str.rstrip("%").replace({"": None, "None": None, "nan": None}).astype(float).',
+    onPass:()=>{ addReportLine('Analysis dataset','One row per student, <b>100 students</b>, four sources joined on <code>student_id</code>. Duplicates removed before joining; <code>submission_rate</code> converted from text to numeric.'); }
+  });
+
+  B.push({stage:3, type:'dialogue', thread:true, time:'11:32 AM', cont:'Measure it', emotion:'concern',
+    text:"One hundred rows, fifteen of them with holes where the engagement data should be. Now - and this is the part most analysts skip - find out what it would have cost to drop them. Not whether it feels reasonable. What it costs, in numbers."});
+
+  B.push({stage:3, type:'code', id:'s4_cost',
+    task:'Write <code>cost_of_dropping(analysis)</code>: group the students by whether they have an LMS record, and report the group size, the mean <code>course_score</code> and the <code>success</code> rate for each.',
+    hint:'<code>analysis["logins_per_week"].notna()</code> gives a True/False Series - group by it directly. Then <code>.agg(n=("student_id","size"), mean_score=("course_score","mean"), pass_rate=("success","mean"))</code>. A mean over a 0/1 column IS the rate.',
+    starter:
+`# The analysis frame from the previous task, rebuilt so this cell stands alone.
+analysis = (high_school.drop_duplicates(subset='student_id')
+            .merge(undergraduate, on='student_id', how='left')
+            .merge(outcomes,      on='student_id', how='left')
+            .merge(lms_activity,  on='student_id', how='left'))
+
+def cost_of_dropping(analysis):
+    # Group by whether the student has an LMS record.
+    # Report: n, mean_score, pass_rate
+    # YOUR CODE HERE
+
+    pass
+
+summary = cost_of_dropping(analysis)
+print(summary)`,
+    test:
+`_s = cost_of_dropping(analysis)
+assert _s is not None, "cost_of_dropping returned None - return the grouped summary."
+assert len(_s) == 2, "Group into exactly two groups: the students with an LMS record and the students without one."
+_s = _s.sort_index()
+_no, _yes = _s.iloc[0], _s.iloc[1]
+assert int(_no['n']) == 15 and int(_yes['n']) == 85, "The groups should be 15 without a record and 85 with one."
+assert round(float(_no['mean_score']), 1) == 62.5, "The students with no LMS record average 62.5 on course_score."
+assert round(float(_yes['mean_score']), 1) == 69.4, "The students with a record average 69.4."
+assert round(float(_no['pass_rate']), 2) == 0.27, "Only 27 percent of the students with no LMS record passed."
+assert round(float(_yes['pass_rate']), 2) == 0.66, "66 percent of the students with a record passed."`,
+    solutionNote:'has_record = analysis["logins_per_week"].notna(); return analysis.groupby(has_record).agg(n=("student_id","size"), mean_score=("course_score","mean"), pass_rate=("success","mean"))',
+    onPass:()=>{ state.ethics.measuredMissing=true; addReportLine('Missing data','Quantified before deciding: the <b>15 students with no LMS record average 62.5</b> and pass at <b>27%</b>; the 85 with a record average 69.4 and pass at <b>66%</b>. The missingness is <b>not</b> random.'); }
+  });
+
+  B.push({stage:3, type:'decision', id:'s4_missing', pts:6,
+    label:'Decision · The fifteen',
+    intro:"Your own numbers: the 15 students with no LMS record average <b>62.5</b> and pass at <b>27%</b>. The 85 with a record average <b>69.4</b> and pass at <b>66%</b>. The students the platform never recorded are the students who struggled most.",
+    q:'What do you do with them?',
+    onPick:(c)=>{ if(c.q==='good') addReportLine('Missing data','<b>Decision:</b> the 15 students without engagement records are <b>retained</b> and reported separately. Every engagement finding states that it covers 85 of 100 students, and that the 15 excluded from it did worse on both measures.'); },
+    choices:[
+      { t:'Keep all 100. Report engagement findings on the 85 who have data, and state explicitly - every time - that the 15 excluded did worse on both measures.', q:'good',
+        ot:'✓ The gap is a finding, not an obstacle', op:'You cannot compute an engagement score without engagement data, so the metric genuinely covers 85 students. What you can refuse to do is let that pass unremarked. Naming the gap every time the finding appears is the difference between a limitation and a misrepresentation - and "the students the LMS never recorded did worst" may itself be worth the Cabinet knowing.' },
+      { t:'Drop the 15. An analysis of engagement needs engagement data, and 85 of 100 is a strong response rate.', q:'bad',
+        ot:'✗ You would delete the students you were sent to help', op:'The cohort mean jumps from 68.3 to 69.4 and the pass rate from 60% to 66% - the analysis gets cheerier the moment those students leave the table. You would be reporting a healthier cohort to the Cabinet by removing the people most in need of the funding, and nothing in the output would show you had done it.' },
+      { t:'Fill the missing engagement values with the cohort mean, so all 100 students stay in every calculation.', q:'bad',
+        ot:'✗ It invents exactly the wrong number', op:'Mean-filling assigns average engagement to the group your own numbers show is furthest from average. Fifteen struggling students become fifteen typical ones, the relationship between engagement and outcome is diluted, and the fabrication is invisible downstream - nobody reading the table can tell which values were measured.' },
+      { t:'Fill the missing engagement values with zero - no record means no activity, so zero is the honest reading.', q:'warn',
+        ot:'~ Plausible, and it might be true - but you do not know it', op:'It is the most defensible of the fills, and if the LMS truly logs every session then absence really does mean zero. But you have not established that. It could equally be a failed export, a late enrolment, or a student on a different platform. Zero would push the finding in the direction you already expect, which is precisely when to be most suspicious of it. Find out before you assume.' },
+    ]});
+
+  B.push({stage:3, type:'dialogue', thread:true, time:'11:58 AM', cont:'Stage 5: Visualize the findings →',
+    text:"One table, one hundred students, and a documented decision about the gap. Next, the charts.",
+    dyn:(verdict)=>{
+      const v=verdict(['s4_join','s4_missing']);
+      const tail=" Next, the charts. And be careful there - a chart makes a claim faster than a sentence does, and people argue with it less.";
+      if(v==='good') return { emotion:'approve',
+        text:"That's an analysis table I'd sign. A hundred students, nobody quietly deleted, and a gap that's documented instead of filled in with something convenient."+tail };
+      if(v==='mixed') return { emotion:'concern',
+        text:"The table is assembled. I'm less comfortable with how we got here than with where we ended up, and if the Cabinet asks how the fifteen were handled, that answer needs to be better than it currently is."+tail };
+      return { emotion:'disappoint',
+        text:"Then understand what you just did. Fifteen students - the fifteen with the lowest scores and the worst pass rate - were either deleted or replaced with a number we made up. The report will read better for it. That is the problem."+tail };
+    }});
+
+  /* ============ STAGE 5 — VISUALIZE THE FINDINGS (Module 5) ============ */
+  B.push({stage:4, type:'dialogue', thread:true, time:'1:15 PM', cont:'Pick the chart',
+    text:"The Cabinet will not read your table. They will look at the pictures and decide. That is not a complaint about them - it is how every decision-making body works, and it means a chart carries more weight than the paragraph beside it. So we choose carefully, starting with the finding itself: engagement tracks with passing."});
+
+  B.push({stage:4, type:'decision', id:'s5_chart', pts:4,
+    label:'Decision · The finding chart',
+    intro:"Pass rate rises steadily across engagement quartiles: <b>14%</b> in the lowest, then 57%, 95%, and <b>100%</b> in the highest. You have 85 students with engagement data and 15 without.",
+    q:'How do you show it?',
+    onPick:(c)=>{ if(c.q==='good') addReportLine('Figure 1','Pass rate by engagement quartile, y-axis <b>0-1</b>, titled with the covered population (<b>85 of 100 students</b>).'); },
+    choices:[
+      { t:'A bar chart of pass rate by quartile, y-axis running the full 0 to 1, titled so it states it covers 85 of 100 students.', q:'good',
+        ot:'✓ The finding, at its real size', op:'Four bars, a full axis, and a title that admits its own population. The trend is strong enough that it does not need help - 14% to 100% is dramatic on an honest axis. Naming the 85 in the title is the part most people skip, and it is the part that stops the chart overstating what it saw.' },
+      { t:'A scatter of engagement against course_score for all 85 students, with a fitted trend line.', q:'warn',
+        ot:'~ More honest about spread, worse at the point', op:'A scatter shows every student and hides nothing, which is a real virtue - and if the question were "how tight is this relationship?" it would be the right chart. But the Cabinet is deciding whether to fund engagement support, and the answer they need is the size of the gap between low and high engagement. Quartiles say that in one glance.' },
+      { t:'A line chart across the four quartiles - it makes the upward trend unmistakable.', q:'bad',
+        ot:'✗ A line promises something continuous', op:'Lines say "this is a trajectory, and the points between mean something". Quartiles are four buckets; there is no student at Q2.5. Worse, a line invites extrapolation - the Cabinet will read it as "keep pushing engagement and pass rates keep climbing", which your data cannot support past 100%.' },
+      { t:'A pie chart of how the 85 students split across the four quartiles.', q:'bad',
+        ot:'✗ That answers a question nobody asked', op:'Quartiles are by construction about a quarter each, so the pie is four near-identical slices carrying no information. It also silently swaps the variable: the finding is about pass RATE by quartile, and this shows COUNT by quartile. Reach for a pie chart approximately never, and never for a comparison.' },
+    ]});
+
+  B.push({stage:4, type:'code', id:'s5_finding',
+    task:'Draw it. A bar chart of pass rate by engagement quartile, on a <b>0 to 1</b> y-axis, with an axis label and a title that states how many students it covers.',
+    hint:'<code>ax.bar(labels, values)</code>. Then <code>ax.set_ylim(0, 1)</code>, <code>ax.set_ylabel(...)</code> and <code>ax.set_title(...)</code>. The title must contain the number 85 - the chart covers the students who have engagement data, and saying so is part of the chart.',
+    starter:
+`# Rebuilt here so this cell stands alone. Deliberately NOT put in the shared
+# namespace: handing every beat a finished 'analysis' would give away Stage 4.
+import matplotlib.pyplot as plt
+analysis = (high_school.drop_duplicates(subset='student_id')
+            .merge(undergraduate, on='student_id', how='left')
+            .merge(outcomes,      on='student_id', how='left')
+            .merge(lms_activity,  on='student_id', how='left')).copy()
+analysis['submission_rate'] = (analysis['submission_rate'].astype(str).str.rstrip('%')
+                               .replace({'': None, 'None': None, 'nan': None}).astype(float))
+def _mm(x):
+    return (x - np.nanmin(x)) / (np.nanmax(x) - np.nanmin(x))
+analysis['engagement'] = (_mm(analysis['logins_per_week'])
+                          + _mm(analysis['time_on_task_hrs'])
+                          + _mm(analysis['submission_rate'])) / 3
+
+# The 15 students with no LMS record have NaN in 'engagement'.
+
+have = analysis.dropna(subset=['engagement']).copy()
+have['quartile'] = pd.qcut(have['engagement'], 4,
+                           labels=['Q1 lowest', 'Q2', 'Q3', 'Q4 highest'])
+rates = have.groupby('quartile', observed=True)['success'].mean()
+print(rates.round(2))
+
+fig, ax = plt.subplots(figsize=(6, 3.4))
+# YOUR CODE HERE
+`,
+    test:
+`_ax = fig.axes[0]
+_bars = list(_ax.patches)
+assert len(_bars) == 4, "Four bars, one per engagement quartile. Got " + str(len(_bars)) + "."
+_lo, _hi = _ax.get_ylim()
+assert _lo == 0, "The y-axis must start at 0. A pass rate is a proportion of a whole, and starting the axis anywhere else exaggerates the differences between the bars."
+assert _hi <= 1.05, "The y-axis should top out at 1.0 - these are proportions, not percentages out of 100."
+assert _ax.get_ylabel().strip() != '', "Label the y-axis. An unlabelled axis makes the reader guess, and they will guess generously."
+assert _ax.get_title().strip() != '', "Give the chart a title."
+assert '85' in _ax.get_title(), "The title must say the chart covers 85 of the 100 students - the other 15 have no engagement data. A chart that silently drops 15% of the cohort is the misrepresentation you decided against one stage ago."`,
+    solutionNote:'ax.bar(list(rates.index.astype(str)), list(rates.values)); ax.set_ylim(0, 1); ax.set_ylabel("Pass rate"); ax.set_title("Pass rate by engagement quartile (n=85 of 100 students)")',
+    onPass:()=>{ addReportLine('Figure 1','<b>Pass rate by engagement quartile.</b> 14% in the lowest quartile rising to 100% in the highest. Full 0-1 axis; covers the 85 students with engagement records.'); }
+  });
+
+  B.push({stage:4, type:'dialogue', thread:true, time:'1:44 PM', emotion:'concern', cont:'See the request',
+    text:"Good. That one is clean. Now the message that just came in from the Provost's office, and I want you to read it twice before you touch anything."});
+
+  B.push({stage:4, type:'decision', id:'s5_axis', pts:6,
+    label:'Decision 2 of 3 · Ethics · The axis',
+    intro:"<i>\"Can you also send a chart showing the gap in outcomes for aid recipients? Something with impact - the last one looked flat and the room lost interest. Crop the axis if you need to.\"</i><br><br>The numbers: students on need-based aid average <b>65.7</b>, students not on aid average <b>72.0</b>. A gap of <b>6.3 points</b> on a 0-100 scale. On a full axis the difference fills about <b>6%</b> of the plot. Cropped to 65-76, it fills <b>57%</b>.",
+    q:'What do you send?',
+    onPick:(c)=>{
+      if(c.q==='good'){ state.ethics.honestAxis=true;
+        addReportLine('Figure 2','<b>Mean course score by aid status</b>, drawn on the full 0-100 axis with group sizes annotated. A truncated axis was requested and declined; the difference is 6.3 points and is shown at that size.'); }
+    },
+    choices:[
+      { t:'Draw it on the full 0-100 axis, annotate both group sizes, and say plainly in the note that the gap is 6.3 points - then explain why the crop was declined.', q:'good',
+        ot:'✓ The gap is real, and it is this big', op:'The difference exists and is worth reporting. It is 6.3 points. Cropping the axis would not reveal it more clearly - it would show a different, larger difference that is not in the data. And this is a chart about the very feature you excluded from the model in Stage 1 as a socioeconomic proxy; presenting it inflated would be the exact harm you wrote a rule against.' },
+      { t:'Crop the axis to 65-76 as asked. Nothing is fabricated - every number on the chart is accurate, and the axis is labelled.', q:'bad',
+        ot:'✗ Every number true, the chart still lying', op:'This is the most common defence of a truncated axis and it does not hold. A bar chart encodes magnitude as LENGTH; that is the entire visual grammar. Crop the baseline and you have changed what the lengths mean while keeping the labels honest, so the reader is misled by the part they trust most and cannot check. A 6% difference rendered as 57% of the plot is a nine-fold exaggeration.' },
+      { t:'Refuse the chart entirely. Any figure comparing aid recipients invites exactly the profiling you excluded the feature to prevent.', q:'warn',
+        ot:'~ Right instinct, wrong lever', op:'The concern is sound: this is the feature you ruled out of any ranking, and a chart can do the profiling a model was forbidden to do. But refusing to show a real disparity has its own cost - you would be hiding evidence that students on aid are being underserved, which is precisely the thing the Cabinet could act on. Excluding a feature from a MODEL and reporting a group difference honestly are different acts. Show it, at its real size, with the limits stated.' },
+      { t:'Send the cropped version they asked for, with a clear note underneath explaining that the axis is truncated.', q:'bad',
+        ot:'✗ The caption does not undo the picture', op:'People remember the shape and forget the footnote - that is not a failure of attention, it is how visual processing works, and a disclaimer does not repeal it. You would be relying on a note to correct an impression you deliberately created. If a chart needs a caption to stop it misleading, redraw the chart.' },
+    ]});
+
+  B.push({stage:4, type:'code', id:'s5_honest',
+    task:'Draw the aid comparison the way you just argued for: full <b>0 to 100</b> axis, both bars annotated with their group size, y-axis labelled.',
+    hint:'<code>ax.set_ylim(0, 100)</code> keeps the bars at their true relative length. Use <code>ax.text(i, value + 2, "n=" + str(n), ha="center")</code> once per bar - 42 students against 58 is context a bar chart otherwise hides completely.',
+    starter:
+`# Rebuilt here so this cell stands alone. Deliberately NOT put in the shared
+# namespace: handing every beat a finished 'analysis' would give away Stage 4.
+import matplotlib.pyplot as plt
+analysis = (high_school.drop_duplicates(subset='student_id')
+            .merge(undergraduate, on='student_id', how='left')
+            .merge(outcomes,      on='student_id', how='left')
+            .merge(lms_activity,  on='student_id', how='left')).copy()
+analysis['submission_rate'] = (analysis['submission_rate'].astype(str).str.rstrip('%')
+                               .replace({'': None, 'None': None, 'nan': None}).astype(float))
+def _mm(x):
+    return (x - np.nanmin(x)) / (np.nanmax(x) - np.nanmin(x))
+analysis['engagement'] = (_mm(analysis['logins_per_week'])
+                          + _mm(analysis['time_on_task_hrs'])
+                          + _mm(analysis['submission_rate'])) / 3
+
+means  = analysis.groupby('need_based_aid')['course_score'].mean()
+counts = analysis.groupby('need_based_aid')['course_score'].size()
+print(means.round(1).to_dict(), counts.to_dict())
+
+fig, ax = plt.subplots(figsize=(5, 3.4))
+# YOUR CODE HERE
+`,
+    test:
+`_ax = fig.axes[0]
+_bars = list(_ax.patches)
+assert len(_bars) == 2, "Two bars: students on need-based aid and students not on it."
+_lo, _hi = _ax.get_ylim()
+assert _lo == 0, "The y-axis must start at 0. The real gap is 6.3 points on a 0-100 scale; cropping to 65-76 makes it fill more than half the plot and turns a modest difference into a chasm."
+assert _hi >= 95, "Let the axis run the full 0-100 range that course_score actually uses."
+assert len(_ax.texts) >= 2, "Annotate each bar with its group size. 42 students against 58 is worth knowing, and a bar chart hides it completely."
+assert _ax.get_ylabel().strip() != '', "Label the y-axis."`,
+    solutionNote:'ax.bar(["No aid", "Need-based aid"], list(means.values)); ax.set_ylim(0, 100); ax.set_ylabel("Mean course score"); then loop: for i,(m,n) in enumerate(zip(means.values, counts.values)): ax.text(i, m+2, "n="+str(n), ha="center")',
+    onPass:()=>{ addReportLine('Figure 2','<b>Mean course score by aid status.</b> 72.0 without aid (n=42) against 65.7 with (n=58) - a 6.3-point difference, drawn on the full 0-100 axis. Reported as a disparity to investigate, not as a feature used in any ranking.'); }
+  });
+
+  B.push({stage:4, type:'dialogue', thread:true, time:'2:20 PM', cont:'Stage 6: Ship the report →',
+    text:"Two figures, and neither of them is doing anything the numbers do not support. Last stage: get it out the door.",
+    dyn:(verdict)=>{
+      const v=verdict(['s5_chart','s5_axis']);
+      const tail=" Last stage: getting it out the door. Which sounds like the boring part, and is the part where a report either becomes something the institution can check, or becomes a PDF nobody can trace back to anything.";
+      if(v==='good') return { emotion:'approve',
+        text:"Two figures, and neither of them is doing anything the numbers do not support. You also told the Provost's office no, with a reason, which is a harder skill than any of the code."+tail };
+      if(v==='mixed') return { emotion:'concern',
+        text:"The figures are drawn. I am not fully comfortable with how we handled the request from upstairs, and if that chart travels beyond this office I would want it redrawn first."+tail };
+      return { emotion:'disappoint',
+        text:"Understand what happened there. Somebody with authority asked for a picture that overstates a gap, and the argument for going along with it - every number is accurate - is the argument every misleading chart has ever used. The bars are the claim. Not the labels."+tail };
+    }});
+
+  /* ============ STAGE 6 — SHIP THE REPORT (Module 6) ============ */
+  B.push({stage:5, type:'dialogue', thread:true, time:'3:05 PM', cont:'How do we ship it?',
+    text:"The analysis is done. Now the part that decides whether it is worth anything: getting it out in a form somebody can check. A finding nobody can reproduce is an opinion with a chart attached. The Cabinet will act on this - fund a programme, maybe defund another - so six months from now, somebody is going to ask how we got these numbers. What we hand over today is the answer to that question."});
+
+  B.push({stage:5, type:'decision', id:'s6_ship', pts:5,
+    label:'Decision · What gets handed over',
+    intro:"The Provost's office asks for \"the report\". You have a notebook, an analysis table built from four sources, two figures, and a set of decisions about scope, fairness and missing data.",
+    q:'What do you actually deliver?',
+    onPick:(c)=>{ if(c.q==='good') addReportLine('Delivery','Handed over as a <b>versioned repository</b>: the code that builds the analysis, the figures it produces, and a written record of the scope, fairness and missing-data decisions - so the numbers can be regenerated and challenged.'); },
+    choices:[
+      { t:'A versioned repository: the code that produces the analysis, the figures it generates, and a written record of the decisions - so anyone can regenerate the numbers and see what was chosen.', q:'good',
+        ot:'✓ Reproducible, and therefore challengeable', op:'The point of versioning a report is not tidiness, it is that somebody can disagree with you precisely. A reader who can rerun the code can find your mistake; a reader holding a PDF can only take it or leave it. Committing the decisions alongside the code is the part people skip - the choices are what a future reader will most want to interrogate, and they are invisible in the output.' },
+      { t:'A polished PDF with the findings and the two figures. It is what they asked for, and it is what will actually get read.', q:'warn',
+        ot:'~ Necessary, and not sufficient', op:'You are right that the PDF gets read and the repository mostly does not - so write the PDF. But if it is the only artefact, the analysis becomes unauditable the moment it is delivered. Ship both: the document for reading, the repository for checking. The mistake is treating them as alternatives.' },
+      { t:'The notebook exactly as you worked in it - it contains every step, so it is the most complete and honest record.', q:'bad',
+        ot:'✗ Complete is not the same as reproducible', op:'A working notebook carries cells run out of order, abandoned attempts and state that only existed on your machine. Handing it over transfers the work without transferring the ability to rerun it - and it invites a reader to mistake an experiment you rejected for a finding you stand behind. Clean it into something that runs top to bottom, or hand over the script that does.' },
+      { t:'The final analysis table as a CSV, so the Cabinet can check the numbers themselves.', q:'bad',
+        ot:'✗ That is the output, not the method', op:'The table is where the judgement calls have already been applied and become invisible. Nothing in that CSV records that 15 students were kept rather than dropped, or that two features were excluded, or that the engagement index covers 85 people. A reader would take it for the raw truth, which is exactly the misreading everything upstream was designed to prevent.' },
+    ]});
+
+  B.push({stage:5, type:'code', id:'s6_summary',
+    task:'Build the summary block that ships with the report. Return a dict with <code>students_in_cohort</code>, <code>students_with_engagement</code>, <code>pass_rate_lowest_quartile</code>, <code>pass_rate_highest_quartile</code>, <code>excluded_features</code> and <code>claim_type</code>.',
+    hint:'Rates to 2 decimals. <code>excluded_features</code> is the list you decided on in Stage 1 - the two proxies. <code>claim_type</code> records what kind of claim this is; the data is observational, so there is only one honest value.',
+    starter:
+`# Rebuilt here so this cell stands alone.
+import matplotlib.pyplot as plt
+analysis = (high_school.drop_duplicates(subset='student_id')
+            .merge(undergraduate, on='student_id', how='left')
+            .merge(outcomes,      on='student_id', how='left')
+            .merge(lms_activity,  on='student_id', how='left')).copy()
+analysis['submission_rate'] = (analysis['submission_rate'].astype(str).str.rstrip('%')
+                               .replace({'': None, 'None': None, 'nan': None}).astype(float))
+def _mm(x):
+    return (x - np.nanmin(x)) / (np.nanmax(x) - np.nanmin(x))
+analysis['engagement'] = (_mm(analysis['logins_per_week'])
+                          + _mm(analysis['time_on_task_hrs'])
+                          + _mm(analysis['submission_rate'])) / 3
+
+# This block travels with the report. Everything a reader needs in order
+# NOT to misread the findings goes in it.
+
+def build_summary(analysis):
+    # YOUR CODE HERE
+
+    pass
+
+summary = build_summary(analysis)
+
+if summary is None:
+    print('build_summary returned None - fill in the body and return the dict.')
+else:
+    for k, v in summary.items():
+        print(k, '=', v)`,
+    test:
+`_s = build_summary(analysis)
+assert _s is not None, "build_summary returned None - return the dictionary."
+assert isinstance(_s, dict), "Return a dict, so each field can be checked by name."
+for _k in ['students_in_cohort', 'students_with_engagement', 'pass_rate_lowest_quartile',
+           'pass_rate_highest_quartile', 'excluded_features', 'claim_type']:
+    assert _k in _s, "The summary is missing '" + _k + "'. Every one of these is something a reader needs in order to read the finding correctly."
+assert _s['students_in_cohort'] == 100, "students_in_cohort should be 100."
+assert _s['students_with_engagement'] == 85, "students_with_engagement should be 85. The engagement finding covers the students who have engagement data, and the report has to say so - the gap does not stop being real because it is inconvenient to mention."
+assert round(float(_s['pass_rate_lowest_quartile']), 2) == 0.14, "The lowest engagement quartile passes at 0.14."
+assert round(float(_s['pass_rate_highest_quartile']), 2) == 1.0, "The highest engagement quartile passes at 1.0."
+_ex = [str(x) for x in _s['excluded_features']]
+assert 'hs_pop_density' in _ex and 'need_based_aid' in _ex, "excluded_features must name both proxies you ruled out in Stage 1 - hs_pop_density and need_based_aid. A fairness rule nobody can see in the deliverable is not a rule, it is a memory."
+assert str(_s['claim_type']).lower() in ('association', 'associational', 'correlational'), "claim_type must record this as an ASSOCIATION. The data is observational, so causal is the one claim this analysis cannot support - and it is the one the Cabinet most wants to hear."`,
+    solutionNote:'Use pd.qcut on the engagement column to get quartiles, groupby them and take the mean of success for the rates. Then return a dict with the six keys; excluded_features = ["hs_pop_density", "need_based_aid"] and claim_type = "association".',
+    onPass:()=>{ state.ethics.shippedLimits=true; addReportLine('Summary block','Ships with the report: <b>100 students</b>, engagement finding covers <b>85</b>; pass rate <b>0.14</b> in the lowest quartile against <b>1.00</b> in the highest; excluded features <code>hs_pop_density</code> and <code>need_based_aid</code>; claim type <b>association, not causation</b>.'); }
+  });
+
+  B.push({stage:5, type:'dialogue', thread:true, time:'3:38 PM', emotion:'concern', cont:'Read the message',
+    text:"That block is the report's conscience - it travels with the numbers so nobody has to remember the caveats. Which brings us to the last message of the day, and the hardest thing anyone has asked you today."});
+
+  B.push({stage:5, type:'decision', id:'s6_score', pts:7,
+    label:'Decision 3 of 3 · Ethics · The single score',
+    intro:"<i>\"This is excellent. Can you convert it into one number per student - a success score - so advisors can prioritise who to contact first? Same model, just ranked.\"</i><br><br>You could build it. The engagement index already exists and it separates the quartiles cleanly: <b>14%</b> pass in the lowest, <b>100%</b> in the highest.",
+    q:'What do you tell them?',
+    onPick:(c)=>{
+      if(c.q==='good'){ state.ethics.refusedRanking=true;
+        addReportLine('Final judgement','A per-student ranking score was requested and <b>declined</b>. The index is reported at cohort level only. Recommended instead: trigger outreach on observable behaviour (a student with no LMS activity for two weeks), which is actionable, contestable, and does not require ranking anyone.'); }
+    },
+    choices:[
+      { t:'Decline the ranking, and offer what they actually need instead: flag students on an observable, contestable trigger - two weeks with no LMS activity - rather than a score that ranks people.', q:'good',
+        ot:'✓ Answer the need, refuse the instrument', op:'They want advisors to reach the right students first. That is a good goal and it does not require a ranking. A behavioural trigger is checkable by the student, contestable when wrong, and carries no implied verdict about who they are. A score does the opposite: it is opaque, it follows a person around, and - because 15 students have no engagement data at all - it would rank the least-visible students on the least evidence.' },
+      { t:'Build it. The finding is real, the Cabinet is accountable for how it is used, and withholding a tool that could direct help to struggling students is its own kind of harm.', q:'warn',
+        ot:'~ The strongest argument for the wrong answer', op:'This deserves a straight response, because it is not a foolish position - refusing to help has costs, and analysts who refuse everything stop being consulted. But "they are accountable for how it is used" is exactly the sentence that precedes every misuse of a model. You have specific knowledge here they do not: the index is undefined for 15 students, it is built from three noisy proxies, and it was never validated for individual prediction. Handing it over as a per-student score means letting it be used for something you know it cannot do.' },
+      { t:'Build it, but attach the caveats - undefined for 15 students, association not causation, not validated per student.', q:'bad',
+        ot:'✗ The caveats will not travel with the number', op:'The number will be pasted into a spreadsheet by the end of the week and the caveats will not come with it. This is the same mistake as the truncated axis with a footnote: relying on a disclaimer to prevent a misreading you actively enabled. If a number is unsafe without its caveats, and you cannot guarantee the caveats stay attached, you have not made it safe.' },
+      { t:'Refuse, and say the data cannot support any individual-level use.', q:'warn',
+        ot:'~ Right refusal, and it ends the conversation', op:'The refusal is correct. Stopping there is not: you leave a real need unmet and you sound obstructive, which is how analysts get routed around rather than consulted. "No, and here is what would work" keeps you in the room for the next decision. The judgement is only half the job; the other half is staying somebody people ask.' },
+    ]});
+
+  B.push({stage:5, type:'dialogue', thread:true, time:'4:15 PM', cont:'Finish',
+    text:"That's the commission.",
+    dyn:(verdict)=>{
+      const v=verdict(['s6_ship','s6_score']);
+      const tail=" Six stages: you scoped the question, drew a fairness line, assembled the data, computed a metric you can defend, drew charts that do not overstate, and shipped something somebody can check. The code was the easy part. It always is.";
+      if(v==='good') return { emotion:'approve',
+        text:"That's the commission. You told the Provost's office no twice today - once about an axis, once about a ranking - and both times you offered them something better instead. That is the entire job, and most people never learn the second half of it."+tail };
+      if(v==='mixed') return { emotion:'concern',
+        text:"That's the commission, and the analysis will stand. Some of what you agreed to today I would want to revisit before this goes any further than my desk."+tail };
+      return { emotion:'disappoint',
+        text:"That's the commission. I want you to sit with what you agreed to today, because the analysis itself was sound and that is what makes it dangerous - a careful piece of work handed over in a form that invites the misuse we spent all day avoiding."+tail };
+    }});
+
   return B;
 }
 
@@ -966,7 +1715,8 @@ async function boot(){
   try{
     pyodide = await loadPyodide({ indexURL:'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
     document.getElementById('loadText').textContent='Loading pandas...';
-    await pyodide.loadPackage(['pandas','numpy']);
+    await pyodide.loadPackage(['pandas','numpy','matplotlib']);
+    pyodide.runPython('import matplotlib; matplotlib.use("AGG")');
     BEATS = buildBeats();
     state.maxPoints = BEATS.filter(b=>b.type==='decision').reduce((s,b)=>s+(b.pts||4),0);
     document.getElementById('loading').classList.add('hidden');

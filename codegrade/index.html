@@ -37,10 +37,32 @@
   strong { color:var(--bright); }
   hr { border:0; border-top:1px solid var(--border); margin:2.2rem 0; }
 
-  /* contents ------------------------------------------------------------- */
-  .toc { background:var(--card); border:1px solid var(--border); border-radius:8px;
-         padding:.8rem 1.1rem; margin:1.4rem 0 0; font-size:.9rem; }
-  .toc a { display:inline-block; margin:.15rem .9rem .15rem 0; }
+  /* start-here directory --------------------------------------------------
+     A bare list of section links makes a stuck student guess. Each entry says
+     what it is for, so the choice is made from the description rather than by
+     clicking through everything. */
+  .start { margin:1.6rem 0 0; }
+  .start h2 { font-size:1.05rem; margin:0 0 .1rem; }
+  .start .hint { color:var(--dim); font-size:.88rem; margin:0 0 .8rem; }
+  .startgrid { display:grid; gap:.55rem; }
+  .card { display:block; text-decoration:none; color:inherit;
+          background:var(--card); border:1px solid var(--border);
+          border-left:3px solid var(--border); border-radius:8px;
+          padding:.75rem .95rem; transition:border-color .14s, transform .14s; }
+  .card:hover { border-color:var(--accent); border-left-color:var(--accent);
+                transform:translateX(2px); }
+  .card .t { display:block; color:var(--bright); font-weight:600; font-size:.97rem; }
+  .card .d { display:block; color:var(--dim); font-size:.88rem; margin-top:.15rem; }
+  .card.do { border-left-color:var(--accent); background:var(--card2); }
+  .card.urgent { border-left-color:var(--flag); background:var(--card2); }
+  .card .when { display:inline-block; font-family:'IBM Plex Mono',monospace;
+                font-size:.62rem; letter-spacing:.09em; text-transform:uppercase;
+                color:var(--dim); border:1px solid var(--border); border-radius:3px;
+                padding:.05rem .4rem; margin-bottom:.25rem; }
+  .card.do .when { color:var(--accent-light); border-color:var(--accent); }
+  .card.urgent .when { color:var(--flag); border-color:var(--flag); }
+  .startsplit { color:var(--dim); font-size:.78rem; font-family:'IBM Plex Mono',monospace;
+                letter-spacing:.1em; text-transform:uppercase; margin:1.3rem 0 .5rem; }
 
   /* the checker ---------------------------------------------------------- */
   .drop { border:2px dashed var(--border); border-radius:10px; background:var(--card);
@@ -110,6 +132,15 @@
   .shot b { color:var(--warn); font-family:'IBM Plex Mono',monospace; font-size:.72rem;
             letter-spacing:.08em; text-transform:uppercase; display:block; margin-bottom:.2rem; }
 
+  figure { margin:.9rem 0 1.2rem; }
+  figure img { display:block; max-width:100%; border:1px solid var(--border);
+               border-radius:8px; background:#fff; }
+  /* the Create submission tile is a small square; full width would blow it
+     up into a blurry mess */
+  figure.small img { max-width:260px; }
+  figcaption { font-size:.86rem; color:var(--dim); margin-top:.45rem; }
+  .nextstep { border-top:1px solid var(--border); margin:.9rem 0 0; padding-top:.7rem;
+              font-size:.9rem; color:var(--dim); }
   .callout { background:var(--card2); border-left:3px solid var(--accent);
              border-radius:0 6px 6px 0; padding:.85rem 1rem; margin:1rem 0; font-size:.93rem; }
   .callout.big { border-left-color:var(--flag); }
@@ -122,19 +153,63 @@
   <a class="back" href="../index.html">&larr; DTSC 520</a>
   <h1>CodeGrade</h1>
   <p class="lede">
-    Everything about submitting: how to do it, what makes a correct answer score
-    zero, and what to do when something has gone wrong. Start with the checker -
-    it finds the most common problem before you submit rather than after.
+    Everything about submitting your work, in one place.
   </p>
 
-  <div class="toc">
-    <a href="#check">Check my notebook</a>
-    <a href="#rule">The one rule</a>
-    <a href="#wrong">Something went wrong</a>
-    <a href="#submitting">Submitting</a>
-    <a href="#functions">Function assignments</a>
-    <a href="#tips">Tips</a>
-    <a href="#practice">Practice assignment</a>
+  <div class="start">
+    <h2>Where do you want to start?</h2>
+    <p class="hint">Pick the one that matches your situation. You do not need to read the rest.</p>
+
+    <div class="startgrid">
+      <a class="card urgent" href="#wrong">
+        <span class="when">Something is wrong</span>
+        <span class="t">My submission was marked wrong</span>
+        <span class="d">Tell it what happened - every question wrong, one question wrong,
+        a crash, a score that never appeared - and it gives you that answer only.</span>
+      </a>
+
+      <a class="card do" href="#check">
+        <span class="when">Before you submit</span>
+        <span class="t">Check my notebook</span>
+        <span class="d">Drop your file in. It finds the leftover <code>print()</code> statements
+        and function calls that make correct answers score zero. Nothing is uploaded.</span>
+      </a>
+    </div>
+
+    <p class="startsplit">If you would rather read</p>
+
+    <div class="startgrid">
+      <a class="card" href="#rule">
+        <span class="t">The one rule that catches everyone</span>
+        <span class="d">Why a file full of correct answers can score zero, and the two
+        lines you have to delete before submitting. If you read nothing else, read this.</span>
+      </a>
+
+      <a class="card" href="#submitting">
+        <span class="t">How to submit</span>
+        <span class="d">Where the link is in Brightspace, and how to get the notebook
+        off your computer and into CodeGrade on Windows or Mac.</span>
+      </a>
+
+      <a class="card" href="#functions">
+        <span class="t">Function assignments</span>
+        <span class="d"><code>def Q3()</code> rather than <code>Q3 = </code>, where the
+        indentation goes, and how to look up whether your function should take an
+        argument instead of guessing.</span>
+      </a>
+
+      <a class="card" href="#tips">
+        <span class="t">Small things that cost marks</span>
+        <span class="d">Capitalisation, strings against lists, and why your random
+        numbers do not match the expected ones.</span>
+      </a>
+
+      <a class="card" href="#practice">
+        <span class="t">The practice assignment</span>
+        <span class="d">Your first submission, deliberately easy. Two questions and the
+        answers are given - the point is to see what submitting feels like.</span>
+      </a>
+    </div>
   </div>
 
   <!-- ================================================== CHECKER -->
@@ -250,14 +325,15 @@ Q3(5)</code></pre></div>
     <code>Q1</code> was never defined. Fix the name and it passes.
   </p>
 
-  <div class="shot"><b>Screenshot needed — errors-tab</b>
-    The Errors tab, showing a run where the expected <code>Q1</code> was not
-    defined. (Original: "Go to the ‘Errors’ tab on CodeGrade:")</div>
+  <figure>
+    <img src="img/errors-tab.png" alt="The Errors tab in CodeGrade. The traceback reads "NameError: name 'Q1' is not defined" - the answer was created under a different name, so CodeGrade could not find it.">
+    <figcaption>The traceback is the answer. Here <code>Q1</code> was never defined, because it had been created under a different name.</figcaption>
+  </figure>
 
-  <div class="shot"><b>Screenshot needed — crash-zero</b>
-    A rubric where the file crashed and every question scored zero despite the
-    values being right. (Original: "100% of my code was correct except I had an
-    error that caused my program to crash")</div>
+  <figure>
+    <img src="img/crash-zero.png" alt="A CodeGrade rubric. The notebook converted successfully, but every question from Q1 to Q6 scored 0 out of 1 because the file crashed.">
+    <figcaption>Note the first row passed - the file converted. Everything after it scored zero, not because those answers were wrong but because the file stopped.</figcaption>
+  </figure>
 
   <p>
     <strong>The Difference tab</strong> shows what was expected against what your
@@ -266,8 +342,10 @@ Q3(5)</code></pre></div>
     instructions and check each step.
   </p>
 
-  <div class="shot"><b>Screenshot needed — difference-tab</b>
-    The Difference tab with an expected value beside the submitted one.</div>
+  <figure>
+    <img src="img/difference-tab.png" alt="The Difference tab, showing expected output of 26 beside an actual output of 20.5.">
+    <figcaption>Expected <code>26.</code>, produced <code>20.5</code>. Nothing is broken - the calculation is simply wrong, so go back to the instructions.</figcaption>
+  </figure>
 
   <p class="lede" style="margin-top:1.2rem">
     Most problems are one of the above. If you have worked through all of it and
@@ -284,8 +362,10 @@ Q3(5)</code></pre></div>
     to the submission portal.
   </p>
 
-  <div class="shot"><b>Screenshot needed — brightspace-link</b>
-    The assignment link in Brightspace that opens CodeGrade.</div>
+  <figure>
+    <img src="img/brightspace-link.png" alt="The Brightspace assignments page. The assignment link, marked "External Learning Tool", is the one that opens CodeGrade.">
+    <figcaption>The one marked <strong>External Learning Tool</strong> is CodeGrade. The PDF above it is the instructions, which is a different thing.</figcaption>
+  </figure>
 
   <h3>Getting your file there</h3>
   <p>
@@ -293,23 +373,27 @@ Q3(5)</code></pre></div>
     computer - name it as the assignment asks, then drag it into CodeGrade.
   </p>
 
-  <div class="shot"><b>Screenshot needed — upload-icon</b>
-    The upload area in CodeGrade you drag onto. (Original: "you click on the
-    ⟨icon⟩ in CodeGrade")</div>
+  <figure class="small">
+    <img src="img/upload-icon.png" alt="The Create submission tile in CodeGrade: a document icon with a plus sign, labelled "Create submission".">
+    <figcaption><strong>Create submission</strong> is the tile you click, and the area you can drag a file onto.</figcaption>
+  </figure>
 
   <p><strong>Windows:</strong> open File Explorer, search for your filename - or
   type <code>*.ipynb</code> and press Enter to list every notebook on the
   machine - then drag the file into the CodeGrade window.</p>
 
-  <div class="shot"><b>Screenshot needed — windows-find</b>
-    File Explorer searching <code>*.ipynb</code>, and the drag into CodeGrade.
-    (2 images in the original.)</div>
+  <figure>
+    <img src="img/windows-find.png" alt="The Windows File Explorer address bar reading "Search Results in Local Disk (C:)", with *.ipynb typed into the search box on the right.">
+    <figcaption>Typing <code>*.ipynb</code> in the search box lists every notebook on the machine, which is quicker than remembering where you saved it.</figcaption>
+  </figure>
 
   <p><strong>Mac:</strong> search for the filename from the top right, then drag
   it in.</p>
 
-  <div class="shot"><b>Screenshot needed — mac-find</b>
-    Finder or Spotlight search for the notebook filename.</div>
+  <figure>
+    <img src="img/mac-find.png" alt="The file search box in CodeGrade's upload dialog on a Mac, with "untitled.ipynb" typed into it.">
+    <figcaption>Search by filename from the upload dialog, then drag the file in.</figcaption>
+  </figure>
 
   <!-- ================================================== FUNCTIONS -->
   <h2 id="functions">Function assignments</h2>
@@ -358,10 +442,14 @@ Q3(5)</code></pre></div>
     <code>Q5(3)</code> it takes an argument.
   </p>
 
-  <div class="shot"><b>Screenshot needed — input-tab-no-arg</b>
-    The Input tab showing a function called with no argument.</div>
-  <div class="shot"><b>Screenshot needed — input-tab-arg</b>
-    The Input tab showing a function called with an argument.</div>
+  <figure>
+    <img src="img/input-tab-no-arg.png" alt="The Input tab showing the command CodeGrade will run: Q2() with empty parentheses.">
+    <figcaption><strong>No argument.</strong> CodeGrade will run <code>Q2()</code>, so your function must work when called with nothing.</figcaption>
+  </figure>
+  <figure>
+    <img src="img/input-tab-arg.png" alt="The Input tab showing the command CodeGrade will run: Q4(5), passing the value 5.">
+    <figcaption><strong>An argument.</strong> CodeGrade will run <code>Q4(5)</code>, so your function must accept a value. Same tab, different answer - which is why it is worth looking rather than guessing.</figcaption>
+  </figure>
 
   <div class="callout">
     Notice what that tab is showing you: <strong>CodeGrade calls the function
@@ -379,8 +467,10 @@ Q3(5)</code></pre></div>
     asked you to create.
   </p>
 
-  <div class="shot"><b>Screenshot needed — check-questions</b>
-    A rubric showing <code>Q1check</code> / <code>Q4check</code> rows.</div>
+  <figure>
+    <img src="img/check-questions.png" alt="A CodeGrade rubric listing Q1, Q1check, Q2, Q3, Q4 and Q4check as separate rows.">
+    <figcaption><code>Q1check</code> and <code>Q4check</code> are separate rows with their own marks. They test the type of what you made, not its value.</figcaption>
+  </figure>
 
   <!-- ================================================== TIPS -->
   <h2 id="tips">Tips</h2>
@@ -553,34 +643,40 @@ var ANSWERS = {
     "<p>Almost always a <code>print()</code> statement or a function call left in the file. " +
     "Run the checker at the top of this page - it finds both.</p>" +
     "<p>If the checker is clean, look at the <strong>Errors tab</strong>: a single crash " +
-    "makes every question fail at once, even the correct ones.</p>"],
+    "makes every question fail at once, even the correct ones.</p>" +
+    "<p class=\"nextstep\"><strong>Still every question?</strong> Then it is probably a crash rather than a print - work through the Errors tab below.</p>"],
   one: ["One or two questions are wrong",
     "<p>The file ran, so this is a values problem, not a formatting one. Open the " +
     "<strong>Difference tab</strong> for that question - it shows what was expected " +
     "beside what you produced.</p><p>Then check the instructions for that question " +
     "specifically: variable name, capitalisation, and whether it wanted a string, a " +
-    "list, or a number.</p>"],
+    "list, or a number.</p>" +
+    "<p class=\"nextstep\"><strong>Difference tab looks right to you?</strong> Check the small things further down - capitalisation, and strings against lists.</p>"],
   crash: ["My file crashed",
     "<p><strong>A crash scores zero for the whole file</strong>, including questions that " +
     "were right. Open the <strong>Errors tab</strong> - it names the error and the line.</p>" +
     "<p>The most common cause is a name that does not exist, usually because the answer " +
     "was named something slightly different from what the assignment asked for.</p>" +
     "<p>If it ran on your machine but crashed here, restart the kernel and run every cell " +
-    "from the top. A cell you never re-ran can hide a broken one.</p>"],
+    "from the top. A cell you never re-ran can hide a broken one.</p>" +
+    "<p class=\"nextstep\"><strong>No error shown at all?</strong> Run the checker at the top of this page - a cell that errored when you last ran it is saved into the file.</p>"],
   check: ["I lost points on a “check” question",
     "<p><code>Q4check</code> does not test your value - it tests the <em>type</em> of what " +
     "you created. Losing it means <code>Q4</code> exists but is the wrong kind of object: " +
     "a list where a NumPy array was asked for, for instance.</p>" +
-    "<p>Re-read what the question told you to create.</p>"],
+    "<p>Re-read what the question told you to create.</p>" +
+    "<p class=\"nextstep\"><strong>Sure the type is right?</strong> Re-read the question wording. \"Array\" and \"list\" are different things, and so are \"string\" and \"number\".</p>"],
   grade: ["My score isn’t in the gradebook",
     "<p>Some CodeGrade assignments are not required and are not entered in the gradebook. " +
     "Check whether the one you are looking at is one of those before assuming something " +
-    "has gone wrong.</p>"],
+    "has gone wrong.</p>" +
+    "<p class=\"nextstep\"><strong>It should be graded?</strong> Email us with the assignment name - this one is not something you can fix from your end.</p>"],
   random: ["My numbers don’t match the expected output",
     "<p>If random values are involved, the sequence depends on the order things ran in. " +
     "Creating a random object twice overwrites the first one.</p>" +
     "<p>Clear all outputs, restart the kernel, and run the whole notebook from the top. " +
-    "That gives you the same order CodeGrade will use.</p>"]
+    "That gives you the same order CodeGrade will use.</p>" +
+    "<p class=\"nextstep\"><strong>Still not matching after a restart?</strong> Then it is a calculation difference rather than a random one - open the Difference tab and compare the values.</p>"]
 };
 
 var answer = document.getElementById("answer");

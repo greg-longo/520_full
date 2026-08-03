@@ -1793,6 +1793,8 @@ window.DTSC_COHORT = {
    "1004",
    "1018"
   ],
+  "missingLmsRows": 17,
+  "missingLmsStudents": 15,
   "lmsColumns": [
    "logins_per_week",
    "time_on_task_hrs",

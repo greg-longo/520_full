@@ -1,38 +1,42 @@
-# Screenshots still needed on the CodeGrade page
+# Screenshots on the CodeGrade page
 
-Ten slots, each marked on the page with an amber dashed box saying
-**"Screenshot needed — <slug>"**. Replace each `<div class="shot">…</div>` with:
+**All ten are in** (August 3, 2026). Nothing outstanding.
 
-```html
-<img src="img/<slug>.png" alt="<describe what it shows>">
-```
+| slug | shows |
+|---|---|
+| `errors-tab` | Errors tab: `NameError: name 'Q1' is not defined` |
+| `crash-zero` | Rubric where the file crashed and every question scored 0 |
+| `difference-tab` | Difference tab: expected 26, produced 20.5 |
+| `brightspace-link` | The Brightspace assignment link (External Learning Tool) |
+| `upload-icon` | The **Create submission** tile |
+| `windows-find` | File Explorer searching `*.ipynb` on the C: drive |
+| `mac-find` | The upload dialog's file search on a Mac |
+| `input-tab-no-arg` | Input tab: `IntroPythonA2credit.Q2()` |
+| `input-tab-arg` | Input tab: `FunctionsA1credit.Q4(5)` |
+| `check-questions` | Rubric showing `Q1check` and `Q4check` rows |
 
-Put the files in `site/codegrade/img/`. The test suite counts these
-placeholders, so `test_cgpage.js` will fail once you start filling them in -
-update the `WANTED` list in that file as you go, and it stays an accurate record
-of what is outstanding.
+Each is a `<figure>` with alt text and a caption that says what to look at.
 
-| slug | what to capture | where it was in the old docs |
-|---|---|---|
-| `errors-tab` | The Errors tab, on a run where the expected `Q1` was never defined | "What to do if my code doesn't work", §2 |
-| `crash-zero` | A rubric where the file crashed and every question scored zero | same doc, the IMPORTANT box |
-| `difference-tab` | The Difference tab, expected value beside submitted value | same doc, §3 |
-| `brightspace-link` | The assignment link in Brightspace that opens CodeGrade | FAQ, "How do I log into CodeGrade?" |
-| `upload-icon` | The upload area in CodeGrade you drag a file onto | FAQ, "An easy way to submit" |
-| `windows-find` | File Explorer searching `*.ipynb`, and the drag into CodeGrade (**this stands in for 2 images in the original**) | FAQ, "For PCs" |
-| `mac-find` | Finder or Spotlight search for the notebook filename | FAQ, "For Macs" |
-| `input-tab-no-arg` | The Input tab showing a function called with **no** argument | FAQ, functions section |
-| `input-tab-arg` | The Input tab showing a function called **with** an argument | FAQ, functions section |
-| `check-questions` | A rubric showing `Q1check` / `Q4check` rows | FAQ, last bullet |
+## What the tests now enforce
 
-**The two Input tab shots are the ones worth taking care over.** Arguments are
-the least intuitive thing in the FAQ, and that pair is the only place the reader
-can see that CodeGrade tells you the answer if you look.
+`test_cgpage.js` asserts every image resolves, carries alt text over 40
+characters, has a caption, is a real PNG rather than a HEIC with the wrong
+extension, and is **at least 200x40** - the first `windows-find` file supplied
+was a 41x41 folder icon, and a size floor is what catches that class of mistake.
 
-## What no longer needs a screenshot
+## Two things worth knowing, neither blocking
 
-Eleven code examples from the original docs are now copyable text on the page -
-the good/bad print pairs, the function-call pairs, the indentation example and
-the practice answer. Four of those existed only to teach the print rule, which
-the checker now enforces directly, so the page states it once instead of
-illustrating it four times.
+**`difference-tab` is from an R assignment** (`Rscript msleep.R`). The tab, the
+arrows and the numbers are right, and they match the original document's example
+exactly, so it teaches the point. A Python student may find the command line
+odd. Worth reshooting from a Python assignment one day.
+
+**`mac-find` shows a search for `untitled.ipynb`** - the default filename the
+checker warns about. Realistic, but if you reshoot it, searching for a properly
+named file would model the habit the page is asking for.
+
+## If you ever replace one
+
+Drop the new file in `img/` with the same name. Mac screenshots default to HEIC
+on some settings; the extension does not tell you the format, so check with
+`file img/whatever.png` if a browser shows a broken image.
