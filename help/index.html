@@ -62,8 +62,15 @@
   .quiet p { margin:.4rem 0 0; font-size:.9rem; }
   .rule { background:var(--card2); border-left:3px solid var(--accent); border-radius:0 6px 6px 0;
           padding:.8rem 1rem; margin:1.25rem 0; font-size:.92rem; }
-  a.back { color:var(--dim); font-size:.85rem; text-decoration:none; }
-  a.back:hover { color:var(--accent-light); }
+  /* `.back` rather than `a.back`: the back control is a <button> when we can
+     only offer history.back(), and a <a> when we can name the destination. */
+  .back { color:var(--dim); font-size:.85rem; text-decoration:none;
+          background:none; border:0; padding:0; font-family:inherit;
+          cursor:pointer; }
+  .back:hover { color:var(--accent-light); }
+  .back-sep { color:var(--border); font-size:.85rem; margin:0 .45rem; }
+  .back-to-module { color:var(--accent-light); }
+  .back-to-module:hover { color:var(--bright); }
 </style>
 </head>
 <body>
@@ -185,5 +192,6 @@ tb.addEventListener("keydown", function (e) {
   });
 })();
 </script>
+<script src="../assets/tool-back.js"></script>
 </body>
 </html>

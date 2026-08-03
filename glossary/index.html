@@ -18,8 +18,15 @@
   h1 { font-family:'Zilla Slab',Georgia,serif; font-size:1.9rem; color:var(--bright);
        margin:0 0 .4rem; font-weight:600; }
   .lede { color:var(--dim); margin:0 0 1.5rem; }
-  a.back { color:var(--dim); font-size:.85rem; text-decoration:none; }
-  a.back:hover { color:var(--accent-light); }
+  /* `.back` rather than `a.back`: the back control is a <button> when we can
+     only offer history.back(), and a <a> when we can name the destination. */
+  .back { color:var(--dim); font-size:.85rem; text-decoration:none;
+          background:none; border:0; padding:0; font-family:inherit;
+          cursor:pointer; }
+  .back:hover { color:var(--accent-light); }
+  .back-sep { color:var(--border); font-size:.85rem; margin:0 .45rem; }
+  .back-to-module { color:var(--accent-light); }
+  .back-to-module:hover { color:var(--bright); }
 
   /* controls -------------------------------------------------------------- */
   .controls { position:sticky; top:0; background:var(--bg); padding:.9rem 0 .7rem;
@@ -177,7 +184,13 @@ function render() {
   groups.forEach(function (g) {
     // Group headings only make sense in alphabetical order, which a search
     // preserves; the data is pre-sorted by the generator.
-    var first = g.term.replace(/^[^a-z0-9]+/i, "").charAt(0).toUpperCase() || "#";
+    //
+    // Keep any leading punctuation in the heading. `.iloc` and `.loc` sort
+    // ahead of every letter because "." precedes them, so stripping the dot
+    // produced headings reading I, L, A, B, C - which looks like the sort is
+    // broken. Showing ".I" and ".L" makes the position explain itself.
+    var m = g.term.match(/^([^a-z0-9]*)([a-z0-9])/i);
+    var first = m ? (m[1] + m[2]).toUpperCase() : "#";
     if (first !== letter) { letter = first; html += '<div class="letter">' + esc(letter) + "</div>"; }
 
     html += '<div class="entry" id="' + esc(g.slug) + '">' +
@@ -248,5 +261,6 @@ if (location.hash.length > 1) {
   if (target) target.scrollIntoView();
 }
 </script>
+<script src="../assets/tool-back.js"></script>
 </body>
 </html>

@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CodeGrade · DTSC 520</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:#14110f; --card:#1b1714; --card2:#221d19; --border:#332b25;
+    --text:#e6ded6; --dim:#9a8f86; --bright:#fff;
+    --accent:#7a5fb5; --accent-light:#9878d4; --warn:#d9913e; --flag:#c9553d;
+    --ok:#4f9d5d;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:0; background:var(--bg); color:var(--text);
+         font-family:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif; line-height:1.6; }
+  .wrap { max-width:860px; margin:0 auto; padding:2.5rem 1.5rem 4rem; }
+  h1 { font-family:'Zilla Slab',Georgia,serif; font-size:1.9rem; color:var(--bright);
+       margin:0 0 .4rem; font-weight:600; }
+  h2 { font-family:'Zilla Slab',Georgia,serif; font-size:1.3rem; color:var(--bright);
+       margin:2.6rem 0 .6rem; font-weight:600; scroll-margin-top:1rem; }
+  h3 { font-size:1rem; color:var(--bright); margin:1.6rem 0 .4rem; font-weight:600; }
+  .lede { color:var(--dim); margin:0 0 1.4rem; max-width:70ch; }
+  /* `.back` rather than `a.back`: the back control is a <button> when we can
+     only offer history.back(), and a <a> when we can name the destination. */
+  .back { color:var(--dim); font-size:.85rem; text-decoration:none;
+          background:none; border:0; padding:0; font-family:inherit;
+          cursor:pointer; }
+  .back:hover { color:var(--accent-light); }
+  .back-sep { color:var(--border); font-size:.85rem; margin:0 .45rem; }
+  .back-to-module { color:var(--accent-light); }
+  .back-to-module:hover { color:var(--bright); }
+  a { color:var(--accent-light); }
+  code { font-family:'IBM Plex Mono',monospace; font-size:.85em; background:var(--card2);
+         padding:.08em .35em; border-radius:3px; color:var(--accent-light); }
+  strong { color:var(--bright); }
+  hr { border:0; border-top:1px solid var(--border); margin:2.2rem 0; }
+
+  /* contents ------------------------------------------------------------- */
+  .toc { background:var(--card); border:1px solid var(--border); border-radius:8px;
+         padding:.8rem 1.1rem; margin:1.4rem 0 0; font-size:.9rem; }
+  .toc a { display:inline-block; margin:.15rem .9rem .15rem 0; }
+
+  /* the checker ---------------------------------------------------------- */
+  .drop { border:2px dashed var(--border); border-radius:10px; background:var(--card);
+          padding:1.8rem 1.2rem; text-align:center; transition:border-color .15s, background .15s; }
+  .drop.over { border-color:var(--accent); background:var(--card2); }
+  .drop p { margin:.3rem 0; }
+  .drop .big { font-size:1.05rem; color:var(--bright); }
+  .drop .small { font-size:.85rem; color:var(--dim); }
+  button.pick { font:inherit; font-size:.9rem; padding:.5rem 1.1rem; border-radius:6px;
+    cursor:pointer; background:var(--accent); border:1px solid var(--accent);
+    color:#fff; font-weight:600; margin-top:.7rem; }
+  button.pick:hover { filter:brightness(1.12); }
+  .privacy { font-size:.82rem; color:var(--dim); margin-top:.8rem; text-align:center; }
+
+  .verdict { border-radius:8px; padding:1rem 1.2rem; margin-top:1.2rem;
+             border:1px solid var(--border); border-left:3px solid var(--border);
+             background:var(--card); }
+  .verdict.pass { border-left-color:var(--ok); }
+  .verdict.stop { border-left-color:var(--flag); }
+  .verdict.warn { border-left-color:var(--warn); }
+  .verdict h3 { margin:0 0 .2rem; font-size:1.05rem; }
+  .verdict .sub { color:var(--dim); font-size:.88rem; margin:0; }
+
+  .find { border-top:1px solid var(--border); padding:.8rem 0 .2rem; }
+  .find:first-of-type { border-top:0; }
+  .tag { font-family:'IBM Plex Mono',monospace; font-size:.62rem; letter-spacing:.09em;
+         text-transform:uppercase; padding:.12rem .45rem; border-radius:3px;
+         margin-right:.5rem; vertical-align:.08em; }
+  .tag.stop { background:var(--flag); color:#fff; }
+  .tag.check { background:var(--warn); color:#2a1c0c; }
+  .tag.note { background:var(--card2); color:var(--dim); border:1px solid var(--border); }
+  .find .msg { color:var(--bright); }
+  .find .why { color:var(--dim); font-size:.9rem; margin:.3rem 0 0; }
+  .find pre { margin:.45rem 0 0; }
+
+  pre { background:#0f0d0c; border:1px solid var(--border); border-radius:6px;
+        padding:.7rem .9rem; overflow-x:auto; margin:.5rem 0; }
+  pre code { background:none; padding:0; color:var(--text); font-size:.82rem; line-height:1.55; }
+
+  /* good / bad code pairs ------------------------------------------------- */
+  .pair { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; margin:.8rem 0 0; }
+  @media (max-width:700px){ .pair { grid-template-columns:1fr; } }
+  .pair > div { min-width:0; }
+  .lbl { font-size:.78rem; font-weight:600; margin:0 0 .2rem; }
+  .lbl.y { color:var(--ok); }
+  .lbl.n { color:var(--flag); }
+  .pair.y pre { border-color:rgba(79,157,93,.45); }
+  .pair.n pre { border-color:rgba(201,85,61,.45); }
+
+  /* triage ---------------------------------------------------------------- */
+  .sym { display:flex; flex-wrap:wrap; gap:.5rem; margin:.9rem 0; }
+  .sym button { font:inherit; font-size:.85rem; padding:.45rem .9rem; border-radius:7px;
+    cursor:pointer; background:var(--card2); border:1px solid var(--border); color:var(--text);
+    text-align:left; }
+  .sym button:hover { border-color:var(--accent); }
+  .sym button[aria-pressed=true] { background:var(--accent); border-color:var(--accent);
+                                   color:#fff; font-weight:600; }
+  .answer { background:var(--card); border:1px solid var(--border);
+            border-left:3px solid var(--accent); border-radius:8px;
+            padding:1rem 1.2rem; margin-top:.8rem; }
+  .answer h3 { margin-top:0; }
+  .answer:empty { display:none; }
+
+  /* screenshot placeholders ---------------------------------------------- */
+  .shot { border:1px dashed var(--warn); border-radius:8px; background:rgba(217,145,62,.07);
+          padding:.8rem 1rem; margin:.8rem 0; font-size:.86rem; color:var(--dim); }
+  .shot b { color:var(--warn); font-family:'IBM Plex Mono',monospace; font-size:.72rem;
+            letter-spacing:.08em; text-transform:uppercase; display:block; margin-bottom:.2rem; }
+
+  .callout { background:var(--card2); border-left:3px solid var(--accent);
+             border-radius:0 6px 6px 0; padding:.85rem 1rem; margin:1rem 0; font-size:.93rem; }
+  .callout.big { border-left-color:var(--flag); }
+  ul, ol { padding-left:1.2rem; }
+  li { margin:.3rem 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">&larr; DTSC 520</a>
+  <h1>CodeGrade</h1>
+  <p class="lede">
+    Everything about submitting: how to do it, what makes a correct answer score
+    zero, and what to do when something has gone wrong. Start with the checker -
+    it finds the most common problem before you submit rather than after.
+  </p>
+
+  <div class="toc">
+    <a href="#check">Check my notebook</a>
+    <a href="#rule">The one rule</a>
+    <a href="#wrong">Something went wrong</a>
+    <a href="#submitting">Submitting</a>
+    <a href="#functions">Function assignments</a>
+    <a href="#tips">Tips</a>
+    <a href="#practice">Practice assignment</a>
+  </div>
+
+  <!-- ================================================== CHECKER -->
+  <h2 id="check">Check my notebook</h2>
+  <p>
+    Drop your <code>.ipynb</code> in and it will look for the things that make
+    CodeGrade mark correct work as wrong. It cannot tell you whether your
+    <em>answers</em> are right - only whether the file will be graded fairly.
+  </p>
+
+  <div class="drop" id="drop">
+    <p class="big">Drop your notebook here</p>
+    <p class="small">or</p>
+    <button class="pick" id="pick" type="button">Choose a file</button>
+    <input type="file" id="file" accept=".ipynb" hidden>
+  </div>
+  <p class="privacy">
+    Your file never leaves this computer. It is read in the browser, checked here,
+    and nothing is uploaded or stored.
+  </p>
+
+  <div id="result"></div>
+
+  <!-- ================================================== THE RULE -->
+  <h2 id="rule">The one rule that catches everyone</h2>
+
+  <div class="callout big">
+    <strong>Do not leave <code>print()</code> statements or function calls in
+    your file.</strong> This is by far the most common reason a student's work
+    is marked wrong when every answer in it is correct.
+  </div>
+
+  <p>
+    CodeGrade runs your file and then calls your objects <em>itself</em> to check
+    them. To grade <code>Q1</code> it runs <code>Q1()</code> and reads what comes
+    back. If your file already printed something, or already called
+    <code>Q1()</code>, that output lands in the middle of what CodeGrade is
+    trying to read, and the comparison fails.
+  </p>
+
+  <div class="pair">
+    <div class="y"><p class="lbl y">✓ Submit this</p>
+      <pre><code>Q1 = 'Welcome to EU!'
+Q2 = 1+1</code></pre></div>
+    <div class="n"><p class="lbl n">✗ Not this</p>
+      <pre><code>Q1 = 'Welcome to EU!'
+print(Q1)
+
+Q2 = 1+1
+print(Q2)</code></pre></div>
+  </div>
+
+  <p>The same rule for functions - define them, do not call them:</p>
+
+  <div class="pair">
+    <div class="y"><p class="lbl y">✓ Submit this</p>
+      <pre><code>def Q3(x):
+    return x * 2</code></pre></div>
+    <div class="n"><p class="lbl n">✗ Not this</p>
+      <pre><code>def Q3(x):
+    return x * 2
+
+Q3(5)</code></pre></div>
+  </div>
+
+  <div class="callout">
+    <strong>So how do you test your work?</strong> Test it freely while you are
+    working - that is the point of a notebook. Then, before you submit, either
+    comment the test lines out with <code>#</code> or delete them. Keeping them
+    in one cell at the bottom makes them easy to find. Or run the checker above,
+    which will tell you if you missed one.
+  </div>
+
+  <!-- ================================================== TRIAGE -->
+  <h2 id="wrong">Something went wrong</h2>
+  <p>What is happening?</p>
+
+  <div class="sym" id="symptoms">
+    <button data-sym="all" type="button">Every question is marked wrong</button>
+    <button data-sym="one" type="button">One or two questions are wrong</button>
+    <button data-sym="crash" type="button">My file crashed</button>
+    <button data-sym="check" type="button">I lost points on a “check” question</button>
+    <button data-sym="grade" type="button">My score isn’t in the gradebook</button>
+    <button data-sym="random" type="button">My numbers don’t match</button>
+  </div>
+  <div class="answer" id="answer"></div>
+
+  <h3>The three reasons you lose credit</h3>
+  <ol>
+    <li><strong>Instructions were not followed</strong> - file name, variable names,
+        libraries, or how the data was loaded.</li>
+    <li><strong>Your file crashes.</strong> See the warning below - this one is
+        worth understanding properly.</li>
+    <li><strong>Your values are not correct.</strong></li>
+  </ol>
+
+  <div class="callout big">
+    <strong>If your file crashes, you earn zero - even where your values are
+    right.</strong> CodeGrade cannot reach question 8 if question 3 stopped the
+    file. This also means you can <em>lose</em> marks you already had: if you
+    change a working file and introduce an error, correct answers below the error
+    stop counting.
+    <br><br>
+    Annoying, yes. But code that crashes in real life has consequences too, and
+    "most of it ran" is not a defence anybody accepts.
+  </div>
+
+  <h3>Where to look in CodeGrade</h3>
+  <p>
+    <strong>The Errors tab</strong> tells you what went wrong. A common one is a
+    name that does not exist - if you called your answer <code>Q100</code> when
+    the assignment asked for <code>Q1</code>, CodeGrade reports that
+    <code>Q1</code> was never defined. Fix the name and it passes.
+  </p>
+
+  <div class="shot"><b>Screenshot needed — errors-tab</b>
+    The Errors tab, showing a run where the expected <code>Q1</code> was not
+    defined. (Original: "Go to the ‘Errors’ tab on CodeGrade:")</div>
+
+  <div class="shot"><b>Screenshot needed — crash-zero</b>
+    A rubric where the file crashed and every question scored zero despite the
+    values being right. (Original: "100% of my code was correct except I had an
+    error that caused my program to crash")</div>
+
+  <p>
+    <strong>The Difference tab</strong> shows what was expected against what your
+    code produced - for example, expected <code>26.0</code> where you gave
+    <code>20.5</code>. That is a calculation problem, so go back to the
+    instructions and check each step.
+  </p>
+
+  <div class="shot"><b>Screenshot needed — difference-tab</b>
+    The Difference tab with an expected value beside the submitted one.</div>
+
+  <p class="lede" style="margin-top:1.2rem">
+    Most problems are one of the above. If you have worked through all of it and
+    still cannot see the cause, email us with the assignment name and what you
+    have already tried.
+  </p>
+
+  <!-- ================================================== SUBMITTING -->
+  <h2 id="submitting">Submitting</h2>
+
+  <h3>Logging in</h3>
+  <p>
+    You don't. Click the assignment link in Brightspace and it takes you straight
+    to the submission portal.
+  </p>
+
+  <div class="shot"><b>Screenshot needed — brightspace-link</b>
+    The assignment link in Brightspace that opens CodeGrade.</div>
+
+  <h3>Getting your file there</h3>
+  <p>
+    You do not need to download anything. Your notebook is already on your
+    computer - name it as the assignment asks, then drag it into CodeGrade.
+  </p>
+
+  <div class="shot"><b>Screenshot needed — upload-icon</b>
+    The upload area in CodeGrade you drag onto. (Original: "you click on the
+    ⟨icon⟩ in CodeGrade")</div>
+
+  <p><strong>Windows:</strong> open File Explorer, search for your filename - or
+  type <code>*.ipynb</code> and press Enter to list every notebook on the
+  machine - then drag the file into the CodeGrade window.</p>
+
+  <div class="shot"><b>Screenshot needed — windows-find</b>
+    File Explorer searching <code>*.ipynb</code>, and the drag into CodeGrade.
+    (2 images in the original.)</div>
+
+  <p><strong>Mac:</strong> search for the filename from the top right, then drag
+  it in.</p>
+
+  <div class="shot"><b>Screenshot needed — mac-find</b>
+    Finder or Spotlight search for the notebook filename.</div>
+
+  <!-- ================================================== FUNCTIONS -->
+  <h2 id="functions">Function assignments</h2>
+
+  <h3>Define, don't assign</h3>
+  <p>
+    When the instructions say <em>create a function named Q3</em>, they mean a
+    function. An assignment is not one:
+  </p>
+  <div class="pair">
+    <div class="y"><p class="lbl y">✓ A function</p>
+      <pre><code>def Q3():
+    return 42</code></pre></div>
+    <div class="n"><p class="lbl n">✗ Not a function</p>
+      <pre><code>Q3 = 42</code></pre></div>
+  </div>
+
+  <h3>Indentation</h3>
+  <p>
+    The body of a function is indented. Anything after it, at the same level as
+    <code>def</code>, is outside the function:
+  </p>
+  <div class="pair">
+    <div class="y"><p class="lbl y">✓ Correct</p>
+      <pre><code>def Q4(x):
+    total = x + 1
+    return total</code></pre></div>
+    <div class="n"><p class="lbl n">✗ Wrong — line 3 is over-indented</p>
+      <pre><code>def Q4(x):
+    total = x + 1
+        return total</code></pre></div>
+  </div>
+  <p>
+    An <code>IndentationError</code> naming a line number is telling you exactly
+    where to look. The <a href="../help/index.html">error translator</a> explains
+    the ones this course raises.
+  </p>
+
+  <h3>Arguments: when to take one</h3>
+  <p>
+    Some questions want a function that takes an argument and some do not, and
+    getting it the wrong way round makes the answer fail. <strong>You can look
+    this up rather than guessing:</strong> the <strong>Input tab</strong> in
+    CodeGrade shows the exact command it uses to run your function. If it shows
+    <code>Q5()</code> your function takes nothing; if it shows
+    <code>Q5(3)</code> it takes an argument.
+  </p>
+
+  <div class="shot"><b>Screenshot needed — input-tab-no-arg</b>
+    The Input tab showing a function called with no argument.</div>
+  <div class="shot"><b>Screenshot needed — input-tab-arg</b>
+    The Input tab showing a function called with an argument.</div>
+
+  <div class="callout">
+    Notice what that tab is showing you: <strong>CodeGrade calls the function
+    itself.</strong> Which is exactly why your own test call has to come out
+    before you submit.
+  </div>
+
+  <h3>“check” questions</h3>
+  <p>
+    Some questions are named <code>Q1check</code>, <code>Q4check</code> and so
+    on. These do not test your value - they test that you built the right
+    <em>kind</em> of thing. A common one is checking you made a NumPy array
+    rather than a plain Python list. Losing points on <code>Q4check</code> means
+    <code>Q4</code> exists but is the wrong type, so re-read what the question
+    asked you to create.
+  </p>
+
+  <div class="shot"><b>Screenshot needed — check-questions</b>
+    A rubric showing <code>Q1check</code> / <code>Q4check</code> rows.</div>
+
+  <!-- ================================================== TIPS -->
+  <h2 id="tips">Tips</h2>
+  <ul>
+    <li><strong>One cell or many, it does not matter</strong> - as long as
+        everything is present and nothing errors.</li>
+    <li><strong>There is often more than one right way.</strong> Different
+        approaches to slicing, for instance, all pass if the output is right.</li>
+    <li><strong>Delete leftover cells.</strong> Not fatal, but a stray cell is
+        usually the remains of something that should have gone.</li>
+    <li><strong>Watch capitalisation.</strong> <code>'Hello World'</code> and
+        <code>'hello world'</code> are different answers.</li>
+    <li><strong>Watch strings against lists.</strong> <code>'a'</code> is not
+        <code>['a']</code>.</li>
+    <li><strong>Create random objects once.</strong> Creating one twice
+        overwrites the first with new values. If your numbers do not match the
+        expected output, restart the kernel and run everything from the top so
+        the random sequence is the same one CodeGrade will get.</li>
+  </ul>
+
+  <!-- ================================================== PRACTICE -->
+  <h2 id="practice">The practice assignment</h2>
+  <p>
+    Your first submission is deliberately easy - two questions, and the answers
+    are given. The point is to see what submitting feels like before it counts.
+  </p>
+  <ul>
+    <li>Create a file called <code>practice.ipynb</code>.</li>
+    <li>Load <strong>no libraries</strong>. Later assignments may require them;
+        read each assignment's instructions.</li>
+    <li>Create <code>Q1</code>, a string containing <code>Welcome to EU!</code></li>
+    <li>Create <code>Q2</code>, equal to <code>1 + 1</code>.</li>
+    <li>Do not print anything.</li>
+  </ul>
+  <p>The whole file should be:</p>
+  <pre><code>Q1 = 'Welcome to EU!'
+Q2 = 1+1</code></pre>
+  <p>
+    Then run it through the checker at the top of this page, and submit.
+  </p>
+  <div class="callout">
+    Watch <strong>CodeGrade Walkthrough</strong> in Module 1 before your first
+    real assignment. Nearly every problem students bring us is answered by that
+    video and this page.
+  </div>
+</div>
+
+<script src="../assets/codegrade-check.js"></script>
+<script src="../assets/tool-back.js"></script>
+<script>
+"use strict";
+
+/* ---------------------------------------------------------------- checker */
+var drop = document.getElementById("drop");
+var fileInput = document.getElementById("file");
+var result = document.getElementById("result");
+
+function esc(s) {
+  return String(s).replace(/[&<>]/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c];
+  });
+}
+
+/* Why each finding matters. Kept beside the rendering rather than inside the
+   checker, so the engine stays about detection and the page stays about
+   explanation - and so the tests do not depend on prose. */
+var WHY = {
+  "print-statement":
+    "CodeGrade reads what your file outputs. A print lands in the middle of that and the comparison fails.",
+  "calls-own-answer":
+    "CodeGrade calls your function itself to grade it. Your own call runs first and corrupts what it reads.",
+  "bare-expression":
+    "A name alone on a line displays it, which is the same problem as printing it.",
+  "cell-errored":
+    "A file that crashes scores zero for every question, including the ones that were right.",
+  "cell-never-run":
+    "CodeGrade runs the file top to bottom. A cell you never ran has never actually been tested.",
+  "out-of-order":
+    "Values can depend on the order cells ran in. CodeGrade will use top-to-bottom order, which may not be yours.",
+  "imports": "",
+  "empty-cells": "",
+  "wrong-extension": "",
+  "default-filename": ""
+};
+
+function render(r) {
+  if (!r.ok) {
+    result.innerHTML = '<div class="verdict stop"><h3>Could not read that file</h3>' +
+      '<p class="sub">' + esc(r.fatal) + "</p></div>";
+    return;
+  }
+  var head, cls, sub;
+  if (r.stops) {
+    cls = "stop";
+    head = r.stops + " thing" + (r.stops === 1 ? "" : "s") + " will cost you marks";
+    sub = "Fix these before you submit.";
+  } else if (r.checks) {
+    cls = "warn";
+    head = "Nothing fatal, but " + r.checks + " thing" + (r.checks === 1 ? "" : "s") + " to look at";
+    sub = "None of these definitely lose marks. All of them sometimes do.";
+  } else {
+    cls = "pass";
+    head = "Nothing found";
+    sub = "No print statements, no stray calls, nothing that errored. " +
+          "This checks the mechanics only - it cannot tell you whether your answers are right.";
+  }
+
+  var html = '<div class="verdict ' + cls + '"><h3>' + esc(head) + "</h3>" +
+             '<p class="sub">' + esc(sub) + "</p>";
+  if (r.filename) {
+    html += '<p class="sub" style="margin-top:.5rem">' + esc(r.filename) + " · " +
+            r.stats.codeCells + " code cell" + (r.stats.codeCells === 1 ? "" : "s") +
+            " · " + r.stats.lines + " lines</p>";
+  }
+  html += "</div>";
+
+  if (r.findings.length) {
+    html += '<div class="verdict">';
+    /* Show at most a dozen. A file with fifty prints in it does not need fifty
+       entries - it needs the first few and the count, or the list becomes a
+       wall nobody reads and the actionable ones get lost in it. */
+    var LIMIT = 12;
+    var shown = r.findings.slice(0, LIMIT);
+    var hidden = r.findings.length - shown.length;
+    shown.forEach(function (f) {
+      html += '<div class="find"><span class="tag ' + f.level + '">' +
+              (f.level === "stop" ? "fix" : f.level === "check" ? "check" : "note") +
+              '</span><span class="msg">' + esc(f.message) + "</span>";
+      if (WHY[f.id]) html += '<p class="why">' + esc(WHY[f.id]) + "</p>";
+      if (f.snippet) html += "<pre><code>" + esc(f.snippet.trim()) + "</code></pre>";
+      html += "</div>";
+    });
+    if (hidden > 0) {
+      html += '<div class="find"><span class="msg">…and ' + hidden +
+              " more. Fix the ones above and run it again.</span></div>";
+    }
+    html += "</div>";
+  }
+  result.innerHTML = html;
+  result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function read(file) {
+  var fr = new FileReader();
+  fr.onload = function () { render(window.CGCheck.check(String(fr.result), file.name)); };
+  fr.onerror = function () {
+    result.innerHTML = '<div class="verdict stop"><h3>Could not read that file</h3>' +
+      '<p class="sub">The browser could not open it. Try the Choose a file button.</p></div>';
+  };
+  fr.readAsText(file);
+}
+
+document.getElementById("pick").addEventListener("click", function () { fileInput.click(); });
+fileInput.addEventListener("change", function () { if (this.files[0]) read(this.files[0]); });
+
+["dragenter", "dragover"].forEach(function (e) {
+  drop.addEventListener(e, function (ev) { ev.preventDefault(); drop.classList.add("over"); });
+});
+["dragleave", "drop"].forEach(function (e) {
+  drop.addEventListener(e, function (ev) { ev.preventDefault(); drop.classList.remove("over"); });
+});
+drop.addEventListener("drop", function (ev) {
+  var f = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
+  if (f) read(f);
+});
+
+/* ----------------------------------------------------------------- triage */
+var ANSWERS = {
+  all: ["Every question is marked wrong",
+    "<p>Almost always a <code>print()</code> statement or a function call left in the file. " +
+    "Run the checker at the top of this page - it finds both.</p>" +
+    "<p>If the checker is clean, look at the <strong>Errors tab</strong>: a single crash " +
+    "makes every question fail at once, even the correct ones.</p>"],
+  one: ["One or two questions are wrong",
+    "<p>The file ran, so this is a values problem, not a formatting one. Open the " +
+    "<strong>Difference tab</strong> for that question - it shows what was expected " +
+    "beside what you produced.</p><p>Then check the instructions for that question " +
+    "specifically: variable name, capitalisation, and whether it wanted a string, a " +
+    "list, or a number.</p>"],
+  crash: ["My file crashed",
+    "<p><strong>A crash scores zero for the whole file</strong>, including questions that " +
+    "were right. Open the <strong>Errors tab</strong> - it names the error and the line.</p>" +
+    "<p>The most common cause is a name that does not exist, usually because the answer " +
+    "was named something slightly different from what the assignment asked for.</p>" +
+    "<p>If it ran on your machine but crashed here, restart the kernel and run every cell " +
+    "from the top. A cell you never re-ran can hide a broken one.</p>"],
+  check: ["I lost points on a “check” question",
+    "<p><code>Q4check</code> does not test your value - it tests the <em>type</em> of what " +
+    "you created. Losing it means <code>Q4</code> exists but is the wrong kind of object: " +
+    "a list where a NumPy array was asked for, for instance.</p>" +
+    "<p>Re-read what the question told you to create.</p>"],
+  grade: ["My score isn’t in the gradebook",
+    "<p>Some CodeGrade assignments are not required and are not entered in the gradebook. " +
+    "Check whether the one you are looking at is one of those before assuming something " +
+    "has gone wrong.</p>"],
+  random: ["My numbers don’t match the expected output",
+    "<p>If random values are involved, the sequence depends on the order things ran in. " +
+    "Creating a random object twice overwrites the first one.</p>" +
+    "<p>Clear all outputs, restart the kernel, and run the whole notebook from the top. " +
+    "That gives you the same order CodeGrade will use.</p>"]
+};
+
+var answer = document.getElementById("answer");
+document.getElementById("symptoms").addEventListener("click", function (e) {
+  var b = e.target.closest ? e.target.closest("button[data-sym]") : null;
+  if (!b) return;
+  var chosen = b.getAttribute("data-sym");
+  var already = b.getAttribute("aria-pressed") === "true";
+  [].forEach.call(this.querySelectorAll("button"), function (x) {
+    x.setAttribute("aria-pressed", String(!already && x === b));
+  });
+  if (already) { answer.innerHTML = ""; return; }
+  var a = ANSWERS[chosen];
+  answer.innerHTML = "<h3>" + a[0] + "</h3>" + a[1];
+});
+</script>
+</body>
+</html>

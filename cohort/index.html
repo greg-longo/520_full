@@ -18,8 +18,15 @@
   h1 { font-family:'Zilla Slab',Georgia,serif; font-size:1.9rem; color:var(--bright);
        margin:0 0 .4rem; font-weight:600; }
   .lede { color:var(--dim); margin:0 0 1.4rem; max-width:70ch; }
-  a.back { color:var(--dim); font-size:.85rem; text-decoration:none; }
-  a.back:hover { color:var(--accent-light); }
+  /* `.back` rather than `a.back`: the back control is a <button> when we can
+     only offer history.back(), and a <a> when we can name the destination. */
+  .back { color:var(--dim); font-size:.85rem; text-decoration:none;
+          background:none; border:0; padding:0; font-family:inherit;
+          cursor:pointer; }
+  .back:hover { color:var(--accent-light); }
+  .back-sep { color:var(--border); font-size:.85rem; margin:0 .45rem; }
+  .back-to-module { color:var(--accent-light); }
+  .back-to-module:hover { color:var(--bright); }
   code { font-family:'IBM Plex Mono',monospace; font-size:.85em; background:var(--card2);
          padding:.08em .35em; border-radius:3px; color:var(--accent-light); }
   strong { color:var(--bright); }
@@ -243,11 +250,17 @@ function findings() {
 
     '<div class="finding">' +
       '<h3><span class="swatch" style="background:rgba(217,145,62,.5)"></span>' +
-      Q.missingLmsIds.length + " students have no engagement record</h3>" +
+      Q.missingLmsRows + " rows have no engagement record - " +
+      Q.missingLmsStudents + " students</h3>" +
       "<p>Their <code>" + Q.lmsColumns.join("</code>, <code>") + "</code> are all empty - " +
-      "one export missed them, so it is the same " + Q.missingLmsIds.length + " people in every column.</p>" +
+      "one export missed them, so it is the same people in every column. " +
+      "<span class=\"why\">The two counts differ because both duplicated students " +
+      "are also missing their LMS record: " + Q.missingLmsRows + " rows, " +
+      Q.missingLmsStudents + " people. Which number you report depends on whether " +
+      "you have deduplicated yet - and saying the wrong one is how a headline " +
+      "becomes false.</span></p>" +
       '<p class="why"><strong>This is the one that matters.</strong> They are not a random ' +
-      Q.missingLmsIds.length + ". They average <strong>" + c.withoutRecord.meanScore +
+      Q.missingLmsRows + " rows. They average <strong>" + c.withoutRecord.meanScore +
       "</strong> against <strong>" + c.withRecord.meanScore + "</strong> for everyone else, and " +
       c.withoutRecord.passed + " of " + c.withoutRecord.n + " passed against " +
       c.withRecord.passed + " of " + c.withRecord.n + ". Dropping them raises the cohort " +
@@ -318,5 +331,6 @@ document.getElementById("foot").innerHTML =
 renderHead();
 renderBody();
 </script>
+<script src="../assets/tool-back.js"></script>
 </body>
 </html>
