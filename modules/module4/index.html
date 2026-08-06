@@ -1444,7 +1444,7 @@ attempt[attempt.hs_attendance &gt; <span class="nm">1.0</span>][<span class="st"
       <div class="output-block">
         <div class="output-block-label">output</div>
 rows still above <span class="out-num">1.0</span>: <span class="out-num">1</span>
-/sessions/youthful-keen-pascal/tmp/ipykernel_11/<span class="out-num">1020421739.</span>py:<span class="out-num">2</span>: SettingWithCopyWarning: 
+/sessions/youthful-keen-pascal/tmp/ipykernel_10/<span class="out-num">1020421739.</span>py:<span class="out-num">2</span>: SettingWithCopyWarning: 
 A value is trying to be set on a copy of a slice from a DataFrame.
 Try using .loc[row_indexer,col_indexer] = value instead
 
@@ -2050,6 +2050,7 @@ Name: course_score, dtype: float64
       <div class="output-block">
         <div class="output-block-label">output</div>
 &lt;class &#x27;pandas.core.indexes.multi.MultiIndex&#x27;&gt;
+
 success            <span class="out-num">0</span>     <span class="out-num">1</span>
 need_based_aid            
 <span class="out-num">0</span>               <span class="out-num">59.7</span>  <span class="out-num">77.5</span>
@@ -2130,7 +2131,6 @@ outcomes      = pd.<span class="fn">read_csv</span>(<span class="st">&quot;data/
       <div class="output-block">
         <div class="output-block-label">output</div>
 students         <span class="out-num">100</span> rows x <span class="out-num">2</span> cols   [&#x27;student_id&#x27;, &#x27;name&#x27;]
-
 high_school      <span class="out-num">100</span> rows x <span class="out-num">6</span> cols   [&#x27;student_id&#x27;, &#x27;hs_gpa&#x27;, &#x27;hs_clubs&#x27;, &#x27;hs_sports&#x27;, &#x27;hs_attendance&#x27;, &#x27;hs_pop_density&#x27;]
 undergraduate    <span class="out-num">100</span> rows x <span class="out-num">4</span> cols   [&#x27;student_id&#x27;, &#x27;ug_gpa&#x27;, &#x27;internships&#x27;, &#x27;need_based_aid&#x27;]
 lms_activity     <span class="out-num">100</span> rows x <span class="out-num">4</span> cols   [&#x27;student_id&#x27;, &#x27;logins_per_week&#x27;, &#x27;time_on_task_hrs&#x27;, &#x27;submission_rate&#x27;]
@@ -3604,6 +3604,39 @@ details.ex-solution pre { margin-top: 0.6rem; }
    about body size: Module 2 sets 0.9rem and Module 4 sets 0.96rem. An h4 tuned
    to clear one of them ended up SMALLER than body text on the other. These
    values clear both. */
+
+/* ==========================================================================
+   Light-theme code colours.
+   ==========================================================================
+   The syntax palette was tuned against the dark background and carried over to
+   the light theme unchanged, where it was never legible: inline <code> ran at
+   1.43:1 on the page background - pale gold on near-white - and no light
+   override existed for it at all. That is every code block in a Python course.
+
+   These values are not eyeballed. Each keeps the hue of its dark-theme
+   counterpart and takes the LIGHTEST value that still clears 4.5:1 against
+   #ede9e3, the darkest of the three light surfaces (#ffffff cards, #f5f2ee
+   page, #ede9e3 code blocks) and therefore the worst case for dark text. All
+   six clear 4.5:1 on all three.
+
+   Comments are the exception: the dark theme's warm grey landed 4deg from the
+   keyword hue once darkened, so the two became hard to tell apart. Comments
+   are now a true neutral, which is what they should have been - they are the
+   one token meant to recede.
+
+   Both naming conventions are covered on purpose. The converter emits
+   .kw/.st/.nm/.fn/.cm; the page shells define .kw/.str/.num/.fn/.cmt/.bi.
+   Styling only one set is how half of these went uncoloured in the first place.
+
+   Verify with:  node tools/check_contrast.js modules/module2/index
+   ========================================================================== */
+:root.theme-light code,
+:root.theme-light pre code { color: #8b620f; }
+:root.theme-light .kw,  :root.theme-light .keyword { color: #985b19; }
+:root.theme-light .st,  :root.theme-light .str     { color: #4d7333; }
+:root.theme-light .nm,  :root.theme-light .num     { color: #227194; }
+:root.theme-light .fn,  :root.theme-light .bi      { color: #7c4cd5; }
+:root.theme-light .cm,  :root.theme-light .cmt     { color: #696969; }
 
 .content-section h3 {
   font-size: 1.15rem;

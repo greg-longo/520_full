@@ -1213,7 +1213,26 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
   margin: 1.8rem 0;
 }
 
+/* Read by screen readers, invisible on screen. Used to number the exercises so
+   eighteen editors on one page do not all announce the same name. Not
+   display:none and not visibility:hidden - both remove it from the
+   accessibility tree, which is the opposite of what is wanted. */
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* A <label>, so it is inline by default - the block is what the layout
+   assumes, and what the div it replaced used to give for free. */
 .exercise-label {
+  display: block;
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 0.7rem;
   font-weight: 600;
@@ -1369,6 +1388,39 @@ details.ex-solution pre { margin-top: 0.6rem; }
    about body size: Module 2 sets 0.9rem and Module 4 sets 0.96rem. An h4 tuned
    to clear one of them ended up SMALLER than body text on the other. These
    values clear both. */
+
+/* ==========================================================================
+   Light-theme code colours.
+   ==========================================================================
+   The syntax palette was tuned against the dark background and carried over to
+   the light theme unchanged, where it was never legible: inline <code> ran at
+   1.43:1 on the page background - pale gold on near-white - and no light
+   override existed for it at all. That is every code block in a Python course.
+
+   These values are not eyeballed. Each keeps the hue of its dark-theme
+   counterpart and takes the LIGHTEST value that still clears 4.5:1 against
+   #ede9e3, the darkest of the three light surfaces (#ffffff cards, #f5f2ee
+   page, #ede9e3 code blocks) and therefore the worst case for dark text. All
+   six clear 4.5:1 on all three.
+
+   Comments are the exception: the dark theme's warm grey landed 4deg from the
+   keyword hue once darkened, so the two became hard to tell apart. Comments
+   are now a true neutral, which is what they should have been - they are the
+   one token meant to recede.
+
+   Both naming conventions are covered on purpose. The converter emits
+   .kw/.st/.nm/.fn/.cm; the page shells define .kw/.str/.num/.fn/.cmt/.bi.
+   Styling only one set is how half of these went uncoloured in the first place.
+
+   Verify with:  node tools/check_contrast.js modules/module2/index
+   ========================================================================== */
+:root.theme-light code,
+:root.theme-light pre code { color: #8b620f; }
+:root.theme-light .kw,  :root.theme-light .keyword { color: #985b19; }
+:root.theme-light .st,  :root.theme-light .str     { color: #4d7333; }
+:root.theme-light .nm,  :root.theme-light .num     { color: #227194; }
+:root.theme-light .fn,  :root.theme-light .bi      { color: #7c4cd5; }
+:root.theme-light .cm,  :root.theme-light .cmt     { color: #696969; }
 
 .content-section h3 {
   font-size: 1.15rem;
@@ -2225,6 +2277,23 @@ section.content-section { scroll-margin-top: 68px; }
         "Ctrl-Enter": function () { runExercise(eid); },
         "Cmd-Enter": function () { runExercise(eid); }
       });
+
+      // fromTextArea sets the original textarea to display:none and builds its
+      // own input, so the <label for> attached to it no longer names anything
+      // the user can reach. Carry the name across by hand - otherwise the
+      // enhanced editor is LESS accessible than the plain textarea it replaced,
+      // and the markup fix looks correct while the real control stays unnamed.
+      var lbl = document.querySelector('label[for="' + eid + '-src"]');
+      var name = lbl ? (lbl.textContent || "").replace(/\s+/g, " ").trim() : "";
+      if (name) {
+        var input = editors[eid].getInputField();
+        if (input) input.setAttribute("aria-label", name);
+        var wrap = editors[eid].getWrapperElement();
+        if (wrap) {
+          wrap.setAttribute("role", "group");
+          wrap.setAttribute("aria-label", name);
+        }
+      }
     }
   }
 

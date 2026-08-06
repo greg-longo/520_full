@@ -3694,6 +3694,39 @@ details.ex-solution pre { margin-top: 0.6rem; }
    to clear one of them ended up SMALLER than body text on the other. These
    values clear both. */
 
+/* ==========================================================================
+   Light-theme code colours.
+   ==========================================================================
+   The syntax palette was tuned against the dark background and carried over to
+   the light theme unchanged, where it was never legible: inline <code> ran at
+   1.43:1 on the page background - pale gold on near-white - and no light
+   override existed for it at all. That is every code block in a Python course.
+
+   These values are not eyeballed. Each keeps the hue of its dark-theme
+   counterpart and takes the LIGHTEST value that still clears 4.5:1 against
+   #ede9e3, the darkest of the three light surfaces (#ffffff cards, #f5f2ee
+   page, #ede9e3 code blocks) and therefore the worst case for dark text. All
+   six clear 4.5:1 on all three.
+
+   Comments are the exception: the dark theme's warm grey landed 4deg from the
+   keyword hue once darkened, so the two became hard to tell apart. Comments
+   are now a true neutral, which is what they should have been - they are the
+   one token meant to recede.
+
+   Both naming conventions are covered on purpose. The converter emits
+   .kw/.st/.nm/.fn/.cm; the page shells define .kw/.str/.num/.fn/.cmt/.bi.
+   Styling only one set is how half of these went uncoloured in the first place.
+
+   Verify with:  node tools/check_contrast.js modules/module2/index
+   ========================================================================== */
+:root.theme-light code,
+:root.theme-light pre code { color: #8b620f; }
+:root.theme-light .kw,  :root.theme-light .keyword { color: #985b19; }
+:root.theme-light .st,  :root.theme-light .str     { color: #4d7333; }
+:root.theme-light .nm,  :root.theme-light .num     { color: #227194; }
+:root.theme-light .fn,  :root.theme-light .bi      { color: #7c4cd5; }
+:root.theme-light .cm,  :root.theme-light .cmt     { color: #696969; }
+
 .content-section h3 {
   font-size: 1.15rem;
   font-weight: 700;
