@@ -496,23 +496,18 @@
     <!-- OVERVIEW / LANDING -->
     <section id="overview" class="content-section">
       <h2>Overview</h2>
-      <h3 id="what-you-already-know-that-transfers">What you already know that transfers</h3>
+      <h3 id="pandas">pandas</h3>
+      <p>Modules 2 and 3 gave you ten students. You held them in dictionaries, then in NumPy arrays, and everything worked, because ten students chosen for a lesson are tidy by construction.</p>
+      <p>This module opens the actual extract. <strong>One hundred and two rows</strong>, the same students, the same columns - and every problem that ten clean records were hiding.</p>
+      <p>By the end you will have taken that file from &quot;unusable&quot; to &quot;ready to analyse&quot;, and you will be able to say exactly what you changed and why. That record of what you changed is not paperwork. It is the difference between a finding and a guess.</p>
+      <h4 id="what-you-already-know-that-transfers">What you already know that transfers</h4>
       <p>You are not starting from zero here. Three things carry straight over:</p>
       <table class="data-table"><thead><tr><th>From</th><th>Becomes</th></tr></thead><tbody><tr><td>Module 2&#x27;s <code>.get(key, 0) + 1</code> counting</td><td><code>value_counts()</code> and <code>groupby</code></td></tr><tr><td>Module 2&#x27;s <code>is None</code> guard</td><td><code>isna()</code> and the missing-data decision</td></tr><tr><td>Module 3&#x27;s boolean masks</td><td>the same masks, now with labels attached</td></tr><tr><td>Module 3&#x27;s views versus copies</td><td><code>SettingWithCopyWarning</code></td></tr></tbody></table>
       <p>pandas is not a new set of ideas. It is the ideas you have, with an index bolted on and the loops written for you.</p>
-      <h3 id="sources-and-acknowledgements">Sources and acknowledgements</h3>
+      <h4 id="sources-and-acknowledgements">Sources and acknowledgements</h4>
       <p>Some of this module is taken closely from published sources, some is adapted, and some is original to Eastern.</p>
       <ul><li>**Wes McKinney, <em>Python for Data Analysis</em>, 3rd edition.** The structure of the selection and cleaning sections follows McKinney&#x27;s treatment. McKinney wrote pandas, and his ordering of <code>.loc</code> before <code>.iloc</code> is deliberate and better than the alternative.</li><li>**Jake VanderPlas, <em>Python Data Science Handbook</em>.** The missing-data, hierarchical-indexing, concatenation and pivot-table material is adapted from it. Text is CC BY-NC-ND, so it is paraphrased rather than copied; the code is MIT.</li><li>**Allen Downey, <em>Think Python</em> 3e** (CC BY-NC-SA 4.0), for the error-reading approach carried through from Module 2.</li><li><strong>Original to Eastern:</strong> the cohort narrative, the diagnosis-before-cleaning sequence in sections 4 to 8, every exercise, and the cleaning decisions the capstone then holds you to.</li></ul>
-      <h3 id="a-word-about-ai-assistants">A word about AI assistants</h3>
-      <p>You will use them. Let&#x27;s be direct about how.</p>
-      <p>First, be sure to review Eastern&#x27;s LLM policies. These will be on syllabi and in the program handbook.  <em>It is your responsibility to know these policies. If you violate them you could face academic discipline including expulsion</em></p>
-      <p><strong>Good uses.</strong> Paste an error message into an llm and ask what it means. Ask for a second explanation of a concept when mine didn&#x27;t land. Ask <em>why</em> code works, not just whether it does. Ask it to generate extra practice problems.</p>
-      <p><strong>Bad use.</strong> Pasting an exercise prompt in and submitting what comes back. You will pass the exercise and fail the course - not because you got caught, but because every module here assumes you can already do the one before it, and the capstone assumes all of them.</p>
-      <p>The line is this: <strong>you are accountable for being able to explain every line you submit.</strong> If you can&#x27;t walk me through it, it isn&#x27;t yours yet. When a model writes something you don&#x27;t understand, that&#x27;s a signal to ask a follow-up question, not to move on.</p>
-      <p>More than anything, AI should be used to <strong>learn</strong> - if you&#x27;re using it without learning, you&#x27;re doing it wrong and will be hurt in the long run.</p>
-      <p>Where I think an assistant is genuinely useful, I&#x27;ll say so in the exercise.</p>
-      <p><strong>How this notebook was made.</strong> The teaching material here is drawn from the instructor&#x27;s own course materials and from the textbooks acknowledged below. AI systems (Claude and Gemini) were used to compare those sources for concept coverage and divergence, and to draft a notebook synthesizing them. The sequence, the pedagogy, and every decision about what to teach are the instructor&#x27;s. The result has been reviewed and corrected by Eastern faculty and staff, and verified to execute end to end.</p>
-      <h3 id="the-vocabulary">The vocabulary</h3>
+      <h4 id="the-vocabulary">The vocabulary</h4>
       <p>pandas has a small vocabulary and uses it precisely. Its error messages assume you know these, and so does every answer you will find online.</p>
       <ul><li><strong>Series</strong> - A one-dimensional array with an index. One column of a table, with labels attached to the values.</li><li><strong>DataFrame</strong> - A set of Series sharing one index. The table, and the object most pandas work is about.</li><li><strong>index</strong> - The labels attached to a DataFrame&#x27;s rows. Identifiers, not positions - which is why <code>.loc</code> and <code>.iloc</code> differ.</li><li><strong>.loc</strong> - Selection by <strong>label</strong>. <code>df.loc[1003]</code> asks for the row whose index is 1003, and includes the endpoint when slicing.</li><li><strong>.iloc</strong> - Selection by integer <strong>position</strong>. <code>df.iloc[0]</code> asks for the first row, whatever its label.</li><li><strong>dtype</strong> - The type of a column. <code>object</code> almost always means text got into something you expected to be numeric.</li><li><strong>NaN</strong> - Not a Number: pandas&#x27; marker for a missing value. It is a float, and it propagates through arithmetic.</li><li><strong>missing at random</strong> - When whether a value is missing has nothing to do with the outcome. If it is not true, dropping rows biases the answer.</li><li><strong>boolean mask</strong> - A Series of <code>True</code>/<code>False</code> used to filter rows. Combine with <code>&amp;</code> and <code>|</code>, never <code>and</code> and <code>or</code>.</li><li><strong>groupby</strong> - Split rows into groups, apply a summary to each, combine the results. The dictionary-counting pattern, industrialised.</li><li><strong>aggregation</strong> - The summary applied to each group - <code>mean</code>, <code>count</code>, <code>median</code>. Named aggregation gives the output readable column names.</li><li><strong>merge</strong> - Joining two tables on a shared key. Check the key is unique first: a repeated key multiplies rows.</li><li><strong>inner join</strong> - Keeps only rows present in both tables. Rows without a match are dropped silently, so check the row count.</li><li><strong>left join</strong> - Keeps every row of the left table, filling gaps with <code>NaN</code>. Makes a missing match visible instead of absent.</li><li><strong>pivot table</strong> - A groupby arranged as a grid: one variable down the side, another across the top, a statistic in the cells.</li><li><strong>chained assignment</strong> - Writing <code>df[mask][&quot;col&quot;] = x</code>. It edits a temporary copy and silently does nothing. Use <code>df.loc[mask, &quot;col&quot;] = x</code>.</li><li><strong>target leakage</strong> - Letting information about the outcome into a predictor. The model looks excellent in testing and fails in use.</li></ul>
       <div class="nb-narrative nb-narrative-open">
@@ -520,7 +515,9 @@
       <p>Nothing enforced that. If you had sorted one array and not the others, every number would still have been a number, every operation would still have run, and every answer would have been wrong. Silently.</p>
       <p>That is the problem pandas exists to solve. It attaches labels to data and then refuses to let them come apart.</p>
       </div>
-      <h3 id="the-alignment-problem-demonstrated">The alignment problem, demonstrated</h3>
+      <h3 id="why-pandas-exists">Why pandas exists</h3>
+      <p>Here are two of the Module 3 arrays and the sorting mistake described above.</p>
+      <h4 id="the-alignment-problem-demonstrated">The alignment problem, demonstrated</h4>
       <pre><code>names  = np.<span class="fn">array</span>([<span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>])
 ug_gpa = np.<span class="fn">array</span>([<span class="nm">3.02</span>, <span class="nm">1.99</span>, <span class="nm">2.80</span>])
 logins = np.<span class="fn">array</span>([<span class="nm">3.4</span>, <span class="nm">0.4</span>, <span class="nm">4.4</span>])
@@ -530,18 +527,30 @@ order  = np.<span class="fn">argsort</span>(-ug_gpa)
 <span class="fn">print</span>(names[order])
 <span class="fn">print</span>(ug_gpa[order])
 <span class="fn">print</span>(logins)          <span class="cm"># &lt;- never reordered</span></code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+[&#x27;Amara Okonkwo&#x27; &#x27;Priya Raghunathan&#x27; &#x27;Devin Castellanos&#x27;]
+[<span class="out-num">3.02</span> <span class="out-num">2.8</span>  <span class="out-num">1.99</span>]
+[<span class="out-num">3.4</span> <span class="out-num">0.4</span> <span class="out-num">4.4</span>]
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Is <code>logins</code> now still lined up with <code>names</code>? What would you compute if you used both?  Commit to an answer before you run the next cell.
       </div>
       <pre><code><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):
     <span class="fn">print</span>(<span class="st">f&quot;{names[order][i]:20} gpa {ug_gpa[order][i]:.2f}   logins {logins[i]}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+Amara Okonkwo        gpa <span class="out-num">3.02</span>   logins <span class="out-num">3.4</span>
+Priya Raghunathan    gpa <span class="out-num">2.80</span>   logins <span class="out-num">0.4</span>
+Devin Castellanos    gpa <span class="out-num">1.99</span>   logins <span class="out-num">4.4</span>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Priya&#x27;s GPA is now printed next to Amara&#x27;s login count.</p>
       <p>Nothing failed. No exception, no warning, no obviously wrong number - Priya plausibly could log in 3.4 times a week. This is the most dangerous class of bug in data work: the kind that produces a publishable-looking answer.</p>
       <p>The fix is not &quot;be careful.&quot; The fix is a data structure that carries the label with the value.</p>
       </details>
-      <h3 id="the-same-thing-in-pandas">The same thing in pandas</h3>
+      <h4 id="the-same-thing-in-pandas">The same thing in pandas</h4>
       <pre><code>df = pd.<span class="fn">DataFrame</span>({
     <span class="st">&quot;name&quot;</span>:   [<span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>],
     <span class="st">&quot;ug_gpa&quot;</span>: [<span class="nm">3.02</span>, <span class="nm">1.99</span>, <span class="nm">2.80</span>],
@@ -549,6 +558,13 @@ order  = np.<span class="fn">argsort</span>(-ug_gpa)
 })
 
 df.<span class="fn">sort_values</span>(<span class="st">&quot;ug_gpa&quot;</span>, ascending=<span class="kw">False</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+                name  ug_gpa  logins
+<span class="out-num">0</span>      Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">2</span>  Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
+<span class="out-num">1</span>  Devin Castellanos    <span class="out-num">1.99</span>     <span class="out-num">0.4</span>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>One sort, every column moves together.</strong> The row is the unit, not the array.</p>
@@ -561,13 +577,29 @@ df.<span class="fn">sort_values</span>(<span class="st">&quot;ug_gpa&quot;</span
 
 <section id="series" class="content-section">
       <h2>Series &amp; DataFrame</h2>
+      <p>pandas has exactly two objects you need. Everything else is a method on one of them.</p>
+      <ul><li>A <strong>Series</strong> is a one-dimensional array with an index. Think of one column.</li><li>A <strong>DataFrame</strong> is a set of Series sharing one index. Think of the table.</li></ul>
+      <p>Start with the Series.</p>
       <pre><code>gpa = pd.<span class="fn">Series</span>([<span class="nm">3.02</span>, <span class="nm">1.99</span>, <span class="nm">2.80</span>],
                 index=[<span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>])
 gpa</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+Amara Okonkwo        <span class="out-num">3.02</span>
+Devin Castellanos    <span class="out-num">1.99</span>
+Priya Raghunathan    <span class="out-num">2.80</span>
+dtype: float64
+      </div>
       <p>Two things to notice in that output: the values on the right, and the <strong>index</strong> on the left. The index is not decoration and it is not a row number - it is a label you can select with.</p>
       <pre><code><span class="fn">print</span>(gpa[<span class="st">&quot;Devin Castellanos&quot;</span>])
 <span class="fn">print</span>(gpa.values)         <span class="cm"># the underlying NumPy array - Module 3 is still in there</span>
 <span class="fn">print</span>(gpa.index)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+<span class="out-num">1.99</span>
+[<span class="out-num">3.02</span> <span class="out-num">1.99</span> <span class="out-num">2.8</span> ]
+Index([&#x27;Amara Okonkwo&#x27;, &#x27;Devin Castellanos&#x27;, &#x27;Priya Raghunathan&#x27;], dtype=&#x27;object&#x27;)
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><code>.values</code> gives you back the NumPy array. A Series <em>is</em> a NumPy array plus an index, and every vectorized operation from Module 3 still works - <code>gpa * 2</code>, <code>gpa[gpa &gt; 3]</code>, <code>gpa.mean()</code>. You have not lost anything.</p>
@@ -578,6 +610,11 @@ gpa</code></pre>
       </div>
       <pre><code><span class="fn">print</span>(gpa.iloc[<span class="nm">0</span>])                 <span class="cm"># by position</span>
 <span class="fn">print</span>(gpa[<span class="st">&quot;Amara Okonkwo&quot;</span>])        <span class="cm"># by label</span></code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+<span class="out-num">3.02</span>
+<span class="out-num">3.02</span>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Both give 3.02, because Amara is the first entry.</p>
       <p>They agree here, which is exactly why this is worth flagging. When the index is made of strings, position and label are different questions that happen to have the same answer. When the index is made of <em>numbers</em> - which it will be, in about ten minutes, when we load a file keyed on <code>student_id</code> - they come apart, and <code>gpa[1001]</code> becomes genuinely ambiguous.</p>
@@ -593,12 +630,30 @@ gpa</code></pre>
 })
 
 students</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+                name  ug_gpa  logins  internships
+<span class="out-num">0</span>      Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>            <span class="out-num">0</span>
+<span class="out-num">1</span>  Devin Castellanos    <span class="out-num">1.99</span>     <span class="out-num">0.4</span>            <span class="out-num">0</span>
+<span class="out-num">2</span>  Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>            <span class="out-num">2</span>
+      </div>
       <pre><code><span class="fn">print</span>(students.shape)        <span class="cm"># (rows, columns) - same attribute as Module 3</span>
 <span class="fn">print</span>(students.columns)
 <span class="fn">print</span>(students.index)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+(<span class="out-num">3</span>, <span class="out-num">4</span>)
+Index([&#x27;name&#x27;, &#x27;ug_gpa&#x27;, &#x27;logins&#x27;, &#x27;internships&#x27;], dtype=&#x27;object&#x27;)
+RangeIndex(start=<span class="out-num">0</span>, stop=<span class="out-num">3</span>, step=<span class="out-num">1</span>)
+      </div>
       <p>Select one column and you get a Series back. Select a list of columns and you get a DataFrame.</p>
       <pre><code><span class="fn">print</span>(<span class="fn">type</span>(students[<span class="st">&quot;ug_gpa&quot;</span>]))
 <span class="fn">print</span>(<span class="fn">type</span>(students[[<span class="st">&quot;ug_gpa&quot;</span>, <span class="st">&quot;logins&quot;</span>]]))</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+&lt;class &#x27;pandas.core.series.Series&#x27;&gt;
+&lt;class &#x27;pandas.core.frame.DataFrame&#x27;&gt;
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>Single brackets give a Series, double brackets give a DataFrame.</strong> <code>students[[&quot;ug_gpa&quot;]]</code> is a one-column table; <code>students[&quot;ug_gpa&quot;]</code> is a column.</p>
@@ -607,8 +662,8 @@ students</code></pre>
       <p><strong>Your turn.</strong></p>
       <p>Build a DataFrame called <code>cohort</code> with these three columns: <code>name</code>, <code>hs_gpa</code>, <code>hs_clubs</code>, for any three students you like. Then print its shape and select just the <code>hs_gpa</code> column as a Series.</p>
       <div class="exercise-block" data-exercise="exseries-14">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="exseries-14-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="exseries-14-src">Your turn - run it here<span class="vh"> (exercise 1)</span></label>
+        <textarea id="exseries-14-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exseries-14">Run</button>
           <button class="ex-reset" data-target="exseries-14">Reset</button>
@@ -632,6 +687,7 @@ cohort[<span class="st">&quot;hs_gpa&quot;</span>]</code></pre></details>
 
 <section id="selection" class="content-section">
       <h2>Selection</h2>
+      <p>Give the DataFrame a meaningful index first, because that is when the distinctions start to bite.</p>
       <pre><code>students = pd.<span class="fn">DataFrame</span>({
     <span class="st">&quot;name&quot;</span>:     [<span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>],
     <span class="st">&quot;ug_gpa&quot;</span>:   [<span class="nm">3.02</span>, <span class="nm">2.80</span>, <span class="nm">1.99</span>],
@@ -640,19 +696,78 @@ cohort[<span class="st">&quot;hs_gpa&quot;</span>]</code></pre></details>
 
 students.index.name = <span class="st">&quot;student_id&quot;</span>
 students</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+                         name  ug_gpa  logins
+student_id                                   
+<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
+<span class="out-num">1089</span>        Devin Castellanos    <span class="out-num">1.99</span>     <span class="out-num">0.4</span>
+      </div>
       <p>Now the index is made of integers that are <strong>identifiers, not positions</strong>. Amara is student 1003; she is also row 0. Those are different facts and they are about to disagree.</p>
       <p>**<code>.loc</code> selects by label.**</p>
       <pre><code>students.loc[<span class="nm">1003</span>]                 <span class="cm"># the student whose id is 1003</span></code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+name      Amara Okonkwo
+ug_gpa             <span class="out-num">3.02</span>
+logins              <span class="out-num">3.4</span>
+Name: <span class="out-num">1003</span>, dtype: object
+      </div>
       <p>**<code>.iloc</code> selects by position.**</p>
       <pre><code>students.iloc[<span class="nm">0</span>]                   <span class="cm"># whatever is in the first row</span></code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+name      Amara Okonkwo
+ug_gpa             <span class="out-num">3.02</span>
+logins              <span class="out-num">3.4</span>
+Name: <span class="out-num">1003</span>, dtype: object
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> What do you think <code>students.loc[0]</code> does? And <code>students.iloc[1003]</code>?  Commit to an answer before you run the next cell.
       </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises KeyError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>students.loc[<span class="nm">0</span>]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+────────────────────────────────────────────────────────────────
+  EXPECTED ERROR. This cell is supposed to fail.
+────────────────────────────────────────────────────────────────
+Traceback (most recent call last):
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexes/base.py&quot;, line <span class="out-num">3812</span>, in get_loc
+    return self._engine.get_loc(casted_key)
+  File &quot;pandas/_libs/index.pyx&quot;, line <span class="out-num">167</span>, in pandas._libs.index.IndexEngine.get_loc
+  File &quot;pandas/_libs/index.pyx&quot;, line <span class="out-num">196</span>, in pandas._libs.index.IndexEngine.get_loc
+  File &quot;pandas/_libs/hashtable_class_helper.pxi&quot;, line <span class="out-num">2606</span>, in pandas._libs.hashtable.Int64HashTable.get_item
+KeyError: <span class="out-num">0</span>
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1192</span>, in __getitem__
+    return self._getitem_axis(maybe_callable, axis=axis)
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1432</span>, in _getitem_axis
+... [<span class="out-num">4</span> more lines]
+      </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises IndexError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>students.iloc[<span class="nm">1003</span>]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+────────────────────────────────────────────────────────────────
+  EXPECTED ERROR. This cell is supposed to fail.
+────────────────────────────────────────────────────────────────
+Traceback (most recent call last):
+  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1192</span>, in __getitem__
+    return self._getitem_axis(maybe_callable, axis=axis)
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1753</span>, in _getitem_axis
+    self._validate_integer(key, axis)
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1686</span>, in _validate_integer
+    raise IndexError(&quot;single positional indexer is out-of-bounds&quot;)
+IndexError: single positional indexer is out-of-bounds
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Both fail, and the two error types tell you which question you asked.</p>
       <p><code>.loc[0]</code> is a <strong>KeyError</strong>: you asked for the student whose id is 0, and there is no such student. <code>.iloc[1003]</code> is an <strong>IndexError</strong>: you asked for the 1,004th row of a three-row table.</p>
@@ -668,10 +783,31 @@ students</code></pre>
       <pre><code><span class="fn">print</span>(students.loc[<span class="nm">1003</span>, <span class="st">&quot;ug_gpa&quot;</span>])            <span class="cm"># one student, one column</span>
 <span class="fn">print</span>()
 <span class="fn">print</span>(students.loc[[<span class="nm">1003</span>, <span class="nm">1024</span>], [<span class="st">&quot;name&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>]])   <span class="cm"># some rows, some columns</span></code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+<span class="out-num">3.02</span>
+
+                         name  ug_gpa
+student_id                           
+<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>
+<span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>
+      </div>
       <p>Slicing with <code>.loc</code> is <strong>inclusive of the endpoint</strong>, which is not how Python slicing works anywhere else. This is a real inconsistency in the library, not a misunderstanding on your part.</p>
       <pre><code><span class="fn">print</span>(students.loc[<span class="nm">1003</span>:<span class="nm">1024</span>])     <span class="cm"># includes 1024</span>
 <span class="fn">print</span>()
 <span class="fn">print</span>(students.iloc[<span class="nm">0</span>:<span class="nm">2</span>])          <span class="cm"># excludes position 2, like normal Python</span></code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+                         name  ug_gpa  logins
+student_id                                   
+<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
+
+                         name  ug_gpa  logins
+student_id                                   
+<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><code>.loc[a:b]</code> <strong>includes</strong> <code>b</code>. <code>.iloc[a:b]</code> excludes it, like every other slice in Python.</p>
@@ -682,6 +818,15 @@ students</code></pre>
       <pre><code>shuffled = students.loc[[<span class="nm">1003</span>, <span class="nm">1089</span>, <span class="nm">1024</span>]]     <span class="cm"># same rows, different order</span>
 <span class="fn">print</span>(<span class="st">f&quot;index sorted? {shuffled.index.is_monotonic_increasing}&quot;</span>)
 shuffled.loc[<span class="nm">1003</span>:<span class="nm">1024</span>]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+index sorted? False
+                         name  ug_gpa  logins
+student_id                                   
+<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">1089</span>        Devin Castellanos    <span class="out-num">1.99</span>     <span class="out-num">0.4</span>
+<span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Devin (1089) is inside a slice that reads <code>1003:1024</code>, even though 1089 is larger than 1024.</p>
       <p>Nothing is broken. The slice took every row between the <em>position</em> of 1003 and the <em>position</em> of 1024, and on this ordering Devin sits between them. On a sorted index that is the same thing as &quot;every label in the range.&quot; On an unsorted one it is not.</p>
@@ -692,6 +837,18 @@ shuffled.loc[<span class="nm">1003</span>:<span class="nm">1024</span>]</code></
       <pre><code><span class="fn">print</span>(students[<span class="st">&quot;ug_gpa&quot;</span>].<span class="fn">head</span>(<span class="nm">2</span>))      <span class="cm"># a column</span>
 <span class="fn">print</span>()
 <span class="fn">print</span>(students[students.ug_gpa &gt; <span class="nm">2.5</span>])  <span class="cm"># rows, via a boolean mask</span></code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+student_id
+<span class="out-num">1003</span>    <span class="out-num">3.02</span>
+<span class="out-num">1024</span>    <span class="out-num">2.80</span>
+Name: ug_gpa, dtype: float64
+
+                         name  ug_gpa  logins
+student_id                                   
+<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>Use <code>[]</code> for two things only: selecting a column by name, and filtering with a boolean mask. For anything else, say <code>.loc</code> or <code>.iloc</code> and be explicit. Ambiguity in selection code is how you get a bug that only shows up after someone sorts the data.</p>
@@ -700,8 +857,8 @@ shuffled.loc[<span class="nm">1003</span>:<span class="nm">1024</span>]</code></
       <p>Using <code>students</code>, and using <code>.loc</code> rather than <code>[]</code>:</p>
       <ol><li>Select Priya Raghunathan&#x27;s row by her student_id, 1024.</li><li>Select the <code>name</code> and <code>logins</code> columns for students 1003 and 1024.</li><li>Select every student with more than 1.0 logins per week.</li></ol>
       <div class="exercise-block" data-exercise="exselection-22">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="exselection-22-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="exselection-22-src">Your turn - run it here<span class="vh"> (exercise 2)</span></label>
+        <textarea id="exselection-22-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exselection-22">Run</button>
           <button class="ex-reset" data-target="exselection-22">Reset</button>
@@ -722,25 +879,87 @@ shuffled.loc[<span class="nm">1003</span>:<span class="nm">1024</span>]</code></
 
 <section id="loading" class="content-section">
       <h2>Loading Data</h2>
+      <p>Institutional Research has sent the full file. It is the same cohort you have been working with since Module 2 - the same students, the same columns, the same <code>student_id</code>s - but all of it, exactly as it came out of the system.</p>
+      <p><code>pd.read_csv</code> reads a comma-separated file into a DataFrame.</p>
       <pre><code>raw = pd.<span class="fn">read_csv</span>(<span class="st">&quot;data/cohort_extract.csv&quot;</span>)
 raw.<span class="fn">head</span>()</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+   student_id            name  hs_gpa  hs_clubs  hs_sports  hs_attendance  hs_pop_density  \
+<span class="out-num">0</span>        <span class="out-num">1001</span>    Kofi Pereira    <span class="out-num">2.87</span>         <span class="out-num">3</span>          <span class="out-num">1</span>          <span class="out-num">0.915</span>            <span class="out-num">3703</span>   
+<span class="out-num">1</span>        <span class="out-num">1002</span>     Elliot Park    <span class="out-num">2.20</span>         <span class="out-num">1</span>          <span class="out-num">1</span>          <span class="out-num">0.866</span>            <span class="out-num">4851</span>   
+<span class="out-num">2</span>        <span class="out-num">1003</span>   Amara Okonkwo    <span class="out-num">2.72</span>         <span class="out-num">2</span>          <span class="out-num">0</span>          <span class="out-num">0.948</span>            <span class="out-num">4341</span>   
+<span class="out-num">3</span>        <span class="out-num">1004</span>     Ravi Wojcik    <span class="out-num">2.05</span>         <span class="out-num">1</span>          <span class="out-num">0</span>          <span class="out-num">0.887</span>            <span class="out-num">4034</span>   
+<span class="out-num">4</span>        <span class="out-num">1005</span>  Perla Sorensen    <span class="out-num">2.27</span>         <span class="out-num">1</span>          <span class="out-num">1</span>          <span class="out-num">0.886</span>            <span class="out-num">3942</span>   
+
+   need_based_aid  ug_gpa  internships  logins_per_week  time_on_task_hrs submission_rate  \
+<span class="out-num">0</span>               <span class="out-num">0</span>    <span class="out-num">2.99</span>            <span class="out-num">0</span>              NaN               NaN             NaN   
+<span class="out-num">1</span>               <span class="out-num">1</span>    <span class="out-num">2.48</span>            <span class="out-num">0</span>              <span class="out-num">0.8</span>               <span class="out-num">2.5</span>             <span class="out-num">69</span>%   
+<span class="out-num">2</span>               <span class="out-num">1</span>    <span class="out-num">3.02</span>            <span class="out-num">0</span>              <span class="out-num">3.4</span>               <span class="out-num">1.8</span>             <span class="out-num">84</span>%   
+<span class="out-num">3</span>               <span class="out-num">0</span>    <span class="out-num">1.81</span>            <span class="out-num">1</span>              NaN               NaN             NaN   
+<span class="out-num">4</span>               <span class="out-num">1</span>    <span class="out-num">3.08</span>            <span class="out-num">0</span>              <span class="out-num">0.6</span>               <span class="out-num">1.9</span>             <span class="out-num">72</span>%   
+
+   course_score  success  
+<span class="out-num">0</span>          <span class="out-num">85.8</span>        <span class="out-num">1</span>  
+<span class="out-num">1</span>          <span class="out-num">57.1</span>        <span class="out-num">0</span>  
+<span class="out-num">2</span>          <span class="out-num">75.5</span>        <span class="out-num">1</span>  
+... [<span class="out-num">2</span> more lines]
+      </div>
       <p>If that raised a <code>FileNotFoundError</code>, the notebook is not running from the <code>notebooks/</code> folder. Reading a file is the first place a notebook&#x27;s working directory ever matters, so find out where you actually are:</p>
       <pre><code><span class="kw">import</span> os
 <span class="fn">print</span>(os.<span class="fn">getcwd</span>())</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+/sessions/youthful-keen-pascal/mnt/<span class="out-num">520</span>/notebooks
+      </div>
       <p>The path in <code>read_csv</code> is interpreted <strong>relative to that directory</strong>. Either start the notebook from <code>notebooks/</code>, or pass an absolute path. This is the single most common thing that stops a working notebook from working on somebody else&#x27;s machine.</p>
       <h3 id="the-index-changed-under-you">The index changed under you</h3>
       <p>Section 3 built a DataFrame whose index <em>was</em> the <code>student_id</code>, so <code>students.loc[1003]</code> meant &quot;the student with id 1003.&quot; Check what <code>read_csv</code> gave you instead.</p>
       <pre><code><span class="fn">print</span>(raw.index)
 <span class="fn">print</span>()
 <span class="fn">print</span>(raw.columns.<span class="fn">tolist</span>()[:<span class="nm">4</span>])</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+RangeIndex(start=<span class="out-num">0</span>, stop=<span class="out-num">102</span>, step=<span class="out-num">1</span>)
+
+[&#x27;student_id&#x27;, &#x27;name&#x27;, &#x27;hs_gpa&#x27;, &#x27;hs_clubs&#x27;]
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>student_id</code> came in as a column, and the index is a plain <code>RangeIndex</code>. So what does <code>raw.loc[1003]</code> do now - and what about <code>raw.loc[7]</code>?  Commit to an answer before you run the next cell.
       </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises KeyError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>raw.loc[<span class="nm">1003</span>]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+────────────────────────────────────────────────────────────────
+  EXPECTED ERROR. This cell is supposed to fail.
+────────────────────────────────────────────────────────────────
+Traceback (most recent call last):
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexes/range.py&quot;, line <span class="out-num">413</span>, in get_loc
+    return self._range.index(new_key)
+ValueError: <span class="out-num">1003</span> is not in range
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1192</span>, in __getitem__
+    return self._getitem_axis(maybe_callable, axis=axis)
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1432</span>, in _getitem_axis
+    return self._get_label(key, axis=axis)
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1382</span>, in _get_label
+    return self.obj.xs(label, axis=axis)
+... [<span class="out-num">1</span> more lines]
+      </div>
       <pre><code>row = raw.loc[<span class="nm">7</span>]
 <span class="fn">print</span>(row[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;name&quot;</span>]])</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+student_id          <span class="out-num">1008</span>
+name          Imani Ruiz
+Name: <span class="out-num">7</span>, dtype: object
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>The first fails, which is survivable. <strong>The second is the dangerous one.</strong></p>
       <p><code>raw.loc[1003]</code> raises a KeyError because there is no row <em>labelled</em> 1003 - the labels are now 0 to 101. Annoying, but it tells you immediately.</p>
@@ -750,9 +969,20 @@ raw.<span class="fn">head</span>()</code></pre>
       <h4 id="two-honest-ways-to-fix-it">Two honest ways to fix it</h4>
       <p><strong>Either</strong> filter on the column, which works on any index:</p>
       <pre><code>raw[raw.student_id == <span class="nm">1003</span>][[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;name&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>]]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+   student_id           name  ug_gpa
+<span class="out-num">2</span>        <span class="out-num">1003</span>  Amara Okonkwo    <span class="out-num">3.02</span>
+      </div>
       <p><strong>Or</strong> make <code>student_id</code> the index, so <code>.loc</code> means what you want:</p>
       <pre><code>indexed = raw.<span class="fn">set_index</span>(<span class="st">&quot;student_id&quot;</span>)
 indexed.loc[<span class="nm">1003</span>, [<span class="st">&quot;name&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>]]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+name      Amara Okonkwo
+ug_gpa             <span class="out-num">3.02</span>
+Name: <span class="out-num">1003</span>, dtype: object
+      </div>
       <p><code>read_csv</code> can do that in one step, which is usually better because it never lets the confusing state exist:</p>
       <pre><code>raw = pd.<span class="fn">read_csv</span>(<span class="st">&quot;data/cohort_extract.csv&quot;</span>, index_col=<span class="st">&quot;student_id&quot;</span>)</code></pre>
       <p>We keep <code>student_id</code> as a column for now, deliberately - section 5 has to check whether it is even usable as a key, and you cannot easily check an index for duplicates you have already told pandas to treat as the index.</p>
@@ -764,6 +994,10 @@ indexed.loc[<span class="nm">1003</span>, [<span class="st">&quot;name&quot;</sp
       <h3 id="first-look-before-anything-else">First look, before anything else</h3>
       <p>Four commands, always, in this order, before you compute a single statistic.</p>
       <pre><code>raw.shape</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+(<span class="out-num">102</span>, <span class="out-num">15</span>)
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> You worked with 10 students in Modules 2 and 3. The registrar says this cohort has 100 students. What number do you expect <code>.shape</code> to report?  Commit to an answer before you run the next cell.
@@ -771,9 +1005,20 @@ indexed.loc[<span class="nm">1003</span>, [<span class="st">&quot;name&quot;</sp
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;rows    {raw.shape[0]}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;columns {raw.shape[1]}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;distinct student_ids {raw.student_id.nunique()}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+rows    <span class="out-num">102</span>
+columns <span class="out-num">15</span>
+distinct student_ids <span class="out-num">100</span>
+      </div>
       <p><code>.nunique()</code> returns the <strong>count</strong> of distinct values. <code>.unique()</code> returns the distinct values themselves, as an array - useful when the column is categorical and you want to see the categories rather than count them.</p>
       <pre><code><span class="fn">print</span>(raw.success.<span class="fn">unique</span>())        <span class="cm"># the values</span>
 <span class="fn">print</span>(raw.success.<span class="fn">nunique</span>())       <span class="cm"># how many there are</span></code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+[<span class="out-num">1</span> <span class="out-num">0</span>]
+<span class="out-num">2</span>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p><strong>102 rows, but only 100 distinct students.</strong></p>
       <p>The file has more rows than there are people in it. That is not a rounding error and it is not something to shrug at - it means at least one student is counted twice in every average you compute from this file.</p>
@@ -787,16 +1032,68 @@ indexed.loc[<span class="nm">1003</span>, [<span class="st">&quot;name&quot;</sp
       </div>
       <h3 id="info-the-single-most-useful-command-in-pandas"><code>.info()</code> - the single most useful command in pandas</h3>
       <pre><code>raw.<span class="fn">info</span>()</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+&lt;class &#x27;pandas.core.frame.DataFrame&#x27;&gt;
+RangeIndex: <span class="out-num">102</span> entries, <span class="out-num">0</span> to <span class="out-num">101</span>
+Data columns (total <span class="out-num">15</span> columns):
+ #   Column            Non-Null Count  Dtype  
+---  ------            --------------  -----  
+ <span class="out-num">0</span>   student_id        <span class="out-num">102</span> non-null    int64  
+ <span class="out-num">1</span>   name              <span class="out-num">102</span> non-null    object 
+ <span class="out-num">2</span>   hs_gpa            <span class="out-num">102</span> non-null    float64
+ <span class="out-num">3</span>   hs_clubs          <span class="out-num">102</span> non-null    int64  
+ <span class="out-num">4</span>   hs_sports         <span class="out-num">102</span> non-null    int64  
+ <span class="out-num">5</span>   hs_attendance     <span class="out-num">102</span> non-null    float64
+ <span class="out-num">6</span>   hs_pop_density    <span class="out-num">102</span> non-null    int64  
+ <span class="out-num">7</span>   need_based_aid    <span class="out-num">102</span> non-null    int64  
+ <span class="out-num">8</span>   ug_gpa            <span class="out-num">102</span> non-null    float64
+ <span class="out-num">9</span>   internships       <span class="out-num">102</span> non-null    int64  
+ <span class="out-num">10</span>  logins_per_week   <span class="out-num">85</span> non-null     float64
+ <span class="out-num">11</span>  time_on_task_hrs  <span class="out-num">85</span> non-null     float64
+ <span class="out-num">12</span>  submission_rate   <span class="out-num">85</span> non-null     object 
+... [<span class="out-num">4</span> more lines]
+      </div>
       <p>Read that output as three questions:</p>
       <ul><li><strong>How many non-null values does each column have?</strong> Any column short of the full row count has missing data.</li><li>**What is each column&#x27;s <code>Dtype</code>?** <code>object</code> on a column you expected to be numeric means something non-numeric got in - the same lesson as Module 3&#x27;s <code>&lt;U21</code> arrays, in a new costume.</li><li><strong>How much memory?</strong> Rarely interesting at this size. It matters at a million rows.</li></ul>
       <p>Two columns in that output should bother you. Find them before reading on.</p>
       <pre><code>raw.dtypes</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+student_id            int64
+name                 object
+hs_gpa              float64
+hs_clubs              int64
+hs_sports             int64
+                     ...   
+logins_per_week     float64
+time_on_task_hrs    float64
+submission_rate      object
+course_score        float64
+success               int64
+Length: <span class="out-num">15</span>, dtype: object
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>submission_rate</code> holds values like 84%. What dtype did pandas give it, and what happens if you try to take its mean?  Commit to an answer before you run the next cell.
       </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>raw.submission_rate.<span class="fn">mean</span>()</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+────────────────────────────────────────────────────────────────
+  EXPECTED ERROR. This cell is supposed to fail.
+────────────────────────────────────────────────────────────────
+Traceback (most recent call last):
+  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/series.py&quot;, line <span class="out-num">6570</span>, in mean
+    return NDFrame.mean(self, axis, skipna, numeric_only, **kwargs)
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/generic.py&quot;, line <span class="out-num">12485</span>, in mean
+    return self._stat_function(
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/generic.py&quot;, line <span class="out-num">12442</span>, in _stat_function
+    return self._reduce(
+TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27;
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p><code>submission_rate</code> is <code>object</code> - pandas&#x27;s label for &quot;these are Python objects, most likely strings.&quot;</p>
       <p>The percent sign makes each value text. <code>&quot;84%&quot;</code> is not a number, so the whole column is not numbers, so arithmetic on it fails. One character per cell has disabled an entire column.</p>
@@ -806,8 +1103,8 @@ indexed.loc[<span class="nm">1003</span>, [<span class="st">&quot;name&quot;</sp
       <p>Answer these from <code>raw</code>, using code rather than by reading the <code>.info()</code> output:</p>
       <ol><li>How many columns have at least one missing value?</li><li>Which column has the most missing values, and how many?</li><li>What percentage of rows have a missing <code>logins_per_week</code>?</li></ol>
       <div class="exercise-block" data-exercise="exloading-32">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="exloading-32-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="exloading-32-src">Your turn - run it here<span class="vh"> (exercise 3)</span></label>
+        <textarea id="exloading-32-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exloading-32">Run</button>
           <button class="ex-reset" data-target="exloading-32">Reset</button>
@@ -831,15 +1128,39 @@ pct = raw.logins_per_week.<span class="fn">isna</span>().<span class="fn">mean</
 
 <section id="diagnosis" class="content-section">
       <h2>Diagnosis</h2>
+      <p>Four problems, four diagnostics. Run each one and record what it says.</p>
       <h3 id="duplicate-rows">Duplicate rows</h3>
       <p><code>.duplicated()</code> returns a boolean Series marking every row that has appeared before. It is a mask, exactly like Module 3&#x27;s.</p>
       <pre><code>dupes = raw.<span class="fn">duplicated</span>()
 
 <span class="fn">print</span>(<span class="st">f&quot;duplicate rows: {dupes.sum()}&quot;</span>)
 raw[dupes]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+duplicate rows: <span class="out-num">2</span>
+     student_id                name  hs_gpa  hs_clubs  hs_sports  hs_attendance  hs_pop_density  \
+<span class="out-num">100</span>        <span class="out-num">1004</span>         Ravi Wojcik    <span class="out-num">2.05</span>         <span class="out-num">1</span>          <span class="out-num">0</span>          <span class="out-num">0.887</span>            <span class="out-num">4034</span>   
+<span class="out-num">101</span>        <span class="out-num">1018</span>  Vera Hollingsworth    <span class="out-num">2.63</span>         <span class="out-num">3</span>          <span class="out-num">1</span>          <span class="out-num">0.986</span>            <span class="out-num">3879</span>   
+
+     need_based_aid  ug_gpa  internships  logins_per_week  time_on_task_hrs submission_rate  \
+<span class="out-num">100</span>               <span class="out-num">0</span>    <span class="out-num">1.81</span>            <span class="out-num">1</span>              NaN               NaN             NaN   
+<span class="out-num">101</span>               <span class="out-num">0</span>    <span class="out-num">2.81</span>            <span class="out-num">1</span>              NaN               NaN             NaN   
+
+     course_score  success  
+<span class="out-num">100</span>          <span class="out-num">60.8</span>        <span class="out-num">0</span>  
+<span class="out-num">101</span>          <span class="out-num">76.3</span>        <span class="out-num">1</span>
+      </div>
       <p><code>.duplicated()</code> marks the <em>second and later</em> copies, not the first, which is why two duplicated students give two marked rows rather than four. To see every copy together, pass <code>keep=False</code>.</p>
       <pre><code>all_copies = raw[raw.<span class="fn">duplicated</span>(keep=<span class="kw">False</span>)].<span class="fn">sort_values</span>(<span class="st">&quot;student_id&quot;</span>)
 all_copies[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;name&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>, <span class="st">&quot;course_score&quot;</span>]]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+     student_id                name  ug_gpa  course_score
+<span class="out-num">3</span>          <span class="out-num">1004</span>         Ravi Wojcik    <span class="out-num">1.81</span>          <span class="out-num">60.8</span>
+<span class="out-num">100</span>        <span class="out-num">1004</span>         Ravi Wojcik    <span class="out-num">1.81</span>          <span class="out-num">60.8</span>
+<span class="out-num">17</span>         <span class="out-num">1018</span>  Vera Hollingsworth    <span class="out-num">2.81</span>          <span class="out-num">76.3</span>
+<span class="out-num">101</span>        <span class="out-num">1018</span>  Vera Hollingsworth    <span class="out-num">2.81</span>          <span class="out-num">76.3</span>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**<code>keep=&quot;first&quot;</code> (the default) marks the extras. <code>keep=False</code> marks every member of a duplicated group.**</p>
@@ -848,6 +1169,13 @@ all_copies[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&qu
       <h3 id="missing-values">Missing values</h3>
       <pre><code>missing = raw.<span class="fn">isna</span>().<span class="fn">sum</span>()
 missing[missing &gt; <span class="nm">0</span>]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+logins_per_week     <span class="out-num">17</span>
+time_on_task_hrs    <span class="out-num">17</span>
+submission_rate     <span class="out-num">17</span>
+dtype: int64
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Three columns are missing the same number of values. What does that suggest about how the data went missing?  Commit to an answer before you run the next cell.
@@ -858,6 +1186,16 @@ missing[missing &gt; <span class="nm">0</span>]</code></pre>
 <span class="fn">print</span>()
 <span class="fn">print</span>(<span class="st">f&quot;rows missing ALL three:  {raw[lms].isna().all(axis=1).sum()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;rows missing ANY of them: {raw[lms].isna().any(axis=1).sum()}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+logins_per_week     <span class="out-num">17</span>
+time_on_task_hrs    <span class="out-num">17</span>
+submission_rate     <span class="out-num">17</span>
+dtype: int64
+
+rows missing ALL three:  <span class="out-num">17</span>
+rows missing ANY of them: <span class="out-num">17</span>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>The same rows are missing all three, so this is not three separate problems - it is one problem. An entire LMS record failed to attach for some students.</p>
       <p><code>.all(axis=1)</code> and <code>.any(axis=1)</code> are Module 3&#x27;s <code>any</code> and <code>all</code>, with <code>axis=1</code> meaning &quot;across the columns, per row.&quot; The idea has not changed.</p>
@@ -873,6 +1211,16 @@ missing[missing &gt; <span class="nm">0</span>]</code></pre>
 <span class="fn">print</span>(<span class="st">&quot;success rate:&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;  with:    {raw.loc[has_lms, &#x27;success&#x27;].mean():.2f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;  without: {raw.loc[~has_lms, &#x27;success&#x27;].mean():.2f}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+mean course_score:
+  students WITH an LMS record:    <span class="out-num">69.4</span>
+  students WITHOUT an LMS record: <span class="out-num">63.2</span>
+
+success rate:
+  with:    <span class="out-num">0.66</span>
+  without: <span class="out-num">0.29</span>
+      </div>
       <h4 id="what-dropna-would-actually-cost">What <code>dropna()</code> would actually cost</h4>
       <p>That gap is abstract until you watch it move a number you care about.</p>
       <pre><code>naive = raw.<span class="fn">dropna</span>()
@@ -885,6 +1233,17 @@ missing[missing &gt; <span class="nm">0</span>]</code></pre>
 <span class="fn">print</span>()
 <span class="fn">print</span>(<span class="st">f&quot;success rate, all students:   {raw.success.mean():.2f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;success rate, after dropna(): {naive.success.mean():.2f}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+rows before dropna(): <span class="out-num">102</span>
+rows after  dropna(): <span class="out-num">85</span>
+
+mean course_score, all students:   <span class="out-num">68.35</span>
+mean course_score, after dropna(): <span class="out-num">69.37</span>
+
+success rate, all students:   <span class="out-num">0.60</span>
+success rate, after dropna(): <span class="out-num">0.66</span>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>One line of &quot;tidying up&quot; made the cohort look better than it is.</p>
       <p>Nobody edited a score. Every number in <code>naive</code> is a real number about a real student. The cohort simply lost a group that was doing worse, and the average of what remained went up on its own.</p>
@@ -901,9 +1260,33 @@ missing[missing &gt; <span class="nm">0</span>]</code></pre>
 <span class="fn">print</span>(raw.submission_rate.<span class="fn">head</span>())
 <span class="fn">print</span>()
 <span class="fn">print</span>(<span class="st">f&quot;distinct non-null values: {raw.submission_rate.nunique()}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+object
+<span class="out-num">0</span>    NaN
+<span class="out-num">1</span>    <span class="out-num">69</span>%
+<span class="out-num">2</span>    <span class="out-num">84</span>%
+<span class="out-num">3</span>    NaN
+<span class="out-num">4</span>    <span class="out-num">72</span>%
+Name: submission_rate, dtype: object
+
+distinct non-null values: <span class="out-num">36</span>
+      </div>
       <h3 id="impossible-values">Impossible values</h3>
       <p>A dtype can be right and the values still be nonsense. <code>.describe()</code> gives the five-number summary of every numeric column, and you read it looking for impossibilities.</p>
       <pre><code>raw[[<span class="st">&quot;hs_gpa&quot;</span>, <span class="st">&quot;hs_attendance&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>, <span class="st">&quot;course_score&quot;</span>]].<span class="fn">describe</span>()</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+           hs_gpa  hs_attendance      ug_gpa  course_score
+count  <span class="out-num">102.000000</span>     <span class="out-num">102.000000</span>  <span class="out-num">102.000000</span>    <span class="out-num">102.000000</span>
+mean     <span class="out-num">2.388529</span>       <span class="out-num">0.905882</span>    <span class="out-num">2.513922</span>     <span class="out-num">68.345098</span>
+std      <span class="out-num">0.543974</span>       <span class="out-num">0.070909</span>    <span class="out-num">0.596666</span>     <span class="out-num">10.434858</span>
+min      <span class="out-num">1.500000</span>       <span class="out-num">0.767000</span>    <span class="out-num">1.500000</span>     <span class="out-num">46.000000</span>
+<span class="out-num">25</span>%      <span class="out-num">1.940000</span>       <span class="out-num">0.873000</span>    <span class="out-num">2.012500</span>     <span class="out-num">60.800000</span>
+<span class="out-num">50</span>%      <span class="out-num">2.380000</span>       <span class="out-num">0.903000</span>    <span class="out-num">2.620000</span>     <span class="out-num">68.050000</span>
+<span class="out-num">75</span>%      <span class="out-num">2.790000</span>       <span class="out-num">0.936750</span>    <span class="out-num">2.920000</span>     <span class="out-num">74.750000</span>
+max      <span class="out-num">3.440000</span>       <span class="out-num">1.400000</span>    <span class="out-num">4.000000</span>     <span class="out-num">91.900000</span>
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>hs_attendance</code> is a rate - the proportion of days a student attended. What is the largest value it could legitimately take, and what does the table say the maximum actually is?  Commit to an answer before you run the next cell.
@@ -912,6 +1295,12 @@ missing[missing &gt; <span class="nm">0</span>]</code></pre>
 
 <span class="fn">print</span>(<span class="st">f&quot;rows with attendance above 100%: {len(bad)}&quot;</span>)
 bad[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;name&quot;</span>, <span class="st">&quot;hs_attendance&quot;</span>]]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+rows with attendance above <span class="out-num">100</span>%: <span class="out-num">1</span>
+   student_id        name  hs_attendance
+<span class="out-num">7</span>        <span class="out-num">1008</span>  Imani Ruiz            <span class="out-num">1.4</span>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>An attendance rate of 1.4 means attending 140% of school days.</p>
       <p>Nothing in the file is going to flag this. The dtype is <code>float64</code>, which is correct; the value is a number, which is correct; every computation you run on it will succeed. Only knowing what the column <em>means</em> catches it.</p>
@@ -931,12 +1320,20 @@ bad[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;name
 ])
 
 inventory</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+              problem   n                   column                    decision
+<span class="out-num">0</span>      duplicate rows   <span class="out-num">2</span>              (whole row)       drop the extra copies
+<span class="out-num">1</span>  missing LMS record  <span class="out-num">17</span>  logins/hours/submission  NOT dropna - see section <span class="out-num">8</span>
+<span class="out-num">2</span>      stored as text  <span class="out-num">85</span>          submission_rate         strip % and convert
+<span class="out-num">3</span>    impossible value   <span class="out-num">1</span>            hs_attendance            treat as missing
+      </div>
       <p><strong>Your turn.</strong></p>
       <p>One diagnostic is missing from the list above: are the <code>student_id</code> values you would use as a key actually usable as one?</p>
       <p>Check whether <code>student_id</code> is unique in <code>raw</code>, and if it is not, show which ids repeat. Then say in a sentence why this matters before any merge.</p>
       <div class="exercise-block" data-exercise="exdiagnosis-26">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="exdiagnosis-26-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="exdiagnosis-26-src">Your turn - run it here<span class="vh"> (exercise 4)</span></label>
+        <textarea id="exdiagnosis-26-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exdiagnosis-26">Run</button>
           <button class="ex-reset" data-target="exdiagnosis-26">Reset</button>
@@ -966,18 +1363,30 @@ repeated = counts[counts &gt; <span class="nm">1</span>]
 
 <section id="cleaning" class="content-section">
       <h2>Cleaning</h2>
-      <h3 id="why-raw-keeps-its-name">Why <code>raw</code> keeps its name</h3>
+      <h3 id="cleaning-1-structure">Cleaning 1: structure</h3>
+      <p>Start with the two problems that are about the shape of the table rather than the values in it: duplicate rows, and an impossible number.</p>
+      <h4 id="why-raw-keeps-its-name">Why <code>raw</code> keeps its name</h4>
       <p>Section 5 measured <code>raw</code>. If cleaning reassigns <code>raw</code>, then scrolling up and re-running the diagnosis reports something different, and you lose the ability to say what the file looked like when it arrived.</p>
       <p>So every step below produces a <strong>new name</strong>. This costs nothing and it is what makes the cleaning reproducible.</p>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;raw is still untouched: {raw.shape[0]} rows&quot;</span>)</code></pre>
-      <h3 id="dropping-the-duplicates">Dropping the duplicates</h3>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+raw is still untouched: <span class="out-num">102</span> rows
+      </div>
+      <h4 id="dropping-the-duplicates">Dropping the duplicates</h4>
       <p><code>drop_duplicates()</code> keeps the first occurrence of each duplicated row and discards the rest.</p>
       <pre><code>deduped = raw.<span class="fn">drop_duplicates</span>()
 
 <span class="fn">print</span>(<span class="st">f&quot;before: {len(raw)} rows&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;after:  {len(deduped)} rows&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;removed: {len(raw) - len(deduped)}&quot;</span>)</code></pre>
-      <h4 id="not-inplace-true">Not <code>inplace=True</code></h4>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+before: <span class="out-num">102</span> rows
+after:  <span class="out-num">100</span> rows
+removed: <span class="out-num">2</span>
+      </div>
+      <h5 id="not-inplace-true">Not <code>inplace=True</code></h5>
       <p><code>drop_duplicates</code> accepts <code>inplace=True</code>, and almost every tutorial you will find uses it. Do not.</p>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -986,16 +1395,25 @@ repeated = counts[counts &gt; <span class="nm">1</span>]
       <ol><li>It does not usually save memory. pandas generally builds the new object anyway and then rebinds the name, so the promised efficiency mostly is not real.</li><li>It returns <code>None</code>, which breaks method chaining. <code>df.drop_duplicates(inplace=True).head()</code> is an <code>AttributeError</code>, and the message will not mention <code>inplace</code>.</li><li><strong>It changes an object you cannot see.</strong> In a notebook, cells run in whatever order you click them. An in-place operation run twice, or run before a cell you then scroll up and re-execute, leaves you holding a DataFrame that does not match the code on screen. That is the single most common way a notebook starts producing numbers nobody can reproduce.</li></ol>
       <p>Explicit reassignment is one extra word and the state is always legible.</p>
       </div>
-      <h3 id="the-index-after-dropping-rows">The index after dropping rows</h3>
+      <h4 id="the-index-after-dropping-rows">The index after dropping rows</h4>
       <p>Look at what the row labels do.</p>
       <pre><code><span class="fn">print</span>(deduped.index[-<span class="nm">6</span>:].<span class="fn">tolist</span>())
 <span class="fn">print</span>(<span class="st">f&quot;rows: {len(deduped)}, last label: {deduped.index[-1]}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+[<span class="out-num">94</span>, <span class="out-num">95</span>, <span class="out-num">96</span>, <span class="out-num">97</span>, <span class="out-num">98</span>, <span class="out-num">99</span>]
+rows: <span class="out-num">100</span>, last label: <span class="out-num">99</span>
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> The table now has 100 rows. What is the largest row label, and why is it not 99?  Commit to an answer before you run the next cell.
       </div>
       <pre><code>gaps = [i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(raw)) <span class="kw">if</span> i <span class="kw">not</span> <span class="kw">in</span> <span class="fn">set</span>(deduped.index)]
 <span class="fn">print</span>(<span class="st">f&quot;labels missing from the index: {gaps}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+labels missing from the index: [<span class="out-num">100</span>, <span class="out-num">101</span>]
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Dropping rows removes their labels but does not renumber anything. The index still runs to 101 with two holes in it, because labels are identifiers, not positions - the same distinction from section 4.</p>
       <p>Usually harmless. It bites when you later assume <code>.iloc[i]</code> and <code>.loc[i]</code> agree, or when you write the file out and someone reads the index as a row count.</p>
@@ -1003,22 +1421,36 @@ repeated = counts[counts &gt; <span class="nm">1</span>]
       <pre><code>clean = deduped.<span class="fn">reset_index</span>(drop=<span class="kw">True</span>)
 
 <span class="fn">print</span>(<span class="st">f&quot;rows: {len(clean)}, last label: {clean.index[-1]}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+rows: <span class="out-num">100</span>, last label: <span class="out-num">99</span>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**<code>reset_index(drop=True)</code> renumbers the rows 0 to N-1.**</p>
       <p>Without <code>drop=True</code> the old index is kept as a new column called <code>index</code>, which is occasionally what you want and usually clutter.</p>
       <p>Worth knowing what you are giving up: those original labels were the only link back to line numbers in the source file. If you need to tell somebody which row of their CSV was malformed, capture it before you reset.</p>
       </div>
-      <h4 id="the-index-plan-for-this-module">The index plan for this module</h4>
+      <h5 id="the-index-plan-for-this-module">The index plan for this module</h5>
       <p>Three stages, decided once so it does not have to be revisited:</p>
       <table class="data-table"><thead><tr><th>Stage</th><th>Index</th><th>Why</th></tr></thead><tbody><tr><td>on load</td><td><code>RangeIndex</code></td><td>duplicates are visible as rows, and <code>student_id</code> can be checked for uniqueness like any other column</td></tr><tr><td>after cleaning</td><td><code>RangeIndex</code>, reset</td><td>contiguous, no holes</td></tr><tr><td>before merging</td><td><code>student_id</code></td><td>a join needs a real key, and by then it is known to be unique</td></tr></tbody></table>
       <p>We are at stage two. Stage three arrives in section 11.</p>
-      <h3 id="the-impossible-value">The impossible value</h3>
+      <h4 id="the-impossible-value">The impossible value</h4>
       <p>One student has an <code>hs_attendance</code> of 1.4. Here is the wrong way to fix it, shown on purpose.</p>
       <pre><code>attempt = clean.<span class="fn">copy</span>()
 attempt[attempt.hs_attendance &gt; <span class="nm">1.0</span>][<span class="st">&quot;hs_attendance&quot;</span>] = np.nan
 
 <span class="fn">print</span>(<span class="st">f&quot;rows still above 1.0: {(attempt.hs_attendance &gt; 1.0).sum()}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+rows still above <span class="out-num">1.0</span>: <span class="out-num">1</span>
+/sessions/youthful-keen-pascal/tmp/ipykernel_11/<span class="out-num">1020421739.</span>py:<span class="out-num">2</span>: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  attempt[attempt.hs_attendance &gt; <span class="out-num">1.0</span>][&quot;hs_attendance&quot;] = np.nan
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> That cell probably printed a warning. Ignore the warning for a moment and read the number underneath it. Did the edit work?  Commit to an answer before you run the next cell.
@@ -1030,13 +1462,19 @@ attempt[attempt.hs_attendance &gt; <span class="nm">1.0</span>][<span class="st"
       <p>pandas does try to warn you. <strong>What it says depends on your version</strong> - older pandas raises <code>SettingWithCopyWarning</code>, and newer pandas with Copy-on-Write raises <code>ChainedAssignmentError</code> instead. Do not memorise either name. Memorise the symptom: <em>you assigned, and nothing changed.</em></p>
       <p>The tell in the code is the <strong>two sets of brackets in a row</strong>. That is chained indexing, and it is never what you want on the left of an <code>=</code>.</p>
       </details>
-      <h4 id="the-fix-one-loc-both-axes-at-once">The fix: one <code>.loc</code>, both axes at once</h4>
+      <h5 id="the-fix-one-loc-both-axes-at-once">The fix: one <code>.loc</code>, both axes at once</h5>
       <pre><code>clean = clean.<span class="fn">copy</span>()
 clean.loc[clean.hs_attendance &gt; <span class="nm">1.0</span>, <span class="st">&quot;hs_attendance&quot;</span>] = np.nan
 
 <span class="fn">print</span>(<span class="st">f&quot;rows above 1.0: {(clean.hs_attendance &gt; 1.0).sum()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;hs_attendance now missing for: {clean.hs_attendance.isna().sum()} student(s)&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;max attendance: {clean.hs_attendance.max()}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+rows above <span class="out-num">1.0</span>: <span class="out-num">0</span>
+hs_attendance now missing for: <span class="out-num">1</span> student(s)
+max attendance: <span class="out-num">1.0</span>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**Select rows and columns in a single <code>.loc</code>, never with two bracket pairs.**</p>
@@ -1050,8 +1488,8 @@ df[mask][<span class="st">&quot;col&quot;</span>] = value          <span class="
       <p><code>hs_gpa</code> and <code>ug_gpa</code> are both on a 4.0 scale, so any value above 4.0 is impossible in the same way.</p>
       <ol><li>Check whether <code>clean</code> contains any.</li><li>Write the <code>.loc</code> statement that would set them to <code>NaN</code> if it did.</li><li>Confirm afterwards that the count is zero either way.</li></ol>
       <div class="exercise-block" data-exercise="excleaning-23">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="excleaning-23-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="excleaning-23-src">Your turn - run it here<span class="vh"> (exercise 5)</span></label>
+        <textarea id="excleaning-23-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="excleaning-23">Run</button>
           <button class="ex-reset" data-target="excleaning-23">Reset</button>
@@ -1073,51 +1511,99 @@ df[mask][<span class="st">&quot;col&quot;</span>] = value          <span class="
         <p>Two problems down. Both were structural, and both had a defensible answer that did not require a judgement call about the students themselves.</p>
       <p>The next one is different. It is a column that is not broken at all - it simply arrived in the wrong shape.</p>
       </div>
+      <h3 id="cleaning-2-the-column-that-is-text">Cleaning 2: the column that is text</h3>
+      <p><code>submission_rate</code> holds values like <code>&quot;84%&quot;</code>. Every one is meaningful, none is missing in the ordinary sense, and the whole column is unusable because of one character per cell.</p>
       <pre><code><span class="fn">print</span>(clean.submission_rate.dtype)
 <span class="fn">print</span>(clean.submission_rate.<span class="fn">head</span>(<span class="nm">4</span>).<span class="fn">tolist</span>())</code></pre>
-      <h3 id="why-one-character-disables-a-column">Why one character disables a column</h3>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+object
+[nan, &#x27;<span class="out-num">69</span>%&#x27;, &#x27;<span class="out-num">84</span>%&#x27;, nan]
+      </div>
+      <h4 id="why-one-character-disables-a-column">Why one character disables a column</h4>
       <p>pandas gives a column a single dtype. One string forces the whole column to <code>object</code>, and <code>object</code> means &quot;arbitrary Python objects&quot;, which supports almost no arithmetic.</p>
       <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>clean.submission_rate.<span class="fn">mean</span>()</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+────────────────────────────────────────────────────────────────
+  EXPECTED ERROR. This cell is supposed to fail.
+────────────────────────────────────────────────────────────────
+Traceback (most recent call last):
+  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/series.py&quot;, line <span class="out-num">6570</span>, in mean
+    return NDFrame.mean(self, axis, skipna, numeric_only, **kwargs)
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/generic.py&quot;, line <span class="out-num">12485</span>, in mean
+    return self._stat_function(
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/generic.py&quot;, line <span class="out-num">12442</span>, in _stat_function
+    return self._reduce(
+TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27;
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**A <code>%</code> or a <code>$</code> or a comma in a number column silently makes it text.**</p>
       <p>Nothing is malformed here. A human reading <code>84%</code> sees a number. pandas sees a five-character string, and every mathematical method on the column is disabled from the moment the file is read.</p>
       <p>This is why <code>.info()</code> is the first thing you run. The dtype tells you before you waste an hour on a calculation that cannot work.</p>
       </div>
-      <h3 id="the-str-accessor">The <code>.str</code> accessor</h3>
+      <h4 id="the-str-accessor">The <code>.str</code> accessor</h4>
       <p>A Series of strings exposes Python&#x27;s string methods through <code>.str</code>, applied to every element at once. This is Module 3&#x27;s vectorization, applied to text.</p>
       <pre><code><span class="fn">print</span>(clean.submission_rate.<span class="fn">str</span>.<span class="fn">rstrip</span>(<span class="st">&quot;%&quot;</span>).<span class="fn">head</span>(<span class="nm">4</span>).<span class="fn">tolist</span>())</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+[nan, &#x27;<span class="out-num">69</span>&#x27;, &#x27;<span class="out-num">84</span>&#x27;, nan]
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Those still print with quote marks. Is the column numeric yet?  Commit to an answer before you run the next cell.
       </div>
       <pre><code>stripped = clean.submission_rate.<span class="fn">str</span>.<span class="fn">rstrip</span>(<span class="st">&quot;%&quot;</span>)
 <span class="fn">print</span>(stripped.dtype)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+object
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Still <code>object</code>. Removing the <code>%</code> left strings that happen to look like numbers, which is not the same as numbers.</p>
       <p><code>&quot;84&quot;</code> and <code>84</code> are different objects. The conversion is a second, separate step - and this is the step everybody forgets.</p>
       </details>
-      <h3 id="astype-converts"><code>.astype()</code> converts</h3>
+      <h4 id="astype-converts"><code>.astype()</code> converts</h4>
       <pre><code>rate = clean.submission_rate.<span class="fn">str</span>.<span class="fn">rstrip</span>(<span class="st">&quot;%&quot;</span>).<span class="fn">astype</span>(<span class="fn">float</span>) / <span class="nm">100</span>
 
 <span class="fn">print</span>(rate.dtype)
 <span class="fn">print</span>(rate.<span class="fn">head</span>(<span class="nm">4</span>).<span class="fn">tolist</span>())
 <span class="fn">print</span>(<span class="st">f&quot;mean submission rate: {rate.mean():.3f}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+float64
+[nan, <span class="out-num">0.69</span>, <span class="out-num">0.84</span>, nan]
+mean submission rate: <span class="out-num">0.798</span>
+      </div>
       <p>Assign it back with <code>.loc</code>-free column assignment, which is unambiguous because it names a whole column rather than a subset of rows.</p>
       <pre><code>clean = clean.<span class="fn">copy</span>()
 clean[<span class="st">&quot;submission_rate&quot;</span>] = clean.submission_rate.<span class="fn">str</span>.<span class="fn">rstrip</span>(<span class="st">&quot;%&quot;</span>).<span class="fn">astype</span>(<span class="fn">float</span>) / <span class="nm">100</span>
 
 clean[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;name&quot;</span>, <span class="st">&quot;submission_rate&quot;</span>]].<span class="fn">head</span>(<span class="nm">4</span>)</code></pre>
-      <h3 id="why-that-did-not-fail-on-the-missing-values">Why that did not fail on the missing values</h3>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+   student_id           name  submission_rate
+<span class="out-num">0</span>        <span class="out-num">1001</span>   Kofi Pereira              NaN
+<span class="out-num">1</span>        <span class="out-num">1002</span>    Elliot Park             <span class="out-num">0.69</span>
+<span class="out-num">2</span>        <span class="out-num">1003</span>  Amara Okonkwo             <span class="out-num">0.84</span>
+<span class="out-num">3</span>        <span class="out-num">1004</span>    Ravi Wojcik              NaN
+      </div>
+      <h4 id="why-that-did-not-fail-on-the-missing-values">Why that did not fail on the missing values</h4>
       <p>Seventeen students have no submission rate at all. <code>.astype(float)</code> on a column containing blanks would normally be a problem.</p>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;missing submission rates: {clean.submission_rate.isna().sum()}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+missing submission rates: <span class="out-num">15</span>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p><code>read_csv</code> had already turned the empty cells into <code>NaN</code>, and <code>NaN</code> is a <strong>float</strong>, so it passes through <code>.astype(float)</code> untouched.</p>
       <p>The <code>.str</code> methods do the same thing - they return <code>NaN</code> for missing entries rather than raising. That is deliberate design in pandas, and it is why the whole chain works in one line.</p>
       <p>It also means the missing values are still missing. Nothing here fixed them, and section 8 has to decide what to do about that.</p>
       </details>
-      <h3 id="when-str-is-not-enough-apply">When <code>.str</code> is not enough: <code>.apply()</code></h3>
+      <h4 id="when-str-is-not-enough-apply">When <code>.str</code> is not enough: <code>.apply()</code></h4>
       <p><code>.str.rstrip</code> worked because every value had the same shape. Real columns are often messier, and then you need an arbitrary function applied per element.</p>
       <pre><code>messy = pd.<span class="fn">Series</span>([<span class="st">&quot;84%&quot;</span>, <span class="st">&quot;0.91&quot;</span>, <span class="st">&quot;77 %&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="st">&quot;n/a&quot;</span>, <span class="st">&quot;1.0&quot;</span>])
 
@@ -1133,6 +1619,16 @@ clean[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;na
     <span class="kw">return</span> x / <span class="nm">100</span> <span class="kw">if</span> x &gt; <span class="nm">1</span> <span class="kw">else</span> x
 
 messy.<span class="fn">apply</span>(to_rate)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+<span class="out-num">0</span>    <span class="out-num">0.84</span>
+<span class="out-num">1</span>    <span class="out-num">0.91</span>
+<span class="out-num">2</span>    <span class="out-num">0.77</span>
+<span class="out-num">3</span>     NaN
+<span class="out-num">4</span>     NaN
+<span class="out-num">5</span>    <span class="out-num">1.00</span>
+dtype: float64
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**<code>.apply()</code> runs a Python function on every element.** It is the escape hatch: anything you can express as a function, you can apply.</p>
@@ -1143,8 +1639,8 @@ messy.<span class="fn">apply</span>(to_rate)</code></pre>
       <p><code>need_based_aid</code> is stored as <code>0</code> and <code>1</code>. For a report, those want to be readable labels.</p>
       <ol><li>Use <code>.map()</code> with a dictionary to make a new Series of <code>&quot;yes&quot;</code> / <code>&quot;no&quot;</code>.</li><li>Count how many students are in each category with <code>value_counts()</code>.</li><li>Say in a comment why you would <em>not</em> overwrite the original column with the labels.</li></ol>
       <div class="exercise-block" data-exercise="excleaning-20">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="excleaning-20-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="excleaning-20-src">Your turn - run it here<span class="vh"> (exercise 6)</span></label>
+        <textarea id="excleaning-20-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="excleaning-20">Run</button>
           <button class="ex-reset" data-target="excleaning-20">Reset</button>
@@ -1167,6 +1663,8 @@ messy.<span class="fn">apply</span>(to_rate)</code></pre>
         <p>Section 5 established that the students without an LMS record are not a random sample of the cohort - they score lower and they succeed less often. That means the missing values carry information, and every way of handling them trades one kind of wrongness for another.</p>
       <p>This section is about choosing deliberately and writing down what you chose. It is the part of the module the capstone actually holds you to.</p>
       </div>
+      <h3 id="cleaning-3-the-missing-values">Cleaning 3: the missing values</h3>
+      <p>Start by restating the problem against the cleaned table.</p>
       <pre><code>lms = [<span class="st">&quot;logins_per_week&quot;</span>, <span class="st">&quot;time_on_task_hrs&quot;</span>, <span class="st">&quot;submission_rate&quot;</span>]
 
 missing_mask = clean[lms].<span class="fn">isna</span>().<span class="fn">all</span>(axis=<span class="nm">1</span>)
@@ -1174,13 +1672,25 @@ missing_mask = clean[lms].<span class="fn">isna</span>().<span class="fn">all</s
 <span class="fn">print</span>()
 <span class="fn">print</span>(<span class="st">f&quot;success rate, has record:  {clean.loc[~missing_mask, &#x27;success&#x27;].mean():.2f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;success rate, no record:   {clean.loc[missing_mask, &#x27;success&#x27;].mean():.2f}&quot;</span>)</code></pre>
-      <h3 id="the-three-options-and-what-each-one-costs">The three options, and what each one costs</h3>
-      <h4 id="option-1-drop-the-rows">Option 1: drop the rows</h4>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+students with no LMS record: <span class="out-num">15</span> of <span class="out-num">100</span>
+
+success rate, has record:  <span class="out-num">0.66</span>
+success rate, no record:   <span class="out-num">0.27</span>
+      </div>
+      <h4 id="the-three-options-and-what-each-one-costs">The three options, and what each one costs</h4>
+      <h5 id="option-1-drop-the-rows">Option 1: drop the rows</h5>
       <pre><code>dropped = clean.<span class="fn">dropna</span>(subset=lms)
 
 <span class="fn">print</span>(<span class="st">f&quot;rows: {len(clean)} -&gt; {len(dropped)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;success rate: {clean.success.mean():.3f} -&gt; {dropped.success.mean():.3f}&quot;</span>)</code></pre>
-      <h4 id="option-2-fill-with-a-central-value">Option 2: fill with a central value</h4>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+rows: <span class="out-num">100</span> -&gt; <span class="out-num">85</span>
+success rate: <span class="out-num">0.600</span> -&gt; <span class="out-num">0.659</span>
+      </div>
+      <h5 id="option-2-fill-with-a-central-value">Option 2: fill with a central value</h5>
       <pre><code>filled = clean.<span class="fn">copy</span>()
 <span class="kw">for</span> col <span class="kw">in</span> lms:
     filled.loc[:, col] = filled[col].<span class="fn">fillna</span>(filled[col].<span class="fn">median</span>())
@@ -1188,6 +1698,12 @@ missing_mask = clean[lms].<span class="fn">isna</span>().<span class="fn">all</s
 <span class="fn">print</span>(<span class="st">f&quot;rows kept: {len(filled)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;success rate: {filled.success.mean():.3f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;logins std: {clean.logins_per_week.std():.3f} -&gt; {filled.logins_per_week.std():.3f}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+rows kept: <span class="out-num">100</span>
+success rate: <span class="out-num">0.600</span>
+logins std: <span class="out-num">1.675</span> -&gt; <span class="out-num">1.543</span>
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Filling kept every row, so the success rate is unchanged. But one number above moved a lot. Which, and why does it matter?  Commit to an answer before you run the next cell.
@@ -1197,7 +1713,7 @@ missing_mask = clean[lms].<span class="fn">isna</span>().<span class="fn">all</s
       <p>Seventeen students were just assigned exactly the median. That is seventeen points of zero variation added to the column, so the spread shrinks and every student who was actually missing now looks perfectly typical.</p>
       <p>Filling does not add information. It manufactures the appearance of information, and it does so most for the students you know least about. Any correlation computed afterwards is diluted toward zero, which will make engagement look like a <em>weaker</em> predictor than it is.</p>
       </details>
-      <h4 id="option-3-keep-the-rows-and-record-the-missingness">Option 3: keep the rows, and record the missingness</h4>
+      <h5 id="option-3-keep-the-rows-and-record-the-missingness">Option 3: keep the rows, and record the missingness</h5>
       <pre><code>flagged = clean.<span class="fn">copy</span>()
 flagged[<span class="st">&quot;lms_missing&quot;</span>] = flagged[lms].<span class="fn">isna</span>().<span class="fn">all</span>(axis=<span class="nm">1</span>)
 
@@ -1205,13 +1721,20 @@ flagged[<span class="st">&quot;lms_missing&quot;</span>] = flagged[lms].<span cl
     flagged.loc[:, col] = flagged[col].<span class="fn">fillna</span>(flagged[col].<span class="fn">median</span>())
 
 <span class="fn">print</span>(flagged.<span class="fn">groupby</span>(<span class="st">&quot;lms_missing&quot;</span>)[[<span class="st">&quot;course_score&quot;</span>, <span class="st">&quot;success&quot;</span>]].<span class="fn">mean</span>().<span class="fn">round</span>(<span class="nm">3</span>))</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+             course_score  success
+lms_missing                       
+False              <span class="out-num">69.367</span>    <span class="out-num">0.659</span>
+True               <span class="out-num">62.527</span>    <span class="out-num">0.267</span>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>Adding a missingness flag keeps the fact that the value was missing, which is itself a finding.</strong></p>
       <p>The two groups differ on the outcome. A model given <code>lms_missing</code> can use that; an analyst reading the table can see it. Neither is possible once the rows are deleted, and it is invisible once the values are filled without a flag.</p>
       <p>The cost is honesty about what the filled numbers are: they are placeholders, not measurements, and any statement about the engagement columns has to be qualified for that group.</p>
       </div>
-      <h3 id="the-decision">The decision</h3>
+      <h4 id="the-decision">The decision</h4>
       <p>There is no option here without a cost, so the deliverable is not a clean table. It is a clean table <strong>plus a written record of what was traded away</strong>.</p>
       <pre><code>decisions = pd.<span class="fn">DataFrame</span>([
     {<span class="st">&quot;problem&quot;</span>: <span class="st">&quot;2 duplicate rows&quot;</span>,
@@ -1229,6 +1752,20 @@ flagged[<span class="st">&quot;lms_missing&quot;</span>] = flagged[lms].<span cl
 ])
 
 decisions</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+                              problem                                action  \
+<span class="out-num">0</span>                    <span class="out-num">2</span> duplicate rows         drop_duplicates(), keep first   
+<span class="out-num">1</span>                 hs_attendance = <span class="out-num">1.4</span>                            set to NaN   
+<span class="out-num">2</span>      submission_rate stored as text  .str.rstrip(&#x27;%&#x27;).astype(float) / <span class="out-num">100</span>   
+<span class="out-num">3</span>  <span class="out-num">17</span> students missing all LMS fields        median fill + lms_missing flag   
+
+                                                cost  
+<span class="out-num">0</span>                     none - the rows were identical  
+<span class="out-num">1</span>          <span class="out-num">1</span> student now missing an attendance value  
+<span class="out-num">2</span>                none - reversible formatting change  
+<span class="out-num">3</span>  filled values are placeholders; column varianc...
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>Write this table before you write a single finding.</strong></p>
@@ -1239,8 +1776,8 @@ decisions</code></pre>
       <p>The median fill above used the median of <em>all</em> students who had a value.</p>
       <ol><li>Compute the median <code>logins_per_week</code> separately for successful and unsuccessful students.</li><li>Say, in a comment, why filling from those group medians would be a <strong>worse</strong> choice here even though it looks more careful.</li></ol>
       <div class="exercise-block" data-exercise="excleaning-15">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="excleaning-15-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="excleaning-15-src">Your turn - run it here<span class="vh"> (exercise 7)</span></label>
+        <textarea id="excleaning-15-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="excleaning-15">Run</button>
           <button class="ex-reset" data-target="excleaning-15">Reset</button>
@@ -1270,26 +1807,85 @@ decisions</code></pre>
 
 <section id="filtering" class="content-section">
       <h2>Filtering</h2>
+      <p>A comparison on a column gives a Series of <code>True</code> and <code>False</code>, one per row.</p>
       <pre><code>low_engagement = clean.logins_per_week &lt; <span class="nm">1.0</span>
 
 <span class="fn">print</span>(<span class="fn">type</span>(low_engagement))
 <span class="fn">print</span>(low_engagement.<span class="fn">head</span>())
 <span class="fn">print</span>(<span class="st">f&quot;\nmatching students: {low_engagement.sum()}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+&lt;class &#x27;pandas.core.series.Series&#x27;&gt;
+<span class="out-num">0</span>    False
+<span class="out-num">1</span>     True
+<span class="out-num">2</span>    False
+<span class="out-num">3</span>    False
+<span class="out-num">4</span>     True
+Name: logins_per_week, dtype: bool
+
+matching students: <span class="out-num">19</span>
+      </div>
       <p><code>.sum()</code> on a boolean Series counts the <code>True</code> values, because <code>True</code> is 1. That is a Module 2 fact still paying rent.</p>
       <p>Pass the mask to the DataFrame to get the rows.</p>
       <pre><code>clean[low_engagement][[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;name&quot;</span>, <span class="st">&quot;logins_per_week&quot;</span>, <span class="st">&quot;course_score&quot;</span>]]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+    student_id               name  logins_per_week  course_score
+<span class="out-num">1</span>         <span class="out-num">1002</span>        Elliot Park              <span class="out-num">0.8</span>          <span class="out-num">57.1</span>
+<span class="out-num">4</span>         <span class="out-num">1005</span>     Perla Sorensen              <span class="out-num">0.6</span>          <span class="out-num">69.9</span>
+<span class="out-num">5</span>         <span class="out-num">1006</span>    Maya Villanueva              <span class="out-num">0.5</span>          <span class="out-num">66.1</span>
+<span class="out-num">9</span>         <span class="out-num">1010</span>    Giulia Farrugia              <span class="out-num">0.6</span>          <span class="out-num">50.2</span>
+<span class="out-num">16</span>        <span class="out-num">1017</span>    Freya Jankowski              <span class="out-num">0.9</span>          <span class="out-num">70.0</span>
+..         ...                ...              ...           ...
+<span class="out-num">75</span>        <span class="out-num">1076</span>    Liora Castaneda              <span class="out-num">0.0</span>          <span class="out-num">50.1</span>
+<span class="out-num">88</span>        <span class="out-num">1089</span>  Devin Castellanos              <span class="out-num">0.4</span>          <span class="out-num">50.6</span>
+<span class="out-num">96</span>        <span class="out-num">1097</span>      Fiona Quiroga              <span class="out-num">0.0</span>          <span class="out-num">54.7</span>
+<span class="out-num">98</span>        <span class="out-num">1099</span>       Zane Pereira              <span class="out-num">0.0</span>          <span class="out-num">54.7</span>
+<span class="out-num">99</span>        <span class="out-num">1100</span>      Mateo Jimenez              <span class="out-num">0.0</span>          <span class="out-num">49.1</span>
+
+[<span class="out-num">19</span> rows x <span class="out-num">4</span> columns]
+      </div>
       <h3 id="combining-conditions">Combining conditions</h3>
       <p>Use <code>&amp;</code> and <code>|</code>, not <code>and</code> and <code>or</code>, and <strong>parenthesise each condition</strong>.</p>
       <pre><code>at_risk = (clean.logins_per_week &lt; <span class="nm">1.5</span>) &amp; (clean.ug_gpa &lt; <span class="nm">2.5</span>)
 
 <span class="fn">print</span>(<span class="st">f&quot;students low on both measures: {at_risk.sum()}&quot;</span>)
 clean[at_risk][[<span class="st">&quot;name&quot;</span>, <span class="st">&quot;logins_per_week&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>, <span class="st">&quot;success&quot;</span>]]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+students low on both measures: <span class="out-num">17</span>
+                 name  logins_per_week  ug_gpa  success
+<span class="out-num">1</span>         Elliot Park              <span class="out-num">0.8</span>    <span class="out-num">2.48</span>        <span class="out-num">0</span>
+<span class="out-num">5</span>     Maya Villanueva              <span class="out-num">0.5</span>    <span class="out-num">2.18</span>        <span class="out-num">0</span>
+<span class="out-num">6</span>    Juniper Sorensen              <span class="out-num">1.0</span>    <span class="out-num">2.09</span>        <span class="out-num">0</span>
+<span class="out-num">9</span>     Giulia Farrugia              <span class="out-num">0.6</span>    <span class="out-num">1.71</span>        <span class="out-num">0</span>
+<span class="out-num">16</span>    Freya Jankowski              <span class="out-num">0.9</span>    <span class="out-num">1.99</span>        <span class="out-num">1</span>
+..                ...              ...     ...      ...
+<span class="out-num">75</span>    Liora Castaneda              <span class="out-num">0.0</span>    <span class="out-num">2.30</span>        <span class="out-num">0</span>
+<span class="out-num">88</span>  Devin Castellanos              <span class="out-num">0.4</span>    <span class="out-num">1.99</span>        <span class="out-num">0</span>
+<span class="out-num">91</span>   Rania Wainwright              <span class="out-num">1.3</span>    <span class="out-num">1.96</span>        <span class="out-num">1</span>
+<span class="out-num">98</span>       Zane Pereira              <span class="out-num">0.0</span>    <span class="out-num">1.50</span>        <span class="out-num">0</span>
+<span class="out-num">99</span>      Mateo Jimenez              <span class="out-num">0.0</span>    <span class="out-num">1.85</span>        <span class="out-num">0</span>
+
+[<span class="out-num">17</span> rows x <span class="out-num">4</span> columns]
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Why <code>&amp;</code> rather than <code>and</code>? What do you think <code>clean.logins_per_week &lt; 1.5 and clean.ug_gpa &lt; 2.5</code> would do?  Commit to an answer before you run the next cell.
       </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>clean.logins_per_week &lt; <span class="nm">1.5</span> <span class="kw">and</span> clean.ug_gpa &lt; <span class="nm">2.5</span></code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+────────────────────────────────────────────────────────────────
+  EXPECTED ERROR. This cell is supposed to fail.
+────────────────────────────────────────────────────────────────
+Traceback (most recent call last):
+  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/generic.py&quot;, line <span class="out-num">1580</span>, in __nonzero__
+    raise ValueError(
+ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>&quot;The truth value of a Series is ambiguous.&quot;</p>
       <p><code>and</code> wants to reduce each side to a single <code>True</code> or <code>False</code>, and a hundred booleans cannot answer that question - pandas refuses to guess whether you meant &quot;any&quot; or &quot;all&quot;. <code>&amp;</code> is the element-wise version, which is what you actually want: compare row by row.</p>
@@ -1307,16 +1903,42 @@ clean[at_risk][[<span class="st">&quot;name&quot;</span>, <span class="st">&quot
 <span class="fn">print</span>(clean[clean.name.<span class="fn">isin</span>(cast)][[<span class="st">&quot;name&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>, <span class="st">&quot;logins_per_week&quot;</span>]])
 <span class="fn">print</span>()
 <span class="fn">print</span>(<span class="st">f&quot;everyone else: {(~clean.name.isin(cast)).sum()} students&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+                 name  ug_gpa  logins_per_week
+<span class="out-num">2</span>       Amara Okonkwo    <span class="out-num">3.02</span>              <span class="out-num">3.4</span>
+<span class="out-num">23</span>  Priya Raghunathan    <span class="out-num">2.80</span>              <span class="out-num">4.4</span>
+<span class="out-num">88</span>  Devin Castellanos    <span class="out-num">1.99</span>              <span class="out-num">0.4</span>
+
+everyone else: <span class="out-num">97</span> students
+      </div>
       <h3 id="query-when-the-condition-gets-long"><code>.query()</code>, when the condition gets long</h3>
       <p><code>.query()</code> takes the condition as a string. It is easier to read once you have three or more clauses, and slower, which rarely matters at this size.</p>
       <pre><code>clean.<span class="fn">query</span>(<span class="st">&quot;logins_per_week &lt; 1.5 and ug_gpa &lt; 2.5&quot;</span>)[[<span class="st">&quot;name&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>]]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+                 name  ug_gpa
+<span class="out-num">1</span>         Elliot Park    <span class="out-num">2.48</span>
+<span class="out-num">5</span>     Maya Villanueva    <span class="out-num">2.18</span>
+<span class="out-num">6</span>    Juniper Sorensen    <span class="out-num">2.09</span>
+<span class="out-num">9</span>     Giulia Farrugia    <span class="out-num">1.71</span>
+<span class="out-num">16</span>    Freya Jankowski    <span class="out-num">1.99</span>
+..                ...     ...
+<span class="out-num">75</span>    Liora Castaneda    <span class="out-num">2.30</span>
+<span class="out-num">88</span>  Devin Castellanos    <span class="out-num">1.99</span>
+<span class="out-num">91</span>   Rania Wainwright    <span class="out-num">1.96</span>
+<span class="out-num">98</span>       Zane Pereira    <span class="out-num">1.50</span>
+<span class="out-num">99</span>      Mateo Jimenez    <span class="out-num">1.85</span>
+
+[<span class="out-num">17</span> rows x <span class="out-num">2</span> columns]
+      </div>
       <p>Note that inside <code>.query()</code> you write <code>and</code>, not <code>&amp;</code> - it is a small expression language, not Python. That is a fair reason to prefer masks until the length of the condition makes the case for you.</p>
       <p><strong>Your turn.</strong></p>
-      <p>Berrios wants a shortlist: students who are <strong>succeeding despite low engagement</strong>, since they may reveal something the engagement index misses.</p>
+      <p>Lee wants a shortlist: students who are <strong>succeeding despite low engagement</strong>, since they may reveal something the engagement index misses.</p>
       <ol><li>Build a mask for <code>logins_per_week</code> below the cohort median <strong>and</strong> <code>success == 1</code>.</li><li>Show their names, logins, and course scores, sorted by score descending.</li><li>Say in a comment how many there are and whether that is few enough to be worth looking at individually.</li></ol>
       <div class="exercise-block" data-exercise="exfiltering-15">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="exfiltering-15-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="exfiltering-15-src">Your turn - run it here<span class="vh"> (exercise 8)</span></label>
+        <textarea id="exfiltering-15-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exfiltering-15">Run</button>
           <button class="ex-reset" data-target="exfiltering-15">Reset</button>
@@ -1344,13 +1966,40 @@ out = clean[mask][[<span class="st">&quot;name&quot;</span>, <span class="st">&q
 
 <section id="groupby" class="content-section">
       <h2>Grouping</h2>
+      <p>Three steps, always, and pandas names them: <strong>split</strong> the rows into groups, <strong>apply</strong> a summary to each group, <strong>combine</strong> the results into a new table.</p>
       <pre><code>clean.<span class="fn">groupby</span>(<span class="st">&quot;success&quot;</span>).<span class="fn">size</span>()</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+success
+<span class="out-num">0</span>    <span class="out-num">40</span>
+<span class="out-num">1</span>    <span class="out-num">60</span>
+dtype: int64
+      </div>
       <p>That is <code>value_counts()</code> with extra steps, and in fact <code>value_counts()</code> is the shortcut for exactly this.</p>
       <pre><code><span class="fn">print</span>(clean.success.<span class="fn">value_counts</span>())
 <span class="fn">print</span>()
 <span class="fn">print</span>(clean.success.<span class="fn">value_counts</span>(normalize=<span class="kw">True</span>).<span class="fn">round</span>(<span class="nm">3</span>))    <span class="cm"># as proportions</span></code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+success
+<span class="out-num">1</span>    <span class="out-num">60</span>
+<span class="out-num">0</span>    <span class="out-num">40</span>
+Name: count, dtype: int64
+
+success
+<span class="out-num">1</span>    <span class="out-num">0.6</span>
+<span class="out-num">0</span>    <span class="out-num">0.4</span>
+Name: proportion, dtype: float64
+      </div>
       <p>The interesting version summarises a <strong>different</strong> column than the one you grouped by.</p>
       <pre><code>clean.<span class="fn">groupby</span>(<span class="st">&quot;success&quot;</span>)[[<span class="st">&quot;logins_per_week&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>, <span class="st">&quot;course_score&quot;</span>]].<span class="fn">mean</span>().<span class="fn">round</span>(<span class="nm">2</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+         logins_per_week  ug_gpa  course_score
+success                                       
+<span class="out-num">0</span>                   <span class="out-num">1.05</span>    <span class="out-num">2.16</span>         <span class="out-num">58.70</span>
+<span class="out-num">1</span>                   <span class="out-num">3.45</span>    <span class="out-num">2.76</span>         <span class="out-num">74.77</span>
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Look at that table. Which of the three columns separates the two groups most sharply, relative to its own scale?  Commit to an answer before you run the next cell.
@@ -1362,18 +2011,50 @@ out = clean[mask][[<span class="st">&quot;name&quot;</span>, <span class="st">&q
       <h3 id="several-statistics-at-once">Several statistics at once</h3>
       <p><code>.agg()</code> takes a list of functions, or a dictionary mapping columns to the statistics you want from each.</p>
       <pre><code>clean.<span class="fn">groupby</span>(<span class="st">&quot;success&quot;</span>).logins_per_week.<span class="fn">agg</span>([<span class="st">&quot;count&quot;</span>, <span class="st">&quot;mean&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;std&quot;</span>]).<span class="fn">round</span>(<span class="nm">2</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+         count  mean  median   std
+success                           
+<span class="out-num">0</span>           <span class="out-num">29</span>  <span class="out-num">1.05</span>    <span class="out-num">0.80</span>  <span class="out-num">0.86</span>
+<span class="out-num">1</span>           <span class="out-num">56</span>  <span class="out-num">3.45</span>    <span class="out-num">3.45</span>  <span class="out-num">1.38</span>
+      </div>
       <pre><code>clean.<span class="fn">groupby</span>(<span class="st">&quot;success&quot;</span>).<span class="fn">agg</span>({
     <span class="st">&quot;logins_per_week&quot;</span>: [<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;std&quot;</span>],
     <span class="st">&quot;ug_gpa&quot;</span>:          <span class="st">&quot;mean&quot;</span>,
     <span class="st">&quot;course_score&quot;</span>:    [<span class="st">&quot;min&quot;</span>, <span class="st">&quot;max&quot;</span>],
 }).<span class="fn">round</span>(<span class="nm">2</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+        logins_per_week       ug_gpa course_score      
+                   mean   std   mean          min   max
+success                                                
+<span class="out-num">0</span>                  <span class="out-num">1.05</span>  <span class="out-num">0.86</span>   <span class="out-num">2.16</span>         <span class="out-num">46.0</span>  <span class="out-num">69.9</span>
+<span class="out-num">1</span>                  <span class="out-num">3.45</span>  <span class="out-num">1.38</span>   <span class="out-num">2.76</span>         <span class="out-num">63.4</span>  <span class="out-num">91.9</span>
+      </div>
       <h3 id="grouping-by-more-than-one-column">Grouping by more than one column</h3>
       <p>Pass a list, and the result gets one index level per grouping column - a <strong>MultiIndex</strong>.</p>
       <pre><code>by_two = clean.<span class="fn">groupby</span>([<span class="st">&quot;need_based_aid&quot;</span>, <span class="st">&quot;success&quot;</span>]).course_score.<span class="fn">mean</span>().<span class="fn">round</span>(<span class="nm">1</span>)
 by_two</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+need_based_aid  success
+<span class="out-num">0</span>               <span class="out-num">0</span>          <span class="out-num">59.7</span>
+                <span class="out-num">1</span>          <span class="out-num">77.5</span>
+<span class="out-num">1</span>               <span class="out-num">0</span>          <span class="out-num">58.2</span>
+                <span class="out-num">1</span>          <span class="out-num">72.2</span>
+Name: course_score, dtype: float64
+      </div>
       <pre><code><span class="fn">print</span>(<span class="fn">type</span>(by_two.index))
 <span class="fn">print</span>()
 <span class="fn">print</span>(by_two.<span class="fn">unstack</span>())        <span class="cm"># pivot the inner level out into columns</span></code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+&lt;class &#x27;pandas.core.indexes.multi.MultiIndex&#x27;&gt;
+success            <span class="out-num">0</span>     <span class="out-num">1</span>
+need_based_aid            
+<span class="out-num">0</span>               <span class="out-num">59.7</span>  <span class="out-num">77.5</span>
+<span class="out-num">1</span>               <span class="out-num">58.2</span>  <span class="out-num">72.2</span>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**<code>.unstack()</code> turns the innermost index level into columns.**</p>
@@ -1388,6 +2069,13 @@ by_two</code></pre>
 ).<span class="fn">round</span>(<span class="nm">3</span>)
 
 aid</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+                students  mean_score  success_rate
+need_based_aid                                    
+<span class="out-num">0</span>                     <span class="out-num">42</span>      <span class="out-num">71.976</span>         <span class="out-num">0.690</span>
+<span class="out-num">1</span>                     <span class="out-num">58</span>      <span class="out-num">65.709</span>         <span class="out-num">0.534</span>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>That gap is real, and it is not a measure of ability.</strong></p>
@@ -1398,8 +2086,8 @@ aid</code></pre>
       <p>Note the named-argument form used above: <code>students=(&quot;student_id&quot;, &quot;count&quot;)</code>. That is <strong>named aggregation</strong>, and it produces readable column names instead of a MultiIndex on the columns.</p>
       <p>Use it to build a table grouped by <code>hs_sports</code> showing, for each group: the number of students, mean <code>ug_gpa</code>, mean <code>logins_per_week</code>, and success rate. Round to 3 decimals. Then say in a comment whether playing a high-school sport looks like it matters.</p>
       <div class="exercise-block" data-exercise="exgroupby-18">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="exgroupby-18-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="exgroupby-18-src">Your turn - run it here<span class="vh"> (exercise 9)</span></label>
+        <textarea id="exgroupby-18-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exgroupby-18">Run</button>
           <button class="ex-reset" data-target="exgroupby-18">Reset</button>
@@ -1428,6 +2116,7 @@ aid</code></pre>
 
 <section id="combining" class="content-section">
       <h2>Merging</h2>
+      <p>Five files, one key. Load them and look at the shapes.</p>
       <pre><code>students      = pd.<span class="fn">read_csv</span>(<span class="st">&quot;data/students.csv&quot;</span>)
 high_school   = pd.<span class="fn">read_csv</span>(<span class="st">&quot;data/high_school.csv&quot;</span>)
 undergraduate = pd.<span class="fn">read_csv</span>(<span class="st">&quot;data/undergraduate.csv&quot;</span>)
@@ -1438,17 +2127,42 @@ outcomes      = pd.<span class="fn">read_csv</span>(<span class="st">&quot;data/
                 (<span class="st">&quot;undergraduate&quot;</span>, undergraduate), (<span class="st">&quot;lms_activity&quot;</span>, lms_activity),
                 (<span class="st">&quot;outcomes&quot;</span>, outcomes)]:
     <span class="fn">print</span>(<span class="st">f&quot;{name:&lt;15} {t.shape[0]:&gt;4} rows x {t.shape[1]} cols   {list(t.columns)}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+students         <span class="out-num">100</span> rows x <span class="out-num">2</span> cols   [&#x27;student_id&#x27;, &#x27;name&#x27;]
+
+high_school      <span class="out-num">100</span> rows x <span class="out-num">6</span> cols   [&#x27;student_id&#x27;, &#x27;hs_gpa&#x27;, &#x27;hs_clubs&#x27;, &#x27;hs_sports&#x27;, &#x27;hs_attendance&#x27;, &#x27;hs_pop_density&#x27;]
+undergraduate    <span class="out-num">100</span> rows x <span class="out-num">4</span> cols   [&#x27;student_id&#x27;, &#x27;ug_gpa&#x27;, &#x27;internships&#x27;, &#x27;need_based_aid&#x27;]
+lms_activity     <span class="out-num">100</span> rows x <span class="out-num">4</span> cols   [&#x27;student_id&#x27;, &#x27;logins_per_week&#x27;, &#x27;time_on_task_hrs&#x27;, &#x27;submission_rate&#x27;]
+outcomes         <span class="out-num">100</span> rows x <span class="out-num">3</span> cols   [&#x27;student_id&#x27;, &#x27;course_score&#x27;, &#x27;success&#x27;]
+      </div>
       <h3 id="the-key-has-to-be-checked-before-you-use-it">The key has to be checked before you use it</h3>
       <p>A merge on a non-unique key multiplies rows. Check first, every time.</p>
       <pre><code><span class="kw">for</span> name, t <span class="kw">in</span> [(<span class="st">&quot;students&quot;</span>, students), (<span class="st">&quot;high_school&quot;</span>, high_school),
                 (<span class="st">&quot;undergraduate&quot;</span>, undergraduate), (<span class="st">&quot;lms_activity&quot;</span>, lms_activity),
                 (<span class="st">&quot;outcomes&quot;</span>, outcomes)]:
     <span class="fn">print</span>(<span class="st">f&quot;{name:&lt;15} student_id unique: {t.student_id.is_unique}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+students        student_id unique: True
+high_school     student_id unique: True
+undergraduate   student_id unique: True
+lms_activity    student_id unique: True
+outcomes        student_id unique: True
+      </div>
       <h3 id="one-merge">One merge</h3>
       <pre><code>pair = students.<span class="fn">merge</span>(high_school, on=<span class="st">&quot;student_id&quot;</span>)
 
 <span class="fn">print</span>(pair.shape)
 pair.<span class="fn">head</span>(<span class="nm">3</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+(<span class="out-num">100</span>, <span class="out-num">7</span>)
+   student_id           name  hs_gpa  hs_clubs  hs_sports  hs_attendance  hs_pop_density
+<span class="out-num">0</span>        <span class="out-num">1001</span>   Kofi Pereira    <span class="out-num">2.87</span>         <span class="out-num">3</span>          <span class="out-num">1</span>          <span class="out-num">0.915</span>            <span class="out-num">3703</span>
+<span class="out-num">1</span>        <span class="out-num">1002</span>    Elliot Park    <span class="out-num">2.20</span>         <span class="out-num">1</span>          <span class="out-num">1</span>          <span class="out-num">0.866</span>            <span class="out-num">4851</span>
+<span class="out-num">2</span>        <span class="out-num">1003</span>  Amara Okonkwo    <span class="out-num">2.72</span>         <span class="out-num">2</span>          <span class="out-num">0</span>          <span class="out-num">0.948</span>            <span class="out-num">4341</span>
+      </div>
       <h3 id="the-four-kinds-of-join">The four kinds of join</h3>
       <p><code>how=</code> decides what happens to rows that have no match on the other side.</p>
       <pre><code>left  = pd.<span class="fn">DataFrame</span>({<span class="st">&quot;student_id&quot;</span>: [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>], <span class="st">&quot;name&quot;</span>: [<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>]})
@@ -1457,6 +2171,13 @@ right = pd.<span class="fn">DataFrame</span>({<span class="st">&quot;student_id&
 <span class="kw">for</span> how <span class="kw">in</span> [<span class="st">&quot;inner&quot;</span>, <span class="st">&quot;left&quot;</span>, <span class="st">&quot;right&quot;</span>, <span class="st">&quot;outer&quot;</span>]:
     out = left.<span class="fn">merge</span>(right, on=<span class="st">&quot;student_id&quot;</span>, how=how)
     <span class="fn">print</span>(<span class="st">f&quot;{how:&lt;7} {len(out)} rows   ids {sorted(out.student_id)}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+inner   <span class="out-num">2</span> rows   ids [<span class="out-num">2</span>, <span class="out-num">3</span>]
+left    <span class="out-num">3</span> rows   ids [<span class="out-num">1</span>, <span class="out-num">2</span>, <span class="out-num">3</span>]
+right   <span class="out-num">3</span> rows   ids [<span class="out-num">2</span>, <span class="out-num">3</span>, <span class="out-num">4</span>]
+outer   <span class="out-num">4</span> rows   ids [<span class="out-num">1</span>, <span class="out-num">2</span>, <span class="out-num">3</span>, <span class="out-num">4</span>]
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> The default is <code>how=&quot;inner&quot;</code>. If one of the five real tables were missing a student, what would an inner join silently do to them?  Commit to an answer before you run the next cell.
@@ -1479,6 +2200,11 @@ rebuilt = <span class="fn">reduce</span>(<span class="kw">lambda</span> a, b: a.
 
 <span class="fn">print</span>(<span class="st">f&quot;shape: {rebuilt.shape}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;columns: {list(rebuilt.columns)}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+shape: (<span class="out-num">100</span>, <span class="out-num">15</span>)
+columns: [&#x27;student_id&#x27;, &#x27;name&#x27;, &#x27;hs_gpa&#x27;, &#x27;hs_clubs&#x27;, &#x27;hs_sports&#x27;, &#x27;hs_attendance&#x27;, &#x27;hs_pop_density&#x27;, &#x27;ug_gpa&#x27;, &#x27;internships&#x27;, &#x27;need_based_aid&#x27;, &#x27;logins_per_week&#x27;, &#x27;time_on_task_hrs&#x27;, &#x27;submission_rate&#x27;, &#x27;course_score&#x27;, &#x27;success&#x27;]
+      </div>
       <h3 id="checking-the-answer">Checking the answer</h3>
       <p><code>clean</code> came from the flat extract, cleaned. <code>rebuilt</code> came from joining the five source tables. They should describe the same 100 students.</p>
       <p>We can compare them directly, which is a habit worth forming: when two routes should give the same answer, make them prove it.</p>
@@ -1490,12 +2216,27 @@ b = clean.<span class="fn">sort_values</span>(<span class="st">&quot;student_id&
 <span class="fn">print</span>()
 <span class="kw">for</span> col <span class="kw">in</span> [<span class="st">&quot;hs_gpa&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>, <span class="st">&quot;logins_per_week&quot;</span>, <span class="st">&quot;course_score&quot;</span>]:
     <span class="fn">print</span>(<span class="st">f&quot;{col:&lt;18} identical: {a[col].equals(b[col])}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+same shape:   True
+same ids:     True
+
+hs_gpa             identical: True
+ug_gpa             identical: True
+logins_per_week    identical: True
+course_score       identical: True
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>submission_rate</code> is not in that list. Predict whether it would match, and why.  Commit to an answer before you run the next cell.
       </div>
       <pre><code><span class="fn">print</span>(<span class="st">&quot;rebuilt: &quot;</span>, rebuilt.submission_rate.dtype, rebuilt.submission_rate.<span class="fn">dropna</span>().<span class="fn">head</span>(<span class="nm">2</span>).<span class="fn">tolist</span>())
 <span class="fn">print</span>(<span class="st">&quot;clean:   &quot;</span>, clean.submission_rate.dtype, clean.submission_rate.<span class="fn">dropna</span>().<span class="fn">head</span>(<span class="nm">2</span>).<span class="fn">tolist</span>())</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+rebuilt:  object [&#x27;<span class="out-num">69</span>%&#x27;, &#x27;<span class="out-num">84</span>%&#x27;]
+clean:    float64 [<span class="out-num">0.69</span>, <span class="out-num">0.84</span>]
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>They hold the same information and they are not equal.</p>
       <p><code>rebuilt</code> came straight from <code>lms_activity.csv</code>, so <code>submission_rate</code> is still the raw <code>&quot;84%&quot;</code> string. <code>clean</code> went through section 7, so it is a float.</p>
@@ -1505,8 +2246,8 @@ b = clean.<span class="fn">sort_values</span>(<span class="st">&quot;student_id&
       <p>The flat extract has 102 rows; the merged tables have 100. Section 5 already told you why.</p>
       <ol><li>Merge <code>students</code> and <code>outcomes</code>, keeping every student.</li><li>Confirm the result has 100 rows.</li><li>In a comment, explain where the extra two rows in <code>cohort_extract.csv</code> came from, and why the source tables do not have them.</li></ol>
       <div class="exercise-block" data-exercise="excombining-18">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="excombining-18-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="excombining-18-src">Your turn - run it here<span class="vh"> (exercise 10)</span></label>
+        <textarea id="excombining-18-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="excombining-18">Run</button>
           <button class="ex-reset" data-target="excombining-18">Reset</button>
@@ -1527,12 +2268,20 @@ b = clean.<span class="fn">sort_values</span>(<span class="st">&quot;student_id&
 
 <section id="pivot-tables" class="content-section">
       <h2>Pivot Tables</h2>
+      <p>A pivot table is a <code>groupby</code> arranged as a grid: one variable down the side, another across the top, a statistic in the cells. Everything here could be done with <code>groupby</code> and <code>.unstack()</code>; <code>pivot_table</code> is the readable shorthand.</p>
       <pre><code>clean.<span class="fn">pivot_table</span>(
     index=<span class="st">&quot;need_based_aid&quot;</span>,
     columns=<span class="st">&quot;hs_sports&quot;</span>,
     values=<span class="st">&quot;course_score&quot;</span>,
     aggfunc=<span class="st">&quot;mean&quot;</span>,
 ).<span class="fn">round</span>(<span class="nm">1</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+hs_sports          <span class="out-num">0</span>     <span class="out-num">1</span>
+need_based_aid            
+<span class="out-num">0</span>               <span class="out-num">69.4</span>  <span class="out-num">75.0</span>
+<span class="out-num">1</span>               <span class="out-num">64.3</span>  <span class="out-num">67.8</span>
+      </div>
       <p>Read it as a sentence: mean <code>course_score</code>, for each combination of <code>need_based_aid</code> down the side and <code>hs_sports</code> across the top.</p>
       <p>Add margins for the row and column totals.</p>
       <pre><code>clean.<span class="fn">pivot_table</span>(
@@ -1542,6 +2291,15 @@ b = clean.<span class="fn">sort_values</span>(<span class="st">&quot;student_id&
     aggfunc=[<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;count&quot;</span>],
     margins=<span class="kw">True</span>,
 ).<span class="fn">round</span>(<span class="nm">1</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+                mean             count         
+success            <span class="out-num">0</span>     <span class="out-num">1</span>   All     <span class="out-num">0</span>   <span class="out-num">1</span>  All
+need_based_aid                                 
+<span class="out-num">0</span>               <span class="out-num">59.7</span>  <span class="out-num">77.5</span>  <span class="out-num">72.0</span>    <span class="out-num">13</span>  <span class="out-num">29</span>   <span class="out-num">42</span>
+<span class="out-num">1</span>               <span class="out-num">58.2</span>  <span class="out-num">72.2</span>  <span class="out-num">65.7</span>    <span class="out-num">27</span>  <span class="out-num">31</span>   <span class="out-num">58</span>
+All             <span class="out-num">58.7</span>  <span class="out-num">74.8</span>  <span class="out-num">68.3</span>    <span class="out-num">40</span>  <span class="out-num">60</span>  <span class="out-num">100</span>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>Always show the counts.</strong> A pivot of means with no <code>count</code> invites you to compare two cells that might be built from forty students and three.</p>
@@ -1557,6 +2315,15 @@ clean[<span class="st">&quot;engagement_band&quot;</span>] = pd.<span class="fn"
 )
 
 clean.engagement_band.<span class="fn">value_counts</span>().<span class="fn">sort_index</span>()</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+engagement_band
+very low    <span class="out-num">21</span>
+low         <span class="out-num">19</span>
+moderate    <span class="out-num">25</span>
+high        <span class="out-num">20</span>
+Name: count, dtype: int64
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Some students have no <code>logins_per_week</code> at all. Which band do you think they landed in?  Commit to an answer before you run the next cell.
@@ -1564,12 +2331,28 @@ clean.engagement_band.<span class="fn">value_counts</span>().<span class="fn">so
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;missing logins:      {clean.logins_per_week.isna().sum()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;missing band:        {clean.engagement_band.isna().sum()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;rows counted above:  {clean.engagement_band.value_counts().sum()} of {len(clean)}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+missing logins:      <span class="out-num">15</span>
+missing band:        <span class="out-num">15</span>
+rows counted above:  <span class="out-num">85</span> of <span class="out-num">100</span>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>None of them. <code>pd.cut</code> returns <code>NaN</code> for a value it cannot place, so the missing students are missing from the bands too.</p>
       <p>This is the correct behaviour and it is easy to miss, because <code>value_counts()</code> <strong>excludes NaN by default</strong> - the bands do not add up to the number of students, and nothing on screen says so unless you check. Read the three numbers the cell just printed rather than taking my word for it.</p>
       <p><code>value_counts(dropna=False)</code> shows them. Get in the habit: any time a count matters, confirm it sums to the number of rows you started with.</p>
       </details>
       <pre><code>clean.engagement_band.<span class="fn">value_counts</span>(dropna=<span class="kw">False</span>).<span class="fn">sort_index</span>()</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+engagement_band
+very low    <span class="out-num">21</span>
+low         <span class="out-num">19</span>
+moderate    <span class="out-num">25</span>
+high        <span class="out-num">20</span>
+NaN         <span class="out-num">15</span>
+Name: count, dtype: int64
+      </div>
       <p>Now the pivot is worth reading.</p>
       <pre><code>clean.<span class="fn">pivot_table</span>(
     index=<span class="st">&quot;engagement_band&quot;</span>,
@@ -1577,12 +2360,22 @@ clean.engagement_band.<span class="fn">value_counts</span>().<span class="fn">so
     aggfunc=[<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;count&quot;</span>],
     observed=<span class="kw">True</span>,
 ).<span class="fn">round</span>(<span class="nm">3</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+                        mean                count        
+                course_score success course_score success
+engagement_band                                          
+very low              <span class="out-num">59.533</span>   <span class="out-num">0.143</span>           <span class="out-num">21</span>      <span class="out-num">21</span>
+low                   <span class="out-num">65.542</span>   <span class="out-num">0.526</span>           <span class="out-num">19</span>      <span class="out-num">19</span>
+moderate              <span class="out-num">72.504</span>   <span class="out-num">0.920</span>           <span class="out-num">25</span>      <span class="out-num">25</span>
+high                  <span class="out-num">79.405</span>   <span class="out-num">1.000</span>           <span class="out-num">20</span>      <span class="out-num">20</span>
+      </div>
       <p><strong>Your turn.</strong></p>
       <p>Build a pivot table showing mean <code>course_score</code> with <code>engagement_band</code> down the side and <code>need_based_aid</code> across the top, including counts.</p>
       <p>Then say in a comment which cell you trust least, and why.</p>
       <div class="exercise-block" data-exercise="expivot-tables-13">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="expivot-tables-13-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="expivot-tables-13-src">Your turn - run it here<span class="vh"> (exercise 11)</span></label>
+        <textarea id="expivot-tables-13-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="expivot-tables-13">Run</button>
           <button class="ex-reset" data-target="expivot-tables-13">Reset</button>
@@ -1608,18 +2401,68 @@ clean.engagement_band.<span class="fn">value_counts</span>().<span class="fn">so
 
 <section id="errors" class="content-section">
       <h2>Reading Errors</h2>
+      <p>Module 2 taught you to read a traceback from the bottom up. pandas errors follow that rule, but the vocabulary is new and a few of the most common ones are not errors at all - they are silently wrong answers.</p>
+      <p>Start with the loud ones.</p>
       <h4 id="keyerror-no-such-label"><code>KeyError</code> - no such label</h4>
       <div class="callout callout-warn"><div class="callout-label">This code raises KeyError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>clean[<span class="st">&quot;Course_Score&quot;</span>]</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+────────────────────────────────────────────────────────────────
+  EXPECTED ERROR. This cell is supposed to fail.
+────────────────────────────────────────────────────────────────
+Traceback (most recent call last):
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexes/base.py&quot;, line <span class="out-num">3812</span>, in get_loc
+    return self._engine.get_loc(casted_key)
+  File &quot;pandas/_libs/index.pyx&quot;, line <span class="out-num">167</span>, in pandas._libs.index.IndexEngine.get_loc
+  File &quot;pandas/_libs/index.pyx&quot;, line <span class="out-num">196</span>, in pandas._libs.index.IndexEngine.get_loc
+  File &quot;pandas/_libs/hashtable_class_helper.pxi&quot;, line <span class="out-num">7088</span>, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: &#x27;Course_Score&#x27;
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/frame.py&quot;, line <span class="out-num">4113</span>, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexes/base.py&quot;, line <span class="out-num">3819</span>, in get_loc
+... [<span class="out-num">2</span> more lines]
+      </div>
       <p>Column names are case-sensitive and whitespace-sensitive. <code>clean.columns.tolist()</code> settles it in one line, and <code>df.columns.str.strip()</code> fixes a file whose headers arrived with stray spaces.</p>
       <h4 id="valueerror-ambiguous-truth-value"><code>ValueError</code> - ambiguous truth value</h4>
       <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="kw">if</span> clean.ug_gpa &gt; <span class="nm">3.0</span>:
     <span class="fn">print</span>(<span class="st">&quot;yes&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+────────────────────────────────────────────────────────────────
+  EXPECTED ERROR. This cell is supposed to fail.
+────────────────────────────────────────────────────────────────
+Traceback (most recent call last):
+  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/generic.py&quot;, line <span class="out-num">1580</span>, in __nonzero__
+    raise ValueError(
+ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+      </div>
       <p>Section 9. A Series of a hundred booleans is not one condition. You want <code>.any()</code>, <code>.all()</code>, or a mask.</p>
       <h4 id="typeerror-arithmetic-on-text"><code>TypeError</code> - arithmetic on text</h4>
       <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>raw.submission_rate.<span class="fn">sum</span>() / <span class="fn">len</span>(raw)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+────────────────────────────────────────────────────────────────
+  EXPECTED ERROR. This cell is supposed to fail.
+────────────────────────────────────────────────────────────────
+Traceback (most recent call last):
+  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/series.py&quot;, line <span class="out-num">6549</span>, in sum
+    return NDFrame.sum(self, axis, skipna, numeric_only, min_count, **kwargs)
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/generic.py&quot;, line <span class="out-num">12571</span>, in sum
+    return self._min_count_stat_function(
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/generic.py&quot;, line <span class="out-num">12554</span>, in _min_count_stat_function
+    return self._reduce(
+TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27;
+      </div>
       <p>Section 7. Check <code>.dtype</code> before you compute.</p>
       <h3 id="the-quiet-ones">The quiet ones</h3>
       <p>These do not raise. They just give you the wrong number.</p>
@@ -1628,6 +2471,13 @@ clean.engagement_band.<span class="fn">value_counts</span>().<span class="fn">so
 <span class="fn">print</span>(<span class="st">f&quot;engagement_band.value_counts(): {clean.engagement_band.value_counts().sum()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;mean of a column with NaN:      {clean.logins_per_week.mean():.3f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;  computed over:                {clean.logins_per_week.notna().sum()} rows, not {len(clean)}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+rows in the table:              <span class="out-num">100</span>
+engagement_band.value_counts(): <span class="out-num">85</span>
+mean of a column with NaN:      <span class="out-num">2.631</span>
+  computed over:                <span class="out-num">85</span> rows, not <span class="out-num">100</span>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>Almost every pandas statistic skips missing values without telling you.</strong> <code>.mean()</code>, <code>.sum()</code>, <code>.count()</code>, <code>value_counts()</code> - all of them.</p>
@@ -1640,6 +2490,11 @@ after = <span class="fn">len</span>(clean.<span class="fn">merge</span>(dupe_key
 
 <span class="fn">print</span>(<span class="st">f&quot;rows before: {before}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;rows after:  {after}&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+rows before: <span class="out-num">100</span>
+rows after:  <span class="out-num">101</span>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>One student matched two rows on the right, so pandas produced a row for each combination. No error - a merge is <em>supposed</em> to do this, and sometimes you want it.</p>
       <p>At this scale you would notice. On a real join, a key that repeats a few times in a large table inflates the row count by an amount that looks plausible, and every average computed afterwards is quietly weighted toward the duplicated students.</p>
@@ -1660,24 +2515,38 @@ after = <span class="fn">len</span>(clean.<span class="fn">merge</span>(dupe_key
 
 <span class="fn">sanity</span>(raw, <span class="st">&quot;raw extract&quot;</span>)
 <span class="fn">sanity</span>(clean, <span class="st">&quot;after cleaning&quot;</span>)</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
+--- raw extract
+  shape        (<span class="out-num">102</span>, <span class="out-num">15</span>)
+  duplicated   <span class="out-num">2</span>
+  any missing  True
+  object cols  [&#x27;name&#x27;, &#x27;submission_rate&#x27;]
+--- after cleaning
+  shape        (<span class="out-num">100</span>, <span class="out-num">16</span>)
+  duplicated   <span class="out-num">0</span>
+  any missing  True
+  object cols  [&#x27;name&#x27;]
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**Run something like <code>sanity()</code> after every step that changes the shape of your data.**</p>
       <p>It is four lines and it turns three of the failures in this section into something you notice immediately rather than three steps later, when the cause is no longer on screen.</p>
       </div>
       <div class="nb-narrative nb-narrative-open">
-        <p>What follows is the module in one piece. Each challenge is a question Berrios could plausibly ask, and answering it takes the whole chain - load, diagnose, clean, filter, group, report.</p>
+        <p>What follows is the module in one piece. Each challenge is a question Lee could plausibly ask, and answering it takes the whole chain - load, diagnose, clean, filter, group, report.</p>
       <p>Nothing here needs a method you have not met. If you find yourself wanting one, the problem is probably the question rather than the tooling.</p>
       </div>
     </section>
 
 <section id="challenges" class="content-section">
       <h2>Challenges</h2>
+      <p>Work from the raw extract each time, so the cleaning is part of the answer.</p>
       <p><strong>Challenge 1 - the engagement report.</strong></p>
-      <p>Produce one table for Berrios with a row per engagement band and these columns: number of students, mean course score, success rate, and the share of the cohort in that band. Include the students with no LMS record as their own row rather than dropping them.</p>
+      <p>Produce one table for Lee with a row per engagement band and these columns: number of students, mean course score, success rate, and the share of the cohort in that band. Include the students with no LMS record as their own row rather than dropping them.</p>
       <div class="exercise-block" data-exercise="exchallenges-1">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="exchallenges-1-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="exchallenges-1-src">Your turn - run it here<span class="vh"> (exercise 12)</span></label>
+        <textarea id="exchallenges-1-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exchallenges-1">Run</button>
           <button class="ex-reset" data-target="exchallenges-1">Reset</button>
@@ -1699,8 +2568,8 @@ report[<span class="st">&quot;share&quot;</span>] = (report.students / report.st
       <p><strong>Challenge 2 - does prior achievement or engagement predict better?</strong></p>
       <p>Compute the correlation between <code>course_score</code> and each of <code>ug_gpa</code>, <code>hs_gpa</code>, and <code>logins_per_week</code>. Report them in one small table, sorted, and say in a comment what you are <em>not</em> entitled to conclude.</p>
       <div class="exercise-block" data-exercise="exchallenges-4">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="exchallenges-4-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="exchallenges-4-src">Your turn - run it here<span class="vh"> (exercise 13)</span></label>
+        <textarea id="exchallenges-4-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exchallenges-4">Run</button>
           <button class="ex-reset" data-target="exchallenges-4">Reset</button>
@@ -1722,8 +2591,8 @@ corr = clean[cols + [<span class="st">&quot;course_score&quot;</span>]].<span cl
       <p><strong>Challenge 3 - the audit trail.</strong></p>
       <p>A colleague will re-run your work. Write a single function <code>load_and_clean(path)</code> that goes from the raw CSV to the cleaned DataFrame, applying every decision from sections 6 to 8, and returns it. Then prove it reproduces <code>clean</code>.</p>
       <div class="exercise-block" data-exercise="exchallenges-7">
-        <div class="exercise-label">Your turn - run it here</div>
-        <textarea id="exchallenges-7-src" class="ex-editor">### ENTER CODE HERE ###</textarea>
+        <label class="exercise-label" for="exchallenges-7-src">Your turn - run it here<span class="vh"> (exercise 14)</span></label>
+        <textarea id="exchallenges-7-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exchallenges-7">Run</button>
           <button class="ex-reset" data-target="exchallenges-7">Reset</button>
@@ -2560,7 +3429,26 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
   margin: 1.8rem 0;
 }
 
+/* Read by screen readers, invisible on screen. Used to number the exercises so
+   eighteen editors on one page do not all announce the same name. Not
+   display:none and not visibility:hidden - both remove it from the
+   accessibility tree, which is the opposite of what is wanted. */
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* A <label>, so it is inline by default - the block is what the layout
+   assumes, and what the div it replaced used to give for free. */
 .exercise-label {
+  display: block;
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 0.7rem;
   font-weight: 600;
@@ -2688,6 +3576,79 @@ details.ex-solution pre { margin-top: 0.6rem; }
       so scrolling to the bottom made the two overlap. The rail stays in column
       3 at every width where the layout is still multi-column; it only leaves
       that column when everything stacks and nothing is sticky any more. */
+
+/* ── heading hierarchy ───────────────────────────────────────────────────────
+   The levels had collapsed into each other, and in one place the order was
+   actually INVERTED. Measured before this rule:
+
+     .content h2        1.35rem   700   --text-bright
+     .content h3        1rem      600   --text
+     h4                 (no rule at all - browser default, ~1rem bold)
+     .content p         0.9rem    400   --text-dim
+     .content p strong  0.9rem    700   --text
+
+   So an h3 was LIGHTER than a bold run inside a paragraph (600 against 700) and
+   the same colour, separated only by 0.1rem of size. "Local variables" (an h3)
+   and "Rule of thumb:" (a bolded lead-in) read as the same thing, because by
+   weight and colour they nearly were. h4 had no styling whatsoever.
+
+   Size alone cannot fix this - there is only 0.45rem of room between the body
+   text and h2, and four levels to fit into it. So each level differs on THREE
+   axes at once: size, weight and colour. Colour does most of the work at the
+   bottom of the tree, where the size differences have run out.
+
+   Applied to `.content-section`, which all seven module pages use, and kept in
+   this shared file so those pages cannot drift apart.
+
+   SIZES ARE ABSOLUTE, NOT RELATIVE TO THE BODY, because the shells disagree
+   about body size: Module 2 sets 0.9rem and Module 4 sets 0.96rem. An h4 tuned
+   to clear one of them ended up SMALLER than body text on the other. These
+   values clear both. */
+
+.content-section h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-top: 2rem;
+  margin-bottom: 0.45rem;
+  letter-spacing: -0.005em;
+}
+
+/* A marker no inline bold can ever have. Small on purpose: Module 2 carries 79
+   of these, and a full-height bar at that density reads as noise. */
+.content-section h3::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 0.78em;
+  margin-right: 0.5rem;
+  vertical-align: -0.04em;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+/* h4 sits below h3 and must still outrank a bold run. It gives up size to do
+   that and takes the accent colour instead - by this depth size has nothing
+   left to give. */
+.content-section h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  margin-top: 1.5rem;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.01em;
+}
+
+/* --accent-light is tuned for the dark theme, where it reaches 5.35:1. On the
+   light background it drops to 3.15:1, under the 4.5:1 bar this course holds
+   itself to - and h4 is body-sized text, so the large-text exemption does not
+   apply. A darker purple carries the same meaning at 5.75:1. */
+:root.theme-light .content-section h4 { color: #6b4fa3; }
+
+/* The h3 marker is a filled block rather than text, so it is decorative and
+   exempt from contrast rules - but it still has to be visible. The dark-theme
+   accent nearly vanishes on a pale background. */
+:root.theme-light .content-section h3::before { background: #6b4fa3; }
 
 .page-wrap.mod3col {
   --toc-w: 230px;
@@ -3499,6 +4460,23 @@ section.content-section { scroll-margin-top: 68px; }
         "Ctrl-Enter": function () { runExercise(eid); },
         "Cmd-Enter": function () { runExercise(eid); }
       });
+
+      // fromTextArea sets the original textarea to display:none and builds its
+      // own input, so the <label for> attached to it no longer names anything
+      // the user can reach. Carry the name across by hand - otherwise the
+      // enhanced editor is LESS accessible than the plain textarea it replaced,
+      // and the markup fix looks correct while the real control stays unnamed.
+      var lbl = document.querySelector('label[for="' + eid + '-src"]');
+      var name = lbl ? (lbl.textContent || "").replace(/\s+/g, " ").trim() : "";
+      if (name) {
+        var input = editors[eid].getInputField();
+        if (input) input.setAttribute("aria-label", name);
+        var wrap = editors[eid].getWrapperElement();
+        if (wrap) {
+          wrap.setAttribute("role", "group");
+          wrap.setAttribute("aria-label", name);
+        }
+      }
     }
   }
 

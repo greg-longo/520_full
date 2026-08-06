@@ -36,7 +36,7 @@
   @media (max-width:1180px){ .grid{ grid-template-columns: 230px 1fr; } }
   @media (max-width:880px){ .grid{ grid-template-columns: 1fr; } .thread{ display:none; } }
 
-  /* Jamie thread (left) */
+  /* Amy thread (left) */
   .thread { background:var(--panel); border-right:1px solid var(--line); display:flex; flex-direction:column; min-height:0; }
   .thread-head { padding:0.9rem 1rem 0.7rem; border-bottom:1px solid var(--line); display:flex; gap:0.65rem; align-items:center; }
   .avatar { width:42px; height:42px; border-radius:50%; flex-shrink:0; border:1.5px solid var(--brass); }
@@ -197,7 +197,7 @@
     <aside class="thread">
       <div class="thread-head">
         <span id="avA"></span>
-        <div><div class="thread-who">Jamie Berrios</div><div class="thread-role">Chief Data Officer</div></div>
+        <div><div class="thread-who">Amy Lee</div><div class="thread-role">Chief Data Officer</div></div>
       </div>
       <div class="thread-msgs" id="thread"></div>
     </aside>
@@ -284,7 +284,7 @@ const JAMIE_SVG = `
        jamie-<emotion>-blink.png                            (optional eyes-closed)
    Emotions: neutral, approve, concern, disappoint, warm.
    The engine probes which files exist and cycles only those:
-     - gently cycles idle frames (faster while Jamie is "talking"),
+     - gently cycles idle frames (faster while Amy is "talking"),
      - blinks occasionally if a -blink frame exists,
      - crossfades when the emotion changes,
      - falls back to the inline SVG if an emotion has no frames at all.
@@ -648,7 +648,7 @@ function renderBeat(){
                              which starts at 0 and so hid stage 0 entirely */
   state.stage = beat.stage ?? state.stage;
   clearBeat();
-  /* set Jamie's emotion for this beat (defaults: serious on interstitials, neutral otherwise) */
+  /* set Amy's emotion for this beat (defaults: serious on interstitials, neutral otherwise) */
   setAvatar(beat.emotion || (beat.type==='interstitial' ? 'concern' : 'neutral'));
   if(beat.type==='dialogue') return renderDialogue(beat);
   if(beat.type==='interstitial') return renderInterstitial(beat);
@@ -688,7 +688,7 @@ function renderPaused(built, decisions, good, passed){
   clearBeat();
   beatEl().innerHTML=`<div class="beat-dialogue">
     <div class="speaker">${avatarHTML(48)}
-      <div><div class="speaker-name">Jamie Berrios</div><div class="speaker-sub">Chief Data Officer</div></div></div>
+      <div><div class="speaker-name">Amy Lee</div><div class="speaker-sub">Chief Data Officer</div></div></div>
     <div class="dialogue">
       <p>That's everything I have for you today. You took this from a question
       the Cabinet could not answer to work that will stand up when somebody
@@ -757,7 +757,7 @@ function renderFinale(decisions, good, passed){
   const pct = state.maxPoints ? Math.round(100*state.points/state.maxPoints) : 0;
   beatEl().innerHTML=`<div class="beat-dialogue">
     <div class="speaker">${avatarHTML(48)}
-      <div><div class="speaker-name">Jamie Berrios</div><div class="speaker-sub">Chief Data Officer</div></div></div>
+      <div><div class="speaker-name">Amy Lee</div><div class="speaker-sub">Chief Data Officer</div></div></div>
     <div class="dialogue">
       <p>The Academic Success Report went to the Cabinet this afternoon. All six
       stages, start to finish - and I put your name on it, which I do not do
@@ -829,7 +829,7 @@ function renderDialogue(b){
   const wrap=beatEl();
   wrap.innerHTML=`<div class="beat-dialogue">
     <div class="speaker">${avatarHTML(48)}
-      <div><div class="speaker-name">Jamie Berrios</div><div class="speaker-sub">Chief Data Officer</div></div></div>
+      <div><div class="speaker-name">Amy Lee</div><div class="speaker-sub">Chief Data Officer</div></div></div>
     <div class="dialogue" id="dlg"></div>
     <div class="beat-nav"><span class="skip-hint" id="skipHint">click to skip</span><button class="btn-cont" id="contBtn" disabled onclick="advance()">${b.cont||'Continue'}</button></div>
   </div>`;
@@ -868,7 +868,7 @@ document.addEventListener('click', function(e){
 function renderInterstitial(b){
   beatEl().innerHTML=`<div class="beat-interstitial">
     <div class="inter-avatar">${avatarHTML(96)}</div>
-    <div class="inter-name">Jamie Berrios</div>
+    <div class="inter-name">Amy Lee</div>
     <div class="interstitial-text" id="intxt"></div>
   </div>`;
   paintAvatars();
@@ -1126,7 +1126,7 @@ def is_sensitive(name):
     # YOUR CODE HERE
     pass
 
-# Berrios will review your flags:
+# Lee will review your flags:
 for f in features:
     print(f, '->', 'EXCLUDE' if is_sensitive(f) else 'keep')`,
     test:

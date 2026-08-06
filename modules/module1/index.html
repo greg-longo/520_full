@@ -1342,6 +1342,79 @@ details.ex-solution pre { margin-top: 0.6rem; }
       3 at every width where the layout is still multi-column; it only leaves
       that column when everything stacks and nothing is sticky any more. */
 
+/* ── heading hierarchy ───────────────────────────────────────────────────────
+   The levels had collapsed into each other, and in one place the order was
+   actually INVERTED. Measured before this rule:
+
+     .content h2        1.35rem   700   --text-bright
+     .content h3        1rem      600   --text
+     h4                 (no rule at all - browser default, ~1rem bold)
+     .content p         0.9rem    400   --text-dim
+     .content p strong  0.9rem    700   --text
+
+   So an h3 was LIGHTER than a bold run inside a paragraph (600 against 700) and
+   the same colour, separated only by 0.1rem of size. "Local variables" (an h3)
+   and "Rule of thumb:" (a bolded lead-in) read as the same thing, because by
+   weight and colour they nearly were. h4 had no styling whatsoever.
+
+   Size alone cannot fix this - there is only 0.45rem of room between the body
+   text and h2, and four levels to fit into it. So each level differs on THREE
+   axes at once: size, weight and colour. Colour does most of the work at the
+   bottom of the tree, where the size differences have run out.
+
+   Applied to `.content-section`, which all seven module pages use, and kept in
+   this shared file so those pages cannot drift apart.
+
+   SIZES ARE ABSOLUTE, NOT RELATIVE TO THE BODY, because the shells disagree
+   about body size: Module 2 sets 0.9rem and Module 4 sets 0.96rem. An h4 tuned
+   to clear one of them ended up SMALLER than body text on the other. These
+   values clear both. */
+
+.content-section h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-top: 2rem;
+  margin-bottom: 0.45rem;
+  letter-spacing: -0.005em;
+}
+
+/* A marker no inline bold can ever have. Small on purpose: Module 2 carries 79
+   of these, and a full-height bar at that density reads as noise. */
+.content-section h3::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 0.78em;
+  margin-right: 0.5rem;
+  vertical-align: -0.04em;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+/* h4 sits below h3 and must still outrank a bold run. It gives up size to do
+   that and takes the accent colour instead - by this depth size has nothing
+   left to give. */
+.content-section h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  margin-top: 1.5rem;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.01em;
+}
+
+/* --accent-light is tuned for the dark theme, where it reaches 5.35:1. On the
+   light background it drops to 3.15:1, under the 4.5:1 bar this course holds
+   itself to - and h4 is body-sized text, so the large-text exemption does not
+   apply. A darker purple carries the same meaning at 5.75:1. */
+:root.theme-light .content-section h4 { color: #6b4fa3; }
+
+/* The h3 marker is a filled block rather than text, so it is decorative and
+   exempt from contrast rules - but it still has to be visible. The dark-theme
+   accent nearly vanishes on a pale background. */
+:root.theme-light .content-section h3::before { background: #6b4fa3; }
+
 .page-wrap.mod3col {
   --toc-w: 230px;
   --rail-w: 208px;

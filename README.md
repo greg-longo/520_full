@@ -24,7 +24,7 @@ This site provides students with module content, quizzes, interactive Python san
 
 ## Credits
 
-Course content and module material created by **Jamie Andrews**.
+Course content and module material created by **Amy Andrews**.
 
 Site design, simulations, and interactive tools created by **Greg Longo** with the assistance of [Claude Cowork](https://claude.ai) (Anthropic).
 

@@ -12,7 +12,26 @@
   margin: 1.8rem 0;
 }
 
+/* Read by screen readers, invisible on screen. Used to number the exercises so
+   eighteen editors on one page do not all announce the same name. Not
+   display:none and not visibility:hidden - both remove it from the
+   accessibility tree, which is the opposite of what is wanted. */
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* A <label>, so it is inline by default - the block is what the layout
+   assumes, and what the div it replaced used to give for free. */
 .exercise-label {
+  display: block;
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 0.7rem;
   font-weight: 600;

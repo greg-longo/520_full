@@ -625,6 +625,81 @@ git --version
 
       <div class="section-footer">
         <button class="sf-btn" onclick="showSection('ds-in-action')">&larr; DS in Action</button>
+        <button class="sf-btn fwd" onclick="showSection('notebooks')">Using the Notebooks &rarr;</button>
+      </div>
+    </section>
+
+    <!-- USING THE NOTEBOOKS -->
+    <section id="notebooks" class="content-section">
+      <h2>Using the Notebooks</h2>
+      <p>Modules 2 through 5 are taught in Jupyter notebooks. This page covers how to
+      work in them, and the course policy on AI assistants. It lives here once rather
+      than at the top of every module - though the notebooks themselves still carry it,
+      because a downloaded file gets read on its own.</p>
+
+      <h3>Run every cell, in order, from the top</h3>
+      <p>A notebook is not a document you simply read - it is text and code you execute a
+      piece at a time. Cells share one memory, so skipping a cell typically breaks the
+      ones after it. If things get strange, use <strong>Kernel &rarr; Restart &amp; Run
+      All</strong> and start clean. You lose none of the code you have written, only the
+      output. This almost always fixes it.</p>
+
+      <h3>Three conventions appear throughout</h3>
+      <p><strong>Predict cells.</strong> When you see a <em>Predict</em> prompt, stop
+      scrolling. Say out loud, or write down, what you think the next cell will output -
+      <em>then</em> run it. Being wrong on purpose is how this material sticks. You will
+      remember the correction far longer than you would remember reading the right
+      answer.</p>
+
+      <p><strong><code>%%expect</code> cells.</strong> Some cells are <em>supposed</em> to
+      fail. They are marked like this:</p>
+      <pre><code>%%expect TypeError
+'126' / 3</code></pre>
+      <p>That first line tells the notebook "this should raise a <code>TypeError</code>",
+      so it prints the error and keeps going instead of stopping. Read those errors
+      carefully. Learning to recognise them here is much better than meeting them for the
+      first time on your own.</p>
+
+      <p><strong>Your turn cells.</strong> Exercises. Do them as you go, not at the end.</p>
+
+      <h3>A word about AI assistants</h3>
+      <p>You will use them. Let's be direct about how.</p>
+
+      <p>First, be sure to review Eastern's LLM policies. These will be on syllabi and in
+      the program handbook. <strong><em>It is your responsibility to know these policies.
+      If you violate them you could face academic discipline including
+      expulsion.</em></strong></p>
+
+      <p><strong>Good uses.</strong> Paste an error message into an LLM and ask what it
+      means. Ask for a second explanation of a concept when mine didn't land. Ask
+      <em>why</em> code works, not just whether it does. Ask it to generate extra practice
+      problems.</p>
+
+      <p><strong>Bad use.</strong> Pasting an exercise prompt in and submitting what comes
+      back. You will pass the exercise and fail the course - not because you got caught,
+      but because every module here assumes you can already do the one before it, and the
+      capstone assumes all of them.</p>
+
+      <p>The line is this: <strong>you are accountable for being able to explain every
+      line you submit.</strong> If you can't walk me through it, it isn't yours yet. When
+      a model writes something you don't understand, that's a signal to ask a follow-up
+      question, not to move on.</p>
+
+      <p>More than anything, AI should be used to <strong>learn</strong> - if you're using
+      it without learning, you're doing it wrong and will be hurt in the long run.</p>
+
+      <p>Where I think an assistant is genuinely useful, I'll say so in the exercise.</p>
+
+      <h3>How these notebooks were made</h3>
+      <p>The teaching material is drawn from the instructor's own course materials and
+      from the textbooks acknowledged in each module. AI systems (Claude and Gemini) were
+      used to compare those sources for concept coverage and divergence, and to draft a
+      notebook synthesising them. The sequence, the pedagogy, and every decision about
+      what to teach are the instructor's. The result has been reviewed and corrected by
+      Eastern faculty and staff, and verified to execute end to end.</p>
+
+      <div class="section-footer">
+        <button class="sf-btn" onclick="showSection('setup')">&larr; Software Setup</button>
         <button class="sf-btn fwd" onclick="showSection('resources')">Resources &rarr;</button>
       </div>
     </section>
@@ -1269,6 +1344,79 @@ details.ex-solution pre { margin-top: 0.6rem; }
       so scrolling to the bottom made the two overlap. The rail stays in column
       3 at every width where the layout is still multi-column; it only leaves
       that column when everything stacks and nothing is sticky any more. */
+
+/* ── heading hierarchy ───────────────────────────────────────────────────────
+   The levels had collapsed into each other, and in one place the order was
+   actually INVERTED. Measured before this rule:
+
+     .content h2        1.35rem   700   --text-bright
+     .content h3        1rem      600   --text
+     h4                 (no rule at all - browser default, ~1rem bold)
+     .content p         0.9rem    400   --text-dim
+     .content p strong  0.9rem    700   --text
+
+   So an h3 was LIGHTER than a bold run inside a paragraph (600 against 700) and
+   the same colour, separated only by 0.1rem of size. "Local variables" (an h3)
+   and "Rule of thumb:" (a bolded lead-in) read as the same thing, because by
+   weight and colour they nearly were. h4 had no styling whatsoever.
+
+   Size alone cannot fix this - there is only 0.45rem of room between the body
+   text and h2, and four levels to fit into it. So each level differs on THREE
+   axes at once: size, weight and colour. Colour does most of the work at the
+   bottom of the tree, where the size differences have run out.
+
+   Applied to `.content-section`, which all seven module pages use, and kept in
+   this shared file so those pages cannot drift apart.
+
+   SIZES ARE ABSOLUTE, NOT RELATIVE TO THE BODY, because the shells disagree
+   about body size: Module 2 sets 0.9rem and Module 4 sets 0.96rem. An h4 tuned
+   to clear one of them ended up SMALLER than body text on the other. These
+   values clear both. */
+
+.content-section h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-top: 2rem;
+  margin-bottom: 0.45rem;
+  letter-spacing: -0.005em;
+}
+
+/* A marker no inline bold can ever have. Small on purpose: Module 2 carries 79
+   of these, and a full-height bar at that density reads as noise. */
+.content-section h3::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 0.78em;
+  margin-right: 0.5rem;
+  vertical-align: -0.04em;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+/* h4 sits below h3 and must still outrank a bold run. It gives up size to do
+   that and takes the accent colour instead - by this depth size has nothing
+   left to give. */
+.content-section h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  margin-top: 1.5rem;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.01em;
+}
+
+/* --accent-light is tuned for the dark theme, where it reaches 5.35:1. On the
+   light background it drops to 3.15:1, under the 4.5:1 bar this course holds
+   itself to - and h4 is body-sized text, so the large-text exemption does not
+   apply. A darker purple carries the same meaning at 5.75:1. */
+:root.theme-light .content-section h4 { color: #6b4fa3; }
+
+/* The h3 marker is a filled block rather than text, so it is decorative and
+   exempt from contrast rules - but it still has to be visible. The dark-theme
+   accent nearly vanishes on a pale background. */
+:root.theme-light .content-section h3::before { background: #6b4fa3; }
 
 .page-wrap.mod3col {
   --toc-w: 230px;

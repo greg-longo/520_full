@@ -1,6 +1,6 @@
-# Jamie avatar — drop your still frames here
+# Amy avatar — drop your still frames here
 
-No GIF needed. Provide **still PNG images** with different expressions and the engine animates Jamie by cycling between them: gentle idle motion, occasional blinks, faster "talking" motion while her dialogue types, and an expression change to match each beat.
+No GIF needed. Provide **still PNG images** with different expressions and the engine animates Amy by cycling between them: gentle idle motion, occasional blinks, faster "talking" motion while her dialogue types, and an expression change to match each beat.
 
 ## Naming scheme (exact)
 
@@ -26,7 +26,7 @@ You said "as many as appropriate" — here's the guide:
 - **Minimum per emotion:** 1 frame (`jamie-neutral-1.png`). Works, but static for that emotion.
 - **To get gentle idle motion:** 2–3 idle frames (`jamie-neutral-1.png`, `-2.png`, `-3.png`). The engine slowly cycles them. Make them *slightly* different (tiny head tilt, small mouth/brow change) — subtle is better than busy.
 - **To get blinking:** add `jamie-neutral-blink.png` (same pose, eyes closed). The engine flashes it for ~130 ms every few seconds.
-- **To get a "talking" feel:** give `neutral` 2–4 frames with small mouth differences (open/closed/slightly-open). While Jamie's text types out, the engine cycles these faster, so she looks like she's speaking; then it slows to idle.
+- **To get a "talking" feel:** give `neutral` 2–4 frames with small mouth differences (open/closed/slightly-open). While Amy's text types out, the engine cycles these faster, so she looks like she's speaking; then it slows to idle.
 
 **Most impactful, least work:** focus your frames on `neutral` (where she spends most time) — say `neutral-1/2/3` + `neutral-blink`. The reaction emotions (`approve`, `concern`, `disappoint`, `warm`) can be a single frame each and still read great, since they only flash briefly.
 

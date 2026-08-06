@@ -279,6 +279,23 @@
         "Ctrl-Enter": function () { runExercise(eid); },
         "Cmd-Enter": function () { runExercise(eid); }
       });
+
+      // fromTextArea sets the original textarea to display:none and builds its
+      // own input, so the <label for> attached to it no longer names anything
+      // the user can reach. Carry the name across by hand - otherwise the
+      // enhanced editor is LESS accessible than the plain textarea it replaced,
+      // and the markup fix looks correct while the real control stays unnamed.
+      var lbl = document.querySelector('label[for="' + eid + '-src"]');
+      var name = lbl ? (lbl.textContent || "").replace(/\s+/g, " ").trim() : "";
+      if (name) {
+        var input = editors[eid].getInputField();
+        if (input) input.setAttribute("aria-label", name);
+        var wrap = editors[eid].getWrapperElement();
+        if (wrap) {
+          wrap.setAttribute("role", "group");
+          wrap.setAttribute("aria-label", name);
+        }
+      }
     }
   }
 
