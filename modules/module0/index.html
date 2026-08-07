@@ -967,6 +967,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <style>
   /* Light theme overrides */
   :root.theme-light {
+      --accent-light: #65656e;   /* light-theme value, this module's hue, >=4.5:1 */
     --bg:        #f5f2ee;
     --bg-card:   #ffffff;
     --bg-card2:  #ede9e3;
@@ -1426,7 +1427,11 @@ details.ex-solution pre { margin-top: 0.6rem; }
    #6b4fa3 is the same purple already used for that h4 override, so nothing new
    enters the palette. It clears 4.5:1 on all four light surfaces (6.42 on
    #ffffff, 5.75 on #f5f2ee, 5.31 on #ede9e3, 5.03 on #e8e3dc). */
-:root.theme-light { --accent-light: #6b4fa3; }
+/* NO GLOBAL VALUE HERE. Each module has its own accent hue - grey, blue,
+   purple, green, orange, teal, maroon - and a single light-theme value paints
+   them all one colour. An earlier version of this file set #6b4fa3 globally,
+   which fixed Module 2 (already purple) and silently repainted the other six.
+   The light-theme value lives in each shell, keeping that module's hue. */
 
 /* The sandbox modal (.sb-box) is hardcoded #161412 and stays dark in BOTH
    themes, which is the right call - it holds a CodeMirror editor, and dark
@@ -1439,6 +1444,13 @@ details.ex-solution pre { margin-top: 0.6rem; }
    dark-appropriate values inside it and nowhere else. If the modal ever gets a
    light background, these have to come back out. */
 :root.theme-light .sb-box {
+  /* REVERTED an attempted :not(.sb-notice-box) exclusion, 7 Aug. The theory
+     was that Module 5's notice box is light; adding the exclusion took M5
+     from 3 failing pairs to 5, which proves the box IS dark and the
+     override was right all along. The 2.40:1 reading that prompted it is
+     still unexplained - see A11Y_BACKLOG.md. Do not retry this without
+     first working out why the checker reports #ffffff behind one span and
+     #161412 behind its siblings. */
   --accent-light: #b39ce0;
   --text-dim: #a79c92;
   --text: #e6ded6;

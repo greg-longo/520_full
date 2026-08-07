@@ -1,7 +1,7 @@
 /**
  * DTSC 520 — Game shell (Phase B, ROADMAP_3.0)
  *
- * Builds the fixed HUD bar (context-aware Back button, streak, credits,
+ * Builds the fixed HUD bar (context-aware Back button, streak,
  * sign-in chip) and the toast stack on every page that includes it. Renders
  * live from player.js state and the `dtsc520:award` events auth.js fires.
  *
@@ -67,7 +67,7 @@
     if (p.indexOf('/sims/') !== -1) {           // sims hub itself
       return { href: BASE + 'index.html', label: 'Mission Control' };
     }
-    if (p.indexOf('/achievements.html') !== -1 || p.indexOf('/workspace.html') !== -1) {
+    if (p.indexOf('/achievements.html') !== -1) {
       return { href: BASE + 'index.html', label: 'Mission Control' };
     }
     return null;                                 // homepage: no Back
@@ -110,14 +110,6 @@
     streak.title = 'Login streak (weekends are free)';
     bar.appendChild(streak);
 
-    var credits = document.createElement('span');
-    credits.className = 'shell-pill credits';
-    credits.id = 'shell-credits';
-    credits.hidden = true;
-    credits.innerHTML = '<span class="ico" aria-hidden="true">&#9672;</span><span class="val">0</span>';
-    credits.setAttribute('aria-label', 'Credit balance');
-    credits.title = 'Credits';
-    bar.appendChild(credits);
 
     if (location.pathname.indexOf('/achievements.html') === -1) {
       var trophy = document.createElement('a');
@@ -128,15 +120,9 @@
       trophy.title = 'Achievements';
       bar.appendChild(trophy);
     }
-    if (location.pathname.indexOf('/workspace.html') === -1) {
-      var desk = document.createElement('a');
-      desk.className = 'shell-pill desk';
-      desk.href = BASE + 'workspace.html';
-      desk.innerHTML = '<span class="ico" aria-hidden="true">&#129414;</span>';
-      desk.setAttribute('aria-label', 'Your workspace');
-      desk.title = 'Your workspace';
-      bar.appendChild(desk);
-    }
+    // The Desk pill was here. Parked 7 Aug 2026 - see
+    // site/_archive/desk/README.md. Restore this block and the home-page pill
+    // in index.html to bring it back.
 
     // Adopt (or create) the auth slot so the chip lives in the bar.
     var slot = document.getElementById('auth-slot');
@@ -197,30 +183,20 @@
           icon: RARITY_ICON[a.rarity] || RARITY_ICON.common,
           kicker: (a.rarity || 'common') + ' achievement',
           name: a.name || a.id,
-          sub: a.credits ? '+' + a.credits + ' credits' : '',
+          sub: '',
           ms: 6000
         });
         sfx('win');
       }, i * 700);
     });
-    if (d.creditsDelta > 0 && !(d.newlyEarned || []).length) {
-      toast({
-        className: 'credits-toast',
-        icon: '&#9672;',
-        kicker: 'credits',
-        name: '+' + d.creditsDelta,
-        sub: d.streak > 1 ? d.streak + ' day streak' : '',
-        ms: 3500
-      });
-      sfx('pass');
-    }
+    // The "+N credits" toast was here. The backend still sends
+    // creditsDelta; it is read and ignored until the Desk ships.
   });
 
   // ── HUD state rendering ────────────────────────────────────────────────
   function renderState(s) {
     if (!s) return;
     setPill('shell-streak', s.streak, s.streak > 0);
-    setPill('shell-credits', s.balance, typeof s.balance === 'number');
   }
 
   function setPill(id, val, show) {
@@ -233,11 +209,6 @@
     var next = String(val);
     if (old !== next) {
       v.textContent = next;
-      if (id === 'shell-credits') {
-        el.classList.remove('bump');
-        void el.offsetWidth;               // restart animation
-        el.classList.add('bump');
-      }
     }
   }
 

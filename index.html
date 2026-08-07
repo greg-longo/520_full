@@ -774,7 +774,6 @@
       color: var(--text);
     }
     .hp-pill .hp-ico { font-size: 0.95rem; }
-    .hp-pill.hp-credits .hp-ico { color: #c9a24a; }
     .hp-pill.hp-streak .hp-ico { color: #e07b39; }
     .hp-badges { display: inline-flex; align-items: center; gap: 0.35rem; }
     .hp-badge {
@@ -847,13 +846,13 @@
 
     <!-- Player strip: appears once signed in, fed by server state -->
     <div class="hero-player" id="heroPlayer" aria-label="Your player stats">
-      <span class="hp-pill hp-credits" title="Credits"><span class="hp-ico" aria-hidden="true">&#9672;</span><span id="hpCredits">0</span></span>
+      <!-- Credit balance pill removed 7 Aug 2026 with the Desk - see _archive/desk/README.md -->
       <span class="hp-pill hp-streak" title="Login streak (weekends are free)"><span class="hp-ico" aria-hidden="true">&#128293;</span><span id="hpStreak">0</span> day streak</span>
       <a href="achievements.html" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.45rem;" title="View all achievements" aria-label="View all achievements">
         <span class="hp-badges" id="hpBadges"></span>
         <span class="hp-badge-count" id="hpBadgeCount"></span>
       </a>
-      <a class="hp-pill" href="workspace.html" style="text-decoration:none;" title="Decorate your desk">&#129414; Your Desk</a>
+      <!-- "Your Desk" pill parked 7 Aug 2026 - see _archive/desk/README.md -->
     </div>
   </div>
 
@@ -1479,7 +1478,6 @@
     const wrap = document.getElementById('heroPlayer');
     if (!wrap || !s || typeof s.balance !== 'number') return;
     wrap.classList.add('on');
-    document.getElementById('hpCredits').textContent = s.balance;
     document.getElementById('hpStreak').textContent = s.streak || 0;
 
     const byId = {};

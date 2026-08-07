@@ -140,7 +140,6 @@
     .r-legendary .glyph, .r-legendary .b-rarity { color: var(--r-legendary); }
     .badge.locked { opacity: 0.55; }
     .badge.locked .glyph { filter: grayscale(1) brightness(0.7); }
-    .b-credits { color: var(--r-legendary); }
     .b-earned-tag { color: #3fa06a; }
 
     .section-title {
@@ -199,7 +198,8 @@
   'use strict';
 
   var GLYPH = { common: '★', rare: '◆', epic: '▲', legendary: '♛' };
-  var CREDITS = { common: 25, rare: 75, epic: 150, legendary: 300 };
+  // CREDITS by rarity (25/75/150/300) removed 7 Aug 2026 with the Desk, which
+  // was the only place they could be spent. See _archive/desk/README.md.
   var ORDER = ['legendary', 'epic', 'rare', 'common'];
   var LABEL = { legendary: 'Legendary', epic: 'Epic', rare: 'Rare', common: 'Common' };
 
@@ -269,7 +269,6 @@
             '<div class="b-desc">' + (hidden ? 'Hidden achievement. Keep exploring.' : esc(a.description)) + '</div>' +
             '<div class="b-meta">' +
               '<span class="b-rarity">' + LABEL[rarity] + '</span>' +
-              '<span class="b-credits">+' + CREDITS[rarity] + ' cr</span>' +
               (got ? '<span class="b-earned-tag">Earned</span>' : '') +
             '</div>' +
             (hint ? '<div class="b-hint">' + esc(hint) + '</div>' : '') +

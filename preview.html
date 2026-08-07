@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Instructor preview - DTSC 520</title>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14110f;--card:#1b1714;--card2:#221d19;--line:#332b25;--text:#e6ded6;
+ --dim:#a79c92;--bright:#fff;--accent:#7a5fb5;--accent-light:#b39ce0;
+ --ok:#5cbb70;--warn:#e0a24a;--flag:#e0705c;--mono:'IBM Plex Mono',monospace;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);line-height:1.65;
+ font-family:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif;}
+.wrap{max-width:780px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
+h1{font-family:'Zilla Slab',Georgia,serif;font-size:1.9rem;color:var(--bright);margin:0 0 .3rem;}
+h2{font-family:'Zilla Slab',Georgia,serif;font-size:1.15rem;color:var(--bright);margin:2rem 0 .5rem;}
+.lede{color:var(--dim);margin:0 0 1.2rem;max-width:66ch;}
+p{max-width:70ch;} a{color:var(--accent-light);}
+code,.mono{font-family:var(--mono);font-size:.86em;}
+code{background:var(--card2);padding:.08em .35em;border-radius:3px;color:var(--accent-light);}
+.btn{font:600 .95rem 'IBM Plex Sans',sans-serif;padding:.6rem 1.3rem;border-radius:7px;
+ cursor:pointer;background:var(--accent);border:1px solid var(--accent);color:#fff;
+ text-decoration:none;display:inline-block;margin:.2rem .3rem .2rem 0;}
+.btn:hover{filter:brightness(1.14);}
+.btn:focus-visible{outline:3px solid var(--accent-light);outline-offset:2px;}
+.btn-ghost{background:transparent;border-color:var(--line);color:var(--text);}
+.btn-danger{background:transparent;border-color:var(--flag);color:#f0b9ae;}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;
+ padding:1.1rem 1.25rem;margin:1rem 0;}
+.note{border-left:3px solid var(--warn);background:rgba(224,162,74,.08);
+ padding:.75rem 1rem;border-radius:0 7px 7px 0;margin:1.2rem 0;font-size:.94rem;}
+.row{display:flex;gap:.7rem;align-items:baseline;padding:.35rem 0;
+ border-top:1px solid var(--line);font-size:.92rem;}
+.row:first-child{border-top:0;}
+.row .k{font-family:var(--mono);font-size:.8rem;color:var(--dim);flex:0 0 15rem;}
+.row .v{flex:1 1 auto;}
+.tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;
+ padding:.1rem .45rem;border-radius:3px;}
+.tag.on{background:rgba(92,187,112,.16);color:var(--ok);}
+.tag.off{background:var(--card2);color:var(--dim);}
+#msg{margin-top:.8rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Instructor preview</h1>
+  <p class="lede">Fills in the progress the site gates on, so you can walk
+  through the capstone and the finished dashboards without playing every
+  simulation first.</p>
+
+  <div class="note">
+    <strong>This writes to this browser only.</strong> Progress that gates the
+    site is kept in <code>localStorage</code>, not on your account - so this is
+    per-browser and per-device, and signing in elsewhere will not carry it. It
+    also does not send anything to the server, so it will not appear in the
+    Events sheet or affect any real completion data.
+  </div>
+
+  <h2>Current state</h2>
+  <div class="panel" id="state"></div>
+
+  <h2>Actions</h2>
+  <p>
+    <button class="btn" id="fill">Mark everything complete</button>
+    <button class="btn btn-ghost" id="refresh">Re-check</button>
+    <button class="btn btn-danger" id="clear">Clear all preview progress</button>
+  </p>
+  <div id="msg"></div>
+
+  <p style="margin-top:1.4rem;">
+    <a class="btn btn-ghost" href="capstone/index.html">Capstone gate</a>
+    <a class="btn btn-ghost" href="capstone/progress.html">Progress tracker</a>
+    <a class="btn btn-ghost" href="achievements.html">Achievements</a>
+    <a class="btn btn-ghost" href="index.html">Home dashboard</a>
+  </p>
+
+  <h2>What this does not do</h2>
+  <p>It fills the twelve simulation keys the capstone gate reads. It does
+  <strong>not</strong> fabricate capstone progress itself - open the commission
+  and play it, or use the tracker's own empty state. And it is not a security
+  boundary: any client-side unlock is readable by anyone who opens the page
+  source. It is a convenience for you, not a lock for them. The page is
+  <code>noindex</code> and linked from nowhere, which is the extent of it.</p>
+</div>
+
+<script>
+"use strict";
+
+// Every key the capstone gate and the home dashboard read, with the exact
+// SHAPE each check expects. These are not guesses - they were read out of
+// capstone/index.html, where the checks differ from one another: some want
+// {completed:true}, one wants a truthy value of any kind, one wants
+// {done:[...]} where every entry is truthy, and Python Field Training wants
+// four named sub-modules each at status 'completed'. Writing {completed:true}
+// to all of them would silently fail three of the twelve.
+const KEYS = [
+  ["dtsc520_morningbrief",     { completed: true }, "Morning Brief"],
+  ["dtsc520_findyourpath",     { completed: true }, "Find Your Path"],
+  ["pft_progress", {
+      mod1:   { status: "completed" },
+      mod2:   { status: "completed" },
+      mod3:   { status: "completed" },
+      finale: { status: "completed" }
+    }, "Python Field Training"],
+  ["dtsc520_escape",           { completed: true }, "Escape from McInnis"],
+  ["dtsc520_charttoppers",     { completed: true }, "NumPy Lab"],
+  ["dtsc520_debugpipeline",    { completed: true }, "Debug the Pipeline"],
+  ["dtsc520_dirtydataset",     { completed: true }, "Dirty Dataset"],
+  ["dtsc520_ariareturns",      { completed: true }, "ARIA Returns"],
+  ["dtsc520_rtginvestigation", { done: [true, true, true, true] }, "RTG Investigation"],
+  ["dtsc520_boardmeeting",     { completed: true }, "The Board Meeting"],
+  ["dtsc520_terminaltrainer",  { completed: true }, "Terminal Trainer"],
+  ["dtsc520_branchcrisis",     { completed: true }, "Branch Crisis"],
+];
+
+function get(k){ try { return JSON.parse(localStorage.getItem(k) || "null"); }
+                 catch(e){ return null; } }
+
+// Mirrors the gate's own checks rather than assuming a key being present is
+// enough - so this panel tells the truth about whether the gate will open.
+function isDone(key, val){
+  if (key === "pft_progress") {
+    const p = val || {};
+    return ["mod1","mod2","mod3","finale"].every(k => p[k] && p[k].status === "completed");
+  }
+  if (key === "dtsc520_rtginvestigation") {
+    return !!(val && val.done && val.done.every(Boolean));
+  }
+  if (key === "dtsc520_debugpipeline") return !!val;
+  return !!(val || {}).completed;
+}
+
+function draw(){
+  const el = document.getElementById("state");
+  let done = 0;
+  el.innerHTML = KEYS.map(([k, , label]) => {
+    const ok = isDone(k, get(k));
+    if (ok) done++;
+    return `<div class="row"><span class="k">${k}</span>` +
+           `<span class="v">${label}</span>` +
+           `<span class="tag ${ok ? "on" : "off"}">${ok ? "complete" : "not set"}</span></div>`;
+  }).join("") +
+  `<div class="row"><span class="k">&nbsp;</span><span class="v"><strong>${done} of ${KEYS.length}</strong> ` +
+  `- the capstone gate opens at all ${KEYS.length}.</span></div>`;
+}
+
+function say(text, good){
+  document.getElementById("msg").innerHTML =
+    `<div class="note" style="border-left-color:${good ? "var(--ok)" : "var(--flag)"};` +
+    `background:${good ? "rgba(92,187,112,.10)" : "rgba(224,112,92,.10)"}">${text}</div>`;
+}
+
+document.getElementById("fill").addEventListener("click", () => {
+  try {
+    for (const [k, v] of KEYS) localStorage.setItem(k, JSON.stringify(v));
+    draw();
+    say("Done. All twelve set - the capstone gate should now be open. " +
+        "Reload any page you already had open.", true);
+  } catch (e) {
+    say("Could not write to localStorage: " + e.message +
+        ". Private browsing blocks this.", false);
+  }
+});
+
+document.getElementById("clear").addEventListener("click", () => {
+  // Only the keys this page wrote. Deliberately does NOT clear
+  // dtsc520_capstone_progress, the theme, or the auth session - clearing
+  // someone's actual capstone work from a preview tool would be unforgivable.
+  for (const [k] of KEYS) localStorage.removeItem(k);
+  draw();
+  say("Cleared the twelve simulation keys. Your capstone progress, theme and " +
+      "sign-in were left alone.", true);
+});
+
+document.getElementById("refresh").addEventListener("click", draw);
+draw();
+</script>
+</body>
+</html>
