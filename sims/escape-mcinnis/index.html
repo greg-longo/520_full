@@ -379,11 +379,11 @@ function(v) {
   const rem = V.totalMin % 60;
   const ts = V.m * 60 + V.s;
   return {
-  icon:'\u{1F522}', doorLabel:'KEYPAD', tag:'LEVEL 1 / 8 - ARITHMETIC & OPERATORS',
+  icon:'\u{1F522}', doorLabel:'KEYPAD', tag:'LEVEL 1 / 10 - ARITHMETIC & OPERATORS',
   title:'The Front Door Keypad',
   story:`11:47 PM. The library was supposed to close at 11. Nobody told you. Nobody told the doors, either.
 
-[ARIA]: "Good evening. I am ARIA - Academic Resident Intelligence & Access. A firmware update at 11:46 PM erased my Python knowledge. All 8 doors between you and the exit are sealed until I am re-trained. Door 1 is the keypad. It has... opinions about division."`,
+[ARIA]: "Good evening. I am ARIA - Academic Resident Intelligence & Access. A firmware update at 11:46 PM erased my Python knowledge. All 10 doors between you and the exit are sealed until I am re-trained. Door 1 is the keypad. It has... opinions about division."`,
   mission:`<h4>&#9656; MISSION</h4>The keypad demands three values. Assign each variable:<br>
 &bull; <code>hours</code> - the number of <i>whole</i> hours in ${V.totalMin} minutes (floor division <code>//</code>)<br>
 &bull; <code>remainder</code> - the minutes left over (modulus <code>%</code>)<br>
@@ -423,7 +423,7 @@ function(v) {
   const len = repeated.length;
   const nWord = ['zero','one','two','THREE','FOUR','FIVE'][V.n];
   return {
-  icon:'\u{1F4E2}', doorLabel:'INTERCOM', tag:'LEVEL 2 / 8 - STRINGS',
+  icon:'\u{1F4E2}', doorLabel:'INTERCOM', tag:'LEVEL 2 / 10 - STRINGS',
   title:'The Voice-Lock Intercom',
   story:`The hallway intercom crackles. It's voice-locked, but ARIA can fake a voice - if you build the exact strings.
 
@@ -465,7 +465,7 @@ function(v) {
   const combo = num / V.div;   // always exact: 42.0 / 24.0 / 43.0
   const comboStr = combo.toFixed(1);
   return {
-  icon:'\u{1F9EA}', doorLabel:'VAULT', tag:'LEVEL 3 / 8 - VALUES & TYPES',
+  icon:'\u{1F9EA}', doorLabel:'VAULT', tag:'LEVEL 3 / 10 - VALUES & TYPES',
   title:`The Vault of '${V.strNum}'`,
   story:`A vault door blocks the stairwell. Its display reads: '${V.strNum}' - with quotes.
 
@@ -508,7 +508,7 @@ function(v) {
   const root = Math.sqrt(V.sq);
   const rootStr = root.toFixed(1);
   return {
-  icon:'\u{1F50B}', doorLabel:'GENERATOR', tag:'LEVEL 4 / 8 - VARIABLES & IMPORTS',
+  icon:'\u{1F50B}', doorLabel:'GENERATOR', tag:'LEVEL 4 / 10 - VARIABLES & IMPORTS',
   title:'The Emergency Generator',
   story:`The stairwell lights die. Somewhere below, an emergency generator hums at low battery.
 
@@ -551,7 +551,7 @@ function(v) {
   const taxed = (100 * V.rate).toFixed(1);
   const pct = Math.round((V.rate - 1) * 100);
   return {
-  icon:'⚙️', doorLabel:'WORKSHOP', tag:'LEVEL 5 / 8 - FUNCTIONS',
+  icon:'⚙️', doorLabel:'WORKSHOP', tag:'LEVEL 5 / 10 - FUNCTIONS',
   title:'Teach ARIA to Fish',
   story:`[ARIA]: "Here is my embarrassing secret: I used to compute door-release codes myself. The firmware wipe took that from me. I need you to DEFINE the functions - then I can call them forever.
 
@@ -597,7 +597,7 @@ function(v) {
   ][v];
   const a = V.admin, s = V.student;
   return {
-  icon:'\u{1F6E1}️', doorLabel:'CHECKPOINT', tag:'LEVEL 6 / 8 - CONDITIONALS',
+  icon:'\u{1F6E1}️', doorLabel:'CHECKPOINT', tag:'LEVEL 6 / 10 - CONDITIONALS',
   title:'The Security Checkpoint',
   story:`A badge scanner bars the atrium. It's stuck treating everyone as an intruder - including you, and somewhat hurtfully, ARIA itself.
 
@@ -639,7 +639,7 @@ function(v) {
   const codesPy = '[' + V.codes.join(', ') + ']';
   const sortedPy = '[' + sorted_.join(', ') + ']';
   return {
-  icon:'\u{1F5C4}️', doorLabel:'SERVERS', tag:'LEVEL 7 / 8 - LISTS',
+  icon:'\u{1F5C4}️', doorLabel:'SERVERS', tag:'LEVEL 7 / 10 - LISTS',
   title:'The Server Room Scramble',
   story:`The server room. Racks of blinking machines, and a terminal showing the penultimate door's codes - scrambled into a list.
 
@@ -685,7 +685,7 @@ function(v) {
     { extraKey: 'lost_and_found', extraVal: 'basement' }
   ][v];
   return {
-  icon:'\u{1F9E0}', doorLabel:'MEMORY', tag:'LEVEL 8 / 8 - DICTIONARIES',
+  icon:'\u{1F9E0}', doorLabel:'MEMORY', tag:'LEVEL 8 / 10 - DICTIONARIES',
   title:`ARIA's Memory Core`,
   story:`The final door: ARIA's own memory core. A dictionary - keys mapped to values - holding everything the building knows about who belongs where.
 
@@ -714,7 +714,99 @@ assert directory.get('you') == 'free', "The directory has no 'you': 'free' entry
 assert has_aria is True, f"has_aria is {has_aria!r} - expected True. Use: 'ARIA' in directory."
 assert len(directory) == 4, f"directory has {len(directory)} items - expected exactly 4 (the original 3, plus you)."
 `,
-  success:`[ARIA]: "directory['you'] -> 'free'. Committed to permanent memory. All eight locks released. The exit is yours."`
+  success:`[ARIA]: "directory['you'] -> 'free'. Committed to permanent memory. Eight locks released. Two to go. The exit is yours."`
+  };
+},
+/* ---------- LEVEL 9: COUNTING WITH A DICTIONARY ---------- */
+function(v) {
+  const V = [
+    { swipes: "['north','east','north','service','north','east','service','north']",
+      tally: "{'north': 4, 'east': 2, 'service': 2}", busiest: 'north', doors: 3 },
+    { swipes: "['east','east','north','east','service','east','north']",
+      tally: "{'east': 4, 'north': 2, 'service': 1}", busiest: 'east', doors: 3 },
+    { swipes: "['service','north','service','service','east','service']",
+      tally: "{'service': 4, 'north': 1, 'east': 1}", busiest: 'service', doors: 3 }
+  ][v];
+  return {
+  icon:'\u{1F6AA}', doorLabel:'TURNSTILE', tag:'LEVEL 9 / 10 - COUNTING',
+  title:'The Badge Turnstile',
+  story:`A turnstile, and a log of every badge swipe tonight - door by door, in order.
+
+[ARIA]: "Count them for me. How many times was each door used? I know what you are about to try, and I am telling you now: it will fail. Ask me why afterwards."`,
+  mission:`<h4>&#9656; MISSION</h4>From the <code>swipes</code> list:<br>
+&bull; <code>tally</code> - a dictionary mapping each door to how many times it was swiped<br>
+&bull; <code>busiest</code> - the name of the door with the most swipes`,
+  starter:`swipes = ${V.swipes}
+
+tally = {}
+for door in swipes:
+    # careful - the door is not in tally yet the first time you see it
+    ...
+
+busiest = ...`,
+  hints:[
+    `<code>tally[door] += 1</code> raises <code>KeyError</code> the first time it meets a door, because you cannot add 1 to something that is not there yet. That is the whole puzzle.`,
+    `<code>tally[door] = tally.get(door, 0) + 1</code> - <code>.get</code> returns 0 when the key is missing, so the first swipe starts the count instead of crashing.`,
+    `For the busiest: <code>max(tally, key=tally.get)</code> asks for the key with the largest value.`
+  ],
+  sourceChecks:[
+    {pattern:/\.get\s*\(/, msg:"The turnstile wants .get() - it is the pattern that survives the first swipe."}
+  ],
+  test:`
+assert tally != Ellipsis and busiest != Ellipsis, "Replace every ... with an expression first."
+assert isinstance(tally, dict), f"tally is {type(tally).__name__} - expected a dict."
+assert len(tally) == ${V.doors}, f"tally has {len(tally)} doors - expected ${V.doors}."
+assert tally == ${V.tally}, f"tally is {tally!r} - expected ${V.tally}."
+assert busiest == '${V.busiest}', f"busiest is {busiest!r} - expected '${V.busiest}'."
+`,
+  success:`[ARIA]: "tally['${V.busiest}'] -> the most used door tonight. And this counting pattern has a grown-up name you will meet in Module 4: value_counts(). Same idea, one call."`
+  };
+},
+
+/* ---------- LEVEL 10: THE MISSING READING ---------- */
+function(v) {
+  const V = [
+    { readings: "[21.4, 19.8, None, 22.1, None, 20.6]",
+      safe: "[21.4, 19.8, 22.1, 20.6]", hottest: '22.1', missing: 2 },
+    { readings: "[18.2, None, 23.7, 20.0, 19.1]",
+      safe: "[18.2, 23.7, 20.0, 19.1]", hottest: '23.7', missing: 1 },
+    { readings: "[None, 24.5, 22.8, None, 21.0, None]",
+      safe: "[24.5, 22.8, 21.0]", hottest: '24.5', missing: 3 }
+  ][v];
+  return {
+  icon:'\u{1F321}', doorLabel:'THERMAL', tag:'LEVEL 10 / 10 - MISSING DATA',
+  title:'The Thermal Lock',
+  story:`The last door reads the building's temperature sensors. Some of them did not report tonight - the firmware update took them too.
+
+[ARIA]: "Find the hottest room. But two of those readings are None - not zero, not cold. Absent. If you hand None to max() it will refuse, and the message it gives you is one you will see again in Module 4. Read it properly and it is the only warning you will need."`,
+  mission:`<h4>&#9656; MISSION</h4>From the <code>readings</code> list:<br>
+&bull; <code>safe</code> - the readings that are actually numbers, in order<br>
+&bull; <code>hottest</code> - the highest of them<br>
+&bull; <code>missing</code> - how many sensors failed to report`,
+  starter:`readings = ${V.readings}
+
+safe = []
+for r in readings:
+    # skip the ones that never reported
+    ...
+
+hottest = ...
+missing = ...`,
+  hints:[
+    `<code>max(readings)</code> raises <code>TypeError: '>' not supported between instances of 'NoneType' and 'float'</code>. Python is telling you it cannot compare "nothing" to a number.`,
+    `Guard with <code>if r is None: continue</code>. Use <code>is None</code>, not <code>== None</code>.`,
+    `<code>missing = len(readings) - len(safe)</code>.`
+  ],
+  sourceChecks:[
+    {pattern:/is\s+None/, msg:"The thermal lock wants an explicit `is None` check."}
+  ],
+  test:`
+assert safe != Ellipsis and hottest != Ellipsis and missing != Ellipsis, "Replace every ... with an expression first."
+assert safe == ${V.safe}, f"safe is {safe!r} - expected ${V.safe}."
+assert missing == ${V.missing}, f"missing is {missing!r} - expected ${V.missing}."
+assert round(hottest, 1) == ${V.hottest}, f"hottest is {hottest!r} - expected ${V.hottest}."
+`,
+  success:`[ARIA]: "${V.hottest} degrees, from ${V.safe.split(',').length} working sensors. You did not average the Nones away or treat them as zero - you counted them. That is the whole of Module 4's missing-data lesson, and you just did it at 2 AM. The exit is open. Goodnight."`
   };
 }
 ];
