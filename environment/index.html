@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Environment Check | DTSC 520</title>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<style>
+:root {
+  --bg:#14110f; --card:#1b1714; --card2:#221d19; --border:#332b25;
+  --text:#e6ded6; --dim:#a79c92; --bright:#fff;
+  --accent:#7a5fb5; --accent-light:#b39ce0;
+  --ok:#5cbb70; --warn:#e0a24a; --flag:#e0705c;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);line-height:1.65;
+     font-family:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif;}
+.wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
+h1{font-family:'Zilla Slab',Georgia,serif;font-size:1.95rem;color:var(--bright);
+   margin:0 0 .35rem;font-weight:600;}
+h2{font-family:'Zilla Slab',Georgia,serif;font-size:1.25rem;color:var(--bright);
+   margin:2.4rem 0 .5rem;font-weight:600;}
+.lede{color:var(--dim);margin:0 0 1.4rem;max-width:70ch;}
+p{max-width:72ch;}
+a{color:var(--accent-light);}
+code,.mono{font-family:var(--mono);font-size:.86em;}
+code{background:var(--card2);padding:.08em .35em;border-radius:3px;
+     color:var(--accent-light);}
+.back{color:var(--dim);font-size:.85rem;text-decoration:none;display:inline-block;
+      margin-bottom:1.2rem;}
+.back:hover{color:var(--accent-light);}
+hr{border:0;border-top:1px solid var(--border);margin:2.4rem 0;}
+
+.panel{background:var(--card);border:1px solid var(--border);border-radius:10px;
+       padding:1.1rem 1.25rem;margin:1rem 0;}
+.btn{font:600 .95rem 'IBM Plex Sans',sans-serif;padding:.6rem 1.3rem;
+     border-radius:7px;cursor:pointer;background:var(--accent);
+     border:1px solid var(--accent);color:#fff;text-decoration:none;
+     display:inline-block;}
+.btn:hover{filter:brightness(1.14);}
+.btn:focus-visible{outline:3px solid var(--accent-light);outline-offset:2px;}
+.btn[disabled]{opacity:.55;cursor:not-allowed;}
+.btn-ghost{background:transparent;border-color:var(--border);color:var(--text);}
+
+.row{display:flex;gap:.7rem;align-items:baseline;padding:.42rem 0;
+     border-top:1px solid var(--border);}
+.row:first-of-type{border-top:0;}
+.row .tag{font-family:var(--mono);font-size:.62rem;letter-spacing:.09em;
+  text-transform:uppercase;padding:.12rem .45rem;border-radius:3px;flex:0 0 auto;}
+.tag.ok{background:rgba(92,187,112,.16);color:var(--ok);}
+.tag.no{background:rgba(224,112,92,.16);color:var(--flag);}
+.tag.run{background:var(--card2);color:var(--dim);}
+.row .what{color:var(--bright);flex:0 0 auto;}
+.row .detail{color:var(--dim);font-family:var(--mono);font-size:.8rem;
+             word-break:break-word;}
+
+pre{background:#0f0d0c;border:1px solid var(--border);border-radius:7px;
+    padding:.8rem .9rem;overflow-x:auto;font-family:var(--mono);font-size:.8rem;
+    white-space:pre-wrap;color:var(--text);}
+.note{border-left:3px solid var(--warn);background:rgba(224,162,74,.08);
+      padding:.7rem .95rem;border-radius:0 7px 7px 0;margin:1rem 0;
+      font-size:.93rem;}
+.vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+ol{max-width:70ch;} li{margin:.3rem 0;}
+</style>
+<link rel="stylesheet" href="/520_full/auth/auth.css">
+<link rel="stylesheet" href="/520_full/assets/shell.css">
+<script src="/520_full/auth/auth.js" defer></script>
+<script src="/520_full/assets/shell.js" defer></script>
+<script src="/520_full/assets/tool-back.js" defer></script>
+</head>
+<body data-auth-required>
+<div id="auth-slot" class="auth-slot-fixed"></div>
+
+<div class="wrap">
+  <a class="back" href="../index.html" id="backLink">&larr; DTSC 520</a>
+
+  <h1>Environment check</h1>
+  <p class="lede">Answers one question - <em>is my setup going to work?</em> - before
+  the course depends on the answer.</p>
+
+  <p>There are two halves, and you want both. <strong>Part 1</strong> runs right
+  here and checks that <strong>your browser</strong> can run the interactive
+  parts of the site. <strong>Part 2</strong> is a notebook you download and run
+  in Jupyter; it checks <strong>the machine you will actually do the work
+  on</strong>, which is the one that usually has the problem.</p>
+
+  <div class="note"><strong>Nothing here changes anything.</strong> No installers,
+  no repair buttons, nothing written to your computer. Both halves only look and
+  report. If something is wrong, you get a short description you can send me.</div>
+
+  <hr>
+
+  <h2>1. This browser</h2>
+  <p>Boots the same Python-in-the-browser engine the module pages and simulations
+  use, then runs one real calculation through it.</p>
+
+  <div class="panel">
+    <div id="rows"></div>
+    <p style="margin:1rem 0 0;">
+      <button class="btn" id="runBtn">Run the browser check</button>
+    </p>
+  </div>
+
+  <div id="reportWrap" style="display:none;">
+    <p style="margin-bottom:.4rem;">Copy this if you need to ask for help:</p>
+    <pre id="report" tabindex="0" aria-label="Browser check report"></pre>
+    <button class="btn btn-ghost" id="copyBtn">Copy report</button>
+  </div>
+
+  <hr>
+
+  <h2>2. Your own machine</h2>
+  <p>This half is a Jupyter notebook called
+  <code>DTSC520_Environment_Check.ipynb</code>. It is about 40 lines of Python
+  that look at your setup and print a summary - it is not an assignment, there
+  is nothing to submit, and you can delete it afterwards.</p>
+
+  <ol>
+    <li><strong>Save it into your DTSC 520 folder</strong> - the same folder you
+      keep the module notebooks in. Where you put it matters: one of the checks
+      reports which directory Jupyter is running from, and that only tells you
+      something useful if it is the folder you actually work in.</li>
+    <li>Open it in Jupyter the way you open any notebook.</li>
+    <li>Choose <strong>Kernel &rarr; Restart &amp; Run All</strong>.</li>
+  </ol>
+
+  <p>It checks the things that actually go wrong on this course:</p>
+
+  <ol>
+    <li>Your Python version, and whether Jupyter is running the interpreter you
+      think it is - two Pythons on one machine is the classic invisible fault.</li>
+    <li><code>numpy</code> and <code>pandas</code> import, with versions.</li>
+    <li>A <code>read_csv</code> from a <em>relative</em> path succeeds. This is
+      the working-directory problem Module 4 teaches, and it is the first thing
+      that really breaks - it shows up as a missing-file error when the file is
+      not missing.</li>
+    <li>Plots draw inline, which Module 5 needs.</li>
+    <li>Cell magics register, so the <code>%%expect</code> cells behave.</li>
+  </ol>
+
+  <p>If <code>numpy</code>, <code>pandas</code> or <code>matplotlib</code> are
+  missing, that is <strong>not</strong> a failure - Module 2 is pure Python and
+  the rest arrive later. The notebook says so, and then gives you the exact
+  command to install them anyway, because there is no reason to wait and every
+  reason not to be doing it the night an assignment is due.</p>
+
+  <p>It works out the right command for <em>your</em> setup - <code>%pip</code>
+  or <code>%conda</code> - and uses the notebook form rather than a terminal
+  one. That matters: plain <code>pip install</code> in a terminal installs into
+  whichever Python comes first on your PATH, which on a machine with two
+  Pythons is often not the one Jupyter is running. That is the exact fault the
+  notebook checks for a few lines earlier.</p>
+
+  <p><a class="btn" id="dlBtn" href="../notebooks/DTSC520_Environment_Check.ipynb"
+        download="DTSC520_Environment_Check.ipynb">Download
+        DTSC520_Environment_Check.ipynb</a></p>
+  <p id="dlNote" style="color:var(--dim);font-size:.92rem;margin-top:.5rem;"></p>
+
+  <p style="color:var(--dim);font-size:.92rem;">If it opens as a wall of text in
+  a browser tab instead of downloading, that tab <em>is</em> the file - use
+  <strong>File &rarr; Save Page As</strong> and make sure the name still ends in
+  <code>.ipynb</code>. Some browsers also save it as <code>.txt</code>; rename it
+  back, or Jupyter will not open it.</p>
+
+  <p style="color:var(--dim);font-size:.92rem;">It finishes by printing a short
+  report between two dashed lines, and tells you plainly whether there is
+  anything to do. Lines marked <code>note</code> are libraries the course has
+  not asked for yet - those are not problems. If anything says
+  <code>FAIL</code>, paste the whole block into your email; it usually turns a
+  problem that would take three exchanges into one reply.</p>
+</div>
+
+<script>
+"use strict";
+
+// Each check is {name, run} where run() resolves to [ok, detail]. Kept as data
+// so the page renders the same way whether a check passed, failed or threw -
+// an environment checker that itself breaks on a broken environment is no use.
+const CHECKS = [
+  { name: "Browser can run WebAssembly", run: async () => {
+      const ok = typeof WebAssembly === "object" &&
+                 typeof WebAssembly.instantiate === "function";
+      return [ok, ok ? "supported" : "not supported - this browser is too old"];
+    }},
+  { name: "Python engine loads", run: async (st) => {
+      st.pyodide = await loadPyodide();
+      return [true, "Pyodide " + (st.pyodide.version || "loaded")];
+    }},
+  { name: "Python runs", run: async (st) => {
+      const v = st.pyodide.runPython("import sys; sys.version.split()[0]");
+      return [true, "Python " + v];
+    }},
+  { name: "numpy loads and computes", run: async (st) => {
+      await st.pyodide.loadPackage("numpy");
+      const v = st.pyodide.runPython(
+        "import numpy as np\n" +
+        "assert np.array([1,2,3]).sum() == 6\n" +
+        "np.__version__");
+      return [true, "numpy " + v + ", array sum correct"];
+    }},
+  { name: "pandas loads and computes", run: async (st) => {
+      await st.pyodide.loadPackage("pandas");
+      const v = st.pyodide.runPython(
+        "import pandas as pd\n" +
+        "df = pd.DataFrame({'gpa':[3.4,3.9]})\n" +
+        "assert round(float(df['gpa'].mean()), 2) == 3.65\n" +
+        "pd.__version__");
+      return [true, "pandas " + v + ", mean correct"];
+    }},
+  { name: "Local storage available", run: async () => {
+      // Used to remember your place in the simulations. Blocked in some
+      // private-browsing modes, which is worth knowing but is not fatal.
+      try {
+        window.localStorage.setItem("_dtsc_probe", "1");
+        window.localStorage.removeItem("_dtsc_probe");
+        return [true, "progress can be saved"];
+      } catch (e) {
+        return [false, "blocked - simulation progress will not be remembered " +
+                       "(private browsing?)"];
+      }
+    }},
+];
+
+const results = [];
+const rowsEl = document.getElementById("rows");
+
+function draw() {
+  rowsEl.innerHTML = CHECKS.map((c, i) => {
+    const r = results[i];
+    const cls = !r ? "run" : r.ok ? "ok" : "no";
+    const label = !r ? (r === null ? "..." : "waiting") : r.ok ? "ok" : "fail";
+    return `<div class="row"><span class="tag ${cls}">${label}</span>` +
+           `<span class="what">${c.name}</span>` +
+           `<span class="detail">${r ? r.detail : ""}</span></div>`;
+  }).join("");
+}
+
+async function runAll() {
+  const btn = document.getElementById("runBtn");
+  btn.disabled = true;
+  btn.textContent = "Checking...";
+  results.length = 0;
+  draw();
+
+  const st = {};
+  for (let i = 0; i < CHECKS.length; i++) {
+    try {
+      const [ok, detail] = await CHECKS[i].run(st);
+      results[i] = { ok, detail };
+    } catch (e) {
+      // A failed check must never stop the rest - the whole point is to get a
+      // complete picture of a broken setup, not to stop at the first problem.
+      results[i] = { ok: false, detail: String(e.message || e).slice(0, 160) };
+    }
+    draw();
+  }
+
+  const passed = results.filter(r => r.ok).length;
+  const lines = [
+    "----- DTSC 520 browser report -----",
+    "result    : " + passed + "/" + results.length + " checks passed",
+    "browser   : " + navigator.userAgent,
+    "",
+    ...CHECKS.map((c, i) =>
+      "[" + (results[i].ok ? "ok  " : "FAIL") + "] " + c.name + ": " +
+      results[i].detail),
+    "-----------------------------------",
+  ];
+  document.getElementById("report").textContent = lines.join("\n");
+  document.getElementById("reportWrap").style.display = "block";
+  btn.disabled = false;
+  btn.textContent = passed === results.length ? "Run again" : "Try again";
+}
+
+/* The download link, made to actually download.
+ *
+ * `download` on an <a> is only honoured same-origin, and is ignored outright on
+ * file:// - and a .ipynb is JSON, so a browser that ignores it renders the
+ * notebook as a wall of text in a tab instead of saving it. Fetching the file
+ * and handing the browser a Blob with a binary content type removes the
+ * browser's discretion: there is nothing it knows how to display, so it saves.
+ *
+ * fetch() is blocked by CORS on file://, so if this page is opened from disk we
+ * cannot help - we say so plainly rather than letting the button look broken.
+ */
+(function () {
+  const btn = document.getElementById("dlBtn");
+  const note = document.getElementById("dlNote");
+  const NAME = "DTSC520_Environment_Check.ipynb";
+
+  // Opened straight off disk rather than served. Students never see this - it
+  // is what happens when the file is previewed locally during authoring. The
+  // link still resolves, so leave it alone and let the browser do whatever it
+  // does; just say why the behaviour may look odd. Do NOT dress this up as the
+  // feature being broken, because on the site it is not.
+  if (location.protocol === "file:") {
+    note.textContent = "Local preview: this page is open from a file rather " +
+      "than the course site, so the browser may show the notebook instead of " +
+      "saving it. On the site it downloads normally.";
+    return;
+  }
+
+  btn.addEventListener("click", async function (e) {
+    e.preventDefault();
+    const original = btn.textContent;
+    btn.textContent = "Preparing...";
+    try {
+      const res = await fetch(btn.getAttribute("href"), { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const text = await res.text();
+      JSON.parse(text);                       // a truncated notebook is worse than none
+      const url = URL.createObjectURL(
+        new Blob([text], { type: "application/octet-stream" }));
+      const a = document.createElement("a");
+      a.href = url; a.download = NAME;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      note.textContent = "Saved as " + NAME + " - check your Downloads folder.";
+    } catch (err) {
+      // Fall back to letting the browser follow the link normally. Worst case
+      // it opens in a tab, which the instructions below already cover.
+      note.textContent = "Could not save automatically - opening it instead. " +
+        "Use File > Save Page As, keeping the .ipynb ending.";
+      window.location.href = btn.getAttribute("href");
+    }
+    btn.textContent = original;
+  });
+})();
+
+document.getElementById("runBtn").addEventListener("click", runAll);
+document.getElementById("copyBtn").addEventListener("click", function () {
+  const txt = document.getElementById("report").textContent;
+  const done = () => { this.textContent = "Copied";
+                       setTimeout(() => { this.textContent = "Copy report"; }, 1600); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(done, () => {});
+  }
+});
+
+draw();
+</script>
+</body>
+</html>

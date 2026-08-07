@@ -20,7 +20,7 @@
   --surface3:     #252220;
   --text:         #f0ece6;
   --text-dim:     #b8b0a6;
-  --text-muted:   #7a7268;
+  --text-muted:   #898179;  /* 3.66:1 -> 4.52:1 on the lightest dark surface */
   --border:       #2e2a26;
   /* Challenge accent colors */
   --c1: #a78bfa;
@@ -891,7 +891,7 @@ textarea.editor:read-only { opacity: 0.7; cursor: default; }
           <div class="scoring-pip-label">third try or later</div>
         </div>
         <div class="scoring-pip">
-          <div class="scoring-pip-pts" style="color:var(--text-muted)">18</div>
+          <div class="scoring-pip-pts" style="color:var(--text-muted)">27</div>
           <div class="scoring-pip-label">points total</div>
         </div>
       </div>
@@ -937,8 +937,8 @@ textarea.editor:read-only { opacity: 0.7; cursor: default; }
 <!-- Status bar -->
 <div class="status-bar">
   <div class="challenge-dots" id="dots"></div>
-  <div class="status-label" id="statusLabel">Challenge 1 of 6</div>
-  <div class="status-score">Score: <strong id="scoreEl">0</strong> / 18</div>
+  <div class="status-label" id="statusLabel">Challenge 1 of 9</div>
+  <div class="status-score">Score: <strong id="scoreEl">0</strong> / 27</div>
 </div>
 
 <!-- Main layout -->
@@ -1057,7 +1057,7 @@ textarea.editor:read-only { opacity: 0.7; cursor: default; }
       <div class="final-emoji" id="finalEmoji">🏆</div>
       <div class="final-eyebrow">Final Score</div>
       <div class="final-title" id="finalTitle">Platinum Artist</div>
-      <div class="final-score" id="finalScore">18 / 18</div>
+      <div class="final-score" id="finalScore">27 / 27</div>
       <div class="breakdown" id="breakdown"></div>
 
       <div class="race-box">
@@ -1377,8 +1377,99 @@ print(plays[playlist_idx])`,
     expected: "['All Eyez on Data' 'Ordinary Least Squares' 'Head Up (Gradient)' 'Dreams of Convergence']\n[2341 1205 1876 1089]",
     why: `Fancy indexing lets you retrieve elements in any order using a list of indices. Unlike slicing, you are not limited to a contiguous range - you can cherry-pick and reorder in a single operation, which is essential for sorting or building playlists.`,
     hint: `<code>songs[playlist_idx]</code> and <code>plays[playlist_idx]</code> - passing a list of indices retrieves those elements in that exact order.`
+  },
+  {
+    accent: '#22d3ee',
+    tag: 'Aggregation & axis',
+    title: 'Total It Two Ways',
+    desc: `<code>weekly</code> holds five tracks (rows) across four weeks (columns). Produce a per-track total and a per-week total, then print the shape of each. The shapes are the part that tells you whether you picked the right axis.`,
+    starter: `import numpy as np
+np.set_printoptions(linewidth=200)
+
+songs = np.array(['Prior Engagement','Posterior Dreams','Ordinary Least Squares',
+                  'Line of Best Fit','The Activation Function'])
+
+# The same five tracks, now broken out by week. Each row still sums to the
+# play count you already know from the earlier challenges.
+weekly = np.array([[210, 198, 224, 215],
+                   [160, 152, 149, 162],
+                   [301, 288, 310, 306],
+                   [230, 241, 236, 227],
+                   [190, 205, 188, 199]])
+# One total per track, then one total per week
+per_track = weekly.sum(axis=?)
+per_week  = weekly.sum(axis=?)
+
+print(per_track)
+print(per_week)
+print(per_track.shape, per_week.shape)`,
+    expected: '[ 847  623 1205  934  782]\n[1091 1084 1107 1109]\n(5,) (4,)',
+    why: `<code>axis=</code> names the axis to <strong>collapse</strong>, not the one to keep - which is why almost everyone gets it backwards the first time. Five tracks and four weeks means the shapes give you away immediately: <code>(5,)</code> is one number per track, <code>(4,)</code> is one per week. Notice the per-track totals are the same play counts from Challenge 1 - the weekly grid reconciles to numbers you already know, so a wrong axis produces figures that are visibly not them.`,
+    hint: `<code>axis=1</code> collapses the columns and leaves one number per row; <code>axis=0</code> collapses the rows.`
+  },
+  {
+    accent: '#f472b6',
+    tag: 'Views & Copies',
+    title: 'The Slice That Bites Back',
+    desc: `Run this one before you change anything, and read the three numbers. It is the only challenge here that produces a <em>wrong answer</em> rather than an error.`,
+    starter: `import numpy as np
+np.set_printoptions(linewidth=200)
+
+songs = np.array(['Prior Engagement','Posterior Dreams','Ordinary Least Squares',
+                  'Line of Best Fit','The Activation Function'])
+
+# The same five tracks, now broken out by week. Each row still sums to the
+# play count you already know from the earlier challenges.
+weekly = np.array([[210, 198, 224, 215],
+                   [160, 152, 149, 162],
+                   [301, 288, 310, 306],
+                   [230, 241, 236, 227],
+                   [190, 205, 188, 199]])
+print(weekly[0, 0])
+
+# A slice is a VIEW. Write through it and see what happens to the original.
+first_two = weekly[:2]
+first_two[0, 0] = 0
+print(weekly[0, 0])
+
+# Now the same thing, on a copy.
+safe = weekly[:2].copy()
+safe[0, 0] = 999
+print(weekly[0, 0])`,
+    expected: '210\n0\n0',
+    why: `A NumPy slice is a <strong>view</strong> - a window onto the same memory, not a new array. Assigning through it edits the original, and nothing warns you. A Python list slice copies; a NumPy slice does not. That single difference has quietly ruined more analyses than any error message, because the code runs, the numbers look fine, and they are wrong. When you intend to modify, <code>.copy()</code> first.`,
+    hint: `Nothing to fill in - run it and read the three numbers. 210 before, 0 after writing through the view, still 0 after writing to the copy.`
+  },
+  {
+    accent: '#a3e635',
+    tag: 'Conditional Logic',
+    title: 'Hit or Miss, Without a Loop',
+    desc: `Using the per-track totals, label each track <code>'hit'</code> if it passed 800 plays and <code>'miss'</code> if it did not - in one call, no loop.`,
+    starter: `import numpy as np
+np.set_printoptions(linewidth=200)
+
+songs = np.array(['Prior Engagement','Posterior Dreams','Ordinary Least Squares',
+                  'Line of Best Fit','The Activation Function'])
+
+# The same five tracks, now broken out by week. Each row still sums to the
+# play count you already know from the earlier challenges.
+weekly = np.array([[210, 198, 224, 215],
+                   [160, 152, 149, 162],
+                   [301, 288, 310, 306],
+                   [230, 241, 236, 227],
+                   [190, 205, 188, 199]])
+totals = weekly.sum(axis=1)
+
+# Label each track 'hit' if totals > 800, otherwise 'miss'
+status = np.where(?)
+
+print(totals)
+print(status)`,
+    expected: "[ 847  623 1205  934  782]\n['hit' 'miss' 'hit' 'hit' 'miss']",
+    why: `<code>np.where(condition, if_true, if_false)</code> classifies a whole array in one pass. The loop-and-append version is four lines, slower, and easy to get wrong at the boundary - and the boundary is exactly where classification errors hide. This reads like the sentence you would say out loud.`,
+    hint: `<code>np.where(totals > 800, 'hit', 'miss')</code> - condition first, then the value when true, then the value when false.`
   }
-];
+]
 
 // ===================================================
 // STATE
@@ -1600,8 +1691,8 @@ function showFinal() {
 
   const total = scores.reduce((a,b)=>a+b,0);
   try { localStorage.setItem('dtsc520_charttoppers', JSON.stringify({ completed: true, score: total })); } catch(e) {}
-  try { if (typeof logEvent === 'function') logEvent('sim_complete', 'numpy_lab', total, 18); } catch(e) {}
-  const pct = total / 18;
+  try { if (typeof logEvent === 'function') logEvent('sim_complete', 'numpy_lab', total, 27); } catch(e) {}
+  const pct = total / 27;
 
   let emoji, title;
   if      (pct >= 0.889) { emoji = '🏆'; title = 'Platinum Artist'; }
@@ -1611,7 +1702,7 @@ function showFinal() {
 
   document.getElementById('finalEmoji').textContent = emoji;
   document.getElementById('finalTitle').textContent = title;
-  document.getElementById('finalScore').textContent = `${total} / 18`;
+  document.getElementById('finalScore').textContent = `${total} / 27`;
 
   const names = ['Arrays', 'Indexing', 'Vectorize', 'Statistics', 'Boolean', 'Fancy Idx'];
   document.getElementById('breakdown').innerHTML = CHALLENGES.map((c,i) => `

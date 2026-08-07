@@ -1071,7 +1071,7 @@ window.runCode=async function(){
   saveProgress();
 };
 
-function saveProgress(){ try{ localStorage.setItem('dtsc520_capstone_progress', JSON.stringify({beatIndex:state.beatIndex,points:state.points,decisions:state.decisions,ethics:state.ethics,codePassed:state.codePassed,reportLines:state.reportLines})); }catch(e){} }
+function saveProgress(){ try{ localStorage.setItem('dtsc520_capstone_progress', JSON.stringify({beatIndex:state.beatIndex,stage:state.stage,totalStages:STAGE_NAMES.length,points:state.points,maxPoints:state.maxPoints,decisions:state.decisions,ethics:state.ethics,codePassed:state.codePassed,reportLines:state.reportLines,savedAt:Date.now()})); }catch(e){} }
 
 /* ===================== STAGE CONTENT ===================== */
 function buildBeats(){

@@ -248,7 +248,15 @@ function render() {
     btn.disabled = false;
     btn.textContent = 'Begin the commission →';
     btn.onclick = () => { location.href = 'commission.html'; };
-    lockNote.textContent = '';
+    // Only offered once the gate is open AND there is something to show.
+    // A 'your progress' link on a commission nobody has started is an
+    // invitation to an empty page.
+    try {
+      if (window.localStorage.getItem('dtsc520_capstone_progress')) {
+        btn.textContent = 'Continue the commission \u2192';
+        lockNote.innerHTML = '<a href="progress.html">See where you got to &rarr;</a>';
+      } else { lockNote.textContent = ''; }
+    } catch (e) { lockNote.textContent = ''; }
   } else {
     gate.classList.remove('open');
     eyebrow.innerHTML = 'Locked &middot; complete all six modules';

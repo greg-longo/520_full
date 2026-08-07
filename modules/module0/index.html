@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --accent: #7a7a80;
+      --accent: #76767c;
       --accent-light: #9898a0;
       --accent-dim: rgba(122,122,128,0.15);
       --bg: #0f0e0d;
@@ -114,7 +114,7 @@
       text-decoration: none; display: inline-block;
     }
     .sf-btn:hover { border-color: var(--accent); color: var(--text-bright); }
-    .sf-btn.fwd { background: var(--accent); color: var(--text-bright); border-color: var(--accent); }
+    .sf-btn.fwd { background: var(--accent); color: #fff; border-color: var(--accent); }
     .sf-btn.fwd:hover { background: var(--accent-light); }
 
     .page-wrap {
@@ -1451,8 +1451,22 @@ details.ex-solution pre { margin-top: 0.6rem; }
 .sb-placeholder,
 #sb-editor-wrap .CodeMirror-linenumber { color: #8a8078; }
 
+/* Comments in DARK-theme code blocks: #6a6460 on #0d0c0b is 3.35:1. Comments
+   are meant to recede, but not out of reach - and in a course where the
+   comments in a worked example often carry the explanation, they are not
+   decoration. #878079 keeps the warm tint and clears 4.5:1 on EVERY dark surface
+   the comments appear on - #0d0c0b, #111010, #1a1815 and #161412. Tuning
+   against only the darkest of them left Module 6 short at 4.41:1.
+
+   Plain `.cm` on purpose: the light-theme rule below is `:root.theme-light .cm`
+   and outranks this on specificity, so light is unaffected. */
+.cm, .cmt { color: #878079; }
+
+/* `.mono` carries the same gold as inline <code> on Modules 0 and 5, but is not
+   a <code> element, so the rule below missed it and it stayed at 1.43:1. */
 :root.theme-light code,
-:root.theme-light pre code { color: #8b620f; }
+:root.theme-light pre code,
+:root.theme-light .mono { color: #8b620f; }
 :root.theme-light .kw,  :root.theme-light .keyword { color: #985b19; }
 :root.theme-light .st,  :root.theme-light .str     { color: #4d7333; }
 :root.theme-light .nm,  :root.theme-light .num     { color: #227194; }
