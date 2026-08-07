@@ -44,9 +44,11 @@
       el.style.width = "100%";
       el.style.boxShadow = "none";
 
-      // Replace the icon-and-pill contents with the rail's own two-line shape.
-      el.innerHTML = '<span class="rail-title">' + tool.label + "</span>"
-                   + '<span class="rail-sub">' + tool.sub + "</span>";
+      // Title only. The subtitles were removed from the Tools card on
+      // 7 Aug 2026 - six two-line buttons in a narrow rail read as noise, and
+      // the labels already say what each one is. tool.sub is left on the
+      // objects rather than deleted, so restoring this is one line.
+      el.innerHTML = '<span class="rail-title">' + tool.label + "</span>";
       host.appendChild(el);
       moved += 1;
     });

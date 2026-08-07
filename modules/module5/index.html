@@ -1064,19 +1064,15 @@ plt.<span class="fn">show</span>()</code></pre>
           <h3>Tools</h3>
           <a class="rail-item" href="../../help/index.html?from=module5">
             <span class="rail-title">Error translator</span>
-            <span class="rail-sub">Paste a traceback, get this course's explanation of it.</span>
           </a>
           <a class="rail-item" href="../../glossary/index.html?from=module5">
             <span class="rail-title">Glossary</span>
-            <span class="rail-sub">Every term the course expects you to know.</span>
           </a>
           <a class="rail-item" href="../../cohort/index.html?from=module5">
             <span class="rail-title">The cohort extract</span>
-            <span class="rail-sub">Look at the 102 rows before you load them.</span>
           </a>
           <a class="rail-item" href="../../codegrade/index.html?from=module5">
             <span class="rail-title">CodeGrade</span>
-            <span class="rail-sub">Check your notebook before you submit it.</span>
           </a>
           <div id="railTools"></div>
         </div>
@@ -3064,9 +3060,11 @@ section.content-section { scroll-margin-top: 68px; }
       el.style.width = "100%";
       el.style.boxShadow = "none";
 
-      // Replace the icon-and-pill contents with the rail's own two-line shape.
-      el.innerHTML = '<span class="rail-title">' + tool.label + "</span>"
-                   + '<span class="rail-sub">' + tool.sub + "</span>";
+      // Title only. The subtitles were removed from the Tools card on
+      // 7 Aug 2026 - six two-line buttons in a narrow rail read as noise, and
+      // the labels already say what each one is. tool.sub is left on the
+      // objects rather than deleted, so restoring this is one line.
+      el.innerHTML = '<span class="rail-title">' + tool.label + "</span>";
       host.appendChild(el);
       moved += 1;
     });

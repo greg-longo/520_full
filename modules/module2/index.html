@@ -876,7 +876,6 @@
     <section id="getting-started" class="content-section">
       <h2>Getting Started</h2>
       <h3 id="python-fundamentals">Python Fundamentals</h3>
-      <p><strong>Fundamentals of Data Science · Eastern University</strong></p>
       <h4 id="your-commission">Your commission</h4>
       <p>You&#x27;ve been hired into a university&#x27;s <strong>Institutional Research</strong> office. Your supervisor is <strong>Amy Lee</strong>, the Chief Data Officer, and she has a problem.</p>
       <p>The University Cabinet is writing a five-year strategic plan, and they want to know what actually supports student success. Lee has assembled a cohort dataset including six tables (see chart below) covering high school experience, undergraduate and graduate experiences, and work experience.</p>
@@ -4244,23 +4243,18 @@ holes = <span class="fn">find_missing</span>({<span class="st">&quot;students&qu
           <h3>Tools</h3>
           <button class="rail-item" id="cardsLaunch" type="button">
             <span class="rail-title">Flashcards</span>
-            <span class="rail-sub">21 terms for this module. Drill until the deck is clear.</span>
           </button>
           <a class="rail-item" href="../../help/index.html?from=module2">
             <span class="rail-title">Error translator</span>
-            <span class="rail-sub">Paste a traceback, get this course's explanation of it.</span>
           </a>
           <a class="rail-item" href="../../glossary/index.html?m=2&amp;from=module2">
             <span class="rail-title">Glossary</span>
-            <span class="rail-sub">Every term in the course, opened on this module's.</span>
           </a>
           <a class="rail-item" href="../../cohort/index.html?from=module2">
             <span class="rail-title">The cohort extract</span>
-            <span class="rail-sub">Look at the 102 rows before you load them.</span>
           </a>
           <a class="rail-item" href="../../codegrade/index.html?from=module2">
             <span class="rail-title">CodeGrade</span>
-            <span class="rail-sub">Check your notebook before you submit it.</span>
           </a>
           <div id="railTools"></div>
         </div>
@@ -6474,9 +6468,11 @@ section.content-section { scroll-margin-top: 68px; }
       el.style.width = "100%";
       el.style.boxShadow = "none";
 
-      // Replace the icon-and-pill contents with the rail's own two-line shape.
-      el.innerHTML = '<span class="rail-title">' + tool.label + "</span>"
-                   + '<span class="rail-sub">' + tool.sub + "</span>";
+      // Title only. The subtitles were removed from the Tools card on
+      // 7 Aug 2026 - six two-line buttons in a narrow rail read as noise, and
+      // the labels already say what each one is. tool.sub is left on the
+      // objects rather than deleted, so restoring this is one line.
+      el.innerHTML = '<span class="rail-title">' + tool.label + "</span>";
       host.appendChild(el);
       moved += 1;
     });
