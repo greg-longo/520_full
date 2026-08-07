@@ -5,8 +5,8 @@ No GIF needed. Provide **still PNG images** with different expressions and the e
 ## Naming scheme (exact)
 
 ```
-jamie-<emotion>-<frame>.png      ← idle frames (1, 2, 3, ...)
-jamie-<emotion>-blink.png        ← optional eyes-closed frame (for blinking)
+amy-<emotion>-<frame>.png      ← idle frames (1, 2, 3, ...)
+amy-<emotion>-blink.png        ← optional eyes-closed frame (for blinking)
 ```
 
 **Emotions:** `neutral`, `approve`, `concern`, `disappoint`, `warm`
@@ -23,9 +23,9 @@ jamie-<emotion>-blink.png        ← optional eyes-closed frame (for blinking)
 
 You said "as many as appropriate" — here's the guide:
 
-- **Minimum per emotion:** 1 frame (`jamie-neutral-1.png`). Works, but static for that emotion.
-- **To get gentle idle motion:** 2–3 idle frames (`jamie-neutral-1.png`, `-2.png`, `-3.png`). The engine slowly cycles them. Make them *slightly* different (tiny head tilt, small mouth/brow change) — subtle is better than busy.
-- **To get blinking:** add `jamie-neutral-blink.png` (same pose, eyes closed). The engine flashes it for ~130 ms every few seconds.
+- **Minimum per emotion:** 1 frame (`amy-neutral-1.png`). Works, but static for that emotion.
+- **To get gentle idle motion:** 2–3 idle frames (`amy-neutral-1.png`, `-2.png`, `-3.png`). The engine slowly cycles them. Make them *slightly* different (tiny head tilt, small mouth/brow change) — subtle is better than busy.
+- **To get blinking:** add `amy-neutral-blink.png` (same pose, eyes closed). The engine flashes it for ~130 ms every few seconds.
 - **To get a "talking" feel:** give `neutral` 2–4 frames with small mouth differences (open/closed/slightly-open). While Amy's text types out, the engine cycles these faster, so she looks like she's speaking; then it slows to idle.
 
 **Most impactful, least work:** focus your frames on `neutral` (where she spends most time) — say `neutral-1/2/3` + `neutral-blink`. The reaction emotions (`approve`, `concern`, `disappoint`, `warm`) can be a single frame each and still read great, since they only flash briefly.
@@ -34,11 +34,11 @@ The engine probes up to **6 idle frames** per emotion (`-1` … `-6`) plus one `
 
 ## Example file set (a good starting point)
 ```
-jamie-neutral-1.png      jamie-neutral-2.png    jamie-neutral-3.png    jamie-neutral-blink.png
-jamie-approve-1.png      jamie-approve-blink.png
-jamie-concern-1.png
-jamie-disappoint-1.png
-jamie-warm-1.png
+amy-neutral-1.png      amy-neutral-2.png    amy-neutral-3.png    amy-neutral-blink.png
+amy-approve-1.png      amy-approve-blink.png
+amy-concern-1.png
+amy-disappoint-1.png
+amy-warm-1.png
 ```
 
 ## Specs

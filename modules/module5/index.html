@@ -1819,6 +1819,32 @@ details.ex-solution pre { margin-top: 0.6rem; }
 
    Verify with:  node tools/check_contrast.js modules/module2/index
    ========================================================================== */
+/* --accent-light was never given a light-theme value. It is a mid purple picked
+   against the dark background, and on the light surfaces it lands at 2.75-3.15:1
+   wherever it carries text - vocabulary spans, the exercise label. The existing
+   `:root.theme-light .content-section h4 { color: #6b4fa3 }` looks like the fix
+   for this and is not: it patched one selector, not the variable.
+
+   #6b4fa3 is the same purple already used for that h4 override, so nothing new
+   enters the palette. It clears 4.5:1 on all four light surfaces (6.42 on
+   #ffffff, 5.75 on #f5f2ee, 5.31 on #ede9e3, 5.03 on #e8e3dc). */
+:root.theme-light { --accent-light: #6b4fa3; }
+
+/* NOT DONE, deliberately: the sandbox modal (.sb-box) is hardcoded #161412 and
+   stays dark in both themes, so it is a pocket of dark surface inside the light
+   theme and --accent-light now lands on it at about 2.6:1. The obvious fix is
+   to re-declare the variables on .sb-box, since custom properties inherit - but
+   check_contrast.js cannot verify that: themeVars() collects every custom
+   property into one flat map with no regard for the selector that set it, so a
+   scoped override reads as a global one and the tool reported 11 failures that
+   do not exist. Fix the checker first, then do this. See A11Y_BACKLOG.md. */
+
+/* Both hardcoded, both placeholder-weight text on that same dark modal, both
+   too dark to read on it at 1.94:1 - in the DARK theme too, so this was never
+   a theming problem. Line numbers and the "output appears here" placeholder. */
+.sb-placeholder,
+#sb-editor-wrap .CodeMirror-linenumber { color: #8a8078; }
+
 :root.theme-light code,
 :root.theme-light pre code { color: #8b620f; }
 :root.theme-light .kw,  :root.theme-light .keyword { color: #985b19; }

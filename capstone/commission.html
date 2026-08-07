@@ -262,8 +262,8 @@
   window.screenShake=function(){ if(REDUCED) return; document.getElementById('beat').animate([{transform:'translate(0,0)'},{transform:'translate(-4px,0)'},{transform:'translate(3px,0)'},{transform:'translate(0,0)'}],{duration:200,easing:'ease-in-out'}); };
 })();
 
-/* ===================== JAMIE AVATAR (inline SVG) ===================== */
-const JAMIE_SVG = `
+/* ===================== AMY AVATAR (inline SVG) ===================== */
+const AMY_SVG = `
 <defs><clipPath id="cir"><circle cx="50" cy="50" r="50"/></clipPath></defs>
 <g clip-path="url(#cir)">
   <rect width="100" height="100" fill="#1b2330"/>
@@ -278,10 +278,10 @@ const JAMIE_SVG = `
 </g>
 <circle cx="50" cy="50" r="49" fill="none" stroke="#c9a24a" stroke-width="1.2" opacity="0.5"/>`;
 
-/* ===================== JAMIE AVATAR — FRAME CYCLING =====================
+/* ===================== AMY AVATAR — FRAME CYCLING =====================
    Provide STILL frames in capstone/assets/ named:
-       jamie-<emotion>-1.png, jamie-<emotion>-2.png, ...   (idle frames; 1+)
-       jamie-<emotion>-blink.png                            (optional eyes-closed)
+       amy-<emotion>-1.png, amy-<emotion>-2.png, ...   (idle frames; 1+)
+       amy-<emotion>-blink.png                            (optional eyes-closed)
    Emotions: neutral, approve, concern, disappoint, warm.
    The engine probes which files exist and cycles only those:
      - gently cycles idle frames (faster while Amy is "talking"),
@@ -297,7 +297,7 @@ const AV = {
   ready:{},             /* emotion -> true once probed */
   timer:null, blinkTimer:null
 };
-const avSrc = (e,f)=>`assets/jamie-${e}-${f}.png`;
+const avSrc = (e,f)=>`assets/amy-${e}-${f}.png`;
 
 /* Probe up to N idle frames + a blink frame for an emotion; keep the ones that load. */
 function probeEmotion(e, maxFrames=6){
@@ -336,7 +336,7 @@ function avatarHTML(size){
   const active=currentSrc();
   const layers = srcs.map(s=>`<img alt="" class="av-frame${s===active?'':' gone'}" data-src="${s}" src="${s}">`).join('');
   return `<span class="av" style="width:${size}px;height:${size}px;">
-    <svg viewBox="0 0 100 100" aria-hidden="true">${JAMIE_SVG}</svg>
+    <svg viewBox="0 0 100 100" aria-hidden="true">${AMY_SVG}</svg>
     ${layers}
   </span>`;
 }
@@ -364,7 +364,7 @@ function paintAvatars(src){
 function remountAvatars(){
   document.querySelectorAll('.av').forEach(av=>{
     const sz=parseInt(av.style.width)||42;
-    av.innerHTML=`<svg viewBox="0 0 100 100" aria-hidden="true">${JAMIE_SVG}</svg>`+
+    av.innerHTML=`<svg viewBox="0 0 100 100" aria-hidden="true">${AMY_SVG}</svg>`+
       allFrameSrcs().map(s=>`<img alt="" class="av-frame gone" data-src="${s}" src="${s}">`).join('');
   });
   paintAvatars();
