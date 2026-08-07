@@ -1428,14 +1428,22 @@ details.ex-solution pre { margin-top: 0.6rem; }
    #ffffff, 5.75 on #f5f2ee, 5.31 on #ede9e3, 5.03 on #e8e3dc). */
 :root.theme-light { --accent-light: #6b4fa3; }
 
-/* NOT DONE, deliberately: the sandbox modal (.sb-box) is hardcoded #161412 and
-   stays dark in both themes, so it is a pocket of dark surface inside the light
-   theme and --accent-light now lands on it at about 2.6:1. The obvious fix is
-   to re-declare the variables on .sb-box, since custom properties inherit - but
-   check_contrast.js cannot verify that: themeVars() collects every custom
-   property into one flat map with no regard for the selector that set it, so a
-   scoped override reads as a global one and the tool reported 11 failures that
-   do not exist. Fix the checker first, then do this. See A11Y_BACKLOG.md. */
+/* The sandbox modal (.sb-box) is hardcoded #161412 and stays dark in BOTH
+   themes, which is the right call - it holds a CodeMirror editor, and dark
+   editors are what people expect. But that makes it a pocket of dark surface
+   inside the light theme, and every light-theme text colour is picked to sit on
+   a light background. Darkening --accent-light above fixed it on the light
+   surfaces and necessarily made it worse here.
+
+   Custom properties inherit, so re-declaring them on the modal restores
+   dark-appropriate values inside it and nowhere else. If the modal ever gets a
+   light background, these have to come back out. */
+:root.theme-light .sb-box {
+  --accent-light: #b39ce0;
+  --text-dim: #a79c92;
+  --text: #e6ded6;
+  --text-bright: #ffffff;
+}
 
 /* Both hardcoded, both placeholder-weight text on that same dark modal, both
    too dark to read on it at 1.94:1 - in the DARK theme too, so this was never
