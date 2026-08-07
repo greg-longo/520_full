@@ -437,7 +437,9 @@
   <script src="/520_full/auth/auth.js" defer></script>
   <script src="/520_full/assets/player.js" defer></script>
   <script src="/520_full/assets/shell.js" defer></script>
-  <script src="/520_full/assets/missions.js" defer></script>
+  <!-- missions.js removed 7 Aug 2026: the MISSIONS panel duplicated the
+       simulations already listed in the right rail. assets/missions.js is
+       still present if it is ever wanted back. -->
   <style>
     body[data-preview]::before {
       content: "PREVIEW - generated from the notebook. The live page is index.html";
@@ -2705,7 +2707,7 @@ bad[<span class="nm">3</span>] = <span class="nm">1.4</span>
   <aside class="rail-col">
         <div class="rail-card">
           <h3>Simulations</h3>
-          <a class="rail-item" href="../../sims/numpy-lab/index.html"><span class="rail-title">NumPy Lab</span><span class="rail-sub">Six tasks on real arrays, plus the vectorization speed race.</span></a><a class="rail-item" href="../../sims/debug-pipeline/index.html"><span class="rail-title">Debug the Pipeline</span><span class="rail-sub">Find what broke, and say why.</span></a>
+          <a class="rail-item" href="../../sims/numpy-lab/index.html"><span class="rail-title">NumPy Lab</span><span class="rail-sub">Nine tasks on real arrays, plus the vectorization speed race.</span></a><a class="rail-item" href="../../sims/shape-mismatch/index.html"><span class="rail-title">Shape Mismatch</span><span class="rail-sub">Five arrays that will not combine. Read the error before you edit.</span></a><a class="rail-item" href="../../sims/debug-pipeline/index.html"><span class="rail-title">Debug the Pipeline</span><span class="rail-sub">Find what broke, and say why.</span></a>
         </div>
         <div class="rail-card">
           <h3>Check yourself</h3>

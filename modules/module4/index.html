@@ -416,7 +416,9 @@
   <script src="/520_full/auth/auth.js" defer></script>
   <script src="/520_full/assets/player.js" defer></script>
   <script src="/520_full/assets/shell.js" defer></script>
-  <script src="/520_full/assets/missions.js" defer></script>
+  <!-- missions.js removed 7 Aug 2026: the MISSIONS panel duplicated the
+       simulations already listed in the right rail. assets/missions.js is
+       still present if it is ever wanted back. -->
   <style>
     body[data-preview]::before {
       content: "PREVIEW - generated from the notebook. The live page is index.html";
@@ -2646,7 +2648,7 @@ shared = [c <span class="kw">for</span> c <span class="kw">in</span> clean.colum
   <aside class="rail-col">
         <div class="rail-card">
           <h3>Simulations</h3>
-          <a class="rail-item" href="../../sims/dirty-dataset/index.html"><span class="rail-title">The Dirty Dataset</span><span class="rail-sub">A messy extract and a deadline. Clean it and defend your choices.</span></a><a class="rail-item" href="../../sims/aria-returns/index.html"><span class="rail-title">ARIA Returns</span><span class="rail-sub">Query a table by asking the right questions.</span></a><a class="rail-item" href="../../sims/rtg-investigation/index.html"><span class="rail-title">RTG Investigation</span><span class="rail-sub">Follow the data to a conclusion you can support.</span></a>
+          <a class="rail-item" href="../../sims/dirty-dataset/index.html"><span class="rail-title">The Dirty Dataset</span><span class="rail-sub">A messy extract and a deadline. Clean it and defend your choices.</span></a><a class="rail-item" href="../../sims/aria-returns/index.html"><span class="rail-title">ARIA Returns</span><span class="rail-sub">Query a table by asking the right questions.</span></a><a class="rail-item" href="../../sims/rtg-investigation/index.html"><span class="rail-title">RTG Investigation</span><span class="rail-sub">Follow the data to a conclusion you can support.</span></a><a class="rail-item" href="../../sims/merge-room/index.html"><span class="rail-title">The Merge Room</span><span class="rail-sub">Four systems that disagree. Choose a join and defend the number.</span></a>
         </div>
         <div class="rail-card">
           <h3>Check yourself</h3>
