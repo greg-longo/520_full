@@ -44,7 +44,6 @@
   var blocks = [];
   var py = null;          // the Pyodide instance, once booted
   var booting = null;     // in-flight boot promise, so two clicks boot once
-  var ran = 0;            // how many blocks have been executed, in order
 
   /* A notebook cell shows the value of its final expression the way a REPL
      does - `type(42)` displays <class 'int'> without any print. Plain exec()
@@ -139,45 +138,77 @@
     statusEl.textContent = "";
     return boot(statusEl).then(function () {
       statusEl.textContent = "";
-      /* Everything above this block, in notebook order, that has not run yet.
-         Safe to do silently precisely because none of it can have been edited. */
+      /* Reset the namespace and replay every earlier block before running this
+         one. Costs nothing (these cells are tiny) and means a block ALWAYS
+         produces the output the notebook produces, no matter what order things
+         were clicked in or how many times.
+
+         Without the reset, `count -= 2` gives 3 the first time and 1 the
+         second, because the name survives between runs. That is correct Python
+         and correct notebook behavior, but on a page whose whole promise is
+         "this is the verified output" it reads as the site being broken. */
+      py.runPython("_dtsc_ns = {'__name__': '__main__'}");
       var idx = blocks.indexOf(block);
-      for (var i = 0; i < idx; i++) {
-        if (!blocks[i].hasAttribute("data-ran")) execOne(blocks[i]);
-      }
+      for (var i = 0; i < idx; i++) execOne(blocks[i]);
       execOne(block);
-      ran++;
+      showCleared(block, false);
       btn.disabled = false;
-      btn.textContent = "Run again";
     }).catch(function (err) {
-      statusEl.textContent = "Python could not start - the stored output is shown instead.";
+      statusEl.textContent = "Python could not start. The stored output is shown instead.";
       block.classList.add("run-unavailable");
       btn.disabled = false;
-      /* Put the verified output back. Failing to run must never leave a
-         student with less than the page had before. */
+      /* Failing to run must never leave a student with less than the page had
+         before, so the verified output comes back. */
       var stored = block.querySelector("[data-stored-output]");
       if (stored) stored.hidden = false;
       if (window.console) console.warn("runnable:", err);
     });
   }
 
+  /* There is no "Run again": re-running a read-only block gives the same answer
+     by construction, so the button would be an invitation to no purpose. Once a
+     block has run, the only useful action is putting it back. */
+  function showCleared(block, cleared) {
+    block.querySelector(".run-btn").hidden = !cleared;
+    block.querySelector(".clear-btn").hidden = cleared;
+  }
+
+  function clear(block) {
+    var slot = block.querySelector(".run-output");
+    if (slot) slot.parentNode.removeChild(slot);
+    block.removeAttribute("data-ran");
+    showCleared(block, true);
+  }
+
   function enhance(block) {
     var bar = document.createElement("div");
     bar.className = "run-bar";
+
     var btn = document.createElement("button");
     btn.type = "button";
     btn.className = "run-btn";
     btn.textContent = "Run";
+
+    var clr = document.createElement("button");
+    clr.type = "button";
+    clr.className = "run-btn clear-btn";
+    clr.textContent = "Clear output";
+    clr.hidden = true;
+
     var status = document.createElement("span");
     status.className = "run-status";
     status.setAttribute("role", "status");
+
     bar.appendChild(btn);
+    bar.appendChild(clr);
     bar.appendChild(status);
     block.appendChild(bar);
-    btn.addEventListener("click", function () { run(block, status); });
 
-    /* Only now, once we know the button exists and JS is alive, is it safe to
-       hide the answer. */
+    btn.addEventListener("click", function () { run(block, status); });
+    clr.addEventListener("click", function () { clear(block); });
+
+    /* Only now, once the button exists and JS is demonstrably alive, is it safe
+       to hide the answer. */
     var stored = block.querySelector("[data-stored-output]");
     if (stored) stored.hidden = true;
   }

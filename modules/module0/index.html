@@ -666,6 +666,37 @@ git --version
 
       <p><strong>Your turn cells.</strong> Exercises. Do them as you go, not at the end.</p>
 
+      <h3>Running code on the module pages, without installing anything</h3>
+      <p>The module pages carry the same code the notebooks do. In some sections you
+      will see a <strong>Run</strong> button under a block of code. Press it and the code
+      runs, right there in the page, and the output appears underneath. Nothing is
+      installed and nothing is sent anywhere. Python is running inside your browser.</p>
+      <p>The first Run of a session takes a few seconds while Python loads. After that
+      it is immediate. If it cannot load at all, the output is simply shown to you the
+      way it always was, so the page never ends up less useful than it started.</p>
+      <p>Two things about this are deliberate.</p>
+      <p><strong>You cannot edit the code.</strong> The blocks run exactly as written.
+      This is not us being protective. It means the result you get is guaranteed to be
+      the result the notebook gets, so the page and the notebook can never quietly
+      disagree with each other. When you want to change a number and find out what
+      happens, and you should want that often, use the notebook, or one of the
+      <strong>Your turn</strong> editors further down any module page. Those are
+      editable and they run the same way.</p>
+      <p><strong>Running one block runs the ones above it first.</strong> Same rule as
+      the notebook: code needs the variables that earlier code created. If you press Run
+      halfway down a section, you will see several outputs appear at once. That is the
+      section catching up, not a bug.</p>
+      <p><strong>Clear output</strong> puts a block back the way it was, in case you want
+      to try predicting the answer before you look at it. Which brings us to why the
+      output is hidden in the first place.</p>
+      <p>Where you see a <em>Predict</em> prompt, the answer is behind a reveal on
+      purpose. Guess first. The guess is the part that does the work, and a wrong guess
+      does more of it than a right one.</p>
+      <p>Not every block runs. The <code>%%expect</code> cells below keep their recorded
+      error instead, because the exact wording of a Python error message matters on this
+      course and the browser version phrases some of them differently.</p>
+      <p>This is for reading and reviewing. The notebook is still where you do the work,
+      and it is the notebook you submit.</p>
       <h3>A word about AI assistants</h3>
       <p>You will use them. Let's be direct about how.</p>
 
@@ -2056,6 +2087,32 @@ details.ex-solution pre { margin-top: 0.6rem; }
    targets - the sections themselves and the sub-headings the contents links to. */
 section.content-section { scroll-margin-top: 68px; }
 .content-section h3[id] { scroll-margin-top: 68px; }
+
+/* --- read-only runnable code blocks (prototype: M2 Variables & Types) ----- */
+/* The block reuses the page's own <pre><code>; only the bar and the live
+   output slot are new, so a runnable block and a static one look identical
+   until the student chooses to act. */
+[data-runnable] { margin: 0 0 1.1rem; }
+[data-runnable] > pre { margin-bottom: 0; }
+.run-bar { display: flex; align-items: center; gap: .7rem; margin-top: .35rem; }
+.run-btn {
+  font: 600 .78rem/1 var(--font, 'Zilla Slab', Georgia, serif);
+  letter-spacing: .04em; padding: .4rem .9rem; border-radius: 6px;
+  cursor: pointer; color: var(--text-bright, #fff);
+  background: transparent; border: 1px solid var(--accent, #7a5fb5);
+}
+.run-btn:hover:not(:disabled) { background: var(--accent, #7a5fb5); }
+.run-btn:disabled { opacity: .55; cursor: progress; }
+.run-btn:focus-visible { outline: 3px solid var(--accent-light); outline-offset: 2px; }
+.run-status { font-size: .78rem; color: var(--text-dim); }
+.run-output { margin-top: .4rem; }
+.run-output pre { margin: 0; white-space: pre-wrap; }
+/* A cell that raised is still a correct result on this course - it is marked,
+   not styled as a site failure. */
+.run-output.run-failed { border-left: 3px solid var(--flag, #e0705c); }
+.clear-btn { border-color: var(--line); color: var(--text-dim); }
+.clear-btn:hover { background: transparent; border-color: var(--text-dim);
+                   color: var(--text); }
 
 </style>
 <script>

@@ -729,3 +729,6 @@ section.content-section { scroll-margin-top: 68px; }
 /* A cell that raised is still a correct result on this course - it is marked,
    not styled as a site failure. */
 .run-output.run-failed { border-left: 3px solid var(--flag, #e0705c); }
+.clear-btn { border-color: var(--line); color: var(--text-dim); }
+.clear-btn:hover { background: transparent; border-color: var(--text-dim);
+                   color: var(--text); }
