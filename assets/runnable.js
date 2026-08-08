@@ -152,6 +152,8 @@
       for (var i = 0; i < idx; i++) execOne(blocks[i]);
       execOne(block);
       showCleared(block, false);
+      var st = block.querySelector("[data-stored-output]");
+      if (st) st.hidden = true;   // the live result replaces it
       btn.disabled = false;
     }).catch(function (err) {
       statusEl.textContent = "Python could not start. The stored output is shown instead.";
@@ -177,6 +179,8 @@
     var slot = block.querySelector(".run-output");
     if (slot) slot.parentNode.removeChild(slot);
     block.removeAttribute("data-ran");
+    var st = block.querySelector("[data-stored-output]");
+    if (st) st.hidden = !showingAll();
     showCleared(block, true);
   }
 
@@ -213,10 +217,67 @@
     if (stored) stored.hidden = true;
   }
 
+  /* ------------------------------------------------------------------ toggle
+     Hiding stored output is the right default: it is what makes a Predict
+     prompt work at all, and students are told plainly that they are expected
+     to run everything.
+
+     But it removes the only place in the whole system where a student can
+     simply SEE what a line of code produces. The student notebooks ship with
+     zero stored output by design, so "download it and Run All" is a five
+     minute commitment rather than a ten second lookup. This toggle is that
+     lookup path, which is why it is site-wide and sticky rather than a
+     per-section convenience - a control you have to set fourteen times is a
+     control nobody sets twice. See RUNNABLE_ROLLOUT.md. */
+  var KEY = "dtsc520-show-output";
+
+  function showingAll() {
+    try { return window.localStorage.getItem(KEY) === "1"; } catch (e) { return false; }
+  }
+
+  function applyShowAll(on) {
+    try { window.localStorage.setItem(KEY, on ? "1" : "0"); } catch (e) {}
+    blocks.forEach(function (b) {
+      var stored = b.querySelector("[data-stored-output]");
+      /* Never reveal the stored copy next to a live result the student just
+         produced - two output blocks for one cell reads as a bug. */
+      if (stored) stored.hidden = !on || b.hasAttribute("data-ran");
+    });
+    Array.prototype.forEach.call(
+      document.querySelectorAll(".show-all-toggle input"),
+      function (i) { i.checked = on; });
+  }
+
+  function addToggle(section) {
+    var wrap = document.createElement("label");
+    wrap.className = "show-all-toggle";
+    var box = document.createElement("input");
+    box.type = "checkbox";
+    box.checked = showingAll();
+    var txt = document.createElement("span");
+    txt.textContent = "Show all output";
+    var hint = document.createElement("span");
+    hint.className = "toggle-hint";
+    hint.textContent = "for looking things up. You still learn more by running it.";
+    wrap.appendChild(box);
+    wrap.appendChild(txt);
+    wrap.appendChild(hint);
+    box.addEventListener("change", function () { applyShowAll(box.checked); });
+    section.insertBefore(wrap, section.firstChild);
+  }
+
   function init() {
     blocks = Array.prototype.slice.call(
       document.querySelectorAll(".content-section [data-runnable]"));
+    if (!blocks.length) return;
     blocks.forEach(enhance);
+
+    var seen = [];
+    blocks.forEach(function (b) {
+      var sec = b.closest(".content-section");
+      if (sec && seen.indexOf(sec) === -1) { seen.push(sec); addToggle(sec); }
+    });
+    applyShowAll(showingAll());
   }
 
   if (document.readyState === "loading") {

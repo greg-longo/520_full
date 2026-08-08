@@ -695,8 +695,18 @@ git --version
       <p>Not every block runs. The <code>%%expect</code> cells below keep their recorded
       error instead, because the exact wording of a Python error message matters on this
       course and the browser version phrases some of them differently.</p>
+      <p><strong>You are expected to run everything.</strong> That is the point of the
+      buttons. Reading code and running code teach different things, and only one of
+      them is the skill this course is about.</p>
+      <p>If you would rather just look something up, there is a <strong>Show all
+      output</strong> checkbox at the top of each section. Tick it once and it stays
+      ticked, on every module page, until you untick it. It is there for the moment you
+      need to check what a line returns and nothing else. You will learn more with it
+      off.</p>
       <p>This is for reading and reviewing. The notebook is still where you do the work,
-      and it is the notebook you submit.</p>
+      and it is the notebook you submit. Note that the notebook arrives with no output at
+      all, so <strong>Kernel &rarr; Restart &amp; Run All</strong> is the first thing to
+      do when you open it.</p>
       <h3>A word about AI assistants</h3>
       <p>You will use them. Let's be direct about how.</p>
 
@@ -2113,6 +2123,22 @@ section.content-section { scroll-margin-top: 68px; }
 .clear-btn { border-color: var(--line); color: var(--text-dim); }
 .clear-btn:hover { background: transparent; border-color: var(--text-dim);
                    color: var(--text); }
+
+/* .output-block carries a negative top margin so it snaps flush against the
+   <pre> above it. Since the Predict work puts the output INSIDE the debrief,
+   it became the first child of an open <details> and that negative margin
+   dragged it up over the "What happened" summary text. Cancel it only in that
+   position; the flush-against-code look everywhere else is deliberate. */
+.debrief > .output-block:first-of-type,
+.debrief > .run-output:first-of-type { margin-top: .75rem; }
+
+/* Site-wide sticky "Show all output". Deliberately quiet: the default (hidden)
+   is the one we want students to leave alone. */
+.show-all-toggle { display: flex; align-items: baseline; gap: .5rem;
+  font-size: .8rem; color: var(--text-dim); margin: 0 0 1.4rem; cursor: pointer; }
+.show-all-toggle input { cursor: pointer; accent-color: var(--accent); }
+.show-all-toggle .toggle-hint { font-size: .74rem; opacity: .75; }
+.show-all-toggle:hover { color: var(--text); }
 
 </style>
 <script>

@@ -898,48 +898,62 @@
       <h3 id="python-as-a-calculator">Python as a calculator</h3>
       <p>We&#x27;ll start where every programmer starts: arithmetic. It&#x27;s the fastest way to get a feel for how Python reads what you type.</p>
       <p>Along the way, notice the vocabulary. <code>30 + 12</code> is an <strong>expression</strong>. The <code>+</code> is an <strong>operator</strong>. The <code>42</code> you get back is a <strong>value</strong>. Small words, but you&#x27;ll need them.</p>
+      <div data-runnable>
       <pre><code><span class="nm">30</span> + <span class="nm">12</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">42</span>
+      </div>
       </div>
       <p>Subtraction uses the minus sign, <code>-</code>:</p>
+      <div data-runnable>
       <pre><code><span class="nm">43</span> - <span class="nm">1</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">42</span>
+      </div>
       </div>
       <p>Multiplication uses the asterisk, <code>*</code> - not <code>×</code>:</p>
+      <div data-runnable>
       <pre><code><span class="nm">6</span> * <span class="nm">7</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">42</span>
       </div>
+      </div>
       <p>And division uses the forward slash, <code>/</code>:</p>
+      <div data-runnable>
       <pre><code><span class="nm">84</span> / <span class="nm">2</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">42.0</span>
+      </div>
       </div>
       <p>Look closely at that last result: <code>42.0</code>, not <code>42</code>.</p>
       <p>Python has two kinds of numbers. An <strong>integer</strong> (<code>int</code>) is a whole number. A <strong>floating-point number</strong> (<code>float</code>) can have a fractional part. Division always produces a float, even when the answer comes out even - because in general division <em>can&#x27;t</em> be relied on to give a whole number, so Python doesn&#x27;t pretend otherwise. <code>/</code> always hands back a float, which means you can reason about the type of the result without knowing the values.</p>
       <p>If you want a whole number back, use <code>//</code>, called <strong>floor division</strong>:</p>
+      <div data-runnable>
       <pre><code><span class="nm">84</span> // <span class="nm">2</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">42</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="nm">7</span> // <span class="nm">2</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">3</span>
       </div>
+      </div>
       <p><code>7 // 2</code> is <code>3</code>, not <code>3.5</code> - floor division always rounds <em>down</em>, toward the floor. It throws away the remainder.</p>
       <p>Often the remainder is exactly what you want, and for that there&#x27;s the <strong>modulus</strong> operator, <code>%</code>:</p>
+      <div data-runnable>
       <pre><code><span class="nm">7</span> % <span class="nm">2</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">1</span>
+      </div>
       </div>
       <h5 id="both-of-these-behave-surprisingly-on-negative-numbers">Both of these behave surprisingly on negative numbers</h5>
       <p>&quot;Rounds down&quot; means <em>down</em>, not &quot;toward zero.&quot; Those are the same thing for positive numbers and different for negative ones.</p>
@@ -947,14 +961,16 @@
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>7 // 2</code> is <code>3</code>. What is <code>-7 // 2</code>? Is it <code>-3</code> or <code>-4</code>?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(-<span class="nm">7</span> // <span class="nm">2</span>)
 <span class="fn">print</span>(-<span class="nm">7</span> % <span class="nm">2</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 -<span class="out-num">4</span>
 <span class="out-num">1</span>
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>-4</code> and <code>1</code>, and both are worth a second look.</p>
       <p><code>-7 / 2</code> is <code>-3.5</code>. Rounding <em>down</em> from there gives <code>-4</code>, because -4 is below -3.5 on the number line. If you expected <code>-3</code> you were rounding toward zero, which is what most calculators do and what several other languages do.</p>
       <p>The modulus is stranger: <code>-7 % 2</code> is <code>1</code>, not <code>-1</code>. In Python the sign of the result follows the <strong>divisor</strong>, not the dividend. One consequence is genuinely useful - <code>n % 2 == 0</code> correctly identifies even numbers whether <code>n</code> is positive or negative, which is not true in every language.</p>
@@ -962,51 +978,65 @@
       </details>
       <p>Modulus looks like a curiosity and turns out to be one of the most useful operators you&#x27;ll meet. Here&#x27;s the case that makes it click.</p>
       <p>Lee asks how much time a student spent on a task: 105 minutes. You&#x27;d like that as hours and minutes.</p>
+      <div data-runnable>
       <pre><code>minutes = <span class="nm">105</span>
 minutes / <span class="nm">60</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">1.75</span>
       </div>
+      </div>
       <p><code>1.75</code> hours is correct but not how anyone says it. Use <code>//</code> for whole hours:</p>
+      <div data-runnable>
       <pre><code>hours = minutes // <span class="nm">60</span>
 hours</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">1</span>
       </div>
+      </div>
       <p>And <code>%</code> for the minutes left over:</p>
+      <div data-runnable>
       <pre><code>leftover = minutes % <span class="nm">60</span>
 leftover</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">45</span>
       </div>
+      </div>
       <p>So: 1 hour and 45 minutes. Two operators, no arithmetic on your part.</p>
       <p>Two more modulus tricks worth knowing, because they show up constantly:</p>
+      <div data-runnable>
       <pre><code><span class="cm"># the last digit of a number</span>
 student_id = <span class="nm">1069</span>
 student_id % <span class="nm">10</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">9</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="cm"># is it even? even numbers have no remainder when divided by 2</span>
 <span class="nm">14</span> % <span class="nm">2</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">0</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="nm">15</span> % <span class="nm">2</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">1</span>
       </div>
+      </div>
       <p>Finally, <code>**</code> raises a number to a power:</p>
+      <div data-runnable>
       <pre><code><span class="nm">7</span> ** <span class="nm">2</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">49</span>
+      </div>
       </div>
       <h4 id="order-of-operations">Order of operations</h4>
       <p>When an expression has several operators, Python doesn&#x27;t just work left to right. It follows the same precedence rules you learned in algebra: exponentiation first, then multiplication and division, then addition and subtraction.</p>
@@ -1014,49 +1044,63 @@ student_id % <span class="nm">10</span></code></pre>
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> What will <code>6 + 6 ** 2</code> produce? Is it <code>144</code> or <code>42</code>?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code><span class="nm">6</span> + <span class="nm">6</span> ** <span class="nm">2</span></code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">42</span>
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>42</code>. The exponentiation happened first: <code>6 ** 2</code> is <code>36</code>, then <code>6 + 36</code>. If Python had worked strictly left to right you&#x27;d have gotten <code>12 ** 2</code>, or <code>144</code>.</p>
       <p>Whitespace makes no difference to Python here: <code>6+6**2</code> gives the same answer. It&#x27;s only for your eyes.</p>
       </details>
+      <div data-runnable>
       <pre><code><span class="nm">12</span> + <span class="nm">5</span> * <span class="nm">6</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">42</span>
       </div>
+      </div>
       <p>Parentheses override precedence. Use them whenever the order isn&#x27;t obvious at a glance:</p>
+      <div data-runnable>
       <pre><code>(<span class="nm">12</span> + <span class="nm">5</span>) * <span class="nm">6</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">102</span>
+      </div>
       </div>
       <h4 id="arithmetic-functions">Arithmetic functions</h4>
       <p>Python also comes with <strong>functions</strong>. A function takes one or more values, does something with them, and hands a result back. When you use one, you are <strong>calling</strong> it, and the value in the parentheses is the <strong>argument</strong>.</p>
       <p><code>round</code> rounds a float to the nearest whole number:</p>
+      <div data-runnable>
       <pre><code><span class="fn">round</span>(<span class="nm">42.4</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">42</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="fn">round</span>(<span class="nm">42.6</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">43</span>
       </div>
+      </div>
       <p><code>abs</code> gives the absolute value - the size of a number, ignoring its sign:</p>
+      <div data-runnable>
       <pre><code><span class="fn">abs</span>(-<span class="nm">42</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">42</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="fn">abs</span>(<span class="nm">42</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">42</span>
+      </div>
       </div>
       <p>Those parentheses aren&#x27;t decoration. Leave one out and Python can&#x27;t tell where the argument ends, so it gives up before running anything. That&#x27;s a <strong>SyntaxError</strong> - the code isn&#x27;t valid Python at all.</p>
       <div class="callout callout-warn"><div class="callout-label">This code raises SyntaxError on purpose</div>Read the error rather than avoiding it.</div>
@@ -1089,15 +1133,19 @@ SyntaxError: &#x27;(&#x27; was never closed
       </div>
       <h5 id="your-turn-1">Your turn</h5>
       <p>Here&#x27;s an oddity worth knowing about. Run both cells below and compare.</p>
+      <div data-runnable>
       <pre><code><span class="fn">round</span>(<span class="nm">42.5</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">42</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="fn">round</span>(<span class="nm">43.5</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">44</span>
+      </div>
       </div>
       <p><code>42.5</code> rounds down to <code>42</code>, but <code>43.5</code> rounds up to <code>44</code>. That isn&#x27;t a bug - Python rounds halves toward the nearest <em>even</em> number, a convention called banker&#x27;s rounding that avoids a systematic upward bias when you round thousands of values.</p>
       <p>This is a good first thing to ask an AI assistant: <em>&quot;Why does Python round 0.5 to even instead of always up?&quot;</em> Compare what it tells you to what you just observed.</p>
@@ -1523,23 +1571,29 @@ n = <span class="nm">17.</span>
       <p>Time to open the actual data. Lee sends over the cohort&#x27;s name field and immediately apologizes for it:</p>
       <div class="callout"><em>&quot;Fair warning, the names came out of three different systems. They&#x27;re a mess. Whitespace, capitalization, all of it. Clean one by hand first so you know what you&#x27;re dealing with.&quot;</em></div>
       <p>Here&#x27;s one record.</p>
+      <div data-runnable>
       <pre><code>raw_name = <span class="st">&quot;  amara OKONKWO  &quot;</span>
 raw_name</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;  amara OKONKWO  &#x27;
       </div>
+      </div>
       <p>Note what the output shows you: <code>&#x27;  amara OKONKWO  &#x27;</code>, quotes included. Those quotes aren&#x27;t part of the value - they&#x27;re Python showing you where the string starts and ends, which is the only way you&#x27;d see the leading and trailing spaces.</p>
       <p>A <strong>string</strong> is a sequence of characters in quotes. Single or double quotes both work and mean exactly the same thing:</p>
+      <div data-runnable>
       <pre><code><span class="st">&#x27;Eastern University&#x27;</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Eastern University&#x27;
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="st">&quot;Eastern University&quot;</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Eastern University&#x27;
+      </div>
       </div>
       <p>Having both is genuinely useful, because it lets you put one kind of quote inside the other. A name with an apostrophe breaks single quotes:</p>
       <div class="callout callout-warn"><div class="callout-label">This code raises SyntaxError on purpose</div>Read the error rather than avoiding it.</div>
@@ -1555,18 +1609,22 @@ raw_name</code></pre>
 SyntaxError: unterminated string literal (detected at line <span class="out-num">1</span>)
       </div>
       <p>Python read <code>&#x27;Lee&#x27;</code> as a complete string, then found a stray <code>s office&#x27;</code> it couldn&#x27;t make sense of. Two ways out. Use double quotes on the outside:</p>
+      <div data-runnable>
       <pre><code>advisor = <span class="st">&quot;Lee&#x27;s office&quot;</span>
 advisor</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &quot;Lee&#x27;s office&quot;
       </div>
+      </div>
       <p>Or <strong>escape</strong> the apostrophe with a backslash, which tells Python the next character is data, not syntax:</p>
+      <div data-runnable>
       <pre><code>advisor = <span class="st">&#x27;Lee\&#x27;s office&#x27;</span>
 advisor</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &quot;Lee&#x27;s office&quot;
+      </div>
       </div>
       <p>Text without quotes isn&#x27;t text at all - Python reads it as a variable name. Two words with a space between them isn&#x27;t a legal name, so this one fails before it runs:</p>
       <div class="callout callout-warn"><div class="callout-label">This code raises SyntaxError on purpose</div>Read the error rather than avoiding it.</div>
@@ -1596,23 +1654,29 @@ NameError: name &#x27;amara&#x27; is not defined
       <p>Two errors, one root cause: <strong>missing quotes</strong>. Worth internalizing, because it&#x27;s the mistake that produces the most confusing beginner errors.</p>
       <h3 id="length-joining-repeating">Length, joining, repeating</h3>
       <p><code>len</code> counts the characters in a string:</p>
+      <div data-runnable>
       <pre><code><span class="fn">len</span>(<span class="st">&#x27;Eastern University&#x27;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">18</span>
       </div>
+      </div>
       <p>Eighteen - the space counts. <code>len</code> counts what&#x27;s between the quotes, not the quotes themselves.</p>
       <p>The <code>+</code> operator joins strings end to end. This is called <strong>concatenation</strong>:</p>
+      <div data-runnable>
       <pre><code><span class="st">&#x27;Eastern&#x27;</span> + <span class="st">&#x27; &#x27;</span> + <span class="st">&#x27;University&#x27;</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Eastern University&#x27;
       </div>
+      </div>
       <p>Note that you have to supply the space yourself. And <code>*</code> repeats a string:</p>
+      <div data-runnable>
       <pre><code><span class="st">&#x27;-&#x27;</span> * <span class="nm">40</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;----------------------------------------&#x27;
+      </div>
       </div>
       <p>Which is a cheap way to draw a divider in a report. The other arithmetic operators don&#x27;t work on strings:</p>
       <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
@@ -1629,45 +1693,57 @@ TypeError: unsupported operand type(s) for -: &#x27;str&#x27; and &#x27;str&#x27
       <h3 id="indexing">Indexing</h3>
       <p>A string is a <strong>sequence</strong>, meaning its characters are in a definite order and each one has a numbered position called an <strong>index</strong>. You get a single character with square brackets.</p>
       <figure class="nb-figure"><img src="assets/fig-856510c58d.png" alt="Positive and negative indices for &#x27;Eastern University&#x27;" loading="lazy"><figcaption>Positive and negative indices for &#x27;Eastern University&#x27;</figcaption></figure>
+      <div data-runnable>
       <pre><code>university = <span class="st">&#x27;Eastern University&#x27;</span>
 university[<span class="nm">0</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;E&#x27;
       </div>
+      </div>
       <p><strong>Indexing starts at zero.</strong> <code>university[0]</code> is the first character, not the second. This trips up everyone at first, and it is the single most common off-by-one mistake in programming. Zero-based indexing is worth getting into your bones now, because lists, arrays, and DataFrames all work the same way.</p>
+      <div data-runnable>
       <pre><code>university[<span class="nm">6</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;n&#x27;
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>university[<span class="nm">7</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27; &#x27;
       </div>
+      </div>
       <p>Index 7 is the space. Spaces are characters like any other - a fact that matters a great deal when you&#x27;re cleaning data.</p>
       <p>Negative indices count from the end, which saves you from computing the length first:</p>
+      <div data-runnable>
       <pre><code>university[-<span class="nm">1</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;y&#x27;
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>university[-<span class="nm">2</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;t&#x27;
+      </div>
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> The string has 18 characters. What does <code>university[-0]</code> give you?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>university[-<span class="nm">0</span>]</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;E&#x27;
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>&#x27;E&#x27;</code> - the first character, not the last.</p>
       <p>There is no <code>-0</code>. Zero and negative zero are the same number, so <code>[-0]</code> is just <code>[0]</code>. Counting forward starts at <code>0</code>; counting backward starts at <code>-1</code>. The asymmetry is annoying but you only have to learn it once.</p>
       </details>
@@ -1686,35 +1762,45 @@ IndexError: string index out of range
       <p>The valid indices for an 18-character string are <code>0</code> through <code>17</code>. <code>18</code> is one past the end - which is exactly why the error type has its own name.</p>
       <h3 id="slicing">Slicing</h3>
       <p>A <strong>slice</strong> is a range of characters. The syntax is <code>[start:stop]</code>, and the character at <code>stop</code> is <em>not</em> included.</p>
+      <div data-runnable>
       <pre><code>university[<span class="nm">0</span>:<span class="nm">7</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Eastern&#x27;
+      </div>
       </div>
       <p>Seven characters - indices 0 through 6. The stop index is exclusive.</p>
       <p>That sounds like a design mistake and isn&#x27;t: it means <code>stop - start</code> is exactly the length of the slice, and it means <code>[0:7]</code> and <code>[7:18]</code> fit together with no overlap and no gap.</p>
+      <div data-runnable>
       <pre><code>university[<span class="nm">8</span>:<span class="nm">18</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;University&#x27;
       </div>
+      </div>
       <p>Leave out the start and the slice runs from the beginning:</p>
+      <div data-runnable>
       <pre><code>university[:<span class="nm">7</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Eastern&#x27;
       </div>
+      </div>
       <p>Leave out the stop and it runs to the end:</p>
+      <div data-runnable>
       <pre><code>university[<span class="nm">8</span>:]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;University&#x27;
       </div>
+      </div>
       <p>Leave out both and you get the whole thing - which looks pointless now but becomes useful with lists:</p>
+      <div data-runnable>
       <pre><code>university[:]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Eastern University&#x27;
+      </div>
       </div>
       <h3 id="f-strings">f-strings</h3>
       <p>Here is the feature you might use more than any other in this notebook.</p>
@@ -1755,88 +1841,112 @@ TypeError: can only concatenate str (not &quot;float&quot;) to str
         <div class="output-block-label">output</div>
 &#x27;GPA to two places: <span class="out-num">3.02</span>&#x27;
       </div>
+      <div data-runnable>
       <pre><code>attendance = <span class="nm">0.9612</span>
 <span class="st">f&quot;Attendance: {attendance:.1%}&quot;</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Attendance: <span class="out-num">96.1</span>%&#x27;
+      </div>
       </div>
       <p>From here on, this notebook uses f-strings for essentially all output. Older code uses <code>%</code> formatting or <code>.format()</code>; you&#x27;ll recognize them when you see them, and you don&#x27;t need to write them.</p>
       <h3 id="string-methods">String methods</h3>
       <p>A <strong>method</strong> is a function that belongs to a value. You call it with a dot after the value: <code>value.method()</code>. Strings come with a lot of them, and the cleaning ones are what Lee needs.</p>
       <p>Back to our messy record:</p>
+      <div data-runnable>
       <pre><code>raw_name</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;  amara OKONKWO  &#x27;
       </div>
+      </div>
       <p><code>.strip()</code> removes whitespace from both ends. <strong>Only the ends</strong> - it will not touch anything in the middle of a string. That matters more than it sounds like it does, and it comes back to bite us in section 8.</p>
+      <div data-runnable>
       <pre><code>raw_name.<span class="fn">strip</span>()</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;amara OKONKWO&#x27;
       </div>
+      </div>
       <p><code>.lower()</code> and <code>.upper()</code> change case:</p>
+      <div data-runnable>
       <pre><code>raw_name.<span class="fn">lower</span>()</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;  amara okonkwo  &#x27;
       </div>
+      </div>
       <p><code>.title()</code> capitalizes the first letter of each word - which is what a name field wants:</p>
+      <div data-runnable>
       <pre><code>raw_name.<span class="fn">strip</span>().<span class="fn">title</span>()</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Amara Okonkwo&#x27;
       </div>
+      </div>
       <p>That line chains two methods: <code>.strip()</code> hands back a string, and <code>.title()</code> is then called on <em>that</em> string. Reading left to right is reading the order of operations, which makes chains easy to follow once you notice.</p>
       <p>One thing to be clear about: <strong>string methods never modify the original.</strong></p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;cleaned: {raw_name.strip().title()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;original: {raw_name}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 cleaned: Amara Okonkwo
 original:   amara OKONKWO
       </div>
+      </div>
       <p><code>raw_name</code> is unchanged. Strings are <strong>immutable</strong> - they cannot be altered in place. Methods hand back a <em>new</em> string, and if you want to keep it, you have to assign it to something.</p>
+      <div data-runnable>
       <pre><code>clean_name = raw_name.<span class="fn">strip</span>().<span class="fn">title</span>()
 clean_name</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Amara Okonkwo&#x27;
       </div>
+      </div>
       <p><code>.split()</code> breaks a string into a list of pieces, splitting on whitespace by default:</p>
+      <div data-runnable>
       <pre><code>clean_name.<span class="fn">split</span>()</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [&#x27;Amara&#x27;, &#x27;Okonkwo&#x27;]
       </div>
+      </div>
       <p>Those square brackets mean you&#x27;ve got a <strong>list</strong> - the subject of section 7. For now, note that splitting a full name gives you the parts separately:</p>
+      <div data-runnable>
       <pre><code>parts = clean_name.<span class="fn">split</span>()
 <span class="fn">print</span>(parts[<span class="nm">0</span>])
 <span class="fn">print</span>(parts[<span class="nm">1</span>])</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Amara
 Okonkwo
       </div>
+      </div>
       <p><code>.split()</code> takes an optional argument, the <strong>delimiter</strong>, for when the separator isn&#x27;t a space. CSV files are the obvious case:</p>
+      <div data-runnable>
       <pre><code>row = <span class="st">&#x27;1003,Amara Okonkwo,Biology&#x27;</span>
 row.<span class="fn">split</span>(<span class="st">&#x27;,&#x27;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [&#x27;<span class="out-num">1003</span>&#x27;, &#x27;Amara Okonkwo&#x27;, &#x27;Biology&#x27;]
       </div>
+      </div>
       <p><code>.join()</code> is the reverse - it glues pieces back together with a separator of your choosing:</p>
+      <div data-runnable>
       <pre><code><span class="st">&#x27; | &#x27;</span>.<span class="fn">join</span>([<span class="st">&#x27;1003&#x27;</span>, <span class="st">&#x27;Amara Okonkwo&#x27;</span>, <span class="st">&#x27;Biology&#x27;</span>])</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;<span class="out-num">1003</span> | Amara Okonkwo | Biology&#x27;
       </div>
+      </div>
       <p>The string you call <code>.join()</code> on is the glue, which reads backwards until you&#x27;ve done it a few times. And <code>.replace()</code> swaps one substring for another:</p>
+      <div data-runnable>
       <pre><code><span class="st">&#x27;MS Data Science&#x27;</span>.<span class="fn">replace</span>(<span class="st">&#x27;MS&#x27;</span>, <span class="st">&#x27;Master of Science&#x27;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Master of Science Data Science&#x27;
+      </div>
       </div>
       <h4 id="methods-belong-to-types">Methods belong to types</h4>
       <p>Methods aren&#x27;t universal. <code>.upper()</code> is a string method, so a number doesn&#x27;t have it.</p>
@@ -1855,14 +1965,17 @@ AttributeError: &#x27;float&#x27; object has no attribute &#x27;upper&#x27;
       <p>An <strong>AttributeError</strong> means <em>this value has no such thing attached to it</em>. Read it as &quot;a float doesn&#x27;t know how to do <code>upper</code>.&quot;</p>
       <p>This is the error you get most often when a variable holds something other than what you assumed - which, in data work, is most of the time. When you see an AttributeError, the useful question isn&#x27;t &quot;what&#x27;s wrong with this method,&quot; it&#x27;s &quot;what type is my variable <em>actually</em>?&quot; Check with <code>type()</code>.</p>
       <p>To see everything a string can do, <code>dir()</code> will list the methods (ignore the ones starting with underscores):</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="fn">dir</span>(<span class="fn">str</span>))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [&#x27;__add__&#x27;, &#x27;__class__&#x27;, &#x27;__contains__&#x27;, &#x27;__delattr__&#x27;, &#x27;__dir__&#x27;, &#x27;__doc__&#x27;, &#x27;__eq__&#x27;, &#x27;__format__&#x27;, &#x27;__ge__&#x27;, &#x27;__getattribute__&#x27;, &#x27;__getitem__&#x27;, &#x27;__getnewargs__&#x27;, &#x27;__gt__&#x27;, &#x27;__hash__&#x27;, &#x27;__init__&#x27;, &#x27;__init_subclass__&#x27;, &#x27;__iter__&#x27;, &#x27;__le__&#x27;, &#x27;__len__&#x27;, &#x27;__lt__&#x27;, &#x27;__mod__&#x27;, &#x27;__mul__&#x27;, &#x27;__ne__&#x27;, &#x27;__new__&#x27;, &#x27;__reduce__&#x27;, &#x27;__reduce_ex__&#x27;, &#x27;__repr__&#x27;, &#x27;__rmod__&#x27;, &#x27;__rmul__&#x27;, &#x27;__setattr__&#x27;, &#x27;__sizeof__&#x27;, &#x27;__str__&#x27;, &#x27;__subclasshook__&#x27;, &#x27;capitalize&#x27;, &#x27;casefold&#x27;, &#x27;center&#x27;, &#x27;count&#x27;, &#x27;encode&#x27;, &#x27;endswith&#x27;, &#x27;expandtabs&#x27;, &#x27;find&#x27;, &#x27;format&#x27;, &#x27;format_map&#x27;, &#x27;index&#x27;, &#x27;isalnum&#x27;, &#x27;isalpha&#x27;, &#x27;isascii&#x27;, &#x27;isdecimal&#x27;, &#x27;isdigit&#x27;, &#x27;isidentifier&#x27;, &#x27;islower&#x27;, &#x27;isnumeric&#x27;, &#x27;isprintable&#x27;, &#x27;isspace&#x27;, &#x27;istitle&#x27;, &#x27;isupper&#x27;, &#x27;join&#x27;, &#x27;ljust&#x27;, &#x27;lower&#x27;, &#x27;lstrip&#x27;, &#x27;maketrans&#x27;, &#x27;partition&#x27;, &#x27;removeprefix&#x27;, &#x27;removesuffix&#x27;, &#x27;replace&#x27;, &#x27;rfind&#x27;, &#x27;rindex&#x27;, &#x27;rjust&#x27;, &#x27;rpartition&#x27;, &#x27;rsplit&#x27;, &#x27;rstrip&#x27;, &#x27;split&#x27;, &#x27;splitlines&#x27;, &#x27;startswith&#x27;, &#x27;strip&#x27;, &#x27;swapcase&#x27;, &#x27;title&#x27;, &#x27;translate&#x27;, &#x27;upper&#x27;, &#x27;zfill&#x27;]
       </div>
+      </div>
       <p>Ignore everything starting with underscores - those are internal. You don&#x27;t need to know the rest of that list either. You need to know that it exists, and that <code>help(str.strip)</code> will explain any single item on it.</p>
+      <div data-runnable>
       <pre><code><span class="fn">help</span>(<span class="fn">str</span>.strip)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Help on method_descriptor:
 
@@ -1870,6 +1983,7 @@ strip(self, chars=None, /)
     Return a copy of the string with leading and trailing whitespace removed.
     
     If chars is given and not None, remove characters in chars instead.
+      </div>
       </div>
       <h4 id="your-turn-4">Your turn</h4>
       <p>Lee needs names formatted as <code>&quot;Okonkwo, Amara&quot;</code> for an alphabetical roster.</p>
@@ -1934,19 +2048,23 @@ last = parts[<span class="nm">1</span>]
       <p>A <strong>function</strong> is a named block of code you can run whenever you want. Four reasons this matters, and none of them are about saving keystrokes:</p>
       <ul><li><strong>Naming.</strong> A well-named function tells a reader what a block of code is <em>for</em>. <code>clean_name(raw)</code> says more than six lines of <code>.strip()</code> and <code>.title()</code>.</li><li><strong>Repetition.</strong> Write it once, use it ten times. When the logic changes, you change one place instead of hunting for ten.</li><li><strong>Debugging.</strong> You can test a small function on its own. Testing a 200-line script as a single unit is how people lose weekends.</li><li><strong>Reuse.</strong> Lee&#x27;s schema report will need the same name-cleaning code the Module 4 pipeline needs.</li></ul>
       <h3 id="defining-a-function">Defining a function</h3>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">show_commission</span>():
     <span class="fn">print</span>(<span class="st">&quot;Institutional Research - Academic Success Report&quot;</span>)
     <span class="fn">print</span>(<span class="st">&quot;Prepared for the University Cabinet&quot;</span>)</code></pre>
+      </div>
       <p>No output. Defining a function doesn&#x27;t run it - it just stores the instructions under a name, the same way an assignment stores a value.</p>
       <p>Look at the anatomy:</p>
       <ul><li><code>def</code> is the <strong>keyword</strong> that starts a function definition.</li><li><code>show_commission</code> is the name. Any legal variable name is a legal function name.</li><li>The empty parentheses <code>()</code> mean this function takes no inputs.</li><li>The first line is the <strong>header</strong> and it must end with a colon.</li><li>The indented lines below are the <strong>body</strong>.</li></ul>
       <p><strong>Indentation is syntax in Python.</strong> In most languages, indenting is a courtesy to readers; in Python it&#x27;s how the language knows which lines belong to the function. Four spaces is the universal convention. Be consistent - mixing tabs and spaces produces errors that are genuinely hard to see.</p>
       <p>Now call it. Parentheses are what trigger the call:</p>
+      <div data-runnable>
       <pre><code><span class="fn">show_commission</span>()</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Institutional Research - Academic Success Report
 Prepared for the University Cabinet
+      </div>
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
@@ -1963,29 +2081,35 @@ Prepared for the University Cabinet
       </details>
       <h3 id="parameters">Parameters</h3>
       <p>A function that always does the same thing has limited use. A <strong>parameter</strong> is a variable in the header that receives a value when the function is called.</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">print_heading</span>(text):
     <span class="fn">print</span>(text)
     <span class="fn">print</span>(<span class="st">&quot;=&quot;</span> * <span class="fn">len</span>(text))</code></pre>
+      </div>
+      <div data-runnable>
       <pre><code><span class="fn">print_heading</span>(<span class="st">&quot;Cohort Summary&quot;</span>)
 <span class="fn">print_heading</span>(<span class="st">&quot;Engagement&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Cohort Summary
 ==============
 Engagement
 ==========
       </div>
+      </div>
       <p>One definition, different output each time.</p>
       <p>Two words that get used loosely and shouldn&#x27;t be:</p>
       <ul><li>a <strong>parameter</strong> is the name in the function definition (<code>text</code>)</li><li>an <strong>argument</strong> is the actual value you pass in (<code>&quot;Cohort Summary&quot;</code>)</li></ul>
       <p>The parameter is the slot; the argument is what you put in it. Error messages use both words precisely, so it pays to know which is which.</p>
       <p>You can pass a variable as the argument - the <em>value</em> gets handed over, and the parameter name inside the function is unrelated to the variable name outside:</p>
+      <div data-runnable>
       <pre><code>report_title = <span class="st">&quot;Term Report&quot;</span>
 <span class="fn">print_heading</span>(report_title)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Term Report
 ===========
+      </div>
       </div>
       <p>Give the wrong number of arguments and you get a <code>TypeError</code>, with a message that names the function and counts the arguments for you:</p>
       <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
@@ -2014,76 +2138,92 @@ TypeError: print_heading() takes <span class="out-num">1</span> positional argum
       <p>This is the concept students most often get halfway. Take it slowly.</p>
       <p><code>print</code> puts text on the screen for a human to read. <code>return</code> hands a value back to the program so it can be used. They are not alternatives to each other; they do different jobs.</p>
       <p>Here is a function that prints:</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">show_letter_grade</span>(gpa):
     <span class="kw">if</span> gpa &gt;= <span class="nm">3.5</span>:
         <span class="fn">print</span>(<span class="st">&quot;A&quot;</span>)
     <span class="kw">else</span>:
         <span class="fn">print</span>(<span class="st">&quot;B or below&quot;</span>)</code></pre>
+      </div>
+      <div data-runnable>
       <pre><code><span class="fn">show_letter_grade</span>(<span class="nm">3.81</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 A
+      </div>
       </div>
       <p>Looks like it works. Now try to <em>use</em> the result:</p>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> What will <code>result</code> be after <code>result = show_letter_grade(3.81)</code>? What will its type be?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>result = <span class="fn">show_letter_grade</span>(<span class="nm">3.81</span>)
 <span class="fn">print</span>(<span class="st">f&quot;result is {result}, of type {type(result)}&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 A
 result is None, of type &lt;class &#x27;NoneType&#x27;&gt;
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>result</code> is <code>None</code>.</p>
       <p>The function printed <code>&quot;A&quot;</code> as a side effect, then ended without returning anything - and a function that returns nothing returns <code>None</code>, a special value meaning &quot;no value at all.&quot; The text went to the screen, where you can read it but your program can&#x27;t.</p>
       <p><code>None</code> showing up unexpectedly almost always means this: a function printed when it should have returned.</p>
       </details>
       <p>Same logic, with <code>return</code>:</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">letter_grade</span>(gpa):
     <span class="kw">if</span> gpa &gt;= <span class="nm">3.5</span>:
         <span class="kw">return</span> <span class="st">&quot;A&quot;</span>
     <span class="kw">else</span>:
         <span class="kw">return</span> <span class="st">&quot;B or below&quot;</span></code></pre>
+      </div>
+      <div data-runnable>
       <pre><code>result = <span class="fn">letter_grade</span>(<span class="nm">3.81</span>)
 <span class="fn">print</span>(<span class="st">f&quot;result is {result!r}, of type {type(result)}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 result is &#x27;A&#x27;, of type &lt;class &#x27;str&#x27;&gt;
       </div>
+      </div>
       <p>Now the value is in your hands. You can store it, test it, put it in an f-string, or feed it to another function:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print_heading</span>(<span class="fn">letter_grade</span>(<span class="nm">3.81</span>))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 A
 =
       </div>
+      </div>
       <p><strong>Rule of thumb: functions should return, not print.</strong> A function that returns can always be printed by whoever calls it. A function that prints can never be un-printed. Printing is a decision about presentation, and it belongs at the edge of your program, not buried in the middle of it.</p>
       <p>You will violate this rule sometimes - <code>print_heading</code> above prints, and that&#x27;s fine because presentation is literally its job. The point is to violate it on purpose.</p>
       <p>One more thing about <code>return</code>: it ends the function immediately. Anything after it never runs.</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">area</span>(radius):
     <span class="kw">return</span> <span class="nm">3.14159</span> * radius ** <span class="nm">2</span>
     <span class="fn">print</span>(<span class="st">&quot;Hello, World!&quot;</span>)
 
 <span class="fn">area</span>(<span class="nm">3</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">28.27431</span>
+      </div>
       </div>
       <p>No printed message - <code>return</code> exited before reaching it. Unreachable code after a <code>return</code> is a common symptom of a half-finished edit.</p>
       <h3 id="local-variables">Local variables</h3>
       <p>Variables created inside a function are <strong>local</strong>: they exist while the function runs and then they&#x27;re gone.</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">normalized_engagement</span>(logins, hours):
     login_score = logins / <span class="nm">20</span>
     hour_score = hours / <span class="nm">15</span>
     <span class="kw">return</span> (login_score + hour_score) / <span class="nm">2</span>
 
 <span class="fn">normalized_engagement</span>(<span class="nm">14</span>, <span class="nm">9.5</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">0.6666666666666666</span>
+      </div>
       </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises NameError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>login_score</code></pre>
@@ -2099,6 +2239,7 @@ NameError: name &#x27;login_score&#x27; is not defined
       <p><code>login_score</code> was never visible outside the function. This is a feature, not a limitation - it means you can write a function without worrying about whether one of its variable names collides with something elsewhere in a 200-line notebook.</p>
       <h3 id="docstrings">Docstrings</h3>
       <p>A <strong>docstring</strong> is a string on the first line of a function body. It documents what the function does, and Python wires it into the help system automatically.</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">normalized_engagement</span>(logins, hours):
     <span class="st">&quot;&quot;&quot;Return a 0-1 engagement score from weekly logins and hours on task.
 
@@ -2108,8 +2249,10 @@ NameError: name &#x27;login_score&#x27; is not defined
     login_score = logins / <span class="nm">20</span>
     hour_score = hours / <span class="nm">15</span>
     <span class="kw">return</span> (login_score + hour_score) / <span class="nm">2</span></code></pre>
+      </div>
+      <div data-runnable>
       <pre><code><span class="fn">help</span>(normalized_engagement)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Help on function normalized_engagement in module __main__:
 
@@ -2119,10 +2262,12 @@ normalized_engagement(logins, hours)
     logins -- logins per week, where <span class="out-num">20</span> is treated as a full score
     hours  -- hours on task per week, where <span class="out-num">15</span> is a full score
       </div>
+      </div>
       <p>Write docstrings for anything you&#x27;ll use more than once. Three months from now you are a different person with no memory of this code, and <code>help()</code> is how you&#x27;ll talk to your past self.</p>
       <p>The same <code>help()</code> works on anything, which is the fastest way to answer &quot;what arguments does this take again?&quot;:</p>
+      <div data-runnable>
       <pre><code><span class="fn">help</span>(<span class="fn">round</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Help on built-in function round in module builtins:
 
@@ -2132,9 +2277,11 @@ round(number, ndigits=None)
     The return value is an integer if ndigits is omitted or None.  Otherwise
     the return value has the same type as the number.  ndigits may be negative.
       </div>
+      </div>
       <p>In Jupyter and Colab, <code>?round</code> does the same thing in a popup, and <code>round?</code> works too. Use whichever you&#x27;ll remember.</p>
       <h3 id="default-arguments">Default arguments</h3>
       <p>A parameter can have a default value, which makes it optional to supply.</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">letter_grade</span>(gpa, honors_cutoff=<span class="nm">3.5</span>):
     <span class="st">&quot;&quot;&quot;Return &#x27;A&#x27; if gpa meets the cutoff, else &#x27;B or below&#x27;.&quot;&quot;&quot;</span>
     <span class="kw">if</span> gpa &gt;= honors_cutoff:
@@ -2144,10 +2291,11 @@ round(number, ndigits=None)
 
 <span class="fn">print</span>(<span class="fn">letter_grade</span>(<span class="nm">3.6</span>))                       <span class="cm"># uses the default 3.5</span>
 <span class="fn">print</span>(<span class="fn">letter_grade</span>(<span class="nm">3.6</span>, honors_cutoff=<span class="nm">3.7</span>))    <span class="cm"># overrides it</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 A
 B or below
+      </div>
       </div>
       <p>That second call names the argument explicitly - a <strong>keyword argument</strong>. Worth doing whenever a bare value wouldn&#x27;t be self-explanatory. <code>letter_grade(3.6, 3.7)</code> is legal and tells the reader nothing.</p>
       <h4 id="your-turn-6">Your turn</h4>
@@ -2167,11 +2315,13 @@ B or below
     <span class="st">&quot;&quot;&quot;Return the Celsius equivalent of a Fahrenheit temperature.&quot;&quot;&quot;</span>
     <span class="kw">return</span> (fahrenheit - <span class="nm">32</span>) * <span class="nm">5</span> / <span class="nm">9</span></code></pre></details>
       </div>
+      <div data-runnable>
       <pre><code><span class="cm"># Uncomment once your function is written.</span>
 
 <span class="cm"># print(convert_to_celsius(32))     # expected 0.0</span>
 <span class="cm"># print(convert_to_celsius(212))    # expected 100.0</span>
 <span class="cm"># print(convert_to_celsius(98.6))   # expected 37.0 (approximately)</span></code></pre>
+      </div>
       <h4 id="your-turn-7">Your turn</h4>
       <p>Write <code>clean_name(raw)</code> that takes a messy name string and returns it stripped and title-cased. This is the function you&#x27;ll use on the whole cohort in section 8, so get it right here where there&#x27;s only one value to think about.</p>
       <p>Then write <code>roster_name(raw)</code> that returns <code>&quot;Last, First&quot;</code> - and have it <em>call</em> <code>clean_name</code> rather than repeating the cleaning logic. Functions calling functions is the whole point.</p>
@@ -2207,20 +2357,26 @@ B or below
       <p>Lee wants students flagged by academic standing. That requires code that makes a decision - which requires expressions that are either true or false.</p>
       <h3 id="boolean-expressions">Boolean expressions</h3>
       <p>A <strong>boolean expression</strong> evaluates to <code>True</code> or <code>False</code>. The <code>==</code> operator asks whether two values are equal.</p>
+      <div data-runnable>
       <pre><code><span class="nm">3.81</span> == <span class="nm">3.81</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 True
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="nm">3.81</span> == <span class="nm">2.94</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 False
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="fn">type</span>(<span class="kw">True</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 bool
+      </div>
       </div>
       <p><code>bool</code> is a type with exactly two values, <code>True</code> and <code>False</code>. Capitalized, no quotes - <code>true</code> is a NameError and <code>&#x27;True&#x27;</code> is a string.</p>
       <p>**<code>=</code> and <code>==</code> are different operators and confusing them is a rite of passage.** <code>=</code> assigns a value. <code>==</code> compares two values. Using <code>=</code> where a comparison belongs is a SyntaxError:</p>
@@ -2240,6 +2396,7 @@ SyntaxError: invalid syntax. Maybe you meant &#x27;==&#x27; or &#x27;:=&#x27; in
       </div>
       <p>Python&#x27;s message here is unusually kind: <em>&quot;Maybe you meant &#x27;==&#x27; or &#x27;:=&#x27; instead of &#x27;=&#x27;?&quot;</em> Ignore the <code>:=</code> suggestion for now.</p>
       <p>The full set of <strong>relational operators</strong>:</p>
+      <div data-runnable>
       <pre><code>gpa = <span class="nm">3.81</span>
 cutoff = <span class="nm">3.5</span>
 
@@ -2249,7 +2406,7 @@ cutoff = <span class="nm">3.5</span>
 <span class="fn">print</span>(gpa &lt; cutoff)     <span class="cm"># less than</span>
 <span class="fn">print</span>(gpa &gt;= cutoff)    <span class="cm"># greater than or equal to</span>
 <span class="fn">print</span>(gpa &lt;= cutoff)    <span class="cm"># less than or equal to</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 False
 True
@@ -2257,73 +2414,89 @@ True
 False
 True
 False
+      </div>
       </div>
       <h3 id="logical-operators">Logical operators</h3>
       <p>Three operators combine boolean expressions: <code>and</code>, <code>or</code>, <code>not</code>.</p>
       <p><code>and</code> is <code>True</code> only if both sides are <code>True</code>:</p>
+      <div data-runnable>
       <pre><code>gpa = <span class="nm">3.81</span>
 credits = <span class="nm">124</span>
 
 gpa &gt;= <span class="nm">3.5</span> <span class="kw">and</span> credits &gt;= <span class="nm">120</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 True
+      </div>
       </div>
       <p><code>or</code> is <code>True</code> if either side is (or both):</p>
+      <div data-runnable>
       <pre><code>gpa &gt;= <span class="nm">3.9</span> <span class="kw">or</span> credits &gt;= <span class="nm">120</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 True
       </div>
+      </div>
       <p><code>not</code> flips a boolean:</p>
+      <div data-runnable>
       <pre><code><span class="kw">not</span> gpa &gt;= <span class="nm">3.5</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 False
+      </div>
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>gpa</code> is 3.81 and <code>credits</code> is 124. What does <code>gpa &gt;= 3.9 and credits &gt;= 120 or gpa &gt;= 3.5</code> give?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>gpa &gt;= <span class="nm">3.9</span> <span class="kw">and</span> credits &gt;= <span class="nm">120</span> <span class="kw">or</span> gpa &gt;= <span class="nm">3.5</span></code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 True
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>True</code> - but if you had to think hard about <em>why</em>, that&#x27;s the lesson.</p>
       <p><code>and</code> binds more tightly than <code>or</code>, so Python reads it as <code>(gpa &gt;= 3.9 and credits &gt;= 120) or (gpa &gt;= 3.5)</code>. The first group is <code>False</code>, the second is <code>True</code>, so the <code>or</code> is <code>True</code>.</p>
       <p>Correct, and unreadable. Add the parentheses even when you don&#x27;t need them - the next person to read this, including you, shouldn&#x27;t have to remember an operator precedence table.</p>
       </details>
       <h3 id="if-statements">if statements</h3>
       <p>The <code>if</code> statement runs a block of code only when a condition is true. The structure is the same shape as a function definition: header ending in a colon, indented body.</p>
+      <div data-runnable>
       <pre><code>gpa = <span class="nm">3.81</span>
 
 <span class="kw">if</span> gpa &gt;= <span class="nm">3.5</span>:
     <span class="fn">print</span>(<span class="st">&quot;Dean&#x27;s list&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Dean&#x27;s list
       </div>
+      </div>
       <p>Change the value and the block is skipped entirely - no output, no error:</p>
+      <div data-runnable>
       <pre><code>gpa = <span class="nm">2.94</span>
 
 <span class="kw">if</span> gpa &gt;= <span class="nm">3.5</span>:
     <span class="fn">print</span>(<span class="st">&quot;Dean&#x27;s list&quot;</span>)</code></pre>
+      </div>
       <p><code>else</code> supplies the alternative:</p>
+      <div data-runnable>
       <pre><code>gpa = <span class="nm">2.94</span>
 
 <span class="kw">if</span> gpa &gt;= <span class="nm">3.5</span>:
     <span class="fn">print</span>(<span class="st">&quot;Dean&#x27;s list&quot;</span>)
 <span class="kw">else</span>:
     <span class="fn">print</span>(<span class="st">&quot;Not on the Dean&#x27;s list&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Not on the Dean&#x27;s list
+      </div>
       </div>
       <p>Exactly one of those two branches runs, always. The <code>if</code> and the <code>else</code> are two paths through the same fork.</p>
       <h3 id="chained-conditionals">Chained conditionals</h3>
       <p>Real classification has more than two outcomes, and <code>elif</code> - short for &quot;else if&quot; - handles the middle cases.</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">standing</span>(gpa):
     <span class="st">&quot;&quot;&quot;Return a student&#x27;s academic standing from their GPA.&quot;&quot;&quot;</span>
     <span class="kw">if</span> gpa &gt;= <span class="nm">3.5</span>:
@@ -2339,17 +2512,19 @@ Not on the Dean&#x27;s list
 <span class="fn">print</span>(<span class="fn">standing</span>(<span class="nm">3.02</span>))
 <span class="fn">print</span>(<span class="fn">standing</span>(<span class="nm">2.60</span>))
 <span class="fn">print</span>(<span class="fn">standing</span>(<span class="nm">1.90</span>))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 excellent
 good
 satisfactory
 at risk
       </div>
+      </div>
       <p>You can have as many <code>elif</code> branches as you need, and the <code>else</code> is optional. Python checks the conditions <strong>top to bottom and stops at the first one that&#x27;s true</strong> - which is why the order matters enormously.</p>
       <p>Notice <code>standing(3.81)</code> returns <code>&quot;excellent&quot;</code> even though <code>3.81 &gt;= 3.0</code> is also true. The first match wins and the rest are never evaluated.</p>
       <h3 id="the-mistake-everyone-makes">The mistake everyone makes</h3>
       <p>These two functions look nearly identical. They behave completely differently. This is the most important cell in the section.</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">standing_elif</span>(gpa):
     <span class="kw">if</span> gpa &gt;= <span class="nm">3.5</span>:
         <span class="kw">return</span> <span class="st">&quot;excellent&quot;</span>
@@ -2370,17 +2545,18 @@ at risk
         <span class="fn">print</span>(<span class="st">&quot;satisfactory&quot;</span>)
     <span class="kw">else</span>:
         <span class="fn">print</span>(<span class="st">&quot;at risk&quot;</span>)</code></pre>
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> What does <code>standing_if(3.81)</code> print? How many lines?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">&quot;--- elif version ---&quot;</span>)
 <span class="fn">print</span>(<span class="fn">standing_elif</span>(<span class="nm">3.81</span>))
 
 <span class="fn">print</span>(<span class="st">&quot;--- if version ---&quot;</span>)
 <span class="fn">standing_if</span>(<span class="nm">3.81</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 --- elif version ---
 excellent
@@ -2389,18 +2565,23 @@ excellent
 good
 satisfactory
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p>The <code>if</code> version prints <strong>three</strong> lines: <code>excellent</code>, <code>good</code>, and <code>satisfactory</code>.</p>
       <p>Separate <code>if</code> statements are independent questions. Python asks all three, and <code>3.81</code> satisfies all three, so all three bodies run. A chain of <code>elif</code> is one question with several possible answers - at most one body runs.</p>
       <p>Worse, look at that <code>else</code>. It&#x27;s attached only to the <em>last</em> <code>if</code>, so it fires whenever <code>gpa &lt; 2.0</code>, regardless of the earlier branches. Try <code>standing_if(1.5)</code> and you&#x27;ll get <code>at risk</code> alone, which happens to be right. Try it on a value where the branches disagree and the logic falls apart.</p>
       <p>**When your conditions are mutually exclusive alternatives, you want <code>elif</code>.** Separate <code>if</code> statements are for genuinely independent checks.</p>
       </details>
+      <div data-runnable>
       <pre><code><span class="fn">standing_if</span>(<span class="nm">1.5</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 at risk
       </div>
+      </div>
       <h3 id="using-modulus-in-a-condition">Using modulus in a condition</h3>
       <p>Back in section 1 you used <code>%</code> to get remainders. Combined with <code>==</code>, it&#x27;s how you test divisibility.</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">parity</span>(n):
     <span class="st">&quot;&quot;&quot;Return &#x27;even&#x27; or &#x27;odd&#x27; for an integer.&quot;&quot;&quot;</span>
     <span class="kw">if</span> n % <span class="nm">2</span> == <span class="nm">0</span>:
@@ -2410,23 +2591,26 @@ at risk
 
 <span class="fn">print</span>(<span class="fn">parity</span>(<span class="nm">1044</span>))
 <span class="fn">print</span>(<span class="fn">parity</span>(<span class="nm">1069</span>))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 even
 odd
       </div>
+      </div>
       <p><code>n % 2 == 0</code> reads as &quot;the remainder when n is divided by 2 equals zero,&quot; which is the definition of even. The same pattern with other divisors tests for any multiple: <code>n % 5 == 0</code>, <code>n % 100 == 0</code>.</p>
       <h3 id="placeholders">Placeholders</h3>
       <p>Python won&#x27;t accept an empty block. If you know you need a branch but haven&#x27;t written it yet, <code>pass</code> does nothing, legally.</p>
+      <div data-runnable>
       <pre><code>gpa = <span class="nm">3.81</span>
 
 <span class="kw">if</span> gpa &gt;= <span class="nm">3.5</span>:
     <span class="fn">print</span>(<span class="st">&quot;Dean&#x27;s list&quot;</span>)
 <span class="kw">else</span>:
     <span class="kw">pass</span>    <span class="cm"># TODO: decide whether to flag these for advising outreach</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Dean&#x27;s list
+      </div>
       </div>
       <p><code>TODO</code> in a comment is a widely-used convention, and most editors will highlight it and let you list every one in a project. Leave yourself notes.</p>
       <h4 id="your-turn-8">Your turn</h4>
@@ -2456,12 +2640,14 @@ Dean&#x27;s list
     <span class="kw">return</span> <span class="kw">False</span></code></pre>
       <p><code>return gpa &lt; 3.0 or logins &lt; 8</code> produces exactly the same result and is easier to read. If you find yourself returning <code>True</code> in one branch and <code>False</code> in the other, you can almost always return the condition itself.</p>
       </div>
+      <div data-runnable>
       <pre><code><span class="cm"># Uncomment once your function is written.</span>
 
 <span class="cm"># print(flag_for_outreach(3.81, 14))    # expected False</span>
 <span class="cm"># print(flag_for_outreach(2.94, 6))     # expected True</span>
 <span class="cm"># print(flag_for_outreach(3.88, 4))     # expected True  (engagement trigger)</span>
 <span class="cm"># print(flag_for_outreach(2.60, 13))    # expected True  (GPA trigger)</span></code></pre>
+      </div>
       <h4 id="your-turn-9">Your turn</h4>
       <p>Predict the output of each, then run them. The third one is the interesting case - think about what <code>elif</code> guarantees.</p>
       <pre><code>x = <span class="nm">5</span>
@@ -2507,6 +2693,7 @@ Dean&#x27;s list
       <h3 id="lists">Lists</h3>
       <p>One student at a time won&#x27;t get Lee a report. You need a way to hold the whole cohort, and that&#x27;s a <strong>list</strong>.</p>
       <p>A list is a <strong>sequence</strong> of values in square brackets, separated by commas. Here&#x27;s the cohort&#x27;s name field as it actually arrived - ten records, three source systems, all the mess that implies.</p>
+      <div data-runnable>
       <pre><code>roster = [
     <span class="st">&quot;  amara OKONKWO  &quot;</span>,
     <span class="st">&quot;devin castellanos&quot;</span>,
@@ -2519,6 +2706,7 @@ Dean&#x27;s list
     <span class="st">&quot;Rosalind Achebe&quot;</span>,
     <span class="st">&quot;JIAN-WEI CHEN&quot;</span>,
 ]</code></pre>
+      </div>
       <p>No output - that&#x27;s an assignment. Ask for the name to see it:</p>
       <pre><code>roster</code></pre>
       <div class="output-block">
@@ -2535,36 +2723,46 @@ Dean&#x27;s list
  &#x27;JIAN-WEI CHEN&#x27;]
       </div>
       <p><code>len</code> gives the number of elements, exactly as it did for strings:</p>
+      <div data-runnable>
       <pre><code><span class="fn">len</span>(roster)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">10</span>
       </div>
+      </div>
       <p>And here are the corresponding undergraduate GPAs, in the same order:</p>
+      <div data-runnable>
       <pre><code>ug_gpas = [<span class="nm">2.48</span>, <span class="nm">3.02</span>, <span class="nm">2.8</span>, <span class="nm">2.81</span>, <span class="nm">2.67</span>, <span class="nm">2.6</span>, <span class="nm">2.13</span>, <span class="nm">2.96</span>, <span class="nm">3.4</span>, <span class="nm">1.99</span>]
 <span class="fn">len</span>(ug_gpas)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">10</span>
+      </div>
       </div>
       <p>Two lists, matched by position: <code>roster[0]</code> and <code>ug_gpas[0]</code> describe the same student. This &quot;parallel lists&quot; arrangement works and is also fragile - sort one without the other and the data is silently corrupted. Section 9 shows a better structure, and Module 4 shows the right one.</p>
       <h4 id="indexing-and-slicing">Indexing and slicing</h4>
       <p>Everything you learned about string indexing applies unchanged. Zero-based, negative indices count from the end, slices exclude the stop.</p>
       <figure class="nb-figure"><img src="assets/fig-c3cf8549c0.png" alt="A list variable refers to a list; the list holds numbered positions" loading="lazy"><figcaption>A list variable refers to a list; the list holds numbered positions</figcaption></figure>
+      <div data-runnable>
       <pre><code>roster[<span class="nm">0</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;  amara OKONKWO  &#x27;
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>roster[-<span class="nm">1</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;JIAN-WEI CHEN&#x27;
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>ug_gpas[<span class="nm">0</span>:<span class="nm">3</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">2.48</span>, <span class="out-num">3.02</span>, <span class="out-num">2.8</span>]
+      </div>
       </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises IndexError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>roster[<span class="nm">10</span>]</code></pre>
@@ -2580,12 +2778,14 @@ IndexError: list index out of range
       <p>Ten elements means valid indices <code>0</code> through <code>9</code>. <code>roster[10]</code> is one past the end - the same off-by-one you met with strings, and the reason <code>len(roster) - 1</code> is the last valid index.</p>
       <h4 id="lists-are-mutable">Lists are mutable</h4>
       <p>Here&#x27;s where lists differ from strings in a way that matters. Strings are immutable - no method changes one in place. Lists <strong>are</strong> mutable: you can assign to a position and change the list itself.</p>
+      <div data-runnable>
       <pre><code>scores = [<span class="nm">88</span>, <span class="nm">92</span>, <span class="nm">79</span>]
 scores[<span class="nm">0</span>] = <span class="nm">95</span>
 scores</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">95</span>, <span class="out-num">92</span>, <span class="out-num">79</span>]
+      </div>
       </div>
       <p>Try the equivalent on a string and Python refuses:</p>
       <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
@@ -2603,67 +2803,81 @@ TypeError: &#x27;str&#x27; object does not support item assignment
       <p>That TypeError - <code>&#x27;str&#x27; object does not support item assignment</code> - is Python saying strings are immutable. It&#x27;s a distinction you&#x27;ll rely on later: mutability is why a list can be built up piece by piece, and immutability is why a string is safe to pass around without worrying that something will change it.</p>
       <h4 id="growing-a-list">Growing a list</h4>
       <p><code>.append()</code> adds one element to the end. Note that it modifies the list in place and returns nothing:</p>
+      <div data-runnable>
       <pre><code>scores = [<span class="nm">88</span>, <span class="nm">92</span>, <span class="nm">79</span>]
 scores.<span class="fn">append</span>(<span class="nm">93</span>)
 scores</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>, <span class="out-num">93</span>]
       </div>
+      </div>
       <p><code>.extend()</code> adds <em>all</em> the elements of another list:</p>
+      <div data-runnable>
       <pre><code>scores.<span class="fn">extend</span>([<span class="nm">85</span>, <span class="nm">91</span>])
 scores</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>, <span class="out-num">93</span>, <span class="out-num">85</span>, <span class="out-num">91</span>]
+      </div>
       </div>
       <p>Now the contrast that catches everyone. What if you <code>append</code> a list instead of extending?</p>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>scores</code> has 6 elements. After <code>scores.append([70, 75])</code>, what is <code>len(scores)</code>?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>scores = [<span class="nm">88</span>, <span class="nm">92</span>, <span class="nm">79</span>, <span class="nm">93</span>, <span class="nm">85</span>, <span class="nm">91</span>]
 scores.<span class="fn">append</span>([<span class="nm">70</span>, <span class="nm">75</span>])
 <span class="fn">print</span>(scores)
 <span class="fn">print</span>(<span class="st">f&quot;length: {len(scores)}&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>, <span class="out-num">93</span>, <span class="out-num">85</span>, <span class="out-num">91</span>, [<span class="out-num">70</span>, <span class="out-num">75</span>]]
 length: <span class="out-num">7</span>
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p>Length <code>7</code>, not <code>8</code>.</p>
       <p><code>.append()</code> adds <strong>one</strong> element, and that one element happens to itself be a list. You get a <strong>nested</strong> list: six numbers and then a list sitting in position</p>
       <ol><li>Look at the output and you can see the inner brackets.</li></ol>
       <p><code>.extend()</code> unpacks; <code>.append()</code> wraps. When a &quot;sum&quot; or &quot;mean&quot; calculation suddenly fails with a TypeError about lists and ints, this is usually why.</p>
       </details>
+      <div data-runnable>
       <pre><code>scores[<span class="nm">6</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">70</span>, <span class="out-num">75</span>]
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>scores[<span class="nm">6</span>][<span class="nm">0</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">70</span>
+      </div>
       </div>
       <p><code>scores[6]</code> is a list, so <code>scores[6][0]</code> reaches inside it. Double brackets are your signal that something is nested.</p>
       <h4 id="removing-things">Removing things</h4>
       <p><code>.pop()</code> removes an element by index and <em>returns</em> it:</p>
+      <div data-runnable>
       <pre><code>letters = [<span class="st">&#x27;a&#x27;</span>, <span class="st">&#x27;b&#x27;</span>, <span class="st">&#x27;c&#x27;</span>, <span class="st">&#x27;d&#x27;</span>]
 removed = letters.<span class="fn">pop</span>(<span class="nm">1</span>)
 <span class="fn">print</span>(<span class="st">f&quot;removed {removed!r}, list is now {letters}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 removed &#x27;b&#x27;, list is now [&#x27;a&#x27;, &#x27;c&#x27;, &#x27;d&#x27;]
       </div>
+      </div>
       <p><code>.remove()</code> deletes by value rather than position, and returns nothing:</p>
+      <div data-runnable>
       <pre><code>letters = [<span class="st">&#x27;a&#x27;</span>, <span class="st">&#x27;b&#x27;</span>, <span class="st">&#x27;c&#x27;</span>, <span class="st">&#x27;d&#x27;</span>]
 letters.<span class="fn">remove</span>(<span class="st">&#x27;c&#x27;</span>)
 letters</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;d&#x27;]
+      </div>
       </div>
       <p>Ask it to remove something that isn&#x27;t there and you get a <code>ValueError</code> - right type of argument, wrong content:</p>
       <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
@@ -2679,49 +2893,61 @@ ValueError: list.remove(x): x not in list
       </div>
       <h4 id="testing-membership">Testing membership</h4>
       <p>The <code>in</code> operator asks whether a value appears in a list. It returns a boolean, so it drops straight into an <code>if</code>.</p>
+      <div data-runnable>
       <pre><code><span class="st">&#x27;Nadia Haddad&#x27;</span> <span class="kw">in</span> roster</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 True
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="st">&#x27;Amy Lee&#x27;</span> <span class="kw">in</span> roster</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 False
       </div>
+      </div>
       <h4 id="summarizing-a-list">Summarizing a list</h4>
       <p>Four built-in functions do most of what you&#x27;ll want. <code>sum</code>, <code>min</code>, <code>max</code>, and <code>len</code> - and with those four you can compute a mean.</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;sum:  {sum(ug_gpas)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;min:  {min(ug_gpas)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;max:  {max(ug_gpas)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;mean: {sum(ug_gpas) / len(ug_gpas):.3f}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 sum:  <span class="out-num">26.86</span>
 min:  <span class="out-num">1.99</span>
 max:  <span class="out-num">3.4</span>
 mean: <span class="out-num">2.686</span>
       </div>
+      </div>
       <p><code>sorted</code> returns a <strong>new</strong> list in order, leaving the original alone:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="fn">sorted</span>(ug_gpas))
 <span class="fn">print</span>(ug_gpas)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">1.99</span>, <span class="out-num">2.13</span>, <span class="out-num">2.48</span>, <span class="out-num">2.6</span>, <span class="out-num">2.67</span>, <span class="out-num">2.8</span>, <span class="out-num">2.81</span>, <span class="out-num">2.96</span>, <span class="out-num">3.02</span>, <span class="out-num">3.4</span>]
 [<span class="out-num">2.48</span>, <span class="out-num">3.02</span>, <span class="out-num">2.8</span>, <span class="out-num">2.81</span>, <span class="out-num">2.67</span>, <span class="out-num">2.6</span>, <span class="out-num">2.13</span>, <span class="out-num">2.96</span>, <span class="out-num">3.4</span>, <span class="out-num">1.99</span>]
       </div>
+      </div>
       <p>The original is untouched. If you want to keep the sorted version, assign it:</p>
+      <div data-runnable>
       <pre><code>ranked = <span class="fn">sorted</span>(ug_gpas, reverse=<span class="kw">True</span>)
 ranked[:<span class="nm">3</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">3.4</span>, <span class="out-num">3.02</span>, <span class="out-num">2.96</span>]
       </div>
+      </div>
       <p><code>reverse=True</code> sorts high to low, so slicing the first three gives the top three GPAs. <code>sorted</code> works on strings too, alphabetically:</p>
+      <div data-runnable>
       <pre><code><span class="fn">sorted</span>([<span class="st">&#x27;Nadia Haddad&#x27;</span>, <span class="st">&#x27;Amara Okonkwo&#x27;</span>, <span class="st">&#x27;Elliot Park&#x27;</span>])</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [&#x27;Amara Okonkwo&#x27;, &#x27;Elliot Park&#x27;, &#x27;Nadia Haddad&#x27;]
+      </div>
       </div>
       <h4 id="copying-and-a-trap">Copying, and a trap</h4>
       <p>This is subtle, it bites hard, and it comes directly from the fact that lists are mutable.</p>
@@ -2729,61 +2955,69 @@ ranked[:<span class="nm">3</span>]</code></pre>
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> After <code>backup = scores</code> and then <code>scores.append(999)</code>, what is <code>len(backup)</code>?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>scores = [<span class="nm">88</span>, <span class="nm">92</span>, <span class="nm">79</span>]
 backup = scores
 scores.<span class="fn">append</span>(<span class="nm">999</span>)
 
 <span class="fn">print</span>(<span class="st">f&quot;scores: {scores}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;backup: {backup}&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 scores: [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>, <span class="out-num">999</span>]
 backup: [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>, <span class="out-num">999</span>]
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>backup</code> changed too.</p>
       <p><code>backup = scores</code> did <strong>not</strong> copy the list. It gave the same list a second name. Both names refer to one object in memory, so a change made through either name is visible through both. This is called <strong>aliasing</strong>.</p>
       </details>
       <figure class="nb-figure"><img src="assets/fig-7be8920b80.png" alt="Two variable names referring to the same list object" loading="lazy"><figcaption>Two variable names referring to the same list object</figcaption></figure>
       <p>To make a real copy, use <code>list()</code> or a full slice:</p>
+      <div data-runnable>
       <pre><code>scores = [<span class="nm">88</span>, <span class="nm">92</span>, <span class="nm">79</span>]
 real_copy = <span class="fn">list</span>(scores)      <span class="cm"># or scores[:]</span>
 scores.<span class="fn">append</span>(<span class="nm">999</span>)
 
 <span class="fn">print</span>(<span class="st">f&quot;scores:    {scores}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;real_copy: {real_copy}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 scores:    [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>, <span class="out-num">999</span>]
 real_copy: [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>]
       </div>
+      </div>
       <p>This is the reason to be careful with mutable values in general, and it&#x27;s worth remembering when a DataFrame in Module 4 changes when you didn&#x27;t expect it to. Same idea, bigger object.</p>
       <h4 id="lists-can-hold-anything">Lists can hold anything</h4>
       <p>Elements don&#x27;t have to share a type, and lists can contain lists:</p>
+      <div data-runnable>
       <pre><code>mixed = [<span class="st">&#x27;1003&#x27;</span>, <span class="st">&#x27;Amara Okonkwo&#x27;</span>, <span class="nm">3.02</span>, <span class="kw">True</span>, [<span class="st">&#x27;Biology&#x27;</span>, <span class="st">&#x27;Chemistry&#x27;</span>]]
 
 <span class="fn">print</span>(<span class="fn">type</span>(mixed[<span class="nm">0</span>]))
 <span class="fn">print</span>(<span class="fn">type</span>(mixed[<span class="nm">2</span>]))
 <span class="fn">print</span>(<span class="fn">type</span>(mixed[<span class="nm">3</span>]))
 <span class="fn">print</span>(<span class="fn">type</span>(mixed[<span class="nm">4</span>]))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &lt;class &#x27;str&#x27;&gt;
 &lt;class &#x27;float&#x27;&gt;
 &lt;class &#x27;bool&#x27;&gt;
 &lt;class &#x27;list&#x27;&gt;
       </div>
+      </div>
       <p>That flexibility is convenient and, in data work, usually a warning sign - a column where the types vary is a column that will break something. One of the first things NumPy does in Module 3 is take that flexibility away, on purpose.</p>
       <h4 id="lists-and-strings">Lists and strings</h4>
       <p><code>.split()</code> turns a string into a list, which you saw in section 4. <code>.join()</code> turns a list back into a string, and it&#x27;s how you build readable output:</p>
+      <div data-runnable>
       <pre><code>row = <span class="st">&quot;1003,Amara Okonkwo,Biology,3.02&quot;</span>
 fields = row.<span class="fn">split</span>(<span class="st">&quot;,&quot;</span>)
 <span class="fn">print</span>(fields)
 <span class="fn">print</span>(<span class="st">&quot; | &quot;</span>.<span class="fn">join</span>(fields))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [&#x27;<span class="out-num">1003</span>&#x27;, &#x27;Amara Okonkwo&#x27;, &#x27;Biology&#x27;, &#x27;<span class="out-num">3.02</span>&#x27;]
 <span class="out-num">1003</span> | Amara Okonkwo | Biology | <span class="out-num">3.02</span>
+      </div>
       </div>
       <h5 id="your-turn-10">Your turn</h5>
       <p>Using <code>ug_gpas</code>:</p>
@@ -2814,22 +3048,26 @@ ranked = <span class="fn">sorted</span>(ug_gpas, reverse=<span class="kw">True</
       <p>What you actually want is to look up a value <em>by name</em>. That&#x27;s a <strong>dictionary</strong>.</p>
       <h4 id="a-dictionary-is-a-mapping">A dictionary is a mapping</h4>
       <p>A list maps positions to values - index <code>0</code> gets you the first element. A dictionary maps <strong>keys</strong> to <strong>values</strong>, and the keys can be anything you like.</p>
+      <div data-runnable>
       <pre><code>gpa_by_name = {
     <span class="st">&quot;Amara Okonkwo&quot;</span>: <span class="nm">3.02</span>,
     <span class="st">&quot;Devin Castellanos&quot;</span>: <span class="nm">1.99</span>,
     <span class="st">&quot;Priya Raghunathan&quot;</span>: <span class="nm">2.8</span>,
 }
 gpa_by_name</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 {&#x27;Amara Okonkwo&#x27;: <span class="out-num">3.02</span>, &#x27;Devin Castellanos&#x27;: <span class="out-num">1.99</span>, &#x27;Priya Raghunathan&#x27;: <span class="out-num">2.8</span>}
       </div>
+      </div>
       <p>Curly braces, and each <strong>item</strong> is a <code>key: value</code> pair separated by a colon. Look it up with square brackets - the same syntax as a list, but with a key instead of a position:</p>
       <figure class="nb-figure"><img src="assets/fig-3d78385a52.png" alt="A dictionary maps each key to a value" loading="lazy"><figcaption>A dictionary maps each key to a value</figcaption></figure>
+      <div data-runnable>
       <pre><code>gpa_by_name[<span class="st">&quot;Priya Raghunathan&quot;</span>]</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">2.8</span>
+      </div>
       </div>
       <p>No searching, no position tracking. And unlike parallel lists, the pairing can&#x27;t come apart.</p>
       <p>Numeric indices don&#x27;t work, because a dictionary has no order to index into:</p>
@@ -2858,18 +3096,22 @@ KeyError: &#x27;Amy Lee&#x27;
       </div>
       <h4 id="get-and-missing-data">.get() and missing data</h4>
       <p>A KeyError stops your program. When you&#x27;re not certain a key exists - which, with real data, is always - <code>.get()</code> returns <code>None</code> instead of raising:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(gpa_by_name.<span class="fn">get</span>(<span class="st">&quot;Amy Lee&quot;</span>))
 <span class="fn">print</span>(gpa_by_name.<span class="fn">get</span>(<span class="st">&quot;Amara Okonkwo&quot;</span>))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 None
 <span class="out-num">3.02</span>
       </div>
+      </div>
       <p>Or supply your own fallback as a second argument:</p>
+      <div data-runnable>
       <pre><code>gpa_by_name.<span class="fn">get</span>(<span class="st">&quot;Amy Lee&quot;</span>, <span class="st">&quot;not enrolled&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;not enrolled&#x27;
+      </div>
       </div>
       <p>This becomes important in Module 4. Real cohort data has holes, and whether you crash, skip, or substitute on a missing value is an analytical decision with consequences - not a technicality.</p>
       <h4 id="changing-a-dictionary">Changing a dictionary</h4>
@@ -2894,81 +3136,98 @@ gpa_by_name</code></pre>
  &#x27;Marcus Webb&#x27;: <span class="out-num">3.05</span>}
       </div>
       <p><code>del</code> removes an item:</p>
+      <div data-runnable>
       <pre><code><span class="kw">del</span> gpa_by_name[<span class="st">&quot;Marcus Webb&quot;</span>]
 gpa_by_name</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 {&#x27;Amara Okonkwo&#x27;: <span class="out-num">3.02</span>, &#x27;Devin Castellanos&#x27;: <span class="out-num">1.99</span>, &#x27;Priya Raghunathan&#x27;: <span class="out-num">2.8</span>}
       </div>
+      </div>
       <p><code>len</code> counts items, and <code>in</code> tests for a key:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="fn">len</span>(gpa_by_name))
 <span class="fn">print</span>(<span class="st">&quot;Amara Okonkwo&quot;</span> <span class="kw">in</span> gpa_by_name)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">3</span>
 True
+      </div>
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>3.02</code> is one of the values. What does <code>3.02 in gpa_by_name</code> return?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code><span class="nm">3.81</span> <span class="kw">in</span> gpa_by_name</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 False
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>False</code>. **<code>in</code> checks keys, not values.**</p>
       <p>This is a genuine gotcha, and the fix is to say what you mean - ask for the values explicitly with <code>.values()</code>.</p>
       </details>
+      <div data-runnable>
       <pre><code><span class="nm">3.81</span> <span class="kw">in</span> gpa_by_name.<span class="fn">values</span>()</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 False
       </div>
+      </div>
       <h4 id="keys-values-items">Keys, values, items</h4>
       <p>Three methods give you the parts of a dictionary.</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(gpa_by_name.<span class="fn">keys</span>())
 <span class="fn">print</span>(gpa_by_name.<span class="fn">values</span>())
 <span class="fn">print</span>(gpa_by_name.<span class="fn">items</span>())</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 dict_keys([&#x27;Amara Okonkwo&#x27;, &#x27;Devin Castellanos&#x27;, &#x27;Priya Raghunathan&#x27;])
 dict_values([<span class="out-num">3.02</span>, <span class="out-num">1.99</span>, <span class="out-num">2.8</span>])
 dict_items([(&#x27;Amara Okonkwo&#x27;, <span class="out-num">3.02</span>), (&#x27;Devin Castellanos&#x27;, <span class="out-num">1.99</span>), (&#x27;Priya Raghunathan&#x27;, <span class="out-num">2.8</span>)])
       </div>
+      </div>
       <p><code>.items()</code> gives you key-value pairs. Look at how they print: <code>[(&#x27;Amara Okonkwo&#x27;, 3.02), ...]</code>. Those are <strong>tuples</strong>, the same thing <code>enumerate</code> handed you in section 8 - which is why the same two-name unpacking works on them.</p>
       <h4 id="looping-over-a-dictionary">Looping over a dictionary</h4>
       <p>Loop over a dictionary directly and you get the <strong>keys</strong>:</p>
+      <div data-runnable>
       <pre><code><span class="kw">for</span> name <span class="kw">in</span> gpa_by_name:
     <span class="fn">print</span>(name)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Amara Okonkwo
 Devin Castellanos
 Priya Raghunathan
       </div>
+      </div>
       <p>Loop over <code>.values()</code> for the values:</p>
+      <div data-runnable>
       <pre><code><span class="kw">for</span> gpa <span class="kw">in</span> gpa_by_name.<span class="fn">values</span>():
     <span class="fn">print</span>(gpa)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">3.02</span>
 <span class="out-num">1.99</span>
 <span class="out-num">2.8</span>
       </div>
+      </div>
       <p>And <code>.items()</code> for both at once - this is the one you&#x27;ll reach for most:</p>
+      <div data-runnable>
       <pre><code><span class="kw">for</span> name, gpa <span class="kw">in</span> gpa_by_name.<span class="fn">items</span>():
     <span class="fn">print</span>(<span class="st">f&quot;{name:22} {gpa:.2f}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Amara Okonkwo          <span class="out-num">3.02</span>
 Devin Castellanos      <span class="out-num">1.99</span>
 Priya Raghunathan      <span class="out-num">2.80</span>
       </div>
+      </div>
       <p>That two-variable unpacking is the same mechanic as <code>enumerate</code>.</p>
       <h4 id="counting-with-a-dictionary">Counting with a dictionary</h4>
       <p>Here is the pattern that makes dictionaries indispensable. You have a list of majors, some repeated, and you want a count of each.</p>
+      <div data-runnable>
       <pre><code>majors = [<span class="st">&quot;Biology&quot;</span>, <span class="st">&quot;Business&quot;</span>, <span class="st">&quot;Mathematics&quot;</span>, <span class="st">&quot;Psychology&quot;</span>, <span class="st">&quot;Economics&quot;</span>,
           <span class="st">&quot;Communications&quot;</span>, <span class="st">&quot;Computer Science&quot;</span>, <span class="st">&quot;Sociology&quot;</span>, <span class="st">&quot;Chemistry&quot;</span>,
           <span class="st">&quot;Engineering&quot;</span>]
@@ -2985,21 +3244,24 @@ counts = {}
         counts[field] = <span class="nm">1</span>
 
 counts</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 {&#x27;Science&#x27;: <span class="out-num">5</span>, &#x27;Business&#x27;: <span class="out-num">2</span>, &#x27;Social Science&#x27;: <span class="out-num">2</span>, &#x27;Humanities&#x27;: <span class="out-num">1</span>}
       </div>
+      </div>
       <p>Walk through the logic: for each field, if it&#x27;s already a key, add one to its count; if not, create it with a count of <code>1</code>. That <code>if/else</code> is guarding against the KeyError you&#x27;d get from <code>counts[field] += 1</code> on a key that doesn&#x27;t exist yet.</p>
       <p><code>.get()</code> collapses it to one line, which is the idiom you&#x27;ll see in real code:</p>
+      <div data-runnable>
       <pre><code>counts = {}
 
 <span class="kw">for</span> field <span class="kw">in</span> fields:
     counts[field] = counts.<span class="fn">get</span>(field, <span class="nm">0</span>) + <span class="nm">1</span>
 
 counts</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 {&#x27;Science&#x27;: <span class="out-num">5</span>, &#x27;Business&#x27;: <span class="out-num">2</span>, &#x27;Social Science&#x27;: <span class="out-num">2</span>, &#x27;Humanities&#x27;: <span class="out-num">1</span>}
+      </div>
       </div>
       <p>That one line is dense, so take it apart from the inside out. On the pass where <code>field</code> is <code>&quot;Science&quot;</code> for the second time:</p>
       <table class="data-table"><thead><tr><th>Step</th><th>Expression</th><th>Value</th></tr></thead><tbody><tr><td>1</td><td><code>counts.get(&quot;Science&quot;, 0)</code></td><td><code>1</code> - it&#x27;s already a key, so we get its count</td></tr><tr><td>2</td><td><code>... + 1</code></td><td><code>2</code></td></tr><tr><td>3</td><td><code>counts[&quot;Science&quot;] = ...</code></td><td>stores <code>2</code> back under the key</td></tr></tbody></table>
@@ -3009,6 +3271,7 @@ counts</code></pre>
       <p>You now have a frequency table - the single most common summary in all of data analysis. In Module 4 this is <code>value_counts()</code>, one method call. It&#x27;s worth having built it by hand once, so you know what that method is doing.</p>
       <h4 id="a-record-as-a-dictionary">A record as a dictionary</h4>
       <p>Dictionaries really come into their own for holding one thing with several attributes. Instead of matching up ten parallel lists, put one student in one dictionary:</p>
+      <div data-runnable>
       <pre><code>student = {
     <span class="st">&quot;student_id&quot;</span>: <span class="nm">1003</span>,
     <span class="st">&quot;name&quot;</span>: <span class="st">&quot;Amara Okonkwo&quot;</span>,
@@ -3019,13 +3282,15 @@ counts</code></pre>
 
 <span class="fn">print</span>(student[<span class="st">&quot;name&quot;</span>])
 <span class="fn">print</span>(<span class="st">f&quot;{student[&#x27;name&#x27;]} studies {student[&#x27;major&#x27;]}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Amara Okonkwo
 Amara Okonkwo studies Biology
       </div>
+      </div>
       <p>Note the quote juggling in that f-string: the outer string uses double quotes, so the key inside the braces uses single quotes. Mixing them up is a common SyntaxError.</p>
       <p>Now a <strong>list of dictionaries</strong> - one dictionary per student, all in a list. This is the structure that finally survives sorting, and it&#x27;s how most real data arrives from an API or a JSON file.</p>
+      <div data-runnable>
       <pre><code>cohort = [
     {<span class="st">&quot;student_id&quot;</span>: <span class="nm">1003</span>, <span class="st">&quot;name&quot;</span>: <span class="st">&quot;Amara Okonkwo&quot;</span>,     <span class="st">&quot;ug_gpa&quot;</span>: <span class="nm">3.02</span>, <span class="st">&quot;logins_per_week&quot;</span>: <span class="nm">3.4</span>},
     {<span class="st">&quot;student_id&quot;</span>: <span class="nm">1089</span>, <span class="st">&quot;name&quot;</span>: <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>: <span class="nm">1.99</span>, <span class="st">&quot;logins_per_week&quot;</span>: <span class="nm">0.4</span>},
@@ -3034,23 +3299,26 @@ Amara Okonkwo studies Biology
 
 <span class="kw">for</span> record <span class="kw">in</span> cohort:
     <span class="fn">print</span>(<span class="st">f&quot;{record[&#x27;student_id&#x27;]}  {record[&#x27;name&#x27;]:20} {record[&#x27;ug_gpa&#x27;]:.2f}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">1003</span>  Amara Okonkwo        <span class="out-num">3.02</span>
 <span class="out-num">1089</span>  Devin Castellanos    <span class="out-num">1.99</span>
 <span class="out-num">1024</span>  Priya Raghunathan    <span class="out-num">2.80</span>
       </div>
+      </div>
       <p>Look at what that loop does: <code>record</code> is a dictionary, so <code>record[&#x27;name&#x27;]</code> reaches inside it. Loop over a list, index into a dictionary. Combining the two structures is most of practical Python.</p>
       <p>And now sorting is safe, because each record carries its own fields:</p>
+      <div data-runnable>
       <pre><code>by_gpa = <span class="fn">sorted</span>(cohort, key=<span class="kw">lambda</span> r: r[<span class="st">&quot;ug_gpa&quot;</span>], reverse=<span class="kw">True</span>)
 
 <span class="kw">for</span> record <span class="kw">in</span> by_gpa:
     <span class="fn">print</span>(<span class="st">f&quot;{record[&#x27;name&#x27;]:20} {record[&#x27;ug_gpa&#x27;]:.2f}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Amara Okonkwo        <span class="out-num">3.02</span>
 Priya Raghunathan    <span class="out-num">2.80</span>
 Devin Castellanos    <span class="out-num">1.99</span>
+      </div>
       </div>
       <p>The <code>key=lambda r: r[&quot;ug_gpa&quot;]</code> tells <code>sorted</code> which field to sort on. <code>lambda</code> is a compact way to write a tiny function; you don&#x27;t need to write these yet, but you should recognize one when you see it, because pandas uses the same idea constantly.</p>
       <h4 id="what-can-be-a-key">What can be a key?</h4>
@@ -3068,6 +3336,7 @@ Traceback (most recent call last):
 TypeError: unhashable type: &#x27;list&#x27;
       </div>
       <p><code>unhashable type: &#x27;list&#x27;</code> is the message, and &quot;hashable&quot; is effectively a synonym for &quot;usable as a dictionary key.&quot; Values, on the other hand, can be anything at all - including lists and other dictionaries:</p>
+      <div data-runnable>
       <pre><code>majors_by_field = {
     <span class="st">&quot;Science&quot;</span>: [<span class="st">&quot;Biology&quot;</span>, <span class="st">&quot;Mathematics&quot;</span>, <span class="st">&quot;Computer Science&quot;</span>, <span class="st">&quot;Chemistry&quot;</span>, <span class="st">&quot;Engineering&quot;</span>],
     <span class="st">&quot;Business&quot;</span>: [<span class="st">&quot;Business&quot;</span>, <span class="st">&quot;Economics&quot;</span>],
@@ -3077,17 +3346,19 @@ TypeError: unhashable type: &#x27;list&#x27;
 
 <span class="kw">for</span> field, major_list <span class="kw">in</span> majors_by_field.<span class="fn">items</span>():
     <span class="fn">print</span>(<span class="st">f&quot;{field:16} {len(major_list)} majors: {&#x27;, &#x27;.join(major_list)}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Science          <span class="out-num">5</span> majors: Biology, Mathematics, Computer Science, Chemistry, Engineering
 Business         <span class="out-num">2</span> majors: Business, Economics
 Social Science   <span class="out-num">2</span> majors: Psychology, Sociology
 Humanities       <span class="out-num">1</span> majors: Communications
       </div>
+      </div>
       <h4 id="the-full-cohort">The full cohort</h4>
       <p>Time to load everything. Below are all six of Lee&#x27;s tables, embedded directly in the notebook - no file paths, no downloads, nothing to go wrong.</p>
       <p>Each table is a dictionary keyed by <code>student_id</code>, with a dictionary of fields as the value. That&#x27;s the structure that makes a lookup like <code>high_school[1003][&quot;hs_gpa&quot;]</code> read the way you&#x27;d say it out loud.</p>
       <p>Run it and read it. This is the data for the rest of the course.</p>
+      <div data-runnable>
       <pre><code><span class="cm"># =============================================================================</span>
 <span class="cm"># DTSC 520 -- Institutional Research cohort (n = 10)</span>
 <span class="cm"># SYNTHETIC DATA. No real student records. These ten students are drawn</span>
@@ -3179,13 +3450,15 @@ lms_activity = {
 }
 
 <span class="fn">print</span>(<span class="st">f&quot;Loaded {len(students)} students across 6 tables.&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Loaded <span class="out-num">10</span> students across <span class="out-num">6</span> tables.
+      </div>
       </div>
       <h5 id="is-versus"><code>is</code> versus <code>==</code></h5>
       <p>One more operator before we use the data, because it&#x27;s about to appear and it isn&#x27;t the one you learned in section 6.</p>
       <p><code>==</code> asks whether two values are <strong>equal</strong>. <code>is</code> asks whether two names refer to the <strong>very same object</strong> - the aliasing question from section 7.</p>
+      <div data-runnable>
       <pre><code>a = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]
 b = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]      <span class="cm"># same contents, separately built</span>
 c = a              <span class="cm"># a second name for a&#x27;s list</span>
@@ -3193,11 +3466,12 @@ c = a              <span class="cm"># a second name for a&#x27;s list</span>
 <span class="fn">print</span>(a == b)      <span class="cm"># equal contents?</span>
 <span class="fn">print</span>(a <span class="kw">is</span> b)      <span class="cm"># the same object?</span>
 <span class="fn">print</span>(a <span class="kw">is</span> c)      <span class="cm"># this one is an alias</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 True
 False
 True
+      </div>
       </div>
       <p><code>a == b</code> is <code>True</code> because the contents match. <code>a is b</code> is <code>False</code> because they are two separate lists that happen to look alike. <code>a is c</code> is <code>True</code> because <code>c = a</code> never made a copy.</p>
       <p>In practice you will use <code>==</code> almost always. The one place <code>is</code> is the correct choice is checking for <code>None</code>:</p>
@@ -3205,6 +3479,7 @@ True
 <span class="kw">if</span> value == <span class="kw">None</span>:        <span class="cm"># works, but not the convention</span></code></pre>
       <p>There is exactly one <code>None</code> object in a running Python program, so identity is the precise question, and <code>is None</code> is what every Python codebase writes. You&#x27;ll see it in the next cell and throughout the rest of this notebook.</p>
       <p>Now a lookup crosses tables using the shared <code>student_id</code>, which is exactly what the schema diagram promised:</p>
+      <div data-runnable>
       <pre><code>sid = <span class="nm">1069</span>
 
 <span class="fn">print</span>(<span class="st">f&quot;{students[sid][&#x27;name&#x27;]} ({sid})&quot;</span>)
@@ -3212,7 +3487,7 @@ True
 <span class="fn">print</span>(<span class="st">f&quot;  UG GPA         {undergraduate[sid][&#x27;ug_gpa&#x27;]}  in {undergraduate[sid][&#x27;major&#x27;]}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;  Grad program   {graduate[sid][&#x27;program&#x27;]}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;  Logins/week    {lms_activity[sid][&#x27;logins_per_week&#x27;]}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Nadia Haddad (<span class="out-num">1069</span>)
   HS GPA         <span class="out-num">2.55</span>
@@ -3220,9 +3495,11 @@ Nadia Haddad (<span class="out-num">1069</span>)
   Grad program   MS Data Science
   Logins/week    <span class="out-num">3.8</span>
       </div>
+      </div>
       <p>In Module 4 this becomes a single <code>pd.merge</code>. For now, notice that you <em>can</em> do it - and notice how much typing it takes. That gap is the argument for pandas.</p>
       <h4 id="the-schema-report">The schema report</h4>
       <p>Lee asked for one thing: open the data, understand its shape, tell her what&#x27;s there. That&#x27;s a <strong>schema report</strong>, and you now have every tool you need to write one - functions, loops, conditionals, dictionaries, f-strings.</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">describe_table</span>(name, table):
     <span class="st">&quot;&quot;&quot;Print the shape and field names of one cohort table.&quot;&quot;&quot;</span>
     row_count = <span class="fn">len</span>(table)
@@ -3260,7 +3537,7 @@ tables = {
 
 <span class="kw">for</span> name, table <span class="kw">in</span> tables.<span class="fn">items</span>():
     <span class="fn">describe_table</span>(name, table)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 ============================================================
 COHORT SCHEMA REPORT - prepared for A. Lee
@@ -3281,6 +3558,7 @@ undergraduate
 graduate
   rows:   <span class="out-num">10</span>
 ... [<span class="out-num">11</span> more lines]
+      </div>
       </div>
       <p>That&#x27;s a real deliverable. It uses a nested loop over a dictionary of dictionaries, a <code>None</code> check, <code>.join()</code> on a list of field names, and f-string alignment - everything from sections 3 through 9, doing actual work.</p>
       <p>It also surfaces the thing Lee most needs to know: <strong>the graduate table has a missing value.</strong> Student 1044 is still enrolled, so there&#x27;s no GPA to record. That single <code>None</code> will break a naive average, and how you handle it is a decision you&#x27;ll make properly in Module 4.</p>
@@ -3344,6 +3622,7 @@ status_counts = {}
 ...</code></pre>
       <p>Ten lines, and every one of them is a chance to typo an index. With eighty students it&#x27;s unthinkable, and Lee&#x27;s real cohort has more than that.</p>
       <p>A <strong>loop</strong> repeats a block of code once for each element in a sequence. This is the point where programming starts to pay for itself.</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">clean_name</span>(raw):
     <span class="st">&quot;&quot;&quot;Return a name stripped of surrounding whitespace and title-cased.&quot;&quot;&quot;</span>
     <span class="kw">return</span> raw.<span class="fn">strip</span>().<span class="fn">title</span>()
@@ -3351,7 +3630,7 @@ status_counts = {}
 
 <span class="kw">for</span> raw <span class="kw">in</span> roster:
     <span class="fn">print</span>(<span class="fn">clean_name</span>(raw))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Amara Okonkwo
 Devin Castellanos
@@ -3364,6 +3643,7 @@ Elliot Park
 Rosalind Achebe
 Jian-Wei Chen
       </div>
+      </div>
       <p>Ten records, three lines of code, and it would be the same three lines for ten thousand records.</p>
       <h3 id="the-anatomy-of-a-for-loop">The anatomy of a for loop</h3>
       <pre><code><span class="kw">for</span> raw <span class="kw">in</span> roster:
@@ -3371,13 +3651,15 @@ Jian-Wei Chen
       <ul><li><code>for</code> and <code>in</code> are keywords. The header ends with a colon; the body is indented.</li><li><code>raw</code> is the <strong>loop variable</strong>. You choose the name.</li><li><code>roster</code> is the sequence being <strong>iterated</strong> over.</li></ul>
       <p>What happens when it runs: <code>raw</code> is assigned the first element and the body executes. Then <code>raw</code> is assigned the second element and the body executes again. And so on until the sequence is exhausted, at which point the loop ends and Python moves to the next line after the body.</p>
       <p>The loop variable name is yours to pick and the loop doesn&#x27;t care what it is:</p>
+      <div data-runnable>
       <pre><code><span class="kw">for</span> cheeseburger <span class="kw">in</span> [<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;c&quot;</span>]:
     <span class="fn">print</span>(cheeseburger)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 a
 b
 c
+      </div>
       </div>
       <p>It works, and please don&#x27;t. Name the loop variable after one element of what you&#x27;re looping over - <code>for raw in roster</code>, <code>for gpa in ug_gpas</code>, <code>for student in cohort</code>. The name is documentation.</p>
       <p>The <em>sequence</em> name, on the other hand, has to be real:</p>
@@ -3410,9 +3692,10 @@ TypeError: &#x27;int&#x27; object is not iterable
       <p><code>&#x27;int&#x27; object is not iterable</code> - a single number isn&#x27;t a collection of things. If you wanted the numbers 0 through 9, that&#x27;s what <code>range</code> is for.</p>
       <h3 id="range">range</h3>
       <p><code>range</code> produces a sequence of integers. It&#x27;s how you repeat something a fixed number of times.</p>
+      <div data-runnable>
       <pre><code><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">5</span>):
     <span class="fn">print</span>(i)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">0</span>
 <span class="out-num">1</span>
@@ -3420,27 +3703,33 @@ TypeError: &#x27;int&#x27; object is not iterable
 <span class="out-num">3</span>
 <span class="out-num">4</span>
       </div>
+      </div>
       <p>Note it starts at <code>0</code> and stops <em>before</em> <code>5</code> - the same exclusive-stop convention as slicing. <code>range(5)</code> gives you five numbers, which is usually what you want. You can also give a start and a step:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="fn">list</span>(<span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">6</span>)))        <span class="cm"># 1 through 5</span>
 <span class="fn">print</span>(<span class="fn">list</span>(<span class="fn">range</span>(<span class="nm">0</span>, <span class="nm">20</span>, <span class="nm">5</span>)))    <span class="cm"># every 5th number</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">1</span>, <span class="out-num">2</span>, <span class="out-num">3</span>, <span class="out-num">4</span>, <span class="out-num">5</span>]
 [<span class="out-num">0</span>, <span class="out-num">5</span>, <span class="out-num">10</span>, <span class="out-num">15</span>]
       </div>
+      </div>
       <p><code>range</code> doesn&#x27;t build a list until you ask it to, which is why printing it directly is unhelpful:</p>
+      <div data-runnable>
       <pre><code><span class="fn">range</span>(<span class="nm">5</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 range(<span class="out-num">0</span>, <span class="out-num">5</span>)
       </div>
+      </div>
       <h3 id="enumerate">enumerate</h3>
       <p>Often you want the element <em>and</em> its position - to pair a name with a student ID, say. You could loop over <code>range(len(roster))</code> and index in, but there&#x27;s a cleaner way.</p>
+      <div data-runnable>
       <pre><code>student_ids = [<span class="nm">1003</span>, <span class="nm">1089</span>, <span class="nm">1024</span>, <span class="nm">1044</span>, <span class="nm">1032</span>, <span class="nm">1050</span>, <span class="nm">1069</span>, <span class="nm">1002</span>, <span class="nm">1063</span>, <span class="nm">1026</span>]
 
 <span class="kw">for</span> i, raw <span class="kw">in</span> <span class="fn">enumerate</span>(roster):
     <span class="fn">print</span>(<span class="st">f&quot;{student_ids[i]}  {clean_name(raw)}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">1003</span>  Amara Okonkwo
 <span class="out-num">1089</span>  Devin Castellanos
@@ -3453,28 +3742,33 @@ range(<span class="out-num">0</span>, <span class="out-num">5</span>)
 <span class="out-num">1063</span>  Rosalind Achebe
 <span class="out-num">1026</span>  Jian-Wei Chen
       </div>
+      </div>
       <p><code>enumerate</code> hands back two values each time through, and <code>for i, raw in ...</code> catches them in two variables. You&#x27;ll use this constantly.</p>
       <h4 id="a-detour-tuples-and-unpacking">A detour: tuples, and unpacking</h4>
       <p>What <code>enumerate</code> actually hands back on each pass is a single value containing two things - a <strong>tuple</strong>.</p>
+      <div data-runnable>
       <pre><code><span class="cm"># What one item from enumerate looks like on its own</span>
 item = <span class="fn">list</span>(<span class="fn">enumerate</span>([<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>]))[<span class="nm">0</span>]
 <span class="fn">print</span>(item)
 <span class="fn">print</span>(<span class="fn">type</span>(item))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 (<span class="out-num">0</span>, &#x27;a&#x27;)
 &lt;class &#x27;tuple&#x27;&gt;
       </div>
+      </div>
       <p>A tuple is an ordered collection, written with parentheses and commas. It is very nearly a list, with one important difference: <strong>a tuple is immutable.</strong> Once built, it cannot be changed.</p>
+      <div data-runnable>
       <pre><code>pair = (<span class="nm">0</span>, <span class="st">&quot;Amara Okonkwo&quot;</span>)
 <span class="fn">print</span>(pair[<span class="nm">0</span>])          <span class="cm"># index it like a list</span>
 <span class="fn">print</span>(pair[<span class="nm">1</span>])
 <span class="fn">print</span>(<span class="fn">len</span>(pair))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">0</span>
 Amara Okonkwo
 <span class="out-num">2</span>
+      </div>
       </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>pair[<span class="nm">0</span>] = <span class="nm">99</span></code></pre>
@@ -3489,18 +3783,21 @@ TypeError: &#x27;tuple&#x27; object does not support item assignment
       </div>
       <p>Same <code>does not support item assignment</code> message you saw when trying to modify a string, and for the same reason - strings and tuples are both immutable, lists and dictionaries are not.</p>
       <p><strong>Unpacking</strong> is what lets you pull a tuple apart into separate names in one step:</p>
+      <div data-runnable>
       <pre><code>index, name = pair       <span class="cm"># unpack two values into two names</span>
 <span class="fn">print</span>(index)
 <span class="fn">print</span>(name)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">0</span>
 Amara Okonkwo
+      </div>
       </div>
       <p>That is exactly what <code>for i, raw in enumerate(roster)</code> is doing on every pass through the loop. It&#x27;s also how you&#x27;ll take two values back from a function later, and how you&#x27;ll loop over a dictionary in section 9.</p>
       <p>You do not need to build tuples yourself in this course. You do need to recognize one when you see it, because Python hands them back constantly - and because the error message when you try to modify one is otherwise baffling.</p>
       <h3 id="the-accumulator-pattern">The accumulator pattern</h3>
       <p>Here is the single most important loop pattern in data work. You want a total, so you start at zero and add to a variable each time through.</p>
+      <div data-runnable>
       <pre><code>total = <span class="nm">0</span>
 
 <span class="kw">for</span> gpa <span class="kw">in</span> ug_gpas:
@@ -3508,15 +3805,17 @@ Amara Okonkwo
 
 <span class="fn">print</span>(<span class="st">f&quot;total: {total}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;mean:  {total / len(ug_gpas):.3f}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 total: <span class="out-num">26.86</span>
 mean:  <span class="out-num">2.686</span>
+      </div>
       </div>
       <p>Three parts, and every accumulator has them:</p>
       <ol><li><strong>Initialize</strong> before the loop - <code>total = 0</code>.</li><li><strong>Update</strong> inside the loop - <code>total += gpa</code>.</li><li><strong>Use</strong> after the loop - the mean.</li></ol>
       <p>Getting the initialization inside the loop by accident is a classic bug: <code>total</code> would reset to zero every iteration and you&#x27;d end up with just the last value.</p>
       <p>Counting works the same way, with <code>if</code> to decide what counts:</p>
+      <div data-runnable>
       <pre><code>high_achievers = <span class="nm">0</span>
 
 <span class="kw">for</span> gpa <span class="kw">in</span> ug_gpas:
@@ -3524,9 +3823,10 @@ mean:  <span class="out-num">2.686</span>
         high_achievers += <span class="nm">1</span>
 
 <span class="fn">print</span>(<span class="st">f&quot;{high_achievers} of {len(ug_gpas)} students at or above 3.5&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">0</span> of <span class="out-num">10</span> students at or above <span class="out-num">3.5</span>
+      </div>
       </div>
       <p>And you can accumulate into a list instead of a number, with <code>.append()</code>:</p>
       <pre><code>clean_roster = []
@@ -3554,10 +3854,10 @@ clean_roster</code></pre>
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Read the ten cleaned names carefully. One of them is still wrong. Which, and why?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code><span class="kw">for</span> name <span class="kw">in</span> clean_roster:
     <span class="fn">print</span>(<span class="st">f&quot;[{name}]&quot;</span>)     <span class="cm"># brackets make the whitespace visible</span></code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [Amara Okonkwo]
 [Devin Castellanos]
@@ -3570,11 +3870,14 @@ clean_roster</code></pre>
 [Rosalind Achebe]
 [Jian-Wei Chen]
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>Sofia  Marchetti</code> still has two spaces between first and last name.</p>
       <p><code>.strip()</code> only removes whitespace from the <strong>ends</strong> of a string, exactly as promised in section 4. It has nothing to say about whitespace in the middle. Our <code>clean_name</code> function did what it was written to do, and what it was written to do was not enough.</p>
       <p>This is the most common way data cleaning fails: not with an error, but with code that runs happily and quietly leaves the problem in place. Had we not printed the values and looked at them, this would have traveled all the way into the Cabinet&#x27;s report.</p>
       <p>The fix is a small idiom worth memorizing. <code>.split()</code> breaks the string on <em>any</em> run of whitespace and discards the empties; <code>&quot; &quot;.join(...)</code> puts it back together with exactly one space between pieces:</p>
       </details>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">clean_name</span>(raw):
     <span class="st">&quot;&quot;&quot;Return a name with outer whitespace stripped, inner whitespace
     collapsed to single spaces, and each word capitalized.
@@ -3588,7 +3891,7 @@ clean_roster = []
 
 <span class="kw">for</span> name <span class="kw">in</span> clean_roster:
     <span class="fn">print</span>(<span class="st">f&quot;[{name}]&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [Amara Okonkwo]
 [Devin Castellanos]
@@ -3601,21 +3904,25 @@ clean_roster = []
 [Rosalind Achebe]
 [Jian-Wei Chen]
       </div>
+      </div>
       <p>Note that we didn&#x27;t need <code>.strip()</code> at all anymore - <code>.split()</code> already discards leading and trailing whitespace. One idiom replaced two operations and fixed a bug.</p>
       <p>**A caution about <code>.title()</code>.** It capitalizes the letter after every non-letter, which is right more often than you&#x27;d expect but not always:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">&quot;JIAN-WEI CHEN&quot;</span>.<span class="fn">title</span>())     <span class="cm"># correct</span>
 <span class="fn">print</span>(<span class="st">&quot;mcdonald&quot;</span>.<span class="fn">title</span>())          <span class="cm"># not what a registrar wants</span>
 <span class="fn">print</span>(<span class="st">&quot;o&#x27;brien&quot;</span>.<span class="fn">title</span>())           <span class="cm"># debatable</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Jian-Wei Chen
 Mcdonald
 O&#x27;Brien
       </div>
+      </div>
       <p>Real name handling is genuinely hard and no one-line fix exists. <code>.title()</code> is fine for this cohort. On real data you would check the output against the source, which is the same lesson as above: <strong>look at your values.</strong></p>
       <p><code>clean_roster</code> is now usable data.</p>
       <h3 id="while-loops">while loops</h3>
       <p>A <code>for</code> loop runs once per element. A <strong>while</strong> loop runs as long as a condition stays true - which means you use it when you don&#x27;t know in advance how many iterations you need.</p>
+      <div data-runnable>
       <pre><code>countdown = <span class="nm">3</span>
 
 <span class="kw">while</span> countdown &gt; <span class="nm">0</span>:
@@ -3623,36 +3930,40 @@ O&#x27;Brien
     countdown -= <span class="nm">1</span>
 
 <span class="fn">print</span>(<span class="st">&quot;done&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">3</span>
 <span class="out-num">2</span>
 <span class="out-num">1</span>
 done
       </div>
+      </div>
       <p>The <code>countdown -= 1</code> is doing critical work. <strong>If the condition never becomes false, the loop never ends.</strong> Remove that line and this cell would print <code>3</code> forever until you interrupted the kernel.</p>
       <p>That&#x27;s not a hypothetical - it&#x27;s the most common way a notebook hangs. If a cell shows <code>[*]</code> and never finishes, an infinite loop is the first thing to suspect. Use <em>Kernel → Interrupt</em> to stop it.</p>
       <p>Because of that hazard, prefer <code>for</code> whenever you&#x27;re iterating over a collection. Reach for <code>while</code> only when the stopping condition genuinely isn&#x27;t a count.</p>
       <p><code>break</code> exits a loop immediately:</p>
+      <div data-runnable>
       <pre><code>target = <span class="st">&quot;Nadia Haddad&quot;</span>
 
 <span class="kw">for</span> i, raw <span class="kw">in</span> <span class="fn">enumerate</span>(roster):
     <span class="kw">if</span> <span class="fn">clean_name</span>(raw) == target:
         <span class="fn">print</span>(<span class="st">f&quot;found {target} at index {i}&quot;</span>)
         <span class="kw">break</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 found Nadia Haddad at index <span class="out-num">6</span>
+      </div>
       </div>
       <p>Without <code>break</code> the loop would keep checking the remaining names for no reason. On ten records that&#x27;s free; on ten million it isn&#x27;t.</p>
       <h3 id="nested-loops">Nested loops</h3>
       <p>A loop can contain another loop. The inner one runs completely for every single iteration of the outer one.</p>
+      <div data-runnable>
       <pre><code>terms = [<span class="st">&quot;Fall&quot;</span>, <span class="st">&quot;Spring&quot;</span>]
 
 <span class="kw">for</span> raw <span class="kw">in</span> roster[:<span class="nm">3</span>]:
     <span class="kw">for</span> term <span class="kw">in</span> terms:
         <span class="fn">print</span>(<span class="st">f&quot;{clean_name(raw):20} {term}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Amara Okonkwo        Fall
 Amara Okonkwo        Spring
@@ -3660,6 +3971,7 @@ Devin Castellanos    Fall
 Devin Castellanos    Spring
 Priya Raghunathan    Fall
 Priya Raghunathan    Spring
+      </div>
       </div>
       <p>Three students times two terms is six lines. Watch the multiplication: nesting a 1,000-element loop inside another 1,000-element loop is a million iterations, and that&#x27;s how a cell that &quot;should be instant&quot; takes four minutes. Module 3 exists largely to make this kind of work fast.</p>
       <h4 id="your-turn-11">Your turn</h4>
@@ -3754,23 +4066,31 @@ values = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm"
       <h2>Modules</h2>
       <p>Python&#x27;s built-in functions are a small fraction of what&#x27;s available. A <strong>module</strong> is a file of variables and functions someone else wrote, and <code>import</code> makes it available to you.</p>
       <p>The <code>math</code> module is a good first one.</p>
+      <div data-runnable>
       <pre><code><span class="kw">import</span> math</code></pre>
+      </div>
       <p>No output - the import succeeded quietly. Now use the <strong>dot operator</strong> to reach inside it. Read <code>math.sqrt</code> as &quot;the <code>sqrt</code> function that belongs to <code>math</code>&quot;:</p>
+      <div data-runnable>
       <pre><code>math.<span class="fn">sqrt</span>(<span class="nm">144</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">12.0</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>math.pi</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">3.141592653589793</span>
       </div>
+      </div>
       <p><code>math.pi</code> is a variable, not a function - no parentheses. <code>math.sqrt</code> is a function, so it takes an argument:</p>
+      <div data-runnable>
       <pre><code><span class="st">f&quot;A circle of radius 5 has area {math.pi * 5 ** 2:.4f}&quot;</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;A circle of radius <span class="out-num">5</span> has area <span class="out-num">78.5398</span>&#x27;
+      </div>
       </div>
       <p>The dot operator is the same one you&#x27;ve been using for string methods (<code>raw_name.strip()</code>). In both cases the dot means &quot;belonging to.&quot; That&#x27;s worth noticing - one piece of syntax, one idea, several uses.</p>
       <p>Forget the module prefix and Python has no idea what you mean:</p>
@@ -3786,20 +4106,24 @@ Traceback (most recent call last):
 NameError: name &#x27;sqrt&#x27; is not defined
       </div>
       <p><code>sqrt</code> isn&#x27;t a built-in - it lives in <code>math</code> and it stays there unless you say otherwise. Which you can:</p>
+      <div data-runnable>
       <pre><code><span class="kw">from</span> math <span class="kw">import</span> sqrt
 <span class="fn">sqrt</span>(<span class="nm">144</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">12.0</span>
+      </div>
       </div>
       <p><code>from math import sqrt</code> copies just that one name into your notebook. It&#x27;s convenient and it has a cost: a reader now can&#x27;t tell where <code>sqrt</code> came from, and if two modules both define something called <code>sqrt</code>, whichever you imported last silently wins. Prefer <code>import math</code> and the prefix for anything you&#x27;ll read again.</p>
       <h3 id="aliases">Aliases</h3>
       <p>The pattern you&#x27;ll see in every data science notebook ever written is <code>import X as Y</code> - a shorter name for something you&#x27;ll type hundreds of times.</p>
+      <div data-runnable>
       <pre><code><span class="kw">import</span> math <span class="kw">as</span> m
 m.<span class="fn">sqrt</span>(<span class="nm">144</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">12.0</span>
+      </div>
       </div>
       <p>Nobody actually aliases <code>math</code>. But the conventions in data science are near-universal, and you should use them because everyone else does:</p>
       <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
@@ -3823,6 +4147,7 @@ ModuleNotFoundError: No module named &#x27;maath&#x27;
       <p>The <code>!</code> runs a shell command instead of Python. You&#x27;ll rarely need it in Colab, which comes with the data science stack preinstalled.</p>
       <h3 id="where-you-re-going">Where you&#x27;re going</h3>
       <p>Here&#x27;s the module that Module 3 is about:</p>
+      <div data-runnable>
       <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
 
 gpas = np.<span class="fn">array</span>([<span class="nm">2.48</span>, <span class="nm">3.02</span>, <span class="nm">2.8</span>, <span class="nm">2.81</span>, <span class="nm">2.67</span>, <span class="nm">2.6</span>, <span class="nm">2.13</span>, <span class="nm">2.96</span>, <span class="nm">3.4</span>, <span class="nm">1.99</span>])
@@ -3830,14 +4155,16 @@ gpas = np.<span class="fn">array</span>([<span class="nm">2.48</span>, <span cla
 <span class="fn">print</span>(<span class="st">f&quot;mean:   {gpas.mean():.3f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;stdev:  {gpas.std():.3f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;max:    {gpas.max()}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 mean:   <span class="out-num">2.686</span>
 stdev:  <span class="out-num">0.396</span>
 max:    <span class="out-num">3.4</span>
       </div>
+      </div>
       <p>Compare that to the accumulator loop you wrote in section 8. Same mean, one method call. And <code>.std()</code> would have taken you fifteen lines by hand.</p>
       <p>That&#x27;s not the real reason NumPy exists, though. Try this:</p>
+      <div data-runnable>
       <pre><code><span class="cm"># Add 0.1 to every GPA -- the pure Python way</span>
 curved = []
 <span class="kw">for</span> gpa <span class="kw">in</span> [<span class="nm">2.48</span>, <span class="nm">3.02</span>, <span class="nm">2.8</span>]:
@@ -3846,10 +4173,11 @@ curved = []
 
 <span class="cm"># The NumPy way</span>
 <span class="fn">print</span>(gpas[:<span class="nm">3</span>] + <span class="nm">0.1</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">2.58</span>, <span class="out-num">3.12</span>, <span class="out-num">2.9</span>]
 [<span class="out-num">2.58</span> <span class="out-num">3.12</span> <span class="out-num">2.9</span> ]
+      </div>
       </div>
       <p>One operation applied to a whole array at once, with no loop. That&#x27;s called <strong>vectorization</strong>, and on a real cohort it&#x27;s not just shorter - it&#x27;s hundreds of times faster. Module 3 will race the two approaches against each other so you can watch the difference.</p>
       <p><strong>Note:</strong> list comprehensions - the <code>[x + 0.1 for x in gpas]</code> syntax you may have seen - are covered in Module 3 as well, right next to vectorization, where the comparison actually means something.</p>
@@ -3864,6 +4192,7 @@ curved = []
       <p>Frustration is normal and it&#x27;s also expensive, because it makes you skip the step where you actually read the message. Almost every error message tells you what went wrong and where. Read it before you change anything.</p>
       <h3 id="anatomy-of-a-traceback">Anatomy of a traceback</h3>
       <p>Here&#x27;s an error with several function calls behind it.</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">gpa_ratio</span>(a, b):
     <span class="kw">return</span> a / b
 
@@ -3872,6 +4201,7 @@ curved = []
     <span class="st">&quot;&quot;&quot;Compare one student&#x27;s undergraduate GPA to another&#x27;s graduate GPA.&quot;&quot;&quot;</span>
     <span class="kw">return</span> <span class="fn">gpa_ratio</span>(ug_table[sid_a][<span class="st">&quot;ug_gpa&quot;</span>],
                      grad_table[sid_b][<span class="st">&quot;grad_gpa&quot;</span>])</code></pre>
+      </div>
       <p>Note that both tables are passed in as <strong>parameters</strong> rather than read from the surrounding notebook. A function that reaches out and grabs whatever happens to be lying around works right up until something else in the notebook changes, and then fails somewhere far away from the real cause. Every helper function in this notebook takes its data as an argument, and yours should too.</p>
       <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="fn">compare_students</span>(<span class="nm">1003</span>, <span class="nm">1044</span>, undergraduate, graduate)</code></pre>
@@ -3902,26 +4232,32 @@ TypeError: unsupported operand type(s) for /: &#x27;float&#x27; and &#x27;NoneTy
       <h4 id="your-turn-14">Your turn</h4>
       <p>Each cell below is broken. For each one: read the error, name the type, say what caused it, and fix it. Don&#x27;t guess-and-check - diagnose first, then edit.</p>
       <p>Do them one at a time.</p>
+      <div data-runnable>
       <pre><code><span class="cm"># 1</span>
 scores = [<span class="nm">88</span>, <span class="nm">92</span>, <span class="nm">79</span>]
 <span class="fn">print</span>(scores[<span class="nm">3</span>])</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 IndexError: list index out of range
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="cm"># 2</span>
 record = {<span class="st">&quot;name&quot;</span>: <span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>: <span class="nm">3.02</span>}
 <span class="fn">print</span>(record[<span class="st">&quot;gpa&quot;</span>])</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 KeyError: &#x27;gpa&#x27;
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="cm"># 3</span>
 gpa = <span class="nm">3.81</span>
 <span class="fn">print</span>(<span class="st">&quot;GPA is &quot;</span> + gpa)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 TypeError: can only concatenate str (not &quot;float&quot;) to str
+      </div>
       </div>
       <pre><code><span class="cm"># 4</span>
 count = <span class="nm">0</span>
@@ -3931,12 +4267,14 @@ count = <span class="nm">0</span>
         <div class="output-block-label">output</div>
 SyntaxError: expected &#x27;:&#x27; (<span class="out-num">818590017.</span>py, line <span class="out-num">3</span>)
       </div>
+      <div data-runnable>
       <pre><code><span class="cm"># 5</span>
 values = []
 <span class="fn">print</span>(<span class="fn">sum</span>(values) / <span class="fn">len</span>(values))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 ZeroDivisionError: division by zero
+      </div>
       </div>
       <pre><code><span class="cm"># 6</span>
 total = <span class="nm">0</span>
@@ -3954,17 +4292,21 @@ IndentationError: expected an indented block after &#x27;for&#x27; statement on 
       <h3 id="cells-share-one-memory-and-order-matters">Cells share one memory, and order matters</h3>
       <p>A notebook is not a script. Cells run when you run them, and they all share the same namespace. Which means the notebook you&#x27;re looking at may not reflect the state Python is actually in.</p>
       <p>Run the next two cells in order, then run the <em>first</em> one again and watch the value change.</p>
+      <div data-runnable>
       <pre><code>counter = <span class="nm">0</span>
 <span class="fn">print</span>(<span class="st">f&quot;counter is {counter}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 counter is <span class="out-num">0</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>counter += <span class="nm">1</span>
 <span class="fn">print</span>(<span class="st">f&quot;counter is now {counter}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 counter is now <span class="out-num">1</span>
+      </div>
       </div>
       <p>Run that second cell three times and <code>counter</code> is <code>3</code> - even though nothing on screen says so. This is the single biggest source of &quot;but it worked a minute ago.&quot;</p>
       <p>**The fix, and use it often: <em>Kernel → Restart &amp; Run All</em>.** It clears everything and runs the notebook top to bottom, which is the only way to know your notebook actually works. Do it before you submit anything. A notebook that only runs in the order you happened to click is a notebook that doesn&#x27;t run.</p>
@@ -5958,6 +6300,14 @@ section.content-section { scroll-margin-top: 68px; }
    position; the flush-against-code look everywhere else is deliberate. */
 .debrief > .output-block:first-of-type,
 .debrief > .run-output:first-of-type { margin-top: .75rem; }
+
+/* Site-wide sticky "Show all output". Deliberately quiet: the default (hidden)
+   is the one we want students to leave alone. */
+.show-all-toggle { display: flex; align-items: baseline; gap: .5rem;
+  font-size: .8rem; color: var(--text-dim); margin: 0 0 1.4rem; cursor: pointer; }
+.show-all-toggle input { cursor: pointer; accent-color: var(--accent); }
+.show-all-toggle .toggle-hint { font-size: .74rem; opacity: .75; }
+.show-all-toggle:hover { color: var(--text); }
 
 </style>
 <script>
