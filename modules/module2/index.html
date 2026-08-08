@@ -1108,33 +1108,43 @@ SyntaxError: &#x27;(&#x27; was never closed
       <h3 id="values-and-types">Values and types</h3>
       <p>Every value in Python has a <strong>type</strong>, and the type determines what you&#x27;re allowed to do with the value. Getting types wrong is probably the single most common source of errors in data work, so it&#x27;s worth being deliberate here.</p>
       <p>The <code>type</code> function tells you what you&#x27;ve got.</p>
+      <div data-runnable>
       <pre><code><span class="fn">type</span>(<span class="nm">42</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 int
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="fn">type</span>(<span class="nm">42.0</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 float
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="fn">type</span>(<span class="st">&#x27;Amara Okonkwo&#x27;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 str
+      </div>
       </div>
       <p>Three types, three uses:</p>
       <ul><li><code>int</code> - a whole number</li><li><code>float</code> - a number with a decimal point</li><li><code>str</code> - a <strong>string</strong>, meaning text (short for &quot;string of characters&quot;)</li></ul>
       <p>The quotes are what make something a string. <code>42</code> is a number; <code>&#x27;42&#x27;</code> is text that happens to look like a number. Python treats them very differently.</p>
+      <div data-runnable>
       <pre><code><span class="fn">type</span>(<span class="nm">42</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 int
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="fn">type</span>(<span class="st">&#x27;42&#x27;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 str
+      </div>
       </div>
       <h4 id="why-the-difference-matters">Why the difference matters</h4>
       <p>Data arrives from the registrar, and every value in it is text - that&#x27;s just how files work. Suppose a GPA came through as the string <code>&#x27;3.81&#x27;</code> and you try to do arithmetic with it.</p>
@@ -1159,33 +1169,43 @@ TypeError: unsupported operand type(s) for /: &#x27;str&#x27; and &#x27;int&#x27
       <p>This error is not Python being difficult. It&#x27;s Python refusing to guess. In a language that guesses, <code>&#x27;126&#x27; / 3</code> might silently produce something wrong, and you&#x27;d find out three steps later.</p>
       </details>
       <p>The fix is to <strong>convert</strong> the string to a number first. <code>int</code> works as a function for exactly this:</p>
+      <div data-runnable>
       <pre><code><span class="fn">int</span>(<span class="st">&#x27;126&#x27;</span>) / <span class="nm">3</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">42.0</span>
       </div>
+      </div>
       <p><code>float</code> does the same for values with a decimal point:</p>
+      <div data-runnable>
       <pre><code><span class="fn">float</span>(<span class="st">&#x27;3.81&#x27;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">3.81</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="fn">float</span>(<span class="st">&#x27;3.81&#x27;</span>) * <span class="nm">2</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">7.62</span>
       </div>
+      </div>
       <p>Conversion goes the other way too. <code>str</code> turns a number into text:</p>
+      <div data-runnable>
       <pre><code><span class="fn">str</span>(<span class="nm">42</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;<span class="out-num">42</span>&#x27;
       </div>
+      </div>
       <p>And <code>int</code> on a float throws away the fractional part - it does not round:</p>
+      <div data-runnable>
       <pre><code><span class="fn">int</span>(<span class="nm">42.9</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">42</span>
+      </div>
       </div>
       <h5 id="a-conversion-trap">A conversion trap</h5>
       <p><code>int</code> converts a string of digits. It will not convert a string that <em>looks</em> like a float.</p>
@@ -1202,10 +1222,12 @@ ValueError: invalid literal for int() with base <span class="out-num">10</span>:
       </div>
       <p>This one is a <strong>ValueError</strong>, not a TypeError, and the distinction is useful. A TypeError means <em>wrong kind of thing</em>. A ValueError means <em>right kind of thing, but its content doesn&#x27;t work</em> - <code>int</code> accepts strings, this just isn&#x27;t a string it can parse.</p>
       <p>If you meant to get <code>3</code>, convert to float first, then to int:</p>
+      <div data-runnable>
       <pre><code><span class="fn">int</span>(<span class="fn">float</span>(<span class="st">&#x27;3.7&#x27;</span>))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">3</span>
+      </div>
       </div>
       <h4 id="the-comma-trap">The comma trap</h4>
       <p>Write a large number the way you&#x27;d write it on paper and Python will not complain - which is exactly what makes this dangerous.</p>
@@ -1213,28 +1235,34 @@ ValueError: invalid literal for int() with base <span class="out-num">10</span>:
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> What do you get if you store <code>1,000,000</code> in a variable and print it?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>population = <span class="nm">1</span>,<span class="nm">000</span>,<span class="nm">000</span>
 <span class="fn">print</span>(population)
 <span class="fn">print</span>(<span class="fn">type</span>(population))</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 (<span class="out-num">1</span>, <span class="out-num">0</span>, <span class="out-num">0</span>)
 &lt;class &#x27;tuple&#x27;&gt;
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p>Not a number at all - <code>(1, 0, 0)</code>, of type <code>tuple</code>.</p>
       <p>In Python, commas separate values, so <code>1,000,000</code> is three separate integers - <code>1</code>, <code>0</code>, and <code>0</code> - bundled into something called a <strong>tuple</strong>. No error, no warning, and every calculation downstream is quietly wrong.</p>
       <p>This is the worst kind of bug: the silent kind. If you need a thousands separator for readability, Python accepts underscores instead.</p>
       </details>
+      <div data-runnable>
       <pre><code><span class="nm">1_000_000</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">1000000</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="nm">1_000_000</span> + <span class="nm">1</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">1000001</span>
+      </div>
       </div>
       <h5 id="your-turn-2">Your turn</h5>
       <p>Below are eight expressions. For each one, write down your guess for the type <em>before</em> running anything, then use <code>type()</code> to check.</p>
@@ -1272,47 +1300,63 @@ ValueError: invalid literal for int() with base <span class="out-num">10</span>:
       <h3 id="variables-and-statements">Variables and statements</h3>
       <p>So far every result has vanished the moment it was displayed. A <strong>variable</strong> lets you keep a value and give it a name.</p>
       <p>Naming things well is most of what makes code readable.</p>
+      <div data-runnable>
       <pre><code>credits_earned = <span class="nm">124</span></code></pre>
+      </div>
       <p>Notice: <strong>no output</strong>. This is an <strong>assignment statement</strong>, and a statement performs an action rather than producing a value. It has three parts - the variable name on the left, the <code>=</code> <strong>assignment operator</strong>, and an expression on the right.</p>
       <p>The value is now stored under that name. Ask for the name and you get the value:</p>
+      <div data-runnable>
       <pre><code>credits_earned</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">124</span>
       </div>
+      </div>
       <p>A variable can hold any type. Here&#x27;s a float and a string:</p>
+      <div data-runnable>
       <pre><code>ug_gpa = <span class="nm">3.81</span>
 major = <span class="st">&#x27;Data Science&#x27;</span></code></pre>
+      </div>
+      <div data-runnable>
       <pre><code>major</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Data Science&#x27;
       </div>
+      </div>
       <p>Once a variable exists, you can use it anywhere you&#x27;d use the value itself:</p>
+      <div data-runnable>
       <pre><code>credits_earned + <span class="nm">6</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">130</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>ug_gpa * <span class="nm">2</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">7.62</span>
       </div>
+      </div>
       <p>Including as an argument to a function:</p>
+      <div data-runnable>
       <pre><code><span class="fn">round</span>(ug_gpa)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">4</span>
       </div>
+      </div>
       <h4 id="reassignment">Reassignment</h4>
       <p>A variable&#x27;s value can change. Assign to the same name again and the old value is simply gone.</p>
+      <div data-runnable>
       <pre><code>attempts = <span class="nm">1</span>
 attempts = <span class="nm">2</span>
 attempts</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">2</span>
+      </div>
       </div>
       <p>This is worth pausing on, because the <code>=</code> sign is misleading. In mathematics, <code>=</code> asserts that two things <em>are</em> equal. In Python, <code>=</code> is an instruction: <em>take the value on the right and store it under the name on the left</em>. It&#x27;s an action, not a claim.</p>
       <p>Which is why this works, and would be nonsense in algebra:</p>
@@ -1320,38 +1364,46 @@ attempts</code></pre>
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> What is <code>count</code> after these two lines?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>count = <span class="nm">5</span>
 count = count + <span class="nm">3</span>
 count</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">8</span>
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>8</code>. Python evaluates the right side first - <code>count + 3</code> is <code>5 + 3</code>, or <code>8</code> - and <em>then</em> stores that result back under the name <code>count</code>. The old value of <code>5</code> is overwritten in the process.</p>
       <p>Read <code>=</code> as &quot;gets&quot; rather than &quot;equals&quot; and this stops being confusing: <code>count</code> <em>gets</em> <code>count + 3</code>.</p>
       </details>
       <p>Adding to a variable is common enough that Python has a shorthand. These two lines do the same thing:</p>
       <pre><code>count = count + <span class="nm">3</span>
 count += <span class="nm">3</span></code></pre>
+      <div data-runnable>
       <pre><code>count = <span class="nm">5</span>
 count += <span class="nm">3</span>
 count</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">8</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>count -= <span class="nm">2</span>
 count</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">6</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>count *= <span class="nm">10</span>
 count</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">60</span>
+      </div>
       </div>
       <p>You&#x27;ll see <code>+=</code> constantly once we get to loops, where it&#x27;s how you accumulate a running total.</p>
       <h4 id="variable-names">Variable names</h4>
@@ -1407,13 +1459,15 @@ SyntaxError: cannot assign to False
       </div>
       <p><code>class</code> is a keyword because Python uses it to define a class (Module 5 territory). <code>False</code> is a built-in constant. There are about thirty-five of these, and you don&#x27;t need to memorize them - your editor will color them differently, which is warning enough.</p>
       <p>If you&#x27;re curious, Python will list them:</p>
+      <div data-runnable>
       <pre><code><span class="kw">import</span> keyword
 <span class="fn">print</span>(keyword.kwlist)
 <span class="fn">print</span>(<span class="fn">len</span>(keyword.kwlist), <span class="st">&#x27;keywords&#x27;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [&#x27;False&#x27;, &#x27;None&#x27;, &#x27;True&#x27;, &#x27;and&#x27;, &#x27;as&#x27;, &#x27;assert&#x27;, &#x27;async&#x27;, &#x27;await&#x27;, &#x27;break&#x27;, &#x27;class&#x27;, &#x27;continue&#x27;, &#x27;def&#x27;, &#x27;del&#x27;, &#x27;elif&#x27;, &#x27;else&#x27;, &#x27;except&#x27;, &#x27;finally&#x27;, &#x27;for&#x27;, &#x27;from&#x27;, &#x27;global&#x27;, &#x27;if&#x27;, &#x27;import&#x27;, &#x27;in&#x27;, &#x27;is&#x27;, &#x27;lambda&#x27;, &#x27;nonlocal&#x27;, &#x27;not&#x27;, &#x27;or&#x27;, &#x27;pass&#x27;, &#x27;raise&#x27;, &#x27;return&#x27;, &#x27;try&#x27;, &#x27;while&#x27;, &#x27;with&#x27;, &#x27;yield&#x27;]
 <span class="out-num">35</span> keywords
+      </div>
       </div>
       <h5 id="naming-style">Naming style</h5>
       <p>Legal is a low bar. The convention in Python - and it is a strong one - is <code>lowercase_with_underscores</code> for variables, and names that say what the thing <em>is</em>:</p>
@@ -1424,10 +1478,14 @@ undergraduate_gpa = <span class="nm">3.81</span>  <span class="cm"># also fine, 
       <p>You will spend far more time reading code than writing it, including your own code six months from now. <code>ug_gpa</code> costs you four extra keystrokes and saves you a minute of puzzling every time you come back to it.</p>
       <h4 id="comments">Comments</h4>
       <p>A <strong>comment</strong> starts with <code>#</code>. Python ignores everything from the <code>#</code> to the end of the line.</p>
+      <div data-runnable>
       <pre><code><span class="cm"># minutes a student spent on task, across the whole term</span>
 time_on_task = <span class="nm">9.5</span></code></pre>
+      </div>
       <p>Comments can also sit at the end of a line of code:</p>
+      <div data-runnable>
       <pre><code>attendance = <span class="nm">0.96</span>     <span class="cm"># proportion of classes attended, 0 to 1</span></code></pre>
+      </div>
       <p>A comment that restates the code is noise:</p>
       <pre><code>gpa = <span class="nm">3.81</span>     <span class="cm"># assign 3.81 to gpa</span></code></pre>
       <p>A comment that supplies what the code <em>can&#x27;t</em> say is valuable:</p>
@@ -5010,6 +5068,7 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
 </script>
 <!-- ═══════════════ END SETTINGS WIDGET ═══════════════ -->
 
+<script src="/520_full/assets/runnable.js" defer></script>
 <style>
 /* exercise-runner.css */
 /* DTSC 520 - live exercise blocks on module pages.
@@ -5865,6 +5924,29 @@ details.ex-solution pre { margin-top: 0.6rem; }
    targets - the sections themselves and the sub-headings the contents links to. */
 section.content-section { scroll-margin-top: 68px; }
 .content-section h3[id] { scroll-margin-top: 68px; }
+
+/* --- read-only runnable code blocks (prototype: M2 Variables & Types) ----- */
+/* The block reuses the page's own <pre><code>; only the bar and the live
+   output slot are new, so a runnable block and a static one look identical
+   until the student chooses to act. */
+[data-runnable] { margin: 0 0 1.1rem; }
+[data-runnable] > pre { margin-bottom: 0; }
+.run-bar { display: flex; align-items: center; gap: .7rem; margin-top: .35rem; }
+.run-btn {
+  font: 600 .78rem/1 var(--font, 'Zilla Slab', Georgia, serif);
+  letter-spacing: .04em; padding: .4rem .9rem; border-radius: 6px;
+  cursor: pointer; color: var(--text-bright, #fff);
+  background: transparent; border: 1px solid var(--accent, #7a5fb5);
+}
+.run-btn:hover:not(:disabled) { background: var(--accent, #7a5fb5); }
+.run-btn:disabled { opacity: .55; cursor: progress; }
+.run-btn:focus-visible { outline: 3px solid var(--accent-light); outline-offset: 2px; }
+.run-status { font-size: .78rem; color: var(--text-dim); }
+.run-output { margin-top: .4rem; }
+.run-output pre { margin: 0; white-space: pre-wrap; }
+/* A cell that raised is still a correct result on this course - it is marked,
+   not styled as a site failure. */
+.run-output.run-failed { border-left: 3px solid var(--flag, #e0705c); }
 
 </style>
 <script>
