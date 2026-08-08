@@ -220,7 +220,7 @@
 
     /* A TEACHING notebook is not a submission, and the rules are opposite: the
        course notebooks print constantly, on purpose. Running one through here
-       produces 141 red flags and a frightened student, so recognise them and
+       produces 141 red flags and a frightened student, so recognize them and
        say what is going on instead of grading them.
 
        Detected by the `dtsc520` metadata the build stamps in, or by the course

@@ -3513,7 +3513,7 @@ clean_roster</code></pre>
       <details class="debrief"><summary>What happened</summary>
       <p><code>Sofia  Marchetti</code> still has two spaces between first and last name.</p>
       <p><code>.strip()</code> only removes whitespace from the <strong>ends</strong> of a string, exactly as promised in section 4. It has nothing to say about whitespace in the middle. Our <code>clean_name</code> function did what it was written to do, and what it was written to do was not enough.</p>
-      <p>This is the most common way data cleaning fails: not with an error, but with code that runs happily and quietly leaves the problem in place. Had we not printed the values and looked at them, this would have travelled all the way into the Cabinet&#x27;s report.</p>
+      <p>This is the most common way data cleaning fails: not with an error, but with code that runs happily and quietly leaves the problem in place. Had we not printed the values and looked at them, this would have traveled all the way into the Cabinet&#x27;s report.</p>
       <p>The fix is a small idiom worth memorizing. <code>.split()</code> breaks the string on <em>any</em> run of whitespace and discards the empties; <code>&quot; &quot;.join(...)</code> puts it back together with exactly one space between pieces:</p>
       </details>
       <pre><code><span class="kw">def</span> <span class="fn">clean_name</span>(raw):
@@ -6431,7 +6431,7 @@ section.content-section { scroll-margin-top: 68px; }
  *
  * This RELOCATES the existing buttons rather than creating new ones that proxy
  * a click. Event handlers are bound to the element, not to its position, so
- * moving a node keeps its behaviour exactly as the page author wrote it. A
+ * moving a node keeps its behavior exactly as the page author wrote it. A
  * proxy button would be a second thing to keep in step - the same duplication
  * argument that governs the notebooks and the site pages.
  *

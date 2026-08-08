@@ -791,7 +791,7 @@ const stages = [
     ],
     feedback: {
       correct: 'Correct. <code>header=None</code> tells pandas the file has no header row, so pandas assigns numeric column names (0, 1, 2...) and treats row 1 of the file - which contains the real column names - as data. Remove that argument and pandas uses the first row as column labels automatically.',
-      wrong: 'Look at column headers: they are 0, 1, 2, 3 (numbers) instead of player, avg, hr, salary. And row 0 contains those exact names as values. That tells you pandas did not recognise the first row as a header - it read it as data. The culprit is <code>header=None</code>, which tells pandas no header exists.'
+      wrong: 'Look at column headers: they are 0, 1, 2, 3 (numbers) instead of player, avg, hr, salary. And row 0 contains those exact names as values. That tells you pandas did not recognize the first row as a header - it read it as data. The culprit is <code>header=None</code>, which tells pandas no header exists.'
     },
     fixCode: `<span class="kw">import</span> pandas <span class="kw">as</span> pd
 

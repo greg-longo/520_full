@@ -1231,7 +1231,7 @@ assert r[2] == exp_pct, "pct_on_aid should be 100*n_on_aid/n_records rounded to 
 
   /* ============ STAGE 3 — COMPUTE THE METRICS (Module 3) ============ */
   B.push({stage:2, type:'dialogue', thread:true, time:'10:05 AM', cont:'Open the editor',
-    text:"The Cabinet keeps saying \"engaged students\". Nobody has defined it. That's our job now, and it matters more than it sounds - whatever we call engagement is what they'll write the cheque for. Before we build it, check the raw material. I don't trust a metric built on fields nobody has looked at."});
+    text:"The Cabinet keeps saying \"engaged students\". Nobody has defined it. That's our job now, and it matters more than it sounds - whatever we call engagement is what they'll write the check for. Before we build it, check the raw material. I don't trust a metric built on fields nobody has looked at."});
 
   B.push({stage:2, type:'code', id:'s3_quality',
     task:'Complete <code>quality_report(logins, attendance)</code>. Return <code>(n_missing, any_missing, attendance_ok)</code>: how many <code>logins</code> values are missing, whether <b>any</b> are, and whether <b>every</b> attendance value is a valid proportion (at most 1.0).',
@@ -1268,9 +1268,9 @@ assert bool(r[2]) is False, "attendance_ok should be False. One student has hs_a
     onPick:(c)=>{ if(c.q==='good') addReportLine('Metric','Engagement index = mean of the three LMS signals, each <b>normalized to 0-1 first</b> so no component dominates through its units alone.'); },
     choices:[
       { t:'Normalize each signal to 0-1 using its own range, then average the three - so each contributes on its own terms.', q:'good',
-        ot:'✓ Each signal gets a real say', op:'This is the defensible version. Normalizing first means the index reflects the three behaviours you chose, in the proportion you chose them. It is also the version you can explain to the Cabinet in one sentence, which matters more than it sounds - a metric nobody can explain is a metric nobody should fund.' },
+        ot:'✓ Each signal gets a real say', op:'This is the defensible version. Normalizing first means the index reflects the three behaviors you chose, in the proportion you chose them. It is also the version you can explain to the Cabinet in one sentence, which matters more than it sounds - a metric nobody can explain is a metric nobody should fund.' },
       { t:'Add the three columns together. It is one line, and they are all measures of engagement anyway.', q:'bad',
-        ot:'✗ You would be measuring one thing and calling it three', op:'submission_rate runs 56-100. The other two run 0-7. Sum them and submission_rate has about seven times the spread of the others, so it decides the answer almost by itself - the sum correlates <b>0.99</b> with it. You would hand the Cabinet a number labelled "engagement" that is really "submission rate", and they would fund the wrong intervention.' },
+        ot:'✗ You would be measuring one thing and calling it three', op:'submission_rate runs 56-100. The other two run 0-7. Sum them and submission_rate has about seven times the spread of the others, so it decides the answer almost by itself - the sum correlates <b>0.99</b> with it. You would hand the Cabinet a number labeled "engagement" that is really "submission rate", and they would fund the wrong intervention.' },
       { t:'Use course_score as the engagement measure - it is already on a clean 0-100 scale and it is what we ultimately care about.', q:'bad',
         ot:'✗ That is the outcome, not a predictor', op:'course_score is the thing you are trying to explain. Feeding it in as an input is target leakage: the analysis becomes spectacularly accurate and completely useless, because it has been told the answer. Worse, it launders a tautology - "students who did well did well" - into something that reads like a finding.' },
       { t:'Rank students on each signal and average the three ranks - ranks are immune to outliers and to the units problem.', q:'warn',
@@ -1338,14 +1338,14 @@ assert float(np.corrcoef(idx[_ok], submission[_ok])[0, 1]) < 0.99, "Your index t
       const v=verdict(['s3_metric']);
       const tail=" One more thing before you go. That index only exists for 85 of our 102 records. Seventeen have nothing at all. Everything from here depends on what you decide to do about them - and it is a decision with a cost, whichever way you go.";
       if(v==='good') return { emotion:'approve',
-        text:"Good. One vectorized pass, missing values still visibly missing, and a definition I can say out loud to the Cabinet: the average of three normalized behaviours."+tail };
+        text:"Good. One vectorized pass, missing values still visibly missing, and a definition I can say out loud to the Cabinet: the average of three normalized behaviors."+tail };
       return { emotion:'concern',
-        text:"The code is right, even if the reasoning that got us here was shaky. The definition holds: the average of three normalized behaviours, computed in one pass."+tail };
+        text:"The code is right, even if the reasoning that got us here was shaky. The definition holds: the average of three normalized behaviors, computed in one pass."+tail };
     }});
 
   /* ============ STAGE 4 — CLEAN AND JOIN (Module 4) ============ */
   B.push({stage:3, type:'dialogue', thread:true, time:'11:10 AM', cont:'Look at the tables',
-    text:"Four tables, four systems, four teams who have never met. <b>high_school</b> from the registrar, <b>undergraduate</b> from student records, <b>outcomes</b> from the gradebook, <b>lms_activity</b> from the learning platform. Nobody agreed on anything. Before you join them, look at their shapes - the shapes are the whole story."});
+    text:"Four tables, four systems, four teams who have never met. high_school from the registrar, undergraduate from student records, outcomes from the gradebook, lms_activity from the learning platform. Nobody agreed on anything. Before you join them, look at their shapes - the shapes are the whole story."});
 
   B.push({stage:3, type:'decision', id:'s4_join', pts:5,
     label:'Decision · How to assemble',
@@ -1356,9 +1356,9 @@ assert float(np.corrcoef(idx[_ok], submission[_ok])[0, 1]) < 0.99, "Your index t
       { t:'Deduplicate high_school first, then left-join the others onto it - so all 100 students survive and missing LMS data shows up as NaN.', q:'good',
         ot:'✓ Everyone is still in the room', op:'Deduplicate before joining, or the repeated rows multiply through every subsequent merge. Left-join, so a student with no LMS record keeps their row and gains NaN instead of vanishing. You end with 100 rows and a visible, countable gap - which is exactly what a gap should be.' },
       { t:'Inner-join all four on student_id. An inner join keeps only complete records, which is what an analysis needs.', q:'bad',
-        ot:'✗ It will look tidy, and that is the danger', op:'You would get 85 clean rows and no warning of any kind. Fifteen students would be gone, and - because both duplicated students happen to have no LMS record - the duplicate problem would vanish too. Two separate defects, silently cancelled into a tidy-looking table. "Complete records" is not a neutral filter; it is a filter on whoever the LMS happened to capture.' },
+        ot:'✗ It will look tidy, and that is the danger', op:'You would get 85 clean rows and no warning of any kind. Fifteen students would be gone, and - because both duplicated students happen to have no LMS record - the duplicate problem would vanish too. Two separate defects, silently canceled into a tidy-looking table. "Complete records" is not a neutral filter; it is a filter on whoever the LMS happened to capture.' },
       { t:'Merge all four as they are and check the row count at the end. If it comes out sensible, nothing went wrong.', q:'bad',
-        ot:'✗ The end count is the one that lies', op:'Try it: high_school x undergraduate gives <b>102 rows for 100 students</b> - the duplicates have already multiplied. Join lms_activity on top and it drops back to 85, which looks reassuring. The final number is tidy because two errors cancelled. Check the row count after <em>every</em> merge, not just the last.' },
+        ot:'✗ The end count is the one that lies', op:'Try it: high_school x undergraduate gives <b>102 rows for 100 students</b> - the duplicates have already multiplied. Join lms_activity on top and it drops back to 85, which looks reassuring. The final number is tidy because two errors canceled. Check the row count after <em>every</em> merge, not just the last.' },
       { t:'Outer-join everything so nothing is lost from any table, then deal with whatever missing values appear.', q:'warn',
         ot:'~ Loses nothing, including the duplicates', op:'Outer join does preserve every student, which is the right instinct. But it carries the duplicated high_school rows straight through, and it invents rows for any id present in one table and not another. Deduplicate first and pick a deliberate spine; then you know what each row means.' },
     ]});
@@ -1538,8 +1538,8 @@ assert '85' in _ax.get_title(), "The title must say the chart covers 85 of the 1
     choices:[
       { t:'Draw it on the full 0-100 axis, annotate both group sizes, and say plainly in the note that the gap is 6.3 points - then explain why the crop was declined.', q:'good',
         ot:'✓ The gap is real, and it is this big', op:'The difference exists and is worth reporting. It is 6.3 points. Cropping the axis would not reveal it more clearly - it would show a different, larger difference that is not in the data. And this is a chart about the very feature you excluded from the model in Stage 1 as a socioeconomic proxy; presenting it inflated would be the exact harm you wrote a rule against.' },
-      { t:'Crop the axis to 65-76 as asked. Nothing is fabricated - every number on the chart is accurate, and the axis is labelled.', q:'bad',
-        ot:'✗ Every number true, the chart still lying', op:'This is the most common defence of a truncated axis and it does not hold. A bar chart encodes magnitude as LENGTH; that is the entire visual grammar. Crop the baseline and you have changed what the lengths mean while keeping the labels honest, so the reader is misled by the part they trust most and cannot check. A 6% difference rendered as 57% of the plot is a nine-fold exaggeration.' },
+      { t:'Crop the axis to 65-76 as asked. Nothing is fabricated - every number on the chart is accurate, and the axis is labeled.', q:'bad',
+        ot:'✗ Every number true, the chart still lying', op:'This is the most common defense of a truncated axis and it does not hold. A bar chart encodes magnitude as LENGTH; that is the entire visual grammar. Crop the baseline and you have changed what the lengths mean while keeping the labels honest, so the reader is misled by the part they trust most and cannot check. A 6% difference rendered as 57% of the plot is a nine-fold exaggeration.' },
       { t:'Refuse the chart entirely. Any figure comparing aid recipients invites exactly the profiling you excluded the feature to prevent.', q:'warn',
         ot:'~ Right instinct, wrong lever', op:'The concern is sound: this is the feature you ruled out of any ranking, and a chart can do the profiling a model was forbidden to do. But refusing to show a real disparity has its own cost - you would be hiding evidence that students on aid are being underserved, which is precisely the thing the Cabinet could act on. Excluding a feature from a MODEL and reporting a group difference honestly are different acts. Show it, at its real size, with the limits stated.' },
       { t:'Send the cropped version they asked for, with a clear note underneath explaining that the axis is truncated.', q:'bad',
@@ -1547,7 +1547,7 @@ assert '85' in _ax.get_title(), "The title must say the chart covers 85 of the 1
     ]});
 
   B.push({stage:4, type:'code', id:'s5_honest',
-    task:'Draw the aid comparison the way you just argued for: full <b>0 to 100</b> axis, both bars annotated with their group size, y-axis labelled.',
+    task:'Draw the aid comparison the way you just argued for: full <b>0 to 100</b> axis, both bars annotated with their group size, y-axis labeled.',
     hint:'<code>ax.set_ylim(0, 100)</code> keeps the bars at their true relative length. Use <code>ax.text(i, value + 2, "n=" + str(n), ha="center")</code> once per bar - 42 students against 58 is context a bar chart otherwise hides completely.',
     starter:
 `# Rebuilt here so this cell stands alone. Deliberately NOT put in the shared
@@ -1600,7 +1600,7 @@ assert _ax.get_ylabel().strip() != '', "Label the y-axis."`,
 
   /* ============ STAGE 6 — SHIP THE REPORT (Module 6) ============ */
   B.push({stage:5, type:'dialogue', thread:true, time:'3:05 PM', cont:'How do we ship it?',
-    text:"The analysis is done. Now the part that decides whether it is worth anything: getting it out in a form somebody can check. A finding nobody can reproduce is an opinion with a chart attached. The Cabinet will act on this - fund a programme, maybe defund another - so six months from now, somebody is going to ask how we got these numbers. What we hand over today is the answer to that question."});
+    text:"The analysis is done. Now the part that decides whether it is worth anything: getting it out in a form somebody can check. A finding nobody can reproduce is an opinion with a chart attached. The Cabinet will act on this - fund a program, maybe defund another - so six months from now, somebody is going to ask how we got these numbers. What we hand over today is the answer to that question."});
 
   B.push({stage:5, type:'decision', id:'s6_ship', pts:5,
     label:'Decision · What gets handed over',
@@ -1678,7 +1678,7 @@ assert str(_s['claim_type']).lower() in ('association', 'associational', 'correl
     q:'What do you tell them?',
     onPick:(c)=>{
       if(c.q==='good'){ state.ethics.refusedRanking=true;
-        addReportLine('Final judgement','A per-student ranking score was requested and <b>declined</b>. The index is reported at cohort level only. Recommended instead: trigger outreach on observable behaviour (a student with no LMS activity for two weeks), which is actionable, contestable, and does not require ranking anyone.'); }
+        addReportLine('Final judgement','A per-student ranking score was requested and <b>declined</b>. The index is reported at cohort level only. Recommended instead: trigger outreach on observable behavior (a student with no LMS activity for two weeks), which is actionable, contestable, and does not require ranking anyone.'); }
     },
     choices:[
       { t:'Decline the ranking, and offer what they actually need instead: flag students on an observable, contestable trigger - two weeks with no LMS activity - rather than a score that ranks people.', q:'good',

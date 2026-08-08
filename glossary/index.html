@@ -239,7 +239,7 @@ document.getElementById("filters").addEventListener("click", function (e) {
 
 /* ?m=4 opens the page already narrowed. The module pages link in this way, so
    a student arriving from Module 4 sees Module 4's terms rather than all fifty
-   and a filter they have to find. An unrecognised value is ignored rather than
+   and a filter they have to find. An unrecognized value is ignored rather than
    showing an empty page. */
 var wanted = (location.search.match(/[?&]m=([^&]*)/) || [])[1];
 if (wanted) setFilter(decodeURIComponent(wanted));

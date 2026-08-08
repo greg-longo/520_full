@@ -111,7 +111,7 @@
     if (q) {
       var r = route(decodeURIComponent(q));
       if (r) return r;
-      return null;   // present but unrecognised: ignore it, never guess
+      return null;   // present but unrecognized: ignore it, never guess
     }
     var ref = document.referrer;
     if (ref) {

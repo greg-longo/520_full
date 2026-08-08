@@ -725,7 +725,7 @@ array([[ <span class="out-num">5.25</span>,  <span class="out-num">7.5</span> , 
          <span class="out-num">9.25</span>]])
       </div>
       <p><strong>Every element</strong> was divided, with no loop. Try that with a list of lists and you get a <code>TypeError</code>.</p>
-      <p>That behaviour is broadcasting, and it gets a full section shortly. For now, notice that it happened.</p>
+      <p>That behavior is broadcasting, and it gets a full section shortly. For now, notice that it happened.</p>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Did <code>points_per_game</code> itself change? What does it hold now?  Commit to an answer before you run the next cell.
@@ -968,7 +968,7 @@ ints = floats.<span class="fn">astype</span>(np.int32)
 [<span class="out-num">1.9</span> <span class="out-num">2.1</span> <span class="out-num">3.7</span>]
 [<span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">3</span>]
       </div>
-      <p>**<code>.astype()</code> to an integer truncates, it does not round.** <code>1.9</code> became <code>1</code>, and <code>3.7</code> became <code>3</code>. Same behaviour as <code>int()</code> in Module 2. If you want rounding, round first:</p>
+      <p>**<code>.astype()</code> to an integer truncates, it does not round.** <code>1.9</code> became <code>1</code>, and <code>3.7</code> became <code>3</code>. Same behavior as <code>int()</code> in Module 2. If you want rounding, round first:</p>
       <pre><code><span class="fn">print</span>(np.<span class="fn">round</span>(floats).<span class="fn">astype</span>(np.int32))</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
@@ -1123,7 +1123,7 @@ ValueError: operands could not be broadcast together with shapes (<span class="o
       <details class="debrief"><summary>What happened</summary>
       <p>A <code>ValueError</code>, and the message is one to memorize: <code>operands could not be broadcast together with shapes (2,3) (2,)</code>.</p>
       <p>Reading right to left: <code>3</code> against <code>2</code>. Not equal, neither is <code>1</code>, so there is no way to line them up. NumPy will not guess.</p>
-      <p>You might reasonably have expected this to work - <code>M</code> has two rows and the array has two elements, so surely one per row? That is a natural thought and it is wrong, because broadcasting aligns from the <strong>right</strong>, not the left. To get the per-row behaviour you have to say so explicitly:</p>
+      <p>You might reasonably have expected this to work - <code>M</code> has two rows and the array has two elements, so surely one per row? That is a natural thought and it is wrong, because broadcasting aligns from the <strong>right</strong>, not the left. To get the per-row behavior you have to say so explicitly:</p>
       </details>
       <pre><code>col = np.<span class="fn">array</span>([<span class="nm">10</span>, <span class="nm">20</span>]).<span class="fn">reshape</span>(<span class="nm">2</span>, <span class="nm">1</span>)     <span class="cm"># an explicit column</span>
 <span class="fn">print</span>(<span class="st">f&quot;col.shape = {col.shape}&quot;</span>)
@@ -1177,7 +1177,7 @@ min nan, max nan
       <div class="nb-narrative nb-narrative-close">
         <p>Three things are worth carrying out of this section.</p>
       <p><strong>The rule.</strong> Compare shapes from the right. Two dimensions are compatible when they are equal, or when one of them is 1. Nothing else is compatible, and NumPy will not guess on your behalf.</p>
-      <p><strong>The direction.</strong> Broadcasting aligns shapes from the right, not the left, which is why a 2-by-3 array and a 2-element array refuse to combine even though &quot;2&quot; appears in both. When you want per-row behaviour you have to ask for it, either by reshaping to a column or by inserting an axis with <code>np.newaxis</code>. This is the most common broadcasting mistake, and it is usually not a misunderstanding of the rule so much as an expectation that it works the other way round.</p>
+      <p><strong>The direction.</strong> Broadcasting aligns shapes from the right, not the left, which is why a 2-by-3 array and a 2-element array refuse to combine even though &quot;2&quot; appears in both. When you want per-row behavior you have to ask for it, either by reshaping to a column or by inserting an axis with <code>np.newaxis</code>. This is the most common broadcasting mistake, and it is usually not a misunderstanding of the rule so much as an expectation that it works the other way round.</p>
       <p><strong>Why it matters beyond convenience.</strong> Broadcasting is what lets a formula written for one value apply unchanged to a whole table. The engagement index you will build in section 11 is four lines long, and it would be four lines whether the cohort held ten students or eighty thousand. That is not a saving in typing. It is the difference between code that expresses an idea and code that buries it in bookkeeping.</p>
       <p>When a shape error does appear, remember that the message contains both shapes. Print them, line them up from the right, and the fix is almost always a reshape on one operand.</p>
       </div>
@@ -1321,7 +1321,7 @@ IndexError: index <span class="out-num">10</span> is out of bounds for axis <spa
       </div>
       <h3 id="views-and-copies">Views and copies</h3>
       <p>A short section with an outsized capacity to ruin an afternoon.</p>
-      <p>In Module 2 you learned that <code>backup = scores</code> does not copy a list - both names refer to the same object. Arrays have that behaviour too, <strong>and one more</strong>: slicing an array does not copy either.</p>
+      <p>In Module 2 you learned that <code>backup = scores</code> does not copy a list - both names refer to the same object. Arrays have that behavior too, <strong>and one more</strong>: slicing an array does not copy either.</p>
       <figure class="nb-figure"><img src="assets/fig-3dc2eeec2a.png" alt="Modifying a slice of an array changes the original" loading="lazy"><figcaption>Modifying a slice of an array changes the original</figcaption></figure>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
@@ -1893,7 +1893,7 @@ np.max(a)        = <span class="out-num">5</span>
       <details class="debrief"><summary>What happened</summary>
       <p><code>np.maximum</code> is a <strong>binary ufunc</strong>: it compares two arrays element by element and returns an array the same shape.</p>
       <p><code>np.max</code> is an <strong>aggregate</strong>: it reduces one array to a single value.</p>
-      <p>The names are one letter apart and the behaviours are unrelated. <code>maximum</code> for pairwise, <code>max</code> for the biggest. Section 11 is all about aggregates.</p>
+      <p>The names are one letter apart and the behaviors are unrelated. <code>maximum</code> for pairwise, <code>max</code> for the biggest. Section 11 is all about aggregates.</p>
       </details>
       <h3 id="ufuncs-and-missing-values">Ufuncs and missing values</h3>
       <p>The cohort&#x27;s <code>grad_gpa</code> has a <code>np.nan</code> in it - Marcus Webb, still enrolled. Watch what ufuncs do with it.</p>
@@ -2350,7 +2350,7 @@ Rosalind Achebe      needs support
 Nadia Haddad         good
 Devin Castellanos    needs support
       </div>
-      <p>Conditions are checked <strong>in order</strong> and the first match wins, so this has the same behaviour as an <code>elif</code> chain - and the same requirement that you put the most restrictive condition first.</p>
+      <p>Conditions are checked <strong>in order</strong> and the first match wins, so this has the same behavior as an <code>elif</code> chain - and the same requirement that you put the most restrictive condition first.</p>
       <p>The advantage over nesting is that adding a fourth category means adding one entry to each list, rather than burying another <code>np.where</code> three levels deep.</p>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -4921,7 +4921,7 @@ section.content-section { scroll-margin-top: 68px; }
  *
  * This RELOCATES the existing buttons rather than creating new ones that proxy
  * a click. Event handlers are bound to the element, not to its position, so
- * moving a node keeps its behaviour exactly as the page author wrote it. A
+ * moving a node keeps its behavior exactly as the page author wrote it. A
  * proxy button would be a second thing to keep in step - the same duplication
  * argument that governs the notebooks and the site pages.
  *

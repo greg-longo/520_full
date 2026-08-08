@@ -7,7 +7,7 @@
  *
  * This RELOCATES the existing buttons rather than creating new ones that proxy
  * a click. Event handlers are bound to the element, not to its position, so
- * moving a node keeps its behaviour exactly as the page author wrote it. A
+ * moving a node keeps its behavior exactly as the page author wrote it. A
  * proxy button would be a second thing to keep in step - the same duplication
  * argument that governs the notebooks and the site pages.
  *

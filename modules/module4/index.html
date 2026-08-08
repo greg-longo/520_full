@@ -964,7 +964,7 @@ Name: <span class="out-num">7</span>, dtype: object
       </div>
       <details class="debrief"><summary>What happened</summary>
       <p>The first fails, which is survivable. <strong>The second is the dangerous one.</strong></p>
-      <p><code>raw.loc[1003]</code> raises a KeyError because there is no row <em>labelled</em> 1003 - the labels are now 0 to 101. Annoying, but it tells you immediately.</p>
+      <p><code>raw.loc[1003]</code> raises a KeyError because there is no row <em>labeled</em> 1003 - the labels are now 0 to 101. Annoying, but it tells you immediately.</p>
       <p><code>raw.loc[7]</code> succeeds, and returns student 1008. You asked for a label, the label 7 exists because the index is just row numbers, and you got a student who has nothing to do with the number you typed. No error, no warning, wrong student.</p>
       <p>The lesson from section 3 has not changed - <code>.loc</code> is still labels. What changed is <em>what the labels are</em>.</p>
       </details>
@@ -1024,13 +1024,13 @@ distinct student_ids <span class="out-num">100</span>
       <details class="debrief"><summary>What happened</summary>
       <p><strong>102 rows, but only 100 distinct students.</strong></p>
       <p>The file has more rows than there are people in it. That is not a rounding error and it is not something to shrug at - it means at least one student is counted twice in every average you compute from this file.</p>
-      <p>Do not fix it yet. Write it down. We are going to catalogue every problem in this file before changing any of it, and section 6 is where the fixing happens.</p>
+      <p>Do not fix it yet. Write it down. We are going to catalog every problem in this file before changing any of it, and section 6 is where the fixing happens.</p>
       </details>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>Diagnose the whole file before you clean any of it.</strong></p>
       <p>The temptation is to fix each problem the moment you find it. Resist it. Cleaning changes what the next diagnostic reports, so a half-cleaned file tells you a half-true story about itself - and you will not be able to reconstruct what the raw data actually looked like.</p>
-      <p>Catalogue first. Clean once, deliberately, in one place. That is also what makes your cleaning reproducible by somebody else, which is the actual standard.</p>
+      <p>Catalog first. Clean once, deliberately, in one place. That is also what makes your cleaning reproducible by somebody else, which is the actual standard.</p>
       </div>
       <h3 id="info-the-single-most-useful-command-in-pandas"><code>.info()</code> - the single most useful command in pandas</h3>
       <pre><code>raw.<span class="fn">info</span>()</code></pre>
@@ -1802,7 +1802,7 @@ decisions</code></pre>
       <p>That is the whole cleaning workflow, and it is worth noticing how little of it was about pandas syntax. Four methods did the work. The rest was deciding what the data was allowed to become.</p>
       </div>
       <div class="nb-narrative nb-narrative-open">
-        <p>The table is clean. From here the work stops being about repair and starts being about questions - and every question you can ask of a table is some combination of three moves: pick rows, group them, and summarise them.</p>
+        <p>The table is clean. From here the work stops being about repair and starts being about questions - and every question you can ask of a table is some combination of three moves: pick rows, group them, and summarize them.</p>
       <p>This section is the first move, and you already know it. A boolean mask in pandas is the same object it was in Module 3. The only difference is that the rows it selects carry their labels with them.</p>
       </div>
     </section>
@@ -1993,7 +1993,7 @@ success
 <span class="out-num">0</span>    <span class="out-num">0.4</span>
 Name: proportion, dtype: float64
       </div>
-      <p>The interesting version summarises a <strong>different</strong> column than the one you grouped by.</p>
+      <p>The interesting version summarizes a <strong>different</strong> column than the one you grouped by.</p>
       <pre><code>clean.<span class="fn">groupby</span>(<span class="st">&quot;success&quot;</span>)[[<span class="st">&quot;logins_per_week&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>, <span class="st">&quot;course_score&quot;</span>]].<span class="fn">mean</span>().<span class="fn">round</span>(<span class="nm">2</span>)</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
@@ -2341,7 +2341,7 @@ rows counted above:  <span class="out-num">85</span> of <span class="out-num">10
       </div>
       <details class="debrief"><summary>What happened</summary>
       <p>None of them. <code>pd.cut</code> returns <code>NaN</code> for a value it cannot place, so the missing students are missing from the bands too.</p>
-      <p>This is the correct behaviour and it is easy to miss, because <code>value_counts()</code> <strong>excludes NaN by default</strong> - the bands do not add up to the number of students, and nothing on screen says so unless you check. Read the three numbers the cell just printed rather than taking my word for it.</p>
+      <p>This is the correct behavior and it is easy to miss, because <code>value_counts()</code> <strong>excludes NaN by default</strong> - the bands do not add up to the number of students, and nothing on screen says so unless you check. Read the three numbers the cell just printed rather than taking my word for it.</p>
       <p><code>value_counts(dropna=False)</code> shows them. Get in the habit: any time a count matters, confirm it sums to the number of rows you started with.</p>
       </details>
       <pre><code>clean.engagement_band.<span class="fn">value_counts</span>(dropna=<span class="kw">False</span>).<span class="fn">sort_index</span>()</code></pre>
@@ -2683,7 +2683,7 @@ shared = [c <span class="kw">for</span> c <span class="kw">in</span> clean.colum
         <div class="rail-card">
           <h3>Next</h3>
           <a class="rail-item" href="../module5/index.html">
-            <span class="rail-title">Module 5: Visualisation</span>
+            <span class="rail-title">Module 5: Visualization</span>
           </a>
         </div>
       </aside>
@@ -4833,7 +4833,7 @@ section.content-section { scroll-margin-top: 68px; }
  *
  * This RELOCATES the existing buttons rather than creating new ones that proxy
  * a click. Event handlers are bound to the element, not to its position, so
- * moving a node keeps its behaviour exactly as the page author wrote it. A
+ * moving a node keeps its behavior exactly as the page author wrote it. A
  * proxy button would be a second thing to keep in step - the same duplication
  * argument that governs the notebooks and the site pages.
  *

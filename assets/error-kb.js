@@ -6,7 +6,7 @@
  *   1. The AI policy draws a line between asking a model to explain an error and
  *      asking it to do the work. A course-hosted assistant sits exactly on that
  *      line. A lookup cannot be mistaken for one.
- *   2. A lookup cannot be confidently wrong. When it does not recognise
+ *   2. A lookup cannot be confidently wrong. When it does not recognize
  *      something it says so, which is the behaviour we want a student to copy.
  *
  * Each entry:
