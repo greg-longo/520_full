@@ -2529,6 +2529,18 @@ section.content-section { scroll-margin-top: 68px; }
 .section-next:focus-visible { outline: 3px solid var(--accent-light);
   outline-offset: 2px; }
 
+/* The live output slot wraps its text in a <pre>, which the stored output does
+   not. That <pre> was picking up the generic dark-theme `pre { color:#c8c3bc }`
+   rule, and the light-theme override targets `.output-block` but never its
+   children - so live results rendered at 1.49:1 on #f0ece6, essentially
+   invisible. Inheriting from the block is correct in BOTH themes. */
+.output-block pre { color: inherit; background: none; }
+
+/* #8a8078 on #f0ece6 is 3.28:1 and this is small uppercase text, so it needs
+   4.5:1, not 3:1. Darkened just enough; still clearly de-emphasized. */
+:root.theme-light .output-block-label,
+:root.theme-light .output-block .out-idx { color: #6e655d !important; }
+
 </style>
 <script>
 /**
