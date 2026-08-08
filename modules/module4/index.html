@@ -733,17 +733,11 @@ Name: <span class="out-num">1003</span>, dtype: object
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> What do you think <code>students.loc[0]</code> does? And <code>students.iloc[1003]</code>?  Commit to an answer before you run the next cell.
       </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises KeyError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>students.loc[<span class="nm">0</span>]</code></pre>
-      <div class="callout callout-warn"><div class="callout-label">This code raises IndexError on purpose</div>Read the error rather than avoiding it.</div>
-      <pre><code>students.iloc[<span class="nm">1003</span>]</code></pre>
-      <details class="debrief"><summary>What happened</summary>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexes/base.py&quot;, line <span class="out-num">3812</span>, in get_loc
     return self._engine.get_loc(casted_key)
   File &quot;pandas/_libs/index.pyx&quot;, line <span class="out-num">167</span>, in pandas._libs.index.IndexEngine.get_loc
@@ -758,14 +752,13 @@ Traceback (most recent call last):
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1192</span>, in __getitem__
     return self._getitem_axis(maybe_callable, axis=axis)
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1432</span>, in _getitem_axis
-... [<span class="out-num">4</span> more lines]
-      </div>
+... [<span class="out-num">4</span> more lines]</div>
+      </details>
+      <pre><code>students.iloc[<span class="nm">1003</span>]</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1192</span>, in __getitem__
     return self._getitem_axis(maybe_callable, axis=axis)
@@ -773,8 +766,9 @@ Traceback (most recent call last):
     self._validate_integer(key, axis)
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1686</span>, in _validate_integer
     raise IndexError(&quot;single positional indexer is out-of-bounds&quot;)
-IndexError: single positional indexer is out-of-bounds
-      </div>
+IndexError: single positional indexer is out-of-bounds</div>
+      </details>
+      <details class="debrief"><summary>What happened</summary>
       <p>Both fail, and the two error types tell you which question you asked.</p>
       <p><code>.loc[0]</code> is a <strong>KeyError</strong>: you asked for the student whose id is 0, and there is no such student. <code>.iloc[1003]</code> is an <strong>IndexError</strong>: you asked for the 1,004th row of a three-row table.</p>
       <p>Read those two words as the question you asked. KeyError means &quot;no such label.&quot; IndexError means &quot;no such position.&quot;</p>
@@ -936,17 +930,11 @@ RangeIndex(start=<span class="out-num">0</span>, stop=<span class="out-num">102<
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>student_id</code> came in as a column, and the index is a plain <code>RangeIndex</code>. So what does <code>raw.loc[1003]</code> do now - and what about <code>raw.loc[7]</code>?  Commit to an answer before you run the next cell.
       </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises KeyError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>raw.loc[<span class="nm">1003</span>]</code></pre>
-      <pre><code>row = raw.loc[<span class="nm">7</span>]
-<span class="fn">print</span>(row[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;name&quot;</span>]])</code></pre>
-      <details class="debrief"><summary>What happened</summary>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexes/range.py&quot;, line <span class="out-num">413</span>, in get_loc
     return self._range.index(new_key)
 ValueError: <span class="out-num">1003</span> is not in range
@@ -961,8 +949,11 @@ Traceback (most recent call last):
     return self._get_label(key, axis=axis)
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1382</span>, in _get_label
     return self.obj.xs(label, axis=axis)
-... [<span class="out-num">1</span> more lines]
-      </div>
+... [<span class="out-num">1</span> more lines]</div>
+      </details>
+      <pre><code>row = raw.loc[<span class="nm">7</span>]
+<span class="fn">print</span>(row[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;name&quot;</span>]])</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 student_id          <span class="out-num">1008</span>
@@ -1087,15 +1078,11 @@ Length: <span class="out-num">15</span>, dtype: object
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>submission_rate</code> holds values like 84%. What dtype did pandas give it, and what happens if you try to take its mean?  Commit to an answer before you run the next cell.
       </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>raw.submission_rate.<span class="fn">mean</span>()</code></pre>
-      <details class="debrief"><summary>What happened</summary>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/series.py&quot;, line <span class="out-num">6570</span>, in mean
     return NDFrame.mean(self, axis, skipna, numeric_only, **kwargs)
@@ -1103,8 +1090,9 @@ Traceback (most recent call last):
     return self._stat_function(
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/generic.py&quot;, line <span class="out-num">12442</span>, in _stat_function
     return self._reduce(
-TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27;
-      </div>
+TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27;</div>
+      </details>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>submission_rate</code> is <code>object</code> - pandas&#x27;s label for &quot;these are Python objects, most likely strings.&quot;</p>
       <p>The percent sign makes each value text. <code>&quot;84%&quot;</code> is not a number, so the whole column is not numbers, so arithmetic on it fails. One character per cell has disabled an entire column.</p>
       <p>This is the single most common real-world data problem there is, and it is why <code>.info()</code> is the first thing you run. Section 7 fixes it.</p>
@@ -1536,14 +1524,11 @@ object
       </div>
       <h4 id="why-one-character-disables-a-column">Why one character disables a column</h4>
       <p>pandas gives a column a single dtype. One string forces the whole column to <code>object</code>, and <code>object</code> means &quot;arbitrary Python objects&quot;, which supports almost no arithmetic.</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>clean.submission_rate.<span class="fn">mean</span>()</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/series.py&quot;, line <span class="out-num">6570</span>, in mean
     return NDFrame.mean(self, axis, skipna, numeric_only, **kwargs)
@@ -1551,8 +1536,8 @@ Traceback (most recent call last):
     return self._stat_function(
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/generic.py&quot;, line <span class="out-num">12442</span>, in _stat_function
     return self._reduce(
-TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27;
-      </div>
+TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27;</div>
+      </details>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**A <code>%</code> or a <code>$</code> or a comma in a number column silently makes it text.**</p>
@@ -1889,20 +1874,17 @@ students low on both measures: <span class="out-num">17</span>
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Why <code>&amp;</code> rather than <code>and</code>? What do you think <code>clean.logins_per_week &lt; 1.5 and clean.ug_gpa &lt; 2.5</code> would do?  Commit to an answer before you run the next cell.
       </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>clean.logins_per_week &lt; <span class="nm">1.5</span> <span class="kw">and</span> clean.ug_gpa &lt; <span class="nm">2.5</span></code></pre>
-      <details class="debrief"><summary>What happened</summary>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/generic.py&quot;, line <span class="out-num">1580</span>, in __nonzero__
     raise ValueError(
-ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
-      </div>
+ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().</div>
+      </details>
+      <details class="debrief"><summary>What happened</summary>
       <p>&quot;The truth value of a Series is ambiguous.&quot;</p>
       <p><code>and</code> wants to reduce each side to a single <code>True</code> or <code>False</code>, and a hundred booleans cannot answer that question - pandas refuses to guess whether you meant &quot;any&quot; or &quot;all&quot;. <code>&amp;</code> is the element-wise version, which is what you actually want: compare row by row.</p>
       <p>The parentheses matter for a duller reason. <code>&amp;</code> binds more tightly than <code>&lt;</code>, so without them Python reads <code>1.5 &amp; clean.ug_gpa</code> and fails somewhere confusing.</p>
@@ -2428,14 +2410,11 @@ high                  <span class="out-num">79.405</span>   <span class="out-num
       <p>Module 2 taught you to read a traceback from the bottom up. pandas errors follow that rule, but the vocabulary is new and a few of the most common ones are not errors at all - they are silently wrong answers.</p>
       <p>Start with the loud ones.</p>
       <h4 id="keyerror-no-such-label"><code>KeyError</code> - no such label</h4>
-      <div class="callout callout-warn"><div class="callout-label">This code raises KeyError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>clean[<span class="st">&quot;Course_Score&quot;</span>]</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexes/base.py&quot;, line <span class="out-num">3812</span>, in get_loc
     return self._engine.get_loc(casted_key)
   File &quot;pandas/_libs/index.pyx&quot;, line <span class="out-num">167</span>, in pandas._libs.index.IndexEngine.get_loc
@@ -2450,34 +2429,28 @@ Traceback (most recent call last):
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/frame.py&quot;, line <span class="out-num">4113</span>, in __getitem__
     indexer = self.columns.get_loc(key)
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexes/base.py&quot;, line <span class="out-num">3819</span>, in get_loc
-... [<span class="out-num">2</span> more lines]
-      </div>
+... [<span class="out-num">2</span> more lines]</div>
+      </details>
       <p>Column names are case-sensitive and whitespace-sensitive. <code>clean.columns.tolist()</code> settles it in one line, and <code>df.columns.str.strip()</code> fixes a file whose headers arrived with stray spaces.</p>
       <h4 id="valueerror-ambiguous-truth-value"><code>ValueError</code> - ambiguous truth value</h4>
-      <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="kw">if</span> clean.ug_gpa &gt; <span class="nm">3.0</span>:
     <span class="fn">print</span>(<span class="st">&quot;yes&quot;</span>)</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/generic.py&quot;, line <span class="out-num">1580</span>, in __nonzero__
     raise ValueError(
-ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
-      </div>
+ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().</div>
+      </details>
       <p>Section 9. A Series of a hundred booleans is not one condition. You want <code>.any()</code>, <code>.all()</code>, or a mask.</p>
       <h4 id="typeerror-arithmetic-on-text"><code>TypeError</code> - arithmetic on text</h4>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>raw.submission_rate.<span class="fn">sum</span>() / <span class="fn">len</span>(raw)</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/series.py&quot;, line <span class="out-num">6549</span>, in sum
     return NDFrame.sum(self, axis, skipna, numeric_only, min_count, **kwargs)
@@ -2485,8 +2458,8 @@ Traceback (most recent call last):
     return self._min_count_stat_function(
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/generic.py&quot;, line <span class="out-num">12554</span>, in _min_count_stat_function
     return self._reduce(
-TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27;
-      </div>
+TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27;</div>
+      </details>
       <p>Section 7. Check <code>.dtype</code> before you compute.</p>
       <h3 id="the-quiet-ones">The quiet ones</h3>
       <p>These do not raise. They just give you the wrong number.</p>
@@ -4358,6 +4331,13 @@ section.content-section { scroll-margin-top: 68px; }
    4.5:1, not 3:1. Darkened just enough; still clearly de-emphasized. */
 :root.theme-light .output-block-label,
 :root.theme-light .output-block .out-idx { color: #6e655d !important; }
+
+/* %%expect cells: the failure is deliberate, so mark it without shouting. */
+.expect-reveal > .expect-note { margin: .8rem 0 .4rem; font-size: .88rem;
+  color: var(--text-dim); }
+.expect-reveal .output-block { border-left-color: var(--flag, #e0705c); }
+.expect-reveal .output-block-label::after { content: " · expected error";
+  color: var(--flag, #e0705c); }
 
 </style>
 <script>

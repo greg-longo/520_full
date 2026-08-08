@@ -1103,18 +1103,15 @@ student_id % <span class="nm">10</span></code></pre>
       </div>
       </div>
       <p>Those parentheses aren&#x27;t decoration. Leave one out and Python can&#x27;t tell where the argument ends, so it gives up before running anything. That&#x27;s a <strong>SyntaxError</strong> - the code isn&#x27;t valid Python at all.</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises SyntaxError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>abs(-42</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
+        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
     abs(-<span class="out-num">42</span>
        ^
-SyntaxError: &#x27;(&#x27; was never closed
-      </div>
+SyntaxError: &#x27;(&#x27; was never closed</div>
+      </details>
       <p>Notice what the error message gives you: the line, a caret pointing at roughly where Python got confused, and the words <code>SyntaxError: &#x27;(&#x27; was never closed</code>. That last part is unusually helpful. Most of the time, Python&#x27;s guess about <em>where</em> the problem is will be close but slightly after the real mistake - because Python only notices something is wrong once it hits something that can&#x27;t possibly follow.</p>
       <h5 id="your-turn">Your turn</h5>
       <p>Lee logged a study session as <strong>227 minutes</strong>. Print how many whole hours that is, and how many minutes are left over.</p>
@@ -1202,18 +1199,15 @@ str
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> What happens when you divide a string by a number?  Commit to an answer before you run the next cell.
       </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="st">&#x27;126&#x27;</span> / <span class="nm">3</span></code></pre>
-      <details class="debrief"><summary>What happened</summary>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-TypeError: unsupported operand type(s) for /: &#x27;str&#x27; and &#x27;int&#x27;
-      </div>
+TypeError: unsupported operand type(s) for /: &#x27;str&#x27; and &#x27;int&#x27;</div>
+      </details>
+      <details class="debrief"><summary>What happened</summary>
       <p>A <strong>TypeError</strong>. The message is worth reading closely: <code>unsupported operand type(s) for /: &#x27;str&#x27; and &#x27;int&#x27;</code>.</p>
       <p>Python is telling you exactly what went wrong: the <code>/</code> operator doesn&#x27;t know how to divide a <code>str</code> by an <code>int</code>. The values in an expression are called <strong>operands</strong>, which is where that wording comes from.</p>
       <p>This error is not Python being difficult. It&#x27;s Python refusing to guess. In a language that guesses, <code>&#x27;126&#x27; / 3</code> might silently produce something wrong, and you&#x27;d find out three steps later.</p>
@@ -1259,17 +1253,14 @@ TypeError: unsupported operand type(s) for /: &#x27;str&#x27; and &#x27;int&#x27
       </div>
       <h5 id="a-conversion-trap">A conversion trap</h5>
       <p><code>int</code> converts a string of digits. It will not convert a string that <em>looks</em> like a float.</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="fn">int</span>(<span class="st">&#x27;3.7&#x27;</span>)</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-ValueError: invalid literal for int() with base <span class="out-num">10</span>: &#x27;<span class="out-num">3.7</span>&#x27;
-      </div>
+ValueError: invalid literal for int() with base <span class="out-num">10</span>: &#x27;<span class="out-num">3.7</span>&#x27;</div>
+      </details>
       <p>This one is a <strong>ValueError</strong>, not a TypeError, and the distinction is useful. A TypeError means <em>wrong kind of thing</em>. A ValueError means <em>right kind of thing, but its content doesn&#x27;t work</em> - <code>int</code> accepts strings, this just isn&#x27;t a string it can parse.</p>
       <p>If you meant to get <code>3</code>, convert to float first, then to int:</p>
       <div data-runnable>
@@ -1458,55 +1449,43 @@ count</code></pre>
       <p>You&#x27;ll see <code>+=</code> constantly once we get to loops, where it&#x27;s how you accumulate a running total.</p>
       <h4 id="variable-names">Variable names</h4>
       <p>Names can contain letters, digits, and underscores, but they cannot start with a digit and cannot contain spaces or punctuation. Break those rules and you get a SyntaxError.</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises SyntaxError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>million! = <span class="nm">1000000</span></code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
+        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
     million! = <span class="out-num">1000000</span>
            ^
-SyntaxError: invalid syntax
-      </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises SyntaxError on purpose</div>Read the error rather than avoiding it.</div>
+SyntaxError: invalid syntax</div>
+      </details>
       <pre><code><span class="nm">76</span>trombones = <span class="st">&#x27;big parade&#x27;</span></code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
+        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
     76trombones = &#x27;big parade&#x27;
      ^
-SyntaxError: invalid decimal literal
-      </div>
+SyntaxError: invalid decimal literal</div>
+      </details>
       <p>There&#x27;s a third category of illegal name that&#x27;s less obvious. Some words are <strong>keywords</strong> - words Python reserves for the structure of the language itself. You can&#x27;t use them as variable names.</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises SyntaxError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="kw">class</span> = <span class="st">&#x27;Introduction to Data Science&#x27;</span></code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
+        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
     class = &#x27;Introduction to Data Science&#x27;
           ^
-SyntaxError: invalid syntax
-      </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises SyntaxError on purpose</div>Read the error rather than avoiding it.</div>
+SyntaxError: invalid syntax</div>
+      </details>
       <pre><code><span class="kw">False</span> = <span class="nm">6</span></code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
+        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
     False = <span class="out-num">6</span>
     ^^^^^
-SyntaxError: cannot assign to False
-      </div>
+SyntaxError: cannot assign to False</div>
+      </details>
       <p><code>class</code> is a keyword because Python uses it to define a class (Module 5 territory). <code>False</code> is a built-in constant. There are about thirty-five of these, and you don&#x27;t need to memorize them - your editor will color them differently, which is warning enough.</p>
       <p>If you&#x27;re curious, Python will list them:</p>
       <div data-runnable>
@@ -1600,18 +1579,15 @@ raw_name</code></pre>
       </div>
       </div>
       <p>Having both is genuinely useful, because it lets you put one kind of quote inside the other. A name with an apostrophe breaks single quotes:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises SyntaxError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>advisor = <span class="st">&#x27;Lee&#x27;</span>s office&#x27;</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
+        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
     advisor = &#x27;Lee&#x27;s office&#x27;
                            ^
-SyntaxError: unterminated string literal (detected at line <span class="out-num">1</span>)
-      </div>
+SyntaxError: unterminated string literal (detected at line <span class="out-num">1</span>)</div>
+      </details>
       <p>Python read <code>&#x27;Lee&#x27;</code> as a complete string, then found a stray <code>s office&#x27;</code> it couldn&#x27;t make sense of. Two ways out. Use double quotes on the outside:</p>
       <div data-runnable>
       <pre><code>advisor = <span class="st">&quot;Lee&#x27;s office&quot;</span>
@@ -1631,30 +1607,24 @@ advisor</code></pre>
       </div>
       </div>
       <p>Text without quotes isn&#x27;t text at all - Python reads it as a variable name. Two words with a space between them isn&#x27;t a legal name, so this one fails before it runs:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises SyntaxError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>name = amara okonkwo</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
+        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
     name = amara okonkwo
                  ^^^^^^^
-SyntaxError: invalid syntax
-      </div>
+SyntaxError: invalid syntax</div>
+      </details>
       <p>Remove the space and it becomes legal syntax - but there&#x27;s still no variable called <code>amara</code>, so now you get a different error:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises NameError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>name = amara</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-NameError: name &#x27;amara&#x27; is not defined
-      </div>
+NameError: name &#x27;amara&#x27; is not defined</div>
+      </details>
       <p>Two errors, one root cause: <strong>missing quotes</strong>. Worth internalizing, because it&#x27;s the mistake that produces the most confusing beginner errors.</p>
       <h3 id="length-joining-repeating">Length, joining, repeating</h3>
       <p><code>len</code> counts the characters in a string:</p>
@@ -1683,17 +1653,14 @@ NameError: name &#x27;amara&#x27; is not defined
       </div>
       </div>
       <p>Which is a cheap way to draw a divider in a report. The other arithmetic operators don&#x27;t work on strings:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="st">&#x27;Eastern&#x27;</span> - <span class="st">&#x27;East&#x27;</span></code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-TypeError: unsupported operand type(s) for -: &#x27;str&#x27; and &#x27;str&#x27;
-      </div>
+TypeError: unsupported operand type(s) for -: &#x27;str&#x27; and &#x27;str&#x27;</div>
+      </details>
       <h3 id="indexing">Indexing</h3>
       <p>A string is a <strong>sequence</strong>, meaning its characters are in a definite order and each one has a numbered position called an <strong>index</strong>. You get a single character with square brackets.</p>
       <figure class="nb-figure"><img src="assets/fig-856510c58d.png" alt="Positive and negative indices for &#x27;Eastern University&#x27;" loading="lazy"><figcaption>Positive and negative indices for &#x27;Eastern University&#x27;</figcaption></figure>
@@ -1752,17 +1719,14 @@ university[<span class="nm">0</span>]</code></pre>
       <p>There is no <code>-0</code>. Zero and negative zero are the same number, so <code>[-0]</code> is just <code>[0]</code>. Counting forward starts at <code>0</code>; counting backward starts at <code>-1</code>. The asymmetry is annoying but you only have to learn it once.</p>
       </details>
       <p>Ask for an index that doesn&#x27;t exist and you get an <strong>IndexError</strong>:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises IndexError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>university[<span class="nm">18</span>]</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-IndexError: string index out of range
-      </div>
+IndexError: string index out of range</div>
+      </details>
       <p>The valid indices for an 18-character string are <code>0</code> through <code>17</code>. <code>18</code> is one past the end - which is exactly why the error type has its own name.</p>
       <h3 id="slicing">Slicing</h3>
       <p>A <strong>slice</strong> is a range of characters. The syntax is <code>[start:stop]</code>, and the character at <code>stop</code> is <em>not</em> included.</p>
@@ -1809,19 +1773,16 @@ IndexError: string index out of range
       <h3 id="f-strings">f-strings</h3>
       <p>Here is the feature you might use more than any other in this notebook.</p>
       <p>Building output by concatenation gets ugly fast, and it breaks the moment a number is involved, because you can&#x27;t concatenate a <code>str</code> and an <code>int</code>:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>name = <span class="st">&#x27;Amara Okonkwo&#x27;</span>
 gpa = <span class="nm">3.02</span>
 <span class="st">&#x27;Student &#x27;</span> + name + <span class="st">&#x27; has GPA &#x27;</span> + gpa</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">3</span>, in &lt;module&gt;
-TypeError: can only concatenate str (not &quot;float&quot;) to str
-      </div>
+TypeError: can only concatenate str (not &quot;float&quot;) to str</div>
+      </details>
       <p>An <strong>f-string</strong> solves this. Put an <code>f</code> before the opening quote, and then anything inside curly braces <code>{}</code> is evaluated as Python and dropped into the text.</p>
       <pre><code><span class="st">f&quot;Student {name} has GPA {gpa}&quot;</span></code></pre>
       <div class="output-block">
@@ -1954,18 +1915,15 @@ row.<span class="fn">split</span>(<span class="st">&#x27;,&#x27;</span>)</code><
       </div>
       <h4 id="methods-belong-to-types">Methods belong to types</h4>
       <p>Methods aren&#x27;t universal. <code>.upper()</code> is a string method, so a number doesn&#x27;t have it.</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises AttributeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>gpa = <span class="nm">3.81</span>
 gpa.<span class="fn">upper</span>()</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">2</span>, in &lt;module&gt;
-AttributeError: &#x27;float&#x27; object has no attribute &#x27;upper&#x27;
-      </div>
+AttributeError: &#x27;float&#x27; object has no attribute &#x27;upper&#x27;</div>
+      </details>
       <p>An <strong>AttributeError</strong> means <em>this value has no such thing attached to it</em>. Read it as &quot;a float doesn&#x27;t know how to do <code>upper</code>.&quot;</p>
       <p>This is the error you get most often when a variable holds something other than what you assumed - which, in data work, is most of the time. When you see an AttributeError, the useful question isn&#x27;t &quot;what&#x27;s wrong with this method,&quot; it&#x27;s &quot;what type is my variable <em>actually</em>?&quot; Check with <code>type()</code>.</p>
       <p>To see everything a string can do, <code>dir()</code> will list the methods (ignore the ones starting with underscores):</p>
@@ -2118,28 +2076,22 @@ Term Report
       </div>
       </div>
       <p>Give the wrong number of arguments and you get a <code>TypeError</code>, with a message that names the function and counts the arguments for you:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="fn">print_heading</span>()</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-TypeError: print_heading() missing <span class="out-num">1</span> required positional argument: &#x27;text&#x27;
-      </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
+TypeError: print_heading() missing <span class="out-num">1</span> required positional argument: &#x27;text&#x27;</div>
+      </details>
       <pre><code><span class="fn">print_heading</span>(<span class="st">&quot;Cohort&quot;</span>, <span class="st">&quot;Summary&quot;</span>)</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-TypeError: print_heading() takes <span class="out-num">1</span> positional argument but <span class="out-num">2</span> were given
-      </div>
+TypeError: print_heading() takes <span class="out-num">1</span> positional argument but <span class="out-num">2</span> were given</div>
+      </details>
       <h3 id="return-values-the-important-distinction">Return values - the important distinction</h3>
       <p>This is the concept students most often get halfway. Take it slowly.</p>
       <p><code>print</code> puts text on the screen for a human to read. <code>return</code> hands a value back to the program so it can be used. They are not alternatives to each other; they do different jobs.</p>
@@ -2231,17 +2183,14 @@ A
 <span class="out-num">0.6666666666666666</span>
       </div>
       </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises NameError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>login_score</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-NameError: name &#x27;login_score&#x27; is not defined
-      </div>
+NameError: name &#x27;login_score&#x27; is not defined</div>
+      </details>
       <p><code>login_score</code> was never visible outside the function. This is a feature, not a limitation - it means you can write a function without worrying about whether one of its variable names collides with something elsewhere in a 200-line notebook.</p>
       <h3 id="docstrings">Docstrings</h3>
       <p>A <strong>docstring</strong> is a string on the first line of a function body. It documents what the function does, and Python wires it into the help system automatically.</p>
@@ -2388,20 +2337,17 @@ bool
       </div>
       <p><code>bool</code> is a type with exactly two values, <code>True</code> and <code>False</code>. Capitalized, no quotes - <code>true</code> is a NameError and <code>&#x27;True&#x27;</code> is a string.</p>
       <p>**<code>=</code> and <code>==</code> are different operators and confusing them is a rite of passage.** <code>=</code> assigns a value. <code>==</code> compares two values. Using <code>=</code> where a comparison belongs is a SyntaxError:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises SyntaxError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>gpa = <span class="nm">3.81</span>
 <span class="kw">if</span> gpa = <span class="nm">3.5</span>:
     <span class="fn">print</span>(<span class="st">&#x27;yes&#x27;</span>)</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">2</span>
+        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">2</span>
     if gpa = <span class="out-num">3.5</span>:
        ^^^^^^^^^
-SyntaxError: invalid syntax. Maybe you meant &#x27;==&#x27; or &#x27;:=&#x27; instead of &#x27;=&#x27;?
-      </div>
+SyntaxError: invalid syntax. Maybe you meant &#x27;==&#x27; or &#x27;:=&#x27; instead of &#x27;=&#x27;?</div>
+      </details>
       <p>Python&#x27;s message here is unusually kind: <em>&quot;Maybe you meant &#x27;==&#x27; or &#x27;:=&#x27; instead of &#x27;=&#x27;?&quot;</em> Ignore the <code>:=</code> suggestion for now.</p>
       <p>The full set of <strong>relational operators</strong>:</p>
       <div data-runnable>
@@ -2774,17 +2720,14 @@ Dean&#x27;s list
 [<span class="out-num">2.48</span>, <span class="out-num">3.02</span>, <span class="out-num">2.8</span>]
       </div>
       </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises IndexError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>roster[<span class="nm">10</span>]</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-IndexError: list index out of range
-      </div>
+IndexError: list index out of range</div>
+      </details>
       <p>Ten elements means valid indices <code>0</code> through <code>9</code>. <code>roster[10]</code> is one past the end - the same off-by-one you met with strings, and the reason <code>len(roster) - 1</code> is the last valid index.</p>
       <h4 id="lists-are-mutable">Lists are mutable</h4>
       <p>Here&#x27;s where lists differ from strings in a way that matters. Strings are immutable - no method changes one in place. Lists <strong>are</strong> mutable: you can assign to a position and change the list itself.</p>
@@ -2797,19 +2740,16 @@ scores</code></pre>
 [<span class="out-num">95</span>, <span class="out-num">92</span>, <span class="out-num">79</span>]
       </div>
       </div>
-      <p>Try the equivalent on a string and Python refuses:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
+      <p>Try the equivalent on a string:</p>
       <pre><code>name = <span class="st">&#x27;Amara&#x27;</span>
 name[<span class="nm">0</span>] = <span class="st">&#x27;X&#x27;</span></code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">2</span>, in &lt;module&gt;
-TypeError: &#x27;str&#x27; object does not support item assignment
-      </div>
+TypeError: &#x27;str&#x27; object does not support item assignment</div>
+      </details>
       <p>That TypeError - <code>&#x27;str&#x27; object does not support item assignment</code> - is Python saying strings are immutable. It&#x27;s a distinction you&#x27;ll rely on later: mutability is why a list can be built up piece by piece, and immutability is why a string is safe to pass around without worrying that something will change it.</p>
       <h4 id="growing-a-list">Growing a list</h4>
       <p><code>.append()</code> adds one element to the end. Note that it modifies the list in place and returns nothing:</p>
@@ -2890,17 +2830,14 @@ letters</code></pre>
       </div>
       </div>
       <p>Ask it to remove something that isn&#x27;t there and you get a <code>ValueError</code> - right type of argument, wrong content:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>letters.<span class="fn">remove</span>(<span class="st">&#x27;z&#x27;</span>)</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-ValueError: list.remove(x): x not in list
-      </div>
+ValueError: list.remove(x): x not in list</div>
+      </details>
       <h4 id="testing-membership">Testing membership</h4>
       <p>The <code>in</code> operator asks whether a value appears in a list. It returns a boolean, so it drops straight into an <code>if</code>.</p>
       <div data-runnable>
@@ -3081,29 +3018,23 @@ gpa_by_name</code></pre>
       </div>
       <p>No searching, no position tracking. And unlike parallel lists, the pairing can&#x27;t come apart.</p>
       <p>Numeric indices don&#x27;t work, because a dictionary has no order to index into:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises KeyError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>gpa_by_name[<span class="nm">0</span>]</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-KeyError: <span class="out-num">0</span>
-      </div>
+KeyError: <span class="out-num">0</span></div>
+      </details>
       <p>A <strong>KeyError</strong> means the key isn&#x27;t in the dictionary - and <code>0</code> isn&#x27;t a key here. You&#x27;d get the same error asking for a student who isn&#x27;t in the cohort:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises KeyError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>gpa_by_name[<span class="st">&quot;Amy Lee&quot;</span>]</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-KeyError: &#x27;Amy Lee&#x27;
-      </div>
+KeyError: &#x27;Amy Lee&#x27;</div>
+      </details>
       <h4 id="get-and-missing-data">.get() and missing data</h4>
       <p>A KeyError stops your program. When you&#x27;re not certain a key exists - which, with real data, is always - <code>.get()</code> returns <code>None</code> instead of raising:</p>
       <div data-runnable>
@@ -3333,18 +3264,15 @@ Devin Castellanos    <span class="out-num">1.99</span>
       <p>The <code>key=lambda r: r[&quot;ug_gpa&quot;]</code> tells <code>sorted</code> which field to sort on. <code>lambda</code> is a compact way to write a tiny function; you don&#x27;t need to write these yet, but you should recognize one when you see it, because pandas uses the same idea constantly.</p>
       <h4 id="what-can-be-a-key">What can be a key?</h4>
       <p>Keys have to be immutable. Strings, numbers, and booleans are fine. Lists are not:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>bad = {}
 bad[[<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>]] = <span class="nm">1</span></code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">2</span>, in &lt;module&gt;
-TypeError: unhashable type: &#x27;list&#x27;
-      </div>
+TypeError: unhashable type: &#x27;list&#x27;</div>
+      </details>
       <p><code>unhashable type: &#x27;list&#x27;</code> is the message, and &quot;hashable&quot; is effectively a synonym for &quot;usable as a dictionary key.&quot; Values, on the other hand, can be anything at all - including lists and other dictionaries:</p>
       <div data-runnable>
       <pre><code>majors_by_field = {
@@ -3675,32 +3603,26 @@ c
       </div>
       <p>It works, and please don&#x27;t. Name the loop variable after one element of what you&#x27;re looping over - <code>for raw in roster</code>, <code>for gpa in ug_gpas</code>, <code>for student in cohort</code>. The name is documentation.</p>
       <p>The <em>sequence</em> name, on the other hand, has to be real:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises NameError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="kw">for</span> name <span class="kw">in</span> rooster:
     <span class="fn">print</span>(name)</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-NameError: name &#x27;rooster&#x27; is not defined
-      </div>
+NameError: name &#x27;rooster&#x27; is not defined</div>
+      </details>
       <p>A <code>NameError</code> and a typo. Read the name in the message - <code>rooster</code> - and the fix is obvious. Most NameErrors are misspellings.</p>
       <p>You also can&#x27;t loop over something that isn&#x27;t a sequence:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="kw">for</span> n <span class="kw">in</span> <span class="nm">10</span>:
     <span class="fn">print</span>(n)</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-TypeError: &#x27;int&#x27; object is not iterable
-      </div>
+TypeError: &#x27;int&#x27; object is not iterable</div>
+      </details>
       <p><code>&#x27;int&#x27; object is not iterable</code> - a single number isn&#x27;t a collection of things. If you wanted the numbers 0 through 9, that&#x27;s what <code>range</code> is for.</p>
       <h3 id="range">range</h3>
       <p><code>range</code> produces a sequence of integers. It&#x27;s how you repeat something a fixed number of times.</p>
@@ -3782,17 +3704,14 @@ Amara Okonkwo
 <span class="out-num">2</span>
       </div>
       </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>pair[<span class="nm">0</span>] = <span class="nm">99</span></code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-TypeError: &#x27;tuple&#x27; object does not support item assignment
-      </div>
+TypeError: &#x27;tuple&#x27; object does not support item assignment</div>
+      </details>
       <p>Same <code>does not support item assignment</code> message you saw when trying to modify a string, and for the same reason - strings and tuples are both immutable, lists and dictionaries are not.</p>
       <p><strong>Unpacking</strong> is what lets you pull a tuple apart into separate names in one step:</p>
       <div data-runnable>
@@ -4108,17 +4027,14 @@ values = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm"
       </div>
       <p>The dot operator is the same one you&#x27;ve been using for string methods (<code>raw_name.strip()</code>). In both cases the dot means &quot;belonging to.&quot; That&#x27;s worth noticing - one piece of syntax, one idea, several uses.</p>
       <p>Forget the module prefix and Python has no idea what you mean:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises NameError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="fn">sqrt</span>(<span class="nm">144</span>)</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-NameError: name &#x27;sqrt&#x27; is not defined
-      </div>
+NameError: name &#x27;sqrt&#x27; is not defined</div>
+      </details>
       <p><code>sqrt</code> isn&#x27;t a built-in - it lives in <code>math</code> and it stays there unless you say otherwise. Which you can:</p>
       <div data-runnable>
       <pre><code><span class="kw">from</span> math <span class="kw">import</span> sqrt
@@ -4145,17 +4061,14 @@ m.<span class="fn">sqrt</span>(<span class="nm">144</span>)</code></pre>
 <span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt</code></pre>
       <h3 id="when-the-module-isn-t-there">When the module isn&#x27;t there</h3>
       <p>Misspell a module name - or ask for one that isn&#x27;t installed - and you get a <code>ModuleNotFoundError</code>:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises ModuleNotFoundError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="kw">import</span> maath</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-ModuleNotFoundError: No module named &#x27;maath&#x27;
-      </div>
+ModuleNotFoundError: No module named &#x27;maath&#x27;</div>
+      </details>
       <p>This is one of the most common errors you&#x27;ll hit in a new environment, and it usually means the package isn&#x27;t installed rather than misspelled. In a notebook you can install it right there:</p>
       <pre><code>!pip install some-package</code></pre>
       <p>The <code>!</code> runs a shell command instead of Python. You&#x27;ll rarely need it in Colab, which comes with the data science stack preinstalled.</p>
@@ -4219,21 +4132,18 @@ curved = []
                      grad_table[sid_b][<span class="st">&quot;grad_gpa&quot;</span>])</code></pre>
       </div>
       <p>Note that both tables are passed in as <strong>parameters</strong> rather than read from the surrounding notebook. A function that reaches out and grabs whatever happens to be lying around works right up until something else in the notebook changes, and then fails somewhere far away from the real cause. Every helper function in this notebook takes its data as an argument, and yours should too.</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="fn">compare_students</span>(<span class="nm">1003</span>, <span class="nm">1044</span>, undergraduate, graduate)</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
   File &quot;/sessions/youthful-keen-pascal/tmp/ipykernel_10/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">7</span>, in compare_students
     return gpa_ratio(ug_table[sid_a][&quot;ug_gpa&quot;],
   File &quot;/sessions/youthful-keen-pascal/tmp/ipykernel_10/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">2</span>, in gpa_ratio
     return a / b
-TypeError: unsupported operand type(s) for /: &#x27;float&#x27; and &#x27;NoneType&#x27;
-      </div>
+TypeError: unsupported operand type(s) for /: &#x27;float&#x27; and &#x27;NoneType&#x27;</div>
+      </details>
       <p>Read a traceback <strong>from the bottom up.</strong></p>
       <ul><li><strong>The last line</strong> names the error type and gives the message: <code>TypeError: unsupported operand type(s) for /: &#x27;float&#x27; and &#x27;NoneType&#x27;</code>. That&#x27;s your actual problem - something is <code>None</code> when a number was expected.</li><li><strong>The lines above it</strong> are the call stack, most recent last. Reading up, you can see the failure happened inside <code>gpa_ratio</code>, which was called by <code>compare_students</code>, which was called by your cell.</li><li><strong>The middle</strong> shows you the offending line of code with a marker under it.</li></ul>
       <p>So: <code>gpa_ratio</code> divided by <code>None</code>. Where did the <code>None</code> come from? Student 1044&#x27;s graduate GPA - the missing value the schema report flagged. The error is three functions deep, but its cause is a data problem you already knew about.</p>
@@ -6354,6 +6264,13 @@ section.content-section { scroll-margin-top: 68px; }
    4.5:1, not 3:1. Darkened just enough; still clearly de-emphasized. */
 :root.theme-light .output-block-label,
 :root.theme-light .output-block .out-idx { color: #6e655d !important; }
+
+/* %%expect cells: the failure is deliberate, so mark it without shouting. */
+.expect-reveal > .expect-note { margin: .8rem 0 .4rem; font-size: .88rem;
+  color: var(--text-dim); }
+.expect-reveal .output-block { border-left-color: var(--flag, #e0705c); }
+.expect-reveal .output-block-label::after { content: " · expected error";
+  color: var(--flag, #e0705c); }
 
 </style>
 <script>

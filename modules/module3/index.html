@@ -943,17 +943,14 @@ float64
 &lt;U21
       </div>
       <p><code>&lt;U21</code> means &quot;Unicode string, up to 21 characters.&quot; <strong>The numbers became text.</strong> Arithmetic on this array now fails, or worse, does something you did not intend.</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>very_mixed * <span class="nm">2</span></code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-TypeError: The &#x27;out&#x27; kwarg is necessary. Use numpy.strings.multiply without it.
-      </div>
+TypeError: The &#x27;out&#x27; kwarg is necessary. Use numpy.strings.multiply without it.</div>
+      </details>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>A <code>dtype</code> of <code>&lt;U...</code> on an array you expected to be numeric means something non-numeric got in. In real data that is almost always a stray <code>&#x27;N/A&#x27;</code>, <code>&#x27;--&#x27;</code>, or an empty string in a column of numbers.</p>
@@ -978,18 +975,15 @@ ints = floats.<span class="fn">astype</span>(np.int32)
       </div>
       <h4 id="a-dtype-consequence-you-will-hit-in-module-4">A dtype consequence you will hit in Module 4</h4>
       <p>Integer arrays have no way to represent a missing value. There is no bit pattern for &quot;absent&quot; in an integer, so NumPy refuses:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>counts = np.<span class="fn">array</span>([<span class="nm">14</span>, <span class="nm">6</span>, <span class="nm">17</span>])
 counts[<span class="nm">0</span>] = np.nan</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">2</span>, in &lt;module&gt;
-ValueError: cannot convert float NaN to integer
-      </div>
+ValueError: cannot convert float NaN to integer</div>
+      </details>
       <p><code>cannot convert float NaN to integer</code>. The array has to be floats before a <code>nan</code> can live in it:</p>
       <pre><code>counts = np.<span class="fn">array</span>([<span class="nm">14</span>, <span class="nm">6</span>, <span class="nm">17</span>]).<span class="fn">astype</span>(<span class="fn">float</span>)
 counts[<span class="nm">0</span>] = np.nan
@@ -1113,18 +1107,15 @@ row.shape = (<span class="out-num">3</span>,)
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>M</code> is shape (2, 3). What happens with <code>M + np.array([10, 20])</code> - a 2-element array?  Commit to an answer before you run the next cell.
       </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>M + np.<span class="fn">array</span>([<span class="nm">10</span>, <span class="nm">20</span>])</code></pre>
-      <details class="debrief"><summary>What happened</summary>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-ValueError: operands could not be broadcast together with shapes (<span class="out-num">2</span>,<span class="out-num">3</span>) (<span class="out-num">2</span>,)
-      </div>
+ValueError: operands could not be broadcast together with shapes (<span class="out-num">2</span>,<span class="out-num">3</span>) (<span class="out-num">2</span>,)</div>
+      </details>
+      <details class="debrief"><summary>What happened</summary>
       <p>A <code>ValueError</code>, and the message is one to memorize: <code>operands could not be broadcast together with shapes (2,3) (2,)</code>.</p>
       <p>Reading right to left: <code>3</code> against <code>2</code>. Not equal, neither is <code>1</code>, so there is no way to line them up. NumPy will not guess.</p>
       <p>You might reasonably have expected this to work - <code>M</code> has two rows and the array has two elements, so surely one per row? That is a natural thought and it is wrong, because broadcasting aligns from the <strong>right</strong>, not the left. To get the per-row behavior you have to say so explicitly:</p>
@@ -1296,17 +1287,14 @@ shape: (<span class="out-num">3</span>, <span class="out-num">2</span>)
       <p>Two slices give you a rectangular block. The mental model that helps: read the comma as &quot;and then.&quot; <em>Rows 0 through 2, and then columns 0 through 1.</em></p>
       </details>
       <p><code>:</code> on its own means everything along that axis, which is why <code>engagement[:, 0]</code> reads as <em>all rows, column zero</em>.</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises IndexError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>engagement[<span class="nm">10</span>, <span class="nm">0</span>]</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-IndexError: index <span class="out-num">10</span> is out of bounds for axis <span class="out-num">0</span> with size <span class="out-num">10</span>
-      </div>
+IndexError: index <span class="out-num">10</span> is out of bounds for axis <span class="out-num">0</span> with size <span class="out-num">10</span></div>
+      </details>
       <p>Ten students means valid row indices <code>0</code> through <code>9</code>. NumPy&#x27;s message names the axis and the size, which is more helpful than the list version in Module 2: <code>index 10 is out of bounds for axis 0 with size 10</code>.</p>
       <h5 id="your-turn-4">Your turn</h5>
       <p>Using <code>engagement</code> (10 rows: logins, hours, submission):</p>
@@ -1472,17 +1460,14 @@ capped = <span class="fn">cap_at_90_safe</span>(scores)
  [ <span class="out-num">9</span> <span class="out-num">10</span> <span class="out-num">11</span>]]
       </div>
       <p>The element <strong>count</strong> has to match. Twelve elements can be 3x4 or 4x3 or 2x6, but not 5x3:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>counts.<span class="fn">reshape</span>(<span class="nm">5</span>, <span class="nm">3</span>)</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-ValueError: cannot reshape array of size <span class="out-num">12</span> into shape (<span class="out-num">5</span>,<span class="out-num">3</span>)
-      </div>
+ValueError: cannot reshape array of size <span class="out-num">12</span> into shape (<span class="out-num">5</span>,<span class="out-num">3</span>)</div>
+      </details>
       <p><code>cannot reshape array of size 12 into shape (5,3)</code> - the message does the arithmetic for you.</p>
       <p><code>-1</code> means <em>work it out yourself</em>, which saves you doing the division:</p>
       <pre><code><span class="fn">print</span>(counts.<span class="fn">reshape</span>(<span class="nm">3</span>, -<span class="nm">1</span>).shape)     <span class="cm"># 3 rows, however many columns that needs</span>
@@ -1644,17 +1629,14 @@ result = []
 result = names[logins &gt; <span class="nm">12</span>]</code></pre>
       <h3 id="combining-conditions">Combining conditions</h3>
       <p>Here is a trap that catches everyone once. Python&#x27;s <code>and</code> / <code>or</code> do <strong>not</strong> work on arrays:</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>logins[(logins &gt; <span class="nm">12</span>) <span class="kw">and</span> (ug_gpa &gt; <span class="nm">3.5</span>)]</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
-      </div>
+ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()</div>
+      </details>
       <p><code>The truth value of an array with more than one element is ambiguous</code> means NumPy was asked whether a ten-element array is &quot;true&quot; and cannot answer.</p>
       <p>Use <code>&amp;</code> for and, <code>|</code> for or, <code>~</code> for not. <strong>And parenthesize each condition</strong>, because <code>&amp;</code> binds more tightly than <code>&gt;</code>:</p>
       <pre><code>high_both = (logins &gt; <span class="nm">12</span>) &amp; (ug_gpa &gt; <span class="nm">3.5</span>)
@@ -2424,43 +2406,34 @@ bucket = np.<span class="fn">where</span>(engagement_index &gt;= <span class="nm
       <table class="data-table"><thead><tr><th>Error</th><th>Means</th><th>Usual cause</th></tr></thead><tbody><tr><td><code>ValueError: operands could not be broadcast</code></td><td>Shapes don&#x27;t line up</td><td>Section 4. Print both shapes</td></tr><tr><td><code>ValueError: cannot reshape array of size N</code></td><td>Element count doesn&#x27;t match</td><td>Section 7. The arithmetic doesn&#x27;t work</td></tr><tr><td><code>IndexError: index N is out of bounds for axis 0 with size M</code></td><td>Index too large</td><td>Off by one, or wrong axis</td></tr><tr><td><code>ValueError: truth value of an array ... is ambiguous</code></td><td>Used <code>and</code>/<code>or</code> on arrays</td><td>Section 8. Use <code>&amp;</code>, `\</td><td>`, with parentheses</td></tr><tr><td><code>TypeError: ufunc did not contain a loop</code></td><td>Wrong dtype for the operation</td><td>Section 3. Usually text where numbers were expected</td></tr><tr><td><code>AxisError: axis 2 is out of bounds</code></td><td>Asked for an axis that doesn&#x27;t exist</td><td>A 2D array has axes 0 and 1 only</td></tr></tbody></table>
       <p><code>AxisError</code> and <code>UFuncTypeError</code> are NumPy&#x27;s own exception classes, but they <strong>subclass</strong> the built-in ones - <code>AxisError</code> is a kind of <code>ValueError</code>, and <code>UFuncTypeError</code> is a kind of <code>TypeError</code>. That is why the <code>%%expect</code> labels below name the built-in parent: catching <code>ValueError</code> catches an <code>AxisError</code> too. Exception hierarchies are worth knowing about for exactly this reason.</p>
       <p>Notice that NumPy messages usually <strong>tell you the shapes involved</strong>. That&#x27;s most of the diagnosis, printed for free.</p>
-      <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>np.<span class="fn">array</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]) + np.<span class="fn">array</span>([<span class="nm">1</span>, <span class="nm">2</span>])</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-ValueError: operands could not be broadcast together with shapes (<span class="out-num">3</span>,) (<span class="out-num">2</span>,)
-      </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
+ValueError: operands could not be broadcast together with shapes (<span class="out-num">3</span>,) (<span class="out-num">2</span>,)</div>
+      </details>
       <pre><code>engagement.<span class="fn">mean</span>(axis=<span class="nm">2</span>)</code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/numpy/_core/_methods.py&quot;, line <span class="out-num">123</span>, in _mean
     rcount = _count_reduce_items(arr, axis, keepdims=keepdims, where=where)
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/numpy/_core/_methods.py&quot;, line <span class="out-num">86</span>, in _count_reduce_items
     items *= arr.shape[mu.normalize_axis_index(ax, arr.ndim)]
-numpy.exceptions.AxisError: axis <span class="out-num">2</span> is out of bounds for array of dimension <span class="out-num">2</span>
-      </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
+numpy.exceptions.AxisError: axis <span class="out-num">2</span> is out of bounds for array of dimension <span class="out-num">2</span></div>
+      </details>
       <pre><code>np.<span class="fn">array</span>([<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>]) + <span class="nm">1</span></code></pre>
+      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
+      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
-        <div class="output-block-label">output</div>
-────────────────────────────────────────────────────────────────
-  EXPECTED ERROR. This cell is supposed to fail.
-────────────────────────────────────────────────────────────────
-Traceback (most recent call last):
+        <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-numpy._core._exceptions._UFuncNoLoopError: ufunc &#x27;add&#x27; did not contain a loop with signature matching types (dtype(&#x27;&lt;U1&#x27;), dtype(&#x27;int64&#x27;)) -&gt; None
-      </div>
+numpy._core._exceptions._UFuncNoLoopError: ufunc &#x27;add&#x27; did not contain a loop with signature matching types (dtype(&#x27;&lt;U1&#x27;), dtype(&#x27;int64&#x27;)) -&gt; None</div>
+      </details>
       <h4 id="your-turn-13">Your turn</h4>
       <p>Each cell is broken. Diagnose before you edit: name the error, say what caused it, then fix it.</p>
       <pre><code><span class="cm"># 1</span>
@@ -4446,6 +4419,13 @@ section.content-section { scroll-margin-top: 68px; }
    4.5:1, not 3:1. Darkened just enough; still clearly de-emphasized. */
 :root.theme-light .output-block-label,
 :root.theme-light .output-block .out-idx { color: #6e655d !important; }
+
+/* %%expect cells: the failure is deliberate, so mark it without shouting. */
+.expect-reveal > .expect-note { margin: .8rem 0 .4rem; font-size: .88rem;
+  color: var(--text-dim); }
+.expect-reveal .output-block { border-left-color: var(--flag, #e0705c); }
+.expect-reveal .output-block-label::after { content: " · expected error";
+  color: var(--flag, #e0705c); }
 
 </style>
 <script>

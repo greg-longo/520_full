@@ -2178,6 +2178,13 @@ section.content-section { scroll-margin-top: 68px; }
 :root.theme-light .output-block-label,
 :root.theme-light .output-block .out-idx { color: #6e655d !important; }
 
+/* %%expect cells: the failure is deliberate, so mark it without shouting. */
+.expect-reveal > .expect-note { margin: .8rem 0 .4rem; font-size: .88rem;
+  color: var(--text-dim); }
+.expect-reveal .output-block { border-left-color: var(--flag, #e0705c); }
+.expect-reveal .output-block-label::after { content: " · expected error";
+  color: var(--flag, #e0705c); }
+
 </style>
 <script>
 /**
