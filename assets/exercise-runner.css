@@ -1,7 +1,7 @@
 /* DTSC 520 - live exercise blocks on module pages.
    Companion to assets/exercise-runner.js and the markup emitted by
    tools/notebook_to_site.py. Uses each module page's own accent variables so
-   the blocks inherit that module's colour rather than imposing one. */
+   the blocks inherit that module's color rather than imposing one. */
 
 .exercise-block {
   border: 1px solid var(--border);

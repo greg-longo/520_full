@@ -877,12 +877,13 @@
       <h2>Getting Started</h2>
       <h3 id="python-fundamentals">Python Fundamentals</h3>
       <h4 id="your-commission">Your commission</h4>
-      <p>You&#x27;ve been hired into a university&#x27;s <strong>Institutional Research</strong> office. Your supervisor is <strong>Amy Lee</strong>, the Chief Data Officer, and she has a problem.</p>
-      <p>The University Cabinet is writing a five-year strategic plan, and they want to know what actually supports student success. Lee has assembled a cohort dataset including six tables (see chart below) covering high school experience, undergraduate and graduate experiences, and work experience.</p>
+      <p>You&#x27;ve been hired into your University&#x27;s <strong>Institutional Research</strong> office. Your supervisor is <strong>Amy Lee</strong>, the Chief Data Officer, and she has a problem.</p>
+      <p>The University Cabinet is writing a five-year strategic plan, and they want to know what actually supports student success. Dr. Lee has assembled a cohort dataset including six tables (see chart below) covering high school experience, undergraduate and graduate experiences, and work experience.</p>
       <p>Right now that data is just sitting there. Nobody has looked at it.</p>
+      <p>You meet with Dr. Lee, and it all boils down to this:</p>
       <div class="callout"><em>&quot;I don&#x27;t need a model yet. I need someone who can open the data, understand what it looks like, and tell me what we&#x27;ve actually got. Start there.&quot;</em> - A. Lee</div>
       <p>That&#x27;s what we&#x27;ll cover this module. By the end you&#x27;ll have loaded all six tables in Python, computed summary stats, and printed a schema report for Lee. Later modules use the same cohort with better tools: NumPy in Module 3, pandas in Module 4, MatPlotLib in Module 5.</p>
-      <p>The data is <strong>synthetic</strong> - generated for this course. No real student records are used anywhere in DTSC 520.</p>
+      <p>The data is <strong>synthetic</strong> - generated for this course. <strong>No real student records are used anywhere in our courses.</strong></p>
       <figure class="nb-figure"><img src="assets/fig-672d2f2e80.png" alt="The six tables of the cohort, all joined on student_id" loading="lazy"><figcaption>The six tables of the cohort, all joined on student_id</figcaption></figure>
       <h4 id="sources-and-acknowledgments">Sources and acknowledgments</h4>
       <p>This notebook is a mix. Some of it is original to Eastern University, some is taken closely from published work, and some is adapted from it. You should know which is which, both because attribution matters and because the originals are worth reading on their own.</p>
@@ -948,12 +949,12 @@
       </div>
       <pre><code><span class="fn">print</span>(-<span class="nm">7</span> // <span class="nm">2</span>)
 <span class="fn">print</span>(-<span class="nm">7</span> % <span class="nm">2</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 -<span class="out-num">4</span>
 <span class="out-num">1</span>
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>-4</code> and <code>1</code>, and both are worth a second look.</p>
       <p><code>-7 / 2</code> is <code>-3.5</code>. Rounding <em>down</em> from there gives <code>-4</code>, because -4 is below -3.5 on the number line. If you expected <code>-3</code> you were rounding toward zero, which is what most calculators do and what several other languages do.</p>
       <p>The modulus is stranger: <code>-7 % 2</code> is <code>1</code>, not <code>-1</code>. In Python the sign of the result follows the <strong>divisor</strong>, not the dividend. One consequence is genuinely useful - <code>n % 2 == 0</code> correctly identifies even numbers whether <code>n</code> is positive or negative, which is not true in every language.</p>
@@ -1014,11 +1015,11 @@ student_id % <span class="nm">10</span></code></pre>
         <strong>Predict.</strong> What will <code>6 + 6 ** 2</code> produce? Is it <code>144</code> or <code>42</code>?  Commit to an answer before you run the next cell.
       </div>
       <pre><code><span class="nm">6</span> + <span class="nm">6</span> ** <span class="nm">2</span></code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 <span class="out-num">42</span>
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>42</code>. The exponentiation happened first: <code>6 ** 2</code> is <code>36</code>, then <code>6 + 36</code>. If Python had worked strictly left to right you&#x27;d have gotten <code>12 ** 2</code>, or <code>144</code>.</p>
       <p>Whitespace makes no difference to Python here: <code>6+6**2</code> gives the same answer. It&#x27;s only for your eyes.</p>
       </details>
@@ -1143,6 +1144,7 @@ str
       </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code><span class="st">&#x27;126&#x27;</span> / <span class="nm">3</span></code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 ────────────────────────────────────────────────────────────────
@@ -1152,7 +1154,6 @@ Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
 TypeError: unsupported operand type(s) for /: &#x27;str&#x27; and &#x27;int&#x27;
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>A <strong>TypeError</strong>. The message is worth reading closely: <code>unsupported operand type(s) for /: &#x27;str&#x27; and &#x27;int&#x27;</code>.</p>
       <p>Python is telling you exactly what went wrong: the <code>/</code> operator doesn&#x27;t know how to divide a <code>str</code> by an <code>int</code>. The values in an expression are called <strong>operands</strong>, which is where that wording comes from.</p>
       <p>This error is not Python being difficult. It&#x27;s Python refusing to guess. In a language that guesses, <code>&#x27;126&#x27; / 3</code> might silently produce something wrong, and you&#x27;d find out three steps later.</p>
@@ -1215,12 +1216,12 @@ ValueError: invalid literal for int() with base <span class="out-num">10</span>:
       <pre><code>population = <span class="nm">1</span>,<span class="nm">000</span>,<span class="nm">000</span>
 <span class="fn">print</span>(population)
 <span class="fn">print</span>(<span class="fn">type</span>(population))</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 (<span class="out-num">1</span>, <span class="out-num">0</span>, <span class="out-num">0</span>)
 &lt;class &#x27;tuple&#x27;&gt;
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>Not a number at all - <code>(1, 0, 0)</code>, of type <code>tuple</code>.</p>
       <p>In Python, commas separate values, so <code>1,000,000</code> is three separate integers - <code>1</code>, <code>0</code>, and <code>0</code> - bundled into something called a <strong>tuple</strong>. No error, no warning, and every calculation downstream is quietly wrong.</p>
       <p>This is the worst kind of bug: the silent kind. If you need a thousands separator for readability, Python accepts underscores instead.</p>
@@ -1270,7 +1271,7 @@ ValueError: invalid literal for int() with base <span class="out-num">10</span>:
       </div>
       <h3 id="variables-and-statements">Variables and statements</h3>
       <p>So far every result has vanished the moment it was displayed. A <strong>variable</strong> lets you keep a value and give it a name.</p>
-      <p>Naming things is not a convenience. It&#x27;s most of what makes code readable.</p>
+      <p>Naming things well is most of what makes code readable.</p>
       <pre><code>credits_earned = <span class="nm">124</span></code></pre>
       <p>Notice: <strong>no output</strong>. This is an <strong>assignment statement</strong>, and a statement performs an action rather than producing a value. It has three parts - the variable name on the left, the <code>=</code> <strong>assignment operator</strong>, and an expression on the right.</p>
       <p>The value is now stored under that name. Ask for the name and you get the value:</p>
@@ -1322,11 +1323,11 @@ attempts</code></pre>
       <pre><code>count = <span class="nm">5</span>
 count = count + <span class="nm">3</span>
 count</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 <span class="out-num">8</span>
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>8</code>. Python evaluates the right side first - <code>count + 3</code> is <code>5 + 3</code>, or <code>8</code> - and <em>then</em> stores that result back under the name <code>count</code>. The old value of <code>5</code> is overwritten in the process.</p>
       <p>Read <code>=</code> as &quot;gets&quot; rather than &quot;equals&quot; and this stops being confusing: <code>count</code> <em>gets</em> <code>count + 3</code>.</p>
       </details>
@@ -1604,11 +1605,11 @@ university[<span class="nm">0</span>]</code></pre>
         <strong>Predict.</strong> The string has 18 characters. What does <code>university[-0]</code> give you?  Commit to an answer before you run the next cell.
       </div>
       <pre><code>university[-<span class="nm">0</span>]</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 &#x27;E&#x27;
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>&#x27;E&#x27;</code> - the first character, not the last.</p>
       <p>There is no <code>-0</code>. Zero and negative zero are the same number, so <code>[-0]</code> is just <code>[0]</code>. Counting forward starts at <code>0</code>; counting backward starts at <code>-1</code>. The asymmetry is annoying but you only have to learn it once.</p>
       </details>
@@ -1894,11 +1895,11 @@ Prepared for the University Cabinet
         <strong>Predict.</strong> What do you get if you leave the parentheses off - <code>show_commission</code> with no <code>()</code>?  Commit to an answer before you run the next cell.
       </div>
       <pre><code>show_commission</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 &lt;function __main__.show_commission()&gt;
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>Not the output - a description of the function object itself.</p>
       <p>Without parentheses you&#x27;re referring to the function as a <em>value</em>, the same way <code>gpa</code> refers to a number. With parentheses you&#x27;re telling Python to <em>run</em> it. This distinction shows up again in Module 4, where you hand functions to pandas as arguments without calling them.</p>
       </details>
@@ -1972,12 +1973,12 @@ A
       </div>
       <pre><code>result = <span class="fn">show_letter_grade</span>(<span class="nm">3.81</span>)
 <span class="fn">print</span>(<span class="st">f&quot;result is {result}, of type {type(result)}&quot;</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 A
 result is None, of type &lt;class &#x27;NoneType&#x27;&gt;
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>result</code> is <code>None</code>.</p>
       <p>The function printed <code>&quot;A&quot;</code> as a side effect, then ended without returning anything - and a function that returns nothing returns <code>None</code>, a special value meaning &quot;no value at all.&quot; The text went to the screen, where you can read it but your program can&#x27;t.</p>
       <p><code>None</code> showing up unexpectedly almost always means this: a function printed when it should have returned.</p>
@@ -2227,11 +2228,11 @@ False
         <strong>Predict.</strong> <code>gpa</code> is 3.81 and <code>credits</code> is 124. What does <code>gpa &gt;= 3.9 and credits &gt;= 120 or gpa &gt;= 3.5</code> give?  Commit to an answer before you run the next cell.
       </div>
       <pre><code>gpa &gt;= <span class="nm">3.9</span> <span class="kw">and</span> credits &gt;= <span class="nm">120</span> <span class="kw">or</span> gpa &gt;= <span class="nm">3.5</span></code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 True
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>True</code> - but if you had to think hard about <em>why</em>, that&#x27;s the lesson.</p>
       <p><code>and</code> binds more tightly than <code>or</code>, so Python reads it as <code>(gpa &gt;= 3.9 and credits &gt;= 120) or (gpa &gt;= 3.5)</code>. The first group is <code>False</code>, the second is <code>True</code>, so the <code>or</code> is <code>True</code>.</p>
       <p>Correct, and unreadable. Add the parentheses even when you don&#x27;t need them - the next person to read this, including you, shouldn&#x27;t have to remember an operator precedence table.</p>
@@ -2320,6 +2321,7 @@ at risk
 
 <span class="fn">print</span>(<span class="st">&quot;--- if version ---&quot;</span>)
 <span class="fn">standing_if</span>(<span class="nm">3.81</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 --- elif version ---
@@ -2329,7 +2331,6 @@ excellent
 good
 satisfactory
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>The <code>if</code> version prints <strong>three</strong> lines: <code>excellent</code>, <code>good</code>, and <code>satisfactory</code>.</p>
       <p>Separate <code>if</code> statements are independent questions. Python asks all three, and <code>3.81</code> satisfies all three, so all three bodies run. A chain of <code>elif</code> is one question with several possible answers - at most one body runs.</p>
       <p>Worse, look at that <code>else</code>. It&#x27;s attached only to the <em>last</em> <code>if</code>, so it fires whenever <code>gpa &lt; 2.0</code>, regardless of the earlier branches. Try <code>standing_if(1.5)</code> and you&#x27;ll get <code>at risk</code> alone, which happens to be right. Try it on a value where the branches disagree and the logic falls apart.</p>
@@ -2567,12 +2568,12 @@ scores</code></pre>
 scores.<span class="fn">append</span>([<span class="nm">70</span>, <span class="nm">75</span>])
 <span class="fn">print</span>(scores)
 <span class="fn">print</span>(<span class="st">f&quot;length: {len(scores)}&quot;</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>, <span class="out-num">93</span>, <span class="out-num">85</span>, <span class="out-num">91</span>, [<span class="out-num">70</span>, <span class="out-num">75</span>]]
 length: <span class="out-num">7</span>
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>Length <code>7</code>, not <code>8</code>.</p>
       <p><code>.append()</code> adds <strong>one</strong> element, and that one element happens to itself be a list. You get a <strong>nested</strong> list: six numbers and then a list sitting in position</p>
       <ol><li>Look at the output and you can see the inner brackets.</li></ol>
@@ -2676,12 +2677,12 @@ scores.<span class="fn">append</span>(<span class="nm">999</span>)
 
 <span class="fn">print</span>(<span class="st">f&quot;scores: {scores}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;backup: {backup}&quot;</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 scores: [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>, <span class="out-num">999</span>]
 backup: [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>, <span class="out-num">999</span>]
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>backup</code> changed too.</p>
       <p><code>backup = scores</code> did <strong>not</strong> copy the list. It gave the same list a second name. Both names refer to one object in memory, so a change made through either name is visible through both. This is called <strong>aliasing</strong>.</p>
       </details>
@@ -2854,11 +2855,11 @@ True
         <strong>Predict.</strong> <code>3.02</code> is one of the values. What does <code>3.02 in gpa_by_name</code> return?  Commit to an answer before you run the next cell.
       </div>
       <pre><code><span class="nm">3.81</span> <span class="kw">in</span> gpa_by_name</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 False
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>False</code>. **<code>in</code> checks keys, not values.**</p>
       <p>This is a genuine gotcha, and the fix is to say what you mean - ask for the values explicitly with <code>.values()</code>.</p>
       </details>
@@ -3497,6 +3498,7 @@ clean_roster</code></pre>
       </div>
       <pre><code><span class="kw">for</span> name <span class="kw">in</span> clean_roster:
     <span class="fn">print</span>(<span class="st">f&quot;[{name}]&quot;</span>)     <span class="cm"># brackets make the whitespace visible</span></code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 [Amara Okonkwo]
@@ -3510,7 +3512,6 @@ clean_roster</code></pre>
 [Rosalind Achebe]
 [Jian-Wei Chen]
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>Sofia  Marchetti</code> still has two spaces between first and last name.</p>
       <p><code>.strip()</code> only removes whitespace from the <strong>ends</strong> of a string, exactly as promised in section 4. It has nothing to say about whitespace in the middle. Our <code>clean_name</code> function did what it was written to do, and what it was written to do was not enough.</p>
       <p>This is the most common way data cleaning fails: not with an error, but with code that runs happily and quietly leaves the problem in place. Had we not printed the values and looked at them, this would have traveled all the way into the Cabinet&#x27;s report.</p>

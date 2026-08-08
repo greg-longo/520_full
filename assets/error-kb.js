@@ -7,7 +7,7 @@
  *      asking it to do the work. A course-hosted assistant sits exactly on that
  *      line. A lookup cannot be mistaken for one.
  *   2. A lookup cannot be confidently wrong. When it does not recognize
- *      something it says so, which is the behaviour we want a student to copy.
+ *      something it says so, which is the behavior we want a student to copy.
  *
  * Each entry:
  *   type      the exception name as Python prints it

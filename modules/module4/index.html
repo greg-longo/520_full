@@ -501,7 +501,7 @@
       <h3 id="pandas">pandas</h3>
       <p>Modules 2 and 3 gave you ten students. You held them in dictionaries, then in NumPy arrays, and everything worked, because ten students chosen for a lesson are tidy by construction.</p>
       <p>This module opens the actual extract. <strong>One hundred and two rows</strong>, the same students, the same columns - and every problem that ten clean records were hiding.</p>
-      <p>By the end you will have taken that file from &quot;unusable&quot; to &quot;ready to analyze&quot;, and you will be able to say exactly what you changed and why. That record of what you changed is not paperwork. It is the difference between a finding and a guess.</p>
+      <p>By the end you will have taken that file from &quot;unusable&quot; to &quot;ready to analyze&quot;, and you will be able to say exactly what you changed and why. That record is what lets somebody else tell your finding from a guess.</p>
       <h4 id="what-you-already-know-that-transfers">What you already know that transfers</h4>
       <p>You are not starting from zero here. Three things carry straight over:</p>
       <table class="data-table"><thead><tr><th>From</th><th>Becomes</th></tr></thead><tbody><tr><td>Module 2&#x27;s <code>.get(key, 0) + 1</code> counting</td><td><code>value_counts()</code> and <code>groupby</code></td></tr><tr><td>Module 2&#x27;s <code>is None</code> guard</td><td><code>isna()</code> and the missing-data decision</td></tr><tr><td>Module 3&#x27;s boolean masks</td><td>the same masks, now with labels attached</td></tr><tr><td>Module 3&#x27;s views versus copies</td><td><code>SettingWithCopyWarning</code></td></tr></tbody></table>
@@ -541,13 +541,13 @@ order  = np.<span class="fn">argsort</span>(-ug_gpa)
       </div>
       <pre><code><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):
     <span class="fn">print</span>(<span class="st">f&quot;{names[order][i]:20} gpa {ug_gpa[order][i]:.2f}   logins {logins[i]}&quot;</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 Amara Okonkwo        gpa <span class="out-num">3.02</span>   logins <span class="out-num">3.4</span>
 Priya Raghunathan    gpa <span class="out-num">2.80</span>   logins <span class="out-num">0.4</span>
 Devin Castellanos    gpa <span class="out-num">1.99</span>   logins <span class="out-num">4.4</span>
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>Priya&#x27;s GPA is now printed next to Amara&#x27;s login count.</p>
       <p>Nothing failed. No exception, no warning, no obviously wrong number - Priya plausibly could log in 3.4 times a week. This is the most dangerous class of bug in data work: the kind that produces a publishable-looking answer.</p>
       <p>The fix is not &quot;be careful.&quot; The fix is a data structure that carries the label with the value.</p>
@@ -612,12 +612,12 @@ Index([&#x27;Amara Okonkwo&#x27;, &#x27;Devin Castellanos&#x27;, &#x27;Priya Rag
       </div>
       <pre><code><span class="fn">print</span>(gpa.iloc[<span class="nm">0</span>])                 <span class="cm"># by position</span>
 <span class="fn">print</span>(gpa[<span class="st">&quot;Amara Okonkwo&quot;</span>])        <span class="cm"># by label</span></code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 <span class="out-num">3.02</span>
 <span class="out-num">3.02</span>
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>Both give 3.02, because Amara is the first entry.</p>
       <p>They agree here, which is exactly why this is worth flagging. When the index is made of strings, position and label are different questions that happen to have the same answer. When the index is made of <em>numbers</em> - which it will be, in about ten minutes, when we load a file keyed on <code>student_id</code> - they come apart, and <code>gpa[1001]</code> becomes genuinely ambiguous.</p>
       <p>That ambiguity is why <code>.loc</code> and <code>.iloc</code> exist. Section 3.</p>
@@ -731,6 +731,9 @@ Name: <span class="out-num">1003</span>, dtype: object
       </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises KeyError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>students.loc[<span class="nm">0</span>]</code></pre>
+      <div class="callout callout-warn"><div class="callout-label">This code raises IndexError on purpose</div>Read the error rather than avoiding it.</div>
+      <pre><code>students.iloc[<span class="nm">1003</span>]</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 ────────────────────────────────────────────────────────────────
@@ -753,8 +756,6 @@ Traceback (most recent call last):
   File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/pandas/core/indexing.py&quot;, line <span class="out-num">1432</span>, in _getitem_axis
 ... [<span class="out-num">4</span> more lines]
       </div>
-      <div class="callout callout-warn"><div class="callout-label">This code raises IndexError on purpose</div>Read the error rather than avoiding it.</div>
-      <pre><code>students.iloc[<span class="nm">1003</span>]</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
 ────────────────────────────────────────────────────────────────
@@ -770,7 +771,6 @@ Traceback (most recent call last):
     raise IndexError(&quot;single positional indexer is out-of-bounds&quot;)
 IndexError: single positional indexer is out-of-bounds
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>Both fail, and the two error types tell you which question you asked.</p>
       <p><code>.loc[0]</code> is a <strong>KeyError</strong>: you asked for the student whose id is 0, and there is no such student. <code>.iloc[1003]</code> is an <strong>IndexError</strong>: you asked for the 1,004th row of a three-row table.</p>
       <p>Read those two words as the question you asked. KeyError means &quot;no such label.&quot; IndexError means &quot;no such position.&quot;</p>
@@ -932,6 +932,9 @@ RangeIndex(start=<span class="out-num">0</span>, stop=<span class="out-num">102<
       </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises KeyError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>raw.loc[<span class="nm">1003</span>]</code></pre>
+      <pre><code>row = raw.loc[<span class="nm">7</span>]
+<span class="fn">print</span>(row[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;name&quot;</span>]])</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 ────────────────────────────────────────────────────────────────
@@ -954,15 +957,12 @@ Traceback (most recent call last):
     return self.obj.xs(label, axis=axis)
 ... [<span class="out-num">1</span> more lines]
       </div>
-      <pre><code>row = raw.loc[<span class="nm">7</span>]
-<span class="fn">print</span>(row[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;name&quot;</span>]])</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
 student_id          <span class="out-num">1008</span>
 name          Imani Ruiz
 Name: <span class="out-num">7</span>, dtype: object
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>The first fails, which is survivable. <strong>The second is the dangerous one.</strong></p>
       <p><code>raw.loc[1003]</code> raises a KeyError because there is no row <em>labeled</em> 1003 - the labels are now 0 to 101. Annoying, but it tells you immediately.</p>
       <p><code>raw.loc[7]</code> succeeds, and returns student 1008. You asked for a label, the label 7 exists because the index is just row numbers, and you got a student who has nothing to do with the number you typed. No error, no warning, wrong student.</p>
@@ -1007,12 +1007,14 @@ Name: <span class="out-num">1003</span>, dtype: object
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;rows    {raw.shape[0]}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;columns {raw.shape[1]}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;distinct student_ids {raw.student_id.nunique()}&quot;</span>)</code></pre>
+      <details class="debrief"><summary>Reveal the output</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 rows    <span class="out-num">102</span>
 columns <span class="out-num">15</span>
 distinct student_ids <span class="out-num">100</span>
       </div>
+      </details>
       <p><code>.nunique()</code> returns the <strong>count</strong> of distinct values. <code>.unique()</code> returns the distinct values themselves, as an array - useful when the column is categorical and you want to see the categories rather than count them.</p>
       <pre><code><span class="fn">print</span>(raw.success.<span class="fn">unique</span>())        <span class="cm"># the values</span>
 <span class="fn">print</span>(raw.success.<span class="fn">nunique</span>())       <span class="cm"># how many there are</span></code></pre>
@@ -1024,13 +1026,13 @@ distinct student_ids <span class="out-num">100</span>
       <details class="debrief"><summary>What happened</summary>
       <p><strong>102 rows, but only 100 distinct students.</strong></p>
       <p>The file has more rows than there are people in it. That is not a rounding error and it is not something to shrug at - it means at least one student is counted twice in every average you compute from this file.</p>
-      <p>Do not fix it yet. Write it down. We are going to catalog every problem in this file before changing any of it, and section 6 is where the fixing happens.</p>
+      <p>Do not fix it yet. Write it down. We are going to catalogue every problem in this file before changing any of it, and section 6 is where the fixing happens.</p>
       </details>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>Diagnose the whole file before you clean any of it.</strong></p>
       <p>The temptation is to fix each problem the moment you find it. Resist it. Cleaning changes what the next diagnostic reports, so a half-cleaned file tells you a half-true story about itself - and you will not be able to reconstruct what the raw data actually looked like.</p>
-      <p>Catalog first. Clean once, deliberately, in one place. That is also what makes your cleaning reproducible by somebody else, which is the actual standard.</p>
+      <p>Catalogue first. Clean once, deliberately, in one place. That is also what makes your cleaning reproducible by somebody else, which is the actual standard.</p>
       </div>
       <h3 id="info-the-single-most-useful-command-in-pandas"><code>.info()</code> - the single most useful command in pandas</h3>
       <pre><code>raw.<span class="fn">info</span>()</code></pre>
@@ -1081,6 +1083,7 @@ Length: <span class="out-num">15</span>, dtype: object
       </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises TypeError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>raw.submission_rate.<span class="fn">mean</span>()</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 ────────────────────────────────────────────────────────────────
@@ -1096,7 +1099,6 @@ Traceback (most recent call last):
     return self._reduce(
 TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27;
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>submission_rate</code> is <code>object</code> - pandas&#x27;s label for &quot;these are Python objects, most likely strings.&quot;</p>
       <p>The percent sign makes each value text. <code>&quot;84%&quot;</code> is not a number, so the whole column is not numbers, so arithmetic on it fails. One character per cell has disabled an entire column.</p>
       <p>This is the single most common real-world data problem there is, and it is why <code>.info()</code> is the first thing you run. Section 7 fixes it.</p>
@@ -1188,6 +1190,7 @@ dtype: int64
 <span class="fn">print</span>()
 <span class="fn">print</span>(<span class="st">f&quot;rows missing ALL three:  {raw[lms].isna().all(axis=1).sum()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;rows missing ANY of them: {raw[lms].isna().any(axis=1).sum()}&quot;</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 logins_per_week     <span class="out-num">17</span>
@@ -1198,7 +1201,6 @@ dtype: int64
 rows missing ALL three:  <span class="out-num">17</span>
 rows missing ANY of them: <span class="out-num">17</span>
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>The same rows are missing all three, so this is not three separate problems - it is one problem. An entire LMS record failed to attach for some students.</p>
       <p><code>.all(axis=1)</code> and <code>.any(axis=1)</code> are Module 3&#x27;s <code>any</code> and <code>all</code>, with <code>axis=1</code> meaning &quot;across the columns, per row.&quot; The idea has not changed.</p>
       </details>
@@ -1297,13 +1299,13 @@ max      <span class="out-num">3.440000</span>       <span class="out-num">1.400
 
 <span class="fn">print</span>(<span class="st">f&quot;rows with attendance above 100%: {len(bad)}&quot;</span>)
 bad[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;name&quot;</span>, <span class="st">&quot;hs_attendance&quot;</span>]]</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 rows with attendance above <span class="out-num">100</span>%: <span class="out-num">1</span>
    student_id        name  hs_attendance
 <span class="out-num">7</span>        <span class="out-num">1008</span>  Imani Ruiz            <span class="out-num">1.4</span>
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>An attendance rate of 1.4 means attending 140% of school days.</p>
       <p>Nothing in the file is going to flag this. The dtype is <code>float64</code>, which is correct; the value is a number, which is correct; every computation you run on it will succeed. Only knowing what the column <em>means</em> catches it.</p>
       <p>That is why <code>.describe()</code> belongs in the diagnosis step. You are not looking at the mean - you are looking at the min and max and asking whether they are possible.</p>
@@ -1412,11 +1414,11 @@ rows: <span class="out-num">100</span>, last label: <span class="out-num">99</sp
       </div>
       <pre><code>gaps = [i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(raw)) <span class="kw">if</span> i <span class="kw">not</span> <span class="kw">in</span> <span class="fn">set</span>(deduped.index)]
 <span class="fn">print</span>(<span class="st">f&quot;labels missing from the index: {gaps}&quot;</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 labels missing from the index: [<span class="out-num">100</span>, <span class="out-num">101</span>]
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>Dropping rows removes their labels but does not renumber anything. The index still runs to 101 with two holes in it, because labels are identifiers, not positions - the same distinction from section 4.</p>
       <p>Usually harmless. It bites when you later assume <code>.iloc[i]</code> and <code>.loc[i]</code> agree, or when you write the file out and someone reads the index as a row count.</p>
       </details>
@@ -1560,11 +1562,11 @@ TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27
       </div>
       <pre><code>stripped = clean.submission_rate.<span class="fn">str</span>.<span class="fn">rstrip</span>(<span class="st">&quot;%&quot;</span>)
 <span class="fn">print</span>(stripped.dtype)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 object
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>Still <code>object</code>. Removing the <code>%</code> left strings that happen to look like numbers, which is not the same as numbers.</p>
       <p><code>&quot;84&quot;</code> and <code>84</code> are different objects. The conversion is a second, separate step - and this is the step everybody forgets.</p>
       </details>
@@ -1772,7 +1774,7 @@ decisions</code></pre>
         <div class="callout-label">Takeaway</div>
         <p><strong>Write this table before you write a single finding.</strong></p>
       <p>Every number you report later is conditional on these four choices. A reader who disagrees with one of them needs to know it was made, and you need to be able to say why - which is much harder to reconstruct a week later than to record now.</p>
-      <p>The capstone asks for exactly this table. It is not documentation of the work. It is part of the work.</p>
+      <p>The capstone asks for exactly this table. Build it as you go, not afterwards from memory.</p>
       </div>
       <p><strong>Your turn.</strong></p>
       <p>The median fill above used the median of <em>all</em> students who had a value.</p>
@@ -1877,6 +1879,7 @@ students low on both measures: <span class="out-num">17</span>
       </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>clean.logins_per_week &lt; <span class="nm">1.5</span> <span class="kw">and</span> clean.ug_gpa &lt; <span class="nm">2.5</span></code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 ────────────────────────────────────────────────────────────────
@@ -1888,7 +1891,6 @@ Traceback (most recent call last):
     raise ValueError(
 ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>&quot;The truth value of a Series is ambiguous.&quot;</p>
       <p><code>and</code> wants to reduce each side to a single <code>True</code> or <code>False</code>, and a hundred booleans cannot answer that question - pandas refuses to guess whether you meant &quot;any&quot; or &quot;all&quot;. <code>&amp;</code> is the element-wise version, which is what you actually want: compare row by row.</p>
       <p>The parentheses matter for a duller reason. <code>&amp;</code> binds more tightly than <code>&lt;</code>, so without them Python reads <code>1.5 &amp; clean.ug_gpa</code> and fails somewhere confusing.</p>
@@ -2234,12 +2236,12 @@ course_score       identical: True
       </div>
       <pre><code><span class="fn">print</span>(<span class="st">&quot;rebuilt: &quot;</span>, rebuilt.submission_rate.dtype, rebuilt.submission_rate.<span class="fn">dropna</span>().<span class="fn">head</span>(<span class="nm">2</span>).<span class="fn">tolist</span>())
 <span class="fn">print</span>(<span class="st">&quot;clean:   &quot;</span>, clean.submission_rate.dtype, clean.submission_rate.<span class="fn">dropna</span>().<span class="fn">head</span>(<span class="nm">2</span>).<span class="fn">tolist</span>())</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 rebuilt:  object [&#x27;<span class="out-num">69</span>%&#x27;, &#x27;<span class="out-num">84</span>%&#x27;]
 clean:    float64 [<span class="out-num">0.69</span>, <span class="out-num">0.84</span>]
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>They hold the same information and they are not equal.</p>
       <p><code>rebuilt</code> came straight from <code>lms_activity.csv</code>, so <code>submission_rate</code> is still the raw <code>&quot;84%&quot;</code> string. <code>clean</code> went through section 7, so it is a float.</p>
       <p>Nothing is wrong. It is a reminder that <strong>merging is not cleaning</strong> - joining five raw tables gives you one raw table, and every cleaning decision from sections 6 to 8 still has to be applied afterwards. In a real pipeline the cleaning is written once as a function and called on whatever arrives.</p>
@@ -2333,13 +2335,13 @@ Name: count, dtype: int64
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;missing logins:      {clean.logins_per_week.isna().sum()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;missing band:        {clean.engagement_band.isna().sum()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;rows counted above:  {clean.engagement_band.value_counts().sum()} of {len(clean)}&quot;</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 missing logins:      <span class="out-num">15</span>
 missing band:        <span class="out-num">15</span>
 rows counted above:  <span class="out-num">85</span> of <span class="out-num">100</span>
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>None of them. <code>pd.cut</code> returns <code>NaN</code> for a value it cannot place, so the missing students are missing from the bands too.</p>
       <p>This is the correct behavior and it is easy to miss, because <code>value_counts()</code> <strong>excludes NaN by default</strong> - the bands do not add up to the number of students, and nothing on screen says so unless you check. Read the three numbers the cell just printed rather than taking my word for it.</p>
       <p><code>value_counts(dropna=False)</code> shows them. Get in the habit: any time a count matters, confirm it sums to the number of rows you started with.</p>

@@ -588,13 +588,13 @@ t_vector = %timeit -o -<span class="fn">q</span> (<span class="nm">1.0</span> / 
 <span class="fn">print</span>(<span class="st">f&quot;loop over big_list    {t_list.average * 1000:8.2f} ms&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;loop over big_array   {t_array.average * 1000:8.2f} ms&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;vectorized            {t_vector.average * 1000:8.3f} ms&quot;</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 loop over big_list        <span class="out-num">8.46</span> ms
 loop over big_array     <span class="out-num">221.12</span> ms
 vectorized               <span class="out-num">0.101</span> ms
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>Two things to notice, and the second one is the surprise.</p>
       <p><strong>The vectorized version is enormously faster than the loop.</strong> Two orders of magnitude, from code that is also shorter. That is the difference between an analysis that runs while you read the question and one that runs while you go get coffee. On Lee&#x27;s eighty thousand rows, across the dozen metrics the Cabinet will eventually ask for, it is the difference between a working pipeline and an abandoned one.</p>
       <p><strong>But looping over the array was far slower than looping over the list</strong> - same numbers, same function, same arithmetic. That is not a typo in your output, and it means the speedup you quote depends on which loop you compare against.</p>
@@ -731,12 +731,12 @@ array([[ <span class="out-num">5.25</span>,  <span class="out-num">7.5</span> , 
         <strong>Predict.</strong> Did <code>points_per_game</code> itself change? What does it hold now?  Commit to an answer before you run the next cell.
       </div>
       <pre><code>points_per_game</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 array([[<span class="out-num">21</span>, <span class="out-num">30</span>,  <span class="out-num">6</span>,  <span class="out-num">7</span>,  <span class="out-num">8</span>, <span class="out-num">21</span>, <span class="out-num">18</span>, <span class="out-num">19</span>, <span class="out-num">10</span>, <span class="out-num">23</span>],
        [<span class="out-num">12</span>, <span class="out-num">13</span>, <span class="out-num">24</span>, <span class="out-num">41</span>, <span class="out-num">23</span>, <span class="out-num">22</span>, <span class="out-num">24</span>, <span class="out-num">31</span>,  <span class="out-num">0</span>, <span class="out-num">37</span>]])
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>Unchanged. <code>points_per_game / 4</code> computed a <strong>new</strong> array and handed it back; nothing was stored.</p>
       <p>This is the single most common NumPy mistake among students, and it&#x27;s the same lesson as <code>.strip()</code> in Module 2: the operation returns a result, and if you want to keep it you must assign it.</p>
       <pre><code>per_quarter = points_per_game / <span class="nm">4</span>      <span class="cm"># keeps the result</span>
@@ -921,12 +921,12 @@ bool
       <pre><code>mixed = np.<span class="fn">array</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3.5</span>])
 <span class="fn">print</span>(mixed)
 <span class="fn">print</span>(mixed.dtype)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 [<span class="out-num">1</span>.  <span class="out-num">2</span>.  <span class="out-num">3.5</span>]
 float64
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>float64</code>, and look closely at the values: <code>1.</code> and <code>2.</code> have gained decimal points.</p>
       <p>NumPy <strong>upcast</strong> the integers to floats, because a float can represent an integer without loss but not the reverse. It picks the type that holds everything, silently.</p>
       <p>Silently is the important word. Nothing warned you that your integer counts are now floats.</p>
@@ -1111,6 +1111,7 @@ row.shape = (<span class="out-num">3</span>,)
       </div>
       <div class="callout callout-warn"><div class="callout-label">This code raises ValueError on purpose</div>Read the error rather than avoiding it.</div>
       <pre><code>M + np.<span class="fn">array</span>([<span class="nm">10</span>, <span class="nm">20</span>])</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 ────────────────────────────────────────────────────────────────
@@ -1120,7 +1121,6 @@ Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
 ValueError: operands could not be broadcast together with shapes (<span class="out-num">2</span>,<span class="out-num">3</span>) (<span class="out-num">2</span>,)
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>A <code>ValueError</code>, and the message is one to memorize: <code>operands could not be broadcast together with shapes (2,3) (2,)</code>.</p>
       <p>Reading right to left: <code>3</code> against <code>2</code>. Not equal, neither is <code>1</code>, so there is no way to line them up. NumPy will not guess.</p>
       <p>You might reasonably have expected this to work - <code>M</code> has two rows and the array has two elements, so surely one per row? That is a natural thought and it is wrong, because broadcasting aligns from the <strong>right</strong>, not the left. To get the per-row behavior you have to say so explicitly:</p>
@@ -1178,7 +1178,7 @@ min nan, max nan
         <p>Three things are worth carrying out of this section.</p>
       <p><strong>The rule.</strong> Compare shapes from the right. Two dimensions are compatible when they are equal, or when one of them is 1. Nothing else is compatible, and NumPy will not guess on your behalf.</p>
       <p><strong>The direction.</strong> Broadcasting aligns shapes from the right, not the left, which is why a 2-by-3 array and a 2-element array refuse to combine even though &quot;2&quot; appears in both. When you want per-row behavior you have to ask for it, either by reshaping to a column or by inserting an axis with <code>np.newaxis</code>. This is the most common broadcasting mistake, and it is usually not a misunderstanding of the rule so much as an expectation that it works the other way round.</p>
-      <p><strong>Why it matters beyond convenience.</strong> Broadcasting is what lets a formula written for one value apply unchanged to a whole table. The engagement index you will build in section 11 is four lines long, and it would be four lines whether the cohort held ten students or eighty thousand. That is not a saving in typing. It is the difference between code that expresses an idea and code that buries it in bookkeeping.</p>
+      <p><strong>Why it matters beyond convenience.</strong> Broadcasting is what lets a formula written for one value apply unchanged to a whole table. The engagement index you will build in section 11 is four lines long, and it would be four lines whether the cohort held ten students or eighty thousand. Typing less is the smallest part of it. Code like that expresses the idea instead of burying it in bookkeeping.</p>
       <p>When a shape error does appear, remember that the message contains both shapes. Print them, line them up from the right, and the fix is almost always a reshape on one operand.</p>
       </div>
       <h4 id="your-turn-3">Your turn</h4>
@@ -1278,6 +1278,7 @@ shape: (<span class="out-num">10</span>, <span class="out-num">3</span>)
       <pre><code>block = engagement[:<span class="nm">3</span>, :<span class="nm">2</span>]
 <span class="fn">print</span>(block)
 <span class="fn">print</span>(<span class="st">f&quot;shape: {block.shape}&quot;</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 [[<span class="out-num">0.8</span> <span class="out-num">2.5</span>]
@@ -1285,7 +1286,6 @@ shape: (<span class="out-num">10</span>, <span class="out-num">3</span>)
  [<span class="out-num">4.4</span> <span class="out-num">6.6</span>]]
 shape: (<span class="out-num">3</span>, <span class="out-num">2</span>)
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p>Shape <code>(3, 2)</code> - the first three students, their logins and hours only.</p>
       <p>Two slices give you a rectangular block. The mental model that helps: read the comma as &quot;and then.&quot; <em>Rows 0 through 2, and then columns 0 through 1.</em></p>
       </details>
@@ -1337,6 +1337,7 @@ sub[<span class="nm">0</span>] = <span class="nm">99</span>
 <span class="fn">print</span>()
 <span class="fn">print</span>(<span class="st">f&quot;sub is now:      {sub}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;original is now: {original}&quot;</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 original: [<span class="out-num">0</span> <span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">3</span> <span class="out-num">4</span> <span class="out-num">5</span>]
@@ -1345,7 +1346,6 @@ sub:      [<span class="out-num">2</span> <span class="out-num">3</span>]
 sub is now:      [<span class="out-num">99</span>  <span class="out-num">3</span>]
 original is now: [ <span class="out-num">0</span>  <span class="out-num">1</span> <span class="out-num">99</span>  <span class="out-num">3</span>  <span class="out-num">4</span>  <span class="out-num">5</span>]
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>original</code> changed to <code>[0 1 99 3 4 5]</code>.</p>
       <p><code>sub</code> is a <strong>view</strong> - a window onto the same memory, not a new array. Writing through the window writes to the original.</p>
       <p>This differs from lists, and the difference is easy to miss:</p>
@@ -1522,11 +1522,11 @@ hstack: [<span class="out-num">1</span> <span class="out-num">2</span> <span cla
         <strong>Predict.</strong> <code>np.hstack([a, b])</code> gave a 6-element array. What shape does <code>np.vstack([a, b])</code> give?  Commit to an answer before you run the next cell.
       </div>
       <pre><code><span class="fn">print</span>(np.<span class="fn">vstack</span>([a, b]).shape)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 (<span class="out-num">2</span>, <span class="out-num">3</span>)
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>(2, 3)</code> - two rows of three.</p>
       <p><code>hstack</code> extends along the existing axis, keeping it one-dimensional. <code>vstack</code> adds a dimension. The names are about direction, not about dimensionality, which is why people mix them up. If you need to be sure, print the shape.</p>
       <p><code>np.concatenate</code> does both, with an explicit <code>axis</code>, and once you understand <code>axis</code> in section 11 it&#x27;s often the clearer choice.</p>
@@ -1885,12 +1885,12 @@ b = np.<span class="fn">array</span>([<span class="nm">4</span>, <span class="nm
       </div>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;np.maximum(a, b) = {np.maximum(a, b)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;np.max(a)        = {np.max(a)}&quot;</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 np.maximum(a, b) = [<span class="out-num">4</span> <span class="out-num">5</span> <span class="out-num">6</span>]
 np.max(a)        = <span class="out-num">5</span>
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>np.maximum</code> is a <strong>binary ufunc</strong>: it compares two arrays element by element and returns an array the same shape.</p>
       <p><code>np.max</code> is an <strong>aggregate</strong>: it reduces one array to a single value.</p>
       <p>The names are one letter apart and the behaviors are unrelated. <code>maximum</code> for pairwise, <code>max</code> for the biggest. Section 11 is all about aggregates.</p>
@@ -1910,11 +1910,11 @@ np.max(a)        = <span class="out-num">5</span>
         <strong>Predict.</strong> What does <code>grad_gpa.mean()</code> give, with one nan among ten values?  Commit to an answer before you run the next cell.
       </div>
       <pre><code><span class="fn">print</span>(grad_gpa.<span class="fn">mean</span>())</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 nan
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>nan</code>. Not the mean of the nine real values - <code>nan</code>.</p>
       <p>This is exactly right and completely unhelpful. NumPy is refusing to guess what the missing value should have been, which is honest, but it means your summary statistic is now unusable.</p>
       <p>Note also that this is a <strong>silent</strong> failure in the sense that matters: no error, no warning, just a result that is wrong if you don&#x27;t look at it. If a report prints <code>nan</code> you&#x27;ll notice. If it feeds into another calculation first, you may not.</p>
@@ -2039,12 +2039,12 @@ axis=<span class="out-num">1</span>:      [<span class="out-num">1.33</span>  <s
       </div>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;axis=0 -&gt; {engagement.sum(axis=0).shape}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;axis=1 -&gt; {engagement.sum(axis=1).shape}&quot;</span>)</code></pre>
+      <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
 axis=<span class="out-num">0</span> -&gt; (<span class="out-num">3</span>,)
 axis=<span class="out-num">1</span> -&gt; (<span class="out-num">10</span>,)
       </div>
-      <details class="debrief"><summary>What happened</summary>
       <p><code>axis=0</code> gives shape <code>(3,)</code> and <code>axis=1</code> gives <code>(10,)</code>.</p>
       <p>The reliable way to think about it: **<code>axis</code> names the dimension that disappears.** <code>axis=0</code> is the row dimension, so the rows collapse and you&#x27;re left with one value per column.</p>
       <p>Almost everyone&#x27;s first instinct is the opposite - that <code>axis=0</code> means &quot;give me rows.&quot; Check the shape until the correct version becomes automatic.</p>

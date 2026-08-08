@@ -42,7 +42,7 @@
  *
  * NO GRADING. The sims compare output against an expected string. These
  * exercises are open-ended - several have many correct answers - so the runner
- * shows output and errors and leaves judgement to the student and the worked
+ * shows output and errors and leaves judgment to the student and the worked
  * solution below each one.
  *
  * PER-EXERCISE NAMESPACE IS SHARED ON PURPOSE. Cells later in a module rely on
