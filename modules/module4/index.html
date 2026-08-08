@@ -501,12 +501,12 @@
       <h3 id="pandas">pandas</h3>
       <p>Modules 2 and 3 gave you ten students. You held them in dictionaries, then in NumPy arrays, and everything worked, because ten students chosen for a lesson are tidy by construction.</p>
       <p>This module opens the actual extract. <strong>One hundred and two rows</strong>, the same students, the same columns - and every problem that ten clean records were hiding.</p>
-      <p>By the end you will have taken that file from &quot;unusable&quot; to &quot;ready to analyse&quot;, and you will be able to say exactly what you changed and why. That record of what you changed is not paperwork. It is the difference between a finding and a guess.</p>
+      <p>By the end you will have taken that file from &quot;unusable&quot; to &quot;ready to analyze&quot;, and you will be able to say exactly what you changed and why. That record of what you changed is not paperwork. It is the difference between a finding and a guess.</p>
       <h4 id="what-you-already-know-that-transfers">What you already know that transfers</h4>
       <p>You are not starting from zero here. Three things carry straight over:</p>
       <table class="data-table"><thead><tr><th>From</th><th>Becomes</th></tr></thead><tbody><tr><td>Module 2&#x27;s <code>.get(key, 0) + 1</code> counting</td><td><code>value_counts()</code> and <code>groupby</code></td></tr><tr><td>Module 2&#x27;s <code>is None</code> guard</td><td><code>isna()</code> and the missing-data decision</td></tr><tr><td>Module 3&#x27;s boolean masks</td><td>the same masks, now with labels attached</td></tr><tr><td>Module 3&#x27;s views versus copies</td><td><code>SettingWithCopyWarning</code></td></tr></tbody></table>
       <p>pandas is not a new set of ideas. It is the ideas you have, with an index bolted on and the loops written for you.</p>
-      <h4 id="sources-and-acknowledgements">Sources and acknowledgements</h4>
+      <h4 id="sources-and-acknowledgments">Sources and acknowledgments</h4>
       <p>Some of this module is taken closely from published sources, some is adapted, and some is original to Eastern.</p>
       <ul><li>**Wes McKinney, <em>Python for Data Analysis</em>, 3rd edition.** The structure of the selection and cleaning sections follows McKinney&#x27;s treatment. McKinney wrote pandas, and his ordering of <code>.loc</code> before <code>.iloc</code> is deliberate and better than the alternative.</li><li>**Jake VanderPlas, <em>Python Data Science Handbook</em>.** The missing-data, hierarchical-indexing, concatenation and pivot-table material is adapted from it. Text is CC BY-NC-ND, so it is paraphrased rather than copied; the code is MIT.</li><li>**Allen Downey, <em>Think Python</em> 3e** (CC BY-NC-SA 4.0), for the error-reading approach carried through from Module 2.</li><li><strong>Original to Eastern:</strong> the cohort narrative, the diagnosis-before-cleaning sequence in sections 4 to 8, every exercise, and the cleaning decisions the capstone then holds you to.</li></ul>
       <h4 id="the-vocabulary">The vocabulary</h4>
@@ -1510,7 +1510,7 @@ df[mask][<span class="st">&quot;col&quot;</span>] = value          <span class="
 <span class="cm"># nothing today is what catches next term&#x27;s extract.</span></code></pre></details>
       </div>
       <div class="nb-narrative nb-narrative-close">
-        <p>Two problems down. Both were structural, and both had a defensible answer that did not require a judgement call about the students themselves.</p>
+        <p>Two problems down. Both were structural, and both had a defensible answer that did not require a judgment call about the students themselves.</p>
       <p>The next one is different. It is a column that is not broken at all - it simply arrived in the wrong shape.</p>
       </div>
       <h3 id="cleaning-2-the-column-that-is-text">Cleaning 2: the column that is text</h3>
@@ -1658,7 +1658,7 @@ dtype: float64
 <span class="cm"># the same rule as Module 2&#x27;s &quot;functions should return, not print&quot;.</span></code></pre></details>
       </div>
       <div class="nb-narrative nb-narrative-close">
-        <p>The column is numeric, the structure is sound, and the impossible value is gone. Three of the four problems in the inventory are closed, and none of them required a judgement about the students.</p>
+        <p>The column is numeric, the structure is sound, and the impossible value is gone. Three of the four problems in the inventory are closed, and none of them required a judgment about the students.</p>
       <p>The fourth one does, and there is no answer that costs nothing.</p>
       </div>
       <div class="nb-narrative nb-narrative-open">
@@ -3416,7 +3416,7 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
 /* DTSC 520 - live exercise blocks on module pages.
    Companion to assets/exercise-runner.js and the markup emitted by
    tools/notebook_to_site.py. Uses each module page's own accent variables so
-   the blocks inherit that module's colour rather than imposing one. */
+   the blocks inherit that module's color rather than imposing one. */
 
 .exercise-block {
   border: 1px solid var(--border);
@@ -3586,13 +3586,13 @@ details.ex-solution pre { margin-top: 0.6rem; }
      .content p strong  0.9rem    700   --text
 
    So an h3 was LIGHTER than a bold run inside a paragraph (600 against 700) and
-   the same colour, separated only by 0.1rem of size. "Local variables" (an h3)
+   the same color, separated only by 0.1rem of size. "Local variables" (an h3)
    and "Rule of thumb:" (a bolded lead-in) read as the same thing, because by
-   weight and colour they nearly were. h4 had no styling whatsoever.
+   weight and color they nearly were. h4 had no styling whatsoever.
 
    Size alone cannot fix this - there is only 0.45rem of room between the body
    text and h2, and four levels to fit into it. So each level differs on THREE
-   axes at once: size, weight and colour. Colour does most of the work at the
+   axes at once: size, weight and color. Color does most of the work at the
    bottom of the tree, where the size differences have run out.
 
    Applied to `.content-section`, which all seven module pages use, and kept in
@@ -3604,7 +3604,7 @@ details.ex-solution pre { margin-top: 0.6rem; }
    values clear both. */
 
 /* ==========================================================================
-   Light-theme code colours.
+   Light-theme code colors.
    ==========================================================================
    The syntax palette was tuned against the dark background and carried over to
    the light theme unchanged, where it was never legible: inline <code> ran at
@@ -3639,14 +3639,14 @@ details.ex-solution pre { margin-top: 0.6rem; }
    #ffffff, 5.75 on #f5f2ee, 5.31 on #ede9e3, 5.03 on #e8e3dc). */
 /* NO GLOBAL VALUE HERE. Each module has its own accent hue - grey, blue,
    purple, green, orange, teal, maroon - and a single light-theme value paints
-   them all one colour. An earlier version of this file set #6b4fa3 globally,
+   them all one color. An earlier version of this file set #6b4fa3 globally,
    which fixed Module 2 (already purple) and silently repainted the other six.
    The light-theme value lives in each shell, keeping that module's hue. */
 
 /* The sandbox modal (.sb-box) is hardcoded #161412 and stays dark in BOTH
    themes, which is the right call - it holds a CodeMirror editor, and dark
    editors are what people expect. But that makes it a pocket of dark surface
-   inside the light theme, and every light-theme text colour is picked to sit on
+   inside the light theme, and every light-theme text color is picked to sit on
    a light background. Darkening --accent-light above fixed it on the light
    surfaces and necessarily made it worse here.
 
@@ -3718,7 +3718,7 @@ details.ex-solution pre { margin-top: 0.6rem; }
 }
 
 /* h4 sits below h3 and must still outrank a bold run. It gives up size to do
-   that and takes the accent colour instead - by this depth size has nothing
+   that and takes the accent color instead - by this depth size has nothing
    left to give. */
 .content-section h4 {
   font-size: 1rem;
@@ -4313,7 +4313,7 @@ section.content-section { scroll-margin-top: 68px; }
  *
  * NO GRADING. The sims compare output against an expected string. These
  * exercises are open-ended - several have many correct answers - so the runner
- * shows output and errors and leaves judgement to the student and the worked
+ * shows output and errors and leaves judgment to the student and the worked
  * solution below each one.
  *
  * PER-EXERCISE NAMESPACE IS SHARED ON PURPOSE. Cells later in a module rely on

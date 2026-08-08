@@ -666,7 +666,7 @@ window.advance=advance;
    work. This tells them the truth, shows what they earned, and keeps their
    report where they can read it.
 
-   Deliberately not a percentage. The capstone is built around judgement calls
+   Deliberately not a percentage. The capstone is built around judgment calls
    with costs, and a progress bar nudges toward completing over deciding well. */
 function renderEndOfBuild(){
   const built = new Set(BEATS.map(b=>b.stage)).size;
@@ -726,7 +726,7 @@ function ethicsRecord(){
   ];
 }
 
-function honours(){
+function honors(){
   const e = ethicsRecord();
   const tookShortcut = e.some(x => x.quality === 'bad');
   const allEthics    = e.every(x => x.ok);
@@ -734,7 +734,7 @@ function honours(){
   const allCode = Object.keys(state.codePassed).length >= BEATS.filter(b=>b.type==='code').length;
 
   if(tookShortcut) return { tier:'Sent Back for Review', cls:'bad',
-    why:'The analysis holds up. One of the judgement calls does not, and it is the kind that '
+    why:'The analysis holds up. One of the judgment calls does not, and it is the kind that '
       + 'turns careful work into something that misleads the people acting on it. That is not a '
       + 'detail to fix in revision - it is the finding being wrong about what it is allowed to say.' };
   if(allEthics && allCode && ratio >= 0.8) return { tier:'Cabinet Commendation', cls:'good',
@@ -747,7 +747,7 @@ function honours(){
 }
 
 function renderFinale(decisions, good, passed){
-  const h = honours();
+  const h = honors();
   const e = ethicsRecord();
   capstoneLog('capstone_complete', 'finale', state.points, state.maxPoints||state.points,
               {tier:h.tier, decisions:decisions.length, goodDecisions:good, codePassed:passed,
@@ -1444,7 +1444,7 @@ assert round(float(_yes['pass_rate']), 2) == 0.66, "66 percent of the students w
       { t:'Fill the missing engagement values with the cohort mean, so all 100 students stay in every calculation.', q:'bad',
         ot:'✗ It invents exactly the wrong number', op:'Mean-filling assigns average engagement to the group your own numbers show is furthest from average. Fifteen struggling students become fifteen typical ones, the relationship between engagement and outcome is diluted, and the fabrication is invisible downstream - nobody reading the table can tell which values were measured.' },
       { t:'Fill the missing engagement values with zero - no record means no activity, so zero is the honest reading.', q:'warn',
-        ot:'~ Plausible, and it might be true - but you do not know it', op:'It is the most defensible of the fills, and if the LMS truly logs every session then absence really does mean zero. But you have not established that. It could equally be a failed export, a late enrolment, or a student on a different platform. Zero would push the finding in the direction you already expect, which is precisely when to be most suspicious of it. Find out before you assume.' },
+        ot:'~ Plausible, and it might be true - but you do not know it', op:'It is the most defensible of the fills, and if the LMS truly logs every session then absence really does mean zero. But you have not established that. It could equally be a failed export, a late enrollment, or a student on a different platform. Zero would push the finding in the direction you already expect, which is precisely when to be most suspicious of it. Find out before you assume.' },
     ]});
 
   B.push({stage:3, type:'dialogue', thread:true, time:'11:58 AM', cont:'Stage 5: Visualize the findings →',
@@ -1517,7 +1517,7 @@ assert len(_bars) == 4, "Four bars, one per engagement quartile. Got " + str(len
 _lo, _hi = _ax.get_ylim()
 assert _lo == 0, "The y-axis must start at 0. A pass rate is a proportion of a whole, and starting the axis anywhere else exaggerates the differences between the bars."
 assert _hi <= 1.05, "The y-axis should top out at 1.0 - these are proportions, not percentages out of 100."
-assert _ax.get_ylabel().strip() != '', "Label the y-axis. An unlabelled axis makes the reader guess, and they will guess generously."
+assert _ax.get_ylabel().strip() != '', "Label the y-axis. An unlabeled axis makes the reader guess, and they will guess generously."
 assert _ax.get_title().strip() != '', "Give the chart a title."
 assert '85' in _ax.get_title(), "The title must say the chart covers 85 of the 100 students - the other 15 have no engagement data. A chart that silently drops 15% of the cohort is the misrepresentation you decided against one stage ago."`,
     solutionNote:'ax.bar(list(rates.index.astype(str)), list(rates.values)); ax.set_ylim(0, 1); ax.set_ylabel("Pass rate"); ax.set_title("Pass rate by engagement quartile (n=85 of 100 students)")',
@@ -1615,7 +1615,7 @@ assert _ax.get_ylabel().strip() != '', "Label the y-axis."`,
       { t:'The notebook exactly as you worked in it - it contains every step, so it is the most complete and honest record.', q:'bad',
         ot:'✗ Complete is not the same as reproducible', op:'A working notebook carries cells run out of order, abandoned attempts and state that only existed on your machine. Handing it over transfers the work without transferring the ability to rerun it - and it invites a reader to mistake an experiment you rejected for a finding you stand behind. Clean it into something that runs top to bottom, or hand over the script that does.' },
       { t:'The final analysis table as a CSV, so the Cabinet can check the numbers themselves.', q:'bad',
-        ot:'✗ That is the output, not the method', op:'The table is where the judgement calls have already been applied and become invisible. Nothing in that CSV records that 15 students were kept rather than dropped, or that two features were excluded, or that the engagement index covers 85 people. A reader would take it for the raw truth, which is exactly the misreading everything upstream was designed to prevent.' },
+        ot:'✗ That is the output, not the method', op:'The table is where the judgment calls have already been applied and become invisible. Nothing in that CSV records that 15 students were kept rather than dropped, or that two features were excluded, or that the engagement index covers 85 people. A reader would take it for the raw truth, which is exactly the misreading everything upstream was designed to prevent.' },
     ]});
 
   B.push({stage:5, type:'code', id:'s6_summary',
@@ -1674,21 +1674,21 @@ assert str(_s['claim_type']).lower() in ('association', 'associational', 'correl
 
   B.push({stage:5, type:'decision', id:'s6_score', pts:7,
     label:'Decision 3 of 3 · Ethics · The single score',
-    intro:"<i>\"This is excellent. Can you convert it into one number per student - a success score - so advisors can prioritise who to contact first? Same model, just ranked.\"</i><br><br>You could build it. The engagement index already exists and it separates the quartiles cleanly: <b>14%</b> pass in the lowest, <b>100%</b> in the highest.",
+    intro:"<i>\"This is excellent. Can you convert it into one number per student - a success score - so advisors can prioritize who to contact first? Same model, just ranked.\"</i><br><br>You could build it. The engagement index already exists and it separates the quartiles cleanly: <b>14%</b> pass in the lowest, <b>100%</b> in the highest.",
     q:'What do you tell them?',
     onPick:(c)=>{
       if(c.q==='good'){ state.ethics.refusedRanking=true;
-        addReportLine('Final judgement','A per-student ranking score was requested and <b>declined</b>. The index is reported at cohort level only. Recommended instead: trigger outreach on observable behavior (a student with no LMS activity for two weeks), which is actionable, contestable, and does not require ranking anyone.'); }
+        addReportLine('Final judgment','A per-student ranking score was requested and <b>declined</b>. The index is reported at cohort level only. Recommended instead: trigger outreach on observable behavior (a student with no LMS activity for two weeks), which is actionable, contestable, and does not require ranking anyone.'); }
     },
     choices:[
       { t:'Decline the ranking, and offer what they actually need instead: flag students on an observable, contestable trigger - two weeks with no LMS activity - rather than a score that ranks people.', q:'good',
-        ot:'✓ Answer the need, refuse the instrument', op:'They want advisors to reach the right students first. That is a good goal and it does not require a ranking. A behavioural trigger is checkable by the student, contestable when wrong, and carries no implied verdict about who they are. A score does the opposite: it is opaque, it follows a person around, and - because 15 students have no engagement data at all - it would rank the least-visible students on the least evidence.' },
+        ot:'✓ Answer the need, refuse the instrument', op:'They want advisors to reach the right students first. That is a good goal and it does not require a ranking. A behavioral trigger is checkable by the student, contestable when wrong, and carries no implied verdict about who they are. A score does the opposite: it is opaque, it follows a person around, and - because 15 students have no engagement data at all - it would rank the least-visible students on the least evidence.' },
       { t:'Build it. The finding is real, the Cabinet is accountable for how it is used, and withholding a tool that could direct help to struggling students is its own kind of harm.', q:'warn',
         ot:'~ The strongest argument for the wrong answer', op:'This deserves a straight response, because it is not a foolish position - refusing to help has costs, and analysts who refuse everything stop being consulted. But "they are accountable for how it is used" is exactly the sentence that precedes every misuse of a model. You have specific knowledge here they do not: the index is undefined for 15 students, it is built from three noisy proxies, and it was never validated for individual prediction. Handing it over as a per-student score means letting it be used for something you know it cannot do.' },
       { t:'Build it, but attach the caveats - undefined for 15 students, association not causation, not validated per student.', q:'bad',
         ot:'✗ The caveats will not travel with the number', op:'The number will be pasted into a spreadsheet by the end of the week and the caveats will not come with it. This is the same mistake as the truncated axis with a footnote: relying on a disclaimer to prevent a misreading you actively enabled. If a number is unsafe without its caveats, and you cannot guarantee the caveats stay attached, you have not made it safe.' },
       { t:'Refuse, and say the data cannot support any individual-level use.', q:'warn',
-        ot:'~ Right refusal, and it ends the conversation', op:'The refusal is correct. Stopping there is not: you leave a real need unmet and you sound obstructive, which is how analysts get routed around rather than consulted. "No, and here is what would work" keeps you in the room for the next decision. The judgement is only half the job; the other half is staying somebody people ask.' },
+        ot:'~ Right refusal, and it ends the conversation', op:'The refusal is correct. Stopping there is not: you leave a real need unmet and you sound obstructive, which is how analysts get routed around rather than consulted. "No, and here is what would work" keeps you in the room for the next decision. The judgment is only half the job; the other half is staying somebody people ask.' },
     ]});
 
   B.push({stage:5, type:'dialogue', thread:true, time:'4:15 PM', cont:'Finish',

@@ -295,7 +295,7 @@ async function runAll() {
   // Opened straight off disk rather than served. Students never see this - it
   // is what happens when the file is previewed locally during authoring. The
   // link still resolves, so leave it alone and let the browser do whatever it
-  // does; just say why the behaviour may look odd. Do NOT dress this up as the
+  // does; just say why the behavior may look odd. Do NOT dress this up as the
   // feature being broken, because on the site it is not.
   if (location.protocol === "file:") {
     note.textContent = "Local preview: this page is open from a file rather " +

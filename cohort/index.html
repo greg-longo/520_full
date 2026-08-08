@@ -158,7 +158,7 @@ Q.lmsColumns.forEach(function (c) { lmsCols[c] = true; });
 
 /* Sorting has to know which columns are numbers. Derived from the values, not
    from a list of column names - `submission_rate` holds "84%", which IS text,
-   and sorting it as text is the honest behaviour until a student cleans it. */
+   and sorting it as text is the honest behavior until a student cleans it. */
 var numeric = COLS.map(function (col, i) {
   var vals = D.rows.map(function (r) { return r[i]; }).filter(function (v) { return v !== ""; });
   return vals.length > 0 && vals.every(function (v) { return !isNaN(parseFloat(v)) && isFinite(v); });

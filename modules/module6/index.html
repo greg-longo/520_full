@@ -1778,7 +1778,7 @@
 /* DTSC 520 - live exercise blocks on module pages.
    Companion to assets/exercise-runner.js and the markup emitted by
    tools/notebook_to_site.py. Uses each module page's own accent variables so
-   the blocks inherit that module's colour rather than imposing one. */
+   the blocks inherit that module's color rather than imposing one. */
 
 .exercise-block {
   border: 1px solid var(--border);
@@ -1948,13 +1948,13 @@ details.ex-solution pre { margin-top: 0.6rem; }
      .content p strong  0.9rem    700   --text
 
    So an h3 was LIGHTER than a bold run inside a paragraph (600 against 700) and
-   the same colour, separated only by 0.1rem of size. "Local variables" (an h3)
+   the same color, separated only by 0.1rem of size. "Local variables" (an h3)
    and "Rule of thumb:" (a bolded lead-in) read as the same thing, because by
-   weight and colour they nearly were. h4 had no styling whatsoever.
+   weight and color they nearly were. h4 had no styling whatsoever.
 
    Size alone cannot fix this - there is only 0.45rem of room between the body
    text and h2, and four levels to fit into it. So each level differs on THREE
-   axes at once: size, weight and colour. Colour does most of the work at the
+   axes at once: size, weight and color. Color does most of the work at the
    bottom of the tree, where the size differences have run out.
 
    Applied to `.content-section`, which all seven module pages use, and kept in
@@ -1966,7 +1966,7 @@ details.ex-solution pre { margin-top: 0.6rem; }
    values clear both. */
 
 /* ==========================================================================
-   Light-theme code colours.
+   Light-theme code colors.
    ==========================================================================
    The syntax palette was tuned against the dark background and carried over to
    the light theme unchanged, where it was never legible: inline <code> ran at
@@ -2001,14 +2001,14 @@ details.ex-solution pre { margin-top: 0.6rem; }
    #ffffff, 5.75 on #f5f2ee, 5.31 on #ede9e3, 5.03 on #e8e3dc). */
 /* NO GLOBAL VALUE HERE. Each module has its own accent hue - grey, blue,
    purple, green, orange, teal, maroon - and a single light-theme value paints
-   them all one colour. An earlier version of this file set #6b4fa3 globally,
+   them all one color. An earlier version of this file set #6b4fa3 globally,
    which fixed Module 2 (already purple) and silently repainted the other six.
    The light-theme value lives in each shell, keeping that module's hue. */
 
 /* The sandbox modal (.sb-box) is hardcoded #161412 and stays dark in BOTH
    themes, which is the right call - it holds a CodeMirror editor, and dark
    editors are what people expect. But that makes it a pocket of dark surface
-   inside the light theme, and every light-theme text colour is picked to sit on
+   inside the light theme, and every light-theme text color is picked to sit on
    a light background. Darkening --accent-light above fixed it on the light
    surfaces and necessarily made it worse here.
 
@@ -2080,7 +2080,7 @@ details.ex-solution pre { margin-top: 0.6rem; }
 }
 
 /* h4 sits below h3 and must still outrank a bold run. It gives up size to do
-   that and takes the accent colour instead - by this depth size has nothing
+   that and takes the accent color instead - by this depth size has nothing
    left to give. */
 .content-section h4 {
   font-size: 1rem;
@@ -2675,7 +2675,7 @@ section.content-section { scroll-margin-top: 68px; }
  *
  * NO GRADING. The sims compare output against an expected string. These
  * exercises are open-ended - several have many correct answers - so the runner
- * shows output and errors and leaves judgement to the student and the worked
+ * shows output and errors and leaves judgment to the student and the worked
  * solution below each one.
  *
  * PER-EXERCISE NAMESPACE IS SHARED ON PURPOSE. Cells later in a module rely on

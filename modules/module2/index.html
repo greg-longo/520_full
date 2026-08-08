@@ -884,7 +884,7 @@
       <p>That&#x27;s what we&#x27;ll cover this module. By the end you&#x27;ll have loaded all six tables in Python, computed summary stats, and printed a schema report for Lee. Later modules use the same cohort with better tools: NumPy in Module 3, pandas in Module 4, MatPlotLib in Module 5.</p>
       <p>The data is <strong>synthetic</strong> - generated for this course. No real student records are used anywhere in DTSC 520.</p>
       <figure class="nb-figure"><img src="assets/fig-672d2f2e80.png" alt="The six tables of the cohort, all joined on student_id" loading="lazy"><figcaption>The six tables of the cohort, all joined on student_id</figcaption></figure>
-      <h4 id="sources-and-acknowledgements">Sources and acknowledgements</h4>
+      <h4 id="sources-and-acknowledgments">Sources and acknowledgments</h4>
       <p>This notebook is a mix. Some of it is original to Eastern University, some is taken closely from published work, and some is adapted from it. You should know which is which, both because attribution matters and because the originals are worth reading on their own.</p>
       <p><strong>Original to Eastern.</strong> The Institutional Research framing and the Lee commission, the synthetic cohort and all six tables, the Predict/Run/Debrief convention, the schema report and cohort briefing, the diagrams, the AI-assistant policy, and the connective tissue that ties this module to the capstone. You can learn syntax anywhere.  We&#x27;re trying to create learning materials you will enjoy and make you want to keep going.</p>
       <p>**<a href="https://allendowney.github.io/ThinkPython/" target="_blank" rel="noopener"><em>Think Python</em>, 3rd edition</a>, by Allen B. Downey.** Free online, and the most direct influence here. The arithmetic-before-variables ordering, the treatment of floor division and modulus, the <code>&#x27;126&#x27; / 3</code> type-error demonstration, the <code>1,000,000</code> tuple surprise, the illegal-variable-name examples, the &quot;make errors on purpose&quot; exercise philosophy, and the passage on debugging as emotional management are all taken from or closely follow Downey. The <code>%%expect</code> convention is his idea; the implementation in this notebook is our own. Chapters 1, 2, 3, 5, 9, and 10 overlap with this module. Licensed CC BY-NC-SA 4.0.</p>
@@ -4211,7 +4211,7 @@ holes = <span class="fn">find_missing</span>({<span class="st">&quot;students&qu
       <p>If you&#x27;re new to programming, <strong>DTSC 575: Principles of Python Programming</strong> covers those properly, and taking it before the machine learning courses is a good idea.</p>
       <p>For self-study, both of the books this module draws on are free online and worth your time:</p>
       <ul><li>Allen Downey, <em><a href="https://allendowney.github.io/ThinkPython/" target="_blank" rel="noopener">Think Python</a></em> (3rd edition). Chapters 1, 2, 3, 5, 9, and 10 overlap with this module; chapters 4, 6, 7, 8, and 11 through 13 are the natural next steps, and they cover most of what was left out above.</li><li>Jake VanderPlas, <em><a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener">Python Data Science Handbook</a></em>. Chapter 1 is the deep version of section 12 here. Chapters 2 and 3 are Modules 3 and 4 of this course, so reading ahead there is time well spent.</li></ul>
-      <p>See the acknowledgements at the top of this notebook for what came from where.</p>
+      <p>See the acknowledgments at the top of this notebook for what came from where.</p>
     </section>
 
     <section id="quiz">
@@ -5014,7 +5014,7 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
 /* DTSC 520 - live exercise blocks on module pages.
    Companion to assets/exercise-runner.js and the markup emitted by
    tools/notebook_to_site.py. Uses each module page's own accent variables so
-   the blocks inherit that module's colour rather than imposing one. */
+   the blocks inherit that module's color rather than imposing one. */
 
 .exercise-block {
   border: 1px solid var(--border);
@@ -5184,13 +5184,13 @@ details.ex-solution pre { margin-top: 0.6rem; }
      .content p strong  0.9rem    700   --text
 
    So an h3 was LIGHTER than a bold run inside a paragraph (600 against 700) and
-   the same colour, separated only by 0.1rem of size. "Local variables" (an h3)
+   the same color, separated only by 0.1rem of size. "Local variables" (an h3)
    and "Rule of thumb:" (a bolded lead-in) read as the same thing, because by
-   weight and colour they nearly were. h4 had no styling whatsoever.
+   weight and color they nearly were. h4 had no styling whatsoever.
 
    Size alone cannot fix this - there is only 0.45rem of room between the body
    text and h2, and four levels to fit into it. So each level differs on THREE
-   axes at once: size, weight and colour. Colour does most of the work at the
+   axes at once: size, weight and color. Color does most of the work at the
    bottom of the tree, where the size differences have run out.
 
    Applied to `.content-section`, which all seven module pages use, and kept in
@@ -5202,7 +5202,7 @@ details.ex-solution pre { margin-top: 0.6rem; }
    values clear both. */
 
 /* ==========================================================================
-   Light-theme code colours.
+   Light-theme code colors.
    ==========================================================================
    The syntax palette was tuned against the dark background and carried over to
    the light theme unchanged, where it was never legible: inline <code> ran at
@@ -5237,14 +5237,14 @@ details.ex-solution pre { margin-top: 0.6rem; }
    #ffffff, 5.75 on #f5f2ee, 5.31 on #ede9e3, 5.03 on #e8e3dc). */
 /* NO GLOBAL VALUE HERE. Each module has its own accent hue - grey, blue,
    purple, green, orange, teal, maroon - and a single light-theme value paints
-   them all one colour. An earlier version of this file set #6b4fa3 globally,
+   them all one color. An earlier version of this file set #6b4fa3 globally,
    which fixed Module 2 (already purple) and silently repainted the other six.
    The light-theme value lives in each shell, keeping that module's hue. */
 
 /* The sandbox modal (.sb-box) is hardcoded #161412 and stays dark in BOTH
    themes, which is the right call - it holds a CodeMirror editor, and dark
    editors are what people expect. But that makes it a pocket of dark surface
-   inside the light theme, and every light-theme text colour is picked to sit on
+   inside the light theme, and every light-theme text color is picked to sit on
    a light background. Darkening --accent-light above fixed it on the light
    surfaces and necessarily made it worse here.
 
@@ -5316,7 +5316,7 @@ details.ex-solution pre { margin-top: 0.6rem; }
 }
 
 /* h4 sits below h3 and must still outrank a bold run. It gives up size to do
-   that and takes the accent colour instead - by this depth size has nothing
+   that and takes the accent color instead - by this depth size has nothing
    left to give. */
 .content-section h4 {
   font-size: 1rem;
@@ -5911,7 +5911,7 @@ section.content-section { scroll-margin-top: 68px; }
  *
  * NO GRADING. The sims compare output against an expected string. These
  * exercises are open-ended - several have many correct answers - so the runner
- * shows output and errors and leaves judgement to the student and the worked
+ * shows output and errors and leaves judgment to the student and the worked
  * solution below each one.
  *
  * PER-EXERCISE NAMESPACE IS SHARED ON PURPOSE. Cells later in a module rely on

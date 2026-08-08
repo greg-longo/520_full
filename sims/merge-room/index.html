@@ -423,7 +423,7 @@ function render(){
     <div class="fb" id="fb"></div>`;
 }
 
-function normalise(s){
+function normalize(s){
   return String(s).replace(/\r/g, "").split("\n")
     .map(l => l.replace(/\s+$/,"")).join("\n").trim();
 }
@@ -469,7 +469,7 @@ sys.stdout = _buf
   }
   btn.disabled = false;
 
-  if (normalise(text) === normalise(t.expected)) {
+  if (normalize(text) === normalize(t.expected)) {
     if (!solved[step]) {
       solved[step] = true;
       score += attempts[step] === 1 ? t.points : Math.max(1, t.points - 1);
