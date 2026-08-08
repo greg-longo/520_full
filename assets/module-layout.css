@@ -748,3 +748,15 @@ section.content-section { scroll-margin-top: 68px; }
 .show-all-toggle input { cursor: pointer; accent-color: var(--accent); }
 .show-all-toggle .toggle-hint { font-size: .74rem; opacity: .75; }
 .show-all-toggle:hover { color: var(--text); }
+
+/* Foot-of-section navigation. Reads as the end of a step, not a call to act. */
+.section-nav { display: flex; justify-content: flex-end;
+  margin: 2.4rem 0 .6rem; padding-top: 1.2rem;
+  border-top: 1px solid var(--line, #332b25); }
+.section-next { font: 600 .88rem var(--font, 'Zilla Slab', Georgia, serif);
+  color: var(--accent-light); text-decoration: none;
+  padding: .55rem 1.1rem; border: 1px solid var(--line, #332b25);
+  border-radius: 7px; }
+.section-next:hover { border-color: var(--accent); color: var(--text-bright); }
+.section-next:focus-visible { outline: 3px solid var(--accent-light);
+  outline-offset: 2px; }

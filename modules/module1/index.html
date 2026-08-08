@@ -478,6 +478,8 @@
         <span class="subpage-nav-center">1 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('ds-vs-analytics')">Next: DS vs. Analytics &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="ds-vs-analytics" href="#ds-vs-analytics">Next: DS vs. Analytics &rarr;</a></div>
     </section>
 
     <!-- DS VS ANALYTICS -->
@@ -530,6 +532,8 @@
         <span class="subpage-nav-center">2 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('careers')">Next: Careers in Data &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="careers" href="#careers">Next: Careers in Data &rarr;</a></div>
     </section>
 
     <!-- CAREERS -->
@@ -574,6 +578,8 @@
         <span class="subpage-nav-center">3 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('company-types')">Next: Company Types &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="company-types" href="#company-types">Next: Company Types &rarr;</a></div>
     </section>
 
     <!-- COMPANY TYPES -->
@@ -624,6 +630,8 @@
         <span class="subpage-nav-center">4 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('tools')">Next: Tool Stack &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="tools" href="#tools">Next: Tool Stack &rarr;</a></div>
     </section>
 
     <!-- KEY TOOLS -->
@@ -677,6 +685,8 @@
         <span class="subpage-nav-center">5 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('why-python')">Next: Why Python? &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="why-python" href="#why-python">Next: Why Python? &rarr;</a></div>
     </section>
 
     <!-- WHY PYTHON -->
@@ -703,6 +713,8 @@
         <span class="subpage-nav-center">6 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('critical-thinking')">Next: Critical Thinking &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="critical-thinking" href="#critical-thinking">Next: Critical Thinking &rarr;</a></div>
     </section>
 
     <!-- CRITICAL THINKING -->
@@ -727,6 +739,8 @@
         <span class="subpage-nav-center">7 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('pseudocode')">Next: Pseudocode &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="pseudocode" href="#pseudocode">Next: Pseudocode &rarr;</a></div>
     </section>
 
     <!-- PSEUDOCODE -->
@@ -802,6 +816,8 @@ roster = [
         <span class="subpage-nav-center">8 / 8</span>
         <a href="quiz.html" class="subpage-nav-btn">Take the Quiz &rarr;</a>
       </div>
+    
+      <div class="section-nav"><a class="section-next" href="quiz.html">Take the Quiz &rarr;</a></div>
     </section>
 
     <!-- QUIZ LINK -->
@@ -2054,6 +2070,60 @@ details.ex-solution pre { margin-top: 0.6rem; }
 section.content-section { scroll-margin-top: 68px; }
 .content-section h3[id] { scroll-margin-top: 68px; }
 
+/* --- read-only runnable code blocks (prototype: M2 Variables & Types) ----- */
+/* The block reuses the page's own <pre><code>; only the bar and the live
+   output slot are new, so a runnable block and a static one look identical
+   until the student chooses to act. */
+[data-runnable] { margin: 0 0 1.1rem; }
+[data-runnable] > pre { margin-bottom: 0; }
+.run-bar { display: flex; align-items: center; gap: .7rem; margin-top: .35rem; }
+.run-btn {
+  font: 600 .78rem/1 var(--font, 'Zilla Slab', Georgia, serif);
+  letter-spacing: .04em; padding: .4rem .9rem; border-radius: 6px;
+  cursor: pointer; color: var(--text-bright, #fff);
+  background: transparent; border: 1px solid var(--accent, #7a5fb5);
+}
+.run-btn:hover:not(:disabled) { background: var(--accent, #7a5fb5); }
+.run-btn:disabled { opacity: .55; cursor: progress; }
+.run-btn:focus-visible { outline: 3px solid var(--accent-light); outline-offset: 2px; }
+.run-status { font-size: .78rem; color: var(--text-dim); }
+.run-output { margin-top: .4rem; }
+.run-output pre { margin: 0; white-space: pre-wrap; }
+/* A cell that raised is still a correct result on this course - it is marked,
+   not styled as a site failure. */
+.run-output.run-failed { border-left: 3px solid var(--flag, #e0705c); }
+.clear-btn { border-color: var(--line); color: var(--text-dim); }
+.clear-btn:hover { background: transparent; border-color: var(--text-dim);
+                   color: var(--text); }
+
+/* .output-block carries a negative top margin so it snaps flush against the
+   <pre> above it. Since the Predict work puts the output INSIDE the debrief,
+   it became the first child of an open <details> and that negative margin
+   dragged it up over the "What happened" summary text. Cancel it only in that
+   position; the flush-against-code look everywhere else is deliberate. */
+.debrief > .output-block:first-of-type,
+.debrief > .run-output:first-of-type { margin-top: .75rem; }
+
+/* Site-wide sticky "Show all output". Deliberately quiet: the default (hidden)
+   is the one we want students to leave alone. */
+.show-all-toggle { display: flex; align-items: baseline; gap: .5rem;
+  font-size: .8rem; color: var(--text-dim); margin: 0 0 1.4rem; cursor: pointer; }
+.show-all-toggle input { cursor: pointer; accent-color: var(--accent); }
+.show-all-toggle .toggle-hint { font-size: .74rem; opacity: .75; }
+.show-all-toggle:hover { color: var(--text); }
+
+/* Foot-of-section navigation. Reads as the end of a step, not a call to act. */
+.section-nav { display: flex; justify-content: flex-end;
+  margin: 2.4rem 0 .6rem; padding-top: 1.2rem;
+  border-top: 1px solid var(--line, #332b25); }
+.section-next { font: 600 .88rem var(--font, 'Zilla Slab', Georgia, serif);
+  color: var(--accent-light); text-decoration: none;
+  padding: .55rem 1.1rem; border: 1px solid var(--line, #332b25);
+  border-radius: 7px; }
+.section-next:hover { border-color: var(--accent); color: var(--text-bright); }
+.section-next:focus-visible { outline: 3px solid var(--accent-light);
+  outline-offset: 2px; }
+
 </style>
 <script>
 /**
@@ -2937,6 +3007,31 @@ section.content-section { scroll-margin-top: 68px; }
   window.dtscCards = { open: open, close: close };
 })();
 
+</script>
+<script>
+(function () {
+  var LAST = "pseudocode";
+  var quiz = document.getElementById('quiz');
+  function syncQuiz(id) { if (quiz) quiz.hidden = (id !== LAST); }
+
+  document.querySelectorAll('.section-next[data-goto]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (typeof showSection === 'function') showSection(a.dataset.goto);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  /* The shell's tab handlers call showSection by name, which resolves through
+     the global at call time - so wrapping it here catches every route in,
+     including the tab strip and any deep link. */
+  if (typeof window.showSection === 'function') {
+    var orig = window.showSection;
+    window.showSection = function (id) { orig(id); syncQuiz(id); };
+  }
+  var active = document.querySelector('.tab-link.active[data-section]');
+  syncQuiz(active ? active.dataset.section : null);
+})();
 </script>
 </body>
 </html>

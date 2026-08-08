@@ -444,6 +444,8 @@
         <span></span>
         <button class="sf-btn fwd" onclick="showSection('syllabus')">Syllabus &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="syllabus" href="#syllabus">Next: Course Syllabus &rarr;</a></div>
     </section>
 
     <!-- SYLLABUS -->
@@ -463,6 +465,8 @@
         <button class="sf-btn" onclick="showSection('overview')">&larr; Course Overview</button>
         <button class="sf-btn fwd" onclick="showSection('modules')">Module Roadmap &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="modules" href="#modules">Next: Module Roadmap &rarr;</a></div>
     </section>
 
     <!-- MODULE ROADMAP -->
@@ -524,6 +528,8 @@
         <button class="sf-btn" onclick="showSection('syllabus')">&larr; Syllabus</button>
         <button class="sf-btn fwd" onclick="showSection('ds-in-action')">DS in Action &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="ds-in-action" href="#ds-in-action">Next: Data Science in Action &rarr;</a></div>
     </section>
 
     <!-- DS IN ACTION -->
@@ -573,6 +579,8 @@
         <button class="sf-btn" onclick="showSection('modules')">&larr; Module Roadmap</button>
         <button class="sf-btn fwd" onclick="showSection('setup')">Software Setup &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="setup" href="#setup">Next: Software Setup &rarr;</a></div>
     </section>
 
     <!-- SOFTWARE SETUP -->
@@ -631,6 +639,8 @@ git --version
         <button class="sf-btn" onclick="showSection('ds-in-action')">&larr; DS in Action</button>
         <button class="sf-btn fwd" onclick="showSection('notebooks')">Using the Notebooks &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="notebooks" href="#notebooks">Next: Using the Notebooks &rarr;</a></div>
     </section>
 
     <!-- USING THE NOTEBOOKS -->
@@ -747,6 +757,8 @@ git --version
         <button class="sf-btn" onclick="showSection('setup')">&larr; Software Setup</button>
         <button class="sf-btn fwd" onclick="showSection('resources')">Resources &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="resources" href="#resources">Next: Course Resources &rarr;</a></div>
     </section>
 
     <!-- RESOURCES -->
@@ -780,6 +792,8 @@ git --version
         <button class="sf-btn" onclick="showSection('setup')">&larr; Software Setup</button>
         <button class="sf-btn fwd" onclick="showSection('quiz')">Take the Quiz &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" href="quiz.html">Take the Quiz &rarr;</a></div>
     </section>
 
     <!-- QUIZ LINK -->
@@ -2140,6 +2154,18 @@ section.content-section { scroll-margin-top: 68px; }
 .show-all-toggle .toggle-hint { font-size: .74rem; opacity: .75; }
 .show-all-toggle:hover { color: var(--text); }
 
+/* Foot-of-section navigation. Reads as the end of a step, not a call to act. */
+.section-nav { display: flex; justify-content: flex-end;
+  margin: 2.4rem 0 .6rem; padding-top: 1.2rem;
+  border-top: 1px solid var(--line, #332b25); }
+.section-next { font: 600 .88rem var(--font, 'Zilla Slab', Georgia, serif);
+  color: var(--accent-light); text-decoration: none;
+  padding: .55rem 1.1rem; border: 1px solid var(--line, #332b25);
+  border-radius: 7px; }
+.section-next:hover { border-color: var(--accent); color: var(--text-bright); }
+.section-next:focus-visible { outline: 3px solid var(--accent-light);
+  outline-offset: 2px; }
+
 </style>
 <script>
 /**
@@ -3023,6 +3049,31 @@ section.content-section { scroll-margin-top: 68px; }
   window.dtscCards = { open: open, close: close };
 })();
 
+</script>
+<script>
+(function () {
+  var LAST = "resources";
+  var quiz = document.getElementById('quiz');
+  function syncQuiz(id) { if (quiz) quiz.hidden = (id !== LAST); }
+
+  document.querySelectorAll('.section-next[data-goto]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (typeof showSection === 'function') showSection(a.dataset.goto);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  /* The shell's tab handlers call showSection by name, which resolves through
+     the global at call time - so wrapping it here catches every route in,
+     including the tab strip and any deep link. */
+  if (typeof window.showSection === 'function') {
+    var orig = window.showSection;
+    window.showSection = function (id) { orig(id); syncQuiz(id); };
+  }
+  var active = document.querySelector('.tab-link.active[data-section]');
+  syncQuiz(active ? active.dataset.section : null);
+})();
 </script>
 </body>
 </html>

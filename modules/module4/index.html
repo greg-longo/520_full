@@ -575,6 +575,8 @@ df.<span class="fn">sort_values</span>(<span class="st">&quot;ug_gpa&quot;</span
       <div class="nb-narrative nb-narrative-close">
         <p>There is a cost, and it is worth naming now rather than letting you discover it as confusion later. NumPy has one way to index. pandas has three, they look almost identical, and two of them will do something you did not intend at least once each. Section 3 is about that, and it is the section worth slowing down in.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="series" href="#series">Next: Series &amp; DataFrame &rarr;</a></div>
     </section>
 
 <section id="series" class="content-section">
@@ -685,6 +687,8 @@ cohort[<span class="st">&quot;hs_gpa&quot;</span>]</code></pre></details>
         <p>Selection is where pandas earns its reputation for being fiddly, and the reputation is deserved. There are three ways to get at a piece of a DataFrame, they are spelled almost the same, and the differences only matter in the cases where getting it wrong is expensive.</p>
       <p>Learn them in one sitting, deliberately, and you will not have to think about it again.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="selection" href="#selection">Next: Selection &rarr;</a></div>
     </section>
 
 <section id="selection" class="content-section">
@@ -877,6 +881,8 @@ student_id
         <p>Everything so far has used three students typed out by hand - clean, small, and completely unlike anything you will be given.</p>
       <p>The next section opens the real file.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="loading" href="#loading">Next: Loading Data &rarr;</a></div>
     </section>
 
 <section id="loading" class="content-section">
@@ -1128,6 +1134,8 @@ pct = raw.logins_per_week.<span class="fn">isna</span>().<span class="fn">mean</
         <p>A cleaning script that someone else cannot check is not much better than no cleaning at all. So this section produces a written inventory of everything wrong with the file, with the code that found each problem next to it.</p>
       <p>That inventory is a deliverable. The capstone asks for it directly, and it is the thing a colleague reads when they want to know whether to trust your numbers.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="diagnosis" href="#diagnosis">Next: Diagnosis &rarr;</a></div>
     </section>
 
 <section id="diagnosis" class="content-section">
@@ -1363,6 +1371,8 @@ repeated = counts[counts &gt; <span class="nm">1</span>]
         <p>The inventory is written, so the arguing is over. What follows is bookkeeping: four problems, four decisions, each one applied once and recorded.</p>
       <p>Two rules govern all of it, and they exist because notebooks get run out of order. The raw data is never overwritten, and nothing is modified in place. Every cleaning step takes a DataFrame and returns a new one with a new name. That way any cell can be re-run at any time and still mean what it says.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="cleaning" href="#cleaning">Next: Cleaning &rarr;</a></div>
     </section>
 
 <section id="cleaning" class="content-section">
@@ -1807,6 +1817,8 @@ decisions</code></pre>
         <p>The table is clean. From here the work stops being about repair and starts being about questions - and every question you can ask of a table is some combination of three moves: pick rows, group them, and summarize them.</p>
       <p>This section is the first move, and you already know it. A boolean mask in pandas is the same object it was in Module 3. The only difference is that the rows it selects carry their labels with them.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="filtering" href="#filtering">Next: Filtering &rarr;</a></div>
     </section>
 
 <section id="filtering" class="content-section">
@@ -1966,6 +1978,8 @@ out = clean[mask][[<span class="st">&quot;name&quot;</span>, <span class="st">&q
       <p>That line is the whole idea of grouping. You looked at each record, decided which bucket it belonged in, and added to that bucket&#x27;s running total. It took four lines and a loop.</p>
       <p><code>groupby</code> is that pattern with the loop written for you, and it does not stop at counting - once the rows are in buckets you can take any summary you like of each one.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="groupby" href="#groupby">Next: Grouping &rarr;</a></div>
     </section>
 
 <section id="groupby" class="content-section">
@@ -2117,6 +2131,8 @@ need_based_aid
       <p>Institutional Research does not keep one table. The registrar owns high-school records, the LMS owns engagement, the provost&#x27;s office owns outcomes, and each system exports its own file keyed on <code>student_id</code>. The flat extract you have been cleaning was produced by joining them - which is where its two duplicate rows came from.</p>
       <p>This section does that join yourself, and then checks your answer against the extract.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="combining" href="#combining">Next: Merging &rarr;</a></div>
     </section>
 
 <section id="combining" class="content-section">
@@ -2268,6 +2284,8 @@ clean:    float64 [<span class="out-num">0.69</span>, <span class="out-num">0.84
 <span class="cm"># property of the extract and not of the data, and why deduplicating was the</span>
 <span class="cm"># right call rather than an assumption.</span></code></pre></details>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="pivot-tables" href="#pivot-tables">Next: Pivot Tables &rarr;</a></div>
     </section>
 
 <section id="pivot-tables" class="content-section">
@@ -2401,6 +2419,8 @@ high                  <span class="out-num">79.405</span>   <span class="out-num
 <span class="cm"># moves the mean by several points. The count columns are what make that</span>
 <span class="cm"># visible - without them every cell looks equally solid.</span></code></pre></details>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="errors" href="#errors">Next: Reading Errors &rarr;</a></div>
     </section>
 
 <section id="errors" class="content-section">
@@ -2541,6 +2561,8 @@ rows after:  <span class="out-num">101</span>
         <p>What follows is the module in one piece. Each challenge is a question Lee could plausibly ask, and answering it takes the whole chain - load, diagnose, clean, filter, group, report.</p>
       <p>Nothing here needs a method you have not met. If you find yourself wanting one, the problem is probably the question rather than the tooling.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="challenges" href="#challenges">Next: Challenges &rarr;</a></div>
     </section>
 
 <section id="challenges" class="content-section">
@@ -2632,6 +2654,8 @@ shared = [c <span class="kw">for</span> c <span class="kw">in</span> clean.colum
       <p>Loading and cleaning look like preparation - the dull part before the analysis starts. They are not. Every choice you made in sections 6 to 8 changed a number somebody will eventually quote, and the only thing separating an analysis from an assertion is whether you can say what those choices were.</p>
       <p>Module 5 turns these tables into charts. The capstone hands you the same extract and asks for findings, and it will hold you to the decisions you recorded here.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" href="quiz.html">Take the Quiz &rarr;</a></div>
     </section>
 
     <section id="quiz">
@@ -4303,6 +4327,26 @@ section.content-section { scroll-margin-top: 68px; }
 .debrief > .output-block:first-of-type,
 .debrief > .run-output:first-of-type { margin-top: .75rem; }
 
+/* Site-wide sticky "Show all output". Deliberately quiet: the default (hidden)
+   is the one we want students to leave alone. */
+.show-all-toggle { display: flex; align-items: baseline; gap: .5rem;
+  font-size: .8rem; color: var(--text-dim); margin: 0 0 1.4rem; cursor: pointer; }
+.show-all-toggle input { cursor: pointer; accent-color: var(--accent); }
+.show-all-toggle .toggle-hint { font-size: .74rem; opacity: .75; }
+.show-all-toggle:hover { color: var(--text); }
+
+/* Foot-of-section navigation. Reads as the end of a step, not a call to act. */
+.section-nav { display: flex; justify-content: flex-end;
+  margin: 2.4rem 0 .6rem; padding-top: 1.2rem;
+  border-top: 1px solid var(--line, #332b25); }
+.section-next { font: 600 .88rem var(--font, 'Zilla Slab', Georgia, serif);
+  color: var(--accent-light); text-decoration: none;
+  padding: .55rem 1.1rem; border: 1px solid var(--line, #332b25);
+  border-radius: 7px; }
+.section-next:hover { border-color: var(--accent); color: var(--text-bright); }
+.section-next:focus-visible { outline: 3px solid var(--accent-light);
+  outline-offset: 2px; }
+
 </style>
 <script>
 /**
@@ -5186,6 +5230,31 @@ section.content-section { scroll-margin-top: 68px; }
   window.dtscCards = { open: open, close: close };
 })();
 
+</script>
+<script>
+(function () {
+  var LAST = "challenges";
+  var quiz = document.getElementById('quiz');
+  function syncQuiz(id) { if (quiz) quiz.hidden = (id !== LAST); }
+
+  document.querySelectorAll('.section-next[data-goto]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (typeof showSection === 'function') showSection(a.dataset.goto);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  /* The shell's tab handlers call showSection by name, which resolves through
+     the global at call time - so wrapping it here catches every route in,
+     including the tab strip and any deep link. */
+  if (typeof window.showSection === 'function') {
+    var orig = window.showSection;
+    window.showSection = function (id) { orig(id); syncQuiz(id); };
+  }
+  var active = document.querySelector('.tab-link.active[data-section]');
+  syncQuiz(active ? active.dataset.section : null);
+})();
 </script>
 </body>
 </html>

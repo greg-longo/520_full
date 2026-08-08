@@ -592,6 +592,8 @@
         <span></span>
         <button class="subpage-nav-btn" onclick="showSection('chart-types')">Chart Types &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="chart-types" href="#chart-types">Next: Chart Types &rarr;</a></div>
     </section>
 
     <section id="chart-types" class="content-section">
@@ -641,6 +643,8 @@
         <span class="subpage-nav-center">1 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('matplotlib')">Next: Matplotlib &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="matplotlib" href="#matplotlib">Next: Matplotlib &rarr;</a></div>
     </section>
 
     <!-- MATPLOTLIB -->
@@ -729,6 +733,8 @@ ax.<span class="fn">barh</span>(players, hrs, color=<span class="st">'#3a8fa0'</
         <span class="subpage-nav-center">2 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('seaborn')">Next: Seaborn &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="seaborn" href="#seaborn">Next: Seaborn &rarr;</a></div>
     </section>
 
     <!-- SEABORN -->
@@ -780,6 +786,8 @@ sns.<span class="fn">histplot</span>(data=roster, x=<span class="st">'avg'</span
         <span class="subpage-nav-center">3 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('subplots')">Next: Subplots &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="subplots" href="#subplots">Next: Subplots &rarr;</a></div>
     </section>
 
     <!-- SUBPLOTS -->
@@ -827,6 +835,8 @@ plt.<span class="fn">tight_layout</span>()  <span class="cm"># prevents overlap<
         <span class="subpage-nav-center">4 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('styling')">Next: Styling &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="styling" href="#styling">Next: Styling &rarr;</a></div>
     </section>
 
     <!-- STYLING -->
@@ -877,6 +887,8 @@ plt.<span class="fn">tight_layout</span>()</code></pre>
         <span class="subpage-nav-center">5 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('plotting-pandas')">Next: Plotting with Pandas &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="plotting-pandas" href="#plotting-pandas">Next: Plotting with Pandas &rarr;</a></div>
     </section>
 
     <!-- PLOTTING WITH PANDAS -->
@@ -936,6 +948,8 @@ monthly.<span class="fn">plot</span>(kind=<span class="st">'scatter'</span>, x=<
         <span class="subpage-nav-center">6 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('annotations')">Next: Annotations &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="annotations" href="#annotations">Next: Annotations &rarr;</a></div>
     </section>
 
     <!-- ANNOTATIONS -->
@@ -983,6 +997,8 @@ plt.<span class="fn">show</span>()</code></pre>
         <span class="subpage-nav-center">7 / 8</span>
         <button class="subpage-nav-btn" onclick="showSection('best-practices')">Next: Best Practices &rarr;</button>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="best-practices" href="#best-practices">Next: Best Practices &rarr;</a></div>
     </section>
 
     <!-- BEST PRACTICES -->
@@ -1035,6 +1051,8 @@ plt.<span class="fn">show</span>()</code></pre>
         <span class="subpage-nav-center">8 / 8</span>
         <a href="quiz.html" class="subpage-nav-btn">Take the Quiz &rarr;</a>
       </div>
+    
+      <div class="section-nav"><a class="section-next" href="quiz.html">Take the Quiz &rarr;</a></div>
     </section>
 
     <!-- QUIZ LINK -->
@@ -2457,6 +2475,60 @@ details.ex-solution pre { margin-top: 0.6rem; }
 section.content-section { scroll-margin-top: 68px; }
 .content-section h3[id] { scroll-margin-top: 68px; }
 
+/* --- read-only runnable code blocks (prototype: M2 Variables & Types) ----- */
+/* The block reuses the page's own <pre><code>; only the bar and the live
+   output slot are new, so a runnable block and a static one look identical
+   until the student chooses to act. */
+[data-runnable] { margin: 0 0 1.1rem; }
+[data-runnable] > pre { margin-bottom: 0; }
+.run-bar { display: flex; align-items: center; gap: .7rem; margin-top: .35rem; }
+.run-btn {
+  font: 600 .78rem/1 var(--font, 'Zilla Slab', Georgia, serif);
+  letter-spacing: .04em; padding: .4rem .9rem; border-radius: 6px;
+  cursor: pointer; color: var(--text-bright, #fff);
+  background: transparent; border: 1px solid var(--accent, #7a5fb5);
+}
+.run-btn:hover:not(:disabled) { background: var(--accent, #7a5fb5); }
+.run-btn:disabled { opacity: .55; cursor: progress; }
+.run-btn:focus-visible { outline: 3px solid var(--accent-light); outline-offset: 2px; }
+.run-status { font-size: .78rem; color: var(--text-dim); }
+.run-output { margin-top: .4rem; }
+.run-output pre { margin: 0; white-space: pre-wrap; }
+/* A cell that raised is still a correct result on this course - it is marked,
+   not styled as a site failure. */
+.run-output.run-failed { border-left: 3px solid var(--flag, #e0705c); }
+.clear-btn { border-color: var(--line); color: var(--text-dim); }
+.clear-btn:hover { background: transparent; border-color: var(--text-dim);
+                   color: var(--text); }
+
+/* .output-block carries a negative top margin so it snaps flush against the
+   <pre> above it. Since the Predict work puts the output INSIDE the debrief,
+   it became the first child of an open <details> and that negative margin
+   dragged it up over the "What happened" summary text. Cancel it only in that
+   position; the flush-against-code look everywhere else is deliberate. */
+.debrief > .output-block:first-of-type,
+.debrief > .run-output:first-of-type { margin-top: .75rem; }
+
+/* Site-wide sticky "Show all output". Deliberately quiet: the default (hidden)
+   is the one we want students to leave alone. */
+.show-all-toggle { display: flex; align-items: baseline; gap: .5rem;
+  font-size: .8rem; color: var(--text-dim); margin: 0 0 1.4rem; cursor: pointer; }
+.show-all-toggle input { cursor: pointer; accent-color: var(--accent); }
+.show-all-toggle .toggle-hint { font-size: .74rem; opacity: .75; }
+.show-all-toggle:hover { color: var(--text); }
+
+/* Foot-of-section navigation. Reads as the end of a step, not a call to act. */
+.section-nav { display: flex; justify-content: flex-end;
+  margin: 2.4rem 0 .6rem; padding-top: 1.2rem;
+  border-top: 1px solid var(--line, #332b25); }
+.section-next { font: 600 .88rem var(--font, 'Zilla Slab', Georgia, serif);
+  color: var(--accent-light); text-decoration: none;
+  padding: .55rem 1.1rem; border: 1px solid var(--line, #332b25);
+  border-radius: 7px; }
+.section-next:hover { border-color: var(--accent); color: var(--text-bright); }
+.section-next:focus-visible { outline: 3px solid var(--accent-light);
+  outline-offset: 2px; }
+
 </style>
 <script>
 /**
@@ -3340,6 +3412,31 @@ section.content-section { scroll-margin-top: 68px; }
   window.dtscCards = { open: open, close: close };
 })();
 
+</script>
+<script>
+(function () {
+  var LAST = "best-practices";
+  var quiz = document.getElementById('quiz');
+  function syncQuiz(id) { if (quiz) quiz.hidden = (id !== LAST); }
+
+  document.querySelectorAll('.section-next[data-goto]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (typeof showSection === 'function') showSection(a.dataset.goto);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  /* The shell's tab handlers call showSection by name, which resolves through
+     the global at call time - so wrapping it here catches every route in,
+     including the tab strip and any deep link. */
+  if (typeof window.showSection === 'function') {
+    var orig = window.showSection;
+    window.showSection = function (id) { orig(id); syncQuiz(id); };
+  }
+  var active = document.querySelector('.tab-link.active[data-section]');
+  syncQuiz(active ? active.dataset.section : null);
+})();
 </script>
 </body>
 </html>

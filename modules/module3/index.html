@@ -689,6 +689,8 @@ A = np.<span class="fn">arange</span>(<span class="nm">1_000_000</span>)
         <p><code>sum(A)</code> is the slowest of the three, and by now you know why: Python&#x27;s per-element loop overhead <strong>plus</strong> the unboxing tax from the footnote above. It is the worst of both worlds, and it looks perfectly reasonable on the page.</p>
       <p>The rule: <strong>use NumPy&#x27;s own methods on NumPy arrays.</strong> <code>A.sum()</code>, not <code>sum(A)</code>. When a NumPy operation feels slow, the first thing to check is whether a Python loop has crept in somewhere.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="arrays" href="#arrays">Next: Arrays &rarr;</a></div>
     </section>
 
 <section id="arrays" class="content-section">
@@ -1035,6 +1037,8 @@ gpas = raw.<span class="fn">astype</span>(<span class="fn">float</span>)
         <p><code>raw + raw</code> is the dangerous case. It does not raise an error - it <strong>concatenates</strong>, giving <code>&#x27;3.813.81&#x27;</code> instead of <code>7.62</code>. A silent wrong answer is far worse than a crash, and this is exactly what happens when two numeric columns arrive as text and somebody adds them.</p>
       <p>Multiplication is less forgiving: in NumPy 2, <code>raw * 2</code> raises a <code>TypeError</code> rather than repeating the text. Which operations fail loudly and which fail quietly is not something you can reason out from first principles - it is a reason to check the dtype rather than to memorize a table.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="broadcasting" href="#broadcasting">Next: Broadcasting &rarr;</a></div>
     </section>
 
 <section id="broadcasting" class="content-section">
@@ -1207,6 +1211,8 @@ centered = ug_gpa - ug_gpa.<span class="fn">mean</span>()
 <span class="cm"># Not exactly 0 -- something like 1e-16. That is floating-point imprecision,</span>
 <span class="cm"># the same reason Module 2 said never to compare floats with ==.</span></code></pre></details>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="indexing" href="#indexing">Next: Indexing &rarr;</a></div>
     </section>
 
 <section id="indexing" class="content-section">
@@ -1437,6 +1443,8 @@ capped = <span class="fn">cap_at_90_safe</span>(scores)
       <p>Returning a <strong>view</strong> rather than a copy is the same hazard one step removed: the caller gets something that looks like fresh data and is secretly wired back to the original. In a multi-step pipeline that is among the most common causes of data changing when nothing appears to have changed it, and it is hard to find afterwards because the code that caused it looks entirely reasonable.</p>
       <p>Unless the function&#x27;s whole job is to modify something in place, copy first. Module 2 said functions should return rather than print; the array version is that functions should return new data rather than mutate their inputs.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="combining" href="#combining">Next: Combining &rarr;</a></div>
     </section>
 
 <section id="combining" class="content-section">
@@ -1586,6 +1594,8 @@ gpas = np.<span class="fn">column_stack</span>([hs_gpa, ug_gpa])
 <span class="cm"># 3</span>
 <span class="fn">print</span>(<span class="st">f&quot;\nevery other student:\n{gpas[::2]}&quot;</span>)</code></pre></details>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="boolean" href="#boolean">Next: Boolean Indexing &rarr;</a></div>
     </section>
 
 <section id="boolean" class="content-section">
@@ -1779,6 +1789,8 @@ high = logins &gt; <span class="nm">12</span>
         <p>That last comparison shows a gap of roughly half a GPA point, and it is exactly the kind of number that ends up in a slide deck without its caveats.</p>
       <p>With five students in each group, no controls, and a split point we chose ourselves after looking at the data, this is a hypothesis and not a finding. Notice in particular that we picked the threshold of 12 because it was convenient. Choosing a cut point after seeing the data is one of the easiest ways to manufacture a result that will not replicate.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="fancy" href="#fancy">Next: Fancy Indexing &rarr;</a></div>
     </section>
 
 <section id="fancy" class="content-section">
@@ -1838,6 +1850,8 @@ sub[<span class="nm">0</span>] = <span class="nm">999</span>
 <span class="fn">print</span>(<span class="st">f&quot;\nsub:    {sub}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;logins: {logins}&quot;</span>)     <span class="cm"># unchanged -- fancy indexing copied</span></code></pre></details>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="vectorization" href="#vectorization">Next: Vectorization &rarr;</a></div>
     </section>
 
 <section id="vectorization" class="content-section">
@@ -1968,6 +1982,8 @@ count of non-missing: <span class="out-num">9</span>
         <p>Exercise 2 has a trap worth noticing: <code>np.maximum(logins, 12)</code> raises everything <em>up</em> to 12, which is the opposite of capping. To impose a ceiling you want <code>np.minimum</code>.</p>
       <p>The names describe what the function returns, not what it does to your data. If that feels backwards, you are not alone - read them as &quot;give me the larger of each pair&quot; and &quot;give me the smaller.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="stats" href="#stats">Next: Aggregation &rarr;</a></div>
     </section>
 
 <section id="stats" class="content-section">
@@ -2140,6 +2156,8 @@ order_weighted = np.<span class="fn">argsort</span>(weighted)[::-<span class="nm
       <p>Equal weights are a choice. They say a login is worth as much as a submitted assignment, which is almost certainly false but is at least transparent. Weighting submission double is also a choice, and it needs a justification other than that it produced a nicer-looking ranking.</p>
       <p>Whatever you pick, <strong>state the weights in the report</strong>. An index whose weights are undocumented is a number nobody can argue with, which sounds like a strength and is actually the problem.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="random" href="#random">Next: Sorting &amp; Random &rarr;</a></div>
     </section>
 
 <section id="random" class="content-section">
@@ -2270,6 +2288,8 @@ diff = np.random.<span class="fn">default_rng</span>(<span class="nm">2</span>).
 <span class="fn">print</span>(<span class="st">f&quot;seed 1: {also}   identical: {np.array_equal(same, also)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;seed 2: {diff}   identical: {np.array_equal(same, diff)}&quot;</span>)</code></pre></details>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="conditional" href="#conditional">Next: Conditional Logic &rarr;</a></div>
     </section>
 
 <section id="conditional" class="content-section">
@@ -2394,6 +2414,8 @@ bucket = np.<span class="fn">where</span>(engagement_index &gt;= <span class="nm
 <span class="kw">for</span> n, b, e <span class="kw">in</span> <span class="fn">zip</span>(names, bucket, engagement_index):
     <span class="fn">print</span>(<span class="st">f&quot;{n:20} {e:.3f}  {b}&quot;</span>)</code></pre></details>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="errors" href="#errors">Next: Reading Errors &rarr;</a></div>
     </section>
 
 <section id="errors" class="content-section">
@@ -2475,6 +2497,8 @@ TypeError: the resolved dtypes are not compatible with add.reduce. Resolved (dty
       <p><strong>Print the shapes.</strong> <code>print(a.shape, b.shape)</code> before the failing line answers every broadcast and axis question.</p>
       <p><strong>Print the dtype.</strong> If arithmetic behaves strangely rather than failing, the dtype is usually the culprit - text where you expected numbers, or integers where you expected floats.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="challenges" href="#challenges">Next: Challenges &rarr;</a></div>
     </section>
 
 <section id="challenges" class="content-section">
@@ -2688,6 +2712,8 @@ bad[<span class="nm">3</span>] = <span class="nm">1.4</span>
       <h3 id="where-to-go-for-more">Where to go for more</h3>
       <ul><li>Wes McKinney, <em><a href="https://wesmckinney.com/book/" target="_blank" rel="noopener">Python for Data Analysis</a></em>, chapter 4 is this module in more depth, and chapter 5 begins pandas.</li><li>Jake VanderPlas, <em><a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener">Python Data Science Handbook</a></em>, chapter 2 covers structured arrays and more on ufuncs.</li></ul>
       <p>Left out on purpose: structured arrays, matrix algebra and <code>@</code>, <code>np.einsum</code>, memory layout and strides, and masked arrays. None are needed for DTSC 520, and pandas replaces most of them.</p>
+    
+      <div class="section-nav"><a class="section-next" href="quiz.html">Take the Quiz &rarr;</a></div>
     </section>
 
     <section id="quiz">
@@ -4389,6 +4415,26 @@ section.content-section { scroll-margin-top: 68px; }
 .debrief > .output-block:first-of-type,
 .debrief > .run-output:first-of-type { margin-top: .75rem; }
 
+/* Site-wide sticky "Show all output". Deliberately quiet: the default (hidden)
+   is the one we want students to leave alone. */
+.show-all-toggle { display: flex; align-items: baseline; gap: .5rem;
+  font-size: .8rem; color: var(--text-dim); margin: 0 0 1.4rem; cursor: pointer; }
+.show-all-toggle input { cursor: pointer; accent-color: var(--accent); }
+.show-all-toggle .toggle-hint { font-size: .74rem; opacity: .75; }
+.show-all-toggle:hover { color: var(--text); }
+
+/* Foot-of-section navigation. Reads as the end of a step, not a call to act. */
+.section-nav { display: flex; justify-content: flex-end;
+  margin: 2.4rem 0 .6rem; padding-top: 1.2rem;
+  border-top: 1px solid var(--line, #332b25); }
+.section-next { font: 600 .88rem var(--font, 'Zilla Slab', Georgia, serif);
+  color: var(--accent-light); text-decoration: none;
+  padding: .55rem 1.1rem; border: 1px solid var(--line, #332b25);
+  border-radius: 7px; }
+.section-next:hover { border-color: var(--accent); color: var(--text-bright); }
+.section-next:focus-visible { outline: 3px solid var(--accent-light);
+  outline-offset: 2px; }
+
 </style>
 <script>
 /**
@@ -5272,6 +5318,31 @@ section.content-section { scroll-margin-top: 68px; }
   window.dtscCards = { open: open, close: close };
 })();
 
+</script>
+<script>
+(function () {
+  var LAST = "challenges";
+  var quiz = document.getElementById('quiz');
+  function syncQuiz(id) { if (quiz) quiz.hidden = (id !== LAST); }
+
+  document.querySelectorAll('.section-next[data-goto]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (typeof showSection === 'function') showSection(a.dataset.goto);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  /* The shell's tab handlers call showSection by name, which resolves through
+     the global at call time - so wrapping it here catches every route in,
+     including the tab strip and any deep link. */
+  if (typeof window.showSection === 'function') {
+    var orig = window.showSection;
+    window.showSection = function (id) { orig(id); syncQuiz(id); };
+  }
+  var active = document.querySelector('.tab-link.active[data-section]');
+  syncQuiz(active ? active.dataset.section : null);
+})();
 </script>
 </body>
 </html>

@@ -913,7 +913,9 @@
           <span></span>
           <button class="subpage-nav-btn" onclick="showSection('version-control')">What is Version Control? &rarr;</button>
         </div>
-      </section>
+      
+      <div class="section-nav"><a class="section-next" data-goto="version-control" href="#version-control">Next: What is Version Control? &rarr;</a></div>
+    </section>
 
       <section id="version-control" class="content-section">
         <h2>What is Version Control?</h2>
@@ -935,7 +937,9 @@
           <span class="subpage-nav-center">1 / 9</span>
           <button class="subpage-nav-btn" onclick="showSection('terminal-intro')">Next: Terminal Setup →</button>
         </div>
-      </section>
+      
+      <div class="section-nav"><a class="section-next" data-goto="terminal-intro" href="#terminal-intro">Next: Using the Terminal &rarr;</a></div>
+    </section>
 
       <!-- SECTION 2: TERMINAL INTRO -->
       <section id="terminal-intro" class="content-section">
@@ -1010,7 +1014,9 @@
           <span class="subpage-nav-center">2 / 9</span>
           <button class="subpage-nav-btn" onclick="showSection('three-states')">Next: Three States →</button>
         </div>
-      </section>
+      
+      <div class="section-nav"><a class="section-next" data-goto="three-states" href="#three-states">Next: The Three States &rarr;</a></div>
+    </section>
       <!-- SECTION 3: THREE STATES -->
       <section id="three-states" class="content-section">
         <h2>The Three States</h2>
@@ -1045,7 +1051,9 @@
           <span class="subpage-nav-center">3 / 9</span>
           <button class="subpage-nav-btn" onclick="showSection('basic-workflow')">Next: Core Workflow →</button>
         </div>
-      </section>
+      
+      <div class="section-nav"><a class="section-next" data-goto="basic-workflow" href="#basic-workflow">Next: The Core Workflow &rarr;</a></div>
+    </section>
 
       <!-- SECTION 4: BASIC WORKFLOW -->
       <section id="basic-workflow" class="content-section">
@@ -1078,7 +1086,9 @@
           <span class="subpage-nav-center">4 / 9</span>
           <button class="subpage-nav-btn" onclick="showSection('repos')">Next: Repositories →</button>
         </div>
-      </section>
+      
+      <div class="section-nav"><a class="section-next" data-goto="repos" href="#repos">Next: Setting Up a Repository &rarr;</a></div>
+    </section>
 
       <!-- SECTION 5: REPOS -->
       <section id="repos" class="content-section">
@@ -1145,7 +1155,9 @@
           <span class="subpage-nav-center">5 / 9</span>
           <button class="subpage-nav-btn" onclick="showSection('branching')">Next: Branching →</button>
         </div>
-      </section>
+      
+      <div class="section-nav"><a class="section-next" data-goto="branching" href="#branching">Next: Branching &rarr;</a></div>
+    </section>
 
       <!-- SECTION 6: BRANCHING -->
       <section id="branching" class="content-section">
@@ -1176,7 +1188,9 @@
           <span class="subpage-nav-center">6 / 9</span>
           <button class="subpage-nav-btn" onclick="showSection('merging')">Next: Merging →</button>
         </div>
-      </section>
+      
+      <div class="section-nav"><a class="section-next" data-goto="merging" href="#merging">Next: Merging and Conflicts &rarr;</a></div>
+    </section>
 
       <!-- SECTION 7: MERGING -->
       <section id="merging" class="content-section">
@@ -1211,7 +1225,9 @@
           <span class="subpage-nav-center">7 / 9</span>
           <button class="subpage-nav-btn" onclick="showSection('pull-requests')">Next: Pull Requests →</button>
         </div>
-      </section>
+      
+      <div class="section-nav"><a class="section-next" data-goto="pull-requests" href="#pull-requests">Next: Pull Requests &rarr;</a></div>
+    </section>
 
       <!-- SECTION 8: PULL REQUESTS -->
       <section id="pull-requests" class="content-section">
@@ -1236,7 +1252,9 @@
           <span class="subpage-nav-center">8 / 9</span>
           <button class="subpage-nav-btn" onclick="showSection('sim-return')">Next: Practice Sim →</button>
         </div>
-      </section>
+      
+      <div class="section-nav"><a class="section-next" data-goto="sim-return" href="#sim-return">Next: Ready to Practice? &rarr;</a></div>
+    </section>
 
       <!-- SECTION 9: SIM RETURN (PRACTICE) -->
       <section id="sim-return" class="content-section">
@@ -1256,7 +1274,9 @@
           <span class="subpage-nav-center">9 / 9</span>
           <span class="subpage-nav-btn invisible">→</span>
         </div>
-      </section>
+      
+      <div class="section-nav"><a class="section-next" href="quiz.html">Take the Quiz &rarr;</a></div>
+    </section>
       <section id="quiz">
         <div class="quiz-link-card">
           <div class="quiz-link-icon">&#9998;</div>
@@ -2629,6 +2649,60 @@ details.ex-solution pre { margin-top: 0.6rem; }
 section.content-section { scroll-margin-top: 68px; }
 .content-section h3[id] { scroll-margin-top: 68px; }
 
+/* --- read-only runnable code blocks (prototype: M2 Variables & Types) ----- */
+/* The block reuses the page's own <pre><code>; only the bar and the live
+   output slot are new, so a runnable block and a static one look identical
+   until the student chooses to act. */
+[data-runnable] { margin: 0 0 1.1rem; }
+[data-runnable] > pre { margin-bottom: 0; }
+.run-bar { display: flex; align-items: center; gap: .7rem; margin-top: .35rem; }
+.run-btn {
+  font: 600 .78rem/1 var(--font, 'Zilla Slab', Georgia, serif);
+  letter-spacing: .04em; padding: .4rem .9rem; border-radius: 6px;
+  cursor: pointer; color: var(--text-bright, #fff);
+  background: transparent; border: 1px solid var(--accent, #7a5fb5);
+}
+.run-btn:hover:not(:disabled) { background: var(--accent, #7a5fb5); }
+.run-btn:disabled { opacity: .55; cursor: progress; }
+.run-btn:focus-visible { outline: 3px solid var(--accent-light); outline-offset: 2px; }
+.run-status { font-size: .78rem; color: var(--text-dim); }
+.run-output { margin-top: .4rem; }
+.run-output pre { margin: 0; white-space: pre-wrap; }
+/* A cell that raised is still a correct result on this course - it is marked,
+   not styled as a site failure. */
+.run-output.run-failed { border-left: 3px solid var(--flag, #e0705c); }
+.clear-btn { border-color: var(--line); color: var(--text-dim); }
+.clear-btn:hover { background: transparent; border-color: var(--text-dim);
+                   color: var(--text); }
+
+/* .output-block carries a negative top margin so it snaps flush against the
+   <pre> above it. Since the Predict work puts the output INSIDE the debrief,
+   it became the first child of an open <details> and that negative margin
+   dragged it up over the "What happened" summary text. Cancel it only in that
+   position; the flush-against-code look everywhere else is deliberate. */
+.debrief > .output-block:first-of-type,
+.debrief > .run-output:first-of-type { margin-top: .75rem; }
+
+/* Site-wide sticky "Show all output". Deliberately quiet: the default (hidden)
+   is the one we want students to leave alone. */
+.show-all-toggle { display: flex; align-items: baseline; gap: .5rem;
+  font-size: .8rem; color: var(--text-dim); margin: 0 0 1.4rem; cursor: pointer; }
+.show-all-toggle input { cursor: pointer; accent-color: var(--accent); }
+.show-all-toggle .toggle-hint { font-size: .74rem; opacity: .75; }
+.show-all-toggle:hover { color: var(--text); }
+
+/* Foot-of-section navigation. Reads as the end of a step, not a call to act. */
+.section-nav { display: flex; justify-content: flex-end;
+  margin: 2.4rem 0 .6rem; padding-top: 1.2rem;
+  border-top: 1px solid var(--line, #332b25); }
+.section-next { font: 600 .88rem var(--font, 'Zilla Slab', Georgia, serif);
+  color: var(--accent-light); text-decoration: none;
+  padding: .55rem 1.1rem; border: 1px solid var(--line, #332b25);
+  border-radius: 7px; }
+.section-next:hover { border-color: var(--accent); color: var(--text-bright); }
+.section-next:focus-visible { outline: 3px solid var(--accent-light);
+  outline-offset: 2px; }
+
 </style>
 <script>
 /**
@@ -3512,6 +3586,31 @@ section.content-section { scroll-margin-top: 68px; }
   window.dtscCards = { open: open, close: close };
 })();
 
+</script>
+<script>
+(function () {
+  var LAST = "sim-return";
+  var quiz = document.getElementById('quiz');
+  function syncQuiz(id) { if (quiz) quiz.hidden = (id !== LAST); }
+
+  document.querySelectorAll('.section-next[data-goto]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (typeof showSection === 'function') showSection(a.dataset.goto);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  /* The shell's tab handlers call showSection by name, which resolves through
+     the global at call time - so wrapping it here catches every route in,
+     including the tab strip and any deep link. */
+  if (typeof window.showSection === 'function') {
+    var orig = window.showSection;
+    window.showSection = function (id) { orig(id); syncQuiz(id); };
+  }
+  var active = document.querySelector('.tab-link.active[data-section]');
+  syncQuiz(active ? active.dataset.section : null);
+})();
 </script>
 </body>
 </html>

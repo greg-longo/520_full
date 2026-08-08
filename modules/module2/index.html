@@ -1149,6 +1149,8 @@ SyntaxError: &#x27;(&#x27; was never closed
       </div>
       <p><code>42.5</code> rounds down to <code>42</code>, but <code>43.5</code> rounds up to <code>44</code>. That isn&#x27;t a bug - Python rounds halves toward the nearest <em>even</em> number, a convention called banker&#x27;s rounding that avoids a systematic upward bias when you round thousands of values.</p>
       <p>This is a good first thing to ask an AI assistant: <em>&quot;Why does Python round 0.5 to even instead of always up?&quot;</em> Compare what it tells you to what you just observed.</p>
+    
+      <div class="section-nav"><a class="section-next" data-goto="variables" href="#variables">Next: Variables &amp; Types &rarr;</a></div>
     </section>
 
 <section id="variables" class="content-section">
@@ -1564,6 +1566,8 @@ x = y = <span class="nm">1</span>
 n = <span class="nm">17.</span>
 <span class="fn">print</span>(n, <span class="fn">type</span>(n))</code></pre></details>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="strings" href="#strings">Next: Strings &rarr;</a></div>
     </section>
 
 <section id="strings" class="content-section">
@@ -2040,6 +2044,8 @@ last = parts[<span class="nm">1</span>]
 <span class="cm"># &#x27;Eastern&#x27; + 7 is the TypeError -- you cannot concatenate str and int.</span>
 <span class="cm"># Fix it with an f-string or str(7).</span></code></pre></details>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="functions" href="#functions">Next: Functions &rarr;</a></div>
     </section>
 
 <section id="functions" class="content-section">
@@ -2350,6 +2356,8 @@ B or below
 
 <span class="cm"># parts[-1] rather than parts[1] so a middle name doesn&#x27;t break it.</span></code></pre></details>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="conditions" href="#conditions">Next: Conditions &rarr;</a></div>
     </section>
 
 <section id="conditions" class="content-section">
@@ -2686,6 +2694,8 @@ Dean&#x27;s list
       <p>Block 2 above prints only <code>positive</code>, and its <code>big</code> branch is unreachable for <em>every</em> positive value of <code>x</code> - the first condition always matches, so Python never evaluates the second. That is a silent bug: no error, just a branch that can never run.</p>
       <p>Block 3 gets the same conditions right by ordering them from most restrictive to least. This is exactly why <code>standing()</code> checks <code>&gt;= 3.5</code> before <code>&gt;= 3.0</code>. When you write an <code>elif</code> chain, read it top to bottom and ask whether any branch is unreachable.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="data-structures" href="#data-structures">Next: Data Structures &rarr;</a></div>
     </section>
 
 <section id="data-structures" class="content-section">
@@ -3611,6 +3621,8 @@ status_counts = {}
       <p>That is not a flaw in the data, it is the data. Every real extract has holes, and a comparison is where they usually surface - not at the point where the value went missing, but three steps later in code that looks obviously correct.</p>
       <p>You will meet this hole twice more: as <code>np.nan</code> in Module 3, and as a decision you have to justify in Module 4.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="loops" href="#loops">Next: Loops &rarr;</a></div>
     </section>
 
 <section id="loops" class="content-section">
@@ -4060,6 +4072,8 @@ values = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm"
       <p>**B. Initialize accumulators <em>before</em> the loop, not inside it.** Block B prints <code>3</code> rather than <code>6</code> because <code>total = 0</code> runs on every pass, throwing away everything accumulated so far. Only the last value survives. This is easy to write by accident and produces a plausible-looking wrong number rather than an error, which makes it genuinely dangerous.</p>
       <p><strong>C. Never modify a list while you are iterating over it.</strong> Appending to the list you&#x27;re looping over means the loop keeps finding new elements - block C would run forever without the <code>break</code>. Removing items while looping is just as bad: it silently skips elements. <strong>Build a new list instead</strong>, the way <code>clean_roster</code> was built above.</p>
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="modules" href="#modules">Next: Modules &rarr;</a></div>
     </section>
 
 <section id="modules" class="content-section">
@@ -4181,6 +4195,8 @@ curved = []
       </div>
       <p>One operation applied to a whole array at once, with no loop. That&#x27;s called <strong>vectorization</strong>, and on a real cohort it&#x27;s not just shorter - it&#x27;s hundreds of times faster. Module 3 will race the two approaches against each other so you can watch the difference.</p>
       <p><strong>Note:</strong> list comprehensions - the <code>[x + 0.1 for x in gpas]</code> syntax you may have seen - are covered in Module 3 as well, right next to vectorization, where the comparison actually means something.</p>
+    
+      <div class="section-nav"><a class="section-next" data-goto="errors" href="#errors">Next: Reading Errors &rarr;</a></div>
     </section>
 
 <section id="errors" class="content-section">
@@ -4284,6 +4300,8 @@ total += gpa</code></pre>
         <div class="output-block-label">output</div>
 IndentationError: expected an indented block after &#x27;for&#x27; statement on line <span class="out-num">3</span> (<span class="out-num">899710289.</span>py, line <span class="out-num">4</span>)
       </div>
+    
+      <div class="section-nav"><a class="section-next" data-goto="notebooks" href="#notebooks">Next: Notebook Skills &rarr;</a></div>
     </section>
 
 <section id="notebooks" class="content-section">
@@ -4329,6 +4347,8 @@ age = <span class="fn">input</span>(<span class="st">&quot;Age: &quot;</span>)  
       <h3 id="timing">Timing</h3>
       <p>One magic command worth knowing, because Module 3 is built on it. <code>%timeit</code> runs a line repeatedly and reports how long it takes:</p>
       <p>Keep that number in mind. In Module 3 you&#x27;ll run the same calculation with NumPy and race them.</p>
+    
+      <div class="section-nav"><a class="section-next" data-goto="challenges" href="#challenges">Next: Challenges &rarr;</a></div>
     </section>
 
 <section id="challenges" class="content-section">
@@ -4613,6 +4633,8 @@ holes = <span class="fn">find_missing</span>({<span class="st">&quot;students&qu
       <p>For self-study, both of the books this module draws on are free online and worth your time:</p>
       <ul><li>Allen Downey, <em><a href="https://allendowney.github.io/ThinkPython/" target="_blank" rel="noopener">Think Python</a></em> (3rd edition). Chapters 1, 2, 3, 5, 9, and 10 overlap with this module; chapters 4, 6, 7, 8, and 11 through 13 are the natural next steps, and they cover most of what was left out above.</li><li>Jake VanderPlas, <em><a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener">Python Data Science Handbook</a></em>. Chapter 1 is the deep version of section 12 here. Chapters 2 and 3 are Modules 3 and 4 of this course, so reading ahead there is time well spent.</li></ul>
       <p>See the acknowledgments at the top of this notebook for what came from where.</p>
+    
+      <div class="section-nav"><a class="section-next" href="quiz.html">Take the Quiz &rarr;</a></div>
     </section>
 
     <section id="quiz">
@@ -6309,6 +6331,18 @@ section.content-section { scroll-margin-top: 68px; }
 .show-all-toggle .toggle-hint { font-size: .74rem; opacity: .75; }
 .show-all-toggle:hover { color: var(--text); }
 
+/* Foot-of-section navigation. Reads as the end of a step, not a call to act. */
+.section-nav { display: flex; justify-content: flex-end;
+  margin: 2.4rem 0 .6rem; padding-top: 1.2rem;
+  border-top: 1px solid var(--line, #332b25); }
+.section-next { font: 600 .88rem var(--font, 'Zilla Slab', Georgia, serif);
+  color: var(--accent-light); text-decoration: none;
+  padding: .55rem 1.1rem; border: 1px solid var(--line, #332b25);
+  border-radius: 7px; }
+.section-next:hover { border-color: var(--accent); color: var(--text-bright); }
+.section-next:focus-visible { outline: 3px solid var(--accent-light);
+  outline-offset: 2px; }
+
 </style>
 <script>
 /**
@@ -7192,6 +7226,31 @@ section.content-section { scroll-margin-top: 68px; }
   window.dtscCards = { open: open, close: close };
 })();
 
+</script>
+<script>
+(function () {
+  var LAST = "challenges";
+  var quiz = document.getElementById('quiz');
+  function syncQuiz(id) { if (quiz) quiz.hidden = (id !== LAST); }
+
+  document.querySelectorAll('.section-next[data-goto]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (typeof showSection === 'function') showSection(a.dataset.goto);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  /* The shell's tab handlers call showSection by name, which resolves through
+     the global at call time - so wrapping it here catches every route in,
+     including the tab strip and any deep link. */
+  if (typeof window.showSection === 'function') {
+    var orig = window.showSection;
+    window.showSection = function (id) { orig(id); syncQuiz(id); };
+  }
+  var active = document.querySelector('.tab-link.active[data-section]');
+  syncQuiz(active ? active.dataset.section : null);
+})();
 </script>
 </body>
 </html>
