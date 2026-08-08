@@ -278,7 +278,7 @@ const AMY_SVG = `
 </g>
 <circle cx="50" cy="50" r="49" fill="none" stroke="#c9a24a" stroke-width="1.2" opacity="0.5"/>`;
 
-/* ===================== AMY AVATAR — FRAME CYCLING =====================
+/* ===================== AMY AVATAR - FRAME CYCLING =====================
    Provide STILL frames in capstone/assets/ named:
        amy-<emotion>-1.png, amy-<emotion>-2.png, ...   (idle frames; 1+)
        amy-<emotion>-blink.png                            (optional eyes-closed)
@@ -693,7 +693,7 @@ function renderPaused(built, decisions, good, passed){
       <p>That's everything I have for you today. You took this from a question
       the Cabinet could not answer to work that will stand up when somebody
       checks it.</p>
-      <p><strong>The commission continues in Stage ${built + 1} — ${STAGE_NAMES[built] || 'the next stage'}.</strong>
+      <p><strong>The commission continues in Stage ${built + 1}: ${STAGE_NAMES[built] || 'the next stage'}.</strong>
       It isn't open yet. When it is, your work so far will still be here.</p>
       <div class="outcome good" style="margin-top:1rem">
         <div class="outcome-t">Where you got to</div>
@@ -1077,12 +1077,12 @@ function saveProgress(){ try{ localStorage.setItem('dtsc520_capstone_progress', 
 function buildBeats(){
   const B=[];
 
-  /* ============ STAGE 1 — FRAME (Module 1) ============ */
+  /* ============ STAGE 1 - FRAME (Module 1) ============ */
   B.push({stage:0, type:'dialogue', thread:true, time:'9:02 AM',
-    text:"So. The Cabinet wants to know what drives student success, and they're putting real money behind whatever we tell them. That means we get this right, or we do harm. No pressure.",
+    text:"So. The Cabinet wants to know what drives student success, and they're putting real money behind whatever we tell them. Real money. Which means if we get this wrong we don't just look bad in a meeting, we do harm to actual students. Anyway. Coffee's over there.",
     cont:'Go on'});
   B.push({stage:0, type:'dialogue', thread:true, time:'9:03 AM',
-    text:"I've pulled de-identified records across the student lifecycle - high school, undergrad, work, and the LMS. Before you touch any of it, I need three things from you: an honest scope, a fairness call, and a plan. Get those wrong and the analysis is poisoned before it starts.",
+    text:"I've pulled de-identified records across the whole student lifecycle. High school, undergrad, work, LMS. Before you touch any of it I need a scope, a fairness call, and a plan, in that order. Everyone wants to skip to the plan.",
     cont:'I\'m ready'});
 
   B.push({stage:0, type:'decision', id:'s1_scope', pts:4,
@@ -1102,13 +1102,13 @@ function buildBeats(){
     ]});
 
   B.push({stage:0, type:'dialogue', thread:true, time:'9:08 AM', cont:'Show me the fields',
-    text:"Now the part that keeps me up at night. Some of these fields would sharpen a model - and using them would be indefensible. I need you to decide which features we will not let near a ranking of students.",  /* fallback */
+    text:"Now the bit I actually lose sleep over. Some of these fields would make the model sharper. They'd also be indefensible. Tell me which ones we keep away from any ranking of a student.",  /* fallback */
     dyn:(verdict)=>{
       const v=verdict(['s1_scope']);
-      const tail=" Now the part that keeps me up at night. Some of these fields would sharpen a model - and using them would be indefensible. I need you to decide which features we will not let near a ranking of students.";
-      if(v==='good') return { emotion:'concern', text:"Good - that's the right way to scope it."+tail };
-      if(v==='mixed') return { emotion:'concern', text:"That scope was softer than I'd state it to the Cabinet, but close enough to move."+tail };
-      return { emotion:'disappoint', text:"That's not how we'd frame it for the Cabinet - reread my note, because getting scope wrong is how the whole report misleads people."+tail };
+      const tail=" Now the bit I actually lose sleep over. Some of these fields would make the model sharper. They'd also be indefensible. Tell me which ones we keep away from any ranking of a student.";
+      if(v==='good') return { emotion:'concern', text:"Good. That's how I'd have scoped it."+tail };
+      if(v==='mixed') return { emotion:'concern', text:"Softer than I'd put it to the Cabinet. Close enough to move on."+tail };
+      return { emotion:'disappoint', text:"That's not how we'd frame it for the Cabinet. Go back and reread my note. If the scope is wrong then everything built on it is wrong too, and nothing downstream will tell you."+tail };
     }});
 
   /* Ethics as a code-predicate task: student writes the rule that flags sensitive proxies. Harder than click-to-exclude. */
@@ -1139,7 +1139,7 @@ assert flags['ug_gpa'] is False and flags['logins_per_week'] is False and flags[
   });
 
   B.push({stage:0, type:'interstitial', emotion:'concern',
-    text:"With those two fields in, the model would've scored a point higher. Hold onto that. Someone in that Cabinet room is going to argue the most accurate model is the right one. It isn't - not when the accuracy comes from the data knowing who's poor.",
+    text:"With those two fields in, the model scores a point higher. Remember that number, because somebody in that room is going to argue the most accurate model is obviously the right one, and they'll sound completely reasonable saying it. What they're actually arguing is that the model got better at spotting which students are poor.",
     cont:'Continue'});
 
   B.push({stage:0, type:'decision', id:'s1_plan', pts:4, shuffle:false,
@@ -1159,20 +1159,20 @@ assert flags['ug_gpa'] is False and flags['logins_per_week'] is False and flags[
     ]});
 
   B.push({stage:0, type:'dialogue', thread:true, time:'9:21 AM', cont:'Open the extract →',
-    text:"That's the framing done. Let's get our hands on the data.",  /* fallback */
+    text:"Framing's done. Let's get our hands on the data.",  /* fallback */
     dyn:(verdict)=>{
       const v=verdict(['s1_scope','s1_plan']);   /* the two Stage-1 decisions */
       if(v==='good') return { emotion:'approve',
-        text:"Scope's honest, the proxies are out, and you caught the pipeline order. That's the framing done - the part most people skip and most analyses die on. Let's get our hands on the data." };
+        text:"Scope's honest, proxies are out, and you caught the pipeline order. Framing's done. Most people skip this part and then spend three weeks paying for it. Let's get our hands on the data." };
       if(v==='mixed') return { emotion:'concern',
-        text:"Mostly there. A couple of those calls were softer than I'd like, and the Cabinet won't be. Framing is where analyses quietly go wrong - so hold yourself to the sharper answer next time. Let's move." };
+        text:"Mostly there. A couple of those calls were softer than I'd like, and the Cabinet won't be soft back. Take the sharper answer next time, even when the vague one would get you out of the room faster. Let's move." };
       return { emotion:'disappoint',
-        text:"Hold on. We don't just click through the framing - that's the part that decides whether the whole report is honest or garbage. You scoped or sequenced this wrong, and on a real commission that's how a university funds the wrong thing or rates students by their zip code. Read the data carefully from here. I'm watching this one closely." };
+        text:"Hold on. You clicked through the framing. That's the part that decides whether any of the rest of this is honest. On a real commission, what you just did is how a university ends up funding the wrong thing, or rating students by their zip code and calling it a model. Read everything carefully from here. I'm going to be watching this one." };
     }});
 
-  /* ============ STAGE 2 — ASSEMBLE (Module 2) ============ */
+  /* ============ STAGE 2 - ASSEMBLE (Module 2) ============ */
   B.push({stage:1, type:'dialogue', thread:true, time:'9:24 AM',
-    text:"Here's the raw extract, straight out of the source system. First job is unglamorous: know exactly what you're holding before you trust a single number. Write me a quick profile - in plain Python, nothing fancy yet.",
+    text:"Here's the raw extract, straight out of the source system. First job is boring. Find out exactly what you're holding before you trust a single number in it. Write me a quick profile. Plain Python, nothing clever yet.",
     cont:'Open the editor'});
 
   B.push({stage:1, type:'code', id:'s2_profile',
@@ -1218,20 +1218,20 @@ assert r[2] == exp_pct, "pct_on_aid should be 100*n_on_aid/n_records rounded to 
     ]});
 
   B.push({stage:1, type:'dialogue', thread:true, time:'9:36 AM', cont:'Stage 3: Compute the metrics →',
-    text:"Now you know what you're holding. Next we turn raw fields into metrics.",  /* fallback */
+    text:"Right, now you know what you're holding. Next we turn raw fields into metrics.",  /* fallback */
     dyn:(verdict)=>{
       const v=verdict(['s2_smell']);
       if(v==='good') return { emotion:'approve',
-        text:"Good - you knew what you're holding and what's wrong with it, and you didn't panic or paper over it. That instinct to catalog problems instead of hiding them is the whole job. Now we turn raw fields into the metrics that actually answer the Cabinet's question." };
+        text:"Good. You found what's wrong with it and you wrote the problems down instead of quietly working around them. That habit is most of the job. Now we turn raw fields into the metrics that answer the Cabinet's question." };
       if(v==='mixed') return { emotion:'concern',
-        text:"Close. You spotted the issues, but the move you reached for would've scattered the cleaning across the workflow - that's how steps get missed and nobody can reproduce your numbers later. Keep cleaning as its own deliberate step. Onward." };
+        text:"Close. You spotted the issues. But the move you reached for scatters the cleaning across the whole workflow, and then nobody can tell you what was done to the data. Including you, in about a month. Keep cleaning as its own step. Onward." };
       return { emotion:'disappoint',
-        text:"No. Read that back. You were one click from either bouncing routine data back to the source - stalling the whole project - or dropping rows whose missingness isn't random, which would bias the exact finding we're chasing. This is precisely the carelessness that produces confident, wrong reports. Slow down. The numbers we build next are only as honest as how we handle this." };
+        text:"No. Read that back. You were one click away from bouncing perfectly routine data back to the source and stalling the whole project. Or from dropping rows whose missingness isn't random, which bends the exact finding we're chasing. Slow down. Everything we build next inherits whatever you decide here." };
     }});
 
-  /* ============ STAGE 3 — COMPUTE THE METRICS (Module 3) ============ */
+  /* ============ STAGE 3 - COMPUTE THE METRICS (Module 3) ============ */
   B.push({stage:2, type:'dialogue', thread:true, time:'10:05 AM', cont:'Open the editor',
-    text:"The Cabinet keeps saying \"engaged students\". Nobody has defined it. That's our job now, and it matters more than it sounds - whatever we call engagement is what they'll write the check for. Before we build it, check the raw material. I don't trust a metric built on fields nobody has looked at."});
+    text:"The Cabinet keeps saying \"engaged students\" like everyone in the room agrees what that means. Nobody has defined it. We're about to, and whatever we put in that definition is what they'll write the check for. So before we build anything, look at the raw material. I don't trust a metric built on fields nobody has opened."});
 
   B.push({stage:2, type:'code', id:'s3_quality',
     task:'Complete <code>quality_report(logins, attendance)</code>. Return <code>(n_missing, any_missing, attendance_ok)</code>: how many <code>logins</code> values are missing, whether <b>any</b> are, and whether <b>every</b> attendance value is a valid proportion (at most 1.0).',
@@ -1259,7 +1259,7 @@ assert bool(r[2]) is False, "attendance_ok should be False. One student has hs_a
   });
 
   B.push({stage:2, type:'dialogue', thread:true, time:'10:14 AM', emotion:'concern', cont:'Define the metric',
-    text:"Seventeen rows with no engagement data at all, and an attendance figure of 1.4 - somebody's export divided by the wrong denominator. Neither of those raises an error. They just sit there being wrong until a person checks. Now: define engagement."});
+    text:"Seventeen rows with no engagement data, and an attendance figure of 1.4. Somebody's export divided by the wrong denominator. Neither of those throws an error. They just sit there being wrong until a person looks. Right. Define engagement."});
 
   B.push({stage:2, type:'decision', id:'s3_metric', pts:5,
     label:'Decision · What counts as engagement',
@@ -1278,13 +1278,13 @@ assert bool(r[2]) is False, "attendance_ok should be False. One student has hs_a
     ]});
 
   B.push({stage:2, type:'dialogue', thread:true, time:'10:26 AM', cont:'Build it',
-    text:"Right. Build it, and build it vectorized - one operation across the whole cohort, not a loop.",
+    text:"Right. Build it. Vectorized, please: one operation across the whole cohort, not a loop.",
     dyn:(verdict)=>{
       const v=verdict(['s3_metric']);
-      const tail=" Build it vectorized - one operation across the whole cohort, not a loop. And leave the missing rows missing; how we handle those is a decision, not something a scoring function should quietly make on our behalf.";
+      const tail=" Build it vectorized: one operation across the whole cohort, not a loop. And leave the missing rows missing. How we handle those is a decision we make on purpose, not something a scoring function settles quietly on our behalf.";
       if(v==='good') return { emotion:'approve', text:"Normalize first, then average. That's the version I can defend in the room."+tail };
-      if(v==='mixed') return { emotion:'concern', text:"I can live with that, though we would be discarding information the Cabinet is paying for."+tail };
-      return { emotion:'disappoint', text:"No. Go back and read what you picked, because a metric built that way is either measuring one column under a false name or being handed the answer outright. I will have you build the honest version anyway."+tail };
+      if(v==='mixed') return { emotion:'concern', text:"I can live with it. We're throwing away information the Cabinet is paying for, but I can live with it."+tail };
+      return { emotion:'disappoint', text:"No. Go back and read what you picked. A metric built that way is either one column wearing a fancier name, or it's been handed the answer outright. You're building the honest version regardless."+tail };
     }});
 
   B.push({stage:2, type:'code', id:'s3_index',
@@ -1336,16 +1336,16 @@ assert float(np.corrcoef(idx[_ok], submission[_ok])[0, 1]) < 0.99, "Your index t
     text:"That's a metric we can put a name to. Next, the data itself.",
     dyn:(verdict)=>{
       const v=verdict(['s3_metric']);
-      const tail=" One more thing before you go. That index only exists for 85 of our 102 records. Seventeen have nothing at all. Everything from here depends on what you decide to do about them - and it is a decision with a cost, whichever way you go.";
+      const tail=" One more thing before you go. That index only exists for 85 of our 102 records. Seventeen have nothing at all. Everything from here depends on what you decide to do about those seventeen, and there's a cost whichever way you go.";
       if(v==='good') return { emotion:'approve',
-        text:"Good. One vectorized pass, missing values still visibly missing, and a definition I can say out loud to the Cabinet: the average of three normalized behaviors."+tail };
+        text:"Good. One pass, missing values still visibly missing, and a definition I can say out loud in the room: the average of three normalized behaviors."+tail };
       return { emotion:'concern',
-        text:"The code is right, even if the reasoning that got us here was shaky. The definition holds: the average of three normalized behaviors, computed in one pass."+tail };
+        text:"Code's right. The reasoning that got us here was shakier than I'd like. Definition holds, though: the average of three normalized behaviors, one pass."+tail };
     }});
 
-  /* ============ STAGE 4 — CLEAN AND JOIN (Module 4) ============ */
+  /* ============ STAGE 4 - CLEAN AND JOIN (Module 4) ============ */
   B.push({stage:3, type:'dialogue', thread:true, time:'11:10 AM', cont:'Look at the tables',
-    text:"Four tables, four systems, four teams who have never met. high_school from the registrar, undergraduate from student records, outcomes from the gradebook, lms_activity from the learning platform. Nobody agreed on anything. Before you join them, look at their shapes - the shapes are the whole story."});
+    text:"Four tables, four systems, four teams who have never met. high_school from the registrar, undergraduate from student records, outcomes from the gradebook, lms_activity from the learning platform. Nobody coordinated any of it. Before you join anything, look at the shapes. The shapes will tell you most of what's about to go wrong."});
 
   B.push({stage:3, type:'decision', id:'s4_join', pts:5,
     label:'Decision · How to assemble',
@@ -1395,7 +1395,7 @@ for _c in ['hs_gpa', 'ug_gpa', 'course_score', 'logins_per_week']:
   });
 
   B.push({stage:3, type:'dialogue', thread:true, time:'11:32 AM', cont:'Measure it', emotion:'concern',
-    text:"One hundred rows, fifteen of them with holes where the engagement data should be. Now - and this is the part most analysts skip - find out what it would have cost to drop them. Not whether it feels reasonable. What it costs, in numbers."});
+    text:"One hundred rows, fifteen with holes where the engagement data should be. Now find out what it would cost to drop them. Not whether dropping them feels reasonable. What it costs, in numbers."});
 
   B.push({stage:3, type:'code', id:'s4_cost',
     task:'Write <code>cost_of_dropping(analysis)</code>: group the students by whether they have an LMS record, and report the group size, the mean <code>course_score</code> and the <code>success</code> rate for each.',
@@ -1448,21 +1448,21 @@ assert round(float(_yes['pass_rate']), 2) == 0.66, "66 percent of the students w
     ]});
 
   B.push({stage:3, type:'dialogue', thread:true, time:'11:58 AM', cont:'Stage 5: Visualize the findings →',
-    text:"One table, one hundred students, and a documented decision about the gap. Next, the charts.",
+    text:"One table, one hundred students, and a written-down decision about the gap. Next, the charts.",
     dyn:(verdict)=>{
       const v=verdict(['s4_join','s4_missing']);
-      const tail=" Next, the charts. And be careful there - a chart makes a claim faster than a sentence does, and people argue with it less.";
+      const tail=" Next, the charts. Be careful there. A chart makes its claim faster than a sentence does, and people argue with it a lot less.";
       if(v==='good') return { emotion:'approve',
-        text:"That's an analysis table I'd sign. A hundred students, nobody quietly deleted, and a gap that's documented instead of filled in with something convenient."+tail };
+        text:"That's a table I'd put my name on. A hundred students, nobody quietly deleted, and the gap written down instead of filled in with something convenient."+tail };
       if(v==='mixed') return { emotion:'concern',
-        text:"The table is assembled. I'm less comfortable with how we got here than with where we ended up, and if the Cabinet asks how the fifteen were handled, that answer needs to be better than it currently is."+tail };
+        text:"Table's assembled. I'm less happy about how we got here than about where we ended up. If the Cabinet asks how the fifteen were handled, we need a better answer than the one we've currently got."+tail };
       return { emotion:'disappoint',
-        text:"Then understand what you just did. Fifteen students - the fifteen with the lowest scores and the worst pass rate - were either deleted or replaced with a number we made up. The report will read better for it. That is the problem."+tail };
+        text:"Then understand what you just did. Fifteen students, and not fifteen random ones. The fifteen with the lowest scores and the worst pass rate. You either deleted them or replaced them with a number we invented. The report reads better for it. That's the problem."+tail };
     }});
 
-  /* ============ STAGE 5 — VISUALIZE THE FINDINGS (Module 5) ============ */
+  /* ============ STAGE 5 - VISUALIZE THE FINDINGS (Module 5) ============ */
   B.push({stage:4, type:'dialogue', thread:true, time:'1:15 PM', cont:'Pick the chart',
-    text:"The Cabinet will not read your table. They will look at the pictures and decide. That is not a complaint about them - it is how every decision-making body works, and it means a chart carries more weight than the paragraph beside it. So we choose carefully, starting with the finding itself: engagement tracks with passing."});
+    text:"The Cabinet will not read your table. They'll look at the pictures and decide. I'm not being snide about them, every committee I've sat on has worked that way, mine included. It just means the chart outweighs whatever paragraph you put beside it. So we pick carefully. Start with the finding: engagement tracks with passing."});
 
   B.push({stage:4, type:'decision', id:'s5_chart', pts:4,
     label:'Decision · The finding chart',
@@ -1525,11 +1525,11 @@ assert '85' in _ax.get_title(), "The title must say the chart covers 85 of the 1
   });
 
   B.push({stage:4, type:'dialogue', thread:true, time:'1:44 PM', emotion:'concern', cont:'See the request',
-    text:"Good. That one is clean. Now the message that just came in from the Provost's office, and I want you to read it twice before you touch anything."});
+    text:"Good, that one's clean. Now. A message came in from the Provost's office. Read it twice before you touch anything."});
 
   B.push({stage:4, type:'decision', id:'s5_axis', pts:6,
     label:'Decision 2 of 3 · Ethics · The axis',
-    intro:"<i>\"Can you also send a chart showing the gap in outcomes for aid recipients? Something with impact - the last one looked flat and the room lost interest. Crop the axis if you need to.\"</i><br><br>The numbers: students on need-based aid average <b>65.7</b>, students not on aid average <b>72.0</b>. A gap of <b>6.3 points</b> on a 0-100 scale. On a full axis the difference fills about <b>6%</b> of the plot. Cropped to 65-76, it fills <b>57%</b>.",
+    intro:"<i>\"Can you also send a chart showing the gap in outcomes for aid recipients? Something with impact. The last one looked flat and the room lost interest. Crop the axis if you need to.\"</i><br><br>The numbers: students on need-based aid average <b>65.7</b>, students not on aid average <b>72.0</b>. A gap of <b>6.3 points</b> on a 0-100 scale. On a full axis the difference fills about <b>6%</b> of the plot. Cropped to 65-76, it fills <b>57%</b>.",
     q:'What do you send?',
     onPick:(c)=>{
       if(c.q==='good'){ state.ethics.honestAxis=true;
@@ -1586,21 +1586,21 @@ assert _ax.get_ylabel().strip() != '', "Label the y-axis."`,
   });
 
   B.push({stage:4, type:'dialogue', thread:true, time:'2:20 PM', cont:'Stage 6: Ship the report →',
-    text:"Two figures, and neither of them is doing anything the numbers do not support. Last stage: get it out the door.",
+    text:"Two figures, and neither of them is doing anything the numbers don't support. Last stage: get it out the door.",
     dyn:(verdict)=>{
       const v=verdict(['s5_chart','s5_axis']);
-      const tail=" Last stage: getting it out the door. Which sounds like the boring part, and is the part where a report either becomes something the institution can check, or becomes a PDF nobody can trace back to anything.";
+      const tail=" Last stage: getting it out the door. Sounds like the boring part. It's the part where this either becomes something the institution can check, or becomes a PDF nobody can trace back to anything.";
       if(v==='good') return { emotion:'approve',
-        text:"Two figures, and neither of them is doing anything the numbers do not support. You also told the Provost's office no, with a reason, which is a harder skill than any of the code."+tail };
+        text:"Two figures, and neither of them is doing anything the numbers don't support. You also told the Provost's office no, and gave them a reason. That's harder than any of the code, and nobody teaches it."+tail };
       if(v==='mixed') return { emotion:'concern',
-        text:"The figures are drawn. I am not fully comfortable with how we handled the request from upstairs, and if that chart travels beyond this office I would want it redrawn first."+tail };
+        text:"Figures are drawn. I'm not comfortable with how we handled the request from upstairs. If that chart leaves this office I'd want it redrawn first."+tail };
       return { emotion:'disappoint',
-        text:"Understand what happened there. Somebody with authority asked for a picture that overstates a gap, and the argument for going along with it - every number is accurate - is the argument every misleading chart has ever used. The bars are the claim. Not the labels."+tail };
+        text:"Understand what happened there. Somebody with authority asked for a picture that overstates a gap. And the argument for going along with it, that every number on the chart is accurate, is the argument behind every misleading chart ever drawn. People read the bars. Nobody reads the axis."+tail };
     }});
 
-  /* ============ STAGE 6 — SHIP THE REPORT (Module 6) ============ */
+  /* ============ STAGE 6 - SHIP THE REPORT (Module 6) ============ */
   B.push({stage:5, type:'dialogue', thread:true, time:'3:05 PM', cont:'How do we ship it?',
-    text:"The analysis is done. Now the part that decides whether it is worth anything: getting it out in a form somebody can check. A finding nobody can reproduce is an opinion with a chart attached. The Cabinet will act on this - fund a program, maybe defund another - so six months from now, somebody is going to ask how we got these numbers. What we hand over today is the answer to that question."});
+    text:"Analysis is done. Now the part that decides whether any of it was worth doing: handing it over in a form somebody can check. The Cabinet is going to act on this. Fund a program, maybe defund another one. And six months from now somebody will ask how we got these numbers, probably somebody who doesn't like what they say. Whatever we hand over today is what they'll get."});
 
   B.push({stage:5, type:'decision', id:'s6_ship', pts:5,
     label:'Decision · What gets handed over',
@@ -1670,11 +1670,11 @@ assert str(_s['claim_type']).lower() in ('association', 'associational', 'correl
   });
 
   B.push({stage:5, type:'dialogue', thread:true, time:'3:38 PM', emotion:'concern', cont:'Read the message',
-    text:"That block is the report's conscience - it travels with the numbers so nobody has to remember the caveats. Which brings us to the last message of the day, and the hardest thing anyone has asked you today."});
+    text:"That block travels with the numbers, so nobody has to remember the caveats or admit they forgot them. One more message. It's the hardest thing anyone's asked you today."});
 
   B.push({stage:5, type:'decision', id:'s6_score', pts:7,
     label:'Decision 3 of 3 · Ethics · The single score',
-    intro:"<i>\"This is excellent. Can you convert it into one number per student - a success score - so advisors can prioritize who to contact first? Same model, just ranked.\"</i><br><br>You could build it. The engagement index already exists and it separates the quartiles cleanly: <b>14%</b> pass in the lowest, <b>100%</b> in the highest.",
+    intro:"<i>\"This is excellent. Can you convert it into one number per student, a success score, so advisors can prioritize who to contact first? Same model, just ranked.\"</i><br><br>You could build it. The engagement index already exists and it separates the quartiles cleanly: <b>14%</b> pass in the lowest, <b>100%</b> in the highest.",
     q:'What do you tell them?',
     onPick:(c)=>{
       if(c.q==='good'){ state.ethics.refusedRanking=true;
@@ -1695,13 +1695,13 @@ assert str(_s['claim_type']).lower() in ('association', 'associational', 'correl
     text:"That's the commission.",
     dyn:(verdict)=>{
       const v=verdict(['s6_ship','s6_score']);
-      const tail=" Six stages: you scoped the question, drew a fairness line, assembled the data, computed a metric you can defend, drew charts that do not overstate, and shipped something somebody can check. The code was the easy part. It always is.";
+      const tail=" Six stages. You scoped the question, drew a fairness line, assembled the data, built a metric you can defend, drew charts that don't overstate, and shipped something somebody else can check. Notice how little of that was the code.";
       if(v==='good') return { emotion:'approve',
-        text:"That's the commission. You told the Provost's office no twice today - once about an axis, once about a ranking - and both times you offered them something better instead. That is the entire job, and most people never learn the second half of it."+tail };
+        text:"That's the commission. You told the Provost's office no twice today, once about an axis and once about a ranking, and both times you handed them something better to say yes to. Plenty of people manage the no. Almost nobody manages the second half."+tail };
       if(v==='mixed') return { emotion:'concern',
-        text:"That's the commission, and the analysis will stand. Some of what you agreed to today I would want to revisit before this goes any further than my desk."+tail };
+        text:"That's the commission, and the analysis will stand. Some of what you agreed to today I'd want to revisit before this goes any further than my desk."+tail };
       return { emotion:'disappoint',
-        text:"That's the commission. I want you to sit with what you agreed to today, because the analysis itself was sound and that is what makes it dangerous - a careful piece of work handed over in a form that invites the misuse we spent all day avoiding."+tail };
+        text:"That's the commission. Sit with what you agreed to today. The analysis was sound, and that's exactly what makes it dangerous. Careful work, handed over in a form that invites the misuse we spent all day avoiding."+tail };
     }});
 
   return B;
