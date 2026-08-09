@@ -323,19 +323,32 @@
   }
 
   function addToggle(section) {
-    var wrap = document.createElement("label");
+    var wrap = document.createElement("div");
     wrap.className = "show-all-toggle";
+
+    /* The guidance sits OUTSIDE the label, and the checkbox comes last.
+       Checkbox-first made the control the first thing the eye lands on, so it
+       got ticked before the sentence explaining when to tick it was read.
+       Text first reads as a sentence; a control at the end reads as an option.
+
+       Keeping the first sentence out of the <label> also keeps the checkbox's
+       accessible name short and accurate - a screen reader announces "Show all
+       output for looking things up, checkbox" rather than both sentences. */
+    var lead = document.createElement("p");
+    lead.className = "toggle-lead";
+    lead.textContent = "Run cells individually the first time you are learning.";
+
+    var label = document.createElement("label");
+    var txt = document.createElement("span");
+    txt.textContent = "Show all output for looking things up.";
     var box = document.createElement("input");
     box.type = "checkbox";
     box.checked = showingAll();
-    var txt = document.createElement("span");
-    txt.textContent = "Show all output";
-    var hint = document.createElement("span");
-    hint.className = "toggle-hint";
-    hint.textContent = "for looking things up. You still learn more by running it.";
-    wrap.appendChild(box);
-    wrap.appendChild(txt);
-    wrap.appendChild(hint);
+    label.appendChild(txt);
+    label.appendChild(box);
+
+    wrap.appendChild(lead);
+    wrap.appendChild(label);
     box.addEventListener("change", function () { applyShowAll(box.checked); });
     section.insertBefore(wrap, section.firstChild);
   }

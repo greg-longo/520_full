@@ -6235,11 +6235,12 @@ section.content-section { scroll-margin-top: 68px; }
 
 /* Site-wide sticky "Show all output". Deliberately quiet: the default (hidden)
    is the one we want students to leave alone. */
-.show-all-toggle { display: flex; align-items: baseline; gap: .5rem;
-  font-size: .8rem; color: var(--text-dim); margin: 0 0 1.4rem; cursor: pointer; }
+.show-all-toggle { font-size: .8rem; color: var(--text-dim); margin: 0 0 1.4rem; }
+.show-all-toggle .toggle-lead { margin: 0 0 .25rem; }
+.show-all-toggle label { display: inline-flex; align-items: center; gap: .5rem;
+  cursor: pointer; }
 .show-all-toggle input { cursor: pointer; accent-color: var(--accent); }
-.show-all-toggle .toggle-hint { font-size: .74rem; opacity: .75; }
-.show-all-toggle:hover { color: var(--text); }
+.show-all-toggle label:hover { color: var(--text); }
 
 /* Foot-of-section navigation. Reads as the end of a step, not a call to act. */
 .section-nav { display: flex; justify-content: flex-end;
