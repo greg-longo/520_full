@@ -528,12 +528,14 @@
       <p>That last sentence is the whole module.</p>
       <p>Everything you built in Module 2 works. It also would not survive real data. Your mean-GPA loop ran ten times; on the full cohort it runs eighty thousand times, and the analysis Lee actually wants runs it repeatedly. NumPy is how Python does numerical work at a scale where loops stop being an option.</p>
       <p>By the end you will have computed a real engagement index across the cohort, using vectorized operations, and checked it for data-quality problems before reporting it. That is <strong>Stage 3 of the capstone</strong>, done for real.</p>
+      <div data-runnable>
       <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
 
 <span class="fn">print</span>(<span class="st">f&quot;NumPy {np.__version__} ready.&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 NumPy <span class="out-num">2.2</span>.<span class="out-num">6</span> ready.
+      </div>
       </div>
       <p><code>import numpy as np</code> is not optional styling. Essentially every NumPy example you will ever read online uses <code>np</code>, and code that spells it out in full reads as unfamiliar to anyone else on a team. Same for <code>pd</code> in Module 4 and <code>plt</code> in Module 5.</p>
       <h4 id="sources-and-acknowledgments">Sources and acknowledgments</h4>
@@ -549,6 +551,7 @@ NumPy <span class="out-num">2.2</span>.<span class="out-num">6</span> ready.
       <h3 id="why-numpy-exists">Why NumPy exists</h3>
       <p>Before any syntax, the demonstration. This is the argument for the entire module, and it takes about thirty seconds to run.</p>
       <p>Here is a pure-Python function that computes reciprocals - <code>1/x</code> for every value in a collection. It&#x27;s an accumulator loop, exactly like the ones you wrote in Module 2.</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">compute_reciprocals</span>(values):
     <span class="st">&quot;&quot;&quot;Return 1/x for each value, the pure Python way.&quot;&quot;&quot;</span>
     output = []
@@ -559,21 +562,24 @@ NumPy <span class="out-num">2.2</span>.<span class="out-num">6</span> ready.
 
 small = np.<span class="fn">array</span>([<span class="nm">4</span>, <span class="nm">9</span>, <span class="nm">2</span>, <span class="nm">7</span>, <span class="nm">1</span>])
 <span class="fn">print</span>(<span class="fn">compute_reciprocals</span>(small))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [np.float64(<span class="out-num">0.25</span>), np.float64(<span class="out-num">0.1111111111111111</span>), np.float64(<span class="out-num">0.5</span>), np.float64(<span class="out-num">0.14285714285714285</span>), np.float64(<span class="out-num">1.0</span>)]
       </div>
+      </div>
       <p>Correct. Now scale it up. We&#x27;ll build the same 200,000 values <strong>twice</strong> - once as an ordinary Python list, once as a NumPy array - because which one you loop over turns out to matter.</p>
+      <div data-runnable>
       <pre><code>rng = np.random.<span class="fn">default_rng</span>(<span class="nm">0</span>)
 big_array = rng.<span class="fn">integers</span>(<span class="nm">1</span>, <span class="nm">100</span>, size=<span class="nm">200_000</span>)
 big_list = [<span class="fn">int</span>(v) <span class="kw">for</span> v <span class="kw">in</span> big_array]     <span class="cm"># the same numbers, as plain Python ints</span>
 
 <span class="fn">print</span>(big_list[:<span class="nm">8</span>])
 <span class="fn">print</span>(big_array[:<span class="nm">8</span>])</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">85</span>, <span class="out-num">64</span>, <span class="out-num">51</span>, <span class="out-num">27</span>, <span class="out-num">31</span>, <span class="out-num">5</span>, <span class="out-num">8</span>, <span class="out-num">2</span>]
 [<span class="out-num">85</span> <span class="out-num">64</span> <span class="out-num">51</span> <span class="out-num">27</span> <span class="out-num">31</span>  <span class="out-num">5</span>  <span class="out-num">8</span>  <span class="out-num">2</span>]
+      </div>
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
@@ -633,6 +639,7 @@ cost of looping an array at all      <span class="out-num">26.</span>1x slower
       <p>NumPy stores its data in one solid block of memory, all of one type, and hands the arithmetic to compiled C code that loops without any of the per-element checking. You pay the flexibility cost once, when you build the array, instead of on every operation.</p>
       <p>That is also why an array cannot hold mixed types, which will look like a limitation in section 3 and is actually the whole trick.</p>
       <p>The name for what you just did is <strong>vectorization</strong>: expressing an operation on a whole array rather than on individual elements. It&#x27;s shorter to write, and the speed comes free.</p>
+      <div data-runnable>
       <pre><code><span class="cm"># The same operation, three ways. Read them and notice which one you&#x27;d</span>
 <span class="cm"># rather debug six months from now.</span>
 
@@ -645,11 +652,12 @@ vect_result = <span class="nm">1.0</span> / values                         <span
 <span class="fn">print</span>(loop_result)
 <span class="fn">print</span>(comp_result)
 <span class="fn">print</span>(vect_result)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [np.float64(<span class="out-num">0.25</span>), np.float64(<span class="out-num">0.1111111111111111</span>), np.float64(<span class="out-num">0.5</span>), np.float64(<span class="out-num">0.14285714285714285</span>), np.float64(<span class="out-num">1.0</span>)]
 [np.float64(<span class="out-num">0.25</span>), np.float64(<span class="out-num">0.1111111111111111</span>), np.float64(<span class="out-num">0.5</span>), np.float64(<span class="out-num">0.14285714285714285</span>), np.float64(<span class="out-num">1.0</span>)]
 [<span class="out-num">0.25</span>       <span class="out-num">0.11111111</span> <span class="out-num">0.5</span>        <span class="out-num">0.14285714</span> <span class="out-num">1</span>.        ]
+      </div>
       </div>
       <p>The middle one is a <strong>list comprehension</strong> - the compact way to write a loop that builds a list. You&#x27;ll see it constantly in Python code, and it&#x27;s worth being able to read:</p>
       <pre><code>[<span class="nm">1.0</span> / v  <span class="kw">for</span> v <span class="kw">in</span> values]
@@ -698,33 +706,39 @@ A = np.<span class="fn">arange</span>(<span class="nm">1_000_000</span>)
       <h3 id="creating-arrays">Creating arrays</h3>
       <p>The <strong>ndarray</strong> - N-dimensional array - is NumPy&#x27;s one big idea. Everything else is operations on it.</p>
       <p>The simplest way to make one is from a list.</p>
+      <div data-runnable>
       <pre><code>points_per_game = np.<span class="fn">array</span>([<span class="nm">21</span>, <span class="nm">30</span>, <span class="nm">6</span>, <span class="nm">7</span>, <span class="nm">8</span>, <span class="nm">21</span>, <span class="nm">18</span>, <span class="nm">19</span>, <span class="nm">10</span>, <span class="nm">23</span>])
 points_per_game</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 array([<span class="out-num">21</span>, <span class="out-num">30</span>,  <span class="out-num">6</span>,  <span class="out-num">7</span>,  <span class="out-num">8</span>, <span class="out-num">21</span>, <span class="out-num">18</span>, <span class="out-num">19</span>, <span class="out-num">10</span>, <span class="out-num">23</span>])
       </div>
+      </div>
       <p>Note the output: <code>array([21, 30, ...])</code>, not <code>[21, 30, ...]</code>. NumPy tells you what type of thing you&#x27;re looking at, and once you&#x27;re juggling lists and arrays in the same notebook you will be glad it does.</p>
       <p>That&#x27;s a season of Eastern Eagles scoring. A <strong>two-dimensional</strong> array holds two seasons - a list of lists:</p>
+      <div data-runnable>
       <pre><code>points_per_game = np.<span class="fn">array</span>([
     [<span class="nm">21</span>, <span class="nm">30</span>,  <span class="nm">6</span>,  <span class="nm">7</span>,  <span class="nm">8</span>, <span class="nm">21</span>, <span class="nm">18</span>, <span class="nm">19</span>, <span class="nm">10</span>, <span class="nm">23</span>],   <span class="cm"># season 1</span>
     [<span class="nm">12</span>, <span class="nm">13</span>, <span class="nm">24</span>, <span class="nm">41</span>, <span class="nm">23</span>, <span class="nm">22</span>, <span class="nm">24</span>, <span class="nm">31</span>,  <span class="nm">0</span>, <span class="nm">37</span>],   <span class="cm"># season 2</span>
 ])
 points_per_game</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 array([[<span class="out-num">21</span>, <span class="out-num">30</span>,  <span class="out-num">6</span>,  <span class="out-num">7</span>,  <span class="out-num">8</span>, <span class="out-num">21</span>, <span class="out-num">18</span>, <span class="out-num">19</span>, <span class="out-num">10</span>, <span class="out-num">23</span>],
        [<span class="out-num">12</span>, <span class="out-num">13</span>, <span class="out-num">24</span>, <span class="out-num">41</span>, <span class="out-num">23</span>, <span class="out-num">22</span>, <span class="out-num">24</span>, <span class="out-num">31</span>,  <span class="out-num">0</span>, <span class="out-num">37</span>]])
       </div>
+      </div>
       <p>Rows and columns. Reading a 2D array printed this way takes practice: the outer brackets hold rows, and each inner bracket is one row.</p>
       <p>Now the first thing that should feel different from Module 2. Divide the whole array by 4 to get points per quarter:</p>
+      <div data-runnable>
       <pre><code>points_per_game / <span class="nm">4</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 array([[ <span class="out-num">5.25</span>,  <span class="out-num">7.5</span> ,  <span class="out-num">1.5</span> ,  <span class="out-num">1.75</span>,  <span class="out-num">2</span>.  ,  <span class="out-num">5.25</span>,  <span class="out-num">4.5</span> ,  <span class="out-num">4.75</span>,  <span class="out-num">2.5</span> ,
          <span class="out-num">5.75</span>],
        [ <span class="out-num">3</span>.  ,  <span class="out-num">3.25</span>,  <span class="out-num">6</span>.  , <span class="out-num">10.25</span>,  <span class="out-num">5.75</span>,  <span class="out-num">5.5</span> ,  <span class="out-num">6</span>.  ,  <span class="out-num">7.75</span>,  <span class="out-num">0</span>.  ,
          <span class="out-num">9.25</span>]])
+      </div>
       </div>
       <p><strong>Every element</strong> was divided, with no loop. Try that with a list of lists and you get a <code>TypeError</code>.</p>
       <p>That behavior is broadcasting, and it gets a full section shortly. For now, notice that it happened.</p>
@@ -732,13 +746,15 @@ array([[ <span class="out-num">5.25</span>,  <span class="out-num">7.5</span> , 
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Did <code>points_per_game</code> itself change? What does it hold now?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>points_per_game</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 array([[<span class="out-num">21</span>, <span class="out-num">30</span>,  <span class="out-num">6</span>,  <span class="out-num">7</span>,  <span class="out-num">8</span>, <span class="out-num">21</span>, <span class="out-num">18</span>, <span class="out-num">19</span>, <span class="out-num">10</span>, <span class="out-num">23</span>],
        [<span class="out-num">12</span>, <span class="out-num">13</span>, <span class="out-num">24</span>, <span class="out-num">41</span>, <span class="out-num">23</span>, <span class="out-num">22</span>, <span class="out-num">24</span>, <span class="out-num">31</span>,  <span class="out-num">0</span>, <span class="out-num">37</span>]])
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p>Unchanged. <code>points_per_game / 4</code> computed a <strong>new</strong> array and handed it back; nothing was stored.</p>
       <p>This is the single most common NumPy mistake among students, and it&#x27;s the same lesson as <code>.strip()</code> in Module 2: the operation returns a result, and if you want to keep it you must assign it.</p>
       <pre><code>per_quarter = points_per_game / <span class="nm">4</span>      <span class="cm"># keeps the result</span>
@@ -746,20 +762,23 @@ points_per_game / <span class="nm">4</span>                    <span class="cm">
       </details>
       <h4 id="building-arrays-without-typing-the-values">Building arrays without typing the values</h4>
       <p>Real arrays are rarely typed by hand. NumPy has constructors for the common shapes, and you&#x27;ll use them constantly for placeholders and test data.</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(np.<span class="fn">zeros</span>(<span class="nm">5</span>))             <span class="cm"># five zeros</span>
 <span class="fn">print</span>(np.<span class="fn">ones</span>(<span class="nm">4</span>))              <span class="cm"># four ones</span>
 <span class="fn">print</span>(np.<span class="fn">full</span>(<span class="nm">4</span>, <span class="nm">7.5</span>))         <span class="cm"># four copies of 7.5</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">0</span>. <span class="out-num">0</span>. <span class="out-num">0</span>. <span class="out-num">0</span>. <span class="out-num">0</span>.]
 [<span class="out-num">1</span>. <span class="out-num">1</span>. <span class="out-num">1</span>. <span class="out-num">1</span>.]
 [<span class="out-num">7.5</span> <span class="out-num">7.5</span> <span class="out-num">7.5</span> <span class="out-num">7.5</span>]
       </div>
+      </div>
       <p>Give a <strong>tuple</strong> for a multi-dimensional shape. Rows first, always:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(np.<span class="fn">zeros</span>((<span class="nm">2</span>, <span class="nm">3</span>)))        <span class="cm"># 2 rows, 3 columns</span>
 <span class="fn">print</span>()
 <span class="fn">print</span>(np.<span class="fn">ones</span>((<span class="nm">3</span>, <span class="nm">2</span>)))         <span class="cm"># 3 rows, 2 columns</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [[<span class="out-num">0</span>. <span class="out-num">0</span>. <span class="out-num">0</span>.]
  [<span class="out-num">0</span>. <span class="out-num">0</span>. <span class="out-num">0</span>.]]
@@ -768,52 +787,61 @@ points_per_game / <span class="nm">4</span>                    <span class="cm">
  [<span class="out-num">1</span>. <span class="out-num">1</span>.]
  [<span class="out-num">1</span>. <span class="out-num">1</span>.]]
       </div>
+      </div>
       <p><code>np.arange</code> is <code>range</code> for arrays - same start, stop, step, and the same exclusive stop:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(np.<span class="fn">arange</span>(<span class="nm">10</span>))
 <span class="fn">print</span>(np.<span class="fn">arange</span>(<span class="nm">0</span>, <span class="nm">101</span>, <span class="nm">10</span>))
 <span class="fn">print</span>(np.<span class="fn">arange</span>(<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">0.25</span>))     <span class="cm"># unlike range, the step can be fractional</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">0</span> <span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">3</span> <span class="out-num">4</span> <span class="out-num">5</span> <span class="out-num">6</span> <span class="out-num">7</span> <span class="out-num">8</span> <span class="out-num">9</span>]
 [  <span class="out-num">0</span>  <span class="out-num">10</span>  <span class="out-num">20</span>  <span class="out-num">30</span>  <span class="out-num">40</span>  <span class="out-num">50</span>  <span class="out-num">60</span>  <span class="out-num">70</span>  <span class="out-num">80</span>  <span class="out-num">90</span> <span class="out-num">100</span>]
 [<span class="out-num">1</span>.   <span class="out-num">1.25</span> <span class="out-num">1.5</span>  <span class="out-num">1.75</span>]
       </div>
+      </div>
       <p><code>np.linspace</code> is the one people forget and then love. Give it a start, a stop, and <strong>how many values you want</strong>, and it spaces them evenly. Note that unlike <code>arange</code>, the stop <strong>is</strong> included.</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(np.<span class="fn">linspace</span>(<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">5</span>))      <span class="cm"># 5 values from 0 to 1 inclusive</span>
 <span class="fn">print</span>(np.<span class="fn">linspace</span>(<span class="nm">0</span>, <span class="nm">100</span>, <span class="nm">11</span>))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">0</span>.   <span class="out-num">0.25</span> <span class="out-num">0.5</span>  <span class="out-num">0.75</span> <span class="out-num">1</span>.  ]
 [  <span class="out-num">0</span>.  <span class="out-num">10</span>.  <span class="out-num">20</span>.  <span class="out-num">30</span>.  <span class="out-num">40</span>.  <span class="out-num">50</span>.  <span class="out-num">60</span>.  <span class="out-num">70</span>.  <span class="out-num">80</span>.  <span class="out-num">90</span>. <span class="out-num">100</span>.]
+      </div>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><code>arange</code> when you know the <strong>step</strong>. <code>linspace</code> when you know <strong>how many values</strong> you want. Reaching for <code>arange</code> with a fractional step and counting the results by hand is a sign you wanted <code>linspace</code>.</p>
       <p>There is a correctness reason too. <code>arange</code> with a fractional step accumulates floating-point error as it goes, so the element count can come out one off from what you expect. <code>linspace</code> computes the endpoints and divides, so you always get exactly the number of values you asked for.</p>
       </div>
+      <div data-runnable>
       <pre><code><span class="cm"># arange with a fractional step: how many values do you get?</span>
 <span class="fn">print</span>(<span class="fn">len</span>(np.<span class="fn">arange</span>(<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0.1</span>)))       <span class="cm"># 10, as expected</span>
 <span class="fn">print</span>(<span class="fn">len</span>(np.<span class="fn">arange</span>(<span class="nm">0</span>, <span class="nm">0.3</span>, <span class="nm">0.1</span>)))     <span class="cm"># ...also fine</span>
 <span class="fn">print</span>(np.<span class="fn">arange</span>(<span class="nm">0</span>, <span class="nm">0.3</span>, <span class="nm">0.1</span>))          <span class="cm"># but look at the last value</span>
 <span class="fn">print</span>(<span class="fn">len</span>(np.<span class="fn">linspace</span>(<span class="nm">0</span>, <span class="nm">0.3</span>, <span class="nm">4</span>)))     <span class="cm"># linspace: exactly what you asked for</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">10</span>
 <span class="out-num">3</span>
 [<span class="out-num">0</span>.  <span class="out-num">0.1</span> <span class="out-num">0.2</span>]
 <span class="out-num">4</span>
       </div>
+      </div>
       <p>A few more you&#x27;ll meet, mostly in linear algebra contexts:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(np.<span class="fn">eye</span>(<span class="nm">3</span>))               <span class="cm"># identity matrix</span>
 <span class="fn">print</span>()
 <span class="fn">print</span>(np.<span class="fn">empty</span>(<span class="nm">3</span>))             <span class="cm"># uninitialized - whatever was in memory</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [[<span class="out-num">1</span>. <span class="out-num">0</span>. <span class="out-num">0</span>.]
  [<span class="out-num">0</span>. <span class="out-num">1</span>. <span class="out-num">0</span>.]
  [<span class="out-num">0</span>. <span class="out-num">0</span>. <span class="out-num">1</span>.]]
 
 [<span class="out-num">1</span>. <span class="out-num">1</span>. <span class="out-num">1</span>.]
+      </div>
       </div>
       <p><code>np.empty</code> does not fill anything in, so its contents are arbitrary leftover memory. It&#x27;s marginally faster than <code>zeros</code> and a reliable source of confusion. Use <code>zeros</code> unless you have measured a reason not to.</p>
       <h5 id="your-turn-1">Your turn</h5>
@@ -840,6 +868,7 @@ points_per_game / <span class="nm">4</span>                    <span class="cm">
       <h3 id="shape-size-and-dtype">Shape, size, and dtype</h3>
       <p>Before you can debug an array operation you have to be able to describe the array. Four attributes do almost all of it.</p>
       <p>Let&#x27;s load the part of the cohort this module is about. Same ten students as Module 2, same numbers - now as arrays.</p>
+      <div data-runnable>
       <pre><code><span class="cm"># ===========================================================================</span>
 <span class="cm"># DTSC 520 -- Institutional Research cohort, LMS engagement (n = 10)</span>
 <span class="cm"># SYNTHETIC DATA. Ten students drawn from the capstone cohort, so every</span>
@@ -870,35 +899,40 @@ hs_gpa       = np.<span class="fn">array</span>([<span class="nm">2.2</span>, <s
 grad_gpa     = np.<span class="fn">array</span>([<span class="nm">2.86</span>, <span class="nm">3.4</span>, <span class="nm">3.18</span>, <span class="nm">3.19</span>, <span class="nm">3.05</span>, np.nan, <span class="nm">2.38</span>, <span class="nm">3.34</span>, <span class="nm">3.78</span>, <span class="nm">2.37</span>])
 
 <span class="fn">print</span>(<span class="st">f&quot;{len(student_ids)} students loaded.&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">10</span> students loaded.
       </div>
+      </div>
       <p>Now the four attributes. Note that none of them are called with parentheses - they&#x27;re values, not methods:</p>
       <figure class="nb-figure"><img src="assets/fig-cf9f9aa14a.png" alt="shape, ndim, size and dtype on a 4x3 array" loading="lazy"><figcaption>shape, ndim, size and dtype on a 4x3 array</figcaption></figure>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;shape  {logins.shape}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;ndim   {logins.ndim}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;size   {logins.size}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;dtype  {logins.dtype}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 shape  (<span class="out-num">10</span>,)
 ndim   <span class="out-num">1</span>
 size   <span class="out-num">10</span>
 dtype  float64
       </div>
+      </div>
       <p><code>shape</code> is a tuple, which is why a one-dimensional array reports <code>(10,)</code> with the trailing comma - Module 2, section 8. On a 2D array all four get more interesting:</p>
+      <div data-runnable>
       <pre><code>M = np.<span class="fn">array</span>([[<span class="nm">21</span>, <span class="nm">30</span>, <span class="nm">6</span>, <span class="nm">7</span>], [<span class="nm">12</span>, <span class="nm">13</span>, <span class="nm">24</span>, <span class="nm">41</span>]])
 <span class="fn">print</span>(<span class="st">f&quot;shape  {M.shape}     &lt;- (rows, columns)&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;ndim   {M.ndim}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;size   {M.size}          &lt;- 2 x 4&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;dtype  {M.dtype}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 shape  (<span class="out-num">2</span>, <span class="out-num">4</span>)     &lt;- (rows, columns)
 ndim   <span class="out-num">2</span>
 size   <span class="out-num">8</span>          &lt;- <span class="out-num">2</span> x <span class="out-num">4</span>
 dtype  int64
+      </div>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -907,40 +941,46 @@ dtype  int64
       </div>
       <h4 id="dtype-one-type-for-the-whole-array">dtype: one type for the whole array</h4>
       <p>A Python list can hold anything. An array holds <strong>one type</strong>, recorded in its <code>dtype</code>, and that restriction is what makes the whole thing fast.</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(np.<span class="fn">array</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]).dtype)          <span class="cm"># int64</span>
 <span class="fn">print</span>(np.<span class="fn">array</span>([<span class="nm">1.0</span>, <span class="nm">2.0</span>, <span class="nm">3.0</span>]).dtype)    <span class="cm"># float64</span>
 <span class="fn">print</span>(np.<span class="fn">array</span>([<span class="kw">True</span>, <span class="kw">False</span>]).dtype)      <span class="cm"># bool</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 int64
 float64
 bool
       </div>
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> What dtype do you get from <code>np.array([1, 2, 3.5])</code> - a mix of ints and a float?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>mixed = np.<span class="fn">array</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3.5</span>])
 <span class="fn">print</span>(mixed)
 <span class="fn">print</span>(mixed.dtype)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">1</span>.  <span class="out-num">2</span>.  <span class="out-num">3.5</span>]
 float64
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>float64</code>, and look closely at the values: <code>1.</code> and <code>2.</code> have gained decimal points.</p>
       <p>NumPy <strong>upcast</strong> the integers to floats, because a float can represent an integer without loss but not the reverse. It picks the type that holds everything, silently.</p>
       <p>Silently is the important word. Nothing warned you that your integer counts are now floats.</p>
       </details>
       <p>Push it further and the result is worse:</p>
+      <div data-runnable>
       <pre><code>very_mixed = np.<span class="fn">array</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="st">&quot;three&quot;</span>])
 <span class="fn">print</span>(very_mixed)
 <span class="fn">print</span>(very_mixed.dtype)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [&#x27;<span class="out-num">1</span>&#x27; &#x27;<span class="out-num">2</span>&#x27; &#x27;three&#x27;]
 &lt;U21
+      </div>
       </div>
       <p><code>&lt;U21</code> means &quot;Unicode string, up to 21 characters.&quot; <strong>The numbers became text.</strong> Arithmetic on this array now fails, or worse, does something you did not intend.</p>
       <pre><code>very_mixed * <span class="nm">2</span></code></pre>
@@ -958,20 +998,24 @@ TypeError: The &#x27;out&#x27; kwarg is necessary. Use numpy.strings.multiply wi
       </div>
       <h4 id="converting-types">Converting types</h4>
       <p><code>.astype()</code> makes a new array with a different dtype:</p>
+      <div data-runnable>
       <pre><code>floats = np.<span class="fn">array</span>([<span class="nm">1.9</span>, <span class="nm">2.1</span>, <span class="nm">3.7</span>])
 ints = floats.<span class="fn">astype</span>(np.int32)
 <span class="fn">print</span>(floats)
 <span class="fn">print</span>(ints)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">1.9</span> <span class="out-num">2.1</span> <span class="out-num">3.7</span>]
 [<span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">3</span>]
       </div>
+      </div>
       <p>**<code>.astype()</code> to an integer truncates, it does not round.** <code>1.9</code> became <code>1</code>, and <code>3.7</code> became <code>3</code>. Same behavior as <code>int()</code> in Module 2. If you want rounding, round first:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(np.<span class="fn">round</span>(floats).<span class="fn">astype</span>(np.int32))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">2</span> <span class="out-num">2</span> <span class="out-num">4</span>]
+      </div>
       </div>
       <h4 id="a-dtype-consequence-you-will-hit-in-module-4">A dtype consequence you will hit in Module 4</h4>
       <p>Integer arrays have no way to represent a missing value. There is no bit pattern for &quot;absent&quot; in an integer, so NumPy refuses:</p>
@@ -985,14 +1029,16 @@ counts[<span class="nm">0</span>] = np.nan</code></pre>
 ValueError: cannot convert float NaN to integer</div>
       </details>
       <p><code>cannot convert float NaN to integer</code>. The array has to be floats before a <code>nan</code> can live in it:</p>
+      <div data-runnable>
       <pre><code>counts = np.<span class="fn">array</span>([<span class="nm">14</span>, <span class="nm">6</span>, <span class="nm">17</span>]).<span class="fn">astype</span>(<span class="fn">float</span>)
 counts[<span class="nm">0</span>] = np.nan
 <span class="fn">print</span>(counts)
 <span class="fn">print</span>(np.<span class="fn">isnan</span>(counts))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [nan  <span class="out-num">6</span>. <span class="out-num">17</span>.]
 [ True False False]
+      </div>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -1046,6 +1092,7 @@ gpas = raw.<span class="fn">astype</span>(<span class="fn">float</span>)
       </div>
       <h3 id="element-wise-arithmetic">Element-wise arithmetic</h3>
       <p>Two arrays of the same shape combine position by position.</p>
+      <div data-runnable>
       <pre><code>a = np.<span class="fn">array</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>])
 b = np.<span class="fn">array</span>([<span class="nm">10</span>, <span class="nm">20</span>, <span class="nm">30</span>, <span class="nm">40</span>])
 
@@ -1053,49 +1100,56 @@ b = np.<span class="fn">array</span>([<span class="nm">10</span>, <span class="n
 <span class="fn">print</span>(b - a)
 <span class="fn">print</span>(a * b)
 <span class="fn">print</span>(b / a)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">11</span> <span class="out-num">22</span> <span class="out-num">33</span> <span class="out-num">44</span>]
 [ <span class="out-num">9</span> <span class="out-num">18</span> <span class="out-num">27</span> <span class="out-num">36</span>]
 [ <span class="out-num">10</span>  <span class="out-num">40</span>  <span class="out-num">90</span> <span class="out-num">160</span>]
 [<span class="out-num">10</span>. <span class="out-num">10</span>. <span class="out-num">10</span>. <span class="out-num">10</span>.]
       </div>
+      </div>
       <p>Note <code>a * b</code>: that&#x27;s <code>[1*10, 2*20, ...]</code>, <strong>not</strong> matrix multiplication. NumPy&#x27;s <code>*</code> is element-wise. Matrix multiplication is <code>@</code>, which you will not need in this course but should recognize.</p>
       <p>All the comparison operators work element-wise too, and return an array of booleans:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(a &gt; <span class="nm">2</span>)
 <span class="fn">print</span>(b == <span class="nm">20</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [False False  True  True]
 [False  True False False]
+      </div>
       </div>
       <p>Hold onto that - an array of booleans is how you filter data, in section 8.</p>
       <h3 id="broadcasting">Broadcasting</h3>
       <p>So what happens when the shapes <strong>don&#x27;t</strong> match?</p>
       <figure class="nb-figure"><img src="assets/fig-3e12a4aebd.png" alt="Broadcasting a scalar and a row across a 2x3 array" loading="lazy"><figcaption>Broadcasting a scalar and a row across a 2x3 array</figcaption></figure>
+      <div data-runnable>
       <pre><code>M = np.<span class="fn">array</span>([[<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>],
               [<span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">6</span>]])
 
 <span class="fn">print</span>(M + <span class="nm">10</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [[<span class="out-num">11</span> <span class="out-num">12</span> <span class="out-num">13</span>]
  [<span class="out-num">14</span> <span class="out-num">15</span> <span class="out-num">16</span>]]
       </div>
+      </div>
       <p>The single number was applied to all six elements. NumPy did not build a 2-by-3 array of tens - it just reused the value, which costs nothing.</p>
       <p>Now a row:</p>
+      <div data-runnable>
       <pre><code>row = np.<span class="fn">array</span>([<span class="nm">10</span>, <span class="nm">20</span>, <span class="nm">30</span>])
 <span class="fn">print</span>(<span class="st">f&quot;M.shape   = {M.shape}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;row.shape = {row.shape}&quot;</span>)
 <span class="fn">print</span>()
 <span class="fn">print</span>(M + row)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 M.shape   = (<span class="out-num">2</span>, <span class="out-num">3</span>)
 row.shape = (<span class="out-num">3</span>,)
 
 [[<span class="out-num">11</span> <span class="out-num">22</span> <span class="out-num">33</span>]
  [<span class="out-num">14</span> <span class="out-num">25</span> <span class="out-num">36</span>]]
+      </div>
       </div>
       <p>The row was reused for each of the two rows of <code>M</code>. Column 0 got <code>10</code>, column 1 got <code>20</code>, column 2 got <code>30</code>.</p>
       <p><strong>The rule.</strong> Compare the shapes from the right. Two dimensions are compatible if they are equal, or if one of them is <code>1</code>:</p>
@@ -1120,12 +1174,13 @@ ValueError: operands could not be broadcast together with shapes (<span class="o
       <p>Reading right to left: <code>3</code> against <code>2</code>. Not equal, neither is <code>1</code>, so there is no way to line them up. NumPy will not guess.</p>
       <p>You might reasonably have expected this to work - <code>M</code> has two rows and the array has two elements, so surely one per row? That is a natural thought and it is wrong, because broadcasting aligns from the <strong>right</strong>, not the left. To get the per-row behavior you have to say so explicitly:</p>
       </details>
+      <div data-runnable>
       <pre><code>col = np.<span class="fn">array</span>([<span class="nm">10</span>, <span class="nm">20</span>]).<span class="fn">reshape</span>(<span class="nm">2</span>, <span class="nm">1</span>)     <span class="cm"># an explicit column</span>
 <span class="fn">print</span>(<span class="st">f&quot;col.shape = {col.shape}&quot;</span>)
 <span class="fn">print</span>(col)
 <span class="fn">print</span>()
 <span class="fn">print</span>(M + col)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 col.shape = (<span class="out-num">2</span>, <span class="out-num">1</span>)
 [[<span class="out-num">10</span>]
@@ -1134,19 +1189,22 @@ col.shape = (<span class="out-num">2</span>, <span class="out-num">1</span>)
 [[<span class="out-num">11</span> <span class="out-num">12</span> <span class="out-num">13</span>]
  [<span class="out-num">24</span> <span class="out-num">25</span> <span class="out-num">26</span>]]
       </div>
+      </div>
       <p>Now the shapes are <code>(2, 3)</code> and <code>(2, 1)</code>. Right to left: <code>3</code> against <code>1</code> - one of them is 1, so it stretches. Then <code>2</code> against <code>2</code> - equal. Compatible.</p>
       <p><code>np.newaxis</code> does the same job and reads more clearly once you&#x27;re used to it:</p>
+      <div data-runnable>
       <pre><code>col = np.<span class="fn">array</span>([<span class="nm">10</span>, <span class="nm">20</span>])[:, np.newaxis]
 <span class="fn">print</span>(col.shape)
 
 <span class="cm"># np.newaxis IS None -- these three are the same thing</span>
 <span class="fn">print</span>(np.newaxis <span class="kw">is</span> <span class="kw">None</span>)
 <span class="fn">print</span>(np.<span class="fn">array</span>([<span class="nm">10</span>, <span class="nm">20</span>])[:, <span class="kw">None</span>].shape)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 (<span class="out-num">2</span>, <span class="out-num">1</span>)
 True
 (<span class="out-num">2</span>, <span class="out-num">1</span>)
+      </div>
       </div>
       <p><code>np.newaxis</code> and <code>None</code> are literally the same object, so <code>a[:, None]</code> and <code>a[:, np.newaxis]</code> are identical. You will see <strong>both</strong> in the wild: <code>np.newaxis</code> is more self-documenting, <code>[:, None]</code> is shorter and very common in library source code and on Stack Overflow. Learn to read both.</p>
       <div class="callout">
@@ -1159,13 +1217,15 @@ True
       <p>The fix is to <strong>normalize</strong> each measure to a 0-to-1 range first:</p>
       <p>$$\text{normalized} = \frac{x - \min(x)}{\max(x) - \min(x)}$$</p>
       <p>Here it is on one measure. Every operation below is broadcasting a single number across a 10-element array:</p>
+      <div data-runnable>
       <pre><code>norm_logins = (logins - logins.<span class="fn">min</span>()) / (logins.<span class="fn">max</span>() - logins.<span class="fn">min</span>())
 <span class="fn">print</span>(np.<span class="fn">round</span>(norm_logins, <span class="nm">3</span>))
 <span class="fn">print</span>(<span class="st">f&quot;min {norm_logins.min()}, max {norm_logins.max()}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [nan nan nan nan nan nan nan nan nan nan]
 min nan, max nan
+      </div>
       </div>
       <p>The lowest value maps to 0, the highest to 1, everything else in between. No loop, three operations, and it reads almost exactly like the formula.</p>
       <p>You will do this for all three measures at once in the final challenge, using <code>axis</code> from section 11. That&#x27;s the engagement index.</p>
@@ -1210,12 +1270,13 @@ centered = ug_gpa - ug_gpa.<span class="fn">mean</span>()
       <h2>Indexing</h2>
       <h3 id="indexing-and-slicing">Indexing and slicing</h3>
       <p>For one-dimensional arrays, everything you learned about lists in Module 2 applies without change. Zero-based, negative indices count from the end, slices exclude the stop.</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(logins[<span class="nm">0</span>])        <span class="cm"># first student</span>
 <span class="fn">print</span>(logins[-<span class="nm">1</span>])       <span class="cm"># last student</span>
 <span class="fn">print</span>(logins[<span class="nm">2</span>:<span class="nm">5</span>])      <span class="cm"># a slice</span>
 <span class="fn">print</span>(logins[:<span class="nm">3</span>])       <span class="cm"># from the beginning</span>
 <span class="fn">print</span>(logins[::<span class="nm">2</span>])      <span class="cm"># every other one</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">0.8</span>
 <span class="out-num">0.4</span>
@@ -1223,19 +1284,23 @@ centered = ug_gpa - ug_gpa.<span class="fn">mean</span>()
 [<span class="out-num">0.8</span> <span class="out-num">3.4</span> <span class="out-num">4.4</span>]
 [<span class="out-num">0.8</span> <span class="out-num">4.4</span> <span class="out-num">3.2</span> <span class="out-num">0.4</span> <span class="out-num">3.8</span>]
       </div>
+      </div>
       <p><code>::2</code> is the <strong>step</strong>, the third part of a slice. <code>[start:stop:step]</code>. It works on lists too, and it&#x27;s how you reverse a sequence:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(logins[::-<span class="nm">1</span>])</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">0.4</span> <span class="out-num">3.8</span> <span class="out-num">3.3</span> <span class="out-num">0.4</span> nan <span class="out-num">3.2</span> <span class="out-num">3.4</span> <span class="out-num">4.4</span> <span class="out-num">3.4</span> <span class="out-num">0.8</span>]
       </div>
+      </div>
       <h4 id="two-dimensions">Two dimensions</h4>
       <p>Here is where arrays part company with lists. Let&#x27;s build a matrix of the three engagement measures, one student per row.</p>
+      <div data-runnable>
       <pre><code><span class="cm"># np.column_stack puts each array in as a column</span>
 engagement = np.<span class="fn">column_stack</span>([logins, hours, submission])
 <span class="fn">print</span>(<span class="st">f&quot;shape: {engagement.shape}&quot;</span>)
 <span class="fn">print</span>(engagement[:<span class="nm">4</span>])       <span class="cm"># first four students</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 shape: (<span class="out-num">10</span>, <span class="out-num">3</span>)
 [[<span class="out-num">0.8</span>  <span class="out-num">2.5</span>  <span class="out-num">0.69</span>]
@@ -1243,46 +1308,55 @@ shape: (<span class="out-num">10</span>, <span class="out-num">3</span>)
  [<span class="out-num">4.4</span>  <span class="out-num">6.6</span>  <span class="out-num">0.99</span>]
  [<span class="out-num">3.4</span>  <span class="out-num">4.3</span>  <span class="out-num">0.74</span>]]
       </div>
+      </div>
       <p>Ten rows, three columns. Column 0 is logins, column 1 is hours, column 2 is submission rate.</p>
       <p>With a list of lists you would reach an element with <code>data[2][0]</code>. NumPy accepts that, but the idiomatic form uses <strong>one</strong> set of brackets with a comma:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(engagement[<span class="nm">2</span>][<span class="nm">0</span>])     <span class="cm"># works, but not idiomatic</span>
 <span class="fn">print</span>(engagement[<span class="nm">2</span>, <span class="nm">0</span>])     <span class="cm"># row 2, column 0 -- this is the NumPy way</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">4.4</span>
 <span class="out-num">4.4</span>
       </div>
+      </div>
       <p>Row first, then column. Always the same order as <code>shape</code>. A single index gives you a whole row:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(engagement[<span class="nm">0</span>])        <span class="cm"># everything about student 0</span>
 <span class="fn">print</span>(engagement[<span class="nm">0</span>].shape)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">0.8</span>  <span class="out-num">2.5</span>  <span class="out-num">0.69</span>]
 (<span class="out-num">3</span>,)
       </div>
+      </div>
       <p>And a slice in either position selects a whole column or a block:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(engagement[:, <span class="nm">0</span>])     <span class="cm"># every row, column 0 -&gt; all the logins</span>
 <span class="fn">print</span>(engagement[:, <span class="nm">1</span>])     <span class="cm"># all the hours</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">0.8</span> <span class="out-num">3.4</span> <span class="out-num">4.4</span> <span class="out-num">3.4</span> <span class="out-num">3.2</span> nan <span class="out-num">0.4</span> <span class="out-num">3.3</span> <span class="out-num">3.8</span> <span class="out-num">0.4</span>]
 [<span class="out-num">2.5</span> <span class="out-num">1.8</span> <span class="out-num">6.6</span> <span class="out-num">4.3</span> <span class="out-num">2.4</span> nan <span class="out-num">1.1</span> <span class="out-num">3.5</span> <span class="out-num">4.4</span> <span class="out-num">1.7</span>]
+      </div>
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> What shape does <code>engagement[:3, :2]</code> have, and what does it contain?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>block = engagement[:<span class="nm">3</span>, :<span class="nm">2</span>]
 <span class="fn">print</span>(block)
 <span class="fn">print</span>(<span class="st">f&quot;shape: {block.shape}&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [[<span class="out-num">0.8</span> <span class="out-num">2.5</span>]
  [<span class="out-num">3.4</span> <span class="out-num">1.8</span>]
  [<span class="out-num">4.4</span> <span class="out-num">6.6</span>]]
 shape: (<span class="out-num">3</span>, <span class="out-num">2</span>)
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p>Shape <code>(3, 2)</code> - the first three students, their logins and hours only.</p>
       <p>Two slices give you a rectangular block. The mental model that helps: read the comma as &quot;and then.&quot; <em>Rows 0 through 2, and then columns 0 through 1.</em></p>
       </details>
@@ -1321,6 +1395,7 @@ IndexError: index <span class="out-num">10</span> is out of bounds for axis <spa
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>sub</code> is a slice of <code>original</code>. After <code>sub[0] = 99</code>, what does <code>original</code> contain?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>original = np.<span class="fn">arange</span>(<span class="nm">6</span>)
 <span class="fn">print</span>(<span class="st">f&quot;original: {original}&quot;</span>)
 
@@ -1331,8 +1406,7 @@ sub[<span class="nm">0</span>] = <span class="nm">99</span>
 <span class="fn">print</span>()
 <span class="fn">print</span>(<span class="st">f&quot;sub is now:      {sub}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;original is now: {original}&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 original: [<span class="out-num">0</span> <span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">3</span> <span class="out-num">4</span> <span class="out-num">5</span>]
 sub:      [<span class="out-num">2</span> <span class="out-num">3</span>]
@@ -1340,6 +1414,8 @@ sub:      [<span class="out-num">2</span> <span class="out-num">3</span>]
 sub is now:      [<span class="out-num">99</span>  <span class="out-num">3</span>]
 original is now: [ <span class="out-num">0</span>  <span class="out-num">1</span> <span class="out-num">99</span>  <span class="out-num">3</span>  <span class="out-num">4</span>  <span class="out-num">5</span>]
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>original</code> changed to <code>[0 1 99 3 4 5]</code>.</p>
       <p><code>sub</code> is a <strong>view</strong> - a window onto the same memory, not a new array. Writing through the window writes to the original.</p>
       <p>This differs from lists, and the difference is easy to miss:</p>
@@ -1351,25 +1427,29 @@ part = arr[<span class="nm">1</span>:<span class="nm">3</span>]     <span class=
       <p>NumPy works this way on purpose. Slicing a million-row array without copying it is instant and free; copying would cost time and memory every time you looked at a subset. The default is the one that scales.</p>
       </details>
       <p>When you genuinely want independent data, ask for it:</p>
+      <div data-runnable>
       <pre><code>original = np.<span class="fn">arange</span>(<span class="nm">6</span>)
 safe = original[<span class="nm">2</span>:<span class="nm">4</span>].<span class="fn">copy</span>()
 safe[<span class="nm">0</span>] = <span class="nm">99</span>
 
 <span class="fn">print</span>(<span class="st">f&quot;safe:     {safe}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;original: {original}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 safe:     [<span class="out-num">99</span>  <span class="out-num">3</span>]
 original: [<span class="out-num">0</span> <span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">3</span> <span class="out-num">4</span> <span class="out-num">5</span>]
       </div>
+      </div>
       <p><code>np.may_share_memory</code> will tell you which situation you&#x27;re in, and it&#x27;s a useful debugging tool:</p>
+      <div data-runnable>
       <pre><code>a = np.<span class="fn">arange</span>(<span class="nm">6</span>)
 <span class="fn">print</span>(np.<span class="fn">may_share_memory</span>(a, a[<span class="nm">2</span>:<span class="nm">4</span>]))          <span class="cm"># a view</span>
 <span class="fn">print</span>(np.<span class="fn">may_share_memory</span>(a, a[<span class="nm">2</span>:<span class="nm">4</span>].<span class="fn">copy</span>()))   <span class="cm"># a copy</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 True
 False
+      </div>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -1440,13 +1520,14 @@ capped = <span class="fn">cap_at_90_safe</span>(scores)
       <p>Data rarely arrives in the shape you need. These operations change the shape without changing the values.</p>
       <h3 id="reshape">reshape</h3>
       <p><code>reshape</code> rearranges the same elements into different dimensions.</p>
+      <div data-runnable>
       <pre><code>counts = np.<span class="fn">arange</span>(<span class="nm">12</span>)
 <span class="fn">print</span>(counts)
 <span class="fn">print</span>()
 <span class="fn">print</span>(counts.<span class="fn">reshape</span>(<span class="nm">3</span>, <span class="nm">4</span>))
 <span class="fn">print</span>()
 <span class="fn">print</span>(counts.<span class="fn">reshape</span>(<span class="nm">4</span>, <span class="nm">3</span>))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [ <span class="out-num">0</span>  <span class="out-num">1</span>  <span class="out-num">2</span>  <span class="out-num">3</span>  <span class="out-num">4</span>  <span class="out-num">5</span>  <span class="out-num">6</span>  <span class="out-num">7</span>  <span class="out-num">8</span>  <span class="out-num">9</span> <span class="out-num">10</span> <span class="out-num">11</span>]
 
@@ -1459,6 +1540,7 @@ capped = <span class="fn">cap_at_90_safe</span>(scores)
  [ <span class="out-num">6</span>  <span class="out-num">7</span>  <span class="out-num">8</span>]
  [ <span class="out-num">9</span> <span class="out-num">10</span> <span class="out-num">11</span>]]
       </div>
+      </div>
       <p>The element <strong>count</strong> has to match. Twelve elements can be 3x4 or 4x3 or 2x6, but not 5x3:</p>
       <pre><code>counts.<span class="fn">reshape</span>(<span class="nm">5</span>, <span class="nm">3</span>)</code></pre>
       <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
@@ -1470,12 +1552,14 @@ ValueError: cannot reshape array of size <span class="out-num">12</span> into sh
       </details>
       <p><code>cannot reshape array of size 12 into shape (5,3)</code> - the message does the arithmetic for you.</p>
       <p><code>-1</code> means <em>work it out yourself</em>, which saves you doing the division:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(counts.<span class="fn">reshape</span>(<span class="nm">3</span>, -<span class="nm">1</span>).shape)     <span class="cm"># 3 rows, however many columns that needs</span>
 <span class="fn">print</span>(counts.<span class="fn">reshape</span>(-<span class="nm">1</span>, <span class="nm">2</span>).shape)     <span class="cm"># 2 columns, however many rows</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 (<span class="out-num">3</span>, <span class="out-num">4</span>)
 (<span class="out-num">6</span>, <span class="out-num">2</span>)
+      </div>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -1484,17 +1568,20 @@ ValueError: cannot reshape array of size <span class="out-num">12</span> into sh
       <h3 id="stacking">Stacking</h3>
       <p>Module 2 built the cohort as separate lists. Here we combine separate arrays into one matrix, which is what the engagement index needs.</p>
       <p><code>np.column_stack</code> treats each array as a column:</p>
+      <div data-runnable>
       <pre><code>engagement = np.<span class="fn">column_stack</span>([logins, hours, submission])
 <span class="fn">print</span>(<span class="st">f&quot;shape {engagement.shape}&quot;</span>)
 <span class="fn">print</span>(engagement[:<span class="nm">3</span>])</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 shape (<span class="out-num">10</span>, <span class="out-num">3</span>)
 [[<span class="out-num">0.8</span>  <span class="out-num">2.5</span>  <span class="out-num">0.69</span>]
  [<span class="out-num">3.4</span>  <span class="out-num">1.8</span>  <span class="out-num">0.84</span>]
  [<span class="out-num">4.4</span>  <span class="out-num">6.6</span>  <span class="out-num">0.99</span>]]
       </div>
+      </div>
       <p><code>np.vstack</code> stacks arrays as rows, and <code>np.hstack</code> joins them end to end:</p>
+      <div data-runnable>
       <pre><code>a = np.<span class="fn">array</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>])
 b = np.<span class="fn">array</span>([<span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">6</span>])
 
@@ -1502,7 +1589,7 @@ b = np.<span class="fn">array</span>([<span class="nm">4</span>, <span class="nm
 <span class="fn">print</span>(np.<span class="fn">vstack</span>([a, b]))
 <span class="fn">print</span>()
 <span class="fn">print</span>(<span class="st">&quot;hstack:&quot;</span>, np.<span class="fn">hstack</span>([a, b]))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 vstack:
 [[<span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">3</span>]
@@ -1510,26 +1597,30 @@ vstack:
 
 hstack: [<span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">3</span> <span class="out-num">4</span> <span class="out-num">5</span> <span class="out-num">6</span>]
       </div>
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>np.hstack([a, b])</code> gave a 6-element array. What shape does <code>np.vstack([a, b])</code> give?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(np.<span class="fn">vstack</span>([a, b]).shape)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 (<span class="out-num">2</span>, <span class="out-num">3</span>)
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>(2, 3)</code> - two rows of three.</p>
       <p><code>hstack</code> extends along the existing axis, keeping it one-dimensional. <code>vstack</code> adds a dimension. The names are about direction, not about dimensionality, which is why people mix them up. If you need to be sure, print the shape.</p>
       <p><code>np.concatenate</code> does both, with an explicit <code>axis</code>, and once you understand <code>axis</code> in section 11 it&#x27;s often the clearer choice.</p>
       </details>
+      <div data-runnable>
       <pre><code>M = np.<span class="fn">array</span>([[<span class="nm">1</span>, <span class="nm">2</span>], [<span class="nm">3</span>, <span class="nm">4</span>]])
 N = np.<span class="fn">array</span>([[<span class="nm">5</span>, <span class="nm">6</span>], [<span class="nm">7</span>, <span class="nm">8</span>]])
 <span class="fn">print</span>(np.<span class="fn">concatenate</span>([M, N], axis=<span class="nm">0</span>))    <span class="cm"># stack rows -&gt; (4, 2)</span>
 <span class="fn">print</span>()
 <span class="fn">print</span>(np.<span class="fn">concatenate</span>([M, N], axis=<span class="nm">1</span>))    <span class="cm"># stack columns -&gt; (2, 4)</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [[<span class="out-num">1</span> <span class="out-num">2</span>]
  [<span class="out-num">3</span> <span class="out-num">4</span>]
@@ -1539,23 +1630,28 @@ N = np.<span class="fn">array</span>([[<span class="nm">5</span>, <span class="n
 [[<span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">5</span> <span class="out-num">6</span>]
  [<span class="out-num">3</span> <span class="out-num">4</span> <span class="out-num">7</span> <span class="out-num">8</span>]]
       </div>
+      </div>
       <h3 id="splitting">Splitting</h3>
       <p><code>np.split</code> cuts an array at given positions:</p>
+      <div data-runnable>
       <pre><code>season = np.<span class="fn">arange</span>(<span class="nm">12</span>)
 first_half, second_half = np.<span class="fn">split</span>(season, [<span class="nm">6</span>])
 <span class="fn">print</span>(first_half)
 <span class="fn">print</span>(second_half)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">0</span> <span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">3</span> <span class="out-num">4</span> <span class="out-num">5</span>]
 [ <span class="out-num">6</span>  <span class="out-num">7</span>  <span class="out-num">8</span>  <span class="out-num">9</span> <span class="out-num">10</span> <span class="out-num">11</span>]
       </div>
+      </div>
       <p>The list <code>[6]</code> is where to cut, not how many pieces. Give more positions for more pieces:</p>
+      <div data-runnable>
       <pre><code>q1, q2, q3, q4 = np.<span class="fn">split</span>(season, [<span class="nm">3</span>, <span class="nm">6</span>, <span class="nm">9</span>])
 <span class="fn">print</span>(q1, q2, q3, q4)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">0</span> <span class="out-num">1</span> <span class="out-num">2</span>] [<span class="out-num">3</span> <span class="out-num">4</span> <span class="out-num">5</span>] [<span class="out-num">6</span> <span class="out-num">7</span> <span class="out-num">8</span>] [ <span class="out-num">9</span> <span class="out-num">10</span> <span class="out-num">11</span>]
+      </div>
       </div>
       <h4 id="your-turn-6">Your turn</h4>
       <ol><li>Take <code>np.arange(20)</code> and reshape it into 4 rows without computing the column count yourself.</li><li>Stack <code>hs_gpa</code> and <code>ug_gpa</code> into a 10-by-2 array where each row is one student.</li><li>From that array, print only the students whose row index is even, using a step slice.</li></ol>
@@ -1587,35 +1683,43 @@ gpas = np.<span class="fn">column_stack</span>([hs_gpa, ug_gpa])
       <h2>Boolean Indexing</h2>
       <p>This is the section that changes how you work. Filtering with booleans replaces almost every <code>if</code> inside a loop you wrote in Module 2.</p>
       <h3 id="a-comparison-produces-an-array-of-booleans">A comparison produces an array of booleans</h3>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(logins)
 <span class="fn">print</span>(logins &gt; <span class="nm">12</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">0.8</span> <span class="out-num">3.4</span> <span class="out-num">4.4</span> <span class="out-num">3.4</span> <span class="out-num">3.2</span> nan <span class="out-num">0.4</span> <span class="out-num">3.3</span> <span class="out-num">3.8</span> <span class="out-num">0.4</span>]
 [False False False False False False False False False False]
       </div>
+      </div>
       <p>One <code>True</code> or <code>False</code> per element. That array is called a <strong>mask</strong>, and on its own it isn&#x27;t very interesting. What makes it powerful is using it as an index.</p>
+      <div data-runnable>
       <pre><code>mask = logins &gt; <span class="nm">12</span>
 <span class="fn">print</span>(logins[mask])</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 []
+      </div>
       </div>
       <p>**Only the elements where the mask was <code>True</code> came back.** No loop, no <code>if</code>, no accumulator list.</p>
       <p>Usually it&#x27;s written in one line:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(logins[logins &gt; <span class="nm">12</span>])</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 []
       </div>
+      </div>
       <p>And because the arrays line up by position, a mask from one measure filters another:</p>
+      <div data-runnable>
       <pre><code>engaged = logins &gt; <span class="nm">12</span>
 <span class="fn">print</span>(<span class="st">f&quot;names:  {names[engaged]}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;GPAs:   {ug_gpa[engaged]}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 names:  []
 GPAs:   []
+      </div>
       </div>
       <p>That is the whole idea. <strong>Build a mask from one column, apply it to another.</strong> Nearly every filtering question in pandas is this same move with nicer syntax.</p>
       <p>Compare it to the Module 2 version:</p>
@@ -1639,6 +1743,7 @@ ValueError: The truth value of an array with more than one element is ambiguous.
       </details>
       <p><code>The truth value of an array with more than one element is ambiguous</code> means NumPy was asked whether a ten-element array is &quot;true&quot; and cannot answer.</p>
       <p>Use <code>&amp;</code> for and, <code>|</code> for or, <code>~</code> for not. <strong>And parenthesize each condition</strong>, because <code>&amp;</code> binds more tightly than <code>&gt;</code>:</p>
+      <div data-runnable>
       <pre><code>high_both = (logins &gt; <span class="nm">12</span>) &amp; (ug_gpa &gt; <span class="nm">3.5</span>)
 <span class="fn">print</span>(<span class="st">f&quot;engaged AND high GPA: {names[high_both]}&quot;</span>)
 
@@ -1647,13 +1752,14 @@ either = (logins &gt; <span class="nm">15</span>) | (ug_gpa &gt; <span class="nm
 
 not_engaged = ~(logins &gt; <span class="nm">12</span>)
 <span class="fn">print</span>(<span class="st">f&quot;not engaged: {names[not_engaged]}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 engaged AND high GPA: []
 very engaged OR very high GPA: []
 not engaged: [&#x27;Elliot Park&#x27; &#x27;Amara Okonkwo&#x27; &#x27;Priya Raghunathan&#x27; &#x27;Jian-Wei Chen&#x27;
  &#x27;Sofia Marchetti&#x27; &#x27;Marcus Webb&#x27; &#x27;Tobias Lindqvist&#x27; &#x27;Rosalind Achebe&#x27;
  &#x27;Nadia Haddad&#x27; &#x27;Devin Castellanos&#x27;]
+      </div>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -1663,24 +1769,29 @@ not engaged: [&#x27;Elliot Park&#x27; &#x27;Amara Okonkwo&#x27; &#x27;Priya Ragh
       </div>
       <h3 id="counting-and-checking">Counting and checking</h3>
       <p>A boolean array answers questions about itself. Since <code>True</code> counts as 1, <code>sum</code> counts matches:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;students with more than 12 logins: {(logins &gt; 12).sum()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;proportion: {(logins &gt; 12).mean():.0%}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 students with more than <span class="out-num">12</span> logins: <span class="out-num">0</span>
 proportion: <span class="out-num">0</span>%
       </div>
+      </div>
       <p><code>.mean()</code> on a boolean array gives the <strong>proportion</strong> that are true, which is a genuinely useful trick.</p>
       <h3 id="any-and-all">any and all</h3>
       <p>Two methods that belong in every data-quality check you write.</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;is ANY submission rate below 0.7?   {(submission &lt; 0.7).any()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;are ALL submission rates above 0.5?  {(submission &gt; 0.5).all()}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 is ANY submission rate below <span class="out-num">0.7</span>?   True
 are ALL submission rates above <span class="out-num">0.5</span>?  False
       </div>
+      </div>
       <p><code>.any()</code> asks whether at least one element is true. <code>.all()</code> asks whether every one is. Both collapse a whole array to a single <code>True</code> or <code>False</code>, which means they slot straight into an <code>if</code>.</p>
+      <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">check_engagement_data</span>(logins, hours, submission):
     <span class="st">&quot;&quot;&quot;Report anything obviously wrong before we compute an index from these.&quot;&quot;&quot;</span>
     problems = []
@@ -1703,24 +1814,27 @@ are ALL submission rates above <span class="out-num">0.5</span>?  False
 
 <span class="fn">print</span>(<span class="st">&quot;Engagement data check:&quot;</span>)
 <span class="fn">check_engagement_data</span>(logins, hours, submission)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Engagement data check:
   PROBLEM: submission rate outside <span class="out-num">0</span><span class="out-num">-1</span>
   PROBLEM: missing values
       </div>
+      </div>
       <p>That function is Capstone Stage 3&#x27;s data-quality requirement, and it is six lines. Run it before you compute anything, every time.</p>
       <p>Now watch it earn its keep on data that is subtly wrong:</p>
+      <div data-runnable>
       <pre><code>bad_submission = submission.<span class="fn">copy</span>()
 bad_submission[<span class="nm">3</span>] = <span class="nm">1.4</span>        <span class="cm"># a rate above 100%, which cannot be right</span>
 
 <span class="fn">print</span>(<span class="st">&quot;Check on corrupted data:&quot;</span>)
 <span class="fn">check_engagement_data</span>(logins, hours, bad_submission)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Check on corrupted data:
   PROBLEM: submission rate outside <span class="out-num">0</span><span class="out-num">-1</span>
   PROBLEM: missing values
+      </div>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -1729,14 +1843,16 @@ Check on corrupted data:
       </div>
       <h3 id="assigning-through-a-mask">Assigning through a mask</h3>
       <p>A mask can appear on the left of an assignment, which replaces only the selected elements:</p>
+      <div data-runnable>
       <pre><code>capped = submission.<span class="fn">copy</span>()
 capped[capped &gt; <span class="nm">0.95</span>] = <span class="nm">0.95</span>
 <span class="fn">print</span>(submission)
 <span class="fn">print</span>(capped)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">0.69</span> <span class="out-num">0.84</span> <span class="out-num">0.99</span> <span class="out-num">0.74</span> <span class="out-num">0.84</span>  nan <span class="out-num">0.68</span> <span class="out-num">0.75</span> <span class="out-num">0.94</span> <span class="out-num">0.7</span> ]
 [<span class="out-num">0.69</span> <span class="out-num">0.84</span> <span class="out-num">0.95</span> <span class="out-num">0.74</span> <span class="out-num">0.84</span>  nan <span class="out-num">0.68</span> <span class="out-num">0.75</span> <span class="out-num">0.94</span> <span class="out-num">0.7</span> ]
+      </div>
       </div>
       <p>Note the <code>.copy()</code>. Section 6 explains what happens without it.</p>
       <h4 id="your-turn-7">Your turn</h4>
@@ -1778,32 +1894,38 @@ high = logins &gt; <span class="nm">12</span>
 <section id="fancy" class="content-section">
       <h2>Fancy Indexing</h2>
       <p>A short section. Passing a <strong>list of indices</strong> pulls out exactly those elements, in exactly that order.</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(logins[[<span class="nm">0</span>, <span class="nm">3</span>, <span class="nm">7</span>]])          <span class="cm"># students 0, 3 and 7</span>
 <span class="fn">print</span>(names[[<span class="nm">7</span>, <span class="nm">3</span>, <span class="nm">0</span>]])           <span class="cm"># order is yours to choose</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">0.8</span> <span class="out-num">3.4</span> <span class="out-num">3.3</span>]
 [&#x27;Rosalind Achebe&#x27; &#x27;Jian-Wei Chen&#x27; &#x27;Elliot Park&#x27;]
       </div>
+      </div>
       <p>This is called <strong>fancy indexing</strong>, and it differs from slicing in two ways worth knowing: the positions don&#x27;t have to be contiguous or in order, and it returns a <strong>copy</strong>, not a view.</p>
+      <div data-runnable>
       <pre><code>a = np.<span class="fn">arange</span>(<span class="nm">6</span>)
 <span class="fn">print</span>(np.<span class="fn">may_share_memory</span>(a, a[<span class="nm">2</span>:<span class="nm">4</span>]))        <span class="cm"># slice -&gt; view</span>
 <span class="fn">print</span>(np.<span class="fn">may_share_memory</span>(a, a[[<span class="nm">2</span>, <span class="nm">3</span>]]))     <span class="cm"># fancy -&gt; copy</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 True
 False
       </div>
+      </div>
       <p>It combines naturally with the sorting in section 12 - take the indices of the top three, then use them to pull names:</p>
+      <div data-runnable>
       <pre><code>top3 = np.<span class="fn">argsort</span>(ug_gpa)[-<span class="nm">3</span>:][::-<span class="nm">1</span>]     <span class="cm"># indices of the 3 highest GPAs</span>
 <span class="fn">print</span>(<span class="st">f&quot;indices: {top3}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;names:   {names[top3]}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;GPAs:    {ug_gpa[top3]}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 indices: [<span class="out-num">8</span> <span class="out-num">1</span> <span class="out-num">7</span>]
 names:   [&#x27;Nadia Haddad&#x27; &#x27;Amara Okonkwo&#x27; &#x27;Rosalind Achebe&#x27;]
 GPAs:    [<span class="out-num">3.4</span>  <span class="out-num">3.02</span> <span class="out-num">2.96</span>]
+      </div>
       </div>
       <h4 id="your-turn-8">Your turn</h4>
       <ol><li>Print the names and login counts of students at indices 1, 5, and 9.</li><li>Using <code>np.argsort</code>, print the three <strong>least</strong> engaged students by logins, with their names.</li><li>Confirm that fancy indexing returns a copy: take <code>sub = logins[[0, 1]]</code>, change <code>sub[0]</code>, and show <code>logins</code> is unaffected.</li></ol>
@@ -1840,92 +1962,106 @@ sub[<span class="nm">0</span>] = <span class="nm">999</span>
       <h2>Vectorization</h2>
       <p>A <strong>ufunc</strong> is a function that operates element-wise on an array. You&#x27;ve been using them since section 4 - <code>+</code>, <code>*</code> and <code>&gt;</code> are all ufuncs wearing operator costumes.</p>
       <p>The named ones cover the mathematics you&#x27;d otherwise loop for.</p>
+      <div data-runnable>
       <pre><code>x = np.<span class="fn">array</span>([<span class="nm">1</span>, <span class="nm">4</span>, <span class="nm">9</span>, <span class="nm">16</span>, <span class="nm">25</span>])
 
 <span class="fn">print</span>(np.<span class="fn">sqrt</span>(x))
 <span class="fn">print</span>(np.<span class="fn">log</span>(x).<span class="fn">round</span>(<span class="nm">3</span>))
 <span class="fn">print</span>(np.<span class="fn">exp</span>([<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">2</span>]).<span class="fn">round</span>(<span class="nm">3</span>))
 <span class="fn">print</span>(np.<span class="fn">abs</span>([-<span class="nm">3</span>, -<span class="nm">1</span>, <span class="nm">2</span>]))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">1</span>. <span class="out-num">2</span>. <span class="out-num">3</span>. <span class="out-num">4</span>. <span class="out-num">5</span>.]
 [<span class="out-num">0</span>.    <span class="out-num">1.386</span> <span class="out-num">2.197</span> <span class="out-num">2.773</span> <span class="out-num">3.219</span>]
 [<span class="out-num">1</span>.    <span class="out-num">2.718</span> <span class="out-num">7.389</span>]
 [<span class="out-num">3</span> <span class="out-num">1</span> <span class="out-num">2</span>]
       </div>
+      </div>
       <p>Rounding has three variants worth telling apart:</p>
+      <div data-runnable>
       <pre><code>vals = np.<span class="fn">array</span>([<span class="nm">1.4</span>, <span class="nm">1.5</span>, <span class="nm">2.5</span>, -<span class="nm">1.5</span>])
 <span class="fn">print</span>(<span class="st">f&quot;round: {np.round(vals)}&quot;</span>)     <span class="cm"># to even on .5, as in Module 2</span>
 <span class="fn">print</span>(<span class="st">f&quot;floor: {np.floor(vals)}&quot;</span>)     <span class="cm"># always down</span>
 <span class="fn">print</span>(<span class="st">f&quot;ceil:  {np.ceil(vals)}&quot;</span>)      <span class="cm"># always up</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 round: [ <span class="out-num">1</span>.  <span class="out-num">2</span>.  <span class="out-num">2</span>. -<span class="out-num">2</span>.]
 floor: [ <span class="out-num">1</span>.  <span class="out-num">1</span>.  <span class="out-num">2</span>. -<span class="out-num">2</span>.]
 ceil:  [ <span class="out-num">2</span>.  <span class="out-num">2</span>.  <span class="out-num">3</span>. -<span class="out-num">1</span>.]
       </div>
+      </div>
       <p><strong>Binary</strong> ufuncs take two arrays and combine them element-wise:</p>
+      <div data-runnable>
       <pre><code>a = np.<span class="fn">array</span>([<span class="nm">1</span>, <span class="nm">5</span>, <span class="nm">3</span>])
 b = np.<span class="fn">array</span>([<span class="nm">4</span>, <span class="nm">2</span>, <span class="nm">6</span>])
 
 <span class="fn">print</span>(np.<span class="fn">maximum</span>(a, b))     <span class="cm"># larger of each pair</span>
 <span class="fn">print</span>(np.<span class="fn">minimum</span>(a, b))     <span class="cm"># smaller of each pair</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">4</span> <span class="out-num">5</span> <span class="out-num">6</span>]
 [<span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">3</span>]
+      </div>
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>np.maximum(a, b)</code> returns an array. What does <code>np.max(a)</code> return, and how is it different?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;np.maximum(a, b) = {np.maximum(a, b)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;np.max(a)        = {np.max(a)}&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 np.maximum(a, b) = [<span class="out-num">4</span> <span class="out-num">5</span> <span class="out-num">6</span>]
 np.max(a)        = <span class="out-num">5</span>
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>np.maximum</code> is a <strong>binary ufunc</strong>: it compares two arrays element by element and returns an array the same shape.</p>
       <p><code>np.max</code> is an <strong>aggregate</strong>: it reduces one array to a single value.</p>
       <p>The names are one letter apart and the behaviors are unrelated. <code>maximum</code> for pairwise, <code>max</code> for the biggest. Section 11 is all about aggregates.</p>
       </details>
       <h3 id="ufuncs-and-missing-values">Ufuncs and missing values</h3>
       <p>The cohort&#x27;s <code>grad_gpa</code> has a <code>np.nan</code> in it - Marcus Webb, still enrolled. Watch what ufuncs do with it.</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(grad_gpa)
 <span class="fn">print</span>(grad_gpa + <span class="nm">1</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">2.86</span> <span class="out-num">3.4</span>  <span class="out-num">3.18</span> <span class="out-num">3.19</span> <span class="out-num">3.05</span>  nan <span class="out-num">2.38</span> <span class="out-num">3.34</span> <span class="out-num">3.78</span> <span class="out-num">2.37</span>]
 [<span class="out-num">3.86</span> <span class="out-num">4.4</span>  <span class="out-num">4.18</span> <span class="out-num">4.19</span> <span class="out-num">4.05</span>  nan <span class="out-num">3.38</span> <span class="out-num">4.34</span> <span class="out-num">4.78</span> <span class="out-num">3.37</span>]
+      </div>
       </div>
       <p><code>nan</code> stayed <code>nan</code>. That&#x27;s the defining property: **<code>nan</code> propagates.** Any arithmetic touching it produces <code>nan</code>, which means one missing value can silently poison an entire calculation.</p>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> What does <code>grad_gpa.mean()</code> give, with one nan among ten values?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(grad_gpa.<span class="fn">mean</span>())</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 nan
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>nan</code>. Not the mean of the nine real values - <code>nan</code>.</p>
       <p>This is exactly right and completely unhelpful. NumPy is refusing to guess what the missing value should have been, which is honest, but it means your summary statistic is now unusable.</p>
       <p>Note also that this is a <strong>silent</strong> failure in the sense that matters: no error, no warning, just a result that is wrong if you don&#x27;t look at it. If a report prints <code>nan</code> you&#x27;ll notice. If it feeds into another calculation first, you may not.</p>
       </details>
       <p>NumPy provides <code>nan</code>-aware versions of the aggregates, which skip missing values:</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;mean  {grad_gpa.mean()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;nanmean {np.nanmean(grad_gpa):.4f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;nanmax  {np.nanmax(grad_gpa)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;count of non-missing: {(~np.isnan(grad_gpa)).sum()}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 mean  nan
 nanmean <span class="out-num">3.0611</span>
 nanmax  <span class="out-num">3.78</span>
 count of non-missing: <span class="out-num">9</span>
+      </div>
       </div>
       <p><code>np.isnan</code> gives a mask, so <code>~np.isnan(x)</code> is the mask of values that are present. That&#x27;s the connection back to section 8.</p>
       <div class="callout">
@@ -1971,13 +2107,14 @@ count of non-missing: <span class="out-num">9</span>
 <section id="stats" class="content-section">
       <h2>Aggregation</h2>
       <p>An <strong>aggregate</strong> collapses many values into one. You know several already.</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;sum    {logins.sum()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;mean   {logins.mean():.2f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;min    {logins.min()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;max    {logins.max()}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;std    {logins.std():.3f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;median {np.median(logins)}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 sum    nan
 mean   nan
@@ -1986,16 +2123,19 @@ max    nan
 std    nan
 median nan
       </div>
+      </div>
       <h4 id="one-number-that-will-change-under-you-in-module-4">One number that will change under you in Module 4</h4>
       <p><code>std</code> has a parameter, <code>ddof</code>, that decides what you divide by. NumPy defaults to <code>ddof=0</code> - the <strong>population</strong> standard deviation, dividing by n. pandas defaults to <code>ddof=1</code> - the <strong>sample</strong> standard deviation, dividing by n-1.</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;numpy default (ddof=0): {logins.std():.6f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;numpy with ddof=1:      {logins.std(ddof=1):.6f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;difference:             {logins.std(ddof=1) - logins.std():.6f}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 numpy default (ddof=<span class="out-num">0</span>): nan
 numpy with ddof=<span class="out-num">1</span>:      nan
 difference:             nan
+      </div>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -2005,28 +2145,32 @@ difference:             nan
       </div>
       <p>Note the two calling styles: <code>logins.sum()</code> is a method on the array, <code>np.median(logins)</code> is a function. Most aggregates offer both; <code>median</code> happens to be function-only. If <code>.something()</code> doesn&#x27;t exist, try <code>np.something()</code>.</p>
       <p><code>argmin</code> and <code>argmax</code> give the <strong>position</strong> of the extreme value rather than the value, which is how you find out <em>who</em>:</p>
+      <div data-runnable>
       <pre><code>busiest = logins.<span class="fn">argmax</span>()
 <span class="fn">print</span>(<span class="st">f&quot;index {busiest}: {names[busiest]} with {logins[busiest]} logins&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 index <span class="out-num">5</span>: Marcus Webb with nan logins
+      </div>
       </div>
       <h3 id="axis-the-part-everyone-gets-wrong">axis: the part everyone gets wrong</h3>
       <p>On a 2D array, an aggregate can collapse the whole thing, or work down the columns, or across the rows.</p>
       <figure class="nb-figure"><img src="assets/fig-9e39d3e04a.png" alt="axis=0 collapses rows to give one value per column; axis=1 does the reverse" loading="lazy"><figcaption>axis=0 collapses rows to give one value per column; axis=1 does the reverse</figcaption></figure>
+      <div data-runnable>
       <pre><code>engagement = np.<span class="fn">column_stack</span>([logins, hours, submission])
 <span class="fn">print</span>(<span class="st">f&quot;shape {engagement.shape}\n&quot;</span>)
 
 <span class="fn">print</span>(<span class="st">f&quot;everything:  {engagement.mean():.3f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;axis=0:      {engagement.mean(axis=0).round(3)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;axis=1:      {engagement.mean(axis=1).round(3)}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 shape (<span class="out-num">10</span>, <span class="out-num">3</span>)
 
 everything:  nan
 axis=<span class="out-num">0</span>:      [nan nan nan]
 axis=<span class="out-num">1</span>:      [<span class="out-num">1.33</span>  <span class="out-num">2.013</span> <span class="out-num">3.997</span> <span class="out-num">2.813</span> <span class="out-num">2.147</span>   nan <span class="out-num">0.727</span> <span class="out-num">2.517</span> <span class="out-num">3.047</span> <span class="out-num">0.933</span>]
+      </div>
       </div>
       <p>With no <code>axis</code>, you get one number for all thirty values - which here is meaningless, since it averages logins with submission rates.</p>
       <p><code>axis=0</code> gave <strong>three</strong> numbers: the mean logins, mean hours, and mean submission across all students. One per column.</p>
@@ -2035,14 +2179,16 @@ axis=<span class="out-num">1</span>:      [<span class="out-num">1.33</span>  <s
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> <code>engagement</code> is shape (10, 3). What shape does <code>engagement.sum(axis=0)</code> have - (10,) or (3,)?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;axis=0 -&gt; {engagement.sum(axis=0).shape}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;axis=1 -&gt; {engagement.sum(axis=1).shape}&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 axis=<span class="out-num">0</span> -&gt; (<span class="out-num">3</span>,)
 axis=<span class="out-num">1</span> -&gt; (<span class="out-num">10</span>,)
       </div>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p><code>axis=0</code> gives shape <code>(3,)</code> and <code>axis=1</code> gives <code>(10,)</code>.</p>
       <p>The reliable way to think about it: **<code>axis</code> names the dimension that disappears.** <code>axis=0</code> is the row dimension, so the rows collapse and you&#x27;re left with one value per column.</p>
       <p>Almost everyone&#x27;s first instinct is the opposite - that <code>axis=0</code> means &quot;give me rows.&quot; Check the shape until the correct version becomes automatic.</p>
@@ -2055,26 +2201,29 @@ axis=<span class="out-num">1</span> -&gt; (<span class="out-num">10</span>,)
       <h3 id="building-the-engagement-index">Building the engagement index</h3>
       <p>Now everything comes together. Lee wants logins, hours, and submission combined into one comparable number, and the three are on different scales.</p>
       <p>Normalize each <strong>column</strong> to 0-1, then average across the three.</p>
+      <div data-runnable>
       <pre><code>col_min = engagement.<span class="fn">min</span>(axis=<span class="nm">0</span>)      <span class="cm"># 3 values, one per measure</span>
 col_max = engagement.<span class="fn">max</span>(axis=<span class="nm">0</span>)
 
 <span class="fn">print</span>(<span class="st">f&quot;minimums: {col_min}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;maximums: {col_max}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;shapes:   {engagement.shape} and {col_min.shape}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 minimums: [nan nan nan]
 maximums: [nan nan nan]
 shapes:   (<span class="out-num">10</span>, <span class="out-num">3</span>) and (<span class="out-num">3</span>,)
       </div>
+      </div>
       <p><code>engagement</code> is <code>(10, 3)</code> and <code>col_min</code> is <code>(3,)</code>. Compare from the right: 3 against 3, they match. So this broadcasts - the same three minimums are subtracted from every one of the ten rows. That&#x27;s section 4 doing real work.</p>
+      <div data-runnable>
       <pre><code>normalized = (engagement - col_min) / (col_max - col_min)
 
 <span class="fn">print</span>(np.<span class="fn">round</span>(normalized[:<span class="nm">4</span>], <span class="nm">3</span>))
 <span class="fn">print</span>()
 <span class="fn">print</span>(<span class="st">f&quot;column minimums now: {normalized.min(axis=0)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;column maximums now: {normalized.max(axis=0)}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [[nan nan nan]
  [nan nan nan]
@@ -2084,11 +2233,13 @@ shapes:   (<span class="out-num">10</span>, <span class="out-num">3</span>) and 
 column minimums now: [nan nan nan]
 column maximums now: [nan nan nan]
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>engagement_index = normalized.<span class="fn">mean</span>(axis=<span class="nm">1</span>)      <span class="cm"># average the 3 measures</span>
 
 <span class="kw">for</span> i <span class="kw">in</span> np.<span class="fn">argsort</span>(engagement_index)[::-<span class="nm">1</span>]:
     <span class="fn">print</span>(<span class="st">f&quot;{names[i]:20} {engagement_index[i]:.3f}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Devin Castellanos    nan
 Nadia Haddad         nan
@@ -2100,6 +2251,7 @@ Jian-Wei Chen        nan
 Priya Raghunathan    nan
 Amara Okonkwo        nan
 Elliot Park          nan
+      </div>
       </div>
       <p>There it is. One number per student, comparable across students, built from three measures on different scales - and the whole computation is four lines that would work identically on eighty thousand rows.</p>
       <h4 id="your-turn-10">Your turn</h4>
@@ -2146,33 +2298,38 @@ order_weighted = np.<span class="fn">argsort</span>(weighted)[::-<span class="nm
       <h2>Sorting &amp; Random</h2>
       <h3 id="sorting">Sorting</h3>
       <p><code>np.sort</code> returns a sorted copy and leaves the original alone - the same contract as Python&#x27;s <code>sorted</code> in Module 2.</p>
+      <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;original: {logins}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;sorted:   {np.sort(logins)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;original: {logins}&quot;</span>)     <span class="cm"># untouched</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 original: [<span class="out-num">0.8</span> <span class="out-num">3.4</span> <span class="out-num">4.4</span> <span class="out-num">3.4</span> <span class="out-num">3.2</span> nan <span class="out-num">0.4</span> <span class="out-num">3.3</span> <span class="out-num">3.8</span> <span class="out-num">0.4</span>]
 sorted:   [<span class="out-num">0.4</span> <span class="out-num">0.4</span> <span class="out-num">0.8</span> <span class="out-num">3.2</span> <span class="out-num">3.3</span> <span class="out-num">3.4</span> <span class="out-num">3.4</span> <span class="out-num">3.8</span> <span class="out-num">4.4</span> nan]
 original: [<span class="out-num">0.8</span> <span class="out-num">3.4</span> <span class="out-num">4.4</span> <span class="out-num">3.4</span> <span class="out-num">3.2</span> nan <span class="out-num">0.4</span> <span class="out-num">3.3</span> <span class="out-num">3.8</span> <span class="out-num">0.4</span>]
       </div>
+      </div>
       <p><code>.sort()</code> as a <strong>method</strong> sorts in place and returns nothing, which is a genuinely easy mistake to make:</p>
+      <div data-runnable>
       <pre><code>demo = np.<span class="fn">array</span>([<span class="nm">3</span>, <span class="nm">1</span>, <span class="nm">2</span>])
 result = demo.<span class="fn">sort</span>()
 <span class="fn">print</span>(<span class="st">f&quot;demo:   {demo}&quot;</span>)         <span class="cm"># sorted</span>
 <span class="fn">print</span>(<span class="st">f&quot;result: {result}&quot;</span>)       <span class="cm"># None</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 demo:   [<span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">3</span>]
 result: None
       </div>
+      </div>
       <p>If a sort produced <code>None</code>, this is why. Module 2&#x27;s print-versus-return lesson, in a new outfit.</p>
       <p><code>argsort</code> is the one that matters for real work. It returns the <strong>indices</strong> that would sort the array, which lets you reorder other arrays to match:</p>
+      <div data-runnable>
       <pre><code>order = np.<span class="fn">argsort</span>(ug_gpa)[::-<span class="nm">1</span>]      <span class="cm"># descending</span>
 <span class="fn">print</span>(<span class="st">f&quot;order: {order}\n&quot;</span>)
 
 <span class="kw">for</span> rank, i <span class="kw">in</span> <span class="fn">enumerate</span>(order, start=<span class="nm">1</span>):
     <span class="fn">print</span>(<span class="st">f&quot;{rank:2}. {names[i]:20} {ug_gpa[i]:.2f}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 order: [<span class="out-num">8</span> <span class="out-num">1</span> <span class="out-num">7</span> <span class="out-num">3</span> <span class="out-num">2</span> <span class="out-num">4</span> <span class="out-num">5</span> <span class="out-num">0</span> <span class="out-num">6</span> <span class="out-num">9</span>]
 
@@ -2187,43 +2344,50 @@ order: [<span class="out-num">8</span> <span class="out-num">1</span> <span clas
  <span class="out-num">9</span>. Tobias Lindqvist     <span class="out-num">2.13</span>
 <span class="out-num">10</span>. Devin Castellanos    <span class="out-num">1.99</span>
       </div>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**<code>argsort</code> keeps records together.** Sorting <code>ug_gpa</code> on its own would destroy the link between a GPA and the student it belongs to - exactly the parallel-array fragility Module 2 warned about.</p>
       <p>Sort the indices, then use them to index every array. This is what pandas does for you automatically, and knowing the manual version is why the pandas version will make sense.</p>
       </div>
       <p>On 2D arrays, sorting takes an axis, and sorts each row or column independently:</p>
+      <div data-runnable>
       <pre><code>M = np.<span class="fn">array</span>([[<span class="nm">3</span>, <span class="nm">1</span>, <span class="nm">2</span>], [<span class="nm">9</span>, <span class="nm">7</span>, <span class="nm">8</span>]])
 <span class="fn">print</span>(np.<span class="fn">sort</span>(M, axis=<span class="nm">1</span>))     <span class="cm"># sort within each row</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [[<span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">3</span>]
  [<span class="out-num">7</span> <span class="out-num">8</span> <span class="out-num">9</span>]]
       </div>
+      </div>
       <h3 id="random-numbers">Random numbers</h3>
       <p>Random data is how you test code before real data arrives, and how simulations work.</p>
       <p>Modern NumPy uses a <strong>generator</strong> object. Create one with a <strong>seed</strong> and you get the same &quot;random&quot; numbers every time - which sounds like it defeats the purpose and is essential for reproducible research.</p>
+      <div data-runnable>
       <pre><code>rng = np.random.<span class="fn">default_rng</span>(seed=<span class="nm">520</span>)
 
 <span class="fn">print</span>(rng.<span class="fn">integers</span>(<span class="nm">0</span>, <span class="nm">100</span>, size=<span class="nm">8</span>))
 <span class="fn">print</span>(rng.<span class="fn">random</span>(<span class="nm">4</span>).<span class="fn">round</span>(<span class="nm">3</span>))
 <span class="fn">print</span>(rng.<span class="fn">normal</span>(loc=<span class="nm">3.2</span>, scale=<span class="nm">0.4</span>, size=<span class="nm">5</span>).<span class="fn">round</span>(<span class="nm">3</span>))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">28</span> <span class="out-num">27</span> <span class="out-num">68</span> <span class="out-num">39</span> <span class="out-num">73</span> <span class="out-num">14</span>  <span class="out-num">1</span> <span class="out-num">29</span>]
 [<span class="out-num">0.743</span> <span class="out-num">0.245</span> <span class="out-num">0.693</span> <span class="out-num">0.286</span>]
 [<span class="out-num">3.232</span> <span class="out-num">2.416</span> <span class="out-num">3.171</span> <span class="out-num">2.875</span> <span class="out-num">2.659</span>]
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>a = np.random.<span class="fn">default_rng</span>(seed=<span class="nm">520</span>).<span class="fn">integers</span>(<span class="nm">0</span>, <span class="nm">100</span>, size=<span class="nm">5</span>)
 b = np.random.<span class="fn">default_rng</span>(seed=<span class="nm">520</span>).<span class="fn">integers</span>(<span class="nm">0</span>, <span class="nm">100</span>, size=<span class="nm">5</span>)
 <span class="fn">print</span>(a)
 <span class="fn">print</span>(b)
 <span class="fn">print</span>(<span class="st">f&quot;identical: {np.array_equal(a, b)}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">28</span> <span class="out-num">27</span> <span class="out-num">68</span> <span class="out-num">39</span> <span class="out-num">73</span>]
 [<span class="out-num">28</span> <span class="out-num">27</span> <span class="out-num">68</span> <span class="out-num">39</span> <span class="out-num">73</span>]
 identical: True
+      </div>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -2232,12 +2396,14 @@ identical: True
       <p>That is why <code>rng = np.random.default_rng(seed)</code> is worth the extra characters, and why your later courses will use it.</p>
       </div>
       <p><code>rng.choice</code> samples from an existing array, which is how you&#x27;d draw a subset of the cohort:</p>
+      <div data-runnable>
       <pre><code>rng = np.random.<span class="fn">default_rng</span>(seed=<span class="nm">7</span>)
 sample = rng.<span class="fn">choice</span>(names, size=<span class="nm">3</span>, replace=<span class="kw">False</span>)
 <span class="fn">print</span>(sample)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [&#x27;Rosalind Achebe&#x27; &#x27;Marcus Webb&#x27; &#x27;Tobias Lindqvist&#x27;]
+      </div>
       </div>
       <h4 id="your-turn-11">Your turn</h4>
       <ol><li>Print the cohort sorted by hours on task, descending, with names.</li><li>Make a reproducible array of 20 simulated GPAs, normally distributed around 3.2 with a standard deviation of 0.4. Clip them to the legal range 0 to 4 using <code>np.clip</code>.</li><li>Show that two generators with the same seed agree and two with different seeds don&#x27;t.</li></ol>
@@ -2277,11 +2443,12 @@ diff = np.random.<span class="fn">default_rng</span>(<span class="nm">2</span>).
 <section id="conditional" class="content-section">
       <h2>Conditional Logic</h2>
       <p><code>np.where</code> is the vectorized <code>if</code>/<code>else</code>. It takes a condition and two alternatives, and picks element by element.</p>
+      <div data-runnable>
       <pre><code>labels = np.<span class="fn">where</span>(logins &gt; <span class="nm">12</span>, <span class="st">&quot;engaged&quot;</span>, <span class="st">&quot;needs outreach&quot;</span>)
 
 <span class="kw">for</span> n, l <span class="kw">in</span> <span class="fn">zip</span>(names, labels):
     <span class="fn">print</span>(<span class="st">f&quot;{n:20} {l}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Elliot Park          needs outreach
 Amara Okonkwo        needs outreach
@@ -2294,6 +2461,7 @@ Rosalind Achebe      needs outreach
 Nadia Haddad         needs outreach
 Devin Castellanos    needs outreach
       </div>
+      </div>
       <p>Read it as: <em>where the condition is true take the second argument, otherwise take the third.</em></p>
       <p>The Module 2 version needed a loop and an accumulator:</p>
       <pre><code>labels = []
@@ -2303,22 +2471,25 @@ Devin Castellanos    needs outreach
     <span class="kw">else</span>:
         labels.<span class="fn">append</span>(<span class="st">&quot;needs outreach&quot;</span>)</code></pre>
       <p>Both alternatives can be arrays, which is how you apply a change to only some elements:</p>
+      <div data-runnable>
       <pre><code><span class="cm"># give a 10% bonus to students below the mean, leave the rest alone</span>
 boosted = np.<span class="fn">where</span>(hours &lt; hours.<span class="fn">mean</span>(), hours * <span class="nm">1.1</span>, hours)
 <span class="fn">print</span>(np.<span class="fn">round</span>(hours, <span class="nm">2</span>))
 <span class="fn">print</span>(np.<span class="fn">round</span>(boosted, <span class="nm">2</span>))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">2.5</span> <span class="out-num">1.8</span> <span class="out-num">6.6</span> <span class="out-num">4.3</span> <span class="out-num">2.4</span> nan <span class="out-num">1.1</span> <span class="out-num">3.5</span> <span class="out-num">4.4</span> <span class="out-num">1.7</span>]
 [<span class="out-num">2.5</span> <span class="out-num">1.8</span> <span class="out-num">6.6</span> <span class="out-num">4.3</span> <span class="out-num">2.4</span> nan <span class="out-num">1.1</span> <span class="out-num">3.5</span> <span class="out-num">4.4</span> <span class="out-num">1.7</span>]
       </div>
+      </div>
       <p>Nesting handles more than two outcomes, though it gets hard to read quickly:</p>
+      <div data-runnable>
       <pre><code>standing = np.<span class="fn">where</span>(ug_gpa &gt;= <span class="nm">3.5</span>, <span class="st">&quot;excellent&quot;</span>,
              np.<span class="fn">where</span>(ug_gpa &gt;= <span class="nm">3.0</span>, <span class="st">&quot;good&quot;</span>, <span class="st">&quot;needs support&quot;</span>))
 
 <span class="kw">for</span> n, s <span class="kw">in</span> <span class="fn">zip</span>(names, standing):
     <span class="fn">print</span>(<span class="st">f&quot;{n:20} {s}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Elliot Park          needs support
 Amara Okonkwo        good
@@ -2331,7 +2502,9 @@ Rosalind Achebe      needs support
 Nadia Haddad         good
 Devin Castellanos    needs support
       </div>
+      </div>
       <p>Beyond two levels, <code>np.select</code> says the same thing far more clearly. It takes a list of conditions, a matching list of results, and a default:</p>
+      <div data-runnable>
       <pre><code>conditions = [ug_gpa &gt;= <span class="nm">3.5</span>, ug_gpa &gt;= <span class="nm">3.0</span>]
 choices    = [<span class="st">&quot;excellent&quot;</span>, <span class="st">&quot;good&quot;</span>]
 
@@ -2339,7 +2512,7 @@ standing = np.<span class="fn">select</span>(conditions, choices, default=<span 
 
 <span class="kw">for</span> n, s <span class="kw">in</span> <span class="fn">zip</span>(names, standing):
     <span class="fn">print</span>(<span class="st">f&quot;{n:20} {s}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Elliot Park          needs support
 Amara Okonkwo        good
@@ -2351,6 +2524,7 @@ Tobias Lindqvist     needs support
 Rosalind Achebe      needs support
 Nadia Haddad         good
 Devin Castellanos    needs support
+      </div>
       </div>
       <p>Conditions are checked <strong>in order</strong> and the first match wins, so this has the same behavior as an <code>elif</code> chain - and the same requirement that you put the most restrictive condition first.</p>
       <p>The advantage over nesting is that adding a fourth category means adding one entry to each list, rather than burying another <code>np.where</code> three levels deep.</p>
@@ -2360,13 +2534,15 @@ Devin Castellanos    needs support
       <p>Note also that the order matters exactly as it did for the <code>elif</code> chain in Module 2: the first matching condition wins, so put the most restrictive first.</p>
       </div>
       <p>Called with only a condition, <code>np.where</code> returns the <strong>indices</strong> where it&#x27;s true - occasionally useful, frequently confusing:</p>
+      <div data-runnable>
       <pre><code>idx = np.<span class="fn">where</span>(logins &gt; <span class="nm">12</span>)
 <span class="fn">print</span>(idx)
 <span class="fn">print</span>(names[idx])</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 (array([], dtype=int64),)
 []
+      </div>
       </div>
       <p>The trailing comma means it&#x27;s a tuple with one array in it, one per dimension. Tuples, from Module 2 section 8.</p>
       <h4 id="your-turn-12">Your turn</h4>
@@ -2436,33 +2612,41 @@ numpy._core._exceptions._UFuncNoLoopError: ufunc &#x27;add&#x27; did not contain
       </details>
       <h4 id="your-turn-13">Your turn</h4>
       <p>Each cell is broken. Diagnose before you edit: name the error, say what caused it, then fix it.</p>
+      <div data-runnable>
       <pre><code><span class="cm"># 1</span>
 a = np.<span class="fn">arange</span>(<span class="nm">10</span>)
 <span class="fn">print</span>(a.<span class="fn">reshape</span>(<span class="nm">3</span>, <span class="nm">4</span>))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 ValueError: cannot reshape array of size <span class="out-num">10</span> into shape (<span class="out-num">3</span>,<span class="out-num">4</span>)
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="cm"># 2</span>
 scores = np.<span class="fn">array</span>([<span class="nm">88</span>, <span class="nm">92</span>, <span class="nm">79</span>])
 <span class="fn">print</span>(scores[scores &gt; <span class="nm">80</span> <span class="kw">and</span> scores &lt; <span class="nm">95</span>])</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="cm"># 3</span>
 M = np.<span class="fn">array</span>([[<span class="nm">1</span>, <span class="nm">2</span>], [<span class="nm">3</span>, <span class="nm">4</span>]])
 <span class="fn">print</span>(M[<span class="nm">2</span>, <span class="nm">0</span>])</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 IndexError: index <span class="out-num">2</span> is out of bounds for axis <span class="out-num">0</span> with size <span class="out-num">2</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="cm"># 4</span>
 gpa_text = np.<span class="fn">array</span>([<span class="st">&quot;3.8&quot;</span>, <span class="st">&quot;2.9&quot;</span>])
 <span class="fn">print</span>(gpa_text.<span class="fn">mean</span>())</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 TypeError: the resolved dtypes are not compatible with add.reduce. Resolved (dtype(&#x27;&lt;U3&#x27;), dtype(&#x27;&lt;U3&#x27;), dtype(&#x27;&lt;U6&#x27;))
+      </div>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -3498,6 +3682,7 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) {
 </script>
 <!-- ═══════════════ END SETTINGS WIDGET ═══════════════ -->
 
+<script src="/520_full/assets/runnable.js" defer></script>
 <style>
 /* exercise-runner.css */
 /* DTSC 520 - live exercise blocks on module pages.

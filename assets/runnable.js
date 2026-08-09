@@ -96,12 +96,23 @@
       s.onerror = function () { reject(new Error("could not load Pyodide")); };
       s.onload = function () {
         window.loadPyodide({ indexURL: PYODIDE }).then(function (p) {
-          /* Module 2 is pure Python - no numpy, no pandas. Nothing to
-             loadPackage, which is why this section is the cheapest one on the
-             site to make live despite having the most code blocks. */
-          p.runPython(SHIM);
-          py = p;
-          resolve(p);
+          /* Work out what to load by READING THE PAGE rather than hardcoding a
+             per-module list. Module 2 needs nothing, Module 3 needs numpy,
+             Module 4 needs pandas - and a list kept in this file would drift
+             the first time a notebook changed. */
+          var src = blocks.map(function (b) {
+            return b.querySelector("code").textContent;
+          }).join("\n");
+          var pkgs = [];
+          if (/\bnumpy\b|\bnp\./.test(src)) pkgs.push("numpy");
+          if (/\bpandas\b|\bpd\./.test(src)) pkgs.push("pandas");
+          if (!pkgs.length) { p.runPython(SHIM); py = p; return resolve(p); }
+          statusEl.textContent = "Loading " + pkgs.join(" and ") + "...";
+          return p.loadPackage(pkgs).then(function () {
+            p.runPython(SHIM);
+            py = p;
+            resolve(p);
+          });
         }).catch(reject);
       };
       document.head.appendChild(s);
