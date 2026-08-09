@@ -83,7 +83,19 @@
     "    finally:",
     "        sys.stdout = old",
     "    return buf.getvalue(), False",
-    "_dtsc_ns = {'__name__': '__main__'}",
+    /* The bootstrap has to land in the SAME dict the cells run in.
+       p.runPython(bootSrc) puts `pd` in Pyodide's globals, while every cell
+       executes against `_dtsc_ns` - so `pd` was defined somewhere the cells
+       could not see it. And run() resets `_dtsc_ns` on each click, which would
+       have wiped it even if it had landed correctly. One reset function owns
+       both jobs, and is the only thing allowed to clear the namespace. */
+    "_dtsc_boot = ''",
+    "def _dtsc_reset():",
+    "    global _dtsc_ns",
+    "    _dtsc_ns = {'__name__': '__main__'}",
+    "    if _dtsc_boot:",
+    "        exec(_dtsc_boot, _dtsc_ns)",
+    "_dtsc_reset()",
   ].join("\n");
 
   function boot(statusEl) {
@@ -130,7 +142,8 @@
                package silently skipped its own imports. */
             if (bootSrc) {
               try {
-                p.runPython(bootSrc);
+                p.globals.set("_dtsc_boot", bootSrc);
+                p.runPython("_dtsc_reset()");
               } catch (e) {
                 /* Loud, not silent: without its imports every block on the page
                    is about to fail for a reason that points somewhere else. */
@@ -208,7 +221,7 @@
          second, because the name survives between runs. That is correct Python
          and correct notebook behavior, but on a page whose whole promise is
          "this is the verified output" it reads as the site being broken. */
-      py.runPython("_dtsc_ns = {'__name__': '__main__'}");
+      py.runPython("_dtsc_reset()");   // clears AND re-applies the imports
       var idx = blocks.indexOf(block);
       for (var i = 0; i < idx; i++) execOne(blocks[i]);
       execOne(block);
