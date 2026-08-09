@@ -97,25 +97,48 @@
       s.onload = function () {
         window.loadPyodide({ indexURL: PYODIDE }).then(function (p) {
           /* Work out what to load by READING THE PAGE rather than hardcoding a
-             per-module list. Module 2 needs nothing, Module 3 needs numpy,
-             Module 4 needs pandas - and a list kept in this file would drift
-             the first time a notebook changed. */
+             per-module list, so a notebook change cannot leave this stale.
+
+             The BOOTSTRAP counts as page source. Module 4's overview showed why:
+             its `import numpy as np` lives in the bootstrap, and numpy appeared
+             nowhere in the runnable blocks it was scanned from. So numpy was
+             never loaded, the bootstrap threw on line one, and every block on
+             the page then failed with `pd is not defined` - one missing import
+             presenting as a completely unrelated error. */
+          var bootEl = document.querySelector(
+            'script[type="application/x-dtsc-setup"]');
+          var bootSrc = bootEl ? bootEl.textContent : "";
           var src = blocks.map(function (b) {
             return b.querySelector("code").textContent;
-          }).join("\n");
+          }).join("\n") + "\n" + bootSrc;
+
           var pkgs = [];
           if (/\bnumpy\b|\bnp\./.test(src)) pkgs.push("numpy");
           if (/\bpandas\b|\bpd\./.test(src)) pkgs.push("pandas");
-          if (!pkgs.length) { p.runPython(SHIM); py = p; return resolve(p); }
-          statusEl.textContent = "Loading " + pkgs.join(" and ") + "...";
-          return p.loadPackage(pkgs).then(function () {
+
+          var loaded = pkgs.length
+            ? (statusEl.textContent = "Loading " + pkgs.join(" and ") + "...",
+               p.loadPackage(pkgs))
+            : Promise.resolve();
+
+          return loaded.then(function () {
             p.runPython(SHIM);
-            return stageData(p, src).then(function () {
-              var boot = document.querySelector('script[type="application/x-dtsc-setup"]');
-              if (boot) p.runPython(boot.textContent);
-              py = p;
-              resolve(p);
-            });
+            return stageData(p, src);
+          }).then(function () {
+            /* Runs whether or not packages were needed. It used to sit inside
+               the package branch, so a page with a bootstrap but no detected
+               package silently skipped its own imports. */
+            if (bootSrc) {
+              try {
+                p.runPython(bootSrc);
+              } catch (e) {
+                /* Loud, not silent: without its imports every block on the page
+                   is about to fail for a reason that points somewhere else. */
+                throw new Error("setup failed: " + e.message);
+              }
+            }
+            py = p;
+            resolve(p);
           });
         }).catch(reject);
       };
