@@ -943,7 +943,7 @@ const challenges = [
   {
     title: "Store a Player's Jersey Number",
     tag: "Variables - Integers",
-    desc: `Jonah hands you the roster sheet. Your first task: store the jersey number of Eagles shortstop <strong>Marcus Rivera</strong> (jersey #14) in a variable named <code>jersey_number</code>, then print it.`,
+    desc: `Jonah hands you the roster sheet. Your first task: store the jersey number of Eagles shortstop <strong>Dario Rivera</strong> (jersey #14) in a variable named <code>jersey_number</code>, then print it.`,
     info: {
       label: "Concept: Variables",
       html: `<p>A <code>variable</code> is a named container for a value. To create one, write the name, an equals sign, and the value:</p>
@@ -952,7 +952,7 @@ const challenges = [
 <span class="fn">print</span>(<span class="kw">player_age</span>)   <span class="cmt"># prints: 23</span></div>
 <p style="margin-top:0.5rem">Variable names are case-sensitive and can contain letters, numbers, and underscores (but can't start with a number).</p>`
     },
-    starterCode: `# Store Marcus Rivera's jersey number (14) in a variable
+    starterCode: `# Store Dario Rivera's jersey number (14) in a variable
 # then print it
 
 jersey_number =
@@ -1014,7 +1014,7 @@ print(batting_avg)`,
   {
     title: "Build a Player's Name String",
     tag: "Variables - Strings",
-    desc: `Store the player's full name <strong>"Marcus Rivera"</strong> in a variable called <code>player_name</code> and print it. Text values in Python are called <em>strings</em> and use quotes.`,
+    desc: `Store the player's full name <strong>"Dario Rivera"</strong> in a variable called <code>player_name</code> and print it. Text values in Python are called <em>strings</em> and use quotes.`,
     info: {
       label: "Concept: Strings",
       html: `<p>A <code>string</code> is any text wrapped in single or double quotes:</p>
@@ -1032,18 +1032,18 @@ print(batting_avg)`,
 player_name =
 print(player_name)`,
     hints: [
-      `Text values in Python need quotes around them — either single <code>'</code> or double <code>"</code>. Try: <code>player_name = "Marcus Rivera"</code>`,
-      `The full name is two words: Marcus Rivera. Quotes go around the entire value: <code>player_name = "Marcus Rivera"</code>`
+      `Text values in Python need quotes around them — either single <code>'</code> or double <code>"</code>. Try: <code>player_name = "Dario Rivera"</code>`,
+      `The full name is two words: Dario Rivera. Quotes go around the entire value: <code>player_name = "Dario Rivera"</code>`
     ],
-    answer: `<code>player_name = "Marcus Rivera"</code><br><code>print(player_name)</code>`,
+    answer: `<code>player_name = "Dario Rivera"</code><br><code>print(player_name)</code>`,
     maxPoints: 2,
     grader: function(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
-      const hasAssign = /player_name\s*=\s*["']Marcus Rivera["']/.test(code);
+      const hasAssign = /player_name\s*=\s*["']Dario Rivera["']/.test(code);
       const hasPrint = stdout.toLowerCase().includes('marcus rivera');
       if (hasAssign && hasPrint) return { pts: 2, level: 'pass', msg: `Correct. Strings hold text data - names, positions, team names - anything that isn't a number you'd do math on. Notice how <code>type(player_name)</code> would show <code>&lt;class 'str'&gt;</code>.` };
       if (hasPrint) return { pts: 1, level: 'partial', msg: `Good output, but name the variable exactly <code>player_name</code> so the system can check it.` };
-      return { pts: 0, level: 'fail', msg: `Assign the string <code>"Marcus Rivera"</code> to a variable named <code>player_name</code>. Don't forget the quotes around the text.` };
+      return { pts: 0, level: 'fail', msg: `Assign the string <code>"Dario Rivera"</code> to a variable named <code>player_name</code>. Don't forget the quotes around the text.` };
     }
   },
   {
@@ -1083,7 +1083,7 @@ print(is_eligible)`,
   {
     title: "Build a Mini Player Card",
     tag: "Putting It Together",
-    desc: `Combine everything. Create four variables for Rivera: <code>player_name</code> ("Marcus Rivera"), <code>jersey_number</code> (14), <code>batting_avg</code> (0.287), <code>is_eligible</code> (True). Then use <code>print()</code> to display all four, one per line.`,
+    desc: `Combine everything. Create four variables for Rivera: <code>player_name</code> ("Dario Rivera"), <code>jersey_number</code> (14), <code>batting_avg</code> (0.287), <code>is_eligible</code> (True). Then use <code>print()</code> to display all four, one per line.`,
     info: {
       label: "Concept: Putting It Together",
       html: `<p>You now have all four basic data types. Here's how they look together for a different player:</p>
@@ -1109,13 +1109,13 @@ is_eligible =
 `,
     hints: [
       `You've done each of these separately. Combine them: string in quotes, integer without, float with a decimal, boolean with capital T. Then four <code>print()</code> calls.`,
-      `Fill in the four values: <code>"Marcus Rivera"</code>, <code>14</code>, <code>0.287</code>, <code>True</code> — then print each one with <code>print(player_name)</code>, etc.`
+      `Fill in the four values: <code>"Dario Rivera"</code>, <code>14</code>, <code>0.287</code>, <code>True</code> — then print each one with <code>print(player_name)</code>, etc.`
     ],
-    answer: `<code>player_name = "Marcus Rivera"</code><br><code>jersey_number = 14</code><br><code>batting_avg = 0.287</code><br><code>is_eligible = True</code><br><br><code>print(player_name)</code><br><code>print(jersey_number)</code><br><code>print(batting_avg)</code><br><code>print(is_eligible)</code>`,
+    answer: `<code>player_name = "Dario Rivera"</code><br><code>jersey_number = 14</code><br><code>batting_avg = 0.287</code><br><code>is_eligible = True</code><br><br><code>print(player_name)</code><br><code>print(jersey_number)</code><br><code>print(batting_avg)</code><br><code>print(is_eligible)</code>`,
     maxPoints: 2,
     grader: function(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
-      const hasName = /player_name\s*=\s*["']Marcus Rivera["']/.test(code);
+      const hasName = /player_name\s*=\s*["']Dario Rivera["']/.test(code);
       const hasNum  = /jersey_number\s*=\s*14/.test(code);
       const hasAvg  = /batting_avg\s*=\s*0?\.287/.test(code);
       const hasElig = /is_eligible\s*=\s*True/.test(code);
@@ -1144,7 +1144,7 @@ function friendlyError(raw) {
 
   // SyntaxError: EOL while scanning string literal
   if (/EOL while scanning string literal|unterminated string/i.test(r))
-    return `Syntax error: You opened a quote but didn't close it.\nExample fix: player_name = "Marcus Rivera"  (needs a closing quote)`;
+    return `Syntax error: You opened a quote but didn't close it.\nExample fix: player_name = "Dario Rivera"  (needs a closing quote)`;
 
   // SyntaxError: invalid syntax - likely missing value after =
   if (/SyntaxError.*invalid syntax/i.test(r)) {
@@ -1480,7 +1480,7 @@ function showDebrief() {
   } else if (pct >= 70) {
     title = 'Solid Work - Almost There';
     verdict = '"Good effort," Jonah says. "You\'ve got the core ideas. Review the challenges you missed and try again."';
-    conceptMsg = '<strong>Key takeaway:</strong> The four data types (int, float, str, bool) each serve a different purpose. Make sure you know how to assign each one and recognize the difference between <code>14</code> (int), <code>0.287</code> (float), <code>"Marcus Rivera"</code> (str), and <code>True</code> (bool).';
+    conceptMsg = '<strong>Key takeaway:</strong> The four data types (int, float, str, bool) each serve a different purpose. Make sure you know how to assign each one and recognize the difference between <code>14</code> (int), <code>0.287</code> (float), <code>"Dario Rivera"</code> (str), and <code>True</code> (bool).';
   } else {
     title = 'Keep Practicing';
     verdict = '"Don\'t get discouraged," Jonah says. "These concepts trip up a lot of new analysts. Review the hints and try again - it\'ll click."';

@@ -189,7 +189,7 @@ tr.dupe td{background:rgba(224,112,92,.14);}
 const ARTISTS = [
   [1,"Nadia Okafor",2019,"front"],   [2,"The Salt Line",2021,"front"],
   [3,"Bruno Vessel",2013,"back"],    [4,"Kit Marlow",2022,"front"],
-  [5,"Halcyon Youth",2020,"front"],  [6,"Reva Sandoval",2011,"back"],
+  [5,"Halcyon Youth",2020,"front"],  [6,"Reva Bergstrom",2011,"back"],
   [7,"Pale Ordinary",2023,"front"],  [8,"Dust & Signal",2018,"front"],
   [9,"Marguerite Yao",2009,"back"],  [10,"The Lowland Set",2012,"back"],
   [11,"Ivo Brandt",2021,"front"],    [12,"Cassandra Reef",2014,"back"],
@@ -289,7 +289,7 @@ print(len(artists), len(inner), len(left))`,
 print(lost["catalogue"].value_counts().to_string())
 print(sorted(lost["name"].tolist()))`,
     expected:
-"catalogue\nback    5\n['Bruno Vessel', 'Cassandra Reef', 'Marguerite Yao', 'Reva Sandoval', 'The Lowland Set']",
+"catalogue\nback    5\n['Bruno Vessel', 'Cassandra Reef', 'Marguerite Yao', 'Reva Bergstrom', 'The Lowland Set']",
     hint: `This one is already written - run it and read the result. The point is
       what it says, not what it takes to write.`,
     why: `Every single dropped artist is back catalogue. The streaming platform

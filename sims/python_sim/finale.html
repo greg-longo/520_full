@@ -478,7 +478,7 @@ function friendlyError(raw) {
 
   // SyntaxError: EOL while scanning string literal
   if (/EOL while scanning string literal|unterminated string/i.test(r))
-    return `Syntax error: You opened a quote but didn't close it.\nExample fix: player_name = "Marcus Rivera"  (needs a closing quote)`;
+    return `Syntax error: You opened a quote but didn't close it.\nExample fix: player_name = "Dario Rivera"  (needs a closing quote)`;
 
   // SyntaxError: invalid syntax - likely missing value after =
   if (/SyntaxError.*invalid syntax/i.test(r)) {
