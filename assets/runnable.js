@@ -110,14 +110,41 @@
           statusEl.textContent = "Loading " + pkgs.join(" and ") + "...";
           return p.loadPackage(pkgs).then(function () {
             p.runPython(SHIM);
-            py = p;
-            resolve(p);
+            return stageData(p, src).then(function () {
+              var boot = document.querySelector('script[type="application/x-dtsc-setup"]');
+              if (boot) p.runPython(boot.textContent);
+              py = p;
+              resolve(p);
+            });
           });
         }).catch(reject);
       };
       document.head.appendChild(s);
     });
     return booting;
+  }
+
+  /* Module 4 reads real CSVs: `read_csv("data/students.csv")`. Pyodide has its
+     own virtual filesystem, so those files have to be put there first. The
+     list comes from the code ON THE PAGE, so adding or renaming a table in the
+     notebook needs no change here. */
+  function stageData(p, src) {
+    var names = [], seen = {}, m;
+    var re = /read_csv\(\s*["']([^"']+\.csv)["']/g;
+    while ((m = re.exec(src))) { if (!seen[m[1]]) { seen[m[1]] = 1; names.push(m[1]); } }
+    if (!names.length) return Promise.resolve();
+    try { p.FS.mkdir("data"); } catch (e) { /* already there */ }
+    return Promise.all(names.map(function (n) {
+      /* Tolerate a miss. The prose contains illustrative paths like
+         read_csv("data/x.csv") that do not exist, and a rejected promise here
+         would take the whole Pyodide boot down with it - turning a cosmetic
+         example into a dead Run button on every block. */
+      return fetch(n, { cache: "force-cache" }).then(function (r) {
+        return r.ok ? r.text() : null;
+      }).then(function (txt) {
+        if (txt !== null) p.FS.writeFile(n, txt);
+      }).catch(function () { /* leave it absent; the cell will say so */ });
+    }));
   }
 
   function outSlot(block) {
