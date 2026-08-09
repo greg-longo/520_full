@@ -1619,6 +1619,7 @@ document.querySelectorAll('.tab-link[data-section]').forEach(function(tab) { tab
 </script>
 <!-- ═══════════════ END SETTINGS WIDGET ═══════════════ -->
 
+<script src="/520_full/assets/module-search.js" defer></script>
 <style>
 /* exercise-runner.css */
 /* DTSC 520 - live exercise blocks on module pages.
@@ -2511,11 +2512,12 @@ section.content-section { scroll-margin-top: 68px; }
 
 /* Site-wide sticky "Show all output". Deliberately quiet: the default (hidden)
    is the one we want students to leave alone. */
-.show-all-toggle { display: flex; align-items: baseline; gap: .5rem;
-  font-size: .8rem; color: var(--text-dim); margin: 0 0 1.4rem; cursor: pointer; }
+.show-all-toggle { font-size: .8rem; color: var(--text-dim); margin: 0 0 1.4rem; }
+.show-all-toggle .toggle-lead { margin: 0 0 .25rem; }
+.show-all-toggle label { display: inline-flex; align-items: center; gap: .5rem;
+  cursor: pointer; }
 .show-all-toggle input { cursor: pointer; accent-color: var(--accent); }
-.show-all-toggle .toggle-hint { font-size: .74rem; opacity: .75; }
-.show-all-toggle:hover { color: var(--text); }
+.show-all-toggle label:hover { color: var(--text); }
 
 /* Foot-of-section navigation. Reads as the end of a step, not a call to act. */
 .section-nav { display: flex; justify-content: flex-end;
@@ -2547,6 +2549,39 @@ section.content-section { scroll-margin-top: 68px; }
 .expect-reveal .output-block { border-left-color: var(--flag, #e0705c); }
 .expect-reveal .output-block-label::after { content: " · expected error";
   color: var(--flag, #e0705c); }
+
+/* --- search box in the Contents pane ------------------------------------- */
+.toc-search { margin: 0 0 .7rem; }
+.toc-search input {
+  width: 100%; box-sizing: border-box; padding: .45rem .6rem;
+  font: inherit; font-size: .82rem; color: var(--text);
+  background: var(--panel2, rgba(0,0,0,.15));
+  border: 1px solid var(--line); border-radius: 6px;
+}
+.toc-search input::placeholder { color: var(--text-dim); }
+.toc-search input:focus-visible { outline: 3px solid var(--accent-light); outline-offset: 1px; }
+.search-count, .search-none { font-size: .72rem; color: var(--text-dim); margin: 0 0 .5rem; }
+.search-result {
+  display: block; width: 100%; text-align: left; cursor: pointer;
+  background: transparent; border: 0; border-left: 2px solid transparent;
+  padding: .4rem .5rem; margin-bottom: .2rem; border-radius: 4px; font: inherit;
+}
+.search-result:hover, .search-result:focus-visible {
+  background: var(--panel2, rgba(255,255,255,.04)); border-left-color: var(--accent);
+}
+.search-result:focus-visible { outline: 2px solid var(--accent-light); outline-offset: -2px; }
+.search-sec { display: block; font-size: .68rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--accent-light); margin-bottom: .12rem; }
+.search-snip { display: block; font-size: .76rem; color: var(--text-dim); line-height: 1.45; }
+/* Where the reader was sent. Fades on its own so it does not become chrome. */
+.search-hit { animation: search-flash 2.2s ease-out; border-radius: 4px; }
+@keyframes search-flash {
+  0%, 55% { background: var(--accent-light); color: #14110f; }
+  100%    { background: transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .search-hit { animation: none; outline: 2px solid var(--accent-light); outline-offset: 3px; }
+}
 
 </style>
 <script>
