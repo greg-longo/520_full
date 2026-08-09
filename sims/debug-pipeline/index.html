@@ -777,7 +777,7 @@ const stages = [
         ['1', {v:'Rivera',c:'v-str'}, {v:'.312',c:'v-str'}, {v:'4',c:'v-str'}, {v:'16800',c:'v-str'}],
         ['2', {v:'Chen',c:'v-str'}, {v:'.287',c:'v-str'}, {v:'2',c:'v-str'}, {v:'14400',c:'v-str'}],
         ['3', {v:'Walker',c:'v-str'}, {v:'.301',c:'v-str'}, {v:'7',c:'v-str'}, {v:'19200',c:'v-str'}],
-        ['4', {v:'Kim',c:'v-str'}, {v:'.268',c:'v-str'}, {v:'1',c:'v-str'}, {v:'760000',c:'v-str'}],
+        ['4', {v:'Vasquez',c:'v-str'}, {v:'.268',c:'v-str'}, {v:'1',c:'v-str'}, {v:'760000',c:'v-str'}],
       ],
       'roster.head() &mdash; something is off'
     ),
@@ -813,7 +813,7 @@ roster = pd.<span class="fn">read_csv</span>(<span class="st">'eagles_roster.csv
         ['0',{v:'Rivera',c:'v-str'},{v:'.312',c:'v-str'},{v:'4',c:'v-str'},{v:'16800',c:'v-str'}],
         ['1',{v:'Chen',c:'v-str'},{v:'.287',c:'v-str'},{v:'2',c:'v-str'},{v:'14400',c:'v-str'}],
         ['2',{v:'Walker',c:'v-str'},{v:'.301',c:'v-str'},{v:'7',c:'v-str'},{v:'19200',c:'v-str'}],
-        ['3',{v:'Kim',c:'v-str'},{v:'.268',c:'v-str'},{v:'1',c:'v-str'},{v:'760000',c:'v-str'}],
+        ['3',{v:'Vasquez',c:'v-str'},{v:'.268',c:'v-str'},{v:'1',c:'v-str'},{v:'760000',c:'v-str'}],
         ['4',{v:'Jones',c:'v-str'},{v:'.295',c:'v-str'},{v:'3',c:'v-str'},{v:'15600',c:'v-str'}],
       ],
       'roster.head()'
@@ -842,7 +842,7 @@ roster = pd.<span class="fn">read_csv</span>(<span class="st">'eagles_roster.csv
         ['0',{v:'Rivera',c:'v-str'},{v:'.312',c:'v-bad'},{v:'4',c:'v-bad'},{v:'16800',c:'v-bad'}],
         ['1',{v:'Chen',c:'v-str'},{v:'.287',c:'v-bad'},{v:'2',c:'v-bad'},{v:'14400',c:'v-bad'}],
         ['2',{v:'Walker',c:'v-str'},{v:'.301',c:'v-bad'},{v:'7',c:'v-bad'},{v:'19200',c:'v-bad'}],
-        ['3',{v:'Kim',c:'v-str'},{v:'.268',c:'v-bad'},{v:'1',c:'v-bad'},{v:'760000',c:'v-bad'}],
+        ['3',{v:'Vasquez',c:'v-str'},{v:'.268',c:'v-bad'},{v:'1',c:'v-bad'},{v:'760000',c:'v-bad'}],
         ['4',{v:'Jones',c:'v-str'},{v:'.295',c:'v-bad'},{v:'3',c:'v-bad'},{v:'15600',c:'v-bad'}],
       ],
       'roster.head() &mdash; numeric columns stored as text'
@@ -881,7 +881,7 @@ roster[<span class="st">'salary'</span>] = roster[<span class="st">'salary'</spa
         ['0',{v:'Rivera',c:'v-str'},{v:'0.312',c:'v-num'},{v:'4',c:'v-num'},{v:'16800',c:'v-num'}],
         ['1',{v:'Chen',c:'v-str'},{v:'0.287',c:'v-num'},{v:'2',c:'v-num'},{v:'14400',c:'v-num'}],
         ['2',{v:'Walker',c:'v-str'},{v:'0.301',c:'v-num'},{v:'7',c:'v-num'},{v:'19200',c:'v-num'}],
-        ['3',{v:'Kim',c:'v-str'},{v:'0.268',c:'v-num'},{v:'1',c:'v-num'},{v:'760000',c:'v-num'}],
+        ['3',{v:'Vasquez',c:'v-str'},{v:'0.268',c:'v-num'},{v:'1',c:'v-num'},{v:'760000',c:'v-num'}],
         ['4',{v:'Jones',c:'v-str'},{v:'0.295',c:'v-num'},{v:'3',c:'v-num'},{v:'15600',c:'v-num'}],
       ],
       'roster &mdash; types corrected'
@@ -891,7 +891,7 @@ roster[<span class="st">'salary'</span>] = roster[<span class="st">'salary'</spa
   // ── STAGE 3: = vs == in filter ──
   {
     who: 'Terminal',
-    msg: 'Step 3: Filter to active players only. Noah Kim is on rehab assignment - flag him separately.',
+    msg: 'Step 3: Filter to active players only. Emil Vasquez is on rehab assignment - flag him separately.',
     ppStep: 'Step 3 of 5 &mdash; boolean filter',
     terminal: `<span class="term-prompt">$</span> <span class="term-cmd">python pipeline.py --step filter</span>
 
@@ -907,7 +907,7 @@ roster[<span class="st">'salary'</span>] = roster[<span class="st">'salary'</spa
       [
         ['0',{v:'Rivera',c:'v-str'},{v:'0.312',c:'v-num'},{v:'4',c:'v-num'},{v:'16800',c:'v-num'},{v:'active',c:'v-str'}],
         ['1',{v:'Chen',c:'v-str'},{v:'0.287',c:'v-num'},{v:'2',c:'v-num'},{v:'14400',c:'v-num'},{v:'active',c:'v-str'}],
-        ['2',{v:'Kim',c:'v-str'},{v:'0.268',c:'v-num'},{v:'1',c:'v-num'},{v:'760000',c:'v-num'},{v:'rehab',c:'v-bad'}],
+        ['2',{v:'Vasquez',c:'v-str'},{v:'0.268',c:'v-num'},{v:'1',c:'v-num'},{v:'760000',c:'v-num'},{v:'rehab',c:'v-bad'}],
         ['3',{v:'Walker',c:'v-str'},{v:'0.301',c:'v-num'},{v:'7',c:'v-num'},{v:'19200',c:'v-num'},{v:'active',c:'v-str'}],
         ['4',{v:'Jones',c:'v-str'},{v:'0.295',c:'v-num'},{v:'3',c:'v-num'},{v:'15600',c:'v-num'},{v:'active',c:'v-str'}],
       ],
@@ -929,13 +929,13 @@ roster[<span class="st">'salary'</span>] = roster[<span class="st">'salary'</spa
 active = roster[roster[<span class="st">'status'</span>] <span class="fix">==</span> <span class="st">'active'</span>]  <span class="fix"># == is comparison</span>
 rehab  = roster[roster[<span class="st">'status'</span>] <span class="fix">==</span> <span class="st">'rehab'</span>]
 
-<span class="cmt"># active has 4 rows, rehab has 1 (Kim)</span>`,
+<span class="cmt"># active has 4 rows, rehab has 1 (Vasquez)</span>`,
     terminalFixed: `<span class="term-good">Fix applied: = changed to ==</span>
 <span class="term-out">Running: active = roster[roster['status'] == 'active']</span>
 
 <span class="df-out">{TABLE_FIXED}</span>
 
-<span class="term-good">4 active players. Kim isolated to rehab DataFrame.</span>`,
+<span class="term-good">4 active players. Vasquez isolated to rehab DataFrame.</span>`,
     tableHtmlFixed: buildTable(
       ['idx','player','avg','hr','salary','status'],
       [
@@ -1084,7 +1084,7 @@ csv = """player,avg,hr,salary
 Rivera,.312,4,16800
 Chen,.287,2,14400
 Walker,.301,7,19200
-Kim,.268,1,760000
+Vasquez,.268,1,760000
 Jones,.295,3,15600
 Diaz,.279,5,15000"""`,
     starter:
@@ -1109,7 +1109,7 @@ assert len(roster) == 6, f"roster has {len(roster)} rows - expected 6. With head
     setup:
 `import pandas as pd
 roster = pd.DataFrame({
-    'player': ['Rivera','Chen','Walker','Kim','Jones','Diaz'],
+    'player': ['Rivera','Chen','Walker','Vasquez','Jones','Diaz'],
     'avg':    ['.312','.287','.301','.268','.295','.279'],
     'hr':     ['4','2','7','1','3','5'],
     'salary': ['16800','14400','19200','760000','15600','15000'],
@@ -1141,7 +1141,7 @@ assert str(roster['salary'].dtype).startswith('int'), f"salary is {roster['salar
     setup:
 `import pandas as pd
 roster = pd.DataFrame({
-    'player': ['Rivera','Chen','Kim','Walker','Jones'],
+    'player': ['Rivera','Chen','Vasquez','Walker','Jones'],
     'avg':    [0.312,0.287,0.268,0.301,0.295],
     'hr':     [4,2,1,7,3],
     'salary': [16800,14400,760000,19200,15600],
@@ -1159,7 +1159,7 @@ print(active)`,
       { pattern: /\[\s*roster\s*\[\s*['"]status['"]\s*\]\s*==/, msg: "The filter still isn't a comparison - use roster[roster['status'] == 'active']." }
     ],
     test:
-`assert len(active) == 4, f"active has {len(active)} rows - expected 4 (everyone except Kim, who is on rehab)."
+`assert len(active) == 4, f"active has {len(active)} rows - expected 4 (everyone except Vasquez, who is on rehab)."
 assert (active['status'] == 'active').all(), "active still contains a non-active player - filter on roster['status'] == 'active'."`
   },
 

@@ -915,7 +915,7 @@ var vfs = {
   '/home/intern/downloads': { type: 'dir', children: ['roster_2025.csv', 'notes.txt'] },
   '/home/intern/downloads/roster_2025.csv': {
     type: 'file',
-    content: 'player_id,name,position\n1,J. Rodriguez,OF\n2,S. Chen,IF\n3,N. Kim,IF'
+    content: 'player_id,name,position\n1,J. Rodriguez,OF\n2,S. Chen,IF\n3,N. Ibarra,IF'
   },
   '/home/intern/downloads/notes.txt': {
     type: 'file',
@@ -936,7 +936,7 @@ var vfs = {
   },
   '/home/intern/projects/statdeck/data.csv': {
     type: 'file',
-    content: 'player_id,name,avg,hr,salary\n1,J. Rodriguez,.312,14,35000\n2,S. Chen,.278,8,32500\n3,N. Kim,.301,22,760000'
+    content: 'player_id,name,avg,hr,salary\n1,J. Rodriguez,.312,14,35000\n2,S. Chen,.278,8,32500\n3,N. Ibarra,.301,22,760000'
   },
   '/home/intern/projects/statdeck/.git': { type: 'dir', children: [] }
 };
@@ -1145,7 +1145,7 @@ var part2 = [
     instruction: "Read the CSV file the script depends on.",
     hint: 'cat data.csv',
     check: function (cmd) { return cmd === 'cat data.csv'; },
-    success: "Three players. Noah Kim leads in home runs. This is the data the script analyzes."
+    success: "Three players. Haruto Ibarra leads in home runs. This is the data the script analyzes."
   },
   {
     title: 'Create a notes file',
