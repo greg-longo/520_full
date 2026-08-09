@@ -336,7 +336,7 @@
        output for looking things up, checkbox" rather than both sentences. */
     var lead = document.createElement("p");
     lead.className = "toggle-lead";
-    lead.textContent = "Run cells individually the first time you are learning.";
+    lead.textContent = "Run cells yourself the first time you are learning.";
 
     var label = document.createElement("label");
     var txt = document.createElement("span");
