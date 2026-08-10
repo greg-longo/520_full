@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search the course | DTSC 520</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --maroon:#8B1C40; --bg:#0d0c0b; --panel:#161412; --panel2:#1e1b18;
+  --line:#2b2622; --text:#e8e4de; --dim:#a09a92; --bright:#f5f2ee;
+  --accent:#8B1C40; --accent-light:#d4738f;
+  --mono:'IBM Plex Mono',monospace;
+}
+:root.theme-light {
+  --bg:#f5f2ee; --panel:#ffffff; --panel2:#f0ece6; --line:#d8d2ca;
+  --text:#1a1715; --dim:#5a5550; --bright:#0d0c0a; --accent-light:#8B1C40;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);
+     font-family:'Zilla Slab',Georgia,serif;line-height:1.6;}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.2rem 4rem;}
+a{color:var(--accent-light);}
+h1{font-size:2rem;margin:.2rem 0 .3rem;color:var(--bright);}
+.sub{color:var(--dim);margin:0 0 1.6rem;}
+.back{font-size:.85rem;color:var(--dim);text-decoration:none;}
+.back:hover{color:var(--accent-light);}
+
+.searchbar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.9rem;}
+#q{flex:1 1 22rem;padding:.7rem .9rem;font:inherit;font-size:1rem;
+   color:var(--text);background:var(--panel);border:1px solid var(--line);
+   border-radius:8px;}
+#q:focus-visible{outline:2px solid var(--accent-light);outline-offset:-2px;}
+.filters{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.2rem;}
+.filters button{font:inherit;font-size:.78rem;padding:.32rem .75rem;cursor:pointer;
+  color:var(--dim);background:transparent;border:1px solid var(--line);border-radius:20px;}
+.filters button[aria-pressed="true"]{color:var(--bright);border-color:var(--accent);
+  background:rgba(139,28,64,.16);}
+.filters button:focus-visible{outline:2px solid var(--accent-light);outline-offset:2px;}
+
+.status{color:var(--dim);font-size:.85rem;margin:.4rem 0 1.1rem;}
+.hit{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+  border-radius:8px;padding:.85rem 1.1rem;margin-bottom:.7rem;}
+.hit .meta{font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--accent-light);margin-bottom:.35rem;}
+.hit .meta .sec{color:var(--dim);}
+.hit p{margin:0 0 .5rem;font-size:.95rem;}
+.hit pre{margin:0 0 .5rem;padding:.6rem .8rem;background:var(--panel2);
+  border-radius:6px;font-family:var(--mono);font-size:.8rem;overflow-x:auto;
+  white-space:pre-wrap;}
+.hit a{font-size:.85rem;text-decoration:none;}
+.hit a:hover{text-decoration:underline;}
+mark{background:var(--accent-light);color:#14110f;padding:0 .12em;border-radius:2px;}
+.note{color:var(--dim);font-size:.85rem;border-top:1px solid var(--line);
+  margin-top:2rem;padding-top:1rem;}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+</style>
+<link rel="stylesheet" href="/520_full/auth/auth.css">
+<script src="/520_full/auth/auth.js" defer></script>
+</head>
+<body data-auth-required>
+<div id="auth-slot" class="auth-slot-fixed"></div>
+<div class="wrap">
+  <a class="back" href="/520_full/index.html">&larr; Course home</a>
+  <h1>Search the course</h1>
+  <p class="sub">Every module, plus the glossary and the student tools.</p>
+
+  <div class="searchbar">
+    <label class="vh" for="q">Search terms</label>
+    <input id="q" type="search" autocomplete="off" autofocus
+           placeholder="Try: inner join, TypeError, axis=1, immutable">
+  </div>
+  <div class="filters" id="filters" role="group" aria-label="Filter by source"></div>
+
+  <p class="status" id="status" role="status" aria-live="polite">Loading the index…</p>
+  <div id="results"></div>
+
+  <p class="note">
+    <strong>Simulations and the capstone are not searchable, on purpose.</strong>
+    Their text contains the answers they exist to make you work out. Everything
+    the modules teach is here.
+  </p>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var DOCS = [], READY = false, group = null;
+  var q = document.getElementById("q"),
+      status = document.getElementById("status"),
+      out = document.getElementById("results"),
+      filters = document.getElementById("filters");
+
+  fetch("/520_full/search-index.json", { cache: "no-cache" })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (data) {
+      DOCS = data.docs; READY = true;
+      buildFilters();
+      status.textContent = DOCS.length + " passages indexed. Type to search.";
+      if (q.value) run();
+    })
+    .catch(function () {
+      /* Say what is wrong and what still works, rather than leaving an empty
+         box that looks like "no results". */
+      status.textContent = "The search index could not be loaded. "
+        + "The per-module search in each module's Contents pane still works.";
+    });
+
+  function buildFilters() {
+    var groups = [];
+    DOCS.forEach(function (d) { if (groups.indexOf(d.g) === -1) groups.push(d.g); });
+    [null].concat(groups).forEach(function (g) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = g === null ? "Everything" : g;
+      b.setAttribute("aria-pressed", g === null ? "true" : "false");
+      b.addEventListener("click", function () {
+        group = g;
+        Array.prototype.forEach.call(filters.children, function (c) {
+          c.setAttribute("aria-pressed", c === b ? "true" : "false");
+        });
+        run();
+      });
+      filters.appendChild(b);
+    });
+  }
+
+  function esc(s) {
+    return s.replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  /* Highlight by splitting on the match and escaping each piece, never by
+     injecting the query into HTML. The query is user input and this page
+     renders it back; doing it the lazy way is a self-XSS waiting to happen. */
+  function mark(text, terms) {
+    var esc_ = esc(text);
+    terms.forEach(function (t) {
+      if (!t) return;
+      var re = new RegExp("(" + t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi");
+      esc_ = esc_.replace(re, "<mark>$1</mark>");
+    });
+    return esc_;
+  }
+
+  function run() {
+    if (!READY) return;
+    var raw = q.value.trim();
+    out.innerHTML = "";
+    if (raw.length < 2) {
+      status.textContent = DOCS.length + " passages indexed. Type to search.";
+      return;
+    }
+    var terms = raw.toLowerCase().split(/\s+/).filter(Boolean);
+    var hits = DOCS.filter(function (d) {
+      if (group !== null && d.g !== group) return false;
+      var hay = d.x.toLowerCase();
+      return terms.every(function (t) { return hay.indexOf(t) !== -1; });
+    });
+
+    status.textContent = hits.length === 0
+      ? "Nothing found for “" + raw + "”."
+      : hits.length + (hits.length === 1 ? " result" : " results")
+        + (hits.length > 60 ? ", showing the first 60" : "");
+
+    hits.slice(0, 60).forEach(function (d) {
+      var div = document.createElement("div");
+      div.className = "hit";
+      var meta = document.createElement("div");
+      meta.className = "meta";
+      meta.innerHTML = esc(d.t) + (d.s ? ' <span class="sec">· ' + esc(d.s) + "</span>" : "");
+      var body = document.createElement(d.c ? "pre" : "p");
+      body.innerHTML = mark(d.x, terms);
+      var a = document.createElement("a");
+      a.href = d.u;
+      a.textContent = "Open " + d.t + (d.s ? " → " + d.s : "") + " →";
+      div.appendChild(meta); div.appendChild(body); div.appendChild(a);
+      out.appendChild(div);
+    });
+  }
+
+  var t = null;
+  q.addEventListener("input", function () {
+    clearTimeout(t); t = setTimeout(run, 130);
+  });
+})();
+</script>
+</body>
+</html>

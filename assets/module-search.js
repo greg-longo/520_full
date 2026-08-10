@@ -135,8 +135,14 @@
     resultsEl.setAttribute("aria-live", "polite");
     resultsEl.setAttribute("aria-label", "Search results");
 
+    var adv = document.createElement("a");
+    adv.className = "toc-search-adv";
+    adv.href = "/520_full/search/index.html";
+    adv.textContent = "Search all modules \u2192";
+
     wrap.appendChild(lab);
     wrap.appendChild(inputEl);
+    wrap.appendChild(adv);
     tocEl.parentNode.insertBefore(wrap, tocEl);
     tocEl.parentNode.insertBefore(resultsEl, tocEl);
 

@@ -6283,7 +6283,13 @@ section.content-section { scroll-margin-top: 68px; }
   border: 1px solid var(--line); border-radius: 6px;
 }
 .toc-search input::placeholder { color: var(--text-dim); }
-.toc-search input:focus-visible { outline: 3px solid var(--accent-light); outline-offset: 1px; }
+/* The focus ring must be INSET. This input sits inside .toc-scroll, which is
+   overflow:auto - so a ring drawn outside the element is clipped on the top and
+   left by the scroll container, leaving a stray L-shape on the bottom and right
+   that reads as a rendering fault rather than focus. A negative offset draws it
+   within the input's own box, where nothing can crop it. */
+.toc-search input:focus-visible { outline: 2px solid var(--accent-light);
+  outline-offset: -2px; }
 .search-count, .search-none { font-size: .72rem; color: var(--text-dim); margin: 0 0 .5rem; }
 .search-result {
   display: block; width: 100%; text-align: left; cursor: pointer;
@@ -6293,7 +6299,8 @@ section.content-section { scroll-margin-top: 68px; }
 .search-result:hover, .search-result:focus-visible {
   background: var(--panel2, rgba(255,255,255,.04)); border-left-color: var(--accent);
 }
-.search-result:focus-visible { outline: 2px solid var(--accent-light); outline-offset: -2px; }
+.search-result:focus-visible { outline: 2px solid var(--accent-light);
+  outline-offset: -2px; }
 .search-sec { display: block; font-size: .68rem; letter-spacing: .06em;
   text-transform: uppercase; color: var(--accent-light); margin-bottom: .12rem; }
 .search-snip { display: block; font-size: .76rem; color: var(--text-dim); line-height: 1.45; }
@@ -6306,6 +6313,11 @@ section.content-section { scroll-margin-top: 68px; }
 @media (prefers-reduced-motion: reduce) {
   .search-hit { animation: none; outline: 2px solid var(--accent-light); outline-offset: 3px; }
 }
+.toc-search-adv { display: inline-block; margin-top: .4rem; font-size: .74rem;
+  color: var(--text-dim); text-decoration: none; }
+.toc-search-adv:hover { color: var(--accent-light); text-decoration: underline; }
+.toc-search-adv:focus-visible { outline: 2px solid var(--accent-light);
+  outline-offset: 1px; }
 
 </style>
 <script>
