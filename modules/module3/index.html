@@ -4670,6 +4670,19 @@ section.content-section { scroll-margin-top: 68px; }
 .toc-col { min-height: 0; }
 .toc-scroll { flex: 1 1 auto; min-height: 0; }
 
+/* --- banner watermarks in light theme ------------------------------------ */
+/* The Eastern shield is `brightness(0) invert(1)` - black, then inverted to
+   pure WHITE - at 7% opacity. That is a faint highlight on the dark banner and
+   completely invisible on light theme's #e8e3dc. Dropping the invert leaves it
+   black, which is the same faint watermark the other way round. */
+:root.theme-light .mod-banner .banner-shield {
+  filter: brightness(0);
+  opacity: 0.10;
+}
+/* The oversized module-name text behind the banner has the same problem: a
+   6% tint chosen against a near-black background. */
+:root.theme-light .mod-banner::after { color: rgba(26,23,21,0.07); }
+
 </style>
 <script>
 /**
