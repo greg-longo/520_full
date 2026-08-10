@@ -4689,6 +4689,30 @@ section.content-section { scroll-margin-top: 68px; }
    6% tint chosen against a near-black background. */
 :root.theme-light .mod-banner::after { color: rgba(26,23,21,0.07); }
 
+/* --- banner: stop the two watermarks stacking ---------------------------- */
+/* The shield (40-149px from the right) sat entirely inside the giant module
+   wordmark (32-378px for "Python", 723px for "Git & GitHub"). Two decorations
+   in one corner, and the whole left of the banner empty.
+
+   The shield now sits above the wordmark rather than beside it - anchored to
+   the top-right, with the wordmark left along the baseline. A fixed horizontal
+   split cannot work, because the wordmark's width varies from 288px to 691px
+   across modules. */
+.mod-banner .banner-shield {
+  top: 1.25rem;
+  transform: none;
+  height: 96px;
+  right: 2rem;
+}
+.mod-banner::after {
+  top: auto;
+  bottom: 0.75rem;
+  transform: none;
+}
+@media (max-width: 900px) {
+  .mod-banner .banner-shield { display: none; }
+}
+
 </style>
 <script>
 /**
