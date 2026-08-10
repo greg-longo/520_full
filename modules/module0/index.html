@@ -1257,6 +1257,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- ═══════════════ END SETTINGS WIDGET ═══════════════ -->
 
 <script src="/520_full/assets/module-search.js" defer></script>
+<script src="/520_full/assets/sticky-panes.js" defer></script>
 <style>
 /* exercise-runner.css */
 /* DTSC 520 - live exercise blocks on module pages.
@@ -2231,6 +2232,16 @@ section.content-section { scroll-margin-top: 68px; }
 .toc-search-adv:hover { color: var(--accent-light); text-decoration: underline; }
 .toc-search-adv:focus-visible { outline: 2px solid var(--accent-light);
   outline-offset: 1px; }
+
+/* --- sticky panes: use the space actually left below them ----------------- */
+/* --pane-max is measured by assets/sticky-panes.js. The calc() is the fallback
+   for no-JS and for the first frame, so nothing regresses if the script never
+   runs - it is simply the old behavior. */
+.toc-col, .rail-col { max-height: var(--pane-max, calc(100vh - 92px)); }
+/* The Contents pane is a flex column; its scroller has to be allowed to shrink
+   or it keeps its content height and the max-height above does nothing. */
+.toc-col { min-height: 0; }
+.toc-scroll { flex: 1 1 auto; min-height: 0; }
 
 </style>
 <script>
