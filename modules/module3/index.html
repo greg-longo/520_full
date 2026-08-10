@@ -3258,13 +3258,13 @@ bad[<span class="nm">3</span>] = <span class="nm">1.4</span>
     try {
       await new Promise((resolve, reject) => {
         const s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js';
+        s.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';
         s.onload = resolve;
         s.onerror = () => reject(new Error('Failed to load Pyodide script'));
         document.head.appendChild(s);
       });
       pyodide = await window.loadPyodide({
-        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/'
+        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/'
       });
       pyodide.runPython('import sys, io\nclass _Capture(io.StringIO): pass\nsys.stdout = _Capture()\nsys.stderr = _Capture()');
       // Load scientific packages
