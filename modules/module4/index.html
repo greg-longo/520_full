@@ -688,7 +688,7 @@ RangeIndex(start=<span class="out-num">0</span>, stop=<span class="out-num">3</s
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>Single brackets give a Series, double brackets give a DataFrame.</strong> <code>students[[&quot;ug_gpa&quot;]]</code> is a one-column table; <code>students[&quot;ug_gpa&quot;]</code> is a column.</p>
-      <p>This trips people constantly, and the error it produces later is usually about a missing attribute rather than about brackets.</p>
+      <p>The error this produces surfaces later and usually names a missing attribute rather than the brackets, which points you at the wrong line.</p>
       </div>
       <p><strong>Your turn.</strong></p>
       <p>Build a DataFrame called <code>cohort</code> with these three columns: <code>name</code>, <code>hs_gpa</code>, <code>hs_clubs</code>, for any three students you like. Then print its shape and select just the <code>hs_gpa</code> column as a Series.</p>
@@ -1535,7 +1535,7 @@ attempt[attempt.hs_attendance &gt; <span class="nm">1.0</span>][<span class="st"
       <div class="output-block">
         <div class="output-block-label">output</div>
 rows still above <span class="out-num">1.0</span>: <span class="out-num">1</span>
-/sessions/youthful-keen-pascal/tmp/ipykernel_52/<span class="out-num">1020421739.</span>py:<span class="out-num">2</span>: SettingWithCopyWarning: 
+/sessions/youthful-keen-pascal/tmp/ipykernel_64/<span class="out-num">1020421739.</span>py:<span class="out-num">2</span>: SettingWithCopyWarning: 
 A value is trying to be set on a copy of a slice from a DataFrame.
 Try using .loc[row_indexer,col_indexer] = value instead
 
@@ -1660,7 +1660,7 @@ object
       </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Still <code>object</code>. Removing the <code>%</code> left strings that happen to look like numbers, which is not the same as numbers.</p>
-      <p><code>&quot;84&quot;</code> and <code>84</code> are different objects. The conversion is a second, separate step - and this is the step everybody forgets.</p>
+      <p><code>&quot;84&quot;</code> and <code>84</code> are different objects. The conversion is a second, separate step, and it is easy to skip because <code>.rstrip(&quot;%&quot;)</code> hands back something that still looks like a number.</p>
       </details>
       <h4 id="astype-converts"><code>.astype()</code> converts</h4>
       <div data-runnable>

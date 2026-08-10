@@ -1672,7 +1672,7 @@ university[<span class="nm">0</span>]</code></pre>
 &#x27;E&#x27;
       </div>
       </div>
-      <p><strong>Indexing starts at zero.</strong> <code>university[0]</code> is the first character, not the second. This trips up everyone at first, and it is the single most common off-by-one mistake in programming. Zero-based indexing is worth getting into your bones now, because lists, arrays, and DataFrames all work the same way.</p>
+      <p><strong>Indexing starts at zero.</strong> <code>university[0]</code> is the first character, not the second. The index is an offset from the start, not a position in a count - <code>university[0]</code> means &quot;zero characters in&quot;. Zero-based indexing is worth getting into your bones now, because lists, arrays, and DataFrames all work the same way.</p>
       <div data-runnable>
       <pre><code>university[<span class="nm">6</span>]</code></pre>
       <div class="output-block" data-stored-output>
@@ -2476,7 +2476,7 @@ at risk
       </div>
       <p>You can have as many <code>elif</code> branches as you need, and the <code>else</code> is optional. Python checks the conditions <strong>top to bottom and stops at the first one that&#x27;s true</strong> - which is why the order matters enormously.</p>
       <p>Notice <code>standing(3.81)</code> returns <code>&quot;excellent&quot;</code> even though <code>3.81 &gt;= 3.0</code> is also true. The first match wins and the rest are never evaluated.</p>
-      <h3 id="the-mistake-everyone-makes">The mistake everyone makes</h3>
+      <h3 id="two-functions-one-difference-that-matters">Two functions, one difference that matters</h3>
       <p>These two functions look nearly identical. They behave completely differently. This is the most important cell in the section.</p>
       <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">standing_elif</span>(gpa):
@@ -4138,9 +4138,9 @@ curved = []
       <div class="output-block">
         <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-  File &quot;/sessions/youthful-keen-pascal/tmp/ipykernel_10/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">7</span>, in compare_students
+  File &quot;/sessions/youthful-keen-pascal/tmp/ipykernel_22/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">7</span>, in compare_students
     return gpa_ratio(ug_table[sid_a][&quot;ug_gpa&quot;],
-  File &quot;/sessions/youthful-keen-pascal/tmp/ipykernel_10/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">2</span>, in gpa_ratio
+  File &quot;/sessions/youthful-keen-pascal/tmp/ipykernel_22/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">2</span>, in gpa_ratio
     return a / b
 TypeError: unsupported operand type(s) for /: &#x27;float&#x27; and &#x27;NoneType&#x27;</div>
       </details>

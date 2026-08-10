@@ -597,9 +597,9 @@ t_vector = %timeit -o -<span class="fn">q</span> (<span class="nm">1.0</span> / 
       <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
-loop over big_list        <span class="out-num">8.46</span> ms
-loop over big_array     <span class="out-num">221.12</span> ms
-vectorized               <span class="out-num">0.101</span> ms
+loop over big_list        <span class="out-num">9.14</span> ms
+loop over big_array     <span class="out-num">242.67</span> ms
+vectorized               <span class="out-num">0.103</span> ms
       </div>
       <p>Two things to notice, and the second one is the surprise.</p>
       <p><strong>The vectorized version is enormously faster than the loop.</strong> Two orders of magnitude, from code that is also shorter. That is the difference between an analysis that runs while you read the question and one that runs while you go get coffee. On Lee&#x27;s eighty thousand rows, across the dozen metrics the Cabinet will eventually ask for, it is the difference between a working pipeline and an abandoned one.</p>
@@ -615,9 +615,9 @@ tax = t_array.average / t_list.average
 <span class="fn">print</span>(<span class="st">f&quot;cost of looping an array at all  {tax:8.1f}x slower&quot;</span>)</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
-vectorized vs. looping a LIST          84x     &lt;- the fair claim
-vectorized vs. looping an ARRAY      2199x     &lt;- the flattering claim
-cost of looping an array at all      <span class="out-num">26.</span>1x slower
+vectorized vs. looping a LIST          89x     &lt;- the fair claim
+vectorized vs. looping an ARRAY      2354x     &lt;- the flattering claim
+cost of looping an array at all      <span class="out-num">26.</span>5x slower
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
@@ -2153,7 +2153,7 @@ difference:             nan
 index <span class="out-num">5</span>: Marcus Webb with nan logins
       </div>
       </div>
-      <h3 id="axis-the-part-everyone-gets-wrong">axis: the part everyone gets wrong</h3>
+      <h3 id="axis-which-direction-the-collapse-runs">axis: which direction the collapse runs</h3>
       <p>On a 2D array, an aggregate can collapse the whole thing, or work down the columns, or across the rows.</p>
       <figure class="nb-figure"><img src="assets/fig-9e39d3e04a.png" alt="axis=0 collapses rows to give one value per column; axis=1 does the reverse" loading="lazy"><figcaption>axis=0 collapses rows to give one value per column; axis=1 does the reverse</figcaption></figure>
       <div data-runnable>
