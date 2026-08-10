@@ -137,7 +137,13 @@
 
     var adv = document.createElement("a");
     adv.className = "toc-search-adv";
-    adv.href = "/520_full/search/index.html";
+    /* Carry where the student is, so the search page can offer a real way back.
+       Both values are read back through tool-back.js, which validates them and
+       rebuilds the destination from its own route table - never from these. */
+    var mod = (location.pathname.match(/\/modules\/(module[0-6])\//) || [])[1];
+    var here = (document.querySelector(".tab-link.active[data-section]") || {}).dataset;
+    adv.href = "/520_full/search/index.html"
+             + (mod ? "?from=" + mod + (here && here.section ? "&s=" + here.section : "") : "");
     adv.textContent = "Search all modules \u2192";
 
     wrap.appendChild(lab);

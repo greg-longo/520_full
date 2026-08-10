@@ -27,6 +27,12 @@ h1{font-size:2rem;margin:.2rem 0 .3rem;color:var(--bright);}
 .sub{color:var(--dim);margin:0 0 1.6rem;}
 .back{font-size:.85rem;color:var(--dim);text-decoration:none;}
 .back:hover{color:var(--accent-light);}
+.backline{margin:0 0 .3rem;}
+.back-sep{color:var(--dim);margin:0 .45rem;font-size:.85rem;}
+.back-to-module{font-size:.85rem;}
+button.back{font:inherit;font-size:.85rem;background:none;border:0;
+  color:var(--dim);cursor:pointer;padding:0;}
+button.back:hover{color:var(--accent-light);}
 
 .searchbar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.9rem;}
 #q{flex:1 1 22rem;padding:.7rem .9rem;font:inherit;font-size:1rem;
@@ -59,11 +65,12 @@ mark{background:var(--accent-light);color:#14110f;padding:0 .12em;border-radius:
 </style>
 <link rel="stylesheet" href="/520_full/auth/auth.css">
 <script src="/520_full/auth/auth.js" defer></script>
+<script src="/520_full/assets/tool-back.js" defer></script>
 </head>
 <body data-auth-required>
 <div id="auth-slot" class="auth-slot-fixed"></div>
 <div class="wrap">
-  <a class="back" href="/520_full/index.html">&larr; Course home</a>
+  <p class="backline"><a class="back" href="/520_full/index.html">&larr; Course home</a></p>
   <h1>Search the course</h1>
   <p class="sub">Every module, plus the glossary and the student tools.</p>
 

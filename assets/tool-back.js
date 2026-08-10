@@ -56,7 +56,8 @@
     "glossary": "the glossary",
     "help": "the error translator",
     "cohort": "the cohort extract",
-    "codegrade": "the CodeGrade guide"
+    "codegrade": "the CodeGrade guide",
+    "search": "search"
   };
 
   /**
@@ -66,10 +67,26 @@
    * link written by the rails and an arrival by ordinary navigation resolve
    * identically. Everything is rebuilt from the captured id.
    */
+  /**
+   * The section a student was reading, from `?s=`, or "".
+   *
+   * Held to [a-z0-9-] and 40 characters, then used ONLY as a fragment on a href
+   * this file has already built from a matched route. It can therefore never
+   * introduce a scheme, a host, a path or a query - the worst a hostile value
+   * can do is name a section that does not exist, which lands the student at
+   * the top of a page they were going to anyway.
+   */
+  function sectionSuffix() {
+    var raw = (location.search.match(/[?&]s=([^&]*)/) || [])[1];
+    if (!raw) return "";
+    var id = decodeURIComponent(raw);
+    return /^[a-z0-9-]{1,40}$/.test(id) ? "#" + id : "";
+  }
+
   function route(token) {
     var m;
     if ((m = /^module([0-6])$/.exec(token)))
-      return { href: "../modules/module" + m[1] + "/index.html",
+      return { href: "../modules/module" + m[1] + "/index.html" + sectionSuffix(),
                label: "Module " + m[1] + ": " + MODULES[m[1]] };
 
     if ((m = /^sim\/([A-Za-z0-9_-]+)$/.exec(token)) && SIMS[m[1]])
@@ -100,7 +117,7 @@
       return SIMS[m[1]] ? "sim/" + m[1] : "sims";
     if (/\/sims\/?($|index)/.test(path)) return "sims";
     if (/\/capstone\//.test(path)) return "capstone";
-    if ((m = /\/(glossary|help|cohort|codegrade)\//.exec(path))) return m[1];
+    if ((m = /\/(glossary|help|cohort|codegrade|search)\//.exec(path))) return m[1];
     if (/\/(index\.html)?$/.test(path)) return "home";
     return null;
   }
