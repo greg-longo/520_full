@@ -4675,9 +4675,15 @@ section.content-section { scroll-margin-top: 68px; }
    pure WHITE - at 7% opacity. That is a faint highlight on the dark banner and
    completely invisible on light theme's #e8e3dc. Dropping the invert leaves it
    black, which is the same faint watermark the other way round. */
+/* NO filter in light theme. The artwork is a two-color logo - Eastern maroon
+   over grey - and `brightness(0)` flattens BOTH to one black silhouette, which
+   at low opacity reads as a grey blob rather than a shield. The dark theme gets
+   away with it because a flat white mark on near-black looks deliberate; on a
+   light banner it just looks like a mistake. Showing the real artwork keeps the
+   internal detail, so it reads as the logo. */
 :root.theme-light .mod-banner .banner-shield {
-  filter: brightness(0);
-  opacity: 0.10;
+  filter: none;
+  opacity: 0.18;
 }
 /* The oversized module-name text behind the banner has the same problem: a
    6% tint chosen against a near-black background. */
