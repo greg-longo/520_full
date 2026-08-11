@@ -120,7 +120,7 @@ window.DTSC_GLOSSARY = [
   },
   {
     "term": "groupby",
-    "def": "Split rows into groups, apply a summary to each, combine the results. The dictionary-counting pattern, industrialised.",
+    "def": "Split rows into groups, apply a summary to each, combine the results. The dictionary-counting pattern, industrialized.",
     "module": 4,
     "slug": "groupby"
   },

@@ -597,9 +597,9 @@ t_vector = %timeit -o -<span class="fn">q</span> (<span class="nm">1.0</span> / 
       <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
-loop over big_list        <span class="out-num">8.85</span> ms
-loop over big_array     <span class="out-num">235.48</span> ms
-vectorized               <span class="out-num">0.100</span> ms
+loop over big_list        <span class="out-num">8.65</span> ms
+loop over big_array     <span class="out-num">215.16</span> ms
+vectorized               <span class="out-num">0.105</span> ms
       </div>
       <p>Two things to notice, and the second one is the surprise.</p>
       <p><strong>The vectorized version is enormously faster than the loop.</strong> Two orders of magnitude, from code that is also shorter. That is the difference between an analysis that runs while you read the question and one that runs while you go get coffee. On Lee&#x27;s eighty thousand rows, across the dozen metrics the Cabinet will eventually ask for, it is the difference between a working pipeline and an abandoned one.</p>
@@ -615,9 +615,9 @@ tax = t_array.average / t_list.average
 <span class="fn">print</span>(<span class="st">f&quot;cost of looping an array at all  {tax:8.1f}x slower&quot;</span>)</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
-vectorized vs. looping a LIST          89x     &lt;- the fair claim
-vectorized vs. looping an ARRAY      2363x     &lt;- the flattering claim
-cost of looping an array at all      <span class="out-num">26.</span>6x slower
+vectorized vs. looping a LIST          82x     &lt;- the fair claim
+vectorized vs. looping an ARRAY      2041x     &lt;- the flattering claim
+cost of looping an array at all      <span class="out-num">24.</span>9x slower
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>

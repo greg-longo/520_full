@@ -102,7 +102,7 @@ window.DTSC_ERROR_KB = {
     causes: [
       { sig: /truth value of a (Series|array|DataFrame) is ambiguous/i,
         what: "You used `and`, `or` or `if` on a whole Series or array.",
-        fix: "A hundred booleans cannot collapse to one True or False. Use `&` and `|` between conditions, parenthesise each one, or reduce with `.any()` / `.all()`." },
+        fix: "A hundred booleans cannot collapse to one True or False. Use `&` and `|` between conditions, parenthesize each one, or reduce with `.any()` / `.all()`." },
       { sig: /could not convert string to float|invalid literal for int/i,
         what: "A value that looks numeric is not.",
         fix: "Something non-numeric is in there - a stray '%', 'N/A', or an empty string. Look at the actual values before converting." },

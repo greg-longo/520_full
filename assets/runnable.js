@@ -34,7 +34,7 @@
 
    WHAT IS DELIBERATELY LEFT OUT of the prototype: %%expect cells (a custom
    IPython magic Pyodide has no equivalent for) and %timeit (WASM timings would
-   misreport the vectorisation speedup Module 3 teaches). Those keep their
+   misreport the vectorization speedup Module 3 teaches). Those keep their
    verified static output.
 --------------------------------------------------------------------------- */
 (function () {

@@ -510,8 +510,8 @@
       <p>Some of this module is taken closely from published sources, some is adapted, and some is original to Eastern.</p>
       <ul><li>**Wes McKinney, <em>Python for Data Analysis</em>, 3rd edition.** The structure of the selection and cleaning sections follows McKinney&#x27;s treatment. McKinney wrote pandas, and his ordering of <code>.loc</code> before <code>.iloc</code> is deliberate and better than the alternative.</li><li>**Jake VanderPlas, <em>Python Data Science Handbook</em>.** The missing-data, hierarchical-indexing, concatenation and pivot-table material is adapted from it. Text is CC BY-NC-ND, so it is paraphrased rather than copied; the code is MIT.</li><li>**Allen Downey, <em>Think Python</em> 3e** (CC BY-NC-SA 4.0), for the error-reading approach carried through from Module 2.</li><li><strong>Original to Eastern:</strong> the cohort narrative, the diagnosis-before-cleaning sequence in sections 4 to 8, every exercise, and the cleaning decisions the capstone then holds you to.</li></ul>
       <h4 id="the-vocabulary">The vocabulary</h4>
-      <p>pandas has a small vocabulary and uses it precisely. Its error messages assume you know these, and so does every answer you will find online. You don&#x27;t have to have these memorized right now, but by the end of the module, you should know them.  (Try using the flash card tool!)</p>
-      <ul><li><strong>Series</strong> - A one-dimensional array with an index. One column of a table, with labels attached to the values.</li><li><strong>DataFrame</strong> - A set of Series sharing one index. The table, and the object most pandas work is about.</li><li><strong>index</strong> - The labels attached to a DataFrame&#x27;s rows. Identifiers, not positions - which is why <code>.loc</code> and <code>.iloc</code> differ.</li><li><strong>.loc</strong> - Selection by <strong>label</strong>. <code>df.loc[1003]</code> asks for the row whose index is 1003, and includes the endpoint when slicing.</li><li><strong>.iloc</strong> - Selection by integer <strong>position</strong>. <code>df.iloc[0]</code> asks for the first row, whatever its label.</li><li><strong>dtype</strong> - The type of a column. <code>object</code> almost always means text got into something you expected to be numeric.</li><li><strong>NaN</strong> - Not a Number: pandas&#x27; marker for a missing value. It is a float, and it propagates through arithmetic.</li><li><strong>missing at random</strong> - When whether a value is missing has nothing to do with the outcome. If it is not true, dropping rows biases the answer.</li><li><strong>boolean mask</strong> - A Series of <code>True</code>/<code>False</code> used to filter rows. Combine with <code>&amp;</code> and <code>|</code>, never <code>and</code> and <code>or</code>.</li><li><strong>groupby</strong> - Split rows into groups, apply a summary to each, combine the results. The dictionary-counting pattern, industrialised.</li><li><strong>aggregation</strong> - The summary applied to each group - <code>mean</code>, <code>count</code>, <code>median</code>. Named aggregation gives the output readable column names.</li><li><strong>merge</strong> - Joining two tables on a shared key. Check the key is unique first: a repeated key multiplies rows.</li><li><strong>inner join</strong> - Keeps only rows present in both tables. Rows without a match are dropped silently, so check the row count.</li><li><strong>left join</strong> - Keeps every row of the left table, filling gaps with <code>NaN</code>. Makes a missing match visible instead of absent.</li><li><strong>pivot table</strong> - A groupby arranged as a grid: one variable down the side, another across the top, a statistic in the cells.</li><li><strong>chained assignment</strong> - Writing <code>df[mask][&quot;col&quot;] = x</code>. It edits a temporary copy and silently does nothing. Use <code>df.loc[mask, &quot;col&quot;] = x</code>.</li><li><strong>target leakage</strong> - Letting information about the outcome into a predictor. The model looks excellent in testing and fails in use.</li></ul>
+      <p>ppandas has a small vocabulary and uses it precisely. Its error messages assume you know these, and so does every answer you will find online. You don&#x27;t have to have these memorized right now, but by the end of the module, you should know them.  (Try using the flash card tool!)</p>
+      <ul><li><strong>Series</strong> - A one-dimensional array with an index. One column of a table, with labels attached to the values.</li><li><strong>DataFrame</strong> - A set of Series sharing one index. The table, and the object most pandas work is about.</li><li><strong>index</strong> - The labels attached to a DataFrame&#x27;s rows. Identifiers, not positions - which is why <code>.loc</code> and <code>.iloc</code> differ.</li><li><strong>.loc</strong> - Selection by <strong>label</strong>. <code>df.loc[1003]</code> asks for the row whose index is 1003, and includes the endpoint when slicing.</li><li><strong>.iloc</strong> - Selection by integer <strong>position</strong>. <code>df.iloc[0]</code> asks for the first row, whatever its label.</li><li><strong>dtype</strong> - The type of a column. <code>object</code> almost always means text got into something you expected to be numeric.</li><li><strong>NaN</strong> - Not a Number: pandas&#x27; marker for a missing value. It is a float, and it propagates through arithmetic.</li><li><strong>missing at random</strong> - When whether a value is missing has nothing to do with the outcome. If it is not true, dropping rows biases the answer.</li><li><strong>boolean mask</strong> - A Series of <code>True</code>/<code>False</code> used to filter rows. Combine with <code>&amp;</code> and <code>|</code>, never <code>and</code> and <code>or</code>.</li><li><strong>groupby</strong> - Split rows into groups, apply a summary to each, combine the results. The dictionary-counting pattern, industrialized.</li><li><strong>aggregation</strong> - The summary applied to each group - <code>mean</code>, <code>count</code>, <code>median</code>. Named aggregation gives the output readable column names.</li><li><strong>merge</strong> - Joining two tables on a shared key. Check the key is unique first: a repeated key multiplies rows.</li><li><strong>inner join</strong> - Keeps only rows present in both tables. Rows without a match are dropped silently, so check the row count.</li><li><strong>left join</strong> - Keeps every row of the left table, filling gaps with <code>NaN</code>. Makes a missing match visible instead of absent.</li><li><strong>pivot table</strong> - A groupby arranged as a grid: one variable down the side, another across the top, a statistic in the cells.</li><li><strong>chained assignment</strong> - Writing <code>df[mask][&quot;col&quot;] = x</code>. It edits a temporary copy and silently does nothing. Use <code>df.loc[mask, &quot;col&quot;] = x</code>.</li><li><strong>target leakage</strong> - Letting information about the outcome into a predictor. The model looks excellent in testing and fails in use.</li></ul>
       <div class="nb-narrative nb-narrative-open">
         <p>Module 3 ended with an engagement index: three arrays, combined, and ranked. But look at what you had to know to make it work: that <code>logins[3]</code>, <code>hours[3]</code>, and <code>ug_gpa[3]</code> all referred to the same student, and that position 3 meant Amara Okonkwo.</p>
       <p>Nothing enforced that. If you had sorted one array and not the others, every number would still have been a number, every operation would still have run, and every answer would have been wrong.</p>
@@ -625,7 +625,7 @@ Index([&#x27;Amara Okonkwo&#x27;, &#x27;Devin Castellanos&#x27;, &#x27;Priya Rag
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
-        <p>\ <code>.values</code> gives you back the NumPy array. \ A Series <em>is</em> a NumPy array plus an index. Every vectorized operation from Module 3 still works - <code>gpa * 2</code>, <code>gpa[gpa &gt; 3]</code>, <code>gpa.mean()</code> - you have not lost anything.</p>
+        <p><code>.values</code> gives you back the NumPy array. A Series <em>is</em> a NumPy array plus an index. Every vectorized operation from Module 3 still works - <code>gpa * 2</code>, <code>gpa[gpa &gt; 3]</code>, <code>gpa.mean()</code> - you have not lost anything.</p>
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
@@ -1486,7 +1486,7 @@ removed: <span class="out-num">2</span>
         <div class="callout-label">Takeaway</div>
         <p>**Avoid <code>inplace=True</code> in pandas, and especially in a notebook.**</p>
       <p>Three reasons, in increasing order of importance:</p>
-      <ol><li>It does not usually save memory. pandas generally builds the new object anyway and then rebinds the name, so the promised efficiency mostly is not real.</li><li>It returns <code>None</code>, which breaks more complex method usage. <code>df.drop_duplicates(inplace=True).head()</code> is an <code>AttributeError</code>, and the message will not mention <code>inplace</code>.</li><li><strong>It changes an object you cannot see.</strong> In a notebook, cells run in whatever order you click them. An in-place operation run twice, or run before a cell you then scroll up and re-execute, leaves you holding a DataFrame that does not match the code on screen. That is the single most common way a notebook starts producing numbers nobody can reproduce.</li></ol>
+      <ol><li>It does not usually save memory. pandas generally builds the new object anyway and then rebinds the name, so the promised efficiency mostly is not real.</li><li>It returns <code>None</code>, which breaks more complex method usage. <code>df.drop_duplicates(inplace=True).head()</code> is an <code>AttributeError</code>, and the message will not mention <code>inplace</code>.</li><li><strong>It changes an object you cannot see.</strong> In a notebook, cells run in whatever order you click them. An in-place operation mutates the DataFrame instead of rebuilding it, so what you have in memory reflects your click history rather than the code on screen. Re-run one of those cells, or change something above it and re-run that, and the numbers in front of you are no longer the numbers that code would produce on a fresh run. This is a longer explanation, but you need to understand it.</li></ol>
       <p>Explicit reassignment is one extra word and the state is always legible.</p>
       </div>
       <h4 id="the-index-after-dropping-rows">The index after dropping rows</h4>
@@ -1528,7 +1528,7 @@ rows: <span class="out-num">100</span>, last label: <span class="out-num">99</sp
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**<code>reset_index(drop=True)</code> renumbers the rows 0 to N-1.**</p>
-      <p>Without <code>drop=True</code> the old index is kept as a new column called <code>index</code>, which is occasionally what you want and usually clutter.</p>
+      <p>Without <code>drop=True</code> the old index is kept as a new column called <code>index</code>, which is occasionally what you want but somethimes not.  This is an option because its not right or wrong, but you need to make a decision.</p>
       <p>Worth knowing what you are giving up: those original labels were the only link back to line numbers in the source file. If you need to tell somebody which row of their CSV was malformed, capture it before you reset.</p>
       </div>
       <h5 id="the-index-plan-for-this-module">The index plan for this module</h5>
@@ -1544,7 +1544,7 @@ attempt[attempt.hs_attendance &gt; <span class="nm">1.0</span>][<span class="st"
       <div class="output-block">
         <div class="output-block-label">output</div>
 rows still above <span class="out-num">1.0</span>: <span class="out-num">1</span>
-/sessions/youthful-keen-pascal/tmp/ipykernel_66/<span class="out-num">1020421739.</span>py:<span class="out-num">2</span>: SettingWithCopyWarning: 
+/sessions/youthful-keen-pascal/tmp/ipykernel_60/<span class="out-num">1020421739.</span>py:<span class="out-num">2</span>: SettingWithCopyWarning: 
 A value is trying to be set on a copy of a slice from a DataFrame.
 Try using .loc[row_indexer,col_indexer] = value instead
 
@@ -1559,7 +1559,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
       <p><strong>The edit did nothing.</strong> There is still one row above 1.0.</p>
       <p><code>attempt[attempt.hs_attendance &gt; 1.0]</code> builds a <strong>new</strong> DataFrame containing the matching rows. Assigning into that new object writes to the temporary copy, which is then discarded. The original is untouched.</p>
       <p>This is Module 3&#x27;s views-versus-copies problem wearing different clothes. There you learned that a NumPy slice may be a view of the original; here the danger is the reverse, a thing that looks like part of the original but is a copy.</p>
-      <p>pandas does try to warn you. <strong>What it says depends on your version</strong> - older pandas raises <code>SettingWithCopyWarning</code>, and newer pandas with Copy-on-Write raises <code>ChainedAssignmentError</code> instead. Do not memorise either name. Memorise the symptom: <em>you assigned, and nothing changed.</em></p>
+      <p>pandas does try to warn you. <strong>What it says depends on your version</strong> - older pandas raises <code>SettingWithCopyWarning</code>, and newer pandas with Copy-on-Write raises <code>ChainedAssignmentError</code> instead. Do not memorize either name. Memorize the symptom: <em>you assigned, and nothing changed.</em></p>
       <p>The tell in the code is the <strong>two sets of brackets in a row</strong>. That is chained indexing, and it is never what you want on the left of an <code>=</code>.</p>
       </details>
       <h5 id="the-fix-one-loc-both-axes-at-once">The fix: one <code>.loc</code>, both axes at once</h5>
@@ -1585,7 +1585,7 @@ df[mask][<span class="st">&quot;col&quot;</span>] = value          <span class="
       <p>The rule is easy to apply: if you see <code>][</code> on the left of an <code>=</code>, it is wrong.</p>
       </div>
       <p>Notice the decision made above: the impossible value became <code>NaN</code> rather than being deleted or corrected.</p>
-      <p>We cannot know what the attendance rate should have been, so inventing one would be fabrication. Deleting the student would throw away their other twelve valid fields. Marking the single bad value as missing keeps everything we do know and records honestly what we do not.</p>
+      <p>We cannot know what the attendance rate should have been, so inventing one would be dishonest and wrong. Deleting the student would throw away their other twelve valid fields. Marking the single bad value as missing keeps everything we do know and records honestly what we do not, and you can later make decisions about how to deal with missing values.</p>
       <p><strong>Your turn.</strong></p>
       <p><code>hs_gpa</code> and <code>ug_gpa</code> are both on a 4.0 scale, so any value above 4.0 is impossible in the same way.</p>
       <ol><li>Check whether <code>clean</code> contains any.</li><li>Write the <code>.loc</code> statement that would set them to <code>NaN</code> if it did.</li><li>Confirm afterwards that the count is zero either way.</li></ol>
@@ -1614,7 +1614,7 @@ df[mask][<span class="st">&quot;col&quot;</span>] = value          <span class="
       <p>The next one is different. It is a column that is not broken at all - it simply arrived in the wrong shape.</p>
       </div>
       <h3 id="cleaning-2-the-column-that-is-text">Cleaning 2: the column that is text</h3>
-      <p><code>submission_rate</code> holds values like <code>&quot;84%&quot;</code>. Every one is meaningful, none is missing in the ordinary sense, and the whole column is unusable because of one character per cell.</p>
+      <p><code>submission_rate</code> contains values like <code>&quot;84%&quot;</code>. Every one is meaningful, none is missing, and the whole column is unusable because of one character per cell.</p>
       <div data-runnable>
       <pre><code><span class="fn">print</span>(clean.submission_rate.dtype)
 <span class="fn">print</span>(clean.submission_rate.<span class="fn">head</span>(<span class="nm">4</span>).<span class="fn">tolist</span>())</code></pre>
@@ -1643,11 +1643,12 @@ TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**A <code>%</code> or a <code>$</code> or a comma in a number column silently makes it text.**</p>
-      <p>Nothing is malformed here. A human reading <code>84%</code> sees a number. pandas sees a five-character string, and every mathematical method on the column is disabled from the moment the file is read.</p>
+      <p>Nothing is wrong here. A human reading <code>84%</code> sees a number. pandas sees a five-character string, and every mathematical method on the column is disabled from the moment the file is read.</p>
       <p>This is why <code>.info()</code> is the first thing you run. The dtype tells you before you waste an hour on a calculation that cannot work.</p>
       </div>
       <h4 id="the-str-accessor">The <code>.str</code> accessor</h4>
-      <p>A Series of strings exposes Python&#x27;s string methods through <code>.str</code>, applied to every element at once. This is Module 3&#x27;s vectorization, applied to text.</p>
+      <p>The string methods you learned in Module 2 work on a whole column through <code>.str</code>. <code>names.str.strip().str.title()</code> cleans every value at once, no loop required.</p>
+      <p>These are pandas&#x27; own versions of those methods rather than Python&#x27;s, and the difference shows up on missing data. A list comprehension calling <code>.upper()</code> on a column with a blank in it raises <code>AttributeError</code>. <code>.str.upper()</code> leaves the blank alone and keeps going. This is Module 3&#x27;s vectorization, applied to text.</p>
       <div data-runnable>
       <pre><code><span class="fn">print</span>(clean.submission_rate.<span class="fn">str</span>.<span class="fn">rstrip</span>(<span class="st">&quot;%&quot;</span>).<span class="fn">head</span>(<span class="nm">4</span>).<span class="fn">tolist</span>())</code></pre>
       <div class="output-block" data-stored-output>
@@ -1669,7 +1670,7 @@ object
       </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Still <code>object</code>. Removing the <code>%</code> left strings that happen to look like numbers, which is not the same as numbers.</p>
-      <p><code>&quot;84&quot;</code> and <code>84</code> are different objects. The conversion is a second, separate step, and it is easy to skip because <code>.rstrip(&quot;%&quot;)</code> hands back something that still looks like a number.</p>
+      <p><code>&quot;84&quot;</code> and <code>84</code> are different objects. The conversion is a second, separate step, and it is easy to skip because <code>.rstrip(&quot;%&quot;)</code> hands back something that still looks like a number. Again, this is why you need to understand what is happening, and not just memorize sysntax.</p>
       </details>
       <h4 id="astype-converts"><code>.astype()</code> converts</h4>
       <div data-runnable>
@@ -1769,8 +1770,8 @@ dtype: float64
 <span class="cm"># the same rule as Module 2&#x27;s &quot;functions should return, not print&quot;.</span></code></pre></details>
       </div>
       <div class="nb-narrative nb-narrative-close">
-        <p>The column is numeric, the structure is sound, and the impossible value is gone. Three of the four problems in the inventory are closed, and none of them required a judgment about the students.</p>
-      <p>The fourth one does, and there is no answer that costs nothing.</p>
+        <p>The column is numeric, the structure is correct, and the impossible value is gone. Three of the four problems in the inventory are addressed, and none of them required a judgment about the students.</p>
+      <p>The fourth one does, and again, there is no answer that costs nothing.</p>
       </div>
       <div class="nb-narrative nb-narrative-open">
         <p>Section 5 established that the students without an LMS record are not a random sample of the cohort - they score lower and they succeed less often. That means the missing values carry information, and every way of handling them trades one kind of wrongness for another.</p>
@@ -1829,8 +1830,8 @@ logins std: <span class="out-num">1.675</span> -&gt; <span class="out-num">1.543
       </div>
       <details class="debrief"><summary>What happened</summary>
       <p>The <strong>standard deviation fell</strong>.</p>
-      <p>Seventeen students were just assigned exactly the median. That is seventeen points of zero variation added to the column, so the spread shrinks and every student who was actually missing now looks perfectly typical.</p>
-      <p>Filling does not add information. It manufactures the appearance of information, and it does so most for the students you know least about. Any correlation computed afterwards is diluted toward zero, which will make engagement look like a <em>weaker</em> predictor than it is.</p>
+      <p>Seventeen students were just assigned exactly the median. That is seventeen points of zero variation added to the column, so the spread shrinks and every value that was actually missing now looks typical.</p>
+      <p>Filling does not add information. It manufactures the appearance of information, and it does so most for the students you know least about. Any values computed afterwards less meaningful, which will make it more difficult for us to find real effects.</p>
       </details>
       <h5 id="option-3-keep-the-rows-and-record-the-missingness">Option 3: keep the rows, and record the missingness</h5>
       <div data-runnable>
@@ -1852,7 +1853,7 @@ True               <span class="out-num">62.527</span>    <span class="out-num">
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>Adding a missingness flag keeps the fact that the value was missing, which is itself a finding.</strong></p>
-      <p>The two groups differ on the outcome. A model given <code>lms_missing</code> can use that; an analyst reading the table can see it. Neither is possible once the rows are deleted, and it is invisible once the values are filled without a flag.</p>
+      <p>The two groups differ on the outcome. A model given <code>lms_missing</code> can use that, and an analyst reading the table can see it. Neither is possible once the rows are deleted, and it is invisible once the values are filled without a flag.</p>
       <p>The cost is honesty about what the filled numbers are: they are placeholders, not measurements, and any statement about the engagement columns has to be qualified for that group.</p>
       </div>
       <h4 id="the-decision">The decision</h4>
@@ -1892,7 +1893,7 @@ decisions</code></pre>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>Write this table before you write a single finding.</strong></p>
-      <p>Every number you report later is conditional on these four choices. A reader who disagrees with one of them needs to know it was made, and you need to be able to say why - which is much harder to reconstruct a week later than to record now.</p>
+      <p>Every number you report later is conditional on these four choices. A reader who disagrees with one of them needs to know it was made, and you need to be able to say why. This is much harder to reconstruct a week later than to record now.</p>
       <p>The capstone asks for exactly this table. Build it as you go, not afterwards from memory.</p>
       </div>
       <p><strong>Your turn.</strong></p>
@@ -1919,8 +1920,7 @@ decisions</code></pre>
 <span class="cm"># excellent validation scores and then fails completely in use.</span></code></pre></details>
       </div>
       <div class="nb-narrative nb-narrative-close">
-        <p>The table is clean, the decisions are recorded, and the things that were traded away are written down where somebody else can argue with them.</p>
-      <p>That is the whole cleaning workflow, and it is worth noticing how little of it was about pandas syntax. Four methods did the work. The rest was deciding what the data was allowed to become.</p>
+        <p>That is the whole cleaning workflow, and it is worth noticing how little of it was about pandas syntax. Four methods did the work, and the rest was deciding what the data was allowed to become.</p>
       </div>
       <div class="nb-narrative nb-narrative-open">
         <p>The table is clean. From here the work stops being about repair and starts being about questions - and every question you can ask of a table is some combination of three moves: pick rows, group them, and summarize them.</p>
@@ -1975,7 +1975,7 @@ matching students: <span class="out-num">19</span>
       </div>
       </div>
       <h3 id="combining-conditions">Combining conditions</h3>
-      <p>Use <code>&amp;</code> and <code>|</code>, not <code>and</code> and <code>or</code>, and <strong>parenthesise each condition</strong>.</p>
+      <p>Use <code>&amp;</code> and <code>|</code>, not <code>and</code> and <code>or</code>, and <strong>parenthesize each condition</strong>.</p>
       <div data-runnable>
       <pre><code>at_risk = (clean.logins_per_week &lt; <span class="nm">1.5</span>) &amp; (clean.ug_gpa &lt; <span class="nm">2.5</span>)
 
@@ -2021,7 +2021,7 @@ ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.i
       </details>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
-        <p>**<code>&amp;</code> and <code>|</code> for masks, and parenthesise every condition.**</p>
+        <p>**<code>&amp;</code> and <code>|</code> for masks, and parenthesize every condition.**</p>
       <p>The same rule you learned for NumPy in Module 3. <code>and</code> and <code>or</code> are for single <code>True</code>/<code>False</code> values; <code>&amp;</code> and <code>|</code> are for arrays and Series of them.</p>
       </div>
       <h3 id="isin-and"><code>.isin()</code> and <code>~</code></h3>
@@ -5247,7 +5247,7 @@ section.content-section { scroll-margin-top: 68px; }
 })();
 
 </script>
-<script id="vocabDeck" type="application/json">[{"def": "A one-dimensional array with an index. One column of a table, with labels attached to the values.", "term": "Series"}, {"def": "A set of Series sharing one index. The table, and the object most pandas work is about.", "term": "DataFrame"}, {"def": "The labels attached to a DataFrame's rows. Identifiers, not positions - which is why `.loc` and `.iloc` differ.", "term": "index"}, {"def": "Selection by **label**. `df.loc[1003]` asks for the row whose index is 1003, and includes the endpoint when slicing.", "term": ".loc"}, {"def": "Selection by integer **position**. `df.iloc[0]` asks for the first row, whatever its label.", "term": ".iloc"}, {"def": "The type of a column. `object` almost always means text got into something you expected to be numeric.", "term": "dtype"}, {"def": "Not a Number: pandas' marker for a missing value. It is a float, and it propagates through arithmetic.", "term": "NaN"}, {"def": "When whether a value is missing has nothing to do with the outcome. If it is not true, dropping rows biases the answer.", "term": "missing at random"}, {"def": "A Series of `True`/`False` used to filter rows. Combine with `&` and `|`, never `and` and `or`.", "term": "boolean mask"}, {"def": "Split rows into groups, apply a summary to each, combine the results. The dictionary-counting pattern, industrialised.", "term": "groupby"}, {"def": "The summary applied to each group - `mean`, `count`, `median`. Named aggregation gives the output readable column names.", "term": "aggregation"}, {"def": "Joining two tables on a shared key. Check the key is unique first: a repeated key multiplies rows.", "term": "merge"}, {"def": "Keeps only rows present in both tables. Rows without a match are dropped silently, so check the row count.", "term": "inner join"}, {"def": "Keeps every row of the left table, filling gaps with `NaN`. Makes a missing match visible instead of absent.", "term": "left join"}, {"def": "A groupby arranged as a grid: one variable down the side, another across the top, a statistic in the cells.", "term": "pivot table"}, {"def": "Writing `df[mask][\"col\"] = x`. It edits a temporary copy and silently does nothing. Use `df.loc[mask, \"col\"] = x`.", "term": "chained assignment"}, {"def": "Letting information about the outcome into a predictor. The model looks excellent in testing and fails in use.", "term": "target leakage"}]</script>
+<script id="vocabDeck" type="application/json">[{"def": "A one-dimensional array with an index. One column of a table, with labels attached to the values.", "term": "Series"}, {"def": "A set of Series sharing one index. The table, and the object most pandas work is about.", "term": "DataFrame"}, {"def": "The labels attached to a DataFrame's rows. Identifiers, not positions - which is why `.loc` and `.iloc` differ.", "term": "index"}, {"def": "Selection by **label**. `df.loc[1003]` asks for the row whose index is 1003, and includes the endpoint when slicing.", "term": ".loc"}, {"def": "Selection by integer **position**. `df.iloc[0]` asks for the first row, whatever its label.", "term": ".iloc"}, {"def": "The type of a column. `object` almost always means text got into something you expected to be numeric.", "term": "dtype"}, {"def": "Not a Number: pandas' marker for a missing value. It is a float, and it propagates through arithmetic.", "term": "NaN"}, {"def": "When whether a value is missing has nothing to do with the outcome. If it is not true, dropping rows biases the answer.", "term": "missing at random"}, {"def": "A Series of `True`/`False` used to filter rows. Combine with `&` and `|`, never `and` and `or`.", "term": "boolean mask"}, {"def": "Split rows into groups, apply a summary to each, combine the results. The dictionary-counting pattern, industrialized.", "term": "groupby"}, {"def": "The summary applied to each group - `mean`, `count`, `median`. Named aggregation gives the output readable column names.", "term": "aggregation"}, {"def": "Joining two tables on a shared key. Check the key is unique first: a repeated key multiplies rows.", "term": "merge"}, {"def": "Keeps only rows present in both tables. Rows without a match are dropped silently, so check the row count.", "term": "inner join"}, {"def": "Keeps every row of the left table, filling gaps with `NaN`. Makes a missing match visible instead of absent.", "term": "left join"}, {"def": "A groupby arranged as a grid: one variable down the side, another across the top, a statistic in the cells.", "term": "pivot table"}, {"def": "Writing `df[mask][\"col\"] = x`. It edits a temporary copy and silently does nothing. Use `df.loc[mask, \"col\"] = x`.", "term": "chained assignment"}, {"def": "Letting information about the outcome into a predictor. The model looks excellent in testing and fails in use.", "term": "target leakage"}]</script>
 <script>
 /**
  * DTSC 520 - vocabulary flashcards.
