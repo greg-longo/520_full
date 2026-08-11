@@ -597,8 +597,8 @@ t_vector = %timeit -o -<span class="fn">q</span> (<span class="nm">1.0</span> / 
       <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
-loop over big_list        <span class="out-num">9.14</span> ms
-loop over big_array     <span class="out-num">242.67</span> ms
+loop over big_list        <span class="out-num">8.27</span> ms
+loop over big_array     <span class="out-num">236.53</span> ms
 vectorized               <span class="out-num">0.103</span> ms
       </div>
       <p>Two things to notice, and the second one is the surprise.</p>
@@ -615,9 +615,9 @@ tax = t_array.average / t_list.average
 <span class="fn">print</span>(<span class="st">f&quot;cost of looping an array at all  {tax:8.1f}x slower&quot;</span>)</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
-vectorized vs. looping a LIST          89x     &lt;- the fair claim
-vectorized vs. looping an ARRAY      2354x     &lt;- the flattering claim
-cost of looping an array at all      <span class="out-num">26.</span>5x slower
+vectorized vs. looping a LIST          80x     &lt;- the fair claim
+vectorized vs. looping an ARRAY      2300x     &lt;- the flattering claim
+cost of looping an array at all      <span class="out-num">28.</span>6x slower
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
@@ -632,7 +632,7 @@ cost of looping an array at all      <span class="out-num">26.</span>5x slower
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>Never loop over a NumPy array in Python.</strong> If you must loop, loop over a list. If you can vectorize, do that instead and the question disappears.</p>
-      <p>And when you see a benchmark, ask what the baseline was. A speedup figure is a ratio, and ratios can be inflated by making the denominator worse rather than the numerator better. This is not usually dishonesty - it is usually someone benchmarking the thing that was convenient rather than the thing that was fair.</p>
+      <p>And when you see a benchmark, ask what the baseline was. A speedup figure is a ratio, and ratios can be inflated by making the denominator worse rather than the numerator better. Usually that is someone benchmarking the thing that was convenient rather than the thing that was fair.</p>
       </div>
       <h4 id="why-the-gap-is-so-large">Why the gap is so large</h4>
       <p>Python is a flexible language, and flexibility costs. Every time that loop touches an element, Python has to check what type it is, look up the right division routine, allocate a new object for the result, and add it to a growing list. A million values means a million rounds of that overhead.</p>
@@ -1075,7 +1075,7 @@ gpas = raw.<span class="fn">astype</span>(<span class="fn">float</span>)
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><code>raw + raw</code> is the dangerous case. It does not raise an error - it <strong>concatenates</strong>, giving <code>&#x27;3.813.81&#x27;</code> instead of <code>7.62</code>. A silent wrong answer is far worse than a crash, and this is exactly what happens when two numeric columns arrive as text and somebody adds them.</p>
-      <p>Multiplication is less forgiving: in NumPy 2, <code>raw * 2</code> raises a <code>TypeError</code> rather than repeating the text. Which operations fail loudly and which fail quietly is not something you can reason out from first principles - it is a reason to check the dtype rather than to memorize a table.</p>
+      <p>Multiplication is less forgiving: in NumPy 2, <code>raw * 2</code> raises a <code>TypeError</code> rather than repeating the text. Which operations fail loudly and which fail quietly follows from the dtype, so check the dtype rather than memorizing a table.</p>
       </div>
     
       <div class="section-nav"><a class="section-next" data-goto="broadcasting" href="#broadcasting">Next: Broadcasting &rarr;</a></div>

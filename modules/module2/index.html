@@ -2191,7 +2191,7 @@ A
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
 NameError: name &#x27;login_score&#x27; is not defined</div>
       </details>
-      <p><code>login_score</code> was never visible outside the function. This is a feature, not a limitation - it means you can write a function without worrying about whether one of its variable names collides with something elsewhere in a 200-line notebook.</p>
+      <p><code>login_score</code> was never visible outside the function. This is a feature: you can write a function without worrying about whether one of its variable names collides with something elsewhere in a 200-line notebook.</p>
       <h3 id="docstrings">Docstrings</h3>
       <p>A <strong>docstring</strong> is a string on the first line of a function body. It documents what the function does, and Python wires it into the help system automatically.</p>
       <div data-runnable>
@@ -3546,7 +3546,7 @@ status_counts = {}
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**Notice the <code>if logins is None: continue</code>.** Without it that loop raises <code>TypeError: &#x27;&lt;&#x27; not supported between instances of &#x27;NoneType&#x27; and &#x27;int&#x27;</code>, because one student has no LMS record this term.</p>
-      <p>That is not a flaw in the data, it is the data. Every real extract has holes, and a comparison is where they usually surface - not at the point where the value went missing, but three steps later in code that looks obviously correct.</p>
+      <p>That hole is part of the data you were given. Every real extract has holes, and a comparison is where they usually surface, three steps downstream of where the value went missing, in code that looks obviously correct.</p>
       <p>You will meet this hole twice more: as <code>np.nan</code> in Module 3, and as a decision you have to justify in Module 4.</p>
       </div>
     
@@ -3805,7 +3805,7 @@ clean_roster</code></pre>
       <details class="debrief"><summary>What happened</summary>
       <p><code>Sofia  Marchetti</code> still has two spaces between first and last name.</p>
       <p><code>.strip()</code> only removes whitespace from the <strong>ends</strong> of a string, exactly as promised in section 4. It has nothing to say about whitespace in the middle. Our <code>clean_name</code> function did what it was written to do, and what it was written to do was not enough.</p>
-      <p>This is the most common way data cleaning fails: not with an error, but with code that runs happily and quietly leaves the problem in place. Had we not printed the values and looked at them, this would have traveled all the way into the Cabinet&#x27;s report.</p>
+      <p>This is the most common way data cleaning fails: the code runs happily, raises nothing, and leaves the problem in place. Had we not printed the values and looked at them, this would have traveled all the way into the Cabinet&#x27;s report.</p>
       <p>The fix is a small idiom worth memorizing. <code>.split()</code> breaks the string on <em>any</em> run of whitespace and discards the empties; <code>&quot; &quot;.join(...)</code> puts it back together with exactly one space between pieces:</p>
       </details>
       <div data-runnable>
@@ -3870,7 +3870,7 @@ done
       </div>
       </div>
       <p>The <code>countdown -= 1</code> is doing critical work. <strong>If the condition never becomes false, the loop never ends.</strong> Remove that line and this cell would print <code>3</code> forever until you interrupted the kernel.</p>
-      <p>That&#x27;s not a hypothetical - it&#x27;s the most common way a notebook hangs. If a cell shows <code>[*]</code> and never finishes, an infinite loop is the first thing to suspect. Use <em>Kernel → Interrupt</em> to stop it.</p>
+      <p>This is the most common way a notebook hangs. If a cell shows <code>[*]</code> and never finishes, an infinite loop is the first thing to suspect. Use <em>Kernel → Interrupt</em> to stop it.</p>
       <p>Because of that hazard, prefer <code>for</code> whenever you&#x27;re iterating over a collection. Reach for <code>while</code> only when the stopping condition genuinely isn&#x27;t a count.</p>
       <p><code>break</code> exits a loop immediately:</p>
       <div data-runnable>
@@ -4138,9 +4138,9 @@ curved = []
       <div class="output-block">
         <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-  File &quot;/sessions/youthful-keen-pascal/tmp/ipykernel_22/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">7</span>, in compare_students
+  File &quot;/sessions/youthful-keen-pascal/tmp/ipykernel_20/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">7</span>, in compare_students
     return gpa_ratio(ug_table[sid_a][&quot;ug_gpa&quot;],
-  File &quot;/sessions/youthful-keen-pascal/tmp/ipykernel_22/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">2</span>, in gpa_ratio
+  File &quot;/sessions/youthful-keen-pascal/tmp/ipykernel_20/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">2</span>, in gpa_ratio
     return a / b
 TypeError: unsupported operand type(s) for /: &#x27;float&#x27; and &#x27;NoneType&#x27;</div>
       </details>

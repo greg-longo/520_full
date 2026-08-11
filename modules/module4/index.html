@@ -499,9 +499,9 @@
     <section id="overview" class="content-section">
       <h2>Overview</h2>
       <h3 id="pandas">pandas</h3>
-      <p>Modules 2 and 3 gave you ten students. You held them in dictionaries, then in NumPy arrays, and everything worked, because ten students chosen for a lesson are tidy by construction.</p>
-      <p>This module opens the actual extract. <strong>One hundred and two rows</strong>, the same students, the same columns - and every problem that ten clean records were hiding.</p>
-      <p>By the end you will have taken that file from &quot;unusable&quot; to &quot;ready to analyze&quot;, and you will be able to say exactly what you changed and why. That record is what lets somebody else tell your finding from a guess.</p>
+      <p>Modules 2 and 3 gave you ten students. You used dictionaries, then NumPy arrays, and everything worked, because the ten students chosen were meant to work.</p>
+      <p>This module opens the actual extract. One hundred and two rows, but with the same students, the same columns, and every problem that the first ten records were shielding you from.</p>
+      <p>By the end of this module you will have taken that file from &quot;dirty&quot; to &quot;clean,&quot; or &quot;real world&quot; to &quot;ready to analyze.&quot; You&#x27;ll also be able to say exactly what you changed and why, which means you can apply these lessons to other datasets.</p>
       <h4 id="what-you-already-know-that-transfers">What you already know that transfers</h4>
       <p>You are not starting from zero here. Three things carry straight over:</p>
       <table class="data-table"><thead><tr><th>From</th><th>Becomes</th></tr></thead><tbody><tr><td>Module 2&#x27;s <code>.get(key, 0) + 1</code> counting</td><td><code>value_counts()</code> and <code>groupby</code></td></tr><tr><td>Module 2&#x27;s <code>is None</code> guard</td><td><code>isna()</code> and the missing-data decision</td></tr><tr><td>Module 3&#x27;s boolean masks</td><td>the same masks, now with labels attached</td></tr><tr><td>Module 3&#x27;s views versus copies</td><td><code>SettingWithCopyWarning</code></td></tr></tbody></table>
@@ -510,12 +510,12 @@
       <p>Some of this module is taken closely from published sources, some is adapted, and some is original to Eastern.</p>
       <ul><li>**Wes McKinney, <em>Python for Data Analysis</em>, 3rd edition.** The structure of the selection and cleaning sections follows McKinney&#x27;s treatment. McKinney wrote pandas, and his ordering of <code>.loc</code> before <code>.iloc</code> is deliberate and better than the alternative.</li><li>**Jake VanderPlas, <em>Python Data Science Handbook</em>.** The missing-data, hierarchical-indexing, concatenation and pivot-table material is adapted from it. Text is CC BY-NC-ND, so it is paraphrased rather than copied; the code is MIT.</li><li>**Allen Downey, <em>Think Python</em> 3e** (CC BY-NC-SA 4.0), for the error-reading approach carried through from Module 2.</li><li><strong>Original to Eastern:</strong> the cohort narrative, the diagnosis-before-cleaning sequence in sections 4 to 8, every exercise, and the cleaning decisions the capstone then holds you to.</li></ul>
       <h4 id="the-vocabulary">The vocabulary</h4>
-      <p>pandas has a small vocabulary and uses it precisely. Its error messages assume you know these, and so does every answer you will find online.</p>
+      <p>pandas has a small vocabulary and uses it precisely. Its error messages assume you know these, and so does every answer you will find online. You don&#x27;t have to have these memorized right now, but by the end of the module, you should know them.  (Try using the flash card tool!)</p>
       <ul><li><strong>Series</strong> - A one-dimensional array with an index. One column of a table, with labels attached to the values.</li><li><strong>DataFrame</strong> - A set of Series sharing one index. The table, and the object most pandas work is about.</li><li><strong>index</strong> - The labels attached to a DataFrame&#x27;s rows. Identifiers, not positions - which is why <code>.loc</code> and <code>.iloc</code> differ.</li><li><strong>.loc</strong> - Selection by <strong>label</strong>. <code>df.loc[1003]</code> asks for the row whose index is 1003, and includes the endpoint when slicing.</li><li><strong>.iloc</strong> - Selection by integer <strong>position</strong>. <code>df.iloc[0]</code> asks for the first row, whatever its label.</li><li><strong>dtype</strong> - The type of a column. <code>object</code> almost always means text got into something you expected to be numeric.</li><li><strong>NaN</strong> - Not a Number: pandas&#x27; marker for a missing value. It is a float, and it propagates through arithmetic.</li><li><strong>missing at random</strong> - When whether a value is missing has nothing to do with the outcome. If it is not true, dropping rows biases the answer.</li><li><strong>boolean mask</strong> - A Series of <code>True</code>/<code>False</code> used to filter rows. Combine with <code>&amp;</code> and <code>|</code>, never <code>and</code> and <code>or</code>.</li><li><strong>groupby</strong> - Split rows into groups, apply a summary to each, combine the results. The dictionary-counting pattern, industrialised.</li><li><strong>aggregation</strong> - The summary applied to each group - <code>mean</code>, <code>count</code>, <code>median</code>. Named aggregation gives the output readable column names.</li><li><strong>merge</strong> - Joining two tables on a shared key. Check the key is unique first: a repeated key multiplies rows.</li><li><strong>inner join</strong> - Keeps only rows present in both tables. Rows without a match are dropped silently, so check the row count.</li><li><strong>left join</strong> - Keeps every row of the left table, filling gaps with <code>NaN</code>. Makes a missing match visible instead of absent.</li><li><strong>pivot table</strong> - A groupby arranged as a grid: one variable down the side, another across the top, a statistic in the cells.</li><li><strong>chained assignment</strong> - Writing <code>df[mask][&quot;col&quot;] = x</code>. It edits a temporary copy and silently does nothing. Use <code>df.loc[mask, &quot;col&quot;] = x</code>.</li><li><strong>target leakage</strong> - Letting information about the outcome into a predictor. The model looks excellent in testing and fails in use.</li></ul>
       <div class="nb-narrative nb-narrative-open">
-        <p>Module 3 ended with an engagement index: three arrays, combined, ranked. It worked. But look at what you had to hold in your head to make it work - that <code>logins[3]</code>, <code>hours[3]</code>, and <code>ug_gpa[3]</code> all referred to the same student, and that position 3 meant Amara Okonkwo because a separate <code>names</code> array said so.</p>
-      <p>Nothing enforced that. If you had sorted one array and not the others, every number would still have been a number, every operation would still have run, and every answer would have been wrong. Silently.</p>
-      <p>That is the problem pandas exists to solve. It attaches labels to data and then refuses to let them come apart.</p>
+        <p>Module 3 ended with an engagement index: three arrays, combined, and ranked. But look at what you had to know to make it work: that <code>logins[3]</code>, <code>hours[3]</code>, and <code>ug_gpa[3]</code> all referred to the same student, and that position 3 meant Amara Okonkwo.</p>
+      <p>Nothing enforced that. If you had sorted one array and not the others, every number would still have been a number, every operation would still have run, and every answer would have been wrong.</p>
+      <p>That is the problem pandas exists to solve. It attaches labels to data and then refuses to let them come apart. Think of it as moving from using a calculator to a spreadsheet.</p>
       </div>
       <script type="application/x-dtsc-setup">import numpy as np
 import pandas as pd
@@ -585,10 +585,10 @@ df.<span class="fn">sort_values</span>(<span class="st">&quot;ug_gpa&quot;</span
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>One sort, every column moves together.</strong> The row is the unit, not the array.</p>
-      <p>That is the whole argument for pandas in one line. Everything else - the selection syntax, the grouping, the merging - is built on the fact that a label and its values cannot be separated by accident.</p>
+      <p>That is the whole reason for pandas. Everything else - the selection syntax, the grouping, the merging - is built on the fact that a label and its values cannot be separated by accident.</p>
       </div>
       <div class="nb-narrative nb-narrative-close">
-        <p>There is a cost, and it is worth naming now rather than letting you discover it as confusion later. NumPy has one way to index. pandas has three, they look almost identical, and two of them will do something you did not intend at least once each. Section 3 is about that, and it is the section worth slowing down in.</p>
+        <p>There is a cost, though. NumPy has one way to index. pandas has three, they look almost identical, and two of them will do something you did not intend at least once each. Section 3 is about that, and it is the section you&#x27;ll need spend extra time in, even if the rest makes sense.</p>
       </div>
     
       <div class="section-nav"><a class="section-next" data-goto="series" href="#series">Next: Series &amp; DataFrame &rarr;</a></div>
@@ -596,9 +596,9 @@ df.<span class="fn">sort_values</span>(<span class="st">&quot;ug_gpa&quot;</span
 
 <section id="series" class="content-section">
       <h2>Series &amp; DataFrame</h2>
-      <p>pandas has exactly two objects you need. Everything else is a method on one of them.</p>
-      <ul><li>A <strong>Series</strong> is a one-dimensional array with an index. Think of one column.</li><li>A <strong>DataFrame</strong> is a set of Series sharing one index. Think of the table.</li></ul>
-      <p>Start with the Series.</p>
+      <p>pandas has two objects you need. Everything else is a method on one of them.</p>
+      <ul><li>A <strong>Series</strong> is a one-dimensional array with an index. Think of one column in a table.</li><li>A <strong>DataFrame</strong> is a set of Series sharing one index. Think of the whole table.</li></ul>
+      <p>First, the Series.</p>
       <div data-runnable>
       <pre><code>gpa = pd.<span class="fn">Series</span>([<span class="nm">3.02</span>, <span class="nm">1.99</span>, <span class="nm">2.80</span>],
                 index=[<span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>])
@@ -611,7 +611,7 @@ Priya Raghunathan    <span class="out-num">2.80</span>
 dtype: float64
       </div>
       </div>
-      <p>Two things to notice in that output: the values on the right, and the <strong>index</strong> on the left. The index is not decoration and it is not a row number - it is a label you can select with.</p>
+      <p>Two things to notice in that output: the values on the right, and the <strong>index</strong> on the left. The index is not a row number, and not merely decoration. It is a label you can use to select data.</p>
       <div data-runnable>
       <pre><code><span class="fn">print</span>(gpa[<span class="st">&quot;Devin Castellanos&quot;</span>])
 <span class="fn">print</span>(gpa.values)         <span class="cm"># the underlying NumPy array - Module 3 is still in there</span>
@@ -625,7 +625,7 @@ Index([&#x27;Amara Okonkwo&#x27;, &#x27;Devin Castellanos&#x27;, &#x27;Priya Rag
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
-        <p><code>.values</code> gives you back the NumPy array. A Series <em>is</em> a NumPy array plus an index, and every vectorized operation from Module 3 still works - <code>gpa * 2</code>, <code>gpa[gpa &gt; 3]</code>, <code>gpa.mean()</code>. You have not lost anything.</p>
+        <p>\ <code>.values</code> gives you back the NumPy array. \ A Series <em>is</em> a NumPy array plus an index. Every vectorized operation from Module 3 still works - <code>gpa * 2</code>, <code>gpa[gpa &gt; 3]</code>, <code>gpa.mean()</code> - you have not lost anything.</p>
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
@@ -641,9 +641,10 @@ Index([&#x27;Amara Okonkwo&#x27;, &#x27;Devin Castellanos&#x27;, &#x27;Priya Rag
       </div>
       </div>
       <details class="debrief"><summary>What happened</summary>
-      <p>Both give 3.02, because Amara is the first entry.</p>
-      <p>They agree here, which is exactly why this is worth flagging. When the index is made of strings, position and label are different questions that happen to have the same answer. When the index is made of <em>numbers</em> - which it will be, in about ten minutes, when we load a file keyed on <code>student_id</code> - they come apart, and <code>gpa[1001]</code> becomes genuinely ambiguous.</p>
-      <p>That ambiguity is why <code>.loc</code> and <code>.iloc</code> exist. Section 3.</p>
+      <p>Both produce 3.02, because Amara is the first entry.</p>
+      <p>This is exactly why we&#x27;re calling this out. <code>.iloc[0]</code> involves position, <code>[&quot;Amara Okonkwo&quot;]</code> involves labels, and in these example, on the first row those have the same answer.</p>
+      <p>Bare brackets hide what the distinction. <code>gpa[0]</code> works right now only because the labels are strings and pandas falls back to position. When we load a file keyed on <code>student_id</code>, the labels are numbers, the fallback stops, and <code>gpa[0]</code> raises a KeyError on a Series that plainly has a first row.</p>
+      <p>That ambiguity is why <code>.loc</code> and <code>.iloc</code> exist, as you&#x27;ll see in Section 3.</p>
       </details>
       <h3 id="dataframe">DataFrame</h3>
       <p>A DataFrame is the table. The most common way to build one by hand is from a dictionary of columns.</p>
@@ -688,7 +689,7 @@ RangeIndex(start=<span class="out-num">0</span>, stop=<span class="out-num">3</s
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>Single brackets give a Series, double brackets give a DataFrame.</strong> <code>students[[&quot;ug_gpa&quot;]]</code> is a one-column table; <code>students[&quot;ug_gpa&quot;]</code> is a column.</p>
-      <p>The error this produces surfaces later and usually names a missing attribute rather than the brackets, which points you at the wrong line.</p>
+      <p>The problem this creates will be felt more later and is a sneaky distinction that <em>feels</em> small now, but will definitely cause problems.  Flag it to remember.</p>
       </div>
       <p><strong>Your turn.</strong></p>
       <p>Build a DataFrame called <code>cohort</code> with these three columns: <code>name</code>, <code>hs_gpa</code>, <code>hs_clubs</code>, for any three students you like. Then print its shape and select just the <code>hs_gpa</code> column as a Series.</p>
@@ -711,7 +712,7 @@ RangeIndex(start=<span class="out-num">0</span>, stop=<span class="out-num">3</s
 cohort[<span class="st">&quot;hs_gpa&quot;</span>]</code></pre></details>
       </div>
       <div class="nb-narrative nb-narrative-open">
-        <p>Selection is where pandas earns its reputation for being fiddly, and the reputation is deserved. There are three ways to get at a piece of a DataFrame, they are spelled almost the same, and the differences only matter in the cases where getting it wrong is expensive.</p>
+        <p>Selection is where pandas earns its reputation for being difficult, and the reputation is deserved. There are three ways to get at a piece of a DataFrame, they are spelled almost the same, and the differences only matter in the cases where getting it wrong is expensive.</p>
       <p>Learn them in one sitting, deliberately, and you will not have to think about it again.</p>
       </div>
     
@@ -720,7 +721,7 @@ cohort[<span class="st">&quot;hs_gpa&quot;</span>]</code></pre></details>
 
 <section id="selection" class="content-section">
       <h2>Selection</h2>
-      <p>Give the DataFrame a meaningful index first, because that is when the distinctions start to bite.</p>
+      <p>Give the DataFrame a meaningful index first, because when you don&#x27;t, the distinctions turn into real headaches.</p>
       <div data-runnable>
       <pre><code>students = pd.<span class="fn">DataFrame</span>({
     <span class="st">&quot;name&quot;</span>:     [<span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>],
@@ -809,14 +810,14 @@ IndexError: single positional indexer is out-of-bounds</div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**<code>.loc</code> is labels, <code>.iloc</code> is integer position.** The <code>i</code> is for integer, and that is the whole mnemonic.</p>
-      <p>Prefer <code>.loc</code>. Position is an accident of how the file happened to be sorted; a label is a fact about the student. Code written with <code>.loc</code> keeps meaning the same thing after a <code>sort_values</code>, and code written with <code>.iloc</code> does not.</p>
+      <p>Generally, you want to use <code>.loc</code>. Position is typically meaningless, and frequently changes. A label is meaningful - if you make it so. Code written with <code>.loc</code> keeps meaning the same thing after a <code>sort_values</code>, and code written with <code>.iloc</code> does not.</p>
       </div>
       <h3 id="two-axes">Two axes</h3>
       <p>Both take a row selector and a column selector, separated by a comma.</p>
       <div data-runnable>
       <pre><code><span class="fn">print</span>(students.loc[<span class="nm">1003</span>, <span class="st">&quot;ug_gpa&quot;</span>])            <span class="cm"># one student, one column</span>
 <span class="fn">print</span>()
-<span class="fn">print</span>(students.loc[[<span class="nm">1003</span>, <span class="nm">1024</span>], [<span class="st">&quot;name&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>]])   <span class="cm"># some rows, some columns</span></code></pre>
+<span class="fn">print</span>(students.loc[[<span class="nm">1003</span>, <span class="nm">1024</span>], [<span class="st">&quot;name&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>]])   <span class="cm"># multiple students, multiple columns</span></code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">3.02</span>
@@ -829,7 +830,7 @@ student_id
       </div>
       <p>Slicing with <code>.loc</code> is <strong>inclusive of the endpoint</strong>, which is not how Python slicing works anywhere else. This is a real inconsistency in the library, not a misunderstanding on your part.</p>
       <div data-runnable>
-      <pre><code><span class="fn">print</span>(students.loc[<span class="nm">1003</span>:<span class="nm">1024</span>])     <span class="cm"># includes 1024</span>
+      <pre><code><span class="fn">print</span>(students.loc[<span class="nm">1003</span>:<span class="nm">1024</span>])     <span class="cm"># 1003 and 1024 (no IDs in between)</span>
 <span class="fn">print</span>()
 <span class="fn">print</span>(students.iloc[<span class="nm">0</span>:<span class="nm">2</span>])          <span class="cm"># excludes position 2, like normal Python</span></code></pre>
       <div class="output-block" data-stored-output>
@@ -848,14 +849,16 @@ student_id
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><code>.loc[a:b]</code> <strong>includes</strong> <code>b</code>. <code>.iloc[a:b]</code> excludes it, like every other slice in Python.</p>
-      <p>The reason is that with labels there is no &quot;one past the end&quot; to point at. It is still a trap, and it is worth checking the row count after any <code>.loc</code> slice.</p>
+      <p>The reason is that with labels there is no &quot;one past the end&quot; to point at. It can still be confusing, and it is worth checking the row count after any <code>.loc</code> slice. (I frequently remember there is &quot;something odd&quot; about a topic and switch back-and-forth multiple times and end up confusing myself entirely)</p>
       </div>
       <h4 id="one-caution-about-label-slices">One caution about label slices</h4>
       <p>That worked cleanly because the index is <strong>sorted</strong>. A label slice does not sort - it finds where <code>a</code> sits, finds where <code>b</code> sits, and takes everything between them <em>in the order the rows happen to be stored</em>.</p>
       <div data-runnable>
       <pre><code>shuffled = students.loc[[<span class="nm">1003</span>, <span class="nm">1089</span>, <span class="nm">1024</span>]]     <span class="cm"># same rows, different order</span>
 <span class="fn">print</span>(<span class="st">f&quot;index sorted? {shuffled.index.is_monotonic_increasing}&quot;</span>)
-shuffled.loc[<span class="nm">1003</span>:<span class="nm">1024</span>]</code></pre>
+<span class="fn">print</span>(shuffled.loc[<span class="nm">1003</span>:<span class="nm">1024</span>])
+<span class="fn">print</span>()
+<span class="fn">print</span>(students.loc[<span class="nm">1003</span>:<span class="nm">1024</span>])  <span class="cm"># original order</span></code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 index sorted? False
@@ -864,15 +867,21 @@ student_id
 <span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
 <span class="out-num">1089</span>        Devin Castellanos    <span class="out-num">1.99</span>     <span class="out-num">0.4</span>
 <span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
+
+                         name  ug_gpa  logins
+student_id                                   
+<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
       </div>
       </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Devin (1089) is inside a slice that reads <code>1003:1024</code>, even though 1089 is larger than 1024.</p>
       <p>Nothing is broken. The slice took every row between the <em>position</em> of 1003 and the <em>position</em> of 1024, and on this ordering Devin sits between them. On a sorted index that is the same thing as &quot;every label in the range.&quot; On an unsorted one it is not.</p>
       <p>Sort the index before slicing it, with <code>.sort_index()</code>, or select an explicit list of labels instead.</p>
+      <p>Again, it is good to use an index that is meaningful so there is real order.</p>
       </details>
       <h3 id="plain">Plain <code>[]</code></h3>
-      <p>Plain brackets are the ambiguous one. On a DataFrame they select <strong>columns</strong> - except when given a slice or a boolean mask, when they select <strong>rows</strong>.</p>
+      <p>Plain brackets are the ambiguous one. On a DataFrame they select <strong>columns</strong> except when given a slice or a boolean mask, when they select <strong>rows</strong>.</p>
       <div data-runnable>
       <pre><code><span class="fn">print</span>(students[<span class="st">&quot;ug_gpa&quot;</span>].<span class="fn">head</span>(<span class="nm">2</span>))      <span class="cm"># a column</span>
 <span class="fn">print</span>()
@@ -913,7 +922,7 @@ student_id
 <span class="fn">print</span>(students.loc[students.logins &gt; <span class="nm">1.0</span>])</code></pre></details>
       </div>
       <div class="nb-narrative nb-narrative-close">
-        <p>Everything so far has used three students typed out by hand - clean, small, and completely unlike anything you will be given.</p>
+        <p>Everything so far has used three students typed out by hand - clean, small, and completely unlike most anything you will be given in the real world.</p>
       <p>The next section opens the real file.</p>
       </div>
     
@@ -1009,7 +1018,7 @@ Name: <span class="out-num">7</span>, dtype: object
       <details class="debrief"><summary>What happened</summary>
       <p>The first fails, which is survivable. <strong>The second is the dangerous one.</strong></p>
       <p><code>raw.loc[1003]</code> raises a KeyError because there is no row <em>labeled</em> 1003 - the labels are now 0 to 101. Annoying, but it tells you immediately.</p>
-      <p><code>raw.loc[7]</code> succeeds, and returns student 1008. You asked for a label, the label 7 exists because the index is just row numbers, and you got a student who has nothing to do with the number you typed. No error, no warning, wrong student.</p>
+      <p><code>raw.loc[7]</code> succeeds, and returns student 1008. You asked for a label, the label 7 exists because the index is just row numbers, and you got a student who has nothing to do with the number you typed. No error, no warning, wrong student - bad news.</p>
       <p>The lesson from section 3 has not changed - <code>.loc</code> is still labels. What changed is <em>what the labels are</em>.</p>
       </details>
       <h4 id="two-honest-ways-to-fix-it">Two honest ways to fix it</h4>
@@ -1035,14 +1044,14 @@ Name: <span class="out-num">1003</span>, dtype: object
       </div>
       <p><code>read_csv</code> can do that in one step, which is usually better because it never lets the confusing state exist:</p>
       <pre><code>raw = pd.<span class="fn">read_csv</span>(<span class="st">&quot;data/cohort_extract.csv&quot;</span>, index_col=<span class="st">&quot;student_id&quot;</span>)</code></pre>
-      <p>We keep <code>student_id</code> as a column for now, deliberately - section 5 has to check whether it is even usable as a key, and you cannot easily check an index for duplicates you have already told pandas to treat as the index.</p>
+      <p>We keep <code>student_id</code> as a column for now, because section 5 has to check whether it is even usable as a key, and you cannot easily check an index for duplicates you have already told pandas to treat as the index.</p>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**Before you use <code>.loc</code>, know what the index is.** <code>df.index</code> takes one second and answers it.</p>
       <p>A DataFrame read from a file almost always arrives with a <code>RangeIndex</code>, which means integer labels that look exactly like positions. That is the one situation where <code>.loc</code> and <code>.iloc</code> agree on every input and neither one warns you that you asked the wrong question.</p>
       </div>
       <h3 id="first-look-before-anything-else">First look, before anything else</h3>
-      <p>Four commands, always, in this order, before you compute a single statistic.</p>
+      <p>Four commands, always, in this order, before you compute a single statistic. Thank me later.</p>
       <div data-runnable>
       <pre><code>raw.shape</code></pre>
       <div class="output-block" data-stored-output>
@@ -1065,7 +1074,7 @@ columns <span class="out-num">15</span>
 distinct student_ids <span class="out-num">100</span>
       </div>
       </div>
-      <p><code>.nunique()</code> returns the <strong>count</strong> of distinct values. <code>.unique()</code> returns the distinct values themselves, as an array - useful when the column is categorical and you want to see the categories rather than count them.</p>
+      <p><code>.nunique()</code> returns the count of <em>distinct</em> values. <code>.unique()</code> returns the distinct values themselves, as an array, which is useful when the column is categorical and you want to see the categories rather than count them.</p>
       <div data-runnable>
       <pre><code><span class="fn">print</span>(raw.success.<span class="fn">unique</span>())        <span class="cm"># the values</span>
 <span class="fn">print</span>(raw.success.<span class="fn">nunique</span>())       <span class="cm"># how many there are</span></code></pre>
@@ -1077,16 +1086,16 @@ distinct student_ids <span class="out-num">100</span>
       </div>
       <details class="debrief"><summary>What happened</summary>
       <p><strong>102 rows, but only 100 distinct students.</strong></p>
-      <p>The file has more rows than there are people in it. That is not a rounding error and it is not something to shrug at - it means at least one student is counted twice in every average you compute from this file.</p>
-      <p>Do not fix it yet. Write it down. We are going to catalogue every problem in this file before changing any of it, and section 6 is where the fixing happens.</p>
+      <p>The file has more rows than there are people in it. That means at least one student is counted twice in most values you compute from this file.</p>
+      <p>Do not fix it yet. We are going to identify every problem in this file before changing any of it, and section 6 is where we get to work fixing things.</p>
       </details>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>Diagnose the whole file before you clean any of it.</strong></p>
-      <p>The temptation is to fix each problem the moment you find it. Resist it. Cleaning changes what the next diagnostic reports, so a half-cleaned file tells you a half-true story about itself - and you will not be able to reconstruct what the raw data actually looked like.</p>
-      <p>Catalogue first. Clean once, deliberately, in one place. That is also what makes your cleaning reproducible by somebody else, which is the actual standard.</p>
+      <p>The temptation is to fix each problem the moment you find it. Resist it. Cleaning changes what the next diagnostic reports, so a half-cleaned file tells you a half-true story about itself, and you will not be able to reconstruct what the raw data actually looked like.</p>
+      <p>Catalogue first. Clean once, deliberately, in one place. That is also what makes your cleaning reproducible by somebody else, which is the actual the practice you should roll into the real world.</p>
       </div>
-      <h3 id="info-the-single-most-useful-command-in-pandas"><code>.info()</code> - the single most useful command in pandas</h3>
+      <h3 id="info-the-most-useful-descriptive-command-in-pandas"><code>.info()</code> - the most useful descriptive command in pandas</h3>
       <div data-runnable>
       <pre><code>raw.<span class="fn">info</span>()</code></pre>
       <div class="output-block" data-stored-output>
@@ -1113,7 +1122,7 @@ Data columns (total <span class="out-num">15</span> columns):
       </div>
       </div>
       <p>Read that output as three questions:</p>
-      <ul><li><strong>How many non-null values does each column have?</strong> Any column short of the full row count has missing data.</li><li>**What is each column&#x27;s <code>Dtype</code>?** <code>object</code> on a column you expected to be numeric means something non-numeric got in - the same lesson as Module 3&#x27;s <code>&lt;U21</code> arrays, in a new costume.</li><li><strong>How much memory?</strong> Rarely interesting at this size. It matters at a million rows.</li></ul>
+      <ul><li><strong>How many non-null values does each column have?</strong> Any column short of the full row count has missing data.</li><li>**What is each column&#x27;s <code>Dtype</code>?** Data type.  <code>object</code> on a column you expected to be numeric means something non-numeric got in - the same lesson as Module 3&#x27;s <code>&lt;U21</code> arrays.</li><li><strong>How much memory?</strong> Rarely interesting at this size, but there are real implications at million or billions of rows.</li></ul>
       <p>Two columns in that output should bother you. Find them before reading on.</p>
       <div data-runnable>
       <pre><code>raw.dtypes</code></pre>
@@ -1154,7 +1163,7 @@ TypeError: unsupported operand type(s) for +: &#x27;int&#x27; and &#x27;str&#x27
       <details class="debrief"><summary>What happened</summary>
       <p><code>submission_rate</code> is <code>object</code> - pandas&#x27;s label for &quot;these are Python objects, most likely strings.&quot;</p>
       <p>The percent sign makes each value text. <code>&quot;84%&quot;</code> is not a number, so the whole column is not numbers, so arithmetic on it fails. One character per cell has disabled an entire column.</p>
-      <p>This is the single most common real-world data problem there is, and it is why <code>.info()</code> is the first thing you run. Section 7 fixes it.</p>
+      <p>This is a frequent real-world data problem, and it is why <code>.info()</code> is the first thing you run. Section 7 fixes the problem.</p>
       </details>
       <p><strong>Your turn.</strong></p>
       <p>Answer these from <code>raw</code>, using code rather than by reading the <code>.info()</code> output:</p>
@@ -1178,8 +1187,8 @@ pct = raw.logins_per_week.<span class="fn">isna</span>().<span class="fn">mean</
 <span class="fn">print</span>(<span class="st">f&quot;rows missing logins_per_week: {pct:.1f}%&quot;</span>)</code></pre></details>
       </div>
       <div class="nb-narrative nb-narrative-open">
-        <p>A cleaning script that someone else cannot check is not much better than no cleaning at all. So this section produces a written inventory of everything wrong with the file, with the code that found each problem next to it.</p>
-      <p>That inventory is a deliverable. The capstone asks for it directly, and it is the thing a colleague reads when they want to know whether to trust your numbers.</p>
+        <p>A cleaning script that someone else cannot check is not much better than no cleaning at all. Because of this, this section produces a written inventory of everything wrong with the file, with the code that found each problem next to it.</p>
+      <p>That inventory is a deliverable. The capstone asks for it directly, and it is the thing a colleague reads when they want to know whats really happening with the file.</p>
       </div>
     
       <div class="section-nav"><a class="section-next" data-goto="diagnosis" href="#diagnosis">Next: Diagnosis &rarr;</a></div>
@@ -1227,7 +1236,7 @@ all_copies[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&qu
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**<code>keep=&quot;first&quot;</code> (the default) marks the extras. <code>keep=False</code> marks every member of a duplicated group.**</p>
-      <p>Use the default to <em>remove</em> duplicates. Use <code>keep=False</code> to <em>inspect</em> them, because you usually want to see what the duplicates disagree about - and here, they agree about everything, which tells you this is a copy-paste export glitch rather than two different students who share an id.</p>
+      <p>Use the default to <em>remove</em> duplicates. Use <code>keep=False</code> to <em>inspect</em> them, because you usually want to see what the duplicates disagree about. Here, they agree about everything, which tells you this is likely a copy-paste glitch rather than two different students who share an id.</p>
       </div>
       <h3 id="missing-values">Missing values</h3>
       <div data-runnable>
@@ -1318,13 +1327,13 @@ success rate, after dropna(): <span class="out-num">0.66</span>
       <details class="debrief"><summary>What happened</summary>
       <p>One line of &quot;tidying up&quot; made the cohort look better than it is.</p>
       <p>Nobody edited a score. Every number in <code>naive</code> is a real number about a real student. The cohort simply lost a group that was doing worse, and the average of what remained went up on its own.</p>
-      <p>If you reported that second figure, you would be telling the Cabinet that students are succeeding at a rate the data does not support - and you would have no idea you had done it, because <code>dropna()</code> is not a suspicious-looking function.</p>
+      <p>If you reported that second figure, you would be telling the Cabinet that students are succeeding at a rate the data does not support, and you would have no idea you had done it, because <code>dropna()</code> is not a suspicious-looking function.</p>
       </details>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><strong>The students with no engagement record are not a random sample.</strong> They score differently and they succeed at a different rate.</p>
       <p>So <code>dropna()</code> here would not just make the dataset smaller - it would make it <em>wrong</em>, by quietly deleting a group that differs on the outcome you are trying to explain. Any conclusion you drew about engagement afterwards would be measuring, in part, who happened to have a record at all.</p>
-      <p>This is the most important idea in the module. Section 8 is about what to do instead, and there is no answer that costs nothing.</p>
+      <p>This is, perhaps, the most important idea in the module. Section 8 is about what to do instead.  Unfortunately, there is no answer that costs nothing.</p>
       </div>
       <h3 id="wrong-dtype">Wrong dtype</h3>
       <div data-runnable>
@@ -1380,8 +1389,8 @@ rows with attendance above <span class="out-num">100</span>%: <span class="out-n
       </div>
       <details class="debrief"><summary>What happened</summary>
       <p>An attendance rate of 1.4 means attending 140% of school days.</p>
-      <p>Nothing in the file is going to flag this. The dtype is <code>float64</code>, which is correct; the value is a number, which is correct; every computation you run on it will succeed. Only knowing what the column <em>means</em> catches it.</p>
-      <p>That is why <code>.describe()</code> belongs in the diagnosis step. You are not looking at the mean - you are looking at the min and max and asking whether they are possible.</p>
+      <p>Nothing in the file will inherently flag this. The dtype is <code>float64</code>, which is correct; the value is a number, which is correct; every computation you run on it will succeed. Only knowing what the column <em>means</em> catches it.</p>
+      <p>That is why <code>.describe()</code> belongs in the diagnosis step. Sure, you look at more interesting aspects like the mean.  But you are also looking values to understand the structure of the dataset, like the min and max and asking whether they are possible.</p>
       </details>
       <h3 id="the-inventory">The inventory</h3>
       <p>Four problems, and each needs a decision rather than a reflex.</p>
@@ -1432,7 +1441,7 @@ repeated = counts[counts &gt; <span class="nm">1</span>]
       </div>
       <div class="nb-narrative nb-narrative-close">
         <p>You now have a written account of what is wrong with this file, and not one value has been changed. That order matters: the inventory is what lets you explain your cleaning later, and it is what a reviewer checks your work against.</p>
-      <p>The next three sections fix these four problems, one decision at a time.</p>
+      <p>The next three sections fix these four problems one at a time.</p>
       </div>
       <div class="nb-narrative nb-narrative-open">
         <p>The inventory is written, so the arguing is over. What follows is bookkeeping: four problems, four decisions, each one applied once and recorded.</p>
@@ -1447,8 +1456,8 @@ repeated = counts[counts &gt; <span class="nm">1</span>]
       <h3 id="cleaning-1-structure">Cleaning 1: structure</h3>
       <p>Start with the two problems that are about the shape of the table rather than the values in it: duplicate rows, and an impossible number.</p>
       <h4 id="why-raw-keeps-its-name">Why <code>raw</code> keeps its name</h4>
-      <p>Section 5 measured <code>raw</code>. If cleaning reassigns <code>raw</code>, then scrolling up and re-running the diagnosis reports something different, and you lose the ability to say what the file looked like when it arrived.</p>
-      <p>So every step below produces a <strong>new name</strong>. This costs nothing and it is what makes the cleaning reproducible.</p>
+      <p>Section 5 used <code>raw</code>. If cleaning reassigns values in <code>raw</code>, then re-running the diagnosis will report something different, and you lose the ability to say what the file looked like when it arrived.</p>
+      <p>Every step below creates a <strong>new name</strong>. This costs nothing and it is what makes the cleaning reproducible.</p>
       <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="st">f&quot;raw is still untouched: {raw.shape[0]} rows&quot;</span>)</code></pre>
       <div class="output-block" data-stored-output>
@@ -1472,7 +1481,7 @@ removed: <span class="out-num">2</span>
       </div>
       </div>
       <h5 id="not-inplace-true">Not <code>inplace=True</code></h5>
-      <p><code>drop_duplicates</code> accepts <code>inplace=True</code>, and almost every tutorial you will find uses it. Do not.</p>
+      <p><code>drop_duplicates</code> accepts <code>inplace=True</code>, and almost every tutorial you will find uses it. Do not do it!</p>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>**Avoid <code>inplace=True</code> in pandas, and especially in a notebook.**</p>
@@ -1535,7 +1544,7 @@ attempt[attempt.hs_attendance &gt; <span class="nm">1.0</span>][<span class="st"
       <div class="output-block">
         <div class="output-block-label">output</div>
 rows still above <span class="out-num">1.0</span>: <span class="out-num">1</span>
-/sessions/youthful-keen-pascal/tmp/ipykernel_64/<span class="out-num">1020421739.</span>py:<span class="out-num">2</span>: SettingWithCopyWarning: 
+/sessions/youthful-keen-pascal/tmp/ipykernel_62/<span class="out-num">1020421739.</span>py:<span class="out-num">2</span>: SettingWithCopyWarning: 
 A value is trying to be set on a copy of a slice from a DataFrame.
 Try using .loc[row_indexer,col_indexer] = value instead
 
@@ -2188,7 +2197,6 @@ Name: course_score, dtype: float64
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &lt;class &#x27;pandas.core.indexes.multi.MultiIndex&#x27;&gt;
-
 success            <span class="out-num">0</span>     <span class="out-num">1</span>
 need_based_aid            
 <span class="out-num">0</span>               <span class="out-num">59.7</span>  <span class="out-num">77.5</span>
