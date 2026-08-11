@@ -75,7 +75,7 @@
     .tab-link:hover { color: var(--text); border-bottom-color: rgba(74,143,107,0.4); }
     .tab-link.active { color: var(--accent-light); border-bottom-color: var(--accent); }
 
-    /* Subpage sections — only active section visible */
+    /* Subpage sections - only active section visible */
     .content-section { display: none; }
     .content-section.active { display: block; }
 
@@ -597,9 +597,9 @@ t_vector = %timeit -o -<span class="fn">q</span> (<span class="nm">1.0</span> / 
       <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
-loop over big_list        <span class="out-num">8.27</span> ms
-loop over big_array     <span class="out-num">236.53</span> ms
-vectorized               <span class="out-num">0.103</span> ms
+loop over big_list        <span class="out-num">8.85</span> ms
+loop over big_array     <span class="out-num">235.48</span> ms
+vectorized               <span class="out-num">0.100</span> ms
       </div>
       <p>Two things to notice, and the second one is the surprise.</p>
       <p><strong>The vectorized version is enormously faster than the loop.</strong> Two orders of magnitude, from code that is also shorter. That is the difference between an analysis that runs while you read the question and one that runs while you go get coffee. On Lee&#x27;s eighty thousand rows, across the dozen metrics the Cabinet will eventually ask for, it is the difference between a working pipeline and an abandoned one.</p>
@@ -615,9 +615,9 @@ tax = t_array.average / t_list.average
 <span class="fn">print</span>(<span class="st">f&quot;cost of looping an array at all  {tax:8.1f}x slower&quot;</span>)</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
-vectorized vs. looping a LIST          80x     &lt;- the fair claim
-vectorized vs. looping an ARRAY      2300x     &lt;- the flattering claim
-cost of looping an array at all      <span class="out-num">28.</span>6x slower
+vectorized vs. looping a LIST          89x     &lt;- the fair claim
+vectorized vs. looping an ARRAY      2363x     &lt;- the flattering claim
+cost of looping an array at all      <span class="out-num">26.</span>6x slower
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
@@ -2878,7 +2878,7 @@ bad[<span class="nm">3</span>] = <span class="nm">1.4</span>
         <div class="quiz-link-icon">&#9998;</div>
         <div class="quiz-link-body">
           <h2>Module 3 Quiz</h2>
-          <p>Ten questions covering arrays, indexing, vectorization, statistical methods, and boolean/fancy indexing. Each question comes up one at a time — no going back, but you can retake when done.</p>
+          <p>Ten questions covering arrays, indexing, vectorization, statistical methods, and boolean/fancy indexing. Each question comes up one at a time - no going back, but you can retake when done.</p>
         </div>
         <a href="quiz.html" class="quiz-link-btn">Take the Quiz &rarr;</a>
       </div>

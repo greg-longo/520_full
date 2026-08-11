@@ -1486,7 +1486,7 @@ removed: <span class="out-num">2</span>
         <div class="callout-label">Takeaway</div>
         <p>**Avoid <code>inplace=True</code> in pandas, and especially in a notebook.**</p>
       <p>Three reasons, in increasing order of importance:</p>
-      <ol><li>It does not usually save memory. pandas generally builds the new object anyway and then rebinds the name, so the promised efficiency mostly is not real.</li><li>It returns <code>None</code>, which breaks method chaining. <code>df.drop_duplicates(inplace=True).head()</code> is an <code>AttributeError</code>, and the message will not mention <code>inplace</code>.</li><li><strong>It changes an object you cannot see.</strong> In a notebook, cells run in whatever order you click them. An in-place operation run twice, or run before a cell you then scroll up and re-execute, leaves you holding a DataFrame that does not match the code on screen. That is the single most common way a notebook starts producing numbers nobody can reproduce.</li></ol>
+      <ol><li>It does not usually save memory. pandas generally builds the new object anyway and then rebinds the name, so the promised efficiency mostly is not real.</li><li>It returns <code>None</code>, which breaks more complex method usage. <code>df.drop_duplicates(inplace=True).head()</code> is an <code>AttributeError</code>, and the message will not mention <code>inplace</code>.</li><li><strong>It changes an object you cannot see.</strong> In a notebook, cells run in whatever order you click them. An in-place operation run twice, or run before a cell you then scroll up and re-execute, leaves you holding a DataFrame that does not match the code on screen. That is the single most common way a notebook starts producing numbers nobody can reproduce.</li></ol>
       <p>Explicit reassignment is one extra word and the state is always legible.</p>
       </div>
       <h4 id="the-index-after-dropping-rows">The index after dropping rows</h4>
@@ -1544,7 +1544,7 @@ attempt[attempt.hs_attendance &gt; <span class="nm">1.0</span>][<span class="st"
       <div class="output-block">
         <div class="output-block-label">output</div>
 rows still above <span class="out-num">1.0</span>: <span class="out-num">1</span>
-/sessions/youthful-keen-pascal/tmp/ipykernel_62/<span class="out-num">1020421739.</span>py:<span class="out-num">2</span>: SettingWithCopyWarning: 
+/sessions/youthful-keen-pascal/tmp/ipykernel_66/<span class="out-num">1020421739.</span>py:<span class="out-num">2</span>: SettingWithCopyWarning: 
 A value is trying to be set on a copy of a slice from a DataFrame.
 Try using .loc[row_indexer,col_indexer] = value instead
 
@@ -2197,6 +2197,7 @@ Name: course_score, dtype: float64
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &lt;class &#x27;pandas.core.indexes.multi.MultiIndex&#x27;&gt;
+
 success            <span class="out-num">0</span>     <span class="out-num">1</span>
 need_based_aid            
 <span class="out-num">0</span>               <span class="out-num">59.7</span>  <span class="out-num">77.5</span>
