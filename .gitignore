@@ -101,3 +101,13 @@ capstone/_data/
 notebooks/**/*_MASTER.*
 notebooks/**/*EXECUTED*
 notebooks/**/.ipynb_checkpoints/
+
+# --- build litter from the Module 5 page build ------------------------------
+# Module 5 teaches saving figures, so its section 12 and 13 cells really do
+# write image files. build_module_page.py executes those cells with the module
+# directory as the working directory, so the folder they write into appears
+# under site/ on every build. It is generated output, not content.
+figures/
+
+# Page-build preview output (build_module_page.py without --live)
+index-generated.html
