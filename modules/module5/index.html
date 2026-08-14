@@ -694,12 +694,10 @@ grid = np.<span class="fn">array</span>([<span class="nm">3</span>, <span class=
 
 fig.<span class="fn">suptitle</span>(<span class="st">&quot;Same means, same spread, same correlation, same fitted line&quot;</span>)
 fig.<span class="fn">supxlabel</span>(<span class="st">&quot;x&quot;</span>)
-fig.<span class="fn">supylabel</span>(<span class="st">&quot;y&quot;</span>)</code></pre>
+fig.<span class="fn">supylabel</span>(<span class="st">&quot;y&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.02</span>, <span class="out-num">0.5</span>, &#x27;y&#x27;)
-      </div>
       <figure class="nb-figure"><img src="assets/fig-1f508b19c2.png" alt="Figure: Same means, same spread, same correlation, same fitted line" loading="lazy"></figure>
       <p>One is the relationship the statistics describe. Two is curved, so a straight line is the wrong summary of it. Three is a straight line plus a single point pulling the fit upward. Four has no relationship at all: one point at x = 19 manufactures the entire correlation. The statistics could not tell you any of that, and one glance can.</p>
       </details>
@@ -733,11 +731,9 @@ ax.<span class="fn">hist</span>(scores, bins=<span class="nm">12</span>, edgecol
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;course score&quot;</span>)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;students&quot;</span>)
 ax.<span class="fn">set_title</span>(<span class="st">f&quot;Course scores center on {scores.median():.0f}, &quot;</span>
-             <span class="st">f&quot;spread about {scores.std():.0f} points (n = {scores.notna().sum()})&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;Course scores center on <span class="out-num">68</span>, spread about <span class="out-num">10</span> points (n = <span class="out-num">100</span>)&#x27;)
-      </div>
+             <span class="st">f&quot;spread about {scores.std():.0f} points (n = {scores.notna().sum()})&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-f08ff3bc3c.png" alt="Figure: Course scores center on ... , spread about ... points (n = ... )" loading="lazy"></figure>
       <details class="debrief"><summary>What happened</summary>
       <p>The table gives you the quartiles exactly, which the picture only implies. The picture gives you the shape, which the table hides: a mean of 68.3 and a median of 68.1 are equally consistent with one hump, with two, or with a long tail on one side, and you cannot tell which from the two numbers. Here it is a single hump, roughly balanced, which is worth knowing before you report a mean as though it described every student.</p>
@@ -755,20 +751,25 @@ Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;C
       <p>Every figure you make from here on starts with the same line:</p>
       <pre><code>fig, ax = plt.<span class="fn">subplots</span>()</code></pre>
       <p>Two objects come back, and knowing which is which explains most of matplotlib.</p>
+      <div data-runnable>
       <pre><code><span class="cm"># alt: An empty figure with a single set of axes, showing the two objects.</span>
 fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">5</span>, <span class="nm">3</span>), layout=<span class="st">&quot;constrained&quot;</span>)
 
 <span class="fn">print</span>(<span class="fn">type</span>(fig))
-<span class="fn">print</span>(<span class="fn">type</span>(ax))</code></pre>
-      <div class="output-block">
+<span class="fn">print</span>(<span class="fn">type</span>(ax))
+
+plt.<span class="fn">show</span>()</code></pre>
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &lt;class &#x27;matplotlib.figure.Figure&#x27;&gt;
 &lt;class &#x27;matplotlib.axes._axes.Axes&#x27;&gt;
       </div>
       <figure class="nb-figure"><img src="assets/fig-bc108a0577.png" alt="An empty figure with a single set of axes, showing the two objects." loading="lazy"></figure>
+      </div>
       <table class="data-table"><thead><tr><th>Object</th><th>What it is</th><th>What it owns</th></tr></thead><tbody><tr><td><strong>Figure</strong></td><td>the whole image</td><td>its size, the title over everything, saving to a file</td></tr><tr><td><strong>Axes</strong></td><td>one plot inside that image</td><td>the data, the x and y axis, the labels, the legend</td></tr><tr><td><strong>Axis</strong></td><td>a single scale on an Axes</td><td>its ticks, its limits, its formatting</td></tr><tr><td><strong>Artist</strong></td><td>anything drawn</td><td>every line, dot, label and spine is one</td></tr></tbody></table>
       <p>An <code>Axes</code> means a single set of axes, which is one panel of the figure, while an axis is one scale on it. The two words look like a singular and a plural of each other, which is what makes the naming confusing the first time and clear after that.</p>
       <p>The practical rule: <strong>if it is about the picture, ask the Figure. If it is about the data, ask the Axes.</strong></p>
+      <div data-runnable>
       <pre><code>fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">6</span>, <span class="nm">3.5</span>), layout=<span class="st">&quot;constrained&quot;</span>)
 
 ax.<span class="fn">scatter</span>(cohort.hs_gpa, cohort.ug_gpa, s=<span class="nm">26</span>, alpha=<span class="nm">0.75</span>)
@@ -776,50 +777,50 @@ ax.<span class="fn">scatter</span>(cohort.hs_gpa, cohort.ug_gpa, s=<span class="
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;high school GPA&quot;</span>)          <span class="cm"># the Axes owns the labels</span>
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;undergraduate GPA&quot;</span>)
 ax.<span class="fn">set_title</span>(<span class="st">&quot;One Axes, one claim&quot;</span>)
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;The Figure owns this line&quot;</span>, fontsize=<span class="nm">10</span>)  <span class="cm"># and the Figure the frame</span></code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;The Figure owns this line&#x27;)
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;The Figure owns this line&quot;</span>, fontsize=<span class="nm">10</span>)  <span class="cm"># and the Figure the frame</span>
+
+plt.<span class="fn">show</span>()</code></pre>
+      <figure class="nb-figure"><img src="assets/fig-157e7f4f49.png" alt="Figure: The Figure owns this line" loading="lazy"></figure>
       </div>
-      <figure class="nb-figure"><img src="assets/fig-8c250ce2f1.png" alt="Figure: The Figure owns this line" loading="lazy"></figure>
       <h3 id="the-other-interface-once">The other interface, once</h3>
       <p>matplotlib has a second way to draw the same figure, and you will meet it constantly, so it is worth seeing exactly once.</p>
       <p>The <strong>implicit</strong> interface, also called the pyplot interface, keeps track of the last figure and axes you touched and adds things to whatever it thinks you meant. The <strong>explicit</strong> interface, the one this module uses, hands you the objects and makes you name them.</p>
       <p>Here is one figure, drawn both ways.</p>
+      <div data-runnable>
       <pre><code><span class="cm"># implicit: no objects are named, and there is no way to refer back</span>
 plt.<span class="fn">plot</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>])
-plt.<span class="fn">ylabel</span>(<span class="st">&quot;some numbers&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0</span>, <span class="out-num">0.5</span>, &#x27;some numbers&#x27;)
-      </div>
+plt.<span class="fn">ylabel</span>(<span class="st">&quot;some numbers&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-bdc940154e.png" alt="Figure of some numbers" loading="lazy"></figure>
+      </div>
+      <div data-runnable>
       <pre><code><span class="cm"># explicit: the same figure, with the objects named</span>
 fig, ax = plt.<span class="fn">subplots</span>()
 ax.<span class="fn">plot</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>])
-ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;some numbers&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0</span>, <span class="out-num">0.5</span>, &#x27;some numbers&#x27;)
-      </div>
+ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;some numbers&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-bdc940154e.png" alt="Figure of some numbers" loading="lazy"></figure>
+      </div>
       <p>Identical output, four lines each. On one plot the difference is preference. Here is where it stops being preference.</p>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> You have three series with very different magnitudes: about 1 to 4, about 100 to 400, and about 1000 to 4000. If you call <code>plt.plot()</code> three times in a row, what do you get?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>plt.<span class="fn">plot</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>])
 plt.<span class="fn">plot</span>([<span class="nm">100</span>, <span class="nm">200</span>, <span class="nm">300</span>, <span class="nm">400</span>])
 plt.<span class="fn">plot</span>([<span class="nm">1000</span>, <span class="nm">2000</span>, <span class="nm">3000</span>, <span class="nm">4000</span>])
-plt.<span class="fn">ylabel</span>(<span class="st">&quot;some numbers&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0</span>, <span class="out-num">0.5</span>, &#x27;some numbers&#x27;)
-      </div>
+plt.<span class="fn">ylabel</span>(<span class="st">&quot;some numbers&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-5507f357f1.png" alt="Figure of some numbers" loading="lazy"></figure>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p>All three landed on the same Axes, because that is what the implicit interface is for: it adds to the current one. The first series is now a flat line at the bottom, unreadable, because it shares a y axis with values a thousand times larger. Nothing failed. You just cannot see two thirds of your data.</p>
       </details>
+      <div data-runnable>
       <pre><code><span class="cm"># The explicit fix: three Axes, named, each with its own scale.</span>
 fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">3</span>, <span class="nm">1</span>, figsize=(<span class="nm">5.5</span>, <span class="nm">5</span>), layout=<span class="st">&quot;constrained&quot;</span>)
 
@@ -829,12 +830,11 @@ series = [[<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm
     ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;numbers&quot;</span>)
 
 axes[-<span class="nm">1</span>].<span class="fn">set_xlabel</span>(<span class="st">&quot;index&quot;</span>)
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;Three scales, three Axes&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;Three scales, three Axes&#x27;)
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;Three scales, three Axes&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <figure class="nb-figure"><img src="assets/fig-83674692d4.png" alt="Figure: Three scales, three Axes" loading="lazy"></figure>
       </div>
-      <figure class="nb-figure"><img src="assets/fig-1a90641534.png" alt="Figure: Three scales, three Axes" loading="lazy"></figure>
       <h3 id="translating-between-them">Translating between them</h3>
       <p>You will need to read the implicit form, because most examples online use it. The mapping is nearly mechanical:</p>
       <table class="data-table"><thead><tr><th>Implicit</th><th>Explicit</th></tr></thead><tbody><tr><td><code>plt.plot(x, y)</code></td><td><code>ax.plot(x, y)</code></td></tr><tr><td><code>plt.xlabel(&quot;t&quot;)</code></td><td><code>ax.set_xlabel(&quot;t&quot;)</code></td></tr><tr><td><code>plt.title(&quot;...&quot;)</code></td><td><code>ax.set_title(&quot;...&quot;)</code></td></tr><tr><td><code>plt.xlim(0, 10)</code></td><td><code>ax.set_xlim(0, 10)</code></td></tr><tr><td><code>plt.xticks(pos, labels)</code></td><td><code>ax.set_xticks(pos, labels)</code></td></tr><tr><td><code>plt.legend()</code></td><td><code>ax.legend()</code></td></tr><tr><td><code>plt.savefig(&quot;f.png&quot;)</code></td><td><code>fig.savefig(&quot;f.png&quot;)</code></td></tr></tbody></table>
@@ -856,7 +856,9 @@ Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;
         <label class="exercise-label" for="exfigure-axes-15-src">Your turn - run it here<span class="vh"> (exercise 1)</span></label>
         <textarea id="exfigure-axes-15-src" class="ex-editor" spellcheck="false">fig, axes = plt.subplots(1, 2, figsize=(9, 3.5), layout=&quot;constrained&quot;)
 
-# YOUR CODE HERE</textarea>
+# YOUR CODE HERE
+
+plt.show()</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exfigure-axes-15">Run</button>
           <button class="ex-reset" data-target="exfigure-axes-15">Reset</button>
@@ -875,12 +877,24 @@ axes[<span class="nm">1</span>].<span class="fn">set_xlabel</span>(<span class="
 axes[<span class="nm">1</span>].<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;Prior GPA&quot;</span>)
 
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;Two candidate predictors of course score&quot;</span>)</code></pre></details>
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;Two candidate predictors of course score&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>Note what you did not have to do: no <code>plt.subplot(1, 2, 1)</code>, no keeping track of which panel is current. You named both panels up front and then addressed them. The explicit interface exists for that, and it is why the next twelve sections never mention the other one again.</p>
       </div>
+      <script type="application/x-dtsc-setup">import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+# The versions this notebook was written and verified against. Printed rather
+# than asserted, so the line stays true when you run it somewhere else.
+print(f"matplotlib {matplotlib.__version__}")
+print(f"pandas     {pd.__version__}")
+print(f"numpy      {np.__version__}")</script>
     
       <div class="section-nav"><a class="section-next" data-goto="distributions" href="#distributions">Next: Distributions &rarr;</a></div>
     </section>
@@ -889,6 +903,7 @@ fig.<span class="fn">suptitle</span>(<span class="st">&quot;Two candidate predic
       <h2>Distributions</h2>
       <p>The first question about any column is what its values do: where they sit, how far they range, whether they cluster in one place or two. The histogram answers it by counting values into bins and drawing the counts.</p>
       <p>That word <em>bins</em> is doing more work than it looks.</p>
+      <div data-runnable>
       <pre><code>scores = cohort.course_score
 <span class="fn">print</span>(<span class="st">f&quot;n = {scores.notna().sum()}, missing = {scores.isna().sum()}&quot;</span>)
 
@@ -896,17 +911,20 @@ fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">6</span
 ax.<span class="fn">hist</span>(scores, bins=<span class="nm">12</span>, edgecolor=<span class="st">&quot;white&quot;</span>)
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;course score&quot;</span>)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;students&quot;</span>)
-ax.<span class="fn">set_title</span>(<span class="st">f&quot;Course scores, {scores.notna().sum()} students, 12 bins&quot;</span>)</code></pre>
-      <div class="output-block">
+ax.<span class="fn">set_title</span>(<span class="st">f&quot;Course scores, {scores.notna().sum()} students, 12 bins&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 n = <span class="out-num">100</span>, missing = <span class="out-num">0</span>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;Course scores, <span class="out-num">100</span> students, <span class="out-num">12</span> bins&#x27;)
       </div>
       <figure class="nb-figure"><img src="assets/fig-e65e0b04c0.png" alt="Figure: Course scores, ... students, 12 bins" loading="lazy"></figure>
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> The same 100 scores, drawn with 5 bins and then with 25. Does the shape you just saw survive both?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">3</span>, figsize=(<span class="nm">10</span>, <span class="nm">3.2</span>), sharey=<span class="kw">True</span>,
                          layout=<span class="st">&quot;constrained&quot;</span>)
 
@@ -916,27 +934,28 @@ Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;C
     ax.<span class="fn">set_title</span>(<span class="st">f&quot;{n_bins} bins (tallest bar: {int(counts.max())})&quot;</span>)
 
 axes[<span class="nm">0</span>].<span class="fn">set_ylabel</span>(<span class="st">&quot;students&quot;</span>)
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;One column, three bin counts, three impressions&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;One column, three bin counts, three impressions&#x27;)
-      </div>
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;One column, three bin counts, three impressions&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-1e61fa168f.png" alt="Figure: One column, three bin counts, three impressions" loading="lazy"></figure>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p>At 5 bins the tallest bar holds 37 of the 100 students, and the distribution looks like one solid block. At 25 bins the tallest holds 10, one bin is empty, and the same data looks ragged and possibly bumpy. Nothing about the students changed between those three pictures. The bin width is a choice you made, and it is a choice your reader cannot see.</p>
       </details>
       <h3 id="choosing-a-bin-count-honestly">Choosing a bin count honestly</h3>
       <p>There is no correct number, which is exactly why it has to be a deliberate choice rather than a default you never looked at.</p>
       <ul><li><strong>Too few</strong> bins and real structure disappears into one block.</li><li><strong>Too many</strong> and sampling noise looks like structure.</li><li><strong>Look at two or three</strong> before you settle, which is what you just did.</li></ul>
       <p>matplotlib will also compute a bin count for you from the data, using rules that account for both the spread and the sample size.</p>
+      <div data-runnable>
       <pre><code><span class="kw">for</span> rule <span class="kw">in</span> [<span class="st">&quot;auto&quot;</span>, <span class="st">&quot;sturges&quot;</span>, <span class="st">&quot;fd&quot;</span>]:
     edges = np.<span class="fn">histogram_bin_edges</span>(scores.<span class="fn">dropna</span>(), bins=rule)
     <span class="fn">print</span>(<span class="st">f&quot;{rule:8} -&gt; {len(edges) - 1} bins, width {edges[1] - edges[0]:.1f}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 auto     -&gt; <span class="out-num">8</span> bins, width <span class="out-num">5.7</span>
 sturges  -&gt; <span class="out-num">8</span> bins, width <span class="out-num">5.7</span>
 fd       -&gt; <span class="out-num">8</span> bins, width <span class="out-num">5.7</span>
+      </div>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -956,11 +975,9 @@ axes[<span class="nm">1</span>].<span class="fn">set_xlabel</span>(<span class="
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;Boxplot: summary&quot;</span>)
 
 fig.<span class="fn">suptitle</span>(<span class="st">f&quot;Median {scores.median():.1f}, &quot;</span>
-             <span class="st">f&quot;middle half {scores.quantile(.25):.1f} to {scores.quantile(.75):.1f}&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;Median <span class="out-num">68.0</span>, middle half <span class="out-num">60.8</span> to <span class="out-num">74.5</span>&#x27;)
-      </div>
+             <span class="st">f&quot;middle half {scores.quantile(.25):.1f} to {scores.quantile(.75):.1f}&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-47cf476e83.png" alt="Figure: Median ... , middle half ... to" loading="lazy"></figure>
       <p>Note <code>tick_labels=</code> in that call. It used to be <code>labels=</code>, which was removed from matplotlib in version 3.11. If you find an example online using <code>labels=</code> on a boxplot, that is the version you are looking at, not a mistake in your code.</p>
       <details class="debrief"><summary>What happened</summary>
@@ -990,7 +1007,9 @@ ax.<span class="fn">hist</span>(logins.<span class="fn">dropna</span>(), bins=<s
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;logins per week&quot;</span>)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;students&quot;</span>)
 ax.<span class="fn">set_title</span>(<span class="st">f&quot;Weekly logins, median {logins.median():.1f} &quot;</span>
-             <span class="st">f&quot;(n = {logins.notna().sum()} of {len(cohort)})&quot;</span>)</code></pre></details>
+             <span class="st">f&quot;(n = {logins.notna().sum()} of {len(cohort)})&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -1006,6 +1025,7 @@ ax.<span class="fn">set_title</span>(<span class="st">f&quot;Weekly logins, medi
       <div class="nb-narrative nb-narrative-open">
         <p>Institutional Research has two candidate explanations on the table. One is prior achievement: students arrive with a high school record, and perhaps that record carries the outcome. The other is engagement: what a student does in the course once it starts. They imply completely different interventions, so the difference matters.</p>
       </div>
+      <div data-runnable>
       <pre><code>pair = cohort[[<span class="st">&quot;logins_per_week&quot;</span>, <span class="st">&quot;course_score&quot;</span>]].<span class="fn">dropna</span>()
 r = pair.logins_per_week.<span class="fn">corr</span>(pair.course_score)
 
@@ -1013,12 +1033,11 @@ fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">6</span
 ax.<span class="fn">scatter</span>(pair.logins_per_week, pair.course_score, s=<span class="nm">30</span>, alpha=<span class="nm">0.75</span>)
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;logins per week&quot;</span>)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
-ax.<span class="fn">set_title</span>(<span class="st">f&quot;Engagement tracks course score (r = {r:.2f}, n = {len(pair)})&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;Engagement tracks course score (r = <span class="out-num">0.72</span>, n = <span class="out-num">85</span>)&#x27;)
-      </div>
+ax.<span class="fn">set_title</span>(<span class="st">f&quot;Engagement tracks course score (r = {r:.2f}, n = {len(pair)})&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-fa55609e00.png" alt="Figure: Engagement tracks course score (r = ... , n = ... )" loading="lazy"></figure>
+      </div>
       <p>Two things in that cell are deliberate.</p>
       <p><code>alpha=0.75</code> makes the dots slightly transparent, so that two points landing on top of each other look different from one. With a hundred points it barely matters; with ten thousand it is the difference between a scatter plot and a solid blob.</p>
       <p>And the correlation in the title was <strong>computed in the same cell that drew the figure</strong>. The 0.72 was never typed by hand, so if the data changes the title changes with it. That is the rule for every figure in this module: the title states a finding, and the number in it is computed.</p>
@@ -1026,6 +1045,7 @@ Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;E
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Now the other candidate: prior GPA against course score. Stronger or weaker than engagement?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">2</span>, figsize=(<span class="nm">10</span>, <span class="nm">4</span>), sharey=<span class="kw">True</span>,
                          layout=<span class="st">&quot;constrained&quot;</span>)
 
@@ -1038,18 +1058,18 @@ Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;E
     ax.<span class="fn">set_title</span>(<span class="st">f&quot;r = {r:.2f}, n = {len(sub)}&quot;</span>)
 
 axes[<span class="nm">0</span>].<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;Engagement is the stronger signal, on different sample sizes&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;Engagement is the stronger signal, on different sample sizes&#x27;)
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;Engagement is the stronger signal, on different sample sizes&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <figure class="nb-figure"><img src="assets/fig-d33b8426df.png" alt="Figure: Engagement is the stronger signal, on different sample sizes" loading="lazy"></figure>
       </div>
-      <figure class="nb-figure"><img src="assets/fig-92e83be2e2.png" alt="Figure: Engagement is the stronger signal, on different sample sizes" loading="lazy"></figure>
+      <details class="debrief"><summary>What happened</summary>
       <p>Engagement comes out at 0.72 and prior GPA at 0.53, so the thing a student does during the course tracks the outcome more closely than the record they arrived with. That is the finding, and it is the one with a usable intervention attached.</p>
       <p>Notice the two panels do not have the same n. The engagement panel has 85 students because of the missing LMS records; the GPA panel has all 100. Two correlations computed on different samples are not strictly comparable, and the honest move is to say so on the figure rather than let the reader assume.</p>
       </details>
       <h3 id="adding-a-line-and-what-a-line-does-not-claim">Adding a line, and what a line does not claim</h3>
       <p>A fitted line summarizes the trend. It is worth adding when the reader needs the direction and rough rate. It is worth being careful about, because a line invites two readings it does not support.</p>
+      <div data-runnable>
       <pre><code>sub = cohort[[<span class="st">&quot;logins_per_week&quot;</span>, <span class="st">&quot;course_score&quot;</span>]].<span class="fn">dropna</span>()
 slope, intercept = np.<span class="fn">polyfit</span>(sub.logins_per_week, sub.course_score, <span class="nm">1</span>)
 grid = np.<span class="fn">linspace</span>(sub.logins_per_week.<span class="fn">min</span>(), sub.logins_per_week.<span class="fn">max</span>(), <span class="nm">50</span>)
@@ -1060,12 +1080,11 @@ ax.<span class="fn">plot</span>(grid, slope * grid + intercept, color=<span clas
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;logins per week&quot;</span>)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
 ax.<span class="fn">set_title</span>(<span class="st">f&quot;About {slope:.1f} points per extra login per week &quot;</span>
-             <span class="st">f&quot;(n = {len(sub)})&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;About <span class="out-num">4.4</span> points per extra login per week (n = <span class="out-num">85</span>)&#x27;)
-      </div>
+             <span class="st">f&quot;(n = {len(sub)})&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-9bc53c1ec2.png" alt="Figure: About ... points per extra login per week (n = ... )" loading="lazy"></figure>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>What the line says: across these 85 students, each additional login per week goes with about 4 more points on average.</p>
@@ -1078,7 +1097,9 @@ Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;A
         <textarea id="exrelationships-10-src" class="ex-editor" spellcheck="false">fig, axes = plt.subplots(1, 2, figsize=(10, 4), sharey=True,
                          layout=&quot;constrained&quot;)
 
-# YOUR CODE HERE</textarea>
+# YOUR CODE HERE
+
+plt.show()</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exrelationships-10">Run</button>
           <button class="ex-reset" data-target="exrelationships-10">Reset</button>
@@ -1097,7 +1118,9 @@ Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;A
     ax.<span class="fn">set_title</span>(<span class="st">f&quot;r = {r:.2f}, n = {len(sub)}&quot;</span>)
 
 axes[<span class="nm">0</span>].<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;Both engagement measures track the outcome&quot;</span>)</code></pre></details>
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;Both engagement measures track the outcome&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
     
       <div class="section-nav"><a class="section-next" data-goto="groups" href="#groups">Next: Groups &rarr;</a></div>
@@ -1106,15 +1129,18 @@ fig.<span class="fn">suptitle</span>(<span class="st">&quot;Both engagement meas
 <section id="groups" class="content-section">
       <h2>Groups</h2>
       <p><code>success</code> splits the cohort in two. The obvious figure is a bar of the group means, and it is the figure most reports would use.</p>
+      <div data-runnable>
       <pre><code>by_group = cohort.<span class="fn">groupby</span>(<span class="st">&quot;success&quot;</span>).course_score.<span class="fn">agg</span>([<span class="st">&quot;count&quot;</span>, <span class="st">&quot;mean&quot;</span>, <span class="st">&quot;std&quot;</span>])
 <span class="fn">print</span>(by_group.<span class="fn">round</span>(<span class="nm">2</span>))</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
          count   mean   std
 success                    
 <span class="out-num">0</span>           <span class="out-num">40</span>  <span class="out-num">58.70</span>  <span class="out-num">6.09</span>
 <span class="out-num">1</span>           <span class="out-num">60</span>  <span class="out-num">74.77</span>  <span class="out-num">7.41</span>
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>labels = [<span class="st">&quot;did not succeed&quot;</span>, <span class="st">&quot;succeeded&quot;</span>]
 means = by_group[<span class="st">&quot;mean&quot;</span>]
 
@@ -1122,12 +1148,11 @@ fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">5</span
 ax.<span class="fn">bar</span>([<span class="nm">0</span>, <span class="nm">1</span>], means, width=<span class="nm">0.6</span>)
 ax.<span class="fn">set_xticks</span>([<span class="nm">0</span>, <span class="nm">1</span>], labels)          <span class="cm"># positions and labels together (D33)</span>
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;mean course score&quot;</span>)
-ax.<span class="fn">set_title</span>(<span class="st">f&quot;A {means.iloc[1] - means.iloc[0]:.0f} point gap in group means&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;A <span class="out-num">16</span> point gap in group means&#x27;)
-      </div>
+ax.<span class="fn">set_title</span>(<span class="st">f&quot;A {means.iloc[1] - means.iloc[0]:.0f} point gap in group means&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-bca2f6b72c.png" alt="Figure: A ... point gap in group means" loading="lazy"></figure>
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> That gap looks decisive. If you drew the same two groups as boxplots instead, would the two groups still look separate?  Commit to an answer before you run the next cell.
@@ -1144,17 +1169,16 @@ groups = [cohort.loc[cohort.success == v, <span class="st">&quot;course_score&qu
 axes[<span class="nm">1</span>].<span class="fn">boxplot</span>(groups, tick_labels=labels)
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;The same students, all of them&quot;</span>)
 
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;The bar chart is two numbers; the boxplot is a hundred&quot;</span>)</code></pre>
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;The bar chart is two numbers; the boxplot is a hundred&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;The bar chart is two numbers; the boxplot is a hundred&#x27;)
-      </div>
       <figure class="nb-figure"><img src="assets/fig-b7da8f8c42.png" alt="Figure: The bar chart is two numbers; the boxplot is a hundred" loading="lazy"></figure>
       <p>The gap is real: 58.7 against 74.8. But the bar chart draws two numbers and implies the groups are neatly separated, while the boxplot shows the top of the lower group reaching well into the range of the upper one. Both figures are honest. The bar chart is simply answering a narrower question than the reader will assume it answered.</p>
       </details>
       <h3 id="error-bars-and-saying-what-they-are">Error bars, and saying what they are</h3>
       <p>An error bar is the usual fix for a bar chart that hides its spread. It is only useful if the reader knows what the bar represents, because a standard deviation and a standard error of the mean differ by a factor of the square root of n and look identical on the page.</p>
+      <div data-runnable>
       <pre><code>sd = by_group[<span class="st">&quot;std&quot;</span>]
 sem = by_group[<span class="st">&quot;std&quot;</span>] / np.<span class="fn">sqrt</span>(by_group[<span class="st">&quot;count&quot;</span>])
 
@@ -1167,18 +1191,18 @@ fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <spa
     ax.<span class="fn">set_title</span>(<span class="st">f&quot;error bars: {name}&quot;</span>)
 
 axes[<span class="nm">0</span>].<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;Same data, same bars, error bars that mean different things&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;Same data, same bars, error bars that mean different things&#x27;)
-      </div>
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;Same data, same bars, error bars that mean different things&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-7e2613fa02.png" alt="Figure: Same data, same bars, error bars that mean different things" loading="lazy"></figure>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>Always label what the error bar is. Standard deviation describes the students; standard error describes how well the mean is pinned down, and it shrinks as the sample grows. A reader who assumes the wrong one will read the wrong amount of certainty off your figure.</p>
       </div>
       <h3 id="category-order">Category order</h3>
       <p>Categories with no natural order should be sorted by value, because a reader compares neighboring bars first. Alphabetical order is a sorting of the labels rather than the data, and it makes the reader do the work.</p>
+      <div data-runnable>
       <pre><code>counts = cohort.hs_clubs.<span class="fn">value_counts</span>()
 
 fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">2</span>, figsize=(<span class="nm">9</span>, <span class="nm">3.2</span>), sharey=<span class="kw">True</span>, layout=<span class="st">&quot;constrained&quot;</span>)
@@ -1192,12 +1216,11 @@ by_size = counts.<span class="fn">sort_values</span>(ascending=<span class="kw">
 axes[<span class="nm">1</span>].<span class="fn">bar</span>(by_size.index.<span class="fn">astype</span>(<span class="fn">str</span>), by_size.values)
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;By frequency&quot;</span>)
 
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;Order is a choice, and it decides what the reader compares first&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;Order is a choice, and it decides what the reader compares first&#x27;)
-      </div>
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;Order is a choice, and it decides what the reader compares first&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-9d7ea26f7e.png" alt="Figure: Order is a choice, and it decides what the reader compares first" loading="lazy"></figure>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>When the category is itself a number, as club count is, the natural order is the numeric one and sorting by frequency destroys information. When the category is a name with no inherent order, sorting by value is nearly always the better figure. So the rule to carry is &quot;know which kind of category you have&quot;, which decides the order for you.</p>
       </details>
@@ -1221,7 +1244,9 @@ ax.<span class="fn">bar</span>([<span class="nm">0</span>, <span class="nm">1</s
 ax.<span class="fn">set_xticks</span>([<span class="nm">0</span>, <span class="nm">1</span>], [<span class="st">f&quot;{labels[0]}\n(n = {stats[&#x27;count&#x27;].iloc[0]})&quot;</span>,
                        <span class="st">f&quot;{labels[1]}\n(n = {stats[&#x27;count&#x27;].iloc[1]})&quot;</span>])
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;mean logins per week&quot;</span>)
-ax.<span class="fn">set_title</span>(<span class="st">&quot;Error bars are the standard error of the mean&quot;</span>)</code></pre></details>
+ax.<span class="fn">set_title</span>(<span class="st">&quot;Error bars are the standard error of the mean&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -1235,6 +1260,7 @@ ax.<span class="fn">set_title</span>(<span class="st">&quot;Error bars are the s
       <h2>Confounds</h2>
       <p>This is the one worth getting right. A relationship that looks solid can be produced entirely by a third variable, and a scatter plot on its own cannot tell you which you have.</p>
       <p>Institutional Research has a proposal in front of it: fund high school outreach clubs, because students who did more activities score better. Here is the evidence for it.</p>
+      <div data-runnable>
       <pre><code>sub = cohort[[<span class="st">&quot;hs_clubs&quot;</span>, <span class="st">&quot;course_score&quot;</span>, <span class="st">&quot;hs_gpa&quot;</span>]].<span class="fn">dropna</span>()
 r_raw = sub.hs_clubs.<span class="fn">corr</span>(sub.course_score)
 
@@ -1242,18 +1268,18 @@ fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">6</span
 ax.<span class="fn">scatter</span>(sub.hs_clubs, sub.course_score, s=<span class="nm">30</span>, alpha=<span class="nm">0.7</span>)
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;high school clubs&quot;</span>)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
-ax.<span class="fn">set_title</span>(<span class="st">f&quot;More clubs, higher scores (r = {r_raw:.2f}, n = {len(sub)})&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;More clubs, higher scores (r = <span class="out-num">0.43</span>, n = <span class="out-num">100</span>)&#x27;)
-      </div>
+ax.<span class="fn">set_title</span>(<span class="st">f&quot;More clubs, higher scores (r = {r_raw:.2f}, n = {len(sub)})&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-390a838e25.png" alt="Figure: More clubs, higher scores (r = ... , n = ... )" loading="lazy"></figure>
+      </div>
       <p>That is a real pattern in the data, and the title is true as written. A report could stop here, and plenty do.</p>
       <p>The question worth asking before it does: <strong>what kind of student joins more clubs?</strong></p>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Students with stronger high school records tend to join more activities. If you split the cohort into three GPA groups and look at clubs against score inside each one, what happens to the relationship?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>sub = sub.<span class="fn">assign</span>(band=pd.<span class="fn">qcut</span>(sub.hs_gpa, <span class="nm">3</span>,
                               labels=[<span class="st">&quot;lower third&quot;</span>, <span class="st">&quot;middle third&quot;</span>, <span class="st">&quot;upper third&quot;</span>]))
 
@@ -1268,15 +1294,15 @@ fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <spa
                  <span class="st">f&quot;r = {r:.2f}, n = {len(g)}&quot;</span>)
 
 axes[<span class="nm">0</span>].<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;Inside a GPA band, clubs and score barely move together&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;Inside a GPA band, clubs and score barely move together&#x27;)
-      </div>
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;Inside a GPA band, clubs and score barely move together&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-d0c1155659.png" alt="Figure: Inside a GPA band, clubs and score barely move together" loading="lazy"></figure>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p>Across the whole cohort the correlation is 0.43. Inside the three GPA thirds it is 0.14, 0.01 and 0.04. The relationship did not weaken, it essentially disappeared, which means it was never between clubs and scores. It was between GPA and both of them: stronger students join more clubs, and stronger students score better.</p>
       </details>
+      <div data-runnable>
       <pre><code><span class="cm"># The same result as one number, for the report: the correlation</span>
 <span class="cm"># between clubs and score after removing what GPA explains of each.</span>
 resid_clubs = sub.hs_clubs - np.<span class="fn">polyval</span>(np.<span class="fn">polyfit</span>(sub.hs_gpa, sub.hs_clubs, <span class="nm">1</span>), sub.hs_gpa)
@@ -1284,10 +1310,11 @@ resid_score = sub.course_score - np.<span class="fn">polyval</span>(np.<span cla
 
 <span class="fn">print</span>(<span class="st">f&quot;raw correlation                : {r_raw:+.2f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;after controlling for hs_gpa   : {np.corrcoef(resid_clubs, resid_score)[0, 1]:+.2f}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 raw correlation                : +<span class="out-num">0.43</span>
 after controlling for hs_gpa   : -<span class="out-num">0.03</span>
+      </div>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -1296,6 +1323,7 @@ after controlling for hs_gpa   : -<span class="out-num">0.03</span>
       </div>
       <h3 id="the-same-control-in-one-panel">The same control, in one panel</h3>
       <p>Three panels make the comparison exact. One panel with the third variable in color makes it immediate, and fits in a report that has room for one figure.</p>
+      <div data-runnable>
       <pre><code>fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">6.5</span>, <span class="nm">4.2</span>), layout=<span class="st">&quot;constrained&quot;</span>)
 
 <span class="kw">for</span> name, g <span class="kw">in</span> sub.<span class="fn">groupby</span>(<span class="st">&quot;band&quot;</span>, observed=<span class="kw">True</span>):
@@ -1304,12 +1332,11 @@ after controlling for hs_gpa   : -<span class="out-num">0.03</span>
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;high school clubs&quot;</span>)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
 ax.<span class="fn">legend</span>(title=<span class="st">&quot;high school GPA&quot;</span>)
-ax.<span class="fn">set_title</span>(<span class="st">&quot;The bands stack by GPA, and each one is flat&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;The bands stack by GPA, and each one is flat&#x27;)
-      </div>
+ax.<span class="fn">set_title</span>(<span class="st">&quot;The bands stack by GPA, and each one is flat&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-8139ec8c9b.png" alt="Figure: The bands stack by GPA, and each one is flat" loading="lazy"></figure>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Read it as three flat clouds sitting at three heights. The upward slope in the first figure was the <em>stacking</em>, not the slope of any one band. Once you can see that shape, you can recognize it in other people&#x27;s figures.</p>
       </details>
@@ -1341,7 +1368,9 @@ fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <spa
 
 axes[<span class="nm">0</span>].<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
 fig.<span class="fn">suptitle</span>(<span class="st">f&quot;Raw r = {intern.internships.corr(intern.course_score):.2f}, &quot;</span>
-             <span class="st">f&quot;and inside the bands&quot;</span>)</code></pre></details>
+             <span class="st">f&quot;and inside the bands&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
     
       <div class="section-nav"><a class="section-next" data-goto="small-multiples" href="#small-multiples">Next: Small Multiples &rarr;</a></div>
@@ -1351,6 +1380,7 @@ fig.<span class="fn">suptitle</span>(<span class="st">f&quot;Raw r = {intern.int
       <h2>Small Multiples</h2>
       <p>Sections 4 and 6 compared two things at a time. The report needs four predictors compared at once, and four separate figures make the reader hold each one in memory while scrolling to the next.</p>
       <p>A grid of panels sharing a scale removes that work.</p>
+      <div data-runnable>
       <pre><code>predictors = [(<span class="st">&quot;hs_gpa&quot;</span>, <span class="st">&quot;high school GPA&quot;</span>),
               (<span class="st">&quot;hs_attendance&quot;</span>, <span class="st">&quot;attendance&quot;</span>),
               (<span class="st">&quot;logins_per_week&quot;</span>, <span class="st">&quot;logins per week&quot;</span>),
@@ -1368,12 +1398,11 @@ fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">2</span>, <spa
 <span class="kw">for</span> ax <span class="kw">in</span> axes[:, <span class="nm">0</span>]:
     ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
 
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;What predicts course score: the two engagement measures win&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;What predicts course score: the two engagement measures win&#x27;)
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;What predicts course score: the two engagement measures win&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <figure class="nb-figure"><img src="assets/fig-8d39ceaaaa.png" alt="Figure: What predicts course score: the two engagement measures win" loading="lazy"></figure>
       </div>
-      <figure class="nb-figure"><img src="assets/fig-c1502dabfe.png" alt="Figure: What predicts course score: the two engagement measures win" loading="lazy"></figure>
       <p>Three things are doing the work there.</p>
       <p><code>axes.flat</code> walks the 2 by 2 array as a flat sequence, so the loop does not need to know the grid shape. <code>sharey=True</code> gives every panel the same y axis, which is what makes the four comparable at a glance. And <code>layout=&quot;constrained&quot;</code> sizes the gaps so the labels do not collide.</p>
       <p>That last one is worth a note, because you will see the older tool everywhere.</p>
@@ -1385,6 +1414,7 @@ Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> The same four panels without <code>sharey</code>. What changes about how the four relationships compare?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">2</span>, <span class="nm">2</span>, figsize=(<span class="nm">9</span>, <span class="nm">6.5</span>), layout=<span class="st">&quot;constrained&quot;</span>)
 
 <span class="kw">for</span> ax, (col, label) <span class="kw">in</span> <span class="fn">zip</span>(axes.flat, predictors):
@@ -1393,17 +1423,17 @@ Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;
     ax.<span class="fn">set_xlabel</span>(label)
     ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
 
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;The same four panels, each on its own y axis&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;The same four panels, each on its own y axis&#x27;)
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;The same four panels, each on its own y axis&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <figure class="nb-figure"><img src="assets/fig-5dfbed88b6.png" alt="Figure: The same four panels, each on its own y axis" loading="lazy"></figure>
       </div>
-      <figure class="nb-figure"><img src="assets/fig-4176ffc89d.png" alt="Figure: The same four panels, each on its own y axis" loading="lazy"></figure>
+      <details class="debrief"><summary>What happened</summary>
       <p>Every panel now fills its own space, so all four look similarly spread out and similarly steep. The differences between the four relationships, which is the entire reason for putting them side by side, are gone. In a comparison figure the shared axis is the thing that makes it a comparison, which puts it well above a formatting preference.</p>
       </details>
       <h3 id="when-the-grid-is-not-a-grid">When the grid is not a grid</h3>
       <p><code>plt.subplots</code> gives you even rows and columns. When the report needs one wide panel above two narrow ones, <code>plt.subplot_mosaic</code> lets you draw the layout and name the panels, which is easier to read six months later than <code>axes[1, 0]</code>.</p>
+      <div data-runnable>
       <pre><code>fig, axd = plt.<span class="fn">subplot_mosaic</span>([[<span class="st">&quot;overview&quot;</span>, <span class="st">&quot;overview&quot;</span>],
                                [<span class="st">&quot;engagement&quot;</span>, <span class="st">&quot;prior&quot;</span>]],
                               figsize=(<span class="nm">9</span>, <span class="nm">6</span>), layout=<span class="st">&quot;constrained&quot;</span>)
@@ -1421,12 +1451,11 @@ axd[<span class="st">&quot;overview&quot;</span>].<span class="fn">set_title</sp
     axd[key].<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
     axd[key].<span class="fn">set_title</span>(<span class="st">f&quot;r = {sub[col].corr(sub.course_score):.2f}&quot;</span>)
 
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;One figure, three panels, named rather than numbered&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;One figure, three panels, named rather than numbered&#x27;)
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;One figure, three panels, named rather than numbered&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <figure class="nb-figure"><img src="assets/fig-e305b5d0b6.png" alt="Figure: One figure, three panels, named rather than numbered" loading="lazy"></figure>
       </div>
-      <figure class="nb-figure"><img src="assets/fig-a865a77488.png" alt="Figure: One figure, three panels, named rather than numbered" loading="lazy"></figure>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><code>plt.subplots(rows, cols)</code> for an even grid, <code>axes.flat</code> to loop it, <code>sharey=True</code> whenever the panels are meant to be compared, and <code>plt.subplot_mosaic</code> when the layout is irregular. Requesting <code>layout=&quot;constrained&quot;</code> at creation is the current way to keep labels from colliding.</p>
@@ -1462,7 +1491,9 @@ fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <spa
 
 axes[<span class="nm">0</span>].<span class="fn">set_ylabel</span>(<span class="st">&quot;students&quot;</span>)
 means = [g.course_score.<span class="fn">mean</span>() <span class="kw">for</span> g <span class="kw">in</span> groups]
-fig.<span class="fn">suptitle</span>(<span class="st">f&quot;Group means rise from {means[0]:.0f} to {means[-1]:.0f}&quot;</span>)</code></pre></details>
+fig.<span class="fn">suptitle</span>(<span class="st">f&quot;Group means rise from {means[0]:.0f} to {means[-1]:.0f}&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
     
       <div class="section-nav"><a class="section-next" data-goto="annotation" href="#annotation">Next: Titles &amp; Annotation &rarr;</a></div>
@@ -1471,6 +1502,7 @@ fig.<span class="fn">suptitle</span>(<span class="st">f&quot;Group means rise fr
 <section id="annotation" class="content-section">
       <h2>Titles &amp; Annotation</h2>
       <p>A figure in a report is read for about three seconds before someone decides what it means. Whatever they decide in those three seconds is what your figure said, so it is worth choosing that sentence yourself.</p>
+      <div data-runnable>
       <pre><code>sub = cohort[[<span class="st">&quot;logins_per_week&quot;</span>, <span class="st">&quot;course_score&quot;</span>]].<span class="fn">dropna</span>()
 
 fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">2</span>, figsize=(<span class="nm">10</span>, <span class="nm">4</span>), sharey=<span class="kw">True</span>, layout=<span class="st">&quot;constrained&quot;</span>)
@@ -1483,17 +1515,17 @@ axes[<span class="nm">0</span>].<span class="fn">set_ylabel</span>(<span class="
 axes[<span class="nm">0</span>].<span class="fn">set_title</span>(<span class="st">&quot;Logins vs course score&quot;</span>)
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">f&quot;Students logging in twice a week score about &quot;</span>
                   <span class="st">f&quot;{sub[sub.logins_per_week &gt;= 2].course_score.mean() - sub[sub.logins_per_week &lt; 2].course_score.mean():.0f} &quot;</span>
-                  <span class="st">f&quot;points higher&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;Students logging in twice a week score about <span class="out-num">13</span> points higher&#x27;)
-      </div>
+                  <span class="st">f&quot;points higher&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-9f9c96fa50.png" alt="Figure: Logins vs course score" loading="lazy"></figure>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Identical data, identical marks. The left title names the axes, which the axes already do. The right title makes a claim, and the reader can check it against the picture. A title that repeats the axis labels spends the reader&#x27;s attention without giving anything back.</p>
       </details>
       <h3 id="annotation-the-one-point-worth-naming">Annotation: the one point worth naming</h3>
       <p>Most points on a scatter plot are context. Occasionally one is the argument, and <code>annotate</code> puts a label on it with an arrow.</p>
+      <div data-runnable>
       <pre><code>outlier = cohort.loc[cohort.logins_per_week.<span class="fn">idxmax</span>()]
 
 fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">6.5</span>, <span class="nm">4.2</span>), layout=<span class="st">&quot;constrained&quot;</span>)
@@ -1507,18 +1539,18 @@ ax.<span class="fn">annotate</span>(<span class="st">f&quot;{outlier[&#x27;name&
 
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;logins per week&quot;</span>)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
-ax.<span class="fn">set_title</span>(<span class="st">&quot;Engagement is not a guarantee&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;Engagement is not a guarantee&#x27;)
-      </div>
+ax.<span class="fn">set_title</span>(<span class="st">&quot;Engagement is not a guarantee&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-c6d14a356d.png" alt="Figure: Engagement is not a guarantee" loading="lazy"></figure>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>One annotation is a point of interest. Five annotations are a table, and a table is usually better at being a table. Annotate when a single case carries part of the argument, which here is that the relationship has real exceptions and the report should say so before someone else finds one.</p>
       </div>
       <h3 id="reference-lines">Reference lines</h3>
       <p>A threshold the reader already cares about belongs on the figure, not in the caption. <code>axhline</code> and <code>axvline</code> draw one across the whole Axes.</p>
+      <div data-runnable>
       <pre><code>below = <span class="fn">int</span>((cohort.course_score &lt; <span class="nm">60</span>).<span class="fn">sum</span>())
 
 fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">6.5</span>, <span class="nm">4</span>), layout=<span class="st">&quot;constrained&quot;</span>)
@@ -1529,12 +1561,11 @@ ax.<span class="fn">axhline</span>(<span class="nm">60</span>, color=<span class
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;logins per week&quot;</span>)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
 ax.<span class="fn">legend</span>(loc=<span class="st">&quot;lower right&quot;</span>)
-ax.<span class="fn">set_title</span>(<span class="st">&quot;Who is below the line, and what were they doing&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;Who is below the line, and what were they doing&#x27;)
-      </div>
+ax.<span class="fn">set_title</span>(<span class="st">&quot;Who is below the line, and what were they doing&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-37ec718fb9.png" alt="Figure: Who is below the line, and what were they doing" loading="lazy"></figure>
+      </div>
       <p>The legend earns its place there, because the dashed line needs explaining. When a figure has one series and no reference line, a legend just repeats the title. Prefer labeling the thing directly when you can.</p>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -1563,7 +1594,9 @@ ax.<span class="fn">axhline</span>(median, color=<span class="st">&quot;black&qu
 ax.<span class="fn">set_xticks</span>([<span class="nm">0</span>, <span class="nm">1</span>], labels)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;mean course score&quot;</span>)
 ax.<span class="fn">legend</span>(loc=<span class="st">&quot;lower right&quot;</span>)
-ax.<span class="fn">set_title</span>(<span class="st">f&quot;The two groups differ by {means.iloc[1] - means.iloc[0]:.0f} points&quot;</span>)</code></pre></details>
+ax.<span class="fn">set_title</span>(<span class="st">f&quot;The two groups differ by {means.iloc[1] - means.iloc[0]:.0f} points&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
     
       <div class="section-nav"><a class="section-next" data-goto="misleading" href="#misleading">Next: Misleading Charts &rarr;</a></div>
@@ -1576,6 +1609,7 @@ ax.<span class="fn">set_title</span>(<span class="st">f&quot;The two groups diff
       <p>Every example below uses the cohort you have been working with, and every pair plots <strong>the same numbers twice.</strong> None of the misleading versions required a single false value, which is the part worth remembering.</p>
       <h3 id="bad-design">Bad design</h3>
       <p>The data is fine and the chart is hard to read anyway.</p>
+      <div data-runnable>
       <pre><code>means = cohort.<span class="fn">groupby</span>(<span class="st">&quot;success&quot;</span>).course_score.<span class="fn">mean</span>()
 labels = [<span class="st">&quot;did not succeed&quot;</span>, <span class="st">&quot;succeeded&quot;</span>]
 
@@ -1596,12 +1630,11 @@ axes[<span class="nm">1</span>].<span class="fn">bar</span>([<span class="nm">0<
 axes[<span class="nm">1</span>].<span class="fn">set_xticks</span>([<span class="nm">0</span>, <span class="nm">1</span>], labels)
 axes[<span class="nm">1</span>].<span class="fn">set_ylabel</span>(<span class="st">&quot;mean course score&quot;</span>)
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">f&quot;Successful students average &quot;</span>
-                  <span class="st">f&quot;{means.iloc[1] - means.iloc[0]:.0f} points higher&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;Successful students average <span class="out-num">16</span> points higher&#x27;)
-      </div>
+                  <span class="st">f&quot;{means.iloc[1] - means.iloc[0]:.0f} points higher&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-85e4a49d33.png" alt="Figure: Mean Course Score By Success Group (Bar Chart)" loading="lazy"></figure>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Every number in the left panel is accurate. It spends the reader&#x27;s attention on a hatch pattern, a legend that names what the y axis already names, gridlines competing with the bars, and a title that describes the chart type. The right panel spends it on the finding.</p>
       </details>
@@ -1611,6 +1644,7 @@ Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;S
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> The two group means are 58.7 and 74.8. If the y axis started at 55 instead of 0, how much larger would the gap look?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">2</span>, figsize=(<span class="nm">9</span>, <span class="nm">4</span>), layout=<span class="st">&quot;constrained&quot;</span>)
 
 <span class="kw">for</span> ax, bottom, note <span class="kw">in</span> [(axes[<span class="nm">0</span>], <span class="nm">55</span>, <span class="st">&quot;y axis starts at 55&quot;</span>),
@@ -1624,15 +1658,15 @@ axes[<span class="nm">0</span>].<span class="fn">set_ylabel</span>(<span class="
 ratio_truncated = (means.iloc[<span class="nm">1</span>] - <span class="nm">55</span>) / (means.iloc[<span class="nm">0</span>] - <span class="nm">55</span>)
 ratio_honest = means.iloc[<span class="nm">1</span>] / means.iloc[<span class="nm">0</span>]
 fig.<span class="fn">suptitle</span>(<span class="st">f&quot;Truncated, one bar looks {ratio_truncated:.1f}x the other. &quot;</span>
-             <span class="st">f&quot;From zero, it is {ratio_honest:.2f}x&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;Truncated, one bar looks <span class="out-num">5.</span>3x the other. From zero, it is <span class="out-num">1.</span>27x&#x27;)
-      </div>
+             <span class="st">f&quot;From zero, it is {ratio_honest:.2f}x&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-0b1754f430.png" alt="Figure: Truncated, one bar looks ... x the other. From zero, it is ... x" loading="lazy"></figure>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p>Truncating the axis turns a ratio of 1.27 into an apparent ratio of 5.4. Both charts plot 58.7 and 74.8. For a bar chart, where the reader compares the <em>lengths</em> of the bars, starting the axis anywhere but zero misrepresents the comparison. A line chart of a quantity that never approaches zero is the usual exception, and even then the axis needs to be labeled clearly enough that a 2 percent move cannot be read as a collapse.</p>
       </details>
+      <div data-runnable>
       <pre><code><span class="cm"># The dual axis: two series, two scales, one implied relationship.</span>
 band = cohort.<span class="fn">assign</span>(band=pd.<span class="fn">qcut</span>(cohort.hs_gpa, <span class="nm">3</span>, labels=[<span class="st">&quot;lower&quot;</span>, <span class="st">&quot;middle&quot;</span>, <span class="st">&quot;upper&quot;</span>]))
 by_band = band.<span class="fn">groupby</span>(<span class="st">&quot;band&quot;</span>, observed=<span class="kw">True</span>).<span class="fn">agg</span>(
@@ -1656,15 +1690,15 @@ axes[<span class="nm">1</span>].<span class="fn">plot</span>(<span class="fn">ra
 axes[<span class="nm">1</span>].<span class="fn">set_xticks</span>(<span class="fn">range</span>(<span class="nm">3</span>), by_band.index)
 axes[<span class="nm">1</span>].<span class="fn">set_ylabel</span>(<span class="st">&quot;relative to the lower band&quot;</span>)
 axes[<span class="nm">1</span>].<span class="fn">legend</span>()
-axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;One axis: they move at very different rates&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;One axis: they move at very different rates&#x27;)
+axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;One axis: they move at very different rates&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <figure class="nb-figure"><img src="assets/fig-e262d26f36.png" alt="Figure: Two y axes: the lines look locked together" loading="lazy"></figure>
       </div>
-      <figure class="nb-figure"><img src="assets/fig-25309992a6.png" alt="Figure: Two y axes: the lines look locked together" loading="lazy"></figure>
       <details class="debrief"><summary>What happened</summary>
       <p>On two axes the lines sit on top of each other and imply a tight coupling. Put both on one scale and course score rises by about 21 percent across the bands while logins roughly double. The dual axis did not add information. It let the person drawing it choose, through the scaling, how related the two series appear.</p>
       </details>
+      <div data-runnable>
       <pre><code><span class="cm"># Cherry-picked range: drop the students at the low end and report</span>
 <span class="cm"># the correlation from what is left.</span>
 full = cohort[[<span class="st">&quot;logins_per_week&quot;</span>, <span class="st">&quot;course_score&quot;</span>]].<span class="fn">dropna</span>()
@@ -1680,15 +1714,15 @@ fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <spa
     ax.<span class="fn">set_title</span>(<span class="st">f&quot;{note}\nr = {r:.2f}, n = {len(data)}&quot;</span>)
 
 axes[<span class="nm">0</span>].<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;Same students, same scores, two different findings&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;Same students, same scores, two different findings&#x27;)
-      </div>
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;Same students, same scores, two different findings&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-991e41f4a6.png" alt="Figure: Same students, same scores, two different findings" loading="lazy"></figure>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>0.72 becomes 0.46, and the second figure is a perfectly honest description of the students it contains. What makes it misleading is reporting it as the relationship in the cohort. Restricting the range of a variable reduces the correlation almost mechanically, and it is worth recognizing in other people&#x27;s work: whenever a sample is filtered on something related to the outcome, ask what the number looked like before the filter.</p>
       </details>
+      <div data-runnable>
       <pre><code><span class="cm"># Bin choice, chosen to produce a shape rather than to reveal one.</span>
 fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">2</span>, figsize=(<span class="nm">9.5</span>, <span class="nm">3.6</span>), sharey=<span class="kw">True</span>, layout=<span class="st">&quot;constrained&quot;</span>)
 
@@ -1701,13 +1735,17 @@ axes[<span class="nm">1</span>].<span class="fn">hist</span>(cohort.course_score
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;Even bins: one hump&quot;</span>)
 
 <span class="kw">for</span> ax <span class="kw">in</span> axes:
-    ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;course score&quot;</span>)</code></pre>
+    ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;course score&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-e8bcfece91.png" alt="Figure: Uneven bins: an apparent double hump" loading="lazy"></figure>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Uneven bin widths make the count in a wide bin look like a concentration, because the eye reads the bar&#x27;s area and the axis only labels its height. Unequal bins have legitimate uses, and they require saying so.</p>
       </details>
       <h3 id="bad-perception">Bad perception</h3>
       <p>The data is honestly represented and the reader&#x27;s eye still gets it wrong.</p>
+      <div data-runnable>
       <pre><code><span class="cm"># Area against length. Both panels encode the same two means.</span>
 fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">2</span>, figsize=(<span class="nm">9</span>, <span class="nm">4</span>), layout=<span class="st">&quot;constrained&quot;</span>)
 
@@ -1724,15 +1762,15 @@ axes[<span class="nm">1</span>].<span class="fn">set_xticks</span>([<span class=
 axes[<span class="nm">1</span>].<span class="fn">set_ylabel</span>(<span class="st">&quot;mean course score&quot;</span>)
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;Encoded as length&quot;</span>)
 
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;A 27 percent difference, read two ways&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;A <span class="out-num">27</span> percent difference, read two ways&#x27;)
-      </div>
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;A 27 percent difference, read two ways&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-62a2a68884.png" alt="Figure: A 27 percent difference, read two ways" loading="lazy"></figure>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>People compare lengths accurately and areas poorly, and they tend to underestimate an area difference. Encoding a quantity as the area of a circle asks the reader to do the harder task for no gain. The same objection applies to a chart drawn in three dimensions when the third dimension carries no data: the depth is decoration that distorts the comparison.</p>
       </details>
+      <div data-runnable>
       <pre><code><span class="cm"># Color implying a grouping the data does not support.</span>
 split = cohort.<span class="fn">assign</span>(
     area=np.<span class="fn">where</span>(cohort.hs_pop_density &gt; cohort.hs_pop_density.<span class="fn">median</span>(),
@@ -1750,12 +1788,11 @@ axes[<span class="nm">0</span>].<span class="fn">set_title</span>(<span class="s
 
 axes[<span class="nm">1</span>].<span class="fn">scatter</span>(cohort.hs_gpa, cohort.course_score, s=<span class="nm">28</span>, alpha=<span class="nm">0.7</span>, color=<span class="st">&quot;grey&quot;</span>)
 axes[<span class="nm">1</span>].<span class="fn">set_xlabel</span>(<span class="st">&quot;high school GPA&quot;</span>)
-axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">f&quot;Uncolored: the group means differ by {gap:.1f} points&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;Uncolored: the group means differ by <span class="out-num">3.0</span> points&#x27;)
+axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">f&quot;Uncolored: the group means differ by {gap:.1f} points&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <figure class="nb-figure"><img src="assets/fig-6885b9cf82.png" alt="Figure: Colored by a median split" loading="lazy"></figure>
       </div>
-      <figure class="nb-figure"><img src="assets/fig-91ab75dfb2.png" alt="Figure: Colored by a median split" loading="lazy"></figure>
       <details class="debrief"><summary>What happened</summary>
       <p>Color reads as category, and a category reads as a real difference between two kinds of student. The two groups here differ by about 3 points on a scale where the cohort&#x27;s standard deviation is 10, and the split point was the median of a variable chosen arbitrarily. The colors are the entire finding.</p>
       <p>This is also the ethics point from the capstone in visual form: population density is one of the two features Institutional Research decided not to model on, and drawing it as a color makes it look like an explanation.</p>
@@ -1776,7 +1813,9 @@ Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;U
 
 fig, axes = plt.subplots(1, 2, figsize=(10, 4), layout=&quot;constrained&quot;)
 
-# YOUR CODE HERE</textarea>
+# YOUR CODE HERE
+
+plt.show()</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exmisleading-20">Run</button>
           <button class="ex-reset" data-target="exmisleading-20">Reset</button>
@@ -1799,7 +1838,9 @@ axes[<span class="nm">1</span>].<span class="fn">scatter</span>(sub.logins_per_w
 axes[<span class="nm">1</span>].<span class="fn">set_xlabel</span>(<span class="st">&quot;logins per week&quot;</span>)
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">f&quot;Full range (n = {len(sub)})&quot;</span>)
 
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;Failure demonstrated: bad data, by cropping the axis&quot;</span>)</code></pre></details>
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;Failure demonstrated: bad data, by cropping the axis&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -1816,6 +1857,7 @@ fig.<span class="fn">suptitle</span>(<span class="st">&quot;Failure demonstrated
       <p>matplotlib groups its colormaps into four classes, and the class is chosen by the data rather than by taste:</p>
       <table class="data-table"><thead><tr><th>Class</th><th>Use it when</th><th>Examples</th></tr></thead><tbody><tr><td><strong>Sequential</strong></td><td>the value has an order and one end matters</td><td><code>viridis</code>, <code>plasma</code>, <code>Blues</code></td></tr><tr><td><strong>Diverging</strong></td><td>there is a meaningful middle, and both directions matter</td><td><code>coolwarm</code>, <code>RdBu</code>, <code>PuOr</code></td></tr><tr><td><strong>Cyclic</strong></td><td>the value wraps around, like an angle or time of day</td><td><code>twilight</code>, <code>hsv</code></td></tr><tr><td><strong>Qualitative</strong></td><td>the categories have no order at all</td><td><code>tab10</code>, <code>Set2</code>, <code>petroff10</code></td></tr></tbody></table>
       <p>The mistake this taxonomy prevents is using a qualitative palette for an ordered variable, which tells the reader the categories are unrelated when they are a sequence.</p>
+      <div data-runnable>
       <pre><code><span class="cm"># Sequential: one ordered variable, colored by how much of it there is.</span>
 sub = cohort[[<span class="st">&quot;hs_gpa&quot;</span>, <span class="st">&quot;course_score&quot;</span>, <span class="st">&quot;logins_per_week&quot;</span>]].<span class="fn">dropna</span>()
 
@@ -1826,14 +1868,14 @@ fig.<span class="fn">colorbar</span>(points, ax=ax, label=<span class="st">&quot
 
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;high school GPA&quot;</span>)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
-ax.<span class="fn">set_title</span>(<span class="st">f&quot;Prior record and engagement, together (n = {len(sub)})&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;Prior record and engagement, together (n = <span class="out-num">85</span>)&#x27;)
+ax.<span class="fn">set_title</span>(<span class="st">f&quot;Prior record and engagement, together (n = {len(sub)})&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <figure class="nb-figure"><img src="assets/fig-59b4098462.png" alt="Figure: Prior record and engagement, together (n = ... )" loading="lazy"></figure>
       </div>
-      <figure class="nb-figure"><img src="assets/fig-23b2941590.png" alt="Figure: Prior record and engagement, together (n = ... )" loading="lazy"></figure>
       <p><code>fig.colorbar(points, ax=ax, ...)</code> asks the <strong>Figure</strong> for the colorbar and tells it which Axes to steal space from, which is the explicit form of what <code>plt.colorbar()</code> guesses.</p>
       <p><code>viridis</code> is matplotlib&#x27;s default for a reason worth knowing: it is <em>perceptually uniform</em>, meaning equal steps in the data look like equal steps in color. The older <code>jet</code> and <code>rainbow</code> maps are not, so they invent boundaries where the data has none, and both go light in the middle and dark at both ends, which makes them unreadable in grayscale.</p>
+      <div data-runnable>
       <pre><code><span class="cm"># Diverging: distance from a meaningful middle, in two directions.</span>
 mean_score = cohort.course_score.<span class="fn">mean</span>()
 deviation = cohort.course_score - mean_score
@@ -1846,12 +1888,11 @@ fig.<span class="fn">colorbar</span>(points, ax=ax, label=<span class="st">f&quo
 
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;high school GPA&quot;</span>)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;high school attendance&quot;</span>)
-ax.<span class="fn">set_title</span>(<span class="st">&quot;A diverging map has to be centered, or the middle color lies&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;A diverging map has to be centered, or the middle color lies&#x27;)
+ax.<span class="fn">set_title</span>(<span class="st">&quot;A diverging map has to be centered, or the middle color lies&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <figure class="nb-figure"><img src="assets/fig-4990922f3e.png" alt="Figure: A diverging map has to be centered, or the middle color lies" loading="lazy"></figure>
       </div>
-      <figure class="nb-figure"><img src="assets/fig-2b569e9e5c.png" alt="Figure: A diverging map has to be centered, or the middle color lies" loading="lazy"></figure>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><code>vmin=-limit, vmax=limit</code> is what makes that figure honest. A diverging colormap puts its neutral color at the midpoint of the range it is given, so if the range is not symmetric around zero, the color that reads as &quot;at the mean&quot; sits somewhere else. This is the color version of a truncated axis.</p>
@@ -1876,6 +1917,7 @@ available from the preferred list: [&#x27;petroff10&#x27;, &#x27;tab10&#x27;]
 using: petroff10
       </div>
       <p><code>okabe_ito</code> and <code>petroff6</code> were added in matplotlib 3.11, and <code>petroff10</code> in 3.10. If your version does not have them, the cell above falls back and the figures still work. Checking <code>matplotlib.color_sequences</code> rather than hardcoding a name is the habit worth taking away: the library moves, and code that asks what is present outlives code that assumes.</p>
+      <div data-runnable>
       <pre><code>bands = cohort.<span class="fn">assign</span>(band=pd.<span class="fn">qcut</span>(cohort.hs_gpa, <span class="nm">3</span>,
                                    labels=[<span class="st">&quot;lower third&quot;</span>, <span class="st">&quot;middle third&quot;</span>, <span class="st">&quot;upper third&quot;</span>]))
 
@@ -1897,12 +1939,11 @@ axes[<span class="nm">0</span>].<span class="fn">set_title</span>(<span class="s
                     color=c, marker=marker, label=name)
 axes[<span class="nm">1</span>].<span class="fn">legend</span>(title=<span class="st">&quot;high school GPA&quot;</span>)
 axes[<span class="nm">1</span>].<span class="fn">set_xlabel</span>(<span class="st">&quot;logins per week&quot;</span>)
-axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;Encoded by color and shape&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;Encoded by color and shape&#x27;)
-      </div>
+axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;Encoded by color and shape&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-6b2ae2cf7a.png" alt="Figure: Encoded by color only" loading="lazy"></figure>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>Never let color be the only thing carrying a distinction. A second channel, marker shape for points, line style for lines, direct labels for bars, costs one argument and makes the figure work for a reader who cannot separate two of your colors, and for anyone who prints it.</p>
@@ -1911,6 +1952,7 @@ Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;E
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Take the palette you just used and convert each color to the gray it would print as. Do the categories stay distinguishable?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code><span class="cm"># alt: Two strips of color swatches, the palette in color above and the</span>
 <span class="cm"># alt: same colors converted to the gray they would print as below.</span>
 <span class="kw">import</span> matplotlib.colors <span class="kw">as</span> mcolors
@@ -1932,9 +1974,12 @@ show = palette[:<span class="nm">6</span>]
     ax.<span class="fn">set_ylim</span>(<span class="nm">0</span>, <span class="nm">1</span>)
     ax.<span class="fn">set_xticks</span>([])
     ax.<span class="fn">set_yticks</span>([])
-    ax.<span class="fn">set_title</span>(title, fontsize=<span class="nm">10</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
+    ax.<span class="fn">set_title</span>(title, fontsize=<span class="nm">10</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-b18e03aa54.png" alt="Two strips of color swatches, the palette in color above and the" loading="lazy"></figure>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p>Two colors with similar luminance become the same gray, and no amount of hue difference rescues them once the figure is printed or photocopied. The numbers printed on the lower strip are relative luminance on a 0 to 1 scale; categories whose values sit close together need a second channel or a different palette.</p>
       </details>
       <h3 id="your-turn-8">Your turn</h3>
@@ -1961,7 +2006,9 @@ ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;mean course score&q
 lum = [<span class="nm">0.2126</span> * mcolors.<span class="fn">to_rgb</span>(c)[<span class="nm">0</span>] + <span class="nm">0.7152</span> * mcolors.<span class="fn">to_rgb</span>(c)[<span class="nm">1</span>]
        + <span class="nm">0.0722</span> * mcolors.<span class="fn">to_rgb</span>(c)[<span class="nm">2</span>] <span class="kw">for</span> c <span class="kw">in</span> two]
 ax.<span class="fn">set_title</span>(<span class="st">f&quot;Luminance {lum[0]:.2f} and {lum[1]:.2f}, &quot;</span>
-             <span class="st">f&quot;and the hatch works without color at all&quot;</span>)</code></pre></details>
+             <span class="st">f&quot;and the hatch works without color at all&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
     
       <div class="section-nav"><a class="section-next" data-goto="shortcuts" href="#shortcuts">Next: pandas &amp; seaborn &rarr;</a></div>
@@ -1972,6 +2019,7 @@ ax.<span class="fn">set_title</span>(<span class="st">f&quot;Luminance {lum[0]:.
       <p>Everything so far has been matplotlib. Two libraries sit on top of it and will draw a figure in one line, and both hand you back matplotlib objects, so everything from sections 2 and 8 still applies.</p>
       <h3 id="pandas-plot-on-the-frame-you-already-have">pandas: <code>.plot()</code> on the frame you already have</h3>
       <p><code>DataFrame.plot()</code> and <code>Series.plot()</code> accept a <code>kind</code> and, importantly, an <code>ax</code>. Passing the Axes you made keeps the figure yours.</p>
+      <div data-runnable>
       <pre><code>fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">2</span>, figsize=(<span class="nm">10</span>, <span class="nm">3.6</span>), layout=<span class="st">&quot;constrained&quot;</span>)
 
 <span class="cm"># The matplotlib version.</span>
@@ -1985,22 +2033,23 @@ cohort.course_score.<span class="fn">plot</span>(kind=<span class="st">&quot;his
 axes[<span class="nm">1</span>].<span class="fn">set_xlabel</span>(<span class="st">&quot;course score&quot;</span>)
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;pandas, with ax=&quot;</span>)
 
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;Same figure, and the second one is one line&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">0.98</span>, &#x27;Same figure, and the second one is one line&#x27;)
-      </div>
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;Same figure, and the second one is one line&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-0d35877979.png" alt="Figure: Same figure, and the second one is one line" loading="lazy"></figure>
+      </div>
+      <div data-runnable>
       <pre><code><span class="cm"># .plot() returns the Axes, which is why the rest still works.</span>
 returned = cohort.course_score.<span class="fn">plot</span>(kind=<span class="st">&quot;hist&quot;</span>, bins=<span class="nm">12</span>)
 <span class="fn">print</span>(<span class="fn">type</span>(returned))
 returned.<span class="fn">set_title</span>(<span class="st">&quot;Still an Axes, so set_title is still the method&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &lt;class &#x27;matplotlib.axes._axes.Axes&#x27;&gt;
 Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;Still an Axes, so set_title is still the method&#x27;)
       </div>
       <figure class="nb-figure"><img src="assets/fig-ea92e9e66d.png" alt="Figure: Still an Axes, so set_title is still the method" loading="lazy"></figure>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>Always pass <code>ax=</code>. Without it, pandas draws on whatever Axes matplotlib thinks is current, which is the implicit interface arriving through a side door. With it, <code>.plot()</code> is a convenient way to fill an Axes you control.</p>
@@ -2019,12 +2068,10 @@ corr = cohort[[<span class="st">&quot;hs_gpa&quot;</span>, <span class="st">&quo
 fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">6</span>, <span class="nm">4.8</span>), layout=<span class="st">&quot;constrained&quot;</span>)
 sns.<span class="fn">heatmap</span>(corr, annot=<span class="kw">True</span>, fmt=<span class="st">&quot;.2f&quot;</span>, cmap=<span class="st">&quot;coolwarm&quot;</span>, vmin=-<span class="nm">1</span>, vmax=<span class="nm">1</span>,
             ax=ax)
-ax.<span class="fn">set_title</span>(<span class="st">&quot;Correlations, with the diverging scale centered on zero&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;Correlations, with the diverging scale centered on zero&#x27;)
-      </div>
-      <figure class="nb-figure"><img src="assets/fig-7b443c9ee2.png" alt="Figure: Correlations, with the diverging scale centered on zero" loading="lazy"></figure>
+ax.<span class="fn">set_title</span>(<span class="st">&quot;Correlations, with the diverging scale centered on zero&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <figure class="nb-figure"><img src="assets/fig-6cd32dbc6d.png" alt="Figure: Correlations, with the diverging scale centered on zero" loading="lazy"></figure>
       <pre><code>fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">2</span>, figsize=(<span class="nm">10</span>, <span class="nm">4</span>), sharey=<span class="kw">True</span>,
                          layout=<span class="st">&quot;constrained&quot;</span>)
 
@@ -2034,19 +2081,19 @@ axes[<span class="nm">0</span>].<span class="fn">set_title</span>(<span class="s
 sns.<span class="fn">boxplot</span>(data=cohort, x=<span class="st">&quot;success&quot;</span>, y=<span class="st">&quot;course_score&quot;</span>, ax=axes[<span class="nm">1</span>])
 axes[<span class="nm">1</span>].<span class="fn">set_xticks</span>([<span class="nm">0</span>, <span class="nm">1</span>], [<span class="st">&quot;did not succeed&quot;</span>, <span class="st">&quot;succeeded&quot;</span>])
 axes[<span class="nm">1</span>].<span class="fn">set_xlabel</span>(<span class="st">&quot;&quot;</span>)
-axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;boxplot: groups without the loop&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;boxplot: groups without the loop&#x27;)
-      </div>
-      <figure class="nb-figure"><img src="assets/fig-e6ef1aa3bb.png" alt="Figure: regplot: fit and confidence band" loading="lazy"></figure>
+axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;boxplot: groups without the loop&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <figure class="nb-figure"><img src="assets/fig-67201d6b00.png" alt="Figure: regplot: fit and confidence band" loading="lazy"></figure>
       <p>Every seaborn call above passed <code>ax=</code>. Those are seaborn&#x27;s <strong>axes-level</strong> functions, and <code>ax=</code> is how seaborn&#x27;s own documentation says to use them with the object-oriented interface.</p>
       <p>The other kind is different, and it is worth being explicit about rather than surprised by.</p>
       <pre><code><span class="cm"># A figure-level function builds its OWN figure. It does not take ax=.</span>
 grid = sns.<span class="fn">pairplot</span>(cohort[[<span class="st">&quot;hs_gpa&quot;</span>, <span class="st">&quot;logins_per_week&quot;</span>, <span class="st">&quot;course_score&quot;</span>]],
                     height=<span class="nm">2.0</span>)
 grid.figure.<span class="fn">suptitle</span>(<span class="st">&quot;pairplot returns a grid object, not an Axes&quot;</span>, y=<span class="nm">1.02</span>)
-<span class="fn">print</span>(<span class="fn">type</span>(grid))</code></pre>
+<span class="fn">print</span>(<span class="fn">type</span>(grid))
+
+plt.<span class="fn">show</span>()</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
 &lt;class &#x27;seaborn.axisgrid.PairGrid&#x27;&gt;
@@ -2064,7 +2111,9 @@ grid.figure.<span class="fn">suptitle</span>(<span class="st">&quot;pairplot ret
         <label class="exercise-label" for="exshortcuts-12-src">Your turn - run it here<span class="vh"> (exercise 10)</span></label>
         <textarea id="exshortcuts-12-src" class="ex-editor" spellcheck="false">fig, axes = plt.subplots(1, 2, figsize=(10, 4), layout=&quot;constrained&quot;)
 
-# YOUR CODE HERE</textarea>
+# YOUR CODE HERE
+
+plt.show()</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exshortcuts-12">Run</button>
           <button class="ex-reset" data-target="exshortcuts-12">Reset</button>
@@ -2081,7 +2130,9 @@ sub = cohort[[<span class="st">&quot;submission_rate&quot;</span>, <span class="
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">f&quot;r = {sub.submission_rate.corr(sub.course_score):.2f}, &quot;</span>
                   <span class="st">f&quot;n = {len(sub)}&quot;</span>)
 
-fig.<span class="fn">suptitle</span>(<span class="st">&quot;seaborn drawing into a figure we built&quot;</span>)</code></pre></details>
+fig.<span class="fn">suptitle</span>(<span class="st">&quot;seaborn drawing into a figure we built&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
     
       <div class="section-nav"><a class="section-next" data-goto="saving" href="#saving">Next: Saving &rarr;</a></div>
@@ -2110,7 +2161,9 @@ ax.<span class="fn">set_title</span>(<span class="st">&quot;The figure we are ab
                      (<span class="st">&quot;fig.svg&quot;</span>, {})]:
     path = os.path.<span class="fn">join</span>(<span class="st">&quot;figures&quot;</span>, name)
     fig.<span class="fn">savefig</span>(path, **kwargs)
-    <span class="fn">print</span>(<span class="st">f&quot;{name:12} {os.path.getsize(path) / 1024:6.0f} KB&quot;</span>)</code></pre>
+    <span class="fn">print</span>(<span class="st">f&quot;{name:12} {os.path.getsize(path) / 1024:6.0f} KB&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
 fig_72.png       <span class="out-num">17</span> KB
@@ -2168,7 +2221,9 @@ ax.<span class="fn">set_title</span>(<span class="st">f&quot;Successful students
 <span class="kw">for</span> name <span class="kw">in</span> [<span class="st">&quot;success_gap_16_points.png&quot;</span>, <span class="st">&quot;success_gap_16_points.pdf&quot;</span>]:
     path = os.path.<span class="fn">join</span>(<span class="st">&quot;figures&quot;</span>, name)
     fig.<span class="fn">savefig</span>(path, dpi=<span class="nm">200</span>, bbox_inches=<span class="st">&quot;tight&quot;</span>)
-    <span class="fn">print</span>(<span class="st">f&quot;wrote {path} ({os.path.getsize(path) / 1024:.0f} KB)&quot;</span>)</code></pre></details>
+    <span class="fn">print</span>(<span class="st">f&quot;wrote {path} ({os.path.getsize(path) / 1024:.0f} KB)&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
     
       <div class="section-nav"><a class="section-next" data-goto="errors" href="#errors">Next: Quiet Failures &rarr;</a></div>
@@ -2180,7 +2235,9 @@ ax.<span class="fn">set_title</span>(<span class="st">f&quot;Successful students
       <h3 id="the-loud-ones-first">The loud ones first</h3>
       <p>Two errors you will meet, worth meeting on purpose.</p>
       <pre><code>fig, ax = plt.<span class="fn">subplots</span>()
-ax.<span class="fn">scatter</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>], [<span class="nm">10</span>, <span class="nm">20</span>])</code></pre>
+ax.<span class="fn">scatter</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>], [<span class="nm">10</span>, <span class="nm">20</span>])
+
+plt.<span class="fn">show</span>()</code></pre>
       <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
       <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
@@ -2199,7 +2256,9 @@ ValueError: x and y must be the same size</div>
       </details>
       <pre><code>fig, ax = plt.<span class="fn">subplots</span>()
 ax.<span class="fn">bar</span>([<span class="nm">0</span>, <span class="nm">1</span>], [<span class="nm">58.7</span>, <span class="nm">74.8</span>])
-ax.<span class="fn">set_xticks</span>([<span class="nm">0</span>, <span class="nm">1</span>], [<span class="st">&quot;group A&quot;</span>, <span class="st">&quot;group B&quot;</span>, <span class="st">&quot;group C&quot;</span>])</code></pre>
+ax.<span class="fn">set_xticks</span>([<span class="nm">0</span>, <span class="nm">1</span>], [<span class="st">&quot;group A&quot;</span>, <span class="st">&quot;group B&quot;</span>, <span class="st">&quot;group C&quot;</span>])
+
+plt.<span class="fn">show</span>()</code></pre>
       <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
       <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
@@ -2222,6 +2281,7 @@ ValueError: The number of FixedLocator locations (<span class="out-num">2</span>
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Two panels. The data goes to the first, and the labels are set on the second. What does the figure look like?  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">2</span>, figsize=(<span class="nm">9</span>, <span class="nm">3.2</span>), layout=<span class="st">&quot;constrained&quot;</span>)
 
 axes[<span class="nm">0</span>].<span class="fn">scatter</span>(cohort.hs_gpa, cohort.course_score, s=<span class="nm">24</span>, alpha=<span class="nm">0.7</span>)
@@ -2229,17 +2289,17 @@ axes[<span class="nm">0</span>].<span class="fn">scatter</span>(cohort.hs_gpa, c
 <span class="cm"># The typo: axes[1] instead of axes[0].</span>
 axes[<span class="nm">1</span>].<span class="fn">set_xlabel</span>(<span class="st">&quot;high school GPA&quot;</span>)
 axes[<span class="nm">1</span>].<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
-axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;Prior record against outcome&quot;</span>)</code></pre>
-      <details class="debrief"><summary>What happened</summary>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;Prior record against outcome&#x27;)
-      </div>
+axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;Prior record against outcome&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-75e1154e44.png" alt="Figure: Prior record against outcome" loading="lazy"></figure>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p>An empty labeled panel beside an unlabeled full one. Obvious here because the figure has two panels and nothing else. In a 2 by 3 grid built in a loop, with a title on every panel, it reads as one panel that happens to have no data, which is the sort of thing that ships.</p>
       </details>
       <h3 id="quiet-failure-2-the-missing-rows">Quiet failure 2: the missing rows</h3>
       <p>This is the one this module has been warning about since section 0.</p>
+      <div data-runnable>
       <pre><code>fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">6</span>, <span class="nm">3.6</span>), layout=<span class="st">&quot;constrained&quot;</span>)
 ax.<span class="fn">scatter</span>(cohort.logins_per_week, cohort.course_score, s=<span class="nm">26</span>, alpha=<span class="nm">0.7</span>)
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;logins per week&quot;</span>)
@@ -2250,19 +2310,23 @@ offsets = np.<span class="fn">asarray</span>(ax.collections[<span class="nm">0</
 drawn = <span class="fn">int</span>(np.<span class="fn">isfinite</span>(offsets).<span class="fn">all</span>(axis=<span class="nm">1</span>).<span class="fn">sum</span>())
 <span class="fn">print</span>(<span class="st">f&quot;rows in the frame     : {len(cohort)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;points handed to scatter: {len(offsets)}&quot;</span>)
-<span class="fn">print</span>(<span class="st">f&quot;points actually drawn : {drawn}&quot;</span>)</code></pre>
-      <div class="output-block">
+<span class="fn">print</span>(<span class="st">f&quot;points actually drawn : {drawn}&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 rows in the frame     : <span class="out-num">100</span>
 points handed to scatter: <span class="out-num">100</span>
 points actually drawn : <span class="out-num">85</span>
       </div>
       <figure class="nb-figure"><img src="assets/fig-3039252607.png" alt="Figure: All 100 students" loading="lazy"></figure>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p>Read those three numbers carefully, because they are not what you would guess. matplotlib accepted all 100 rows, and 85 of them produced a visible point. The missing values are still in the collection, held as a masked array, and they are simply never drawn. So the figure shows 85 students, no warning was issued, and a naive <code>len()</code> on the offsets would have told you 100 and agreed with the false title.</p>
       <p>This is the mechanical argument for D30, the rule that a figure&#x27;s title states its finding <strong>and the cell computes the number in it</strong>. A computed n cannot be wrong in this way.</p>
       </div>
+      <div data-runnable>
       <pre><code><span class="cm"># The honest version, and the check worth running on any figure.</span>
 sub = cohort[[<span class="st">&quot;logins_per_week&quot;</span>, <span class="st">&quot;course_score&quot;</span>]].<span class="fn">dropna</span>()
 
@@ -2270,14 +2334,14 @@ fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">6</span
 ax.<span class="fn">scatter</span>(sub.logins_per_week, sub.course_score, s=<span class="nm">26</span>, alpha=<span class="nm">0.7</span>)
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;logins per week&quot;</span>)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
-ax.<span class="fn">set_title</span>(<span class="st">f&quot;{len(sub)} of {len(cohort)} students have LMS records&quot;</span>)</code></pre>
-      <div class="output-block">
-        <div class="output-block-label">output</div>
-Text(<span class="out-num">0.5</span>, <span class="out-num">1.0</span>, &#x27;<span class="out-num">85</span> of <span class="out-num">100</span> students have LMS records&#x27;)
-      </div>
+ax.<span class="fn">set_title</span>(<span class="st">f&quot;{len(sub)} of {len(cohort)} students have LMS records&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-6b9de72ac4.png" alt="Figure: of ... students have LMS records" loading="lazy"></figure>
+      </div>
       <h3 id="quiet-failure-3-the-column-that-is-not-what-you-think">Quiet failure 3: the column that is not what you think</h3>
       <p>A column read from a CSV can arrive as text that looks numeric. Plotting it does not fail. It produces a category for every distinct value.</p>
+      <div data-runnable>
       <pre><code>as_text = cohort.course_score.<span class="fn">round</span>().<span class="fn">astype</span>(<span class="fn">int</span>).<span class="fn">astype</span>(<span class="fn">str</span>)
 
 fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">2</span>, figsize=(<span class="nm">10</span>, <span class="nm">3.4</span>), layout=<span class="st">&quot;constrained&quot;</span>)
@@ -2289,12 +2353,15 @@ axes[<span class="nm">0</span>].<span class="fn">tick_params</span>(axis=<span c
 axes[<span class="nm">1</span>].<span class="fn">hist</span>(cohort.course_score, bins=<span class="nm">12</span>, edgecolor=<span class="st">&quot;white&quot;</span>)
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;course_score as numbers&quot;</span>)
 
-<span class="fn">print</span>(<span class="st">&quot;dtype of the text version:&quot;</span>, as_text.dtype)</code></pre>
-      <div class="output-block">
+<span class="fn">print</span>(<span class="st">&quot;dtype of the text version:&quot;</span>, as_text.dtype)
+
+plt.<span class="fn">show</span>()</code></pre>
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 dtype of the text version: str
       </div>
       <figure class="nb-figure"><img src="assets/fig-78176348eb.png" alt="Figure: course_score as text" loading="lazy"></figure>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>The left panel is not a distribution. Each distinct string became its own category, in the order encountered, so the x axis is neither sorted nor numeric and the shape means nothing. Check <code>.dtype</code> before plotting anything that came out of a file, which is the same habit Module 4 built for <code>submission_rate</code>.</p>
       </details>
@@ -2308,7 +2375,9 @@ dtype of the text version: str
     fig.<span class="fn">savefig</span>(<span class="st">f&quot;figures/band_{band}.png&quot;</span>, dpi=<span class="nm">72</span>)
     plt.<span class="fn">close</span>(fig)          <span class="cm"># the line that matters</span>
 
-<span class="fn">print</span>(<span class="st">f&quot;open figures before: {before}, after: {len(plt.get_fignums())}&quot;</span>)</code></pre>
+<span class="fn">print</span>(<span class="st">f&quot;open figures before: {before}, after: {len(plt.get_fignums())}&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
 open figures before: <span class="out-num">0</span>, after: <span class="out-num">0</span>
@@ -2353,7 +2422,9 @@ ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;<
 
 drawn = <span class="fn">points_drawn</span>(ax)
 ax.<span class="fn">set_title</span>(<span class="st">f&quot;{drawn} points drawn, {len(cohort) - drawn} students missing&quot;</span>)
-<span class="fn">print</span>(<span class="st">f&quot;frame rows {len(cohort)}, drawn {drawn}, dropna agrees: {drawn == len(sub)}&quot;</span>)</code></pre></details>
+<span class="fn">print</span>(<span class="st">f&quot;frame rows {len(cohort)}, drawn {drawn}, dropna agrees: {drawn == len(sub)}&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
     
       <div class="section-nav"><a class="section-next" data-goto="challenges" href="#challenges">Next: Challenges &rarr;</a></div>
@@ -2396,7 +2467,9 @@ results = {}
 
 best = <span class="fn">max</span>(results, key=results.get)
 fig.<span class="fn">suptitle</span>(<span class="st">f&quot;{best} tracks course score most closely &quot;</span>
-             <span class="st">f&quot;(r = {results[best]:.2f}), on 85 of 100 students&quot;</span>)</code></pre></details>
+             <span class="st">f&quot;(r = {results[best]:.2f}), on 85 of 100 students&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
       <h3 id="challenge-2-the-finding-that-changes-the-plan">Challenge 2: the finding that changes the plan</h3>
       <p>The proposal on the table is to fund high school outreach clubs. Build the single figure that shows why that would be spending on a correlation belonging to something else. One figure, not three.</p>
@@ -2426,7 +2499,9 @@ ax.<span class="fn">legend</span>(title=<span class="st">&quot;high school GPA&q
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;high school clubs&quot;</span>)
 ax.<span class="fn">set_ylabel</span>(<span class="st">&quot;course score&quot;</span>)
 ax.<span class="fn">set_title</span>(<span class="st">f&quot;Clubs and score correlate at {raw:.2f} overall, &quot;</span>
-             <span class="st">f&quot;and at most {max(within):.2f} within a GPA band&quot;</span>)</code></pre></details>
+             <span class="st">f&quot;and at most {max(within):.2f} within a GPA band&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
       <h3 id="challenge-3-the-audit-trail">Challenge 3: the audit trail</h3>
       <p>The Cabinet will ask how many students each claim rests on. Build a figure that answers it: for each column the report uses, how many of the 100 students have a value. Sort it so the gaps are obvious, and state the worst case in the title.</p>
@@ -2457,7 +2532,9 @@ ax.<span class="fn">axvline</span>(<span class="fn">len</span>(cohort), color=<s
 ax.<span class="fn">set_xlabel</span>(<span class="st">&quot;students with a value&quot;</span>)
 ax.<span class="fn">legend</span>(loc=<span class="st">&quot;lower right&quot;</span>)
 ax.<span class="fn">set_title</span>(<span class="st">f&quot;Every engagement measure rests on {counts.min()} of &quot;</span>
-             <span class="st">f&quot;{len(cohort)} students&quot;</span>)</code></pre></details>
+             <span class="st">f&quot;{len(cohort)} students&quot;</span>)
+
+plt.<span class="fn">show</span>()</code></pre></details>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>

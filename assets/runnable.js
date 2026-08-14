@@ -52,7 +52,7 @@
      the last statement, then eval the last one if it is an expression, and
      display it only if it is not None. */
   var SHIM = [
-    "import ast, sys, io, traceback",
+    "import ast, sys, io, base64, traceback",
     "def _dtsc_run(src, ns):",
     "    buf = io.StringIO()",
     "    old = sys.stdout",
@@ -79,16 +79,36 @@
     "        lines = traceback.format_exc().splitlines()",
     "        buf.write(lines[0] + '\\n' if len(lines) == 1 else lines[-1] + '\\n')",
     "        sys.stdout = old",
-    "        return buf.getvalue(), True",
+    "        return buf.getvalue(), True, _dtsc_figs()",
     "    finally:",
     "        sys.stdout = old",
-    "    return buf.getvalue(), False",
+    "    return buf.getvalue(), False, _dtsc_figs()",
     /* The bootstrap has to land in the SAME dict the cells run in.
        p.runPython(bootSrc) puts `pd` in Pyodide's globals, while every cell
        executes against `_dtsc_ns` - so `pd` was defined somewhere the cells
        could not see it. And run() resets `_dtsc_ns` on each click, which would
        have wiped it even if it had landed correctly. One reset function owns
        both jobs, and is the only thing allowed to clear the namespace. */
+    /* Figures. A plotting cell writes nothing to stdout, so without this a Run
+       click on Module 5 looks like it did nothing at all. Pyodide's default
+       matplotlib backend (matplotlib-pyodide) draws onto a canvas it appends to
+       the document, which would put figures outside this block and outside the
+       page's layout entirely - so the backend is forced to Agg at import time
+       and the figures are collected here as PNG instead. */
+    "def _dtsc_figs():",
+    "    plt = sys.modules.get('matplotlib.pyplot')",
+    "    if plt is None:",
+    "        return []",
+    "    out = []",
+    "    for num in plt.get_fignums():",
+    "        fig = plt.figure(num)",
+    "        buf = io.BytesIO()",
+    "        try:",
+    "            fig.savefig(buf, format='png', dpi=110, bbox_inches='tight')",
+    "            out.append(base64.b64encode(buf.getvalue()).decode('ascii'))",
+    "        finally:",
+    "            plt.close(fig)",
+    "    return out",
     "_dtsc_boot = ''",
     "def _dtsc_reset():",
     "    global _dtsc_ns",
@@ -108,6 +128,10 @@
       s.onerror = function () { reject(new Error("could not load Pyodide")); };
       s.onload = function () {
         window.loadPyodide({ indexURL: PYODIDE }).then(function (p) {
+        /* Before any cell can `import matplotlib.pyplot`. matplotlib-pyodide
+           would otherwise take over and render to its own canvas. */
+        try { p.runPython("import os\nos.environ['MPLBACKEND'] = 'agg'"); }
+        catch (e) { if (window.console) console.warn("runnable: backend", e); }
           /* Work out what to load by READING THE PAGE rather than hardcoding a
              per-module list, so a notebook change cannot leave this stale.
 
@@ -197,13 +221,37 @@
   function execOne(block) {
     var src = block.querySelector("code").textContent;
     var res = py.runPython("_dtsc_run(" + JSON.stringify(src) + ", _dtsc_ns)");
-    var text = res.get(0), failed = res.get(1);
+    var text = res.get(0), failed = res.get(1), figs = res.get(2).toJs();
     res.destroy();
     var slot = outSlot(block);
-    slot.querySelector("pre").textContent = text === "" ? "— no output —" : text;
+    var hasText = text !== "";
+    slot.querySelector("pre").textContent =
+      hasText ? text : (figs.length ? "" : "— no output —");
+    slot.querySelector("pre").hidden = !hasText && figs.length > 0;
+    renderFigures(slot, figs, block);
     slot.classList.toggle("run-failed", failed);
     block.setAttribute("data-ran", "1");
     return failed;
+  }
+
+  /* The alt text is lifted from the stored figure the page already shipped, so
+     a live re-run describes itself exactly as the verified one did. A figure
+     with no stored counterpart says so rather than shipping an empty alt. */
+  function renderFigures(slot, figs, block) {
+    var old = slot.querySelectorAll(".run-figure");
+    for (var i = 0; i < old.length; i++) old[i].remove();
+    if (!figs.length) return;
+    var stored = block.parentNode.querySelectorAll(".nb-figure img");
+    for (var j = 0; j < figs.length; j++) {
+      var fig = document.createElement("figure");
+      fig.className = "nb-figure run-figure";
+      var img = document.createElement("img");
+      img.src = "data:image/png;base64," + figs[j];
+      img.alt = stored[j] ? stored[j].getAttribute("alt")
+                          : "Figure produced by running this code.";
+      fig.appendChild(img);
+      slot.appendChild(fig);
+    }
   }
 
   function run(block, statusEl) {
