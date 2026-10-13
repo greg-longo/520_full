@@ -19,6 +19,10 @@
       --wrong-bg: #b04040;
       --wrong-text: #e08080;
       --border: #3a3835;
+      /* Oct 2026 contrast pass: accent as TEXT needs its own value (4.5:1 on the cards),
+         and button text picks whichever of white or near-black reads on the accent. */
+      --accent-text: #a888dc;
+      --on-accent: #ffffff;
     }
 
     * {
@@ -55,7 +59,7 @@
     }
 
     .nav-breadcrumb a {
-      color: var(--accent);
+      color: var(--accent-text);
       text-decoration: none;
     }
 
@@ -66,7 +70,7 @@
     .nav-back {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 14px;
-      color: var(--accent);
+      color: var(--accent-text);
       text-decoration: none;
     }
 
@@ -91,7 +95,7 @@
       font-family: 'IBM Plex Mono', monospace;
       font-size: 12px;
       font-weight: 600;
-      color: var(--accent);
+      color: var(--accent-text);
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-bottom: 20px;
@@ -127,7 +131,7 @@
       font-size: 14px;
       font-weight: 600;
       background-color: var(--accent);
-      color: var(--bg);
+      color: var(--on-accent);
       border: none;
       padding: 12px 24px;
       cursor: pointer;
@@ -181,7 +185,7 @@
     .question-eyebrow {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 12px;
-      color: var(--accent);
+      color: var(--accent-text);
       letter-spacing: 0.5px;
       margin-bottom: 12px;
     }
@@ -296,7 +300,7 @@
     .score-number {
       font-size: 80px;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--accent-text);
       margin-bottom: 12px;
     }
 
@@ -380,7 +384,7 @@
       display: inline-block;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 14px;
-      color: var(--accent);
+      color: var(--accent-text);
       text-decoration: none;
       margin-top: 12px;
     }
@@ -512,7 +516,7 @@
       // --- VARIABLES & TYPES ---
       {
         text: "What does print(10 / 3) output in Python?",
-        options: ["3", "3.0", "3.3333333333333335", "Error - cannot divide integers"],
+        options: ["3", "3.0", "3.3333333333333335", "Error: cannot divide integers"],
         correctIndex: 2,
         difficulty: "easy",
         feedbackCorrect: "Correct. Python 3's / operator always returns a float. Use // for integer (floor) division.",
@@ -520,14 +524,14 @@
       },
       {
         text: "Which of these is a valid Python variable name?",
-        options: ["2nd_base", "batting_avg", "batting-avg", "batting avg"],
+        options: ["2nd_major", "ug_gpa", "ug-gpa", "ug gpa"],
         correctIndex: 1,
         difficulty: "easy",
         feedbackCorrect: "Correct. Variable names can contain letters, numbers, and underscores, but cannot start with a number or contain spaces or hyphens.",
-        feedbackWrong: "Not quite. Variable names cannot start with a digit, contain hyphens, or contain spaces. batting_avg uses underscores, which is the Python convention."
+        feedbackWrong: "Not quite. Variable names cannot start with a digit, contain hyphens, or contain spaces. ug_gpa uses underscores, which is the Python convention."
       },
       {
-        text: "Which error would this cause: name = 'Rivera'; print(name + 14)?",
+        text: "Which error would this cause: name = 'Okoroha'; print(name + 14)?",
         options: ["SyntaxError", "NameError", "ValueError", "TypeError"],
         correctIndex: 3,
         difficulty: "medium",
@@ -568,7 +572,7 @@
       },
       {
         text: "You write: x = 5; x = x + 1. What is x afterward?",
-        options: ["5", "6", "x + 1", "Error - x is already defined"],
+        options: ["5", "6", "x + 1", "Error: x is already defined"],
         correctIndex: 1,
         difficulty: "easy",
         feedbackCorrect: "Correct. x = x + 1 reads the current value (5), adds 1, and stores 6 back in x. Variables can be reassigned.",
@@ -584,7 +588,7 @@
       },
       {
         text: "What does bool(0) return?",
-        options: ["True", "False", "0", "None"],
+        options: ["True", "False", "0", "Error"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. In Python, 0, empty strings, empty lists, and None are all falsy. bool(0) returns False.",
@@ -592,8 +596,8 @@
       },
       // --- STRINGS ---
       {
-        text: "What is the output of print('Eagles'[0])?",
-        options: ["E", "Ea", "s", "Error - strings are not indexable"],
+        text: "What is the output of print('Eastern'[0])?",
+        options: ["E", "Ea", "n", "Error: strings are not indexable"],
         correctIndex: 0,
         difficulty: "easy",
         feedbackCorrect: "Correct. String indexing starts at 0, so [0] is the first character.",
@@ -601,44 +605,39 @@
       },
       {
         text: "What does 'Go ' * 3 produce?",
-        options: ["'Go Go Go '", "'Go 3'", "Error - strings cannot be multiplied", "'GGG ooo   '"],
+        options: ["'Go Go Go '", "'Go 3'", "Error: strings cannot be multiplied", "'GGG ooo   '"],
         correctIndex: 0,
         difficulty: "easy",
         feedbackCorrect: "Correct. The * operator repeats a string. 'Go ' * 3 produces 'Go Go Go '.",
         feedbackWrong: "Not quite. In Python, multiplying a string by an integer repeats it. 'Go ' * 3 gives 'Go Go Go '."
       },
       {
-        text: "What does len('batting') return?",
+        text: "What does len('advisor') return?",
         options: ["6", "7", "8", "Error"],
         correctIndex: 1,
         difficulty: "easy",
-        feedbackCorrect: "Correct. len() returns the number of characters. 'batting' has 7 characters: b-a-t-t-i-n-g.",
-        feedbackWrong: "Not quite. Count the characters: b(1) a(2) t(3) t(4) i(5) n(6) g(7). len('batting') is 7."
+        feedbackCorrect: "Correct. len() returns the number of characters. 'advisor' has 7 characters: a-d-v-i-s-o-r.",
+        feedbackWrong: "Not quite. Count the characters: a(1) d(2) v(3) i(4) s(5) o(6) r(7). len('advisor') is 7."
       },
       {
-        text: "What does 'Rivera'[-1] return?",
-        options: ["R", "a", "e", "Error"],
+        text: "What does 'Park'[-1] return?",
+        options: ["P", "k", "r", "Error"],
         correctIndex: 1,
         difficulty: "medium",
-        feedbackCorrect: "Correct. Negative indexing counts from the end. -1 is the last character, which is 'a' in 'Rivera'.",
-        feedbackWrong: "Not quite. Negative indexes count from the end. 'Rivera'[-1] is the last character 'a'. 'Rivera'[-2] would be 'r'."
+        feedbackCorrect: "Correct. Negative indexing counts from the end. -1 is the last character, which is 'k' in 'Park'.",
+        feedbackWrong: "Not quite. Negative indexes count from the end. 'Park'[-1] is the last character 'k'. 'Park'[-2] would be 'r'."
       },
       {
-        text: "What does 'Eagles'[1:4] return?",
-        options: ["'Eag'", "'agl'", "'agle'", "'Eagl'"],
+        text: "What does 'Eastern'[1:4] return?",
+        options: ["'Eas'", "'ast'", "'aste'", "'East'"],
         correctIndex: 1,
         difficulty: "medium",
-        feedbackCorrect: "Correct. Slicing is start-inclusive, stop-exclusive. [1:4] gives indices 1, 2, 3 - the characters 'a', 'g', 'l'.",
-        feedbackWrong: "Not quite. [1:4] starts at index 1 and stops before index 4. 'Eagles'[0]='E', [1]='a', [2]='g', [3]='l'. Result: 'agl'."
+        feedbackCorrect: "Correct. Slicing is start-inclusive, stop-exclusive. [1:4] gives indices 1, 2, 3: the characters 'a', 's', 't'.",
+        feedbackWrong: "Not quite. [1:4] starts at index 1 and stops before index 4. 'Eastern'[0]='E', [1]='a', [2]='s', [3]='t'. Result: 'ast'."
       },
       {
-        text: "What does f'Player: {name}' do?",
-        options: [
-          "Creates a function called f with parameter name",
-          "Creates a formatted string with the value of name embedded in it",
-          "Filters a list using the variable name",
-          "Converts name to a float"
-        ],
+        text: "What does f'Student: {name}' do?",
+        options: ["Creates a function called f with a parameter called name", "Builds a string with the value of name placed inside it", "Filters a list, keeping only items equal to name", "Converts the value of name to a float, then a string"],
         correctIndex: 1,
         difficulty: "easy",
         feedbackCorrect: "Correct. f-strings (formatted string literals) embed expressions inside {} directly in the string.",
@@ -653,24 +652,24 @@
         feedbackWrong: "Not quite. .upper() is the correct method. .capitalize() only uppercases the first letter. .toUpper() and .UP() do not exist in Python."
       },
       {
-        text: "What does 'first' + 'base' produce?",
-        options: ["'first base'", "'firstbase'", "Error - strings use append()", "'first' + 'base'"],
+        text: "What does 'data' + 'science' produce?",
+        options: ["'data science'", "'datascience'", "Error: strings use append()", "'data' + 'science'"],
         correctIndex: 1,
         difficulty: "easy",
-        feedbackCorrect: "Correct. The + operator concatenates strings directly with no space added. 'first' + 'base' = 'firstbase'.",
-        feedbackWrong: "Not quite. + concatenates strings with no separator. To include a space you would write 'first' + ' ' + 'base'."
+        feedbackCorrect: "Correct. The + operator joins strings directly, with no space added. 'data' + 'science' = 'datascience'.",
+        feedbackWrong: "Not quite. + joins strings with no separator. To include a space you would write 'data' + ' ' + 'science'."
       },
       {
-        text: "What does 'strikeout'.replace('strike', 'walk') return?",
-        options: ["'walkout'", "'strikeout'", "Error", "'walkstrike'"],
+        text: "What does 'midterm'.replace('mid', 'final') return?",
+        options: ["'finalterm'", "'midterm'", "Error", "'finalmidterm'"],
         correctIndex: 0,
         difficulty: "medium",
         feedbackCorrect: "Correct. str.replace(old, new) returns a new string with all occurrences of 'old' replaced by 'new'.",
-        feedbackWrong: "Not quite. replace() returns a new string. 'strike' is found in 'strikeout' and replaced with 'walk', giving 'walkout'."
+        feedbackWrong: "Not quite. replace() returns a new string. 'mid' is found in 'midterm' and replaced with 'final', giving 'finalterm'."
       },
       {
-        text: "Which expression checks if 'avg' appears in the string 'batting_avg'?",
-        options: ["'avg' in 'batting_avg'", "'batting_avg'.contains('avg')", "find('avg', 'batting_avg')", "'batting_avg'['avg']"],
+        text: "Which expression checks if 'gpa' appears in the string 'ug_gpa'?",
+        options: ["'gpa' in 'ug_gpa'", "'ug_gpa'.contains('gpa')", "find('gpa', 'ug_gpa')", "'ug_gpa'['gpa']"],
         correctIndex: 0,
         difficulty: "medium",
         feedbackCorrect: "Correct. The in operator checks for substring membership and returns True or False.",
@@ -678,12 +677,12 @@
       },
       // --- CONDITIONS ---
       {
-        text: "What prints when avg = 0.287 and you run print(avg >= 0.300)?",
-        options: ["0.287", "0.300", "True", "False"],
+        text: "What prints when ug_gpa = 3.45 and you run print(ug_gpa >= 3.5)?",
+        options: ["3.45", "3.5", "True", "False"],
         correctIndex: 3,
         difficulty: "easy",
-        feedbackCorrect: "Correct. 0.287 is less than 0.300, so the >= comparison returns False.",
-        feedbackWrong: "Not quite. 0.287 < 0.300, so the comparison 0.287 >= 0.300 is False."
+        feedbackCorrect: "Correct. 3.45 is less than 3.5, so the >= comparison returns False.",
+        feedbackWrong: "Not quite. 3.45 < 3.5, so the comparison 3.45 >= 3.5 is False."
       },
       {
         text: "What is the output of: x = 10; print('high' if x > 5 else 'low')?",
@@ -703,12 +702,7 @@
       },
       {
         text: "What does the not operator do?",
-        options: [
-          "Subtracts 1 from a number",
-          "Inverts a boolean value (True becomes False, False becomes True)",
-          "Checks if two values are not equal",
-          "Removes an item from a list"
-        ],
+        options: ["Subtracts 1 from a number, like x - 1", "Flips a boolean: True becomes False", "Checks whether two values are not equal", "Removes an item from a list by its value"],
         correctIndex: 1,
         difficulty: "easy",
         feedbackCorrect: "Correct. not is a logical operator that inverts the boolean. not True is False, not False is True.",
@@ -725,7 +719,7 @@
         correctIndex: 0,
         difficulty: "medium",
         feedbackCorrect: "Correct. score=85 fails the >= 90 check, then passes the >= 80 check, so 'B' prints.",
-        feedbackWrong: "Not quite. With score=85: option A's first check (>=90) fails, second check (>=80) passes - prints 'B'. Option B requires score > 85 for 'B', so 85 would print 'C'."
+        feedbackWrong: "Not quite. With score=85: in the >= 90 / >= 80 version the first check fails and the second passes, so it prints 'B'. The > 85 version needs score above 85 for 'B', so 85 would print 'C'."
       },
       // --- LOOPS ---
       {
@@ -746,12 +740,7 @@
       },
       {
         text: "What does the break statement do inside a loop?",
-        options: [
-          "Skips the current iteration and moves to the next one",
-          "Pauses the loop for one second",
-          "Exits the loop immediately",
-          "Restarts the loop from the beginning"
-        ],
+        options: ["Skips the current iteration and moves to the next", "Pauses the loop for one second before continuing", "Exits the loop immediately", "Restarts the loop from the beginning"],
         correctIndex: 2,
         difficulty: "easy",
         feedbackCorrect: "Correct. break exits the loop entirely. continue skips to the next iteration.",
@@ -759,33 +748,23 @@
       },
       {
         text: "What does the continue statement do inside a loop?",
-        options: [
-          "Exits the loop immediately",
-          "Skips the rest of the current iteration and moves to the next one",
-          "Restarts the loop from the first iteration",
-          "Pauses execution until a key is pressed"
-        ],
+        options: ["Exits the loop immediately, skipping the rest", "Skips the rest of this pass and moves on", "Restarts the loop from the very first iteration", "Pauses execution until a key is pressed"],
         correctIndex: 1,
         difficulty: "easy",
         feedbackCorrect: "Correct. continue skips the remaining code in the current iteration and jumps to the next one.",
         feedbackWrong: "Not quite. continue skips the rest of the current loop body and moves to the next iteration. break would exit entirely."
       },
       {
-        text: "How many times does 'hit' print? for i in range(3): print('hit')",
+        text: "How many times does 'check' print? for i in range(3): print('check')",
         options: ["2", "3", "4", "0"],
         correctIndex: 1,
         difficulty: "easy",
-        feedbackCorrect: "Correct. range(3) produces 0, 1, 2 - three values. The loop body runs once per value, printing 'hit' three times.",
-        feedbackWrong: "Not quite. range(3) produces three values: 0, 1, 2. The loop runs once for each, so 'hit' prints 3 times."
+        feedbackCorrect: "Correct. range(3) produces 0, 1, 2: three values. The loop body runs once per value, printing 'check' three times.",
+        feedbackWrong: "Not quite. range(3) produces three values: 0, 1, 2. The loop runs once for each, so 'check' prints 3 times."
       },
       {
         text: "What is a while loop most appropriate for compared to a for loop?",
-        options: [
-          "When you know exactly how many iterations you need",
-          "When you need to iterate over a list",
-          "When you need to repeat until a condition is met, not a fixed number of times",
-          "While loops are always faster than for loops"
-        ],
+        options: ["When you know exactly how many iterations you need", "When you need to step through every item in a list", "When you repeat until a condition changes", "While loops are always faster than for loops are"],
         correctIndex: 2,
         difficulty: "medium",
         feedbackCorrect: "Correct. while loops run as long as a condition is True - useful when you don't know in advance how many iterations you need.",
@@ -793,29 +772,24 @@
       },
       // --- DATA STRUCTURES ---
       {
-        text: "How do you add 'Patel' to the end of roster = ['Rivera', 'Chen']?",
-        options: ["roster.add('Patel')", "roster + 'Patel'", "roster.append('Patel')", "roster.insert('Patel')"],
+        text: "How do you add 'Haddad' to the end of roster = ['Okoroha', 'Park']?",
+        options: ["roster.add('Haddad')", "roster + 'Haddad'", "roster.append('Haddad')", "roster.insert('Haddad')"],
         correctIndex: 2,
         difficulty: "easy",
         feedbackCorrect: "Correct. list.append() adds an element to the end of a list.",
         feedbackWrong: "Not quite. Lists use .append(value) to add to the end. .add() is for sets, not lists."
       },
       {
-        text: "In a dictionary player = {'name': 'Rivera', 'avg': 0.287}, how do you access the average?",
-        options: ["player['avg']", "player[1]", "player.avg", "player.get(0.287)"],
+        text: "In a dictionary student = {'name': 'Amaka Okoroha', 'ug_gpa': 3.81}, how do you access the GPA?",
+        options: ["student['ug_gpa']", "student[1]", "student.ug_gpa", "student.get(3.81)"],
         correctIndex: 0,
         difficulty: "easy",
         feedbackCorrect: "Correct. Dictionary values are accessed by key using square brackets.",
         feedbackWrong: "Not quite. Dictionaries use key-based access: dict[key]. Integer indexes and dot notation do not work on plain dicts."
       },
       {
-        text: "What does roster.pop() do to roster = ['Rivera', 'Chen', 'Patel']?",
-        options: [
-          "Removes and returns the first element ('Rivera')",
-          "Removes and returns the last element ('Patel')",
-          "Returns the list length",
-          "Removes all elements"
-        ],
+        text: "What does roster.pop() do to roster = ['Okoroha', 'Park', 'Haddad']?",
+        options: ["Removes and returns the first element ('Okoroha')", "Removes and returns the last element ('Haddad')", "Returns the length of the list without changing it", "Removes every element, leaving an empty list"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. list.pop() with no argument removes and returns the last element. pop(0) removes the first.",
@@ -823,76 +797,56 @@
       },
       {
         text: "What makes a tuple different from a list?",
-        options: [
-          "Tuples can only hold numbers; lists can hold any type",
-          "Tuples are immutable (cannot be changed after creation); lists are mutable",
-          "Lists are faster than tuples for all operations",
-          "Tuples use {} and lists use []"
-        ],
+        options: ["Tuples can only hold numbers; lists can hold any type", "Tuples can't be changed after creation; lists can", "Lists are faster than tuples for every operation", "Tuples are written with {} and lists with []"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. Tuples use () and cannot be modified after creation. Lists use [] and can be changed.",
         feedbackWrong: "Not quite. The key difference is mutability. Tuples () are immutable; lists [] are mutable. Both can hold any type."
       },
       {
-        text: "What does roster = ['Rivera', 'Chen', 'Patel']; print(len(roster)) output?",
+        text: "What does roster = ['Okoroha', 'Park', 'Haddad']; print(len(roster)) output?",
         options: ["2", "3", "4", "Error"],
         correctIndex: 1,
         difficulty: "easy",
         feedbackCorrect: "Correct. len() on a list returns the number of elements. The list has 3 elements.",
-        feedbackWrong: "Not quite. The list has 3 elements: 'Rivera', 'Chen', 'Patel'. len(roster) returns 3."
+        feedbackWrong: "Not quite. The list has 3 elements: 'Okoroha', 'Park', 'Haddad'. len(roster) returns 3."
       },
       {
-        text: "roster = ['Rivera', 'Chen', 'Patel']. What does roster[1] return?",
-        options: ["'Rivera'", "'Chen'", "'Patel'", "Error - lists use 1-based indexing"],
+        text: "roster = ['Okoroha', 'Park', 'Haddad']. What does roster[1] return?",
+        options: ["'Okoroha'", "'Park'", "'Haddad'", "Error: lists use 1-based indexing"],
         correctIndex: 1,
         difficulty: "easy",
-        feedbackCorrect: "Correct. Python uses 0-based indexing. roster[0] = 'Rivera', roster[1] = 'Chen', roster[2] = 'Patel'.",
-        feedbackWrong: "Not quite. Python indexes start at 0. roster[0] = 'Rivera', roster[1] = 'Chen'."
+        feedbackCorrect: "Correct. Python uses 0-based indexing. roster[0] = 'Okoroha', roster[1] = 'Park', roster[2] = 'Haddad'.",
+        feedbackWrong: "Not quite. Python indexes start at 0. roster[0] = 'Okoroha', roster[1] = 'Park'."
       },
       {
-        text: "How do you add a new key 'hr' with value 5 to an existing dictionary player?",
-        options: [
-          "player.add('hr', 5)",
-          "player['hr'] = 5",
-          "player.insert('hr', 5)",
-          "player.update = {'hr': 5}"
-        ],
+        text: "How do you add a new key 'credits_earned' with value 124 to an existing dictionary student?",
+        options: ["student.add('credits_earned', 124)", "student['credits_earned'] = 124", "student.insert('credits_earned', 124)", "student.update = {'credits_earned': 124}"],
         correctIndex: 1,
         difficulty: "easy",
         feedbackCorrect: "Correct. You add or update dictionary keys with dict[key] = value. This creates the key if it doesn't exist.",
-        feedbackWrong: "Not quite. player['hr'] = 5 is how you add or update a key. .add() is for sets. .insert() is for lists."
+        feedbackWrong: "Not quite. student['credits_earned'] = 124 is how you add or update a key. .add() is for sets. .insert() is for lists."
       },
       {
-        text: "What does 'hr' in player check, where player is a dictionary?",
-        options: [
-          "Whether the value 'hr' exists in the dictionary",
-          "Whether the key 'hr' exists in the dictionary",
-          "Whether player has a method called 'hr'",
-          "The position of 'hr' in the dictionary"
-        ],
+        text: "What does 'major' in student check, where student is a dictionary?",
+        options: ["Whether the value 'major' exists in the dictionary", "Whether the key 'major' exists in the dictionary", "Whether student has a method called 'major'", "The position of 'major' in the dictionary"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. The in operator checks for key membership in a dictionary, not values.",
-        feedbackWrong: "Not quite. in on a dictionary checks keys, not values. To check values use 'hr' in player.values()."
+        feedbackWrong: "Not quite. in on a dictionary checks keys, not values. To check values use 'major' in student.values()."
       },
       {
-        text: "Which data structure would you use to store a set of unique player IDs where order doesn't matter?",
-        options: ["list", "tuple", "set", "dict"],
-        correctIndex: 2,
+        text: "scores = [88, 92, 79]; backup = scores; backup[0] = 95. What does print(scores) show?",
+        options: ["[88, 92, 79]", "[95, 92, 79]", "[95, 88, 92, 79]", "Error: lists cannot be changed"],
+        correctIndex: 1,
         difficulty: "medium",
-        feedbackCorrect: "Correct. Sets store unique values with no duplicates and no guaranteed order. Adding a duplicate has no effect.",
-        feedbackWrong: "Not quite. A set automatically removes duplicates and doesn't maintain order. Lists allow duplicates. Tuples are ordered and immutable."
+        feedbackCorrect: "Correct. backup = scores does not copy the list. It gives the same list a second name, so a change through either name shows up in both.",
+        feedbackWrong: "Not quite. Lists are mutable, and backup = scores makes a second name for the same list rather than a copy. Changing backup[0] changes scores too. Use scores.copy() when you want an independent list."
       },
       // --- FUNCTIONS ---
       {
         text: "What is the difference between return and print() inside a function?",
-        options: [
-          "There is no difference - both produce the same result",
-          "return only works inside loops; print() works anywhere",
-          "return sends a value back to the caller so it can be used; print() just displays it",
-          "print() is faster than return for large datasets"
-        ],
+        options: ["There is no difference; both produce the same result", "return only works inside loops; print() works anywhere", "return hands the value back; print() only shows it", "print() is faster than return when the data is large"],
         correctIndex: 2,
         difficulty: "medium",
         feedbackCorrect: "Correct. return passes the value back to the caller for further use. print() just displays it - the value is gone after that.",
@@ -908,16 +862,11 @@
       },
       {
         text: "What is a default parameter value in a function?",
-        options: [
-          "A value that is required in every function call",
-          "A value used when the caller does not provide that argument",
-          "The first parameter of a function",
-          "A parameter that can only be a number"
-        ],
+        options: ["A value that must be passed in every call to the function", "A value used when the caller leaves that argument out", "The first parameter listed in a function's definition", "A parameter that is only allowed to hold a number"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. Default parameters (def f(x, y=10)) allow the caller to omit that argument, in which case the default is used.",
-        feedbackWrong: "Not quite. A default value is used when the caller doesn't provide that argument. def greet(name, greeting='Hello') lets you call greet('Rivera') without specifying a greeting."
+        feedbackWrong: "Not quite. A default value is used when the caller doesn't provide that argument. def greet(name, greeting='Hello') lets you call greet('Amaka') without specifying a greeting."
       },
       {
         text: "What is the scope rule that says a variable defined inside a function is not accessible outside it?",
@@ -934,71 +883,51 @@
       },
       {
         text: "Which of the following correctly defines a function that takes two arguments and returns their sum?",
-        options: [
-          "function add(a, b): return a + b",
-          "def add(a, b) { return a + b }",
-          "def add(a, b): return a + b",
-          "def add(a, b) => a + b"
-        ],
+        options: ["function add(a, b): return a + b", "def add(a, b) { return a + b }", "def add(a, b): return a + b", "def add(a, b) => a + b;"],
         correctIndex: 2,
         difficulty: "easy",
         feedbackCorrect: "Correct. Python functions use the def keyword, a colon after the signature, and indentation for the body.",
         feedbackWrong: "Not quite. Python syntax: def keyword, name, parameters in (), colon, then indented body. No curly braces, no 'function' keyword."
       },
       {
-        text: "What does *args allow a function to do?",
-        options: [
-          "Accept any number of keyword arguments",
-          "Accept any number of positional arguments as a tuple",
-          "Make all arguments optional",
-          "Force all arguments to be integers"
-        ],
+        text: "You run len(124) and Python stops with: TypeError: object of type 'int' has no len(). What is the message telling you?",
+        options: ["The name len has not been defined in this notebook yet", "len() was given an int, a type it cannot measure", "The line is missing a closing parenthesis somewhere", "124 is too large a number for len() to count up to"],
         correctIndex: 1,
-        difficulty: "hard",
-        feedbackCorrect: "Correct. *args collects extra positional arguments into a tuple, allowing a function to accept any number of them.",
-        feedbackWrong: "Not quite. *args captures positional arguments into a tuple. **kwargs captures keyword arguments into a dict."
+        difficulty: "medium",
+        feedbackCorrect: "Correct. The error type says the problem is the kind of value, and the message names it: len() works on sequences like strings and lists, not on an int.",
+        feedbackWrong: "Not quite. A TypeError means an operation got a value of the wrong type. Here the message says exactly which: len() was handed an int, which has no length. A missing name would be a NameError, and a missing parenthesis a SyntaxError."
       },
       {
-        text: "A function is defined as: def batting_grade(avg): if avg >= .300: return 'Elite'. What does batting_grade(0.250) return?",
-        options: ["'Elite'", "'Not Elite'", "None", "Error"],
+        text: "A function is defined as: def honors_status(gpa): if gpa >= 3.5: return 'Honors'. What does honors_status(3.2) return?",
+        options: ["'Honors'", "'Not Honors'", "None", "Error"],
         correctIndex: 2,
         difficulty: "medium",
-        feedbackCorrect: "Correct. 0.250 < 0.300, so the if block doesn't execute, and there's no other return. The function returns None.",
-        feedbackWrong: "Not quite. 0.250 < 0.300 so the if condition is False. There's no else or second return, so the function falls off the end and returns None."
+        feedbackCorrect: "Correct. 3.2 < 3.5, so the if block doesn't execute, and there's no other return. The function returns None.",
+        feedbackWrong: "Not quite. 3.2 < 3.5 so the if condition is False. There's no else or second return, so the function falls off the end and returns None."
       },
       {
         text: "What is a lambda function?",
-        options: [
-          "A function that runs automatically when the script starts",
-          "A small anonymous function defined with the lambda keyword, often used for short one-line operations",
-          "A function that only accepts numeric inputs",
-          "A function that is only available inside loops"
-        ],
+        options: ["A function that runs automatically when the script starts", "A small, unnamed one-line function made with lambda", "A function that only accepts numbers as its inputs", "A function that is only available inside of loops"],
         correctIndex: 1,
         difficulty: "hard",
         feedbackCorrect: "Correct. lambda creates a small anonymous function. lambda x: x * 2 is equivalent to a def with one expression body.",
         feedbackWrong: "Not quite. lambda creates a small, anonymous, single-expression function. Example: double = lambda x: x * 2. Useful in sorted(), map(), filter()."
       },
       {
-        text: "What does list comprehension [x**2 for x in range(4)] produce?",
-        options: ["[1, 4, 9, 16]", "[0, 1, 4, 9]", "[0, 1, 2, 3]", "[4, 4, 4, 4]"],
+        text: "Cell 1 sets honors_cutoff = 3.5 and cell 2 prints it. You restart the kernel and run only cell 2. What happens?",
+        options: ["It prints 3.5, since the notebook saved the value", "NameError: name 'honors_cutoff' is not defined", "It prints None, the value of any unset name", "It prints 0, since a restart zeroes variables"],
         correctIndex: 1,
         difficulty: "medium",
-        feedbackCorrect: "Correct. range(4) gives 0, 1, 2, 3. Squaring each: 0, 1, 4, 9.",
-        feedbackWrong: "Not quite. range(4) produces 0, 1, 2, 3. Squaring each: 0**2=0, 1**2=1, 2**2=4, 3**2=9. Result: [0, 1, 4, 9]."
+        feedbackCorrect: "Correct. Restarting the kernel clears every variable. Cell 1 has not run since, so honors_cutoff does not exist yet. Restart & Run All runs the cells top to bottom and avoids this.",
+        feedbackWrong: "Not quite. A restart wipes the kernel's memory. Values shown on screen from earlier runs are not stored anywhere Python can see, so cell 2 raises a NameError until cell 1 runs again."
       },
       {
-        text: "What does sorted(['Chen', 'Rivera', 'Patel']) return?",
-        options: [
-          "['Chen', 'Rivera', 'Patel'] (unchanged)",
-          "['Rivera', 'Patel', 'Chen']",
-          "['Chen', 'Patel', 'Rivera']",
-          "Error - sorted() only works on numbers"
-        ],
+        text: "What does sorted(['Park', 'Webb', 'Haddad']) return?",
+        options: ["['Park', 'Webb', 'Haddad'] (unchanged)", "['Webb', 'Park', 'Haddad']", "['Haddad', 'Park', 'Webb']", "Error: sorted() only works on numbers"],
         correctIndex: 2,
         difficulty: "easy",
         feedbackCorrect: "Correct. sorted() returns a new list in ascending order. For strings this is alphabetical order.",
-        feedbackWrong: "Not quite. sorted() sorts alphabetically for strings. C comes before P which comes before R, so the result is ['Chen', 'Patel', 'Rivera']."
+        feedbackWrong: "Not quite. sorted() sorts strings alphabetically. H comes before P, which comes before W, so the result is ['Haddad', 'Park', 'Webb']."
       }
     ];
 
@@ -1006,7 +935,14 @@
     const questions = allQuestions
       .slice()
       .sort(() => Math.random() - 0.5)
-      .slice(0, 10);
+      .slice(0, 10)
+      // Shuffle each question's options too, so the right answer has no favorite
+      // slot (before Oct 2026 it was option B in 62-76% of questions in most banks).
+      .map(q => {
+        const order = q.options.map((_, i) => i).sort(() => Math.random() - 0.5);
+        return Object.assign({}, q, { options: order.map(i => q.options[i]),
+                                      correctIndex: order.indexOf(q.correctIndex) });
+      });
 
     let currentQ = 0;
     let results = [];
@@ -1183,6 +1119,12 @@
     --surface3:  #e4e0d8;
     --border-l:  #d4cfc9;
     --muted:     #8a8078;
+    /* the quiz uses these names; the light theme never set them (white title on a light page) */
+    --text-primary: #1a1715;
+    --text-secondary: #5a5550;
+    --correct-text: #2e6e48;
+    --wrong-text: #9a3333;
+    --accent-text: #7a55b5;
   }
   /* ── Light mode overrides (comprehensive) ── */
   /* Nav */

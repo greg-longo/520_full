@@ -19,6 +19,10 @@
       --wrong-bg: #b04040;
       --wrong-text: #e08080;
       --border: #3a3835;
+      /* Oct 2026 contrast pass: accent as TEXT needs its own value (4.5:1 on the cards),
+         and button text picks whichever of white or near-black reads on the accent. */
+      --accent-text: #5cad84;
+      --on-accent: #0f0e0d;
     }
 
     * {
@@ -55,7 +59,7 @@
     }
 
     .nav-breadcrumb a {
-      color: var(--accent);
+      color: var(--accent-text);
       text-decoration: none;
     }
 
@@ -66,7 +70,7 @@
     .nav-back {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 14px;
-      color: var(--accent);
+      color: var(--accent-text);
       text-decoration: none;
     }
 
@@ -91,7 +95,7 @@
       font-family: 'IBM Plex Mono', monospace;
       font-size: 12px;
       font-weight: 600;
-      color: var(--accent);
+      color: var(--accent-text);
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-bottom: 20px;
@@ -127,7 +131,7 @@
       font-size: 14px;
       font-weight: 600;
       background-color: var(--accent);
-      color: var(--bg);
+      color: var(--on-accent);
       border: none;
       padding: 12px 24px;
       cursor: pointer;
@@ -181,7 +185,7 @@
     .question-eyebrow {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 12px;
-      color: var(--accent);
+      color: var(--accent-text);
       letter-spacing: 0.5px;
       margin-bottom: 12px;
     }
@@ -296,7 +300,7 @@
     .score-number {
       font-size: 80px;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--accent-text);
       margin-bottom: 12px;
     }
 
@@ -380,7 +384,7 @@
       display: inline-block;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 14px;
-      color: var(--accent);
+      color: var(--accent-text);
       text-decoration: none;
       margin-top: 12px;
     }
@@ -559,12 +563,7 @@
       },
       {
         text: "What does np.eye(3) create?",
-        options: [
-          "A 3-element array of ones",
-          "A 3x3 array filled with random values",
-          "A 3x3 identity matrix with 1s on the diagonal and 0s elsewhere",
-          "A 3x3 array where every element is 3"
-        ],
+        options: ["A 1-D array of three ones: [1., 1., 1.]", "A 3x3 array filled with random float values", "A 3x3 identity matrix: 1s on the diagonal", "A 3x3 array in which every element is 3"],
         correctIndex: 2,
         difficulty: "medium",
         feedbackCorrect: "Correct. np.eye(n) creates an n x n identity matrix.",
@@ -640,12 +639,7 @@
       },
       {
         text: "What does a[::2] do for a = np.array([1, 2, 3, 4, 5, 6])?",
-        options: [
-          "Returns the first 2 elements",
-          "Returns every other element starting from index 0: [1, 3, 5]",
-          "Returns the last 2 elements",
-          "Reverses the array"
-        ],
+        options: ["Returns the first 2 elements: [1, 2]", "Returns every other element: [1, 3, 5]", "Returns the last 2 elements: [5, 6]", "Reverses the array: [6, 5, 4, 3, 2, 1]"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. a[start:stop:step] with step=2 skips every other element. Starting at 0: indices 0, 2, 4 = values 1, 3, 5.",
@@ -667,12 +661,7 @@
       // --- VECTORIZATION ---
       {
         text: "What is the main reason NumPy vectorized operations are faster than Python loops?",
-        options: [
-          "NumPy uses parallel processing across multiple CPU cores by default.",
-          "NumPy skips bounds checking, which makes it less safe but faster.",
-          "NumPy compresses the data before operating on it.",
-          "NumPy stores data in a contiguous memory block and loops run in compiled C code, eliminating Python interpreter overhead per element."
-        ],
+        options: ["NumPy uses parallel processing across all CPU cores by default.", "NumPy skips bounds checking, which is less safe but faster.", "NumPy compresses the data in memory before it operates on it.", "Data sits in one memory block, and the loop runs in compiled C."],
         correctIndex: 3,
         difficulty: "hard",
         feedbackCorrect: "Correct. NumPy stores homogeneous data in contiguous memory. Operations run in compiled C code with no per-element Python overhead.",
@@ -680,12 +669,7 @@
       },
       {
         text: "Given a = np.array([1, 2, 3, 4]) and b = np.array([10, 20, 30, 40]), what does a * b produce?",
-        options: [
-          "A scalar: the dot product (300)",
-          "A single number: sum of all products",
-          "An array: [10, 40, 90, 160] - element-wise multiplication",
-          "An error because * is not defined for arrays"
-        ],
+        options: ["A scalar: the dot product, 300", "A single number: the sum of all products", "An array: [10, 40, 90, 160], element-wise", "An error, because * is not defined for arrays"],
         correctIndex: 2,
         difficulty: "easy",
         feedbackCorrect: "Correct. The * operator on NumPy arrays is element-wise multiplication.",
@@ -709,12 +693,7 @@
       },
       {
         text: "What is broadcasting in NumPy?",
-        options: [
-          "Sending array data over a network connection",
-          "Making arrays larger by repeating their elements",
-          "The ability to apply operations between arrays of different shapes by stretching the smaller array",
-          "Converting an array to a Python list"
-        ],
+        options: ["Sending array data out over a network connection to another machine", "Making arrays larger by repeating their elements", "Combining arrays of different shapes by stretching one", "Converting a NumPy array into a plain Python list"],
         correctIndex: 2,
         difficulty: "hard",
         feedbackCorrect: "Correct. Broadcasting allows NumPy to perform operations between arrays of compatible but different shapes without copying data.",
@@ -762,12 +741,7 @@
       },
       {
         text: "What does np.std(a) measure?",
-        options: [
-          "The center of the data",
-          "The spread of values around the mean",
-          "The total of all values",
-          "The maximum minus the minimum"
-        ],
+        options: ["The center of the data, like the mean", "The spread around the mean", "The total of all the values in a", "The maximum minus the minimum"],
         correctIndex: 1,
         difficulty: "easy",
         feedbackCorrect: "Correct. Standard deviation measures how spread out values are around the mean. A large std means high variability.",
@@ -789,12 +763,7 @@
       // --- BOOLEAN INDEXING ---
       {
         text: "Given avgs = np.array([.312, .287, .301, .268]), what does avgs[avgs > .295] return?",
-        options: [
-          "[True, False, True, False]",
-          "The indices where avgs > .295: [0, 2]",
-          "The count of values above .295: 2",
-          "[.312, .301] - the values themselves where the condition is True"
-        ],
+        options: ["[True, False, True, False], a boolean mask", "The indices where avgs > .295, which are [0, 2]", "The count of values above .295, which is 2", "[.312, .301], the values where it is True"],
         correctIndex: 3,
         difficulty: "medium",
         feedbackCorrect: "Correct. Boolean indexing uses the boolean mask to select elements. avgs[avgs > .295] returns the actual values [.312, .301].",
@@ -815,12 +784,7 @@
       },
       {
         text: "What is the key difference between a NumPy slice (a[1:3]) and fancy indexing (a[[1, 3]]) in terms of memory?",
-        options: [
-          "A slice returns a view (no copy made); fancy indexing always returns a copy.",
-          "A slice returns a copy; fancy indexing returns a view.",
-          "Both always return copies.",
-          "Both always return views."
-        ],
+        options: ["A slice returns a view; fancy indexing returns a copy.", "A slice returns a copy; fancy indexing returns a view.", "Both always return copies of the selected elements.", "Both always return views onto the original array."],
         correctIndex: 0,
         difficulty: "hard",
         feedbackCorrect: "Correct. Slices return views - they share memory with the original. Fancy indexing always returns a new copy.",
@@ -828,12 +792,7 @@
       },
       {
         text: "What does np.where(avgs > .300, 'hot', 'cold') do for avgs = np.array([.312, .287, .301])?",
-        options: [
-          "Returns the indices where avgs > .300",
-          "Returns ['hot', 'cold', 'hot'] based on whether each element meets the condition",
-          "Returns True or False for each element",
-          "Returns only the elements where avgs > .300"
-        ],
+        options: ["Returns the indices where avgs > .300, as a tuple", "Returns ['hot', 'cold', 'hot'], one per element", "Returns True or False for each element of avgs", "Returns only the elements of avgs that are > .300"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. np.where(condition, val_if_true, val_if_false) creates an array choosing between two values based on the condition.",
@@ -864,12 +823,7 @@
       // --- RANDOM NUMBERS ---
       {
         text: "What does np.random.seed(42) do?",
-        options: [
-          "Generates 42 random numbers",
-          "Limits random numbers to the range 0-42",
-          "Sets the random number generator state so results are reproducible",
-          "Creates an array of zeros with 42 elements"
-        ],
+        options: ["Generates 42 random numbers and stores them for later", "Limits all random numbers to the range from 0 to 42", "Sets the generator's state so results are repeatable", "Creates an array of zeros with 42 elements in it"],
         correctIndex: 2,
         difficulty: "medium",
         feedbackCorrect: "Correct. Setting a seed makes random number generation reproducible. The same seed always produces the same sequence.",
@@ -877,12 +831,7 @@
       },
       {
         text: "What does np.random.randn(3, 3) produce?",
-        options: [
-          "A 3x3 array of random integers between 0 and 3",
-          "A 3x3 array of random floats uniformly distributed between 0 and 1",
-          "A 3x3 array of random floats from a standard normal distribution (mean=0, std=1)",
-          "An error - randn requires only one argument"
-        ],
+        options: ["A 3x3 array of random integers between 0 and 3", "A 3x3 array of random floats, uniform from 0 up to 1, inclusive", "A 3x3 array drawn from a standard normal distribution", "An error, because randn takes only a single argument"],
         correctIndex: 2,
         difficulty: "medium",
         feedbackCorrect: "Correct. randn generates samples from a standard normal distribution (Gaussian, mean=0, std=1).",
@@ -890,12 +839,7 @@
       },
       {
         text: "What does np.random.randint(1, 7, size=10) simulate?",
-        options: [
-          "10 random floats between 1 and 7",
-          "10 random integers from 1 to 6 (like rolling a 6-sided die 10 times)",
-          "10 random integers from 1 to 7 inclusive",
-          "A random choice of 10 elements from a given array"
-        ],
+        options: ["10 random floats between 1 and 7, like heights", "10 random integers from 1 to 6, like die rolls", "10 random integers from 1 to 7, both ends included", "A random choice of 10 elements from a given array"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. randint(low, high, size) generates integers from low to high-1. With low=1 and high=7, that is 1 through 6 - like a die roll.",
@@ -917,12 +861,7 @@
       },
       {
         text: "What is the difference between np.vstack and np.hstack?",
-        options: [
-          "vstack joins arrays side by side; hstack stacks them on top of each other",
-          "vstack stacks arrays vertically (adds rows); hstack stacks arrays horizontally (adds columns)",
-          "They are identical functions with different names",
-          "vstack is for 1D arrays; hstack is for 2D arrays"
-        ],
+        options: ["vstack joins arrays side by side; hstack stacks them on top", "vstack adds rows (vertical); hstack adds columns", "They are identical functions with two different names", "vstack is for 1-D arrays; hstack is for 2-D arrays only"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. vstack = vertical stack (increases number of rows). hstack = horizontal stack (increases number of columns).",
@@ -930,12 +869,7 @@
       },
       {
         text: "np.split(a, 3) on a = np.array([1, 2, 3, 4, 5, 6]) returns:",
-        options: [
-          "[[1, 2], [3, 4], [5, 6]] - 3 equal sub-arrays",
-          "[1, 2, 3] and [4, 5, 6] - 2 halves",
-          "Error - cannot split an array of 6 into 3",
-          "[[1, 2, 3, 4, 5, 6]] - unchanged"
-        ],
+        options: ["Three equal sub-arrays: [1, 2], [3, 4], [5, 6]", "Two halves: [1, 2, 3] and [4, 5, 6], ignoring the 3", "Error: an array of 6 cannot be split into 3 parts", "The original array, unchanged: [1, 2, 3, 4, 5, 6]"],
         correctIndex: 0,
         difficulty: "medium",
         feedbackCorrect: "Correct. np.split(a, 3) divides the array into 3 equal pieces: [1, 2], [3, 4], [5, 6].",
@@ -944,12 +878,7 @@
       // --- CONDITIONAL LOGIC ---
       {
         text: "What does np.where(a > 0, a, 0) do for a = np.array([-1, 2, -3, 4])?",
-        options: [
-          "Returns the indices of positive values",
-          "Returns [0, 2, 0, 4] - keeps positives, replaces negatives with 0",
-          "Returns [-1, 2, -3, 4] unchanged",
-          "Returns [1, 0, 1, 0] as a boolean mask"
-        ],
+        options: ["Returns the indices of the positive values: (1, 3)", "Returns [0, 2, 0, 4], replacing negatives with 0", "Returns [-1, 2, -3, 4] unchanged, as a new array", "Returns [False, True, False, True] as a mask"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. np.where(condition, if_true, if_false): where a > 0 is True, keep a; where False, use 0. This is the ReLU operation.",
@@ -957,21 +886,16 @@
       },
       {
         text: "Which NumPy function finds where a condition is True and returns a tuple of arrays of indices?",
-        options: ["np.find()", "np.where(condition)", "np.search()", "np.nonzero()"],
+        options: ["np.find(condition)", "np.where(condition)", "np.search(condition)", "np.argmax(condition)"],
         correctIndex: 1,
         difficulty: "hard",
         feedbackCorrect: "Correct. np.where(condition) with only one argument returns a tuple of arrays containing the indices where condition is True.",
-        feedbackWrong: "Not quite. np.where(condition) with only one argument returns indices where the condition is True (as a tuple of arrays)."
+        feedbackWrong: "Not quite. np.where(condition) with one argument returns a tuple of index arrays, one per dimension. (np.nonzero does the same thing.)"
       },
       // --- GENERAL ---
       {
         text: "What does a.reshape(2, 6) do for a = np.arange(12)?",
-        options: [
-          "Reduces the array to 2 elements",
-          "Rearranges the 12 elements into a 2-row, 6-column array",
-          "Creates a copy of a with 2 and 6 appended",
-          "Error - reshape only works on 2D arrays"
-        ],
+        options: ["Reduces the array to just its first 2 elements", "Rearranges the 12 elements into 2 rows of 6", "Creates a copy of a with 2 and 6 appended to it", "Error: reshape only works on arrays that are 2-D"],
         correctIndex: 1,
         difficulty: "easy",
         feedbackCorrect: "Correct. reshape rearranges elements into a new shape. As long as the total elements match (2*6=12), it works.",
@@ -979,12 +903,7 @@
       },
       {
         text: "What does a.flatten() do?",
-        options: [
-          "Sorts the array in ascending order",
-          "Converts a multi-dimensional array into a 1D array",
-          "Removes all negative values",
-          "Rounds all values to the nearest integer"
-        ],
+        options: ["Sorts the array in ascending order", "Turns a multi-dimensional array into 1-D", "Removes all of the negative values", "Rounds all values to the nearest integer"],
         correctIndex: 1,
         difficulty: "easy",
         feedbackCorrect: "Correct. flatten() returns a 1D copy of the array, collapsing all dimensions.",
@@ -992,12 +911,7 @@
       },
       {
         text: "Why does NumPy require all elements in an array to be the same data type?",
-        options: [
-          "It is a limitation that Python imposes on all data structures",
-          "Homogeneous types allow NumPy to store data in contiguous memory, enabling compiled C operations with no type-checking overhead per element",
-          "Mixed types would require too much disk space",
-          "It is not required - NumPy supports mixed types"
-        ],
+        options: ["It is a limitation Python imposes on all of its data structures", "One type allows contiguous memory and C loops with no type checks", "Mixed types would take up far too much disk space to be practical", "It is not required, since NumPy arrays support mixed types freely"],
         correctIndex: 1,
         difficulty: "hard",
         feedbackCorrect: "Correct. Homogeneous type + contiguous memory = no per-element type checking needed. This is the core of NumPy's performance advantage.",
@@ -1005,12 +919,7 @@
       },
       {
         text: "What does np.dot(a, b) compute for 1D arrays?",
-        options: [
-          "Element-wise multiplication (same as a * b)",
-          "The sum of both arrays",
-          "The dot (inner) product: sum of element-wise products",
-          "The outer product (matrix)"
-        ],
+        options: ["Element-wise multiplication, the same as a * b", "The sum of both arrays, added element by element", "The inner product: sum of element-wise products", "The outer product of a and b, returned as a 2-D matrix"],
         correctIndex: 2,
         difficulty: "medium",
         feedbackCorrect: "Correct. For 1D arrays, np.dot(a, b) = sum(a * b) - the dot product. For 2D arrays it is matrix multiplication.",
@@ -1018,12 +927,7 @@
       },
       {
         text: "What does np.clip(a, 0, 1) do for a = np.array([-0.5, 0.3, 1.2, 0.8])?",
-        options: [
-          "[0, 0.3, 1, 0.8] - clips values to the range [0, 1]",
-          "[-0.5, 0.3, 1.2, 0.8] - unchanged",
-          "[0, 0, 1, 0] - rounds to nearest boundary",
-          "Error - clip requires integer arrays"
-        ],
+        options: ["[0, 0.3, 1, 0.8]: values clipped to [0, 1]", "[-0.5, 0.3, 1.2, 0.8]: the array unchanged", "[0, 0, 1, 0]: each rounded to the nearest bound", "Error: clip only works on arrays of integers"],
         correctIndex: 0,
         difficulty: "medium",
         feedbackCorrect: "Correct. np.clip(a, min, max) clips values below min to min, and values above max to max.",
@@ -1031,12 +935,7 @@
       },
       {
         text: "You run a = np.array([3, 1, 4, 1, 5]); b = np.sort(a). What is a afterward?",
-        options: [
-          "[1, 1, 3, 4, 5] - a is also sorted",
-          "[3, 1, 4, 1, 5] - a is unchanged; np.sort returns a new array",
-          "Error - sort modifies the original",
-          "[5, 4, 3, 1, 1] - a is reversed"
-        ],
+        options: ["[1, 1, 3, 4, 5]: a is sorted along with b", "[3, 1, 4, 1, 5]: unchanged; np.sort copies", "Error: np.sort cannot be assigned to a new name", "[5, 4, 3, 1, 1]: a is sorted in reverse order"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. np.sort(a) returns a sorted copy. The original a is unchanged. Use a.sort() to sort in place.",
@@ -1054,12 +953,7 @@
       // --- ADDITIONAL QUESTIONS ---
       {
         text: "What does np.linspace(0, 1, 5) produce?",
-        options: [
-          "[0, 0.25, 0.5, 0.75, 1.0] - 5 evenly spaced values from 0 to 1 inclusive",
-          "[0, 0.2, 0.4, 0.6, 0.8] - 5 values from 0 to 0.8",
-          "[0, 1, 2, 3, 4] - 5 integers",
-          "Error - linspace requires integers"
-        ],
+        options: ["[0, 0.25, 0.5, 0.75, 1.0]: 5 even steps", "[0, 0.2, 0.4, 0.6, 0.8]: 5 values, 0 up to 0.8", "[0, 1, 2, 3, 4]: the first 5 integers from 0", "Error: linspace only accepts integer arguments"],
         correctIndex: 0,
         difficulty: "medium",
         feedbackCorrect: "Correct. np.linspace(start, stop, num) returns num evenly spaced values including both endpoints.",
@@ -1067,12 +961,7 @@
       },
       {
         text: "What does a.T do for a NumPy array a?",
-        options: [
-          "Converts a to a Python list",
-          "Returns the transpose of a (rows and columns swapped)",
-          "Removes the last element",
-          "Returns the total (sum) of all elements"
-        ],
+        options: ["Converts a to a plain Python list", "Returns the transpose of a", "Removes the last element of a", "Returns the total (sum) of a"],
         correctIndex: 1,
         difficulty: "easy",
         feedbackCorrect: "Correct. .T is the transpose attribute. For a (3, 4) array, a.T has shape (4, 3) - rows and columns swapped.",
@@ -1080,12 +969,7 @@
       },
       {
         text: "What does np.abs(a) do for a = np.array([-3, 1, -4, 1, 5])?",
-        options: [
-          "[3, 1, 4, 1, 5] - returns absolute values",
-          "[-3, 1, -4, 1, 5] - unchanged",
-          "[9, 1, 16, 1, 25] - squares each value",
-          "Error - abs only works on scalars"
-        ],
+        options: ["[3, 1, 4, 1, 5]: absolute values", "[-3, 1, -4, 1, 5]: unchanged", "[9, 1, 16, 1, 25]: each value squared", "Error: abs only works on scalars"],
         correctIndex: 0,
         difficulty: "easy",
         feedbackCorrect: "Correct. np.abs() is a ufunc that returns the absolute value element-wise.",
@@ -1093,12 +977,7 @@
       },
       {
         text: "What does np.random.choice(['OF', '1B', 'SS'], size=5) do?",
-        options: [
-          "Returns the first 5 characters of the concatenated strings",
-          "Randomly selects 5 elements from the given list, with replacement",
-          "Shuffles the list and returns 5 copies",
-          "Error - np.random.choice only works on numeric arrays"
-        ],
+        options: ["Returns the first 5 characters of the joined strings", "Picks 5 elements at random, with replacement", "Shuffles the list and returns 5 copies of it", "Error: np.random.choice only works on numbers"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. np.random.choice draws random samples from the provided array, with replacement by default.",
@@ -1106,12 +985,7 @@
       },
       {
         text: "What does np.cumsum(np.array([1, 2, 3, 4])) return?",
-        options: [
-          "[1, 2, 3, 4]",
-          "[1, 3, 6, 10] - cumulative sum",
-          "10 - the total sum",
-          "[0, 1, 3, 6]"
-        ],
+        options: ["[1, 2, 3, 4]", "[1, 3, 6, 10]", "10", "[0, 1, 3, 6, 10]"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. np.cumsum returns running totals: [1, 1+2, 1+2+3, 1+2+3+4] = [1, 3, 6, 10].",
@@ -1123,7 +997,14 @@
     const questions = allQuestions
       .slice()
       .sort(() => Math.random() - 0.5)
-      .slice(0, 10);
+      .slice(0, 10)
+      // Shuffle each question's options too, so the right answer has no favorite
+      // slot (before Oct 2026 it was option B in 62-76% of questions in most banks).
+      .map(q => {
+        const order = q.options.map((_, i) => i).sort(() => Math.random() - 0.5);
+        return Object.assign({}, q, { options: order.map(i => q.options[i]),
+                                      correctIndex: order.indexOf(q.correctIndex) });
+      });
 
     let currentQ = 0;
     let results = [];
@@ -1300,6 +1181,12 @@
     --surface3:  #e4e0d8;
     --border-l:  #d4cfc9;
     --muted:     #8a8078;
+    /* the quiz uses these names; the light theme never set them (white title on a light page) */
+    --text-primary: #1a1715;
+    --text-secondary: #5a5550;
+    --correct-text: #2e6e48;
+    --wrong-text: #9a3333;
+    --accent-text: #357052;
   }
   /* ── Light mode overrides (comprehensive) ── */
   /* Nav */
