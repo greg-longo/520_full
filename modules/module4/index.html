@@ -513,7 +513,7 @@
       <p>ppandas has a small vocabulary and uses it precisely. Its error messages assume you know these, and so does every answer you will find online. You don&#x27;t have to have these memorized right now, but by the end of the module, you should know them.  (Try using the flash card tool!)</p>
       <ul><li><strong>Series</strong> - A one-dimensional array with an index. One column of a table, with labels attached to the values.</li><li><strong>DataFrame</strong> - A set of Series sharing one index. The table, and the object most pandas work is about.</li><li><strong>index</strong> - The labels attached to a DataFrame&#x27;s rows. Identifiers, not positions - which is why <code>.loc</code> and <code>.iloc</code> differ.</li><li><strong>.loc</strong> - Selection by <strong>label</strong>. <code>df.loc[1003]</code> asks for the row whose index is 1003, and includes the endpoint when slicing.</li><li><strong>.iloc</strong> - Selection by integer <strong>position</strong>. <code>df.iloc[0]</code> asks for the first row, whatever its label.</li><li><strong>dtype</strong> - The type of a column. <code>object</code> almost always means text got into something you expected to be numeric.</li><li><strong>NaN</strong> - Not a Number: pandas&#x27; marker for a missing value. It is a float, and it propagates through arithmetic.</li><li><strong>missing at random</strong> - When whether a value is missing has nothing to do with the outcome. If it is not true, dropping rows biases the answer.</li><li><strong>boolean mask</strong> - A Series of <code>True</code>/<code>False</code> used to filter rows. Combine with <code>&amp;</code> and <code>|</code>, never <code>and</code> and <code>or</code>.</li><li><strong>groupby</strong> - Split rows into groups, apply a summary to each, combine the results. The dictionary-counting pattern, industrialized.</li><li><strong>aggregation</strong> - The summary applied to each group - <code>mean</code>, <code>count</code>, <code>median</code>. Named aggregation gives the output readable column names.</li><li><strong>merge</strong> - Joining two tables on a shared key. Check the key is unique first: a repeated key multiplies rows.</li><li><strong>inner join</strong> - Keeps only rows present in both tables. Rows without a match are dropped silently, so check the row count.</li><li><strong>left join</strong> - Keeps every row of the left table, filling gaps with <code>NaN</code>. Makes a missing match visible instead of absent.</li><li><strong>pivot table</strong> - A groupby arranged as a grid: one variable down the side, another across the top, a statistic in the cells.</li><li><strong>chained assignment</strong> - Writing <code>df[mask][&quot;col&quot;] = x</code>. It edits a temporary copy and silently does nothing. Use <code>df.loc[mask, &quot;col&quot;] = x</code>.</li><li><strong>target leakage</strong> - Letting information about the outcome into a predictor. The model looks excellent in testing and fails in use.</li></ul>
       <div class="nb-narrative nb-narrative-open">
-        <p>Module 3 ended with an engagement index: three arrays, combined, and ranked. But look at what you had to know to make it work: that <code>logins[3]</code>, <code>hours[3]</code>, and <code>ug_gpa[3]</code> all referred to the same student, and that position 3 meant Amara Okonkwo.</p>
+        <p>Module 3 ended with an engagement index: three arrays, combined, and ranked. But look at what you had to know to make it work: that <code>logins[3]</code>, <code>hours[3]</code>, and <code>ug_gpa[3]</code> all referred to the same student, and that position 3 meant Amaka Okoroha.</p>
       <p>Nothing enforced that. If you had sorted one array and not the others, every number would still have been a number, every operation would still have run, and every answer would have been wrong.</p>
       <p>That is the problem pandas exists to solve. It attaches labels to data and then refuses to let them come apart. Think of it as moving from using a calculator to a spreadsheet.</p>
       </div>
@@ -530,7 +530,7 @@ print(f"numpy  {np.__version__}")</script>
       <p>Here are two of the Module 3 arrays and the sorting mistake described above.</p>
       <h4 id="the-alignment-problem-demonstrated">The alignment problem, demonstrated</h4>
       <div data-runnable>
-      <pre><code>names  = np.<span class="fn">array</span>([<span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>])
+      <pre><code>names  = np.<span class="fn">array</span>([<span class="st">&quot;Amaka Okoroha&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>])
 ug_gpa = np.<span class="fn">array</span>([<span class="nm">3.02</span>, <span class="nm">1.99</span>, <span class="nm">2.80</span>])
 logins = np.<span class="fn">array</span>([<span class="nm">3.4</span>, <span class="nm">0.4</span>, <span class="nm">4.4</span>])
 
@@ -541,7 +541,7 @@ order  = np.<span class="fn">argsort</span>(-ug_gpa)
 <span class="fn">print</span>(logins)          <span class="cm"># &lt;- never reordered</span></code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-[&#x27;Amara Okonkwo&#x27; &#x27;Priya Raghunathan&#x27; &#x27;Devin Castellanos&#x27;]
+[&#x27;Amaka Okoroha&#x27; &#x27;Priya Raghunathan&#x27; &#x27;Devin Castellanos&#x27;]
 [<span class="out-num">3.02</span> <span class="out-num">2.8</span>  <span class="out-num">1.99</span>]
 [<span class="out-num">3.4</span> <span class="out-num">0.4</span> <span class="out-num">4.4</span>]
       </div>
@@ -555,20 +555,20 @@ order  = np.<span class="fn">argsort</span>(-ug_gpa)
     <span class="fn">print</span>(<span class="st">f&quot;{names[order][i]:20} gpa {ug_gpa[order][i]:.2f}   logins {logins[i]}&quot;</span>)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-Amara Okonkwo        gpa <span class="out-num">3.02</span>   logins <span class="out-num">3.4</span>
+Amaka Okoroha        gpa <span class="out-num">3.02</span>   logins <span class="out-num">3.4</span>
 Priya Raghunathan    gpa <span class="out-num">2.80</span>   logins <span class="out-num">0.4</span>
 Devin Castellanos    gpa <span class="out-num">1.99</span>   logins <span class="out-num">4.4</span>
       </div>
       </div>
       <details class="debrief"><summary>What happened</summary>
-      <p>Priya&#x27;s GPA is now printed next to Amara&#x27;s login count.</p>
+      <p>Priya&#x27;s GPA is now printed next to Amaka&#x27;s login count.</p>
       <p>Nothing failed. No exception, no warning, no obviously wrong number - Priya plausibly could log in 3.4 times a week. This is the most dangerous class of bug in data work: the kind that produces a publishable-looking answer.</p>
       <p>The fix is not &quot;be careful.&quot; The fix is a data structure that carries the label with the value.</p>
       </details>
       <h4 id="the-same-thing-in-pandas">The same thing in pandas</h4>
       <div data-runnable>
       <pre><code>df = pd.<span class="fn">DataFrame</span>({
-    <span class="st">&quot;name&quot;</span>:   [<span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>],
+    <span class="st">&quot;name&quot;</span>:   [<span class="st">&quot;Amaka Okoroha&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>],
     <span class="st">&quot;ug_gpa&quot;</span>: [<span class="nm">3.02</span>, <span class="nm">1.99</span>, <span class="nm">2.80</span>],
     <span class="st">&quot;logins&quot;</span>: [<span class="nm">3.4</span>, <span class="nm">0.4</span>, <span class="nm">4.4</span>],
 })
@@ -577,7 +577,7 @@ df.<span class="fn">sort_values</span>(<span class="st">&quot;ug_gpa&quot;</span
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
                 name  ug_gpa  logins
-<span class="out-num">0</span>      Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">0</span>      Amaka Okoroha    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
 <span class="out-num">2</span>  Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
 <span class="out-num">1</span>  Devin Castellanos    <span class="out-num">1.99</span>     <span class="out-num">0.4</span>
       </div>
@@ -601,11 +601,11 @@ df.<span class="fn">sort_values</span>(<span class="st">&quot;ug_gpa&quot;</span
       <p>First, the Series.</p>
       <div data-runnable>
       <pre><code>gpa = pd.<span class="fn">Series</span>([<span class="nm">3.02</span>, <span class="nm">1.99</span>, <span class="nm">2.80</span>],
-                index=[<span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>])
+                index=[<span class="st">&quot;Amaka Okoroha&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>])
 gpa</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-Amara Okonkwo        <span class="out-num">3.02</span>
+Amaka Okoroha        <span class="out-num">3.02</span>
 Devin Castellanos    <span class="out-num">1.99</span>
 Priya Raghunathan    <span class="out-num">2.80</span>
 dtype: float64
@@ -620,7 +620,7 @@ dtype: float64
         <div class="output-block-label">output</div>
 <span class="out-num">1.99</span>
 [<span class="out-num">3.02</span> <span class="out-num">1.99</span> <span class="out-num">2.8</span> ]
-Index([&#x27;Amara Okonkwo&#x27;, &#x27;Devin Castellanos&#x27;, &#x27;Priya Raghunathan&#x27;], dtype=&#x27;object&#x27;)
+Index([&#x27;Amaka Okoroha&#x27;, &#x27;Devin Castellanos&#x27;, &#x27;Priya Raghunathan&#x27;], dtype=&#x27;object&#x27;)
       </div>
       </div>
       <div class="callout">
@@ -629,11 +629,11 @@ Index([&#x27;Amara Okonkwo&#x27;, &#x27;Devin Castellanos&#x27;, &#x27;Priya Rag
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
-        <strong>Predict.</strong> <code>gpa</code> has three entries. What does <code>gpa[0]</code> give you - and is that the same as <code>gpa[&quot;Amara Okonkwo&quot;]</code>?  Commit to an answer before you run the next cell.
+        <strong>Predict.</strong> <code>gpa</code> has three entries. What does <code>gpa[0]</code> give you - and is that the same as <code>gpa[&quot;Amaka Okoroha&quot;]</code>?  Commit to an answer before you run the next cell.
       </div>
       <div data-runnable>
       <pre><code><span class="fn">print</span>(gpa.iloc[<span class="nm">0</span>])                 <span class="cm"># by position</span>
-<span class="fn">print</span>(gpa[<span class="st">&quot;Amara Okonkwo&quot;</span>])        <span class="cm"># by label</span></code></pre>
+<span class="fn">print</span>(gpa[<span class="st">&quot;Amaka Okoroha&quot;</span>])        <span class="cm"># by label</span></code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">3.02</span>
@@ -641,8 +641,8 @@ Index([&#x27;Amara Okonkwo&#x27;, &#x27;Devin Castellanos&#x27;, &#x27;Priya Rag
       </div>
       </div>
       <details class="debrief"><summary>What happened</summary>
-      <p>Both produce 3.02, because Amara is the first entry.</p>
-      <p>This is exactly why we&#x27;re calling this out. <code>.iloc[0]</code> involves position, <code>[&quot;Amara Okonkwo&quot;]</code> involves labels, and in these example, on the first row those have the same answer.</p>
+      <p>Both produce 3.02, because Amaka is the first entry.</p>
+      <p>This is exactly why we&#x27;re calling this out. <code>.iloc[0]</code> involves position, <code>[&quot;Amaka Okoroha&quot;]</code> involves labels, and in these example, on the first row those have the same answer.</p>
       <p>Bare brackets hide what the distinction. <code>gpa[0]</code> works right now only because the labels are strings and pandas falls back to position. When we load a file keyed on <code>student_id</code>, the labels are numbers, the fallback stops, and <code>gpa[0]</code> raises a KeyError on a Series that plainly has a first row.</p>
       <p>That ambiguity is why <code>.loc</code> and <code>.iloc</code> exist, as you&#x27;ll see in Section 3.</p>
       </details>
@@ -650,7 +650,7 @@ Index([&#x27;Amara Okonkwo&#x27;, &#x27;Devin Castellanos&#x27;, &#x27;Priya Rag
       <p>A DataFrame is the table. The most common way to build one by hand is from a dictionary of columns.</p>
       <div data-runnable>
       <pre><code>students = pd.<span class="fn">DataFrame</span>({
-    <span class="st">&quot;name&quot;</span>:     [<span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>],
+    <span class="st">&quot;name&quot;</span>:     [<span class="st">&quot;Amaka Okoroha&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>],
     <span class="st">&quot;ug_gpa&quot;</span>:   [<span class="nm">3.02</span>, <span class="nm">1.99</span>, <span class="nm">2.80</span>],
     <span class="st">&quot;logins&quot;</span>:   [<span class="nm">3.4</span>, <span class="nm">0.4</span>, <span class="nm">4.4</span>],
     <span class="st">&quot;internships&quot;</span>: [<span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">2</span>],
@@ -660,7 +660,7 @@ students</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
                 name  ug_gpa  logins  internships
-<span class="out-num">0</span>      Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>            <span class="out-num">0</span>
+<span class="out-num">0</span>      Amaka Okoroha    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>            <span class="out-num">0</span>
 <span class="out-num">1</span>  Devin Castellanos    <span class="out-num">1.99</span>     <span class="out-num">0.4</span>            <span class="out-num">0</span>
 <span class="out-num">2</span>  Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>            <span class="out-num">2</span>
       </div>
@@ -724,7 +724,7 @@ cohort[<span class="st">&quot;hs_gpa&quot;</span>]</code></pre></details>
       <p>Give the DataFrame a meaningful index first, because when you don&#x27;t, the distinctions turn into real headaches.</p>
       <div data-runnable>
       <pre><code>students = pd.<span class="fn">DataFrame</span>({
-    <span class="st">&quot;name&quot;</span>:     [<span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>],
+    <span class="st">&quot;name&quot;</span>:     [<span class="st">&quot;Amaka Okoroha&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>],
     <span class="st">&quot;ug_gpa&quot;</span>:   [<span class="nm">3.02</span>, <span class="nm">2.80</span>, <span class="nm">1.99</span>],
     <span class="st">&quot;logins&quot;</span>:   [<span class="nm">3.4</span>, <span class="nm">4.4</span>, <span class="nm">0.4</span>],
 }, index=[<span class="nm">1003</span>, <span class="nm">1024</span>, <span class="nm">1089</span>])       <span class="cm"># student_id, exactly as the extract is keyed</span>
@@ -735,18 +735,18 @@ students</code></pre>
         <div class="output-block-label">output</div>
                          name  ug_gpa  logins
 student_id                                   
-<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">1003</span>            Amaka Okoroha    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
 <span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
 <span class="out-num">1089</span>        Devin Castellanos    <span class="out-num">1.99</span>     <span class="out-num">0.4</span>
       </div>
       </div>
-      <p>Now the index is made of integers that are <strong>identifiers, not positions</strong>. Amara is student 1003; she is also row 0. Those are different facts and they are about to disagree.</p>
+      <p>Now the index is made of integers that are <strong>identifiers, not positions</strong>. Amaka is student 1003; she is also row 0. Those are different facts and they are about to disagree.</p>
       <p>**<code>.loc</code> selects by label.**</p>
       <div data-runnable>
       <pre><code>students.loc[<span class="nm">1003</span>]                 <span class="cm"># the student whose id is 1003</span></code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-name      Amara Okonkwo
+name      Amaka Okoroha
 ug_gpa             <span class="out-num">3.02</span>
 logins              <span class="out-num">3.4</span>
 Name: <span class="out-num">1003</span>, dtype: object
@@ -757,7 +757,7 @@ Name: <span class="out-num">1003</span>, dtype: object
       <pre><code>students.iloc[<span class="nm">0</span>]                   <span class="cm"># whatever is in the first row</span></code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-name      Amara Okonkwo
+name      Amaka Okoroha
 ug_gpa             <span class="out-num">3.02</span>
 logins              <span class="out-num">3.4</span>
 Name: <span class="out-num">1003</span>, dtype: object
@@ -824,7 +824,7 @@ IndexError: single positional indexer is out-of-bounds</div>
 
                          name  ug_gpa
 student_id                           
-<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>
+<span class="out-num">1003</span>            Amaka Okoroha    <span class="out-num">3.02</span>
 <span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>
       </div>
       </div>
@@ -837,12 +837,12 @@ student_id
         <div class="output-block-label">output</div>
                          name  ug_gpa  logins
 student_id                                   
-<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">1003</span>            Amaka Okoroha    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
 <span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
 
                          name  ug_gpa  logins
 student_id                                   
-<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">1003</span>            Amaka Okoroha    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
 <span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
       </div>
       </div>
@@ -864,13 +864,13 @@ student_id
 index sorted? False
                          name  ug_gpa  logins
 student_id                                   
-<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">1003</span>            Amaka Okoroha    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
 <span class="out-num">1089</span>        Devin Castellanos    <span class="out-num">1.99</span>     <span class="out-num">0.4</span>
 <span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
 
                          name  ug_gpa  logins
 student_id                                   
-<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">1003</span>            Amaka Okoroha    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
 <span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
       </div>
       </div>
@@ -895,7 +895,7 @@ Name: ug_gpa, dtype: float64
 
                          name  ug_gpa  logins
 student_id                                   
-<span class="out-num">1003</span>            Amara Okonkwo    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
+<span class="out-num">1003</span>            Amaka Okoroha    <span class="out-num">3.02</span>     <span class="out-num">3.4</span>
 <span class="out-num">1024</span>        Priya Raghunathan    <span class="out-num">2.80</span>     <span class="out-num">4.4</span>
       </div>
       </div>
@@ -941,7 +941,7 @@ raw.<span class="fn">head</span>()</code></pre>
    student_id            name  hs_gpa  hs_clubs  hs_sports  hs_attendance  hs_pop_density  \
 <span class="out-num">0</span>        <span class="out-num">1001</span>    Kofi Pereira    <span class="out-num">2.87</span>         <span class="out-num">3</span>          <span class="out-num">1</span>          <span class="out-num">0.915</span>            <span class="out-num">3703</span>   
 <span class="out-num">1</span>        <span class="out-num">1002</span>     Elliot Park    <span class="out-num">2.20</span>         <span class="out-num">1</span>          <span class="out-num">1</span>          <span class="out-num">0.866</span>            <span class="out-num">4851</span>   
-<span class="out-num">2</span>        <span class="out-num">1003</span>   Amara Okonkwo    <span class="out-num">2.72</span>         <span class="out-num">2</span>          <span class="out-num">0</span>          <span class="out-num">0.948</span>            <span class="out-num">4341</span>   
+<span class="out-num">2</span>        <span class="out-num">1003</span>   Amaka Okoroha    <span class="out-num">2.72</span>         <span class="out-num">2</span>          <span class="out-num">0</span>          <span class="out-num">0.948</span>            <span class="out-num">4341</span>   
 <span class="out-num">3</span>        <span class="out-num">1004</span>     Ravi Wojcik    <span class="out-num">2.05</span>         <span class="out-num">1</span>          <span class="out-num">0</span>          <span class="out-num">0.887</span>            <span class="out-num">4034</span>   
 <span class="out-num">4</span>        <span class="out-num">1005</span>  Perla Sorensen    <span class="out-num">2.27</span>         <span class="out-num">1</span>          <span class="out-num">1</span>          <span class="out-num">0.886</span>            <span class="out-num">3942</span>   
 
@@ -964,7 +964,7 @@ raw.<span class="fn">head</span>()</code></pre>
 <span class="fn">print</span>(os.<span class="fn">getcwd</span>())</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
-/sessions/youthful-keen-pascal/mnt/<span class="out-num">520</span>/notebooks
+/Users/you/DTSC520/notebooks
       </div>
       <p>The path in <code>read_csv</code> is interpreted <strong>relative to that directory</strong>. Either start the notebook from <code>notebooks/</code>, or pass an absolute path. This is the single most common thing that stops a working notebook from working on somebody else&#x27;s machine.</p>
       <h3 id="the-index-changed-under-you">The index changed under you</h3>
@@ -1028,7 +1028,7 @@ Name: <span class="out-num">7</span>, dtype: object
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
    student_id           name  ug_gpa
-<span class="out-num">2</span>        <span class="out-num">1003</span>  Amara Okonkwo    <span class="out-num">3.02</span>
+<span class="out-num">2</span>        <span class="out-num">1003</span>  Amaka Okoroha    <span class="out-num">3.02</span>
       </div>
       </div>
       <p><strong>Or</strong> make <code>student_id</code> the index, so <code>.loc</code> means what you want:</p>
@@ -1037,7 +1037,7 @@ Name: <span class="out-num">7</span>, dtype: object
 indexed.loc[<span class="nm">1003</span>, [<span class="st">&quot;name&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>]]</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-name      Amara Okonkwo
+name      Amaka Okoroha
 ug_gpa             <span class="out-num">3.02</span>
 Name: <span class="out-num">1003</span>, dtype: object
       </div>
@@ -1544,7 +1544,7 @@ attempt[attempt.hs_attendance &gt; <span class="nm">1.0</span>][<span class="st"
       <div class="output-block">
         <div class="output-block-label">output</div>
 rows still above <span class="out-num">1.0</span>: <span class="out-num">1</span>
-/sessions/youthful-keen-pascal/tmp/ipykernel_63/<span class="out-num">1020421739.</span>py:<span class="out-num">2</span>: SettingWithCopyWarning: 
+/tmp/ipykernel_11/<span class="out-num">1020421739.</span>py:<span class="out-num">2</span>: SettingWithCopyWarning: 
 A value is trying to be set on a copy of a slice from a DataFrame.
 Try using .loc[row_indexer,col_indexer] = value instead
 
@@ -1697,7 +1697,7 @@ clean[[<span class="st">&quot;student_id&quot;</span>, <span class="st">&quot;na
    student_id           name  submission_rate
 <span class="out-num">0</span>        <span class="out-num">1001</span>   Kofi Pereira              NaN
 <span class="out-num">1</span>        <span class="out-num">1002</span>    Elliot Park             <span class="out-num">0.69</span>
-<span class="out-num">2</span>        <span class="out-num">1003</span>  Amara Okonkwo             <span class="out-num">0.84</span>
+<span class="out-num">2</span>        <span class="out-num">1003</span>  Amaka Okoroha             <span class="out-num">0.84</span>
 <span class="out-num">3</span>        <span class="out-num">1004</span>    Ravi Wojcik              NaN
       </div>
       </div>
@@ -2027,7 +2027,7 @@ ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.i
       <h3 id="isin-and"><code>.isin()</code> and <code>~</code></h3>
       <p><code>.isin()</code> tests membership against a list, and <code>~</code> inverts a mask.</p>
       <div data-runnable>
-      <pre><code>cast = [<span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>]
+      <pre><code>cast = [<span class="st">&quot;Amaka Okoroha&quot;</span>, <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;Priya Raghunathan&quot;</span>]
 
 <span class="fn">print</span>(clean[clean.name.<span class="fn">isin</span>(cast)][[<span class="st">&quot;name&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>, <span class="st">&quot;logins_per_week&quot;</span>]])
 <span class="fn">print</span>()
@@ -2035,7 +2035,7 @@ ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.i
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
                  name  ug_gpa  logins_per_week
-<span class="out-num">2</span>       Amara Okonkwo    <span class="out-num">3.02</span>              <span class="out-num">3.4</span>
+<span class="out-num">2</span>       Amaka Okoroha    <span class="out-num">3.02</span>              <span class="out-num">3.4</span>
 <span class="out-num">23</span>  Priya Raghunathan    <span class="out-num">2.80</span>              <span class="out-num">4.4</span>
 <span class="out-num">88</span>  Devin Castellanos    <span class="out-num">1.99</span>              <span class="out-num">0.4</span>
 
@@ -2197,7 +2197,6 @@ Name: course_score, dtype: float64
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &lt;class &#x27;pandas.core.indexes.multi.MultiIndex&#x27;&gt;
-
 success            <span class="out-num">0</span>     <span class="out-num">1</span>
 need_based_aid            
 <span class="out-num">0</span>               <span class="out-num">59.7</span>  <span class="out-num">77.5</span>
@@ -2284,6 +2283,7 @@ outcomes      = pd.<span class="fn">read_csv</span>(<span class="st">&quot;data/
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 students         <span class="out-num">100</span> rows x <span class="out-num">2</span> cols   [&#x27;student_id&#x27;, &#x27;name&#x27;]
+
 high_school      <span class="out-num">100</span> rows x <span class="out-num">6</span> cols   [&#x27;student_id&#x27;, &#x27;hs_gpa&#x27;, &#x27;hs_clubs&#x27;, &#x27;hs_sports&#x27;, &#x27;hs_attendance&#x27;, &#x27;hs_pop_density&#x27;]
 undergraduate    <span class="out-num">100</span> rows x <span class="out-num">4</span> cols   [&#x27;student_id&#x27;, &#x27;ug_gpa&#x27;, &#x27;internships&#x27;, &#x27;need_based_aid&#x27;]
 lms_activity     <span class="out-num">100</span> rows x <span class="out-num">4</span> cols   [&#x27;student_id&#x27;, &#x27;logins_per_week&#x27;, &#x27;time_on_task_hrs&#x27;, &#x27;submission_rate&#x27;]
@@ -2318,7 +2318,7 @@ pair.<span class="fn">head</span>(<span class="nm">3</span>)</code></pre>
    student_id           name  hs_gpa  hs_clubs  hs_sports  hs_attendance  hs_pop_density
 <span class="out-num">0</span>        <span class="out-num">1001</span>   Kofi Pereira    <span class="out-num">2.87</span>         <span class="out-num">3</span>          <span class="out-num">1</span>          <span class="out-num">0.915</span>            <span class="out-num">3703</span>
 <span class="out-num">1</span>        <span class="out-num">1002</span>    Elliot Park    <span class="out-num">2.20</span>         <span class="out-num">1</span>          <span class="out-num">1</span>          <span class="out-num">0.866</span>            <span class="out-num">4851</span>
-<span class="out-num">2</span>        <span class="out-num">1003</span>  Amara Okonkwo    <span class="out-num">2.72</span>         <span class="out-num">2</span>          <span class="out-num">0</span>          <span class="out-num">0.948</span>            <span class="out-num">4341</span>
+<span class="out-num">2</span>        <span class="out-num">1003</span>  Amaka Okoroha    <span class="out-num">2.72</span>         <span class="out-num">2</span>          <span class="out-num">0</span>          <span class="out-num">0.948</span>            <span class="out-num">4341</span>
       </div>
       </div>
       <h3 id="the-four-kinds-of-join">The four kinds of join</h3>
@@ -2829,7 +2829,7 @@ shared = [c <span class="kw">for</span> c <span class="kw">in</span> clean.colum
   <aside class="rail-col">
         <div class="rail-card">
           <h3>Simulations</h3>
-          <a class="rail-item" href="../../sims/dirty-dataset/index.html"><span class="rail-title">The Dirty Dataset</span><span class="rail-sub">A messy extract and a deadline. Clean it and defend your choices.</span></a><a class="rail-item" href="../../sims/aria-returns/index.html"><span class="rail-title">ARIA Returns</span><span class="rail-sub">Query a table by asking the right questions.</span></a><a class="rail-item" href="../../sims/rtg-investigation/index.html"><span class="rail-title">RTG Investigation</span><span class="rail-sub">Follow the data to a conclusion you can support.</span></a><a class="rail-item" href="../../sims/merge-room/index.html"><span class="rail-title">The Merge Room</span><span class="rail-sub">Four systems that disagree. Choose a join and defend the number.</span></a>
+          <a class="rail-item" href="../../sims/dirty-dataset/index.html"><span class="rail-title">The Dirty Dataset</span><span class="rail-sub">A messy extract and a deadline. Clean it and defend your choices.</span></a><a class="rail-item" href="../../sims/aria-returns/index.html"><span class="rail-title">ARIA Returns</span><span class="rail-sub">Query a table by asking the right questions.</span></a><a class="rail-item" href="../../sims/rtg-investigation/index.html"><span class="rail-title">RTG Investigation</span><span class="rail-sub">Follow the data to a conclusion you can support.</span></a><a class="rail-item" href="../../sims/merge-room/index.html"><span class="rail-title">The Merge Room</span><span class="rail-sub">Four systems that disagree. Choose a join and defend the number.</span></a><a class="rail-item" href="../../sims/debug-pipeline/index.html"><span class="rail-title">Debug the Pipeline</span><span class="rail-sub">Find what broke, and say why.</span></a>
         </div>
         <div class="rail-card">
           <h3>Check yourself</h3>
@@ -3741,6 +3741,10 @@ details.ex-solution pre { margin-top: 0.6rem; }
   .ex-run, .ex-reset { transition: none; }
 }
 
+/* material-darker paints comments #545454 on #212121 (2.13:1); students read
+   these comments as instructions. #8a8a8a keeps them quiet at 4.66:1. */
+.cm-s-material-darker span.cm-comment { color: #8a8a8a; }
+
 /* module-layout.css */
 /* DTSC 520 - three-column module page layout.
    Contents left, teaching content middle, simulations and CTAs right.
@@ -3872,7 +3876,7 @@ details.ex-solution pre { margin-top: 0.6rem; }
    a <code> element, so the rule below missed it and it stayed at 1.43:1. */
 :root.theme-light code,
 :root.theme-light pre code,
-:root.theme-light .mono { color: #8b620f; }
+:root.theme-light .mono { color: #6f4e0b; }   /* was #8b620f: 4.31:1 on the tinted code background axe found (Oct 2026); #6f4e0b clears 4.9:1 on every light surface */
 :root.theme-light .kw,  :root.theme-light .keyword { color: #985b19; }
 :root.theme-light .st,  :root.theme-light .str     { color: #4d7333; }
 :root.theme-light .nm,  :root.theme-light .num     { color: #227194; }
@@ -4619,6 +4623,73 @@ section.content-section { scroll-margin-top: 68px; }
 @media (max-width: 900px) {
   .mod-banner .banner-shield { display: none; }
 }
+
+/* ==========================================================================
+   Contrast fixes found by axe in a real browser (Oct 13 2026).
+   jsdom could not evaluate color-contrast; Chrome could, on the live pages.
+   ========================================================================== */
+/* The "Output" label over every recorded output was #4a4642 on #0a0908 in the
+   dark theme: 2.12:1 on small uppercase text, 194 times on Module 2 alone.
+   #8a837c is the same warm gray family at 5.32:1. The light theme already has
+   its own value (above). */
+:root:not(.theme-light) .output-block-label,
+:root:not(.theme-light) .output-block .out-idx { color: #8a837c !important; }
+
+/* Links written in prose (the Think Python and PDSH citations) had no color
+   rule at all, so they rendered browser-default #0000ee on the dark page at
+   2.05:1. Use the module's own accent, which each shell already tunes for both
+   themes. Same for the quiz card's button text. */
+.content-section p a:not([class]),
+.content-section li a:not([class]),
+.content-section em a:not([class]) { color: var(--accent-light); }
+
+/* Module 2's page never got the quiz button style the other shells carry, so
+   its "Take the Quiz" rendered as a default blue link. White on each module's
+   accent clears 4.5:1 in every module (4.51 on M0's gray is the lowest). */
+.quiz-link-btn { display: inline-flex; align-items: center; padding: .65rem 1.25rem;
+  background: var(--accent); color: #fff; border-radius: 4px; text-decoration: none;
+  font-size: .9rem; font-weight: 500; white-space: nowrap; }
+
+/* Contents-pane section numbers: 3.18:1 dark, 2.70:1 light. */
+:root:not(.theme-light) .toc-section > a .toc-num { color: #8a847e; opacity: 1; }
+:root.theme-light .toc-section > a .toc-num { color: #6e6963; opacity: 1; }
+.toc-section.active > a .toc-num { color: var(--accent-light); }
+
+/* Warning callout labels on white, light theme: #d06060 is 3.80:1. */
+:root.theme-light .callout-warn .callout-label { color: #b04040; }
+
+/* Module 1: keyword spans and links were tuned for the light theme. */
+:root:not(.theme-light) body[data-module="1"] .kw { color: #4c9cc2; }
+:root:not(.theme-light) body[data-module="1"] { --accent-light: #4c9cc2; }
+:root.theme-light body[data-module="1"] .pseudocode .ps-comment { color: #6e6963; }
+
+/* Module 6: its accent-light is maroon #a82050, 2.74:1 on the dark page, and
+   it colors every Next button and link there. */
+:root:not(.theme-light) body[data-module="6"] { --accent-light: #d9688b; }
+:root:not(.theme-light) body[data-module="6"] .callout-title { color: #4a9ac0; }
+body[data-module="6"] .rail-item .rail-title { color: var(--text-bright, #e8e4de); }
+:root.theme-light body[data-module="6"] .rail-item .rail-title { color: var(--text, #1a1715); }
+body[data-module="6"] .sim-cta h3 { color: #fff !important; }
+body[data-module="6"] .sim-cta-label { color: #f0d8e0 !important; }
+body[data-module="6"] .sim-cta p { color: #f0d8e0 !important; }
+:root.theme-light body[data-module="6"] .cmt { color: #64605b !important; }
+:root.theme-light body[data-module="6"] .str { color: #3f6a28 !important; }
+/* Module 6 never defined --text-bright, so its resource cards (inline
+   color:var(--text-bright)) fell back to link blue; and the light theme's
+   ".content h3/p !important" painted dark text onto the maroon sim cards. */
+:root:not(.theme-light) body[data-module="6"] { --text-bright: #f0ece6; }
+:root.theme-light body[data-module="6"] { --text-bright: #0d0c0a; }
+:root.theme-light body[data-module="6"] .sim-cta h3 { color: #fff !important; }
+:root.theme-light body[data-module="6"] .sim-cta p,
+:root.theme-light body[data-module="6"] .sim-cta-label { color: #f0d8e0 !important; }
+
+/* Module 0's section pills: #65656e on the light banner is 3.99:1. */
+:root.theme-light body[data-module="0"] .pill { color: #4f4f56; }
+
+/* The current-module step in the banner rail used --accent-light on its own
+   accent tint: 3.74:1 in the light theme. Body text color reads clearly there
+   and the tint plus border still mark it as "you are here". */
+:root.theme-light .banner-rail .rail-step.here { color: var(--text); }
 
 </style>
 <script>

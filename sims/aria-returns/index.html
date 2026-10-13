@@ -407,9 +407,9 @@ const LEVEL_BUILDERS = [
 /* ---------- SYSTEM 1: SERIES (HVAC) ---------- */
 function(v) {
   const V = [
-    { rooms: ['lobby','lab','library','server_room'], temps: [68, 71, 66, 95], hot: 'server_room' },
-    { rooms: ['lobby','atrium','lab','basement'],     temps: [70, 74, 69, 59], hot: 'basement' },
-    { rooms: ['office','lab','lobby','rooftop'],      temps: [72, 70, 65, 105], hot: 'rooftop' }
+    { rooms: ['lobby','server_room','lab','library'], temps: [68, 95, 71, 66], hot: 'server_room' },
+    { rooms: ['lobby','basement','atrium','lab'],     temps: [70, 59, 74, 69], hot: 'basement' },
+    { rooms: ['rooftop','office','lab','lobby'],      temps: [105, 72, 70, 65], hot: 'rooftop' }
   ][v];
   const target = V.temps[V.rooms.indexOf(V.hot)];
   const hottest = Math.max(...V.temps);
@@ -569,7 +569,7 @@ function(v) {
   title:'The Catalog of Holes',
   story:`The library catalog loaded with holes in it. Where the copy counts should be, some rows just say NaN - Not a Number, pandas' way of shrugging.
 
-[ARIA]: "The scanner battery died mid-inventory. Count the holes with .isna(), then patch them with .fillna(0) - if we didn't scan it, we assume zero copies until proven otherwise. Pessimistic, but auditable."`,
+[ARIA]: "The scanner battery died mid-inventory. Count the holes with .isna(), then patch them with .fillna(0) - if we didn't scan it, we assume zero copies until a scan says otherwise. Pessimistic, but auditable."`,
   mission:`<h4>&#9656; MISSION</h4>The DataFrame <code>catalog</code> has missing values in <code>copies</code>:<br>
 &bull; <code>num_missing</code> - count the NaN values in the <code>copies</code> column, using <code>.isna()</code> and <code>.sum()</code><br>
 &bull; <code>patched</code> - the <code>copies</code> column with NaN replaced by 0, using <code>.fillna()</code><br>
@@ -715,7 +715,7 @@ assert ids_matched == ${'[' + matched.join(', ') + ']'}, f"ids_matched is {ids_m
 /* ---------- SYSTEM 7: SORT & VALUE_COUNTS (LIGHTING) ---------- */
 function(v) {
   const V = [
-    { zones: ['east','west','east','north','east','west'],   sevs: [3, 7, 9, 2, 5, 4] },
+    { zones: ['east','west','east','north','east','west'],   sevs: [3, 9, 7, 2, 5, 4] },
     { zones: ['north','north','south','east','north','south'], sevs: [6, 2, 8, 10, 3, 1] },
     { zones: ['west','south','west','south','north','west'],  sevs: [4, 9, 6, 2, 7, 5] }
   ][v];
@@ -881,7 +881,8 @@ function recordCompletion(review) {
       name: state.name,
       date: new Date().toISOString()
     }));
-    try { if (typeof logEvent === 'function') logEvent('sim_complete', 'aria_returns', 1, 1); } catch(e) {}
+    try { if (typeof logEvent === 'function') logEvent('sim_complete', 'aria_returns', 1, 1,
+      { hints: Object.values(state.hintsShown || {}).reduce((a, b) => a + b, 0) }); } catch(e) {}
     return { newBest: !prev || !prev.bestTimeMs || state.elapsed < prev.bestTimeMs, hadPrev: !!(prev && prev.bestTimeMs), best };
   } catch(e) { return { newBest: false, hadPrev: false, best: state.elapsed }; }
 }

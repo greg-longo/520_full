@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 <style>
   :root {
     --maroon: #8B1C40; --maroon-light: #a82050;
@@ -361,7 +361,7 @@ for i in range(len(roster)):
     print(   )`,
     hints: [
       `<code>range(len(roster))</code> gives you 0, 1, 2, 3, 4. Inside the loop, <code>i</code> is the index and <code>roster[i]</code> is the player. How do you print the batting number (1-based)?`,
-      `Use <code>print(i+1, roster[i])</code> inside the loop — <code>i+1</code> converts from 0-based to 1-based. Or: <code>print(str(i+1) + ". " + roster[i])</code> for "1. Rivera" format.`
+      `Use <code>print(i+1, roster[i])</code> inside the loop: <code>i+1</code> converts from 0-based to 1-based. Or: <code>print(str(i+1) + ". " + roster[i])</code> for "1. Rivera" format.`
     ],
     answer: `Inside the loop: <code>print(i+1, roster[i])</code> prints "1 Rivera", "2 Santos", etc. Add <code>". "</code> for "1. Rivera" style.`,
     maxPoints: 2,
@@ -402,7 +402,7 @@ for i in range(len(players)):
     else:
         print(name,    )`,
     hints: [
-      `The if/else structure is already there — you just need to fill in what to print. What two quoted strings go in the blanks after <code>name,</code>?`,
+      `The if/else structure is already there: you just need to fill in what to print. What two quoted strings go in the blanks after <code>name,</code>?`,
       `Fill in the quoted strings: <code>print(name, "HOT")</code> for averages above .280, and <code>print(name, "COLD")</code> for everyone else.`
     ],
     answer: `<code>print(name, "HOT")</code> in the if branch, <code>print(name, "COLD")</code> in the else. Rivera (.287), Chen (.305), Torres (.293) are HOT; Santos and Williams are COLD.`,
@@ -516,9 +516,12 @@ print("Walks:", walks)`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
-      const has6 = stdout.includes('6');
-      const has3 = stdout.includes('3');
-      const has1 = stdout.includes('1');
+      // Each count must sit on its own labeled line, and come from the loop:
+      // a bare includes('3') also passed with strikeouts and walks swapped.
+      const hasLoop = /for\s+\w+\s+in\s+at_bats/.test(code);
+      const has6 = /hits\D*\b6\b/i.test(stdout) && hasLoop;
+      const has3 = /(strikeouts|k)\s*:\s*3\b/i.test(stdout);
+      const has1 = /(walks|bb)\s*:\s*1\b/i.test(stdout);
       const hasHitsLabel = stdout.toLowerCase().includes('hit');
       const hasKLabel    = stdout.toLowerCase().includes('strike') || stdout.toLowerCase().includes('k:');
       const hasWalkLabel = stdout.toLowerCase().includes('walk') || stdout.toLowerCase().includes('bb');
@@ -623,7 +626,7 @@ function renderChallenge(idx) {
       </div>
       <div class="editor-wrap" style="margin-top:1.25rem">
         <div class="editor-label">Your Code <span>Tab key = 4 spaces</span></div>
-        <textarea class="code-editor" id="codeEditor" spellcheck="false" aria-label="Python code editor — write your solution here">${c.starterCode}</textarea>
+        <textarea class="code-editor" id="codeEditor" spellcheck="false" aria-label="Python code editor: write your solution here">${c.starterCode}</textarea>
         <div class="editor-actions">
           <button class="btn-prev${idx > 0 ? ' show' : ''}" id="btnPrev" onclick="prevChallenge()">&larr; Prev</button>
           <button class="btn-run" id="btnRun" onclick="runCode(${idx})">&#9654; Run Code</button>
@@ -684,6 +687,22 @@ function updateDots(active) {
   }
 }
 
+// Graders read the code to see HOW an answer was produced, so a comment must not
+// count: "# jersey_number = 14" above print(14) used to pass. Strip comments
+// (outside of string literals) before grading.
+function stripComments(src) {
+  return String(src).split('\n').map(line => {
+    let q = null;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (q) { if (ch === '\\') i++; else if (ch === q) q = null; }
+      else if (ch === '"' || ch === "'") q = ch;
+      else if (ch === '#') return line.slice(0, i);
+    }
+    return line;
+  }).join('\n');
+}
+
 async function runCode(idx) {
   const code = document.getElementById('codeEditor').value;
   const outBox = document.getElementById('outputBox');
@@ -701,7 +720,7 @@ async function runCode(idx) {
   else if (stdout) { outBox.textContent = stdout; }
   else { outBox.textContent = '(no output)'; }
   const c = challenges[idx];
-  const result = c.grader(pyodideInstance, code, stdout, errorMsg || null);
+  const result = c.grader(pyodideInstance, stripComments(code), stdout, errorMsg || null);
   scores[idx] = { pts: result.pts, level: result.level, msg: result.msg, verdict: result.level === 'pass' ? 'Correct' : result.level === 'partial' ? 'Partially Correct' : 'Not Quite', title: c.title, max: c.maxPoints };
   try { result.level === 'pass' ? (window.sfx.pass(), window.confettiBurst()) : result.level === 'partial' ? window.sfx.hint() : (window.sfx.fail(), window.screenShake()); } catch(e){}
   showFeedback(result.level, scores[idx].verdict, result.msg);
@@ -752,8 +771,8 @@ function revealAnswer(idx) {
   label.textContent = 'Answer';
   text.innerHTML = c.answer;
   if (!scores[idx] || scores[idx].level === 'fail') {
-    scores[idx] = { pts: 0, level: 'partial', msg: 'Answer revealed — review the solution above before moving on.', verdict: 'Answer Revealed', title: c.title, max: c.maxPoints };
-    showFeedback('partial', 'Answer Revealed', 'Answer revealed — review the solution above before moving on.');
+    scores[idx] = { pts: 0, level: 'partial', msg: 'Answer revealed: review the solution above before moving on.', verdict: 'Answer Revealed', title: c.title, max: c.maxPoints };
+    showFeedback('partial', 'Answer Revealed', 'Answer revealed: review the solution above before moving on.');
     updateScore();
     document.getElementById('btnNext').style.display = 'inline-flex';
     saveProgress();

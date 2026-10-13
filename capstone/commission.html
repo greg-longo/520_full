@@ -10,7 +10,7 @@
 <style>
   :root {
     --bg:#0a0c11; --panel:#11151d; --panel2:#161b25; --line:#272d3a; --line2:#333b4b;
-    --ink:#eef1f6; --ink-dim:#a3abbd; --ink-mute:#626c80;
+    --ink:#eef1f6; --ink-dim:#a3abbd; --ink-mute:#8a94a8;
     --brass:#c9a24a; --brass-l:#e3c075; --maroon:#8B1C40; --maroon-l:#c25a7a;
     --on:#5ec99a; --warn:#dab153; --bad:#cf6b7e;
     --serif:'Newsreader',Georgia,serif; --sans:'Zilla Slab',Georgia,serif; --mono:'IBM Plex Mono',monospace;
@@ -189,7 +189,7 @@
 <div id="appwin" class="hidden">
   <div class="titlebar">
     <span class="tb-dots"><i></i><i></i><i></i></span>
-    <span class="tb-title"><b>Institutional Research</b> &mdash; Cabinet Commission &mdash; case file</span>
+    <span class="tb-title"><b>Institutional Research</b> · Cabinet Commission · case file</span>
     <span class="tb-spacer"></span>
     <a class="tb-home" href="index.html">Save &amp; exit &rarr;</a>
   </div>
@@ -752,6 +752,8 @@ function renderFinale(decisions, good, passed){
   capstoneLog('capstone_complete', 'finale', state.points, state.maxPoints||state.points,
               {tier:h.tier, decisions:decisions.length, goodDecisions:good, codePassed:passed,
                ethicsOk:e.filter(x=>x.ok).length});
+  /* The server's Cabinet Approved achievement and finale credits key on this event name. */
+  capstoneLog('capstone_finale', 'finale', state.points, state.maxPoints||state.points, {tier:h.tier});
   try{ window.confettiBurst && h.cls==='good' && window.confettiBurst(90); }catch(err){}
   clearBeat();
   const pct = state.maxPoints ? Math.round(100*state.points/state.maxPoints) : 0;
@@ -1089,7 +1091,7 @@ function buildBeats(){
     label:'Decision 1 of 3 · Scope',
     intro:"The Provost's framing memo asks: “Tell us what <em>causes</em> student success so we can fund it.”",
     q:'How do you scope what this observational dataset can deliver?',
-    onPick:(c)=>{ if(c.q==='good') addReportLine('Scope','This analysis reports <b>associations</b>, not proven causes. Causal claims would require a controlled study.'); },
+    onPick:(c)=>{ if(c.q==='good') addReportLine('Scope','This analysis reports <b>associations</b>, not causes. Causal claims would require a controlled study.'); },
     choices:[
       { t:'Promise associations and clearly actionable signals, but flag that causal claims need a controlled study or natural experiment.', q:'good',
         ot:'✓ Honest and useful', op:'Observational data yields associations. The mature deliverable says: here is what robustly co-occurs with success, here is where it plausibly points to a lever, and here is where we must not claim cause. The Cabinet can act on that responsibly.' },
@@ -1148,13 +1150,13 @@ assert flags['ug_gpa'] is False and flags['logins_per_week'] is False and flags[
     q:'<span style="font-family:var(--mono);font-size:0.85rem;color:var(--ink-dim)">load &rarr; join all tables &rarr; compute metrics &rarr; clean &rarr; model &rarr; report</span><br>What\'s the most serious problem with this order?',
     onPick:(c)=>{ if(c.q==='good') addReportLine('Method','Tables were cleaned <b>before</b> joining and fairness was checked <b>with</b> modeling - not bolted on at the end.'); },
     choices:[
-      { t:'Cleaning happens after joining - you\'d merge six messy tables and then try to untangle the combined mess, and metrics get computed on dirty data.', q:'good',
+      { t:'Cleaning happens after joining, so you\'d merge six messy tables, then untangle the combined mess, and metrics get computed on dirty data.', q:'good',
         ot:'✓ That\'s the real flaw', op:'Clean each table before you join, and never compute metrics on uncleaned data. Joining first multiplies the mess (mismatched keys, duplicated dirt) and computing-then-cleaning means your numbers were wrong when you calculated them. Correct spine: load → clean → join → compute → model & fairness → report.' },
-      { t:'There\'s no separate fairness step - but that\'s minor, since you already excluded the bad features earlier.', q:'warn',
+      { t:'There\'s no separate fairness step, but that\'s minor, since you already excluded the bad features before any modeling begins.', q:'warn',
         ot:'~ Fairness isn\'t one-and-done', op:'Excluding proxies up front is necessary but not sufficient - models can reconstruct sensitive signals from correlated features, so fairness checking belongs <em>with</em> modeling. Still, the ordering problem above is the more immediate, results-poisoning flaw.' },
       { t:'Reporting is last - stakeholders should see findings throughout, so the report step should come earlier and repeat.', q:'bad',
         ot:'✗ Reporting belongs at the end', op:'You report conclusions once they\'re trustworthy. Surfacing half-baked findings early invites the Cabinet to act on noise. The actual flaw is upstream: cleaning is in the wrong place.' },
-      { t:'Modeling before reporting is fine, but metrics should come before joining so you can compute per-table summaries first.', q:'bad',
+      { t:'Modeling before reporting is fine, but metrics should come before joining, so you can compute clean per-table summaries first and compare them.', q:'bad',
         ot:'✗ That makes it worse', op:'Per-table metrics computed before cleaning are just as untrustworthy, and the analysis you owe the Cabinet is cross-table (it needs the join). The fix isn\'t moving compute earlier - it\'s cleaning before joining.' },
     ]});
 
@@ -1207,9 +1209,9 @@ assert r[2] == exp_pct, "pct_on_aid should be 100*n_on_aid/n_records rounded to 
     q:'What do these signs tell you, and what\'s the right next move?',
     onPick:(c)=>{ if(c.q==='good') addReportLine('Data quality','Flagged before cleaning: duplicate rows, a percent-string column, and missing values concentrated in engagement fields.'); },
     choices:[
-      { t:'Duplicates and a string-typed column and blanks are exactly the issues to fix in the dedicated cleaning step - note them and move on to clean deliberately.', q:'good',
+      { t:'Duplicates, a string-typed column, and blanks are exactly what the dedicated cleaning step is for. Note them now and clean deliberately.', q:'good',
         ot:'✓ Right read, right restraint', op:'Two extra rows = the duplicates you expected. A "84%" string means the column is text, not numeric. Blanks mean missing values. These are precisely what the cleaning stage handles - you note them now and fix them deliberately, not reactively.' },
-      { t:'The data is corrupted and untrustworthy - flag it back to the source team and pause the analysis until they send a clean export.', q:'bad',
+      { t:'The data is corrupted and untrustworthy. Flag it back to the source team and pause the analysis until they send a clean, verified export.', q:'bad',
         ot:'✗ This is normal, not corruption', op:'Real extracts always arrive with duplicates, type quirks, and gaps. Bouncing it back stalls the project over routine cleaning that\'s literally your job. Note the issues; handle them at the cleaning step.' },
       { t:'Quickly strip the "%", convert to float, and drop duplicate rows now so the data\'s clean before you forget.', q:'warn',
         ot:'~ Right fixes, wrong moment', op:'Those are the correct operations - but doing them ad hoc, here, scattered through the workflow, is how steps get missed and decisions go undocumented. Cleaning is its own stage for a reason. Catalog the issues now; execute them together.' },
@@ -1359,7 +1361,7 @@ assert float(np.corrcoef(idx[_ok], submission[_ok])[0, 1]) < 0.99, "Your index t
         ot:'✗ It will look tidy, and that is the danger', op:'You would get 85 clean rows and no warning of any kind. Fifteen students would be gone, and - because both duplicated students happen to have no LMS record - the duplicate problem would vanish too. Two separate defects, silently canceled into a tidy-looking table. "Complete records" is not a neutral filter; it is a filter on whoever the LMS happened to capture.' },
       { t:'Merge all four as they are and check the row count at the end. If it comes out sensible, nothing went wrong.', q:'bad',
         ot:'✗ The end count is the one that lies', op:'Try it: high_school x undergraduate gives <b>102 rows for 100 students</b> - the duplicates have already multiplied. Join lms_activity on top and it drops back to 85, which looks reassuring. The final number is tidy because two errors canceled. Check the row count after <em>every</em> merge, not just the last.' },
-      { t:'Outer-join everything so nothing is lost from any table, then deal with whatever missing values appear.', q:'warn',
+      { t:'Outer-join everything so no student from any table is lost, then deal with whatever missing values and duplicate rows appear afterward.', q:'warn',
         ot:'~ Loses nothing, including the duplicates', op:'Outer join does preserve every student, which is the right instinct. But it carries the duplicated high_school rows straight through, and it invents rows for any id present in one table and not another. Deduplicate first and pick a deliberate spine; then you know what each row means.' },
     ]});
 
@@ -1437,13 +1439,13 @@ assert round(float(_yes['pass_rate']), 2) == 0.66, "66 percent of the students w
     q:'What do you do with them?',
     onPick:(c)=>{ if(c.q==='good') addReportLine('Missing data','<b>Decision:</b> the 15 students without engagement records are <b>retained</b> and reported separately. Every engagement finding states that it covers 85 of 100 students, and that the 15 excluded from it did worse on both measures.'); },
     choices:[
-      { t:'Keep all 100. Report engagement findings on the 85 who have data, and state explicitly - every time - that the 15 excluded did worse on both measures.', q:'good',
+      { t:'Keep all 100. Report engagement findings on the 85 who have data, and say every time that the 15 excluded did worse on both measures.', q:'good',
         ot:'✓ The gap is a finding, not an obstacle', op:'You cannot compute an engagement score without engagement data, so the metric genuinely covers 85 students. What you can refuse to do is let that pass unremarked. Naming the gap every time the finding appears is the difference between a limitation and a misrepresentation - and "the students the LMS never recorded did worst" may itself be worth the Cabinet knowing.' },
       { t:'Drop the 15. An analysis of engagement needs engagement data, and 85 of 100 is a strong response rate.', q:'bad',
         ot:'✗ You would delete the students you were sent to help', op:'The cohort mean jumps from 68.3 to 69.4 and the pass rate from 60% to 66% - the analysis gets cheerier the moment those students leave the table. You would be reporting a healthier cohort to the Cabinet by removing the people most in need of the funding, and nothing in the output would show you had done it.' },
       { t:'Fill the missing engagement values with the cohort mean, so all 100 students stay in every calculation.', q:'bad',
         ot:'✗ It invents exactly the wrong number', op:'Mean-filling assigns average engagement to the group your own numbers show is furthest from average. Fifteen struggling students become fifteen typical ones, the relationship between engagement and outcome is diluted, and the fabrication is invisible downstream - nobody reading the table can tell which values were measured.' },
-      { t:'Fill the missing engagement values with zero - no record means no activity, so zero is the honest reading.', q:'warn',
+      { t:'Fill the missing engagement values with zero. No LMS record means no activity, so zero is the honest reading of what the system recorded.', q:'warn',
         ot:'~ Plausible, and it might be true - but you do not know it', op:'It is the most defensible of the fills, and if the LMS truly logs every session then absence really does mean zero. But you have not established that. It could equally be a failed export, a late enrollment, or a student on a different platform. Zero would push the finding in the direction you already expect, which is precisely when to be most suspicious of it. Find out before you assume.' },
     ]});
 
@@ -1470,9 +1472,9 @@ assert round(float(_yes['pass_rate']), 2) == 0.66, "66 percent of the students w
     q:'How do you show it?',
     onPick:(c)=>{ if(c.q==='good') addReportLine('Figure 1','Pass rate by engagement quartile, y-axis <b>0-1</b>, titled with the covered population (<b>85 of 100 students</b>).'); },
     choices:[
-      { t:'A bar chart of pass rate by quartile, y-axis running the full 0 to 1, titled so it states it covers 85 of 100 students.', q:'good',
+      { t:'A bar chart of pass rate by quartile, y-axis from 0 to 1, titled so it says it covers 85 of 100 students.', q:'good',
         ot:'✓ The finding, at its real size', op:'Four bars, a full axis, and a title that admits its own population. The trend is strong enough that it does not need help - 14% to 100% is dramatic on an honest axis. Naming the 85 in the title is the part most people skip, and it is the part that stops the chart overstating what it saw.' },
-      { t:'A scatter of engagement against course_score for all 85 students, with a fitted trend line.', q:'warn',
+      { t:'A scatter of engagement against course_score for all 85 students, with a fitted trend line and its r value.', q:'warn',
         ot:'~ More honest about spread, worse at the point', op:'A scatter shows every student and hides nothing, which is a real virtue - and if the question were "how tight is this relationship?" it would be the right chart. But the Cabinet is deciding whether to fund engagement support, and the answer they need is the size of the gap between low and high engagement. Quartiles say that in one glance.' },
       { t:'A line chart across the four quartiles - it makes the upward trend unmistakable.', q:'bad',
         ot:'✗ A line promises something continuous', op:'Lines say "this is a trajectory, and the points between mean something". Quartiles are four buckets; there is no student at Q2.5. Worse, a line invites extrapolation - the Cabinet will read it as "keep pushing engagement and pass rates keep climbing", which your data cannot support past 100%.' },
@@ -1536,11 +1538,11 @@ assert '85' in _ax.get_title(), "The title must say the chart covers 85 of the 1
         addReportLine('Figure 2','<b>Mean course score by aid status</b>, drawn on the full 0-100 axis with group sizes annotated. A truncated axis was requested and declined; the difference is 6.3 points and is shown at that size.'); }
     },
     choices:[
-      { t:'Draw it on the full 0-100 axis, annotate both group sizes, and say plainly in the note that the gap is 6.3 points - then explain why the crop was declined.', q:'good',
+      { t:'Draw it on the full 0-100 axis, annotate both group sizes, and say plainly that the gap is 6.3 points, then explain why you declined the crop.', q:'good',
         ot:'✓ The gap is real, and it is this big', op:'The difference exists and is worth reporting. It is 6.3 points. Cropping the axis would not reveal it more clearly - it would show a different, larger difference that is not in the data. And this is a chart about the very feature you excluded from the model in Stage 1 as a socioeconomic proxy; presenting it inflated would be the exact harm you wrote a rule against.' },
       { t:'Crop the axis to 65-76 as asked. Nothing is fabricated - every number on the chart is accurate, and the axis is labeled.', q:'bad',
         ot:'✗ Every number true, the chart still lying', op:'This is the most common defense of a truncated axis and it does not hold. A bar chart encodes magnitude as LENGTH; that is the entire visual grammar. Crop the baseline and you have changed what the lengths mean while keeping the labels honest, so the reader is misled by the part they trust most and cannot check. A 6% difference rendered as 57% of the plot is a nine-fold exaggeration.' },
-      { t:'Refuse the chart entirely. Any figure comparing aid recipients invites exactly the profiling you excluded the feature to prevent.', q:'warn',
+      { t:'Refuse the chart entirely. Any figure comparing aid recipients invites exactly the profiling you excluded the feature to prevent in the first place.', q:'warn',
         ot:'~ Right instinct, wrong lever', op:'The concern is sound: this is the feature you ruled out of any ranking, and a chart can do the profiling a model was forbidden to do. But refusing to show a real disparity has its own cost - you would be hiding evidence that students on aid are being underserved, which is precisely the thing the Cabinet could act on. Excluding a feature from a MODEL and reporting a group difference honestly are different acts. Show it, at its real size, with the limits stated.' },
       { t:'Send the cropped version they asked for, with a clear note underneath explaining that the axis is truncated.', q:'bad',
         ot:'✗ The caption does not undo the picture', op:'People remember the shape and forget the footnote - that is not a failure of attention, it is how visual processing works, and a disclaimer does not repeal it. You would be relying on a note to correct an impression you deliberately created. If a chart needs a caption to stop it misleading, redraw the chart.' },
@@ -1608,9 +1610,9 @@ assert _ax.get_ylabel().strip() != '', "Label the y-axis."`,
     q:'What do you actually deliver?',
     onPick:(c)=>{ if(c.q==='good') addReportLine('Delivery','Handed over as a <b>versioned repository</b>: the code that builds the analysis, the figures it produces, and a written record of the scope, fairness and missing-data decisions - so the numbers can be regenerated and challenged.'); },
     choices:[
-      { t:'A versioned repository: the code that produces the analysis, the figures it generates, and a written record of the decisions - so anyone can regenerate the numbers and see what was chosen.', q:'good',
+      { t:'A versioned repository: the code, the figures it generates, and a written record of decisions, so anyone can regenerate the numbers.', q:'good',
         ot:'✓ Reproducible, and therefore challengeable', op:'The point of versioning a report is not tidiness, it is that somebody can disagree with you precisely. A reader who can rerun the code can find your mistake; a reader holding a PDF can only take it or leave it. Committing the decisions alongside the code is the part people skip - the choices are what a future reader will most want to interrogate, and they are invisible in the output.' },
-      { t:'A polished PDF with the findings and the two figures. It is what they asked for, and it is what will actually get read.', q:'warn',
+      { t:'A polished PDF with the findings, the two figures, and a methods appendix. It is what they asked for, and it is what will actually get read.', q:'warn',
         ot:'~ Necessary, and not sufficient', op:'You are right that the PDF gets read and the repository mostly does not - so write the PDF. But if it is the only artefact, the analysis becomes unauditable the moment it is delivered. Ship both: the document for reading, the repository for checking. The mistake is treating them as alternatives.' },
       { t:'The notebook exactly as you worked in it - it contains every step, so it is the most complete and honest record.', q:'bad',
         ot:'✗ Complete is not the same as reproducible', op:'A working notebook carries cells run out of order, abandoned attempts and state that only existed on your machine. Handing it over transfers the work without transferring the ability to rerun it - and it invites a reader to mistake an experiment you rejected for a finding you stand behind. Clean it into something that runs top to bottom, or hand over the script that does.' },
@@ -1681,7 +1683,7 @@ assert str(_s['claim_type']).lower() in ('association', 'associational', 'correl
         addReportLine('Final judgment','A per-student ranking score was requested and <b>declined</b>. The index is reported at cohort level only. Recommended instead: trigger outreach on observable behavior (a student with no LMS activity for two weeks), which is actionable, contestable, and does not require ranking anyone.'); }
     },
     choices:[
-      { t:'Decline the ranking, and offer what they actually need instead: flag students on an observable, contestable trigger - two weeks with no LMS activity - rather than a score that ranks people.', q:'good',
+      { t:'Decline the ranking and offer what they need instead: flag students on an observable, contestable trigger (two weeks with no LMS activity), not a score.', q:'good',
         ot:'✓ Answer the need, refuse the instrument', op:'They want advisors to reach the right students first. That is a good goal and it does not require a ranking. A behavioral trigger is checkable by the student, contestable when wrong, and carries no implied verdict about who they are. A score does the opposite: it is opaque, it follows a person around, and - because 15 students have no engagement data at all - it would rank the least-visible students on the least evidence.' },
       { t:'Build it. The finding is real, the Cabinet is accountable for how it is used, and withholding a tool that could direct help to struggling students is its own kind of harm.', q:'warn',
         ot:'~ The strongest argument for the wrong answer', op:'This deserves a straight response, because it is not a foolish position - refusing to help has costs, and analysts who refuse everything stop being consulted. But "they are accountable for how it is used" is exactly the sentence that precedes every misuse of a model. You have specific knowledge here they do not: the index is undefined for 15 students, it is built from three noisy proxies, and it was never validated for individual prediction. Handing it over as a per-student score means letting it be used for something you know it cannot do.' },

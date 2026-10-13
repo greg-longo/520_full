@@ -141,3 +141,7 @@ details.ex-solution pre { margin-top: 0.6rem; }
 @media (prefers-reduced-motion: reduce) {
   .ex-run, .ex-reset { transition: none; }
 }
+
+/* material-darker paints comments #545454 on #212121 (2.13:1); students read
+   these comments as instructions. #8a8a8a keeps them quiet at 4.66:1. */
+.cm-s-material-darker span.cm-comment { color: #8a8a8a; }

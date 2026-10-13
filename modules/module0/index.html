@@ -1404,6 +1404,10 @@ details.ex-solution pre { margin-top: 0.6rem; }
   .ex-run, .ex-reset { transition: none; }
 }
 
+/* material-darker paints comments #545454 on #212121 (2.13:1); students read
+   these comments as instructions. #8a8a8a keeps them quiet at 4.66:1. */
+.cm-s-material-darker span.cm-comment { color: #8a8a8a; }
+
 /* module-layout.css */
 /* DTSC 520 - three-column module page layout.
    Contents left, teaching content middle, simulations and CTAs right.
@@ -1535,7 +1539,7 @@ details.ex-solution pre { margin-top: 0.6rem; }
    a <code> element, so the rule below missed it and it stayed at 1.43:1. */
 :root.theme-light code,
 :root.theme-light pre code,
-:root.theme-light .mono { color: #8b620f; }
+:root.theme-light .mono { color: #6f4e0b; }   /* was #8b620f: 4.31:1 on the tinted code background axe found (Oct 2026); #6f4e0b clears 4.9:1 on every light surface */
 :root.theme-light .kw,  :root.theme-light .keyword { color: #985b19; }
 :root.theme-light .st,  :root.theme-light .str     { color: #4d7333; }
 :root.theme-light .nm,  :root.theme-light .num     { color: #227194; }
@@ -2282,6 +2286,73 @@ section.content-section { scroll-margin-top: 68px; }
 @media (max-width: 900px) {
   .mod-banner .banner-shield { display: none; }
 }
+
+/* ==========================================================================
+   Contrast fixes found by axe in a real browser (Oct 13 2026).
+   jsdom could not evaluate color-contrast; Chrome could, on the live pages.
+   ========================================================================== */
+/* The "Output" label over every recorded output was #4a4642 on #0a0908 in the
+   dark theme: 2.12:1 on small uppercase text, 194 times on Module 2 alone.
+   #8a837c is the same warm gray family at 5.32:1. The light theme already has
+   its own value (above). */
+:root:not(.theme-light) .output-block-label,
+:root:not(.theme-light) .output-block .out-idx { color: #8a837c !important; }
+
+/* Links written in prose (the Think Python and PDSH citations) had no color
+   rule at all, so they rendered browser-default #0000ee on the dark page at
+   2.05:1. Use the module's own accent, which each shell already tunes for both
+   themes. Same for the quiz card's button text. */
+.content-section p a:not([class]),
+.content-section li a:not([class]),
+.content-section em a:not([class]) { color: var(--accent-light); }
+
+/* Module 2's page never got the quiz button style the other shells carry, so
+   its "Take the Quiz" rendered as a default blue link. White on each module's
+   accent clears 4.5:1 in every module (4.51 on M0's gray is the lowest). */
+.quiz-link-btn { display: inline-flex; align-items: center; padding: .65rem 1.25rem;
+  background: var(--accent); color: #fff; border-radius: 4px; text-decoration: none;
+  font-size: .9rem; font-weight: 500; white-space: nowrap; }
+
+/* Contents-pane section numbers: 3.18:1 dark, 2.70:1 light. */
+:root:not(.theme-light) .toc-section > a .toc-num { color: #8a847e; opacity: 1; }
+:root.theme-light .toc-section > a .toc-num { color: #6e6963; opacity: 1; }
+.toc-section.active > a .toc-num { color: var(--accent-light); }
+
+/* Warning callout labels on white, light theme: #d06060 is 3.80:1. */
+:root.theme-light .callout-warn .callout-label { color: #b04040; }
+
+/* Module 1: keyword spans and links were tuned for the light theme. */
+:root:not(.theme-light) body[data-module="1"] .kw { color: #4c9cc2; }
+:root:not(.theme-light) body[data-module="1"] { --accent-light: #4c9cc2; }
+:root.theme-light body[data-module="1"] .pseudocode .ps-comment { color: #6e6963; }
+
+/* Module 6: its accent-light is maroon #a82050, 2.74:1 on the dark page, and
+   it colors every Next button and link there. */
+:root:not(.theme-light) body[data-module="6"] { --accent-light: #d9688b; }
+:root:not(.theme-light) body[data-module="6"] .callout-title { color: #4a9ac0; }
+body[data-module="6"] .rail-item .rail-title { color: var(--text-bright, #e8e4de); }
+:root.theme-light body[data-module="6"] .rail-item .rail-title { color: var(--text, #1a1715); }
+body[data-module="6"] .sim-cta h3 { color: #fff !important; }
+body[data-module="6"] .sim-cta-label { color: #f0d8e0 !important; }
+body[data-module="6"] .sim-cta p { color: #f0d8e0 !important; }
+:root.theme-light body[data-module="6"] .cmt { color: #64605b !important; }
+:root.theme-light body[data-module="6"] .str { color: #3f6a28 !important; }
+/* Module 6 never defined --text-bright, so its resource cards (inline
+   color:var(--text-bright)) fell back to link blue; and the light theme's
+   ".content h3/p !important" painted dark text onto the maroon sim cards. */
+:root:not(.theme-light) body[data-module="6"] { --text-bright: #f0ece6; }
+:root.theme-light body[data-module="6"] { --text-bright: #0d0c0a; }
+:root.theme-light body[data-module="6"] .sim-cta h3 { color: #fff !important; }
+:root.theme-light body[data-module="6"] .sim-cta p,
+:root.theme-light body[data-module="6"] .sim-cta-label { color: #f0d8e0 !important; }
+
+/* Module 0's section pills: #65656e on the light banner is 3.99:1. */
+:root.theme-light body[data-module="0"] .pill { color: #4f4f56; }
+
+/* The current-module step in the banner rail used --accent-light on its own
+   accent tint: 3.74:1 in the light theme. Body text color reads clearly there
+   and the tint plus border still mark it as "you are here". */
+:root.theme-light .banner-rail .rail-step.here { color: var(--text); }
 
 </style>
 <script>

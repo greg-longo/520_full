@@ -108,8 +108,16 @@
     .mod-group-count {
       margin-left: auto;
       font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
-      color: var(--text-dim); opacity: 0.5;
+      color: #8a847e;   /* was text-dim at 50% opacity: 2.57:1 (Oct 2026 axe pass) */
     }
+    :root.theme-light .mod-group-count { color: #6e6963; }
+    /* Badge text on its own tint, light theme: several were under 3:1 */
+    :root.theme-light .mod-badge.m1 { color: #1f5c7a; }
+    :root.theme-light .mod-badge.m2 { color: #6b4fa3; }
+    :root.theme-light .mod-badge.m3 { color: #2d6346; }
+    :root.theme-light .mod-badge.m4 { color: #8a5420; }
+    :root.theme-light .mod-badge.m5 { color: #a03070; }
+    :root.theme-light .mod-badge.m6 { color: #8B1C40; }
 
     /* ── SIM CARDS ── */
     .sim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1rem; }
@@ -220,8 +228,8 @@
     .mod-badge.m2 { background: rgba(122,85,181,0.12); color: #9a75d5; border-color: rgba(122,85,181,0.3); }
     .mod-badge.m3 { background: rgba(74,143,107,0.12); color: #5cad84; border-color: rgba(74,143,107,0.3); }
     .mod-badge.m4 { background: rgba(176,112,48,0.12); color: #c88840; border-color: rgba(176,112,48,0.3); }
-    .mod-badge.m5 { background: rgba(160,48,112,0.12); color: #c04888; border-color: rgba(160,48,112,0.3); }
-    .mod-badge.m6 { background: rgba(139,28,64,0.12); color: #a82050; border-color: rgba(139,28,64,0.3); }
+    .mod-badge.m5 { background: rgba(160,48,112,0.12); color: #dc7bad; border-color: rgba(160,48,112,0.3); }
+    .mod-badge.m6 { background: rgba(139,28,64,0.12); color: #e07a98; border-color: rgba(139,28,64,0.3); }
 
     .sim-label.m1 { color: #3a8ab0; }
     .sim-label.m2 { color: #9a75d5; }
@@ -473,7 +481,7 @@
             </div>
             <div class="sim-progress-dot" data-sim="escape" title="Loading..."></div>
           </div>
-          <div class="sim-desc">11:47 PM. A firmware update just erased the building AI's Python knowledge - and Python runs the locks. Write real code to re-train ARIA, one subject per door, eight doors to the exit.</div>
+          <div class="sim-desc">11:47 PM. A firmware update just erased the building AI's Python knowledge - and Python runs the locks. Write real code to re-train ARIA, one subject per door, ten doors to the exit.</div>
           <div class="sim-type">&#128274; Escape room (live Python)</div>
         </div>
         <div class="sim-footer">
@@ -538,7 +546,7 @@
     <div class="mod-group-header">
       <span class="mod-badge m4">Module 4</span>
       <h2 class="mod-group-title">Pandas</h2>
-      <span class="mod-group-count">4 sims</span>
+      <span class="mod-group-count">5 sims</span>
     </div>
     <div class="sim-grid">
 

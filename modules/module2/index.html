@@ -1170,7 +1170,7 @@ float
       </div>
       </div>
       <div data-runnable>
-      <pre><code><span class="fn">type</span>(<span class="st">&#x27;Amara Okonkwo&#x27;</span>)</code></pre>
+      <pre><code><span class="fn">type</span>(<span class="st">&#x27;Amaka Okoroha&#x27;</span>)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 str
@@ -1555,14 +1555,14 @@ n = <span class="nm">17.</span>
       <div class="callout"><em>&quot;Fair warning, the names came out of three different systems. They&#x27;re a mess. Whitespace, capitalization, all of it. Clean one by hand first so you know what you&#x27;re dealing with.&quot;</em></div>
       <p>Here&#x27;s one record.</p>
       <div data-runnable>
-      <pre><code>raw_name = <span class="st">&quot;  amara OKONKWO  &quot;</span>
+      <pre><code>raw_name = <span class="st">&quot;  amaka OKOROHA  &quot;</span>
 raw_name</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-&#x27;  amara OKONKWO  &#x27;
+&#x27;  amaka OKOROHA  &#x27;
       </div>
       </div>
-      <p>Note what the output shows you: <code>&#x27;  amara OKONKWO  &#x27;</code>, quotes included. Those quotes aren&#x27;t part of the value - they&#x27;re Python showing you where the string starts and ends, which is the only way you&#x27;d see the leading and trailing spaces.</p>
+      <p>Note what the output shows you: <code>&#x27;  amaka OKOROHA  &#x27;</code>, quotes included. Those quotes aren&#x27;t part of the value - they&#x27;re Python showing you where the string starts and ends, which is the only way you&#x27;d see the leading and trailing spaces.</p>
       <p>A <strong>string</strong> is a sequence of characters in quotes. Single or double quotes both work and mean exactly the same thing:</p>
       <div data-runnable>
       <pre><code><span class="st">&#x27;Eastern University&#x27;</span></code></pre>
@@ -1607,23 +1607,23 @@ advisor</code></pre>
       </div>
       </div>
       <p>Text without quotes isn&#x27;t text at all - Python reads it as a variable name. Two words with a space between them isn&#x27;t a legal name, so this one fails before it runs:</p>
-      <pre><code>name = amara okonkwo</code></pre>
+      <pre><code>name = amaka okoroha</code></pre>
       <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
       <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
         <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
-    name = amara okonkwo
+    name = amaka okoroha
                  ^^^^^^^
 SyntaxError: invalid syntax</div>
       </details>
-      <p>Remove the space and it becomes legal syntax - but there&#x27;s still no variable called <code>amara</code>, so now you get a different error:</p>
-      <pre><code>name = amara</code></pre>
+      <p>Remove the space and it becomes legal syntax - but there&#x27;s still no variable called <code>amaka</code>, so now you get a different error:</p>
+      <pre><code>name = amaka</code></pre>
       <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
       <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
         <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-NameError: name &#x27;amara&#x27; is not defined</div>
+NameError: name &#x27;amaka&#x27; is not defined</div>
       </details>
       <p>Two errors, one root cause: <strong>missing quotes</strong>. Worth internalizing, because it&#x27;s the mistake that produces the most confusing beginner errors.</p>
       <h3 id="length-joining-repeating">Length, joining, repeating</h3>
@@ -1773,7 +1773,7 @@ IndexError: string index out of range</div>
       <h3 id="f-strings">f-strings</h3>
       <p>Here is the feature you might use more than any other in this notebook.</p>
       <p>Building output by concatenation gets ugly fast, and it breaks the moment a number is involved, because you can&#x27;t concatenate a <code>str</code> and an <code>int</code>:</p>
-      <pre><code>name = <span class="st">&#x27;Amara Okonkwo&#x27;</span>
+      <pre><code>name = <span class="st">&#x27;Amaka Okoroha&#x27;</span>
 gpa = <span class="nm">3.02</span>
 <span class="st">&#x27;Student &#x27;</span> + name + <span class="st">&#x27; has GPA &#x27;</span> + gpa</code></pre>
       <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
@@ -1787,13 +1787,13 @@ TypeError: can only concatenate str (not &quot;float&quot;) to str</div>
       <pre><code><span class="st">f&quot;Student {name} has GPA {gpa}&quot;</span></code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
-&#x27;Student Amara Okonkwo has GPA <span class="out-num">3.02</span>&#x27;
+&#x27;Student Amaka Okoroha has GPA <span class="out-num">3.02</span>&#x27;
       </div>
       <p>No conversion needed, no manual spaces, and you can read it. Any expression works inside the braces, not just a variable name:</p>
       <pre><code><span class="st">f&quot;{name} needs {124 - 118} more credits.&quot;</span></code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
-&#x27;Amara Okonkwo needs <span class="out-num">6</span> more credits.&#x27;
+&#x27;Amaka Okoroha needs <span class="out-num">6</span> more credits.&#x27;
       </div>
       <pre><code><span class="st">f&quot;Rounded GPA: {round(gpa, 1)}&quot;</span></code></pre>
       <div class="output-block">
@@ -1822,7 +1822,7 @@ TypeError: can only concatenate str (not &quot;float&quot;) to str</div>
       <pre><code>raw_name</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-&#x27;  amara OKONKWO  &#x27;
+&#x27;  amaka OKOROHA  &#x27;
       </div>
       </div>
       <p><code>.strip()</code> removes whitespace from both ends. <strong>Only the ends</strong> - it will not touch anything in the middle of a string. That matters more than it sounds like it does, and it comes back to bite us in section 8.</p>
@@ -1830,7 +1830,7 @@ TypeError: can only concatenate str (not &quot;float&quot;) to str</div>
       <pre><code>raw_name.<span class="fn">strip</span>()</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-&#x27;amara OKONKWO&#x27;
+&#x27;amaka OKOROHA&#x27;
       </div>
       </div>
       <p><code>.lower()</code> and <code>.upper()</code> change case:</p>
@@ -1838,7 +1838,7 @@ TypeError: can only concatenate str (not &quot;float&quot;) to str</div>
       <pre><code>raw_name.<span class="fn">lower</span>()</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-&#x27;  amara okonkwo  &#x27;
+&#x27;  amaka okoroha  &#x27;
       </div>
       </div>
       <p><code>.title()</code> capitalizes the first letter of each word - which is what a name field wants:</p>
@@ -1846,7 +1846,7 @@ TypeError: can only concatenate str (not &quot;float&quot;) to str</div>
       <pre><code>raw_name.<span class="fn">strip</span>().<span class="fn">title</span>()</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-&#x27;Amara Okonkwo&#x27;
+&#x27;Amaka Okoroha&#x27;
       </div>
       </div>
       <p>That line chains two methods: <code>.strip()</code> hands back a string, and <code>.title()</code> is then called on <em>that</em> string. Reading left to right is reading the order of operations, which makes chains easy to follow once you notice.</p>
@@ -1856,8 +1856,8 @@ TypeError: can only concatenate str (not &quot;float&quot;) to str</div>
 <span class="fn">print</span>(<span class="st">f&quot;original: {raw_name}&quot;</span>)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-cleaned: Amara Okonkwo
-original:   amara OKONKWO
+cleaned: Amaka Okoroha
+original:   amaka OKOROHA
       </div>
       </div>
       <p><code>raw_name</code> is unchanged. Strings are <strong>immutable</strong> - they cannot be altered in place. Methods hand back a <em>new</em> string, and if you want to keep it, you have to assign it to something.</p>
@@ -1866,7 +1866,7 @@ original:   amara OKONKWO
 clean_name</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-&#x27;Amara Okonkwo&#x27;
+&#x27;Amaka Okoroha&#x27;
       </div>
       </div>
       <p><code>.split()</code> breaks a string into a list of pieces, splitting on whitespace by default:</p>
@@ -1874,7 +1874,7 @@ clean_name</code></pre>
       <pre><code>clean_name.<span class="fn">split</span>()</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-[&#x27;Amara&#x27;, &#x27;Okonkwo&#x27;]
+[&#x27;Amaka&#x27;, &#x27;Okoroha&#x27;]
       </div>
       </div>
       <p>Those square brackets mean you&#x27;ve got a <strong>list</strong> - the subject of section 7. For now, note that splitting a full name gives you the parts separately:</p>
@@ -1884,25 +1884,25 @@ clean_name</code></pre>
 <span class="fn">print</span>(parts[<span class="nm">1</span>])</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-Amara
-Okonkwo
+Amaka
+Okoroha
       </div>
       </div>
       <p><code>.split()</code> takes an optional argument, the <strong>delimiter</strong>, for when the separator isn&#x27;t a space. CSV files are the obvious case:</p>
       <div data-runnable>
-      <pre><code>row = <span class="st">&#x27;1003,Amara Okonkwo,Biology&#x27;</span>
+      <pre><code>row = <span class="st">&#x27;1003,Amaka Okoroha,Biology&#x27;</span>
 row.<span class="fn">split</span>(<span class="st">&#x27;,&#x27;</span>)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-[&#x27;<span class="out-num">1003</span>&#x27;, &#x27;Amara Okonkwo&#x27;, &#x27;Biology&#x27;]
+[&#x27;<span class="out-num">1003</span>&#x27;, &#x27;Amaka Okoroha&#x27;, &#x27;Biology&#x27;]
       </div>
       </div>
       <p><code>.join()</code> is the reverse - it glues pieces back together with a separator of your choosing:</p>
       <div data-runnable>
-      <pre><code><span class="st">&#x27; | &#x27;</span>.<span class="fn">join</span>([<span class="st">&#x27;1003&#x27;</span>, <span class="st">&#x27;Amara Okonkwo&#x27;</span>, <span class="st">&#x27;Biology&#x27;</span>])</code></pre>
+      <pre><code><span class="st">&#x27; | &#x27;</span>.<span class="fn">join</span>([<span class="st">&#x27;1003&#x27;</span>, <span class="st">&#x27;Amaka Okoroha&#x27;</span>, <span class="st">&#x27;Biology&#x27;</span>])</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-&#x27;<span class="out-num">1003</span> | Amara Okonkwo | Biology&#x27;
+&#x27;<span class="out-num">1003</span> | Amaka Okoroha | Biology&#x27;
       </div>
       </div>
       <p>The string you call <code>.join()</code> on is the glue, which reads backwards until you&#x27;ve done it a few times. And <code>.replace()</code> swaps one substring for another:</p>
@@ -1948,12 +1948,12 @@ strip(self, chars=None, /)
       </div>
       </div>
       <h4 id="your-turn-4">Your turn</h4>
-      <p>Lee needs names formatted as <code>&quot;Okonkwo, Amara&quot;</code> for an alphabetical roster.</p>
+      <p>Lee needs names formatted as <code>&quot;Okoroha, Amaka&quot;</code> for an alphabetical roster.</p>
       <p>Starting from <code>raw_name</code>, produce that string. You&#x27;ll need <code>.strip()</code>, <code>.title()</code>, <code>.split()</code>, indexing, and an f-string.</p>
       <p>Do it in as many steps as you like - clarity beats cleverness.</p>
       <div class="exercise-block" data-exercise="exstrings-90">
         <label class="exercise-label" for="exstrings-90-src">Your turn - run it here<span class="vh"> (exercise 4)</span></label>
-        <textarea id="exstrings-90-src" class="ex-editor" spellcheck="false">raw_name = &quot;  amara OKONKWO  &quot;
+        <textarea id="exstrings-90-src" class="ex-editor" spellcheck="false">raw_name = &quot;  amaka OKOROHA  &quot;
 
 ### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
@@ -1962,7 +1962,7 @@ strip(self, chars=None, /)
           <span class="ex-status" id="exstrings-90-status"></span>
         </div>
         <pre class="ex-output" id="exstrings-90-out"></pre>
-        <details class="ex-solution"><summary>Show a worked solution</summary><pre><code>raw_name = <span class="st">&quot;  amara OKONKWO  &quot;</span>
+        <details class="ex-solution"><summary>Show a worked solution</summary><pre><code>raw_name = <span class="st">&quot;  amaka OKOROHA  &quot;</span>
 
 clean = raw_name.<span class="fn">strip</span>().<span class="fn">title</span>()
 parts = clean.<span class="fn">split</span>()
@@ -2651,7 +2651,7 @@ Dean&#x27;s list
       <p>A list is a <strong>sequence</strong> of values in square brackets, separated by commas. Here&#x27;s the cohort&#x27;s name field as it actually arrived - ten records, three source systems, all the mess that implies.</p>
       <div data-runnable>
       <pre><code>roster = [
-    <span class="st">&quot;  amara OKONKWO  &quot;</span>,
+    <span class="st">&quot;  amaka OKOROHA  &quot;</span>,
     <span class="st">&quot;devin castellanos&quot;</span>,
     <span class="st">&quot;Priya Raghunathan &quot;</span>,
     <span class="st">&quot;MARCUS WEBB&quot;</span>,
@@ -2667,7 +2667,7 @@ Dean&#x27;s list
       <pre><code>roster</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
-[&#x27;  amara OKONKWO  &#x27;,
+[&#x27;  amaka OKOROHA  &#x27;,
  &#x27;devin castellanos&#x27;,
  &#x27;Priya Raghunathan &#x27;,
  &#x27;MARCUS WEBB&#x27;,
@@ -2698,12 +2698,12 @@ Dean&#x27;s list
       <p>Two lists, matched by position: <code>roster[0]</code> and <code>ug_gpas[0]</code> describe the same student. This &quot;parallel lists&quot; arrangement works and is also fragile - sort one without the other and the data is silently corrupted. Section 9 shows a better structure, and Module 4 shows the right one.</p>
       <h4 id="indexing-and-slicing">Indexing and slicing</h4>
       <p>Everything you learned about string indexing applies unchanged. Zero-based, negative indices count from the end, slices exclude the stop.</p>
-      <figure class="nb-figure"><img src="assets/fig-c3cf8549c0.png" alt="A list variable refers to a list; the list holds numbered positions" loading="lazy"><figcaption>A list variable refers to a list; the list holds numbered positions</figcaption></figure>
+      <figure class="nb-figure"><img src="assets/fig-3a9f3602da.png" alt="A list variable refers to a list; the list holds numbered positions" loading="lazy"><figcaption>A list variable refers to a list; the list holds numbered positions</figcaption></figure>
       <div data-runnable>
       <pre><code>roster[<span class="nm">0</span>]</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-&#x27;  amara OKONKWO  &#x27;
+&#x27;  amaka OKOROHA  &#x27;
       </div>
       </div>
       <div data-runnable>
@@ -2741,7 +2741,7 @@ scores</code></pre>
       </div>
       </div>
       <p>Try the equivalent on a string:</p>
-      <pre><code>name = <span class="st">&#x27;Amara&#x27;</span>
+      <pre><code>name = <span class="st">&#x27;Amaka&#x27;</span>
 name[<span class="nm">0</span>] = <span class="st">&#x27;X&#x27;</span></code></pre>
       <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
       <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
@@ -2890,10 +2890,10 @@ ranked[:<span class="nm">3</span>]</code></pre>
       </div>
       <p><code>reverse=True</code> sorts high to low, so slicing the first three gives the top three GPAs. <code>sorted</code> works on strings too, alphabetically:</p>
       <div data-runnable>
-      <pre><code><span class="fn">sorted</span>([<span class="st">&#x27;Nadia Haddad&#x27;</span>, <span class="st">&#x27;Amara Okonkwo&#x27;</span>, <span class="st">&#x27;Elliot Park&#x27;</span>])</code></pre>
+      <pre><code><span class="fn">sorted</span>([<span class="st">&#x27;Nadia Haddad&#x27;</span>, <span class="st">&#x27;Amaka Okoroha&#x27;</span>, <span class="st">&#x27;Elliot Park&#x27;</span>])</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-[&#x27;Amara Okonkwo&#x27;, &#x27;Elliot Park&#x27;, &#x27;Nadia Haddad&#x27;]
+[&#x27;Amaka Okoroha&#x27;, &#x27;Elliot Park&#x27;, &#x27;Nadia Haddad&#x27;]
       </div>
       </div>
       <h4 id="copying-and-a-trap">Copying, and a trap</h4>
@@ -2938,7 +2938,7 @@ real_copy: [<span class="out-num">88</span>, <span class="out-num">92</span>, <s
       <h4 id="lists-can-hold-anything">Lists can hold anything</h4>
       <p>Elements don&#x27;t have to share a type, and lists can contain lists:</p>
       <div data-runnable>
-      <pre><code>mixed = [<span class="st">&#x27;1003&#x27;</span>, <span class="st">&#x27;Amara Okonkwo&#x27;</span>, <span class="nm">3.02</span>, <span class="kw">True</span>, [<span class="st">&#x27;Biology&#x27;</span>, <span class="st">&#x27;Chemistry&#x27;</span>]]
+      <pre><code>mixed = [<span class="st">&#x27;1003&#x27;</span>, <span class="st">&#x27;Amaka Okoroha&#x27;</span>, <span class="nm">3.02</span>, <span class="kw">True</span>, [<span class="st">&#x27;Biology&#x27;</span>, <span class="st">&#x27;Chemistry&#x27;</span>]]
 
 <span class="fn">print</span>(<span class="fn">type</span>(mixed[<span class="nm">0</span>]))
 <span class="fn">print</span>(<span class="fn">type</span>(mixed[<span class="nm">2</span>]))
@@ -2956,14 +2956,14 @@ real_copy: [<span class="out-num">88</span>, <span class="out-num">92</span>, <s
       <h4 id="lists-and-strings">Lists and strings</h4>
       <p><code>.split()</code> turns a string into a list, which you saw in section 4. <code>.join()</code> turns a list back into a string, and it&#x27;s how you build readable output:</p>
       <div data-runnable>
-      <pre><code>row = <span class="st">&quot;1003,Amara Okonkwo,Biology,3.02&quot;</span>
+      <pre><code>row = <span class="st">&quot;1003,Amaka Okoroha,Biology,3.02&quot;</span>
 fields = row.<span class="fn">split</span>(<span class="st">&quot;,&quot;</span>)
 <span class="fn">print</span>(fields)
 <span class="fn">print</span>(<span class="st">&quot; | &quot;</span>.<span class="fn">join</span>(fields))</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-[&#x27;<span class="out-num">1003</span>&#x27;, &#x27;Amara Okonkwo&#x27;, &#x27;Biology&#x27;, &#x27;<span class="out-num">3.02</span>&#x27;]
-<span class="out-num">1003</span> | Amara Okonkwo | Biology | <span class="out-num">3.02</span>
+[&#x27;<span class="out-num">1003</span>&#x27;, &#x27;Amaka Okoroha&#x27;, &#x27;Biology&#x27;, &#x27;<span class="out-num">3.02</span>&#x27;]
+<span class="out-num">1003</span> | Amaka Okoroha | Biology | <span class="out-num">3.02</span>
       </div>
       </div>
       <h5 id="your-turn-10">Your turn</h5>
@@ -2997,18 +2997,18 @@ ranked = <span class="fn">sorted</span>(ug_gpas, reverse=<span class="kw">True</
       <p>A list maps positions to values - index <code>0</code> gets you the first element. A dictionary maps <strong>keys</strong> to <strong>values</strong>, and the keys can be anything you like.</p>
       <div data-runnable>
       <pre><code>gpa_by_name = {
-    <span class="st">&quot;Amara Okonkwo&quot;</span>: <span class="nm">3.02</span>,
+    <span class="st">&quot;Amaka Okoroha&quot;</span>: <span class="nm">3.02</span>,
     <span class="st">&quot;Devin Castellanos&quot;</span>: <span class="nm">1.99</span>,
     <span class="st">&quot;Priya Raghunathan&quot;</span>: <span class="nm">2.8</span>,
 }
 gpa_by_name</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-{&#x27;Amara Okonkwo&#x27;: <span class="out-num">3.02</span>, &#x27;Devin Castellanos&#x27;: <span class="out-num">1.99</span>, &#x27;Priya Raghunathan&#x27;: <span class="out-num">2.8</span>}
+{&#x27;Amaka Okoroha&#x27;: <span class="out-num">3.02</span>, &#x27;Devin Castellanos&#x27;: <span class="out-num">1.99</span>, &#x27;Priya Raghunathan&#x27;: <span class="out-num">2.8</span>}
       </div>
       </div>
       <p>Curly braces, and each <strong>item</strong> is a <code>key: value</code> pair separated by a colon. Look it up with square brackets - the same syntax as a list, but with a key instead of a position:</p>
-      <figure class="nb-figure"><img src="assets/fig-3d78385a52.png" alt="A dictionary maps each key to a value" loading="lazy"><figcaption>A dictionary maps each key to a value</figcaption></figure>
+      <figure class="nb-figure"><img src="assets/fig-6c9683c856.png" alt="A dictionary maps each key to a value" loading="lazy"><figcaption>A dictionary maps each key to a value</figcaption></figure>
       <div data-runnable>
       <pre><code>gpa_by_name[<span class="st">&quot;Priya Raghunathan&quot;</span>]</code></pre>
       <div class="output-block" data-stored-output>
@@ -3039,7 +3039,7 @@ KeyError: &#x27;Amy Lee&#x27;</div>
       <p>A KeyError stops your program. When you&#x27;re not certain a key exists - which, with real data, is always - <code>.get()</code> returns <code>None</code> instead of raising:</p>
       <div data-runnable>
       <pre><code><span class="fn">print</span>(gpa_by_name.<span class="fn">get</span>(<span class="st">&quot;Amy Lee&quot;</span>))
-<span class="fn">print</span>(gpa_by_name.<span class="fn">get</span>(<span class="st">&quot;Amara Okonkwo&quot;</span>))</code></pre>
+<span class="fn">print</span>(gpa_by_name.<span class="fn">get</span>(<span class="st">&quot;Amaka Okoroha&quot;</span>))</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 None
@@ -3061,7 +3061,7 @@ None
 gpa_by_name</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
-{&#x27;Amara Okonkwo&#x27;: <span class="out-num">3.02</span>,
+{&#x27;Amaka Okoroha&#x27;: <span class="out-num">3.02</span>,
  &#x27;Devin Castellanos&#x27;: <span class="out-num">1.99</span>,
  &#x27;Priya Raghunathan&#x27;: <span class="out-num">2.8</span>,
  &#x27;Marcus Webb&#x27;: <span class="out-num">2.6</span>}
@@ -3071,7 +3071,7 @@ gpa_by_name</code></pre>
 gpa_by_name</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
-{&#x27;Amara Okonkwo&#x27;: <span class="out-num">3.02</span>,
+{&#x27;Amaka Okoroha&#x27;: <span class="out-num">3.02</span>,
  &#x27;Devin Castellanos&#x27;: <span class="out-num">1.99</span>,
  &#x27;Priya Raghunathan&#x27;: <span class="out-num">2.8</span>,
  &#x27;Marcus Webb&#x27;: <span class="out-num">3.05</span>}
@@ -3082,13 +3082,13 @@ gpa_by_name</code></pre>
 gpa_by_name</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-{&#x27;Amara Okonkwo&#x27;: <span class="out-num">3.02</span>, &#x27;Devin Castellanos&#x27;: <span class="out-num">1.99</span>, &#x27;Priya Raghunathan&#x27;: <span class="out-num">2.8</span>}
+{&#x27;Amaka Okoroha&#x27;: <span class="out-num">3.02</span>, &#x27;Devin Castellanos&#x27;: <span class="out-num">1.99</span>, &#x27;Priya Raghunathan&#x27;: <span class="out-num">2.8</span>}
       </div>
       </div>
       <p><code>len</code> counts items, and <code>in</code> tests for a key:</p>
       <div data-runnable>
       <pre><code><span class="fn">print</span>(<span class="fn">len</span>(gpa_by_name))
-<span class="fn">print</span>(<span class="st">&quot;Amara Okonkwo&quot;</span> <span class="kw">in</span> gpa_by_name)</code></pre>
+<span class="fn">print</span>(<span class="st">&quot;Amaka Okoroha&quot;</span> <span class="kw">in</span> gpa_by_name)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">3</span>
@@ -3125,12 +3125,12 @@ False
 <span class="fn">print</span>(gpa_by_name.<span class="fn">items</span>())</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-dict_keys([&#x27;Amara Okonkwo&#x27;, &#x27;Devin Castellanos&#x27;, &#x27;Priya Raghunathan&#x27;])
+dict_keys([&#x27;Amaka Okoroha&#x27;, &#x27;Devin Castellanos&#x27;, &#x27;Priya Raghunathan&#x27;])
 dict_values([<span class="out-num">3.02</span>, <span class="out-num">1.99</span>, <span class="out-num">2.8</span>])
-dict_items([(&#x27;Amara Okonkwo&#x27;, <span class="out-num">3.02</span>), (&#x27;Devin Castellanos&#x27;, <span class="out-num">1.99</span>), (&#x27;Priya Raghunathan&#x27;, <span class="out-num">2.8</span>)])
+dict_items([(&#x27;Amaka Okoroha&#x27;, <span class="out-num">3.02</span>), (&#x27;Devin Castellanos&#x27;, <span class="out-num">1.99</span>), (&#x27;Priya Raghunathan&#x27;, <span class="out-num">2.8</span>)])
       </div>
       </div>
-      <p><code>.items()</code> gives you key-value pairs. Look at how they print: <code>[(&#x27;Amara Okonkwo&#x27;, 3.02), ...]</code>. Those are <strong>tuples</strong>, the same thing <code>enumerate</code> handed you in section 8 - which is why the same two-name unpacking works on them.</p>
+      <p><code>.items()</code> gives you key-value pairs. Look at how they print: <code>[(&#x27;Amaka Okoroha&#x27;, 3.02), ...]</code>. Those are <strong>tuples</strong>, the same thing <code>enumerate</code> handed you in section 8 - which is why the same two-name unpacking works on them.</p>
       <h4 id="looping-over-a-dictionary">Looping over a dictionary</h4>
       <p>Loop over a dictionary directly and you get the <strong>keys</strong>:</p>
       <div data-runnable>
@@ -3138,7 +3138,7 @@ dict_items([(&#x27;Amara Okonkwo&#x27;, <span class="out-num">3.02</span>), (&#x
     <span class="fn">print</span>(name)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-Amara Okonkwo
+Amaka Okoroha
 Devin Castellanos
 Priya Raghunathan
       </div>
@@ -3160,7 +3160,7 @@ Priya Raghunathan
     <span class="fn">print</span>(<span class="st">f&quot;{name:22} {gpa:.2f}&quot;</span>)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-Amara Okonkwo          <span class="out-num">3.02</span>
+Amaka Okoroha          <span class="out-num">3.02</span>
 Devin Castellanos      <span class="out-num">1.99</span>
 Priya Raghunathan      <span class="out-num">2.80</span>
       </div>
@@ -3215,7 +3215,7 @@ counts</code></pre>
       <div data-runnable>
       <pre><code>student = {
     <span class="st">&quot;student_id&quot;</span>: <span class="nm">1003</span>,
-    <span class="st">&quot;name&quot;</span>: <span class="st">&quot;Amara Okonkwo&quot;</span>,
+    <span class="st">&quot;name&quot;</span>: <span class="st">&quot;Amaka Okoroha&quot;</span>,
     <span class="st">&quot;ug_gpa&quot;</span>: <span class="nm">3.02</span>,
     <span class="st">&quot;major&quot;</span>: <span class="st">&quot;Biology&quot;</span>,
     <span class="st">&quot;logins_per_week&quot;</span>: <span class="nm">14</span>,
@@ -3225,15 +3225,15 @@ counts</code></pre>
 <span class="fn">print</span>(<span class="st">f&quot;{student[&#x27;name&#x27;]} studies {student[&#x27;major&#x27;]}&quot;</span>)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-Amara Okonkwo
-Amara Okonkwo studies Biology
+Amaka Okoroha
+Amaka Okoroha studies Biology
       </div>
       </div>
       <p>Note the quote juggling in that f-string: the outer string uses double quotes, so the key inside the braces uses single quotes. Mixing them up is a common SyntaxError.</p>
       <p>Now a <strong>list of dictionaries</strong> - one dictionary per student, all in a list. This is the structure that finally survives sorting, and it&#x27;s how most real data arrives from an API or a JSON file.</p>
       <div data-runnable>
       <pre><code>cohort = [
-    {<span class="st">&quot;student_id&quot;</span>: <span class="nm">1003</span>, <span class="st">&quot;name&quot;</span>: <span class="st">&quot;Amara Okonkwo&quot;</span>,     <span class="st">&quot;ug_gpa&quot;</span>: <span class="nm">3.02</span>, <span class="st">&quot;logins_per_week&quot;</span>: <span class="nm">3.4</span>},
+    {<span class="st">&quot;student_id&quot;</span>: <span class="nm">1003</span>, <span class="st">&quot;name&quot;</span>: <span class="st">&quot;Amaka Okoroha&quot;</span>,     <span class="st">&quot;ug_gpa&quot;</span>: <span class="nm">3.02</span>, <span class="st">&quot;logins_per_week&quot;</span>: <span class="nm">3.4</span>},
     {<span class="st">&quot;student_id&quot;</span>: <span class="nm">1089</span>, <span class="st">&quot;name&quot;</span>: <span class="st">&quot;Devin Castellanos&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>: <span class="nm">1.99</span>, <span class="st">&quot;logins_per_week&quot;</span>: <span class="nm">0.4</span>},
     {<span class="st">&quot;student_id&quot;</span>: <span class="nm">1024</span>, <span class="st">&quot;name&quot;</span>: <span class="st">&quot;Priya Raghunathan&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>: <span class="nm">2.8</span>, <span class="st">&quot;logins_per_week&quot;</span>: <span class="nm">4.4</span>},
 ]
@@ -3242,7 +3242,7 @@ Amara Okonkwo studies Biology
     <span class="fn">print</span>(<span class="st">f&quot;{record[&#x27;student_id&#x27;]}  {record[&#x27;name&#x27;]:20} {record[&#x27;ug_gpa&#x27;]:.2f}&quot;</span>)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-<span class="out-num">1003</span>  Amara Okonkwo        <span class="out-num">3.02</span>
+<span class="out-num">1003</span>  Amaka Okoroha        <span class="out-num">3.02</span>
 <span class="out-num">1089</span>  Devin Castellanos    <span class="out-num">1.99</span>
 <span class="out-num">1024</span>  Priya Raghunathan    <span class="out-num">2.80</span>
       </div>
@@ -3256,7 +3256,7 @@ Amara Okonkwo studies Biology
     <span class="fn">print</span>(<span class="st">f&quot;{record[&#x27;name&#x27;]:20} {record[&#x27;ug_gpa&#x27;]:.2f}&quot;</span>)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-Amara Okonkwo        <span class="out-num">3.02</span>
+Amaka Okoroha        <span class="out-num">3.02</span>
 Priya Raghunathan    <span class="out-num">2.80</span>
 Devin Castellanos    <span class="out-num">1.99</span>
       </div>
@@ -3307,7 +3307,7 @@ Humanities       <span class="out-num">1</span> majors: Communications
 
 students = {
     <span class="nm">1002</span>: {<span class="st">&quot;name&quot;</span>: <span class="st">&quot;Elliot Park&quot;</span>,       <span class="st">&quot;entry_term&quot;</span>: <span class="st">&quot;Spring 2021&quot;</span>},
-    <span class="nm">1003</span>: {<span class="st">&quot;name&quot;</span>: <span class="st">&quot;Amara Okonkwo&quot;</span>,     <span class="st">&quot;entry_term&quot;</span>: <span class="st">&quot;Fall 2019&quot;</span>},
+    <span class="nm">1003</span>: {<span class="st">&quot;name&quot;</span>: <span class="st">&quot;Amaka Okoroha&quot;</span>,     <span class="st">&quot;entry_term&quot;</span>: <span class="st">&quot;Fall 2019&quot;</span>},
     <span class="nm">1024</span>: {<span class="st">&quot;name&quot;</span>: <span class="st">&quot;Priya Raghunathan&quot;</span>, <span class="st">&quot;entry_term&quot;</span>: <span class="st">&quot;Fall 2020&quot;</span>},
     <span class="nm">1026</span>: {<span class="st">&quot;name&quot;</span>: <span class="st">&quot;Jian-Wei Chen&quot;</span>,     <span class="st">&quot;entry_term&quot;</span>: <span class="st">&quot;Fall 2021&quot;</span>},
     <span class="nm">1032</span>: {<span class="st">&quot;name&quot;</span>: <span class="st">&quot;Sofia Marchetti&quot;</span>,   <span class="st">&quot;entry_term&quot;</span>: <span class="st">&quot;Fall 2020&quot;</span>},
@@ -3572,7 +3572,7 @@ status_counts = {}
     <span class="fn">print</span>(<span class="fn">clean_name</span>(raw))</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-Amara Okonkwo
+Amaka Okoroha
 Devin Castellanos
 Priya Raghunathan
 Marcus Webb
@@ -3665,7 +3665,7 @@ range(<span class="out-num">0</span>, <span class="out-num">5</span>)
     <span class="fn">print</span>(<span class="st">f&quot;{student_ids[i]}  {clean_name(raw)}&quot;</span>)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-<span class="out-num">1003</span>  Amara Okonkwo
+<span class="out-num">1003</span>  Amaka Okoroha
 <span class="out-num">1089</span>  Devin Castellanos
 <span class="out-num">1024</span>  Priya Raghunathan
 <span class="out-num">1044</span>  Marcus Webb
@@ -3693,14 +3693,14 @@ item = <span class="fn">list</span>(<span class="fn">enumerate</span>([<span cla
       </div>
       <p>A tuple is an ordered collection, written with parentheses and commas. It is very nearly a list, with one important difference: <strong>a tuple is immutable.</strong> Once built, it cannot be changed.</p>
       <div data-runnable>
-      <pre><code>pair = (<span class="nm">0</span>, <span class="st">&quot;Amara Okonkwo&quot;</span>)
+      <pre><code>pair = (<span class="nm">0</span>, <span class="st">&quot;Amaka Okoroha&quot;</span>)
 <span class="fn">print</span>(pair[<span class="nm">0</span>])          <span class="cm"># index it like a list</span>
 <span class="fn">print</span>(pair[<span class="nm">1</span>])
 <span class="fn">print</span>(<span class="fn">len</span>(pair))</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">0</span>
-Amara Okonkwo
+Amaka Okoroha
 <span class="out-num">2</span>
       </div>
       </div>
@@ -3721,7 +3721,7 @@ TypeError: &#x27;tuple&#x27; object does not support item assignment</div>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">0</span>
-Amara Okonkwo
+Amaka Okoroha
       </div>
       </div>
       <p>That is exactly what <code>for i, raw in enumerate(roster)</code> is doing on every pass through the loop. It&#x27;s also how you&#x27;ll take two values back from a function later, and how you&#x27;ll loop over a dictionary in section 9.</p>
@@ -3768,7 +3768,7 @@ mean:  <span class="out-num">2.686</span>
 clean_roster</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
-[&#x27;Amara Okonkwo&#x27;,
+[&#x27;Amaka Okoroha&#x27;,
  &#x27;Devin Castellanos&#x27;,
  &#x27;Priya Raghunathan&#x27;,
  &#x27;Marcus Webb&#x27;,
@@ -3790,7 +3790,7 @@ clean_roster</code></pre>
     <span class="fn">print</span>(<span class="st">f&quot;[{name}]&quot;</span>)     <span class="cm"># brackets make the whitespace visible</span></code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-[Amara Okonkwo]
+[Amaka Okoroha]
 [Devin Castellanos]
 [Priya Raghunathan]
 [Marcus Webb]
@@ -3824,7 +3824,7 @@ clean_roster = []
     <span class="fn">print</span>(<span class="st">f&quot;[{name}]&quot;</span>)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-[Amara Okonkwo]
+[Amaka Okoroha]
 [Devin Castellanos]
 [Priya Raghunathan]
 [Marcus Webb]
@@ -3896,8 +3896,8 @@ found Nadia Haddad at index <span class="out-num">6</span>
         <span class="fn">print</span>(<span class="st">f&quot;{clean_name(raw):20} {term}&quot;</span>)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-Amara Okonkwo        Fall
-Amara Okonkwo        Spring
+Amaka Okoroha        Fall
+Amaka Okoroha        Spring
 Devin Castellanos    Fall
 Devin Castellanos    Spring
 Priya Raghunathan    Fall
@@ -4170,7 +4170,7 @@ IndexError: list index out of range
       </div>
       <div data-runnable>
       <pre><code><span class="cm"># 2</span>
-record = {<span class="st">&quot;name&quot;</span>: <span class="st">&quot;Amara Okonkwo&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>: <span class="nm">3.02</span>}
+record = {<span class="st">&quot;name&quot;</span>: <span class="st">&quot;Amaka Okoroha&quot;</span>, <span class="st">&quot;ug_gpa&quot;</span>: <span class="nm">3.02</span>}
 <span class="fn">print</span>(record[<span class="st">&quot;gpa&quot;</span>])</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
@@ -5492,6 +5492,10 @@ details.ex-solution pre { margin-top: 0.6rem; }
   .ex-run, .ex-reset { transition: none; }
 }
 
+/* material-darker paints comments #545454 on #212121 (2.13:1); students read
+   these comments as instructions. #8a8a8a keeps them quiet at 4.66:1. */
+.cm-s-material-darker span.cm-comment { color: #8a8a8a; }
+
 /* module-layout.css */
 /* DTSC 520 - three-column module page layout.
    Contents left, teaching content middle, simulations and CTAs right.
@@ -5623,7 +5627,7 @@ details.ex-solution pre { margin-top: 0.6rem; }
    a <code> element, so the rule below missed it and it stayed at 1.43:1. */
 :root.theme-light code,
 :root.theme-light pre code,
-:root.theme-light .mono { color: #8b620f; }
+:root.theme-light .mono { color: #6f4e0b; }   /* was #8b620f: 4.31:1 on the tinted code background axe found (Oct 2026); #6f4e0b clears 4.9:1 on every light surface */
 :root.theme-light .kw,  :root.theme-light .keyword { color: #985b19; }
 :root.theme-light .st,  :root.theme-light .str     { color: #4d7333; }
 :root.theme-light .nm,  :root.theme-light .num     { color: #227194; }
@@ -6370,6 +6374,73 @@ section.content-section { scroll-margin-top: 68px; }
 @media (max-width: 900px) {
   .mod-banner .banner-shield { display: none; }
 }
+
+/* ==========================================================================
+   Contrast fixes found by axe in a real browser (Oct 13 2026).
+   jsdom could not evaluate color-contrast; Chrome could, on the live pages.
+   ========================================================================== */
+/* The "Output" label over every recorded output was #4a4642 on #0a0908 in the
+   dark theme: 2.12:1 on small uppercase text, 194 times on Module 2 alone.
+   #8a837c is the same warm gray family at 5.32:1. The light theme already has
+   its own value (above). */
+:root:not(.theme-light) .output-block-label,
+:root:not(.theme-light) .output-block .out-idx { color: #8a837c !important; }
+
+/* Links written in prose (the Think Python and PDSH citations) had no color
+   rule at all, so they rendered browser-default #0000ee on the dark page at
+   2.05:1. Use the module's own accent, which each shell already tunes for both
+   themes. Same for the quiz card's button text. */
+.content-section p a:not([class]),
+.content-section li a:not([class]),
+.content-section em a:not([class]) { color: var(--accent-light); }
+
+/* Module 2's page never got the quiz button style the other shells carry, so
+   its "Take the Quiz" rendered as a default blue link. White on each module's
+   accent clears 4.5:1 in every module (4.51 on M0's gray is the lowest). */
+.quiz-link-btn { display: inline-flex; align-items: center; padding: .65rem 1.25rem;
+  background: var(--accent); color: #fff; border-radius: 4px; text-decoration: none;
+  font-size: .9rem; font-weight: 500; white-space: nowrap; }
+
+/* Contents-pane section numbers: 3.18:1 dark, 2.70:1 light. */
+:root:not(.theme-light) .toc-section > a .toc-num { color: #8a847e; opacity: 1; }
+:root.theme-light .toc-section > a .toc-num { color: #6e6963; opacity: 1; }
+.toc-section.active > a .toc-num { color: var(--accent-light); }
+
+/* Warning callout labels on white, light theme: #d06060 is 3.80:1. */
+:root.theme-light .callout-warn .callout-label { color: #b04040; }
+
+/* Module 1: keyword spans and links were tuned for the light theme. */
+:root:not(.theme-light) body[data-module="1"] .kw { color: #4c9cc2; }
+:root:not(.theme-light) body[data-module="1"] { --accent-light: #4c9cc2; }
+:root.theme-light body[data-module="1"] .pseudocode .ps-comment { color: #6e6963; }
+
+/* Module 6: its accent-light is maroon #a82050, 2.74:1 on the dark page, and
+   it colors every Next button and link there. */
+:root:not(.theme-light) body[data-module="6"] { --accent-light: #d9688b; }
+:root:not(.theme-light) body[data-module="6"] .callout-title { color: #4a9ac0; }
+body[data-module="6"] .rail-item .rail-title { color: var(--text-bright, #e8e4de); }
+:root.theme-light body[data-module="6"] .rail-item .rail-title { color: var(--text, #1a1715); }
+body[data-module="6"] .sim-cta h3 { color: #fff !important; }
+body[data-module="6"] .sim-cta-label { color: #f0d8e0 !important; }
+body[data-module="6"] .sim-cta p { color: #f0d8e0 !important; }
+:root.theme-light body[data-module="6"] .cmt { color: #64605b !important; }
+:root.theme-light body[data-module="6"] .str { color: #3f6a28 !important; }
+/* Module 6 never defined --text-bright, so its resource cards (inline
+   color:var(--text-bright)) fell back to link blue; and the light theme's
+   ".content h3/p !important" painted dark text onto the maroon sim cards. */
+:root:not(.theme-light) body[data-module="6"] { --text-bright: #f0ece6; }
+:root.theme-light body[data-module="6"] { --text-bright: #0d0c0a; }
+:root.theme-light body[data-module="6"] .sim-cta h3 { color: #fff !important; }
+:root.theme-light body[data-module="6"] .sim-cta p,
+:root.theme-light body[data-module="6"] .sim-cta-label { color: #f0d8e0 !important; }
+
+/* Module 0's section pills: #65656e on the light banner is 3.99:1. */
+:root.theme-light body[data-module="0"] .pill { color: #4f4f56; }
+
+/* The current-module step in the banner rail used --accent-light on its own
+   accent tint: 3.74:1 in the light theme. Body text color reads clearly there
+   and the tint plus border still mark it as "you are here". */
+:root.theme-light .banner-rail .rail-step.here { color: var(--text); }
 
 </style>
 <script>

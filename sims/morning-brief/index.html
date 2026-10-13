@@ -748,25 +748,25 @@
     <div class="choices" id="choices-2">
       <button class="choice-btn" onclick="choose(2,'A')">
         <span class="choice-letter">A</span>
-        <span>"Why are 30-day readmissions increasing at Riverside?"
+        <span>"Why are 30-day readmissions increasing at Riverside, and what can the hospital do to bring them back down?"
           <span class="choice-sub">Wide-open. Covers all possible explanations.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(2,'B')">
         <span class="choice-letter">B</span>
-        <span>"Which Q3 patient groups have the highest 30-day readmission rate, and what discharge factors are most strongly associated with those readmissions?"
-          <span class="choice-sub">Specific time window, specific outcome, specific factors to examine.</span>
+        <span>"How does Riverside's 30-day readmission rate compare to national benchmarks this year?"
+          <span class="choice-sub">Contextualizes the problem. Useful for the board presentation.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(2,'C')">
         <span class="choice-letter">C</span>
-        <span>"How does Riverside's readmission rate compare to national benchmarks?"
-          <span class="choice-sub">Contextualizes the problem. Useful for the board presentation.</span>
+        <span>"Which Q3 patient groups have the highest 30-day readmission rate, and what discharge factors go with it?"
+          <span class="choice-sub">Specific time window, specific outcome, specific factors to examine.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(2,'D')">
         <span class="choice-letter">D</span>
-        <span>"What is the average length of stay for patients who are readmitted within 30 days?"
+        <span>"What is the average length of stay, in days, for the patients who are readmitted within 30 days?"
           <span class="choice-sub">A clean, measurable question. Easy to answer with the data.</span>
         </span>
       </button>
@@ -942,25 +942,25 @@
     <div class="choices" id="choices-4">
       <button class="choice-btn" onclick="choose(4,'A')">
         <span class="choice-letter">A</span>
-        <span>Drop all rows where discharge_condition_score is NaN.
-          <span class="choice-sub">Missing data is unreliable. Better to work with a clean subset.</span>
+        <span>Keep and flag the NaN rows, lean on followup_scheduled since it's complete, and set aside the 20 AMA patients.
+          <span class="choice-sub">Preserves sample size, stays honest about the limitation, relies on the variable you actually have.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(4,'B')">
         <span class="choice-letter">B</span>
-        <span>Fill all NaN values with the column mean.
+        <span>Fill all NaN values with the column mean, which keeps every row and leaves the average unchanged.
           <span class="choice-sub">Standard imputation technique. Preserves row count without inventing extremes.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(4,'C')">
         <span class="choice-letter">C</span>
-        <span>Keep the NaN rows but flag them. Use followup_scheduled as the primary factor (it's complete), and note the missingness as a limitation. Exclude the 20 AMA patients with a documented reason.
-          <span class="choice-sub">Preserves sample size, stays honest about the limitation, relies on the variable you actually have.</span>
+        <span>Drop all rows where discharge_condition_score is NaN, so every remaining row has a complete record.
+          <span class="choice-sub">Missing data is unreliable. Better to work with a clean subset.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(4,'D')">
         <span class="choice-letter">D</span>
-        <span>Fill NaN values with 0. Missing score most likely means the condition was normal and not flagged.
+        <span>Fill NaN values with 0. A missing score most likely means the condition was normal, so nobody bothered to flag it.
           <span class="choice-sub">Reasonable assumption. A blank field probably means nothing unusual to report.</span>
         </span>
       </button>
@@ -1046,26 +1046,26 @@
     <div class="choices" id="choices-5">
       <button class="choice-btn" onclick="choose(5,'A')">
         <span class="choice-letter">A</span>
-        <span>Agree. The data is clear - 28.7% vs 11.2% is a strong signal and the hospital should act now.
+        <span>Agree. The data is clear: 28.7% vs 11.2% is a strong signal, and the hospital should act on it now, before Q4 numbers come in.
           <span class="choice-sub">The gap is large and statistically meaningful. This is exactly what they asked for.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(5,'B')">
         <span class="choice-letter">B</span>
-        <span>Push back. This is a correlation, not causation. Sicker patients may be both harder to schedule follow-ups for and more likely to be readmitted regardless - the ward concentration makes this even more suspicious. More analysis needed before recommending a policy.
-          <span class="choice-sub">Correlation vs. causation. There are at least two plausible confounders here.</span>
+        <span>Ignore the follow-up finding and focus on diagnosis groups instead, since those are more clinically clear-cut for a board.
+          <span class="choice-sub">Heart failure and COPD rates are high and defensible. Follow-up is messier to explain.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(5,'C')">
         <span class="choice-letter">C</span>
-        <span>Partially agree - present the finding but frame it as a hypothesis to test, not a conclusion. Recommend a controlled pilot before a hospital-wide mandate.
+        <span>Partially agree: present the finding as a hypothesis to test, not a conclusion, and recommend a controlled pilot before any hospital-wide mandate.
           <span class="choice-sub">Scientifically careful. Actionable without overclaiming.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(5,'D')">
         <span class="choice-letter">D</span>
-        <span>Ignore the follow-up finding. Focus on diagnosis groups - those are more clinically clear-cut.
-          <span class="choice-sub">Heart failure and COPD rates are high and defensible. Follow-up is messier to explain.</span>
+        <span>Push back. It's a correlation: sicker patients may be harder to schedule and likelier to return anyway, and the ward clustering adds to the doubt.
+          <span class="choice-sub">Asks what else could explain the gap before anyone acts on it.</span>
         </span>
       </button>
     </div>
@@ -1126,25 +1126,25 @@
     <div class="choices" id="choices-6">
       <button class="choice-btn" onclick="choose(6,'A')">
         <span class="choice-letter">A</span>
-        <span>These are definitive findings. Three independent risk factors identified, analysis complete.
+        <span>These are definitive findings: three independent risk factors identified, the analysis is complete, and the board can act on all three today.
           <span class="choice-sub">The board needs clarity, not caveats. Strong language builds confidence.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(6,'B')">
         <span class="choice-letter">B</span>
-        <span>These are statistically significant associations in Q3 data - two at 95% confidence, one at 90%. They identify actionable high-risk groups, but this is observational. Causation isn't established, and the 31% missingness on discharge_condition_score is a real limitation that should be disclosed.
-          <span class="choice-sub">Quantified uncertainty. Honest about limitations. Actionable without overclaiming.</span>
+        <span>Significant associations in Q3 data (two at 95%, one at 90%). Actionable, but observational, and the 31% missing condition scores must be disclosed.
+          <span class="choice-sub">Gives the board the numbers, the limits, and a next step.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(6,'C')">
         <span class="choice-letter">C</span>
-        <span>The findings are too preliminary to present today. There are too many limitations to bring to the board with confidence.
+        <span>The findings are too preliminary to present today. There are too many open limitations to bring them to the board with any real confidence.
           <span class="choice-sub">Better to delay than to mislead.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(6,'D')">
         <span class="choice-letter">D</span>
-        <span>Present only the heart failure finding - it's the clearest result. Leave out the confidence intervals to keep it simple for the board.
+        <span>Present only the heart failure finding, since it's the clearest result, and leave out the confidence intervals so the board sees one clean, simple message.
           <span class="choice-sub">One clean headline is better than three confusing ones.</span>
         </span>
       </button>
@@ -1183,25 +1183,25 @@
     <div class="choices" id="choices-7">
       <button class="choice-btn" onclick="choose(7,'A')">
         <span class="choice-letter">A</span>
-        <span>Walk through the analysis chronologically - data acquisition, cleaning decisions, exploratory tables, then findings.
-          <span class="choice-sub">Shows rigor. The board should understand how you got here before seeing the results.</span>
+        <span>Lead with the question and the headline finding, one clear visual per risk factor, confidence in plain language, then one scoped recommendation.
+          <span class="choice-sub">Answer first, evidence second. Closes with a clear action.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(7,'B')">
         <span class="choice-letter">B</span>
-        <span>Lead with the business question and the headline finding. Support with one clear visual per risk factor. State confidence levels in plain language. End with one specific, scoped recommendation and defined next steps.
-          <span class="choice-sub">Answer first, evidence second. Closes with a clear action.</span>
+        <span>Walk through the analysis in order: data acquisition, cleaning decisions, exploratory tables, and then the findings and what they mean.
+          <span class="choice-sub">Shows rigor. The board should understand how you got here before seeing the results.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(7,'C')">
         <span class="choice-letter">C</span>
-        <span>Present the statistical output - confidence intervals and adjusted rates - and let the clinicians interpret clinical significance.
+        <span>Present the statistical output, confidence intervals and adjusted rates, and let the clinicians in the room interpret the clinical significance for everyone.
           <span class="choice-sub">Accurate and complete. The clinicians can translate for the rest of the room.</span>
         </span>
       </button>
       <button class="choice-btn" onclick="choose(7,'D')">
         <span class="choice-letter">D</span>
-        <span>Present a single slide with the recommendation only. Decision-makers don't need the underlying analysis.
+        <span>Present a single slide with the recommendation only, since decision-makers don't need the underlying analysis to approve it.
           <span class="choice-sub">Respects their time. They want the answer, not the workings.</span>
         </span>
       </button>
@@ -1224,7 +1224,7 @@
   let stagesComplete = 0;
   const answers = {};
   const maxScore = 18;
-  const correctAnswers = { 2:'B', 3:'C', 4:'C', 5:'B', 6:'B', 7:'B' };
+  const correctAnswers = { 2:'C', 3:'C', 4:'A', 5:'D', 6:'B', 7:'A' };
   const stagePoints = { 2:3, 3:3, 4:3, 5:3, 6:3, 7:3 };
 
   // ---- TYPEWRITER ----
@@ -1387,9 +1387,9 @@
   // ---- OUTCOME CONTENT ----
   const OUTCOMES = {
     2: {
-      correct: 'B',
+      correct: 'C',
       outcomes: {
-        B: { type:'good', title:'Correct - 3 pts', body:`<p>This question is specific (Q3 cohort), identifies a measurable outcome (30-day readmission rate), and points at actionable factors (discharge conditions). The board can act on an answer to this question. It passes the "what decision does this inform?" test from Module 1.</p>
+        C: { type:'good', title:'Correct - 3 pts', body:`<p>This question is specific (Q3 cohort), identifies a measurable outcome (30-day readmission rate), and points at actionable factors (discharge conditions). The board can act on an answer to this question. It passes the "what decision does this inform?" test from Module 1.</p>
         <p>You write it at the top of your notebook before opening a single file. It will keep you on track for the next five stages.</p>`, codeReveal: true,
         codeHtml: `<div class="code-label">Your pseudocode before touching data</div>
 <div class="code-block"><pre><span class="cm">// Pseudocode - Module 1 framework, Step 4</span>
@@ -1406,7 +1406,7 @@
 
 <span class="cm">// Now we know what to ask Kenji for</span></pre></div>` },
         A: { type:'bad', title:'Not quite - 0 pts', body:`<p><strong>"Why are readmissions going up?"</strong> is not specific enough to be answerable. "Why" questions are starting points, not analysis questions. Before pulling any data, you need to specify: which patients, which time window, and which factors you're examining.</p><p>Dr. Voss catches the vagueness before you leave her desk. "That's a conversation, not an analysis question," she says. You spend 20 minutes reframing it - time you don't have.</p>` },
-        C: { type:'warn', title:'Partially useful - 0 pts', body:`<p>Benchmarking is useful context, but it doesn't answer the board's question. They already know they're above average - that's why they called St. Davids Health. They want to understand their own patients and act on the findings.</p><p>This makes a good supporting slide, not a core analysis. You're answering the wrong question.</p>` },
+        B: { type:'warn', title:'Partially useful - 0 pts', body:`<p>Benchmarking is useful context, but it doesn't answer the board's question. They already know they're above average - that's why they called St. Davids Health. They want to understand their own patients and act on the findings.</p><p>This makes a good supporting slide, not a core analysis. You're answering the wrong question.</p>` },
         D: { type:'bad', title:'Off track - 0 pts', body:`<p>Length of stay is a metric, not an analysis question. Knowing the average LOS of readmitted patients doesn't tell you who is at risk or what factors drive readmission - which is what the hospital needs to actually change anything.</p><p>You produce a clean answer to a question nobody asked.</p>` },
       }
     },
@@ -1436,9 +1436,9 @@ df[<span class="st">'readmitted_30d'</span>] = df[<span class="st">'readmitted_3
       }
     },
     4: {
-      correct: 'C',
+      correct: 'A',
       outcomes: {
-        C: { type:'good', title:'Correct - 3 pts', body:`<p>Dropping 31% of rows risks systematic bias if the missing scores cluster in specific wards or diagnoses. Mean imputation at 31% is too high a rate to be defensible. Filing with 0 invents data. The clean move: rely on the complete variable (followup_scheduled), flag the limitation, and document the AMA exclusion separately.</p>
+        A: { type:'good', title:'Correct - 3 pts', body:`<p>Dropping 31% of rows risks systematic bias if the missing scores cluster in specific wards or diagnoses. Mean imputation at 31% is too high a rate to be defensible. Filing with 0 invents data. The clean move: rely on the complete variable (followup_scheduled), flag the limitation, and document the AMA exclusion separately.</p>
         <p>Your cleaning notes are thorough. When the peer reviewer asks about missing data, you have an answer ready.</p>`, codeReveal: true,
         codeHtml: `<div class="code-label">Handling missing data - documented approach</div>
 <div class="code-block"><pre><span class="cm"># Flag missing condition scores - do NOT drop or impute at 31%</span>
@@ -1451,15 +1451,15 @@ df[<span class="st">'score_missing'</span>] = df[<span class="st">'discharge_con
 ama_ids = admissions[~admissions[<span class="st">'patient_id'</span>].<span class="fn">isin</span>(discharge[<span class="st">'patient_id'</span>])][<span class="st">'patient_id'</span>]
 df_clean = df[~df[<span class="st">'patient_id'</span>].<span class="fn">isin</span>(ama_ids)].<span class="fn">copy</span>()
 <span class="fn">print</span>(<span class="st">f"Excluded </span>{<span class="fn">len</span>(ama_ids)}<span class="st"> AMA patients. Remaining: </span>{<span class="fn">len</span>(df_clean)}<span class="st">"</span>)</pre></div>` },
-        A: { type:'bad', title:'Selection bias introduced - 0 pts', body:`<p>You drop 1,295 rows. The analysis runs cleanly on the remaining 69% - but Dr. Voss notices when reviewing the output that patients with missing scores cluster disproportionately in wards 3B and 4A. Your clean dataset is biased toward a different patient population than the one the hospital is actually concerned about.</p>` },
+        C: { type:'bad', title:'Selection bias introduced - 0 pts', body:`<p>You drop 1,295 rows. The analysis runs cleanly on the remaining 69% - but Dr. Voss notices when reviewing the output that patients with missing scores cluster disproportionately in wards 3B and 4A. Your clean dataset is biased toward a different patient population than the one the hospital is actually concerned about.</p>` },
         B: { type:'warn', title:'Defensible but flawed - 0 pts', body:`<p>Mean imputation works. But a 31% imputation rate is high enough that a peer reviewer will flag it. More importantly, imputing the mean compresses the variance of the score variable - real patterns in the data get flattened. The finding is publishable, but with a significant methodological caveat attached.</p>` },
         D: { type:'bad', title:'Invented data - 0 pts', body:`<p>Filling with 0 means you're asserting that every patient with a missing score was in the worst possible discharge condition. That assumption has no basis. Your model flags a large group of patients as high-risk - but follow-up shows their actual outcomes were average. You've manufactured a false signal.</p>` },
       }
     },
     5: {
-      correct: 'B',
+      correct: 'D',
       outcomes: {
-        B: { type:'good', title:'Correct - 3 pts', body:`<p>This is the textbook confounding problem from Module 1. Sicker patients (heart failure, COPD) are both harder to schedule follow-ups for and more likely to be readmitted regardless of follow-up. The ward concentration points to a systemic factor - staff capacity - that could explain both. "Whenever you find a relationship in data, ask: what third variable could explain this?"</p>
+        D: { type:'good', title:'Correct - 3 pts', body:`<p>This is the textbook confounding problem from Module 1. Sicker patients (heart failure, COPD) are both harder to schedule follow-ups for and more likely to be readmitted regardless of follow-up. The ward concentration points to a systemic factor - staff capacity - that could explain both. "Whenever you find a relationship in data, ask: what third variable could explain this?"</p>
         <p>You write back to Darius: <em>"Strong signal, but I need to control for acuity and ward before we can call it actionable. Give me an hour."</em> That's the right call.</p>`, codeReveal: true,
         codeHtml: `<div class="code-label">Checking for confounders before drawing conclusions</div>
 <div class="code-block"><pre><span class="cm"># Is the follow-up gap explained by diagnosis severity?</span>
@@ -1474,7 +1474,7 @@ ward_check = df_clean[df_clean[<span class="st">'followup_scheduled'</span>] == 
 <span class="cm"># 2C    108</span></pre></div>` },
         A: { type:'bad', title:'Acting on a correlation - 0 pts', body:`<p>The board mandates follow-up scheduling for all patients. Six months later, a follow-up study shows readmission rates unchanged. The policy addressed a symptom of high-acuity wards, not the underlying cause. "Correlation is not causation" - this is exactly the Module 1 warning.</p>` },
         C: { type:'warn', title:'Almost right - 0 pts', body:`<p>Framing it as a hypothesis is good instinct - but "recommend a pilot" is still acting before you've checked for confounders. The right move at this stage is to do the additional analysis first, then decide what to recommend. You have the data to check this now.</p>` },
-        D: { type:'bad', title:'Ignoring a key signal - 0 pts', body:`<p>The follow-up finding is the most actionable thing in the dataset - especially since it links directly to the two wards you flagged. Focusing only on diagnosis groups answers part of the question but leaves the strongest discharge process signal unexamined. The board will notice the gap.</p>` },
+        B: { type:'bad', title:'Ignoring a key signal - 0 pts', body:`<p>The follow-up finding is the most actionable thing in the dataset - especially since it links directly to the two wards you flagged. Focusing only on diagnosis groups answers part of the question but leaves the strongest discharge process signal unexamined. The board will notice the gap.</p>` },
       }
     },
     6: {
@@ -1488,11 +1488,11 @@ ward_check = df_clean[df_clean[<span class="st">'followup_scheduled'</span>] == 
       }
     },
     7: {
-      correct: 'B',
+      correct: 'A',
       outcomes: {
-        B: { type:'good', title:'Correct - 3 pts', body:`<p>Lead with the question and the answer - not the methodology. Use one visual per risk factor (not tables). Translate statistics into plain language the trustees can act on: "patients discharged from wards 3B and 4A without a follow-up appointment are twice as likely to return within 30 days." End with one specific recommendation. The board approves immediate action.</p>
+        A: { type:'good', title:'Correct - 3 pts', body:`<p>Lead with the question and the answer - not the methodology. Use one visual per risk factor (not tables). Translate statistics into plain language the trustees can act on: "patients discharged from wards 3B and 4A without a follow-up appointment are twice as likely to return within 30 days." End with one specific recommendation. The board approves immediate action.</p>
         <p>Dr. Voss catches you on the way out: <em>"That's how it's done."</em></p>`, codeReveal: false },
-        A: { type:'warn', title:'Lost the room - 0 pts', body:`<p>You spend 12 minutes on methodology before reaching the findings. The operations director checks her phone by slide three. The board approves further study rather than action. Your analysis was correct. Your presentation structure cost you the outcome.</p>` },
+        B: { type:'warn', title:'Lost the room - 0 pts', body:`<p>You spend 12 minutes on methodology before reaching the findings. The operations director checks her phone by slide three. The board approves further study rather than action. Your analysis was correct. Your presentation structure cost you the outcome.</p>` },
         C: { type:'bad', title:'Inaccessible - 0 pts', body:`<p>The clinicians appreciate the rigor. The trustees are lost. The operations director tables the decision pending a plain-language summary. A data scientist's job is to bridge the gap between the analysis and the decision - not to hand the room raw statistical output and hope someone else translates it.</p>` },
         D: { type:'bad', title:'Recommendation without evidence - 0 pts', body:`<p>The board approves the recommendation but a trustee asks "what's the evidence?" It's not in the slide. Dr. Voss steps in to provide context, which is not the position you want to put your VP in. A recommendation without evidence can't be evaluated, challenged, or refined. It also can't be trusted.</p>` },
       }

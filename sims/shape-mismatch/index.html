@@ -171,7 +171,7 @@ const LEVELS = [
     error: "ValueError: operands could not be broadcast together with shapes (3,4) (3,)",
     shapes: ["(3,4)", "(3,)"], names: ["a", "b"],
     fixed: "result = a + b[:, np.newaxis]",
-    check: "assert result.shape == (3, 4)\nprint(result.shape)",
+    check: "assert result.shape == (3, 4)\nassert np.array_equal(result, a + b[:, np.newaxis]), 'Right shape, wrong numbers: each row should get its own bonus'\nprint(result.shape)",
     expect: "(3, 4)",
     hint: "<code>b[:, np.newaxis]</code> turns <code>(3,)</code> into <code>(3, 1)</code>, which lines up against the 3.",
     why: `Broadcasting compares dimensions <strong>from the right</strong>. Your
@@ -186,7 +186,7 @@ const LEVELS = [
     error: "ValueError: cannot reshape array of size 24 into shape (5,5)",
     shapes: ["(24,)", "(5,5)"], names: ["plays", "the shape you asked for"],
     fixed: "result = plays.reshape(4, 6)",
-    check: "assert result.shape == (4, 6)\nprint(result.shape)",
+    check: "assert result.shape == (4, 6)\nassert np.array_equal(result, plays.reshape(4, 6)), 'Right shape, wrong numbers: reshape keeps every value in its original order'\nprint(result.shape)",
     expect: "(4, 6)",
     hint: "24 elements have to land somewhere. 4 x 6 works; so does <code>reshape(4, -1)</code>, which makes NumPy do the arithmetic.",
     why: `A reshape moves elements into a new grid. It cannot create or discard
@@ -201,7 +201,7 @@ const LEVELS = [
     error: "ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0",
     shapes: ["(2,3)", "(2,3)"], names: ["scores", "weights"],
     fixed: "result = scores @ weights.T",
-    check: "assert result.shape == (2, 2)\nprint(result.shape)",
+    check: "assert result.shape == (2, 2)\nassert np.array_equal(result, scores @ weights.T), 'Right shape, wrong numbers: this should be a matrix product'\nprint(result.shape)",
     expect: "(2, 2)",
     hint: "Matrix multiply needs the inner dimensions to meet: <code>(2,3) @ (3,2)</code>. <code>.T</code> transposes.",
     why: `The two arrays are identical in shape, which is exactly why this feels
@@ -216,7 +216,7 @@ const LEVELS = [
     error: "ValueError: all the input array dimensions except for the concatenation axis must match exactly",
     shapes: ["(2,4)", "(4,1)"], names: ["week1", "week2"],
     fixed: "result = np.hstack([week1, week2.reshape(2, 2)])",
-    check: "assert result.shape == (2, 6)\nprint(result.shape)",
+    check: "assert result.shape == (2, 6)\nassert np.array_equal(result, np.hstack([week1, week2.reshape(2, 2)])), 'Right shape, wrong numbers: keep every value from both weeks'\nprint(result.shape)",
     expect: "(2, 6)",
     hint: "<code>hstack</code> joins along axis 1, so axis 0 has to already match. week2 has 4 elements - <code>reshape(2, 2)</code> gives it 2 rows.",
     why: `Joining along one axis means every <em>other</em> axis must already
@@ -386,7 +386,11 @@ async function run(){
     const msg = String(e.message || e).trim().split("\n").filter(Boolean).slice(-1)[0];
     out.textContent = msg;
     fb.className = "fb no";
-    fb.innerHTML = `<strong>Still not combining.</strong> Read the shapes in that
+    fb.innerHTML = /^AssertionError/.test(msg)
+      ? `<strong>Right shape, wrong numbers.</strong> The shapes line up, but the values
+      are not where they belong. A fix that only makes shapes agree can still put
+      numbers in the wrong place, which is what the last level is about.`
+      : `<strong>Still not combining.</strong> Read the shapes in that
       message the same way you just read the first one.`;
     btn.disabled = false;
     return;

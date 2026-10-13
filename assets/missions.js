@@ -39,9 +39,7 @@
     3: [
       { type: 'quiz', title: 'Module 3 Quiz', href: 'quiz.html', event: 'm3_quiz', read: quizReader(3) },
       { type: 'sim', title: 'NumPy Lab', href: S + 'numpy-lab/index.html', event: 'numpy_lab',
-        read: scoreReader('dtsc520_charttoppers', 18) },
-      { type: 'sim', title: 'Debug the Pipeline', href: S + 'debug-pipeline/index.html', event: 'debug_pipeline',
-        read: scoreReader('dtsc520_debugpipeline', 20) }
+        read: scoreReader('dtsc520_charttoppers', 18) }
     ],
     4: [
       { type: 'quiz', title: 'Module 4 Quiz', href: 'quiz.html', event: 'm4_quiz', read: quizReader(4) },
@@ -49,7 +47,9 @@
         read: pctReader('dtsc520_dirtydataset', 'score') },
       { type: 'sim', title: 'RTG Investigation', href: S + 'rtg-investigation/index.html', event: 'rtg_investigation', read: rtgReader },
       { type: 'event', title: 'ARIA Returns: The pandas Update', href: S + 'aria-returns/index.html', event: 'aria_returns',
-        read: timeReader('dtsc520_ariareturns') }
+        read: timeReader('dtsc520_ariareturns') },
+      { type: 'sim', title: 'Debug the Pipeline', href: S + 'debug-pipeline/index.html', event: 'debug_pipeline',
+        read: scoreReader('dtsc520_debugpipeline', 20) }
     ],
     5: [
       { type: 'quiz', title: 'Module 5 Quiz', href: 'quiz.html', event: 'm5_quiz', read: quizReader(5) },

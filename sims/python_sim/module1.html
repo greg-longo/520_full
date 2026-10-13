@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 <style>
   :root {
     --maroon: #8B1C40;
@@ -958,8 +958,8 @@ const challenges = [
 jersey_number =
 print(jersey_number)`,
     hints: [
-      `A variable stores a value. The pattern is: <code>name = value</code>. Your variable is named <code>jersey_number</code> — what number goes after the <code>=</code>?`,
-      `Jersey #14. Fill in: <code>jersey_number = 14</code> — just the number, no quotes needed for integers.`
+      `A variable stores a value. The pattern is: <code>name = value</code>. Your variable is named <code>jersey_number</code>: what number goes after the <code>=</code>?`,
+      `Jersey #14. Fill in <code>jersey_number = 14</code>. Just the number, no quotes needed for integers.`
     ],
     answer: `<code>jersey_number = 14</code><br><code>print(jersey_number)</code>`,
     maxPoints: 2,
@@ -997,7 +997,7 @@ print(jersey_number)`,
 batting_avg =
 print(batting_avg)`,
     hints: [
-      `A float is a decimal number. The batting average is .287 — in Python, always write the leading zero: <code>0.287</code>. What goes after <code>batting_avg =</code>?`,
+      `A float is a decimal number. The batting average is .287. In Python, always write the leading zero: <code>0.287</code>. What goes after <code>batting_avg =</code>?`,
       `Write it as: <code>batting_avg = 0.287</code>. The decimal point is what makes this a float instead of an int.`
     ],
     answer: `<code>batting_avg = 0.287</code><br><code>print(batting_avg)</code>`,
@@ -1032,7 +1032,7 @@ print(batting_avg)`,
 player_name =
 print(player_name)`,
     hints: [
-      `Text values in Python need quotes around them — either single <code>'</code> or double <code>"</code>. Try: <code>player_name = "Dario Rivera"</code>`,
+      `Text values in Python need quotes around them: either single <code>'</code> or double <code>"</code>. Try: <code>player_name = "Dario Rivera"</code>`,
       `The full name is two words: Dario Rivera. Quotes go around the entire value: <code>player_name = "Dario Rivera"</code>`
     ],
     answer: `<code>player_name = "Dario Rivera"</code><br><code>print(player_name)</code>`,
@@ -1040,7 +1040,7 @@ print(player_name)`,
     grader: function(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
       const hasAssign = /player_name\s*=\s*["']Dario Rivera["']/.test(code);
-      const hasPrint = stdout.toLowerCase().includes('marcus rivera');
+      const hasPrint = stdout.toLowerCase().includes('dario rivera');   // was 'marcus rivera', left behind by the Aug 9 rename, so the right answer failed
       if (hasAssign && hasPrint) return { pts: 2, level: 'pass', msg: `Correct. Strings hold text data - names, positions, team names - anything that isn't a number you'd do math on. Notice how <code>type(player_name)</code> would show <code>&lt;class 'str'&gt;</code>.` };
       if (hasPrint) return { pts: 1, level: 'partial', msg: `Good output, but name the variable exactly <code>player_name</code> so the system can check it.` };
       return { pts: 0, level: 'fail', msg: `Assign the string <code>"Dario Rivera"</code> to a variable named <code>player_name</code>. Don't forget the quotes around the text.` };
@@ -1065,8 +1065,8 @@ print(player_name)`,
 is_eligible =
 print(is_eligible)`,
     hints: [
-      `Booleans are either <code>True</code> or <code>False</code> — capital first letter, no quotes. Rivera is cleared to play, so which value is correct?`,
-      `<code>is_eligible = True</code> — capital T, no quotes. Writing <code>"True"</code> with quotes would make it a string, not a boolean.`
+      `Booleans are either <code>True</code> or <code>False</code>: capital first letter, no quotes. Rivera is cleared to play, so which value is correct?`,
+      `<code>is_eligible = True</code>: capital T, no quotes. Writing <code>"True"</code> with quotes would make it a string, not a boolean.`
     ],
     answer: `<code>is_eligible = True</code><br><code>print(is_eligible)</code>`,
     maxPoints: 2,
@@ -1109,7 +1109,7 @@ is_eligible =
 `,
     hints: [
       `You've done each of these separately. Combine them: string in quotes, integer without, float with a decimal, boolean with capital T. Then four <code>print()</code> calls.`,
-      `Fill in the four values: <code>"Dario Rivera"</code>, <code>14</code>, <code>0.287</code>, <code>True</code> — then print each one with <code>print(player_name)</code>, etc.`
+      `Fill in the four values: <code>"Dario Rivera"</code>, <code>14</code>, <code>0.287</code>, <code>True</code>, then print each one with <code>print(player_name)</code>, etc.`
     ],
     answer: `<code>player_name = "Dario Rivera"</code><br><code>jersey_number = 14</code><br><code>batting_avg = 0.287</code><br><code>is_eligible = True</code><br><br><code>print(player_name)</code><br><code>print(jersey_number)</code><br><code>print(batting_avg)</code><br><code>print(is_eligible)</code>`,
     maxPoints: 2,
@@ -1234,7 +1234,7 @@ function renderChallenge(idx) {
           Your Code
           <span>Tab key inserts 4 spaces</span>
         </div>
-        <textarea class="code-editor" id="codeEditor" spellcheck="false" aria-label="Python code editor — write your solution here">${c.starterCode}</textarea>
+        <textarea class="code-editor" id="codeEditor" spellcheck="false" aria-label="Python code editor: write your solution here">${c.starterCode}</textarea>
         <div class="editor-actions">
           <button class="btn-run" id="btnRun" onclick="runCode(${idx})">
             &#9654; Run Code
@@ -1327,6 +1327,22 @@ function goToChallenge(idx) {
 }
 
 // ===== RUN CODE =====
+// Graders read the code to see HOW an answer was produced, so a comment must not
+// count: "# jersey_number = 14" above print(14) used to pass. Strip comments
+// (outside of string literals) before grading.
+function stripComments(src) {
+  return String(src).split('\n').map(line => {
+    let q = null;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (q) { if (ch === '\\') i++; else if (ch === q) q = null; }
+      else if (ch === '"' || ch === "'") q = ch;
+      else if (ch === '#') return line.slice(0, i);
+    }
+    return line;
+  }).join('\n');
+}
+
 async function runCode(idx) {
   const code = document.getElementById('codeEditor').value;
   const outBox = document.getElementById('outputBox');
@@ -1366,7 +1382,7 @@ async function runCode(idx) {
 
   // Grade
   const c = challenges[idx];
-  const result = c.grader(pyodideInstance, code, stdout, errorMsg || null);
+  const result = c.grader(pyodideInstance, stripComments(code), stdout, errorMsg || null);
   scores[idx] = { pts: result.pts, level: result.level, msg: result.msg, verdict: result.level === 'pass' ? 'Correct' : result.level === 'partial' ? 'Partially Correct' : 'Not Quite', title: c.title, max: c.maxPoints };
 
   try { result.level === 'pass' ? (window.sfx.pass(), window.confettiBurst()) : result.level === 'partial' ? window.sfx.hint() : (window.sfx.fail(), window.screenShake()); } catch(e){}

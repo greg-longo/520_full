@@ -247,6 +247,7 @@ print(contracts["artist_id"].is_unique)
 # Which ids appear more than once in contracts?
 dupes = contracts[contracts["artist_id"].duplicated(keep=False)]
 print(sorted(dupes["artist_id"].???))`,
+    check: "assert sorted(dupes['artist_id'].unique().tolist()) == [4, 8], 'dupes should hold the repeated contracts rows.'",
     expected: "True\nFalse\n[4, 8]",
     hint: `<code>.unique()</code> gives the distinct values as a NumPy array;
       <code>.tolist()</code> turns it into a plain Python list so it prints
@@ -268,6 +269,7 @@ print(sorted(dupes["artist_id"].???))`,
 left  = artists.merge(streams, on="artist_id", how=???)
 
 print(len(artists), len(inner), len(left))`,
+    check: "assert len(inner) == 7 and len(left) == 12, 'inner and left should be the two merges.'",
     expected: "12 7 12",
     hint: `The second merge needs <code>how="left"</code>. A left join keeps every
       row on the left and fills in nothing where the right has no match.`,
@@ -310,12 +312,13 @@ seen = paid[paid["artist_id"].isin(streams["artist_id"])]
 # The true average, then the average the inner join would have given you
 print(round(paid["paid"].???(), 2))
 print(round(seen["paid"].mean(), 2))`,
+    check: "assert round(paid['paid'].mean(), 2) == 27707.92 and 'mean' in _code, 'Compute both averages from paid and seen.'",
     expected: "27707.92\n41785.0",
     hint: `Both lines want <code>.mean()</code>.`,
     why: `There it is. The inner join does not just lose rows - it loses the
       <em>cheapest</em> rows, because the back catalogue is the part of the roster
       Vantage pays least. Drop them and the average payment per artist reads
-      &pound;41,785 instead of &pound;27,708: half again as generous as the truth,
+      $41,785 instead of $27,708: half again as generous as the truth,
       in a press release about how well the label treats its musicians.`,
   },
 ];
@@ -326,7 +329,7 @@ const DECISION = {
   desc: `The press office wants one number by five o'clock. Which do you give
     them, and can you say why in one sentence?`,
   options: [
-    { id:"inner", label:"&pound;41,785 - the artists with streaming data",
+    { id:"inner", label:"$41,785 - the artists with streaming data",
       verdict:"no",
       text:`This is the number the inner join hands you, and it is the one that
         will be wrong in public. The artists it excludes are not missing at
@@ -334,7 +337,7 @@ const DECISION = {
         biased in exactly the direction that flatters whoever is publishing it.
         "The data wasn't there" is not a defense when you chose the join that
         removed it.`},
-    { id:"left", label:"&pound;27,708 - every artist on the roster",
+    { id:"left", label:"$27,708 - every artist on the roster",
       verdict:"yes",
       text:`Correct, and for the right reason. The question was "average royalty
         per artist", and the artist roster is <code>artists</code>, not "artists
@@ -347,7 +350,7 @@ const DECISION = {
       text:`Defensible, and better than either number alone if the note is
         honest. But be careful: publishing two figures often means the reader
         picks the flattering one, and the press office has an obvious preference.
-        If you offer both, the headline number should be &pound;27,708 and the
+        If you offer both, the headline number should be $27,708 and the
         other should be labeled as covering only actively-promoted artists.`},
     { id:"more", label:"Neither - go back and ask what they mean by 'artist'",
       verdict:"ok",
@@ -355,7 +358,7 @@ const DECISION = {
         4:55pm. The whole ambiguity is in the word "artist": current roster, or
         everyone ever signed? You have found the question that decides the
         number, which is more useful than either number. Just be ready for the
-        answer to be "the roster", in which case it is &pound;27,708.`},
+        answer to be "the roster", in which case it is $27,708.`},
   ],
 };
 
@@ -428,6 +431,37 @@ function normalize(s){
     .map(l => l.replace(/\s+$/,"")).join("\n").trim();
 }
 
+
+/* ---- Hidden checks (Oct 2026) -------------------------------------------
+   Matching output is necessary but not sufficient. A task passes only if
+   (1) the code does not simply type the expected output in, and
+   (2) its optional `check` (Python asserts run in the same namespace, with
+       _src = the code and _code = the code without comments) holds. */
+const TYPED_MSG = "The output matches, but it is typed into the code rather than computed. Print the result of the calculation instead.";
+function codeOnly(src){ return String(src).split("\n").map(l => l.replace(/#.*$/, "")).join("\n"); }
+function typedOutput(src, expected){
+  const code = codeOnly(src);
+  return String(expected).split("\n").map(s => s.trim())
+    .filter(s => s.length >= 5 && /\d/.test(s)).some(s => code.includes(s));
+}
+async function hiddenCheck(check, src){
+  if (!check) return null;
+  try {
+    pyodide.globals.set("_src", src);
+    pyodide.globals.set("_code", codeOnly(src));
+    pyodide.runPython(check);
+    return null;
+  } catch (e) {
+    const last = String(e.message || e).trim().split("\n").filter(Boolean).slice(-1)[0] || "";
+    return last.replace(/^AssertionError:?\s*/, "") || "The output matches, but the code does not compute it.";
+  }
+}
+async function verifyMatch(src, expected, check){
+  if (typedOutput(src, expected)) return TYPED_MSG;
+  return await hiddenCheck(check, src);
+}
+
+const revealed = [];
 async function run(){
   const t = TASKS[step];
   const btn = document.getElementById("runBtn");
@@ -469,10 +503,15 @@ sys.stdout = _buf
   }
   btn.disabled = false;
 
-  if (normalize(text) === normalize(t.expected)) {
+  const matched = normalize(text) === normalize(t.expected);
+  const problem = matched ? await verifyMatch(code, t.expected, t.check) : null;
+  if (matched && !problem) {
     if (!solved[step]) {
       solved[step] = true;
-      score += attempts[step] === 1 ? t.points : Math.max(1, t.points - 1);
+      // Decision #3: help is free for the first three steps; from step 4 the
+      // revealed answer costs a point, and the button says so before the click.
+      const penalty = (revealed[step] && step >= 3) ? 1 : 0;
+      score += Math.max(0, (attempts[step] === 1 ? t.points : Math.max(1, t.points - 1)) - penalty);
       document.getElementById("score").textContent = score;
     }
     fb.className = "fb ok";
@@ -480,9 +519,21 @@ sys.stdout = _buf
       <div class="controls"><button class="btn" onclick="next()">Continue &rarr;</button></div>`;
   } else {
     fb.className = "fb no";
-    fb.innerHTML = `<strong>Not the expected output yet.</strong>
-      <div class="why">Expected:<br><span class="mono">${esc(t.expected).replace(/\n/g,"<br>")}</span></div>`;
+    fb.innerHTML = problem
+      ? `<strong>Not yet.</strong> <div class="why">${esc(problem)}</div>`
+      : `<strong>Not the expected output yet.</strong> Compare your output with what the
+      task asks for, line by line.
+      <div class="controls"><button class="btn btn-ghost" onclick="revealExpected()">Show the expected output${step >= 3 ? " (costs 1 point)" : ""}</button></div>`;
   }
+}
+
+function revealExpected(){
+  const t = TASKS[step];
+  revealed[step] = true;
+  const fb = document.getElementById("fb");
+  fb.className = "fb tip";
+  fb.innerHTML = `<strong>Expected output.</strong>
+    <div class="why"><span class="mono">${esc(t.expected).replace(/\n/g,"<br>")}</span></div>`;
 }
 
 function hint(){
@@ -543,8 +594,8 @@ function renderFinal(){
         <div class="row"><span>Artists after an inner join</span><span>7</span></div>
         <div class="row"><span>Dropped, all back catalogue</span><span>5</span></div>
         <div class="row"><span>Duplicate contract rows</span><span>2 (ids 4, 8)</span></div>
-        <div class="row"><span>True average payment</span><span>&pound;27,707.92</span></div>
-        <div class="row"><span>Inner-join average</span><span>&pound;41,785.00</span></div>
+        <div class="row"><span>True average payment</span><span>$27,707.92</span></div>
+        <div class="row"><span>Inner-join average</span><span>$41,785.00</span></div>
         <div class="row hero"><span>Overstated by</span><span>1.51&times;</span></div>
       </div>
       <p class="desc">Four one-line checks, and every one of them changed the

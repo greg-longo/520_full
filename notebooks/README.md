@@ -1,12 +1,13 @@
 # DTSC 520 notebooks
 
-The teaching notebooks for Modules 2, 3 and 4, in the form you work in them.
+The teaching notebooks for Modules 2 to 5, in the form you work in them.
 
 | Notebook | Module |
 |---|---|
 | `DTSC520_Module2_Python_STUDENT.ipynb` | 2 - Python |
 | `DTSC520_Module3_NumPy_STUDENT.ipynb` | 3 - NumPy |
 | `DTSC520_Module4_Pandas_STUDENT.ipynb` | 4 - pandas |
+| `DTSC520_Module5_Matplotlib_STUDENT.ipynb` | 5 - matplotlib and seaborn |
 
 Each one is the same material as the module page on the site. The page is for
 reading; the notebook is for running.

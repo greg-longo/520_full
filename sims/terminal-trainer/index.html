@@ -1847,14 +1847,17 @@ function showCompletion() {
 
   /* Full-completion key (all 3 parts incl. the git workflow) for the capstone gate */
   try { localStorage.setItem('dtsc520_terminaltrainer', JSON.stringify({ completed: true, date: new Date().toISOString() })); } catch(e) {}
-  try { if (typeof logEvent === 'function') logEvent('sim_complete', 'terminal_trainer', completed, part1.length + part2.length + part3.length); } catch(e) {}
-
   /* Speedrun: finalize time, compare to personal best */
-  var newBest = false;
+  var newBest = false, runPayload = { mode: runMode };
   if (runMode === 'speedrun' && runStartMs) {
     var elapsed = stopSpeedClock();
     var prevBest = getBestTime();
     newBest = (prevBest == null || elapsed < prevBest);
+    runPayload.seconds = Math.round(elapsed / 1000);   /* server: Terminal Velocity achievement */
+    /* Only a beaten previous best counts as an improvement (server: Personal Trainer) */
+    if (newBest && prevBest != null) {
+      try { if (typeof logEvent === 'function') logEvent('pb_improved', 'terminal_trainer', Math.round(elapsed / 1000), Math.round(prevBest / 1000)); } catch(e) {}
+    }
     if (newBest) { try { localStorage.setItem(BEST_KEY, String(elapsed)); } catch(e){} }
     document.getElementById('speedResult').style.display = 'block';
     document.getElementById('speedFinalTime').textContent = fmtTime(elapsed);
@@ -1862,6 +1865,7 @@ function showCompletion() {
     document.getElementById('speedBestLine').textContent =
       newBest ? 'Speedrun time' : 'Your time  (best: ' + fmtTime(prevBest) + ')';
   }
+  try { if (typeof logEvent === 'function') logEvent('sim_complete', 'terminal_trainer', completed, part1.length + part2.length + part3.length, runPayload); } catch(e) {}
 
   try { window.sfx.win(); window.confettiBurst(); if (newBest) setTimeout(window.confettiBurst, 350); } catch(e){}
   document.querySelectorAll('.progress-dot').forEach(function (d) { d.classList.remove('current'); d.classList.add('done'); });

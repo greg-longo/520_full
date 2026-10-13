@@ -15,7 +15,7 @@
     --line:      #2a3344;
     --ink:       #eef2f8;
     --ink-dim:   #9aa6bb;
-    --ink-mute:  #5f6b80;
+    --ink-mute:  #8a94a8;   /* was #5f6b80, 3.26:1 on the panels (Oct 2026 axe pass) */
     --brass:     #c9a24a;
     --brass-l:   #e0bd6a;
     --maroon:    #8B1C40;
@@ -118,7 +118,7 @@
   <div class="brief">
     <div class="brief-from">&#9993; From: Amy Lee, Chief Data Officer</div>
     <p>Welcome to the IR office. The Cabinet has asked us for an evidence-based picture of what actually supports student success - and they're making real decisions off it, so we get exactly one shot to do this honestly.</p>
-    <p>Here's the deal: I can't hand you the full commission until you've proven the fundamentals. Each module you finish lights up one capability below. Light all six and the project opens - a real analysis, real data, real judgment calls. Including the ones that are uncomfortable.</p>
+    <p>Here's the deal: I can't hand you the full commission until you've shown you have the fundamentals. Each module you finish lights up one capability below. Light all six and the project opens - a real analysis, real data, real judgment calls. Including the ones that are uncomfortable.</p>
     <p class="sig">- Amy</p>
   </div>
 
@@ -189,12 +189,12 @@ const MODULES = [
   ]},
   { id:3, name:'NumPy', reqs:[
     { label:'NumPy Lab',         href:'../sims/numpy-lab/index.html',     check:()=>!!(get('dtsc520_charttoppers')||{}).completed },
-    { label:'Debug the Pipeline',href:'../sims/debug-pipeline/index.html',check:()=>!!get('dtsc520_debugpipeline') },
   ]},
   { id:4, name:'pandas', reqs:[
     { label:'Dirty Dataset',     href:'../sims/dirty-dataset/index.html',  check:()=>!!(get('dtsc520_dirtydataset')||{}).completed },
     { label:'ARIA Returns',      href:'../sims/aria-returns/index.html',   check:()=>!!(get('dtsc520_ariareturns')||{}).completed },
     { label:'RTG Investigation', href:'../sims/rtg-investigation/index.html', check:()=>{ const r=get('dtsc520_rtginvestigation'); return !!(r&&r.done&&r.done.every(Boolean)); } },
+    { label:'Debug the Pipeline',href:'../sims/debug-pipeline/index.html',check:()=>!!get('dtsc520_debugpipeline') },
   ]},
   { id:5, name:'Visualization', reqs:[
     { label:'The Board Meeting', href:'../sims/board-meeting/index.html',  check:()=>!!(get('dtsc520_boardmeeting')||{}).completed },

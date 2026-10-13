@@ -1,7 +1,7 @@
 student_id,name,hs_gpa,hs_clubs,hs_sports,hs_attendance,hs_pop_density,need_based_aid,ug_gpa,internships,logins_per_week,time_on_task_hrs,submission_rate,course_score,success
 1001,Kofi Pereira,2.87,3,1,0.915,3703,0,2.99,0,,,,85.8,1
 1002,Elliot Park,2.2,1,1,0.866,4851,1,2.48,0,0.8,2.5,69%,57.1,0
-1003,Amara Okonkwo,2.72,2,0,0.948,4341,1,3.02,0,3.4,1.8,84%,75.5,1
+1003,Amaka Okoroha,2.72,2,0,0.948,4341,1,3.02,0,3.4,1.8,84%,75.5,1
 1004,Ravi Wojcik,2.05,1,0,0.887,4034,0,1.81,1,,,,60.8,0
 1005,Perla Sorensen,2.27,1,1,0.886,3942,1,3.08,0,0.6,1.9,72%,69.9,0
 1006,Maya Villanueva,1.51,1,1,0.874,3846,1,2.18,0,0.5,1.8,72%,66.1,0

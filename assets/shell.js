@@ -25,7 +25,7 @@
     'python_sim': 'modules/module2/index.html',
     'escape-mcinnis': 'modules/module2/index.html',
     'numpy-lab': 'modules/module3/index.html',
-    'debug-pipeline': 'modules/module3/index.html',
+    'debug-pipeline': 'modules/module4/index.html',
     'aria-returns': 'modules/module4/index.html',
     'rtg-investigation': 'modules/module4/index.html',
     'dirty-dataset': 'modules/module4/index.html',

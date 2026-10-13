@@ -58,7 +58,7 @@ window.DTSC_COHORT = {
   ],
   [
    "1003",
-   "Amara Okonkwo",
+   "Amaka Okoroha",
    "2.72",
    "2",
    "0",

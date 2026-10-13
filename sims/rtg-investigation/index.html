@@ -6,7 +6,7 @@
   <title>Reading Terminal Grill - DTSC 520</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
   <style>
     /* ── Variables ───────────────────────────────────────────────── */
     :root {
@@ -1309,7 +1309,7 @@
     <h1 class="landing-title">Reading Terminal<br>Grill</h1>
     <p class="landing-subtitle">Something changed. The data will tell you what.</p>
     <div class="landing-divider"></div>
-    <p class="landing-desc">A Philly restaurant started getting complaints. Nobody could say exactly what was different. You have four data tables and a set of pandas tools. Your job is to find out what actually changed - and prove it.</p>
+    <p class="landing-desc">A Philly restaurant started getting complaints. Nobody could say exactly what was different. You have four data tables and a set of pandas tools. Your job is to find out what actually changed, and back it up with the data.</p>
     <div class="landing-stats">
       <div>
         <span class="landing-stat-num">5</span>
@@ -1418,7 +1418,7 @@
         <div class="ch-vars" id="chVars"></div>
 
         <div class="ch-editor-wrap">
-          <textarea class="ch-code" id="chCode" spellcheck="false" aria-label="Python code editor — write your solution here"></textarea>
+          <textarea class="ch-code" id="chCode" spellcheck="false" aria-label="Python code editor: write your solution here"></textarea>
         </div>
 
         <div class="ch-btns">
@@ -1744,6 +1744,7 @@ print(len(clean))`,
       correct: 1,
       feedback: 'Correct. Data from APIs, exports, and third-party platforms routinely arrives with missing values, duplicates, and formatting inconsistencies. Cleaning is not a special case - it is a standard first step in any real analysis pipeline.'
     },
+    check: "assert len(clean) == 50 and clean['rating'].notna().all() and not clean.duplicated().any(), 'Build clean with the two cleaning methods.'",
     expected: '50'
   },
   {
@@ -1771,6 +1772,7 @@ print(merged.shape)`,
       correct: 1,
       feedback: 'Correct. In an inner join, rows are only kept when a match exists in both tables. The fact that all 62 rows survived means every order\'s dish_id has a corresponding entry in the menu - a sign of good referential integrity in this dataset.'
     },
+    check: "assert merged.shape == (62, 11) and 'merge' in _code, 'Build merged with orders.merge(...).'",
     expected: '(62, 11)'
   },
   {
@@ -1801,6 +1803,7 @@ print(result)`,
       correct: 1,
       feedback: 'Correct. A baseline is the reference point that makes change visible. If you only had a post-change rating of 3.0, you wouldn\'t know if that was a decline or just how the dish always rated. Comparing before and after is what turns a number into a finding.'
     },
+    check: "assert abs(float(result) - 4.5) < 1e-9 and 'r_menu[' in _code.replace(' ', ''), 'Compute result by filtering r_menu.'",
     expected: '4.5'
   },
   {
@@ -1831,6 +1834,7 @@ print(result)`,
       correct: 1,
       feedback: 'Correct. This is the key analytical distinction. A chef change is a global factor - it would plausibly affect every dish on the menu. A supplier change affecting one ingredient would only impact the dishes that use that ingredient. The pattern in the data (CS dishes drop, others hold steady) fits the supplier hypothesis much better than the chef hypothesis.'
     },
+    check: "assert abs(float(result) - 3.0) < 1e-9 and 'r_menu[' in _code.replace(' ', ''), 'Compute result by filtering r_menu.'",
     expected: '3.0'
   },
   {
@@ -1867,6 +1871,7 @@ print(result)`,
       correct: 1,
       feedback: 'Correct. Good data analysis supports conclusions, it doesn\'t overstate them. Option A overclaims certainty - correlation in a dataset isn\'t proof of causation. Option B is the right framing: it describes what the data shows, names the pattern (CS-specific decline), and recommends action without asserting more than the evidence can support.'
     },
+    check: "assert abs(float(result) - 1.5) < 1e-9 and 'before' in _code and 'after' in _code, 'Compute result from before and after.'",
     expected: '1.5'
   }
 ];
@@ -2328,6 +2333,36 @@ _sys.stdout = _stdout_buf
   saveState();
 }
 
+
+/* ---- Hidden checks (Oct 2026) -------------------------------------------
+   Matching output is necessary but not sufficient. A task passes only if
+   (1) the code does not simply type the expected output in, and
+   (2) its optional `check` (Python asserts run in the same namespace, with
+       _src = the code and _code = the code without comments) holds. */
+const TYPED_MSG = "The output matches, but it is typed into the code rather than computed. Print the result of the calculation instead.";
+function codeOnly(src){ return String(src).split("\n").map(l => l.replace(/#.*$/, "")).join("\n"); }
+function typedOutput(src, expected){
+  const code = codeOnly(src);
+  return String(expected).split("\n").map(s => s.trim())
+    .filter(s => s.length >= 5 && /\d/.test(s)).some(s => code.includes(s));
+}
+async function hiddenCheck(check, src){
+  if (!check) return null;
+  try {
+    pyodide.globals.set("_src", src);
+    pyodide.globals.set("_code", codeOnly(src));
+    await pyodide.runPythonAsync(check);
+    return null;
+  } catch (e) {
+    const last = String(e.message || e).trim().split("\n").filter(Boolean).slice(-1)[0] || "";
+    return last.replace(/^AssertionError:?\s*/, "") || "The output matches, but the code does not compute it.";
+  }
+}
+async function verifyMatch(src, expected, check){
+  if (typedOutput(src, expected)) return TYPED_MSG;
+  return await hiddenCheck(check, src);
+}
+
 async function checkAnswer() {
   if (!pyodideReady) return;
   await runCode();
@@ -2341,7 +2376,9 @@ async function checkAnswer() {
   state.attempts[idx]++;
   const att = state.attempts[idx];
 
-  if (normalize(output) === normalize(ch.expected)) {
+  const problem = normalize(output) === normalize(ch.expected)
+    ? await verifyMatch(document.getElementById('chCode').value, ch.expected, ch.check) : null;
+  if (normalize(output) === normalize(ch.expected) && !problem) {
     const pts = pointsForAttempt(att);
     state.scores[idx] = pts;
     state.done[idx]   = true;
@@ -2359,7 +2396,7 @@ async function checkAnswer() {
     }
   } else {
     fbEl.className = 'ch-feedback show wrong';
-    fbEl.textContent = `Not quite. Check your output and try again.`;
+    fbEl.textContent = problem ? `Not quite. ${problem}` : `Not quite. Check your output and try again.`;
     try { window.sfx.fail(); window.screenShake(); } catch(e) {}
     attEl.textContent = `${att} attempt${att > 1 ? 's' : ''} - next correct answer worth ${pointsForAttempt(att + 1)} pt${pointsForAttempt(att+1)!==1?'s':''}`;
     saveState();
@@ -2522,7 +2559,7 @@ const TABLE_DATA = {
     ]
   },
   ratings: {
-    title: 'ratings (raw)', meta: '60 rows · 5 columns — includes 5 NaN rows (italic) and 5 duplicates (red)',
+    title: 'ratings (raw)', meta: '60 rows · 5 columns: includes 5 NaN rows (italic) and 5 duplicates (red)',
     cols: ['dish_id','dish_name','rating','review_date','reviewer_id'],
     // clean rows 1-50, then 5 dupes, then 5 NaN
     rows: [

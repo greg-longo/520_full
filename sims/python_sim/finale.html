@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 <style>
   :root {
     --maroon: #8B1C40; --maroon-light: #a82050;
@@ -585,7 +585,7 @@ function renderChallenge(idx) {
       ${tableHTML}
       <div class="editor-wrap" style="margin-top:1.25rem">
         <div class="editor-label">Your Code <span>Tab = 4 spaces</span></div>
-        <textarea class="code-editor" id="codeEditor" spellcheck="false" aria-label="Python code editor — write your solution here">${c.starterCode}</textarea>
+        <textarea class="code-editor" id="codeEditor" spellcheck="false" aria-label="Python code editor: write your solution here">${c.starterCode}</textarea>
         <div class="editor-actions">
           <button class="btn-run" id="btnRun" onclick="runCode(${idx})">&#9654; Run Code</button>
           <button class="btn-hint" onclick="toggleHint()">Hint</button>
@@ -636,6 +636,22 @@ function updateDots(active) {
   }
 }
 
+// Graders read the code to see HOW an answer was produced, so a comment must not
+// count: "# jersey_number = 14" above print(14) used to pass. Strip comments
+// (outside of string literals) before grading.
+function stripComments(src) {
+  return String(src).split('\n').map(line => {
+    let q = null;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (q) { if (ch === '\\') i++; else if (ch === q) q = null; }
+      else if (ch === '"' || ch === "'") q = ch;
+      else if (ch === '#') return line.slice(0, i);
+    }
+    return line;
+  }).join('\n');
+}
+
 async function runCode(idx) {
   const code = document.getElementById('codeEditor').value;
   const outBox = document.getElementById('outputBox');
@@ -654,7 +670,7 @@ async function runCode(idx) {
   else { outBox.textContent = '(no output)'; }
 
   const c = challenges[idx];
-  const result = c.grader(pyodideInstance, code, stdout, errorMsg || null);
+  const result = c.grader(pyodideInstance, stripComments(code), stdout, errorMsg || null);
   const scoreIdx = idx - 1;
   scores[scoreIdx] = { pts: result.pts, level: result.level, msg: result.msg, verdict: result.level === 'pass' ? 'Correct' : result.level === 'partial' ? 'Partially Correct' : 'Not Quite', title: c.title, max: c.maxPoints };
   try { result.level === 'pass' ? (window.sfx.pass(), window.confettiBurst()) : result.level === 'partial' ? window.sfx.hint() : (window.sfx.fail(), window.screenShake()); } catch(e){}

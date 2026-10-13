@@ -370,10 +370,10 @@ const STAGES = [
   slack: `How bad is it? Batting avg nulls are probably pitchers - they don't bat in Single-A most of the time. Age nulls might just be sloppy data entry from the front office. Don't delete rows unless you have a real reason to.`,
   q: `How do you handle the missing values in batting avg, age, and games played?`,
   choices: [
-    { k:'A', text:`Drop any row that has <em>any</em> null value - keeps the dataset clean and simple.`, sub:`Removes ~7 rows from a 20-row dataset`, q:'warn' },
-    { k:'B', text:`Impute missing values: fill each column with its median.`, sub:`Preserves all rows; median is robust to outliers`, q:'good' },
-    { k:'C', text:`Fill all nulls with zero - it's a number, so the model won't crash.`, sub:`Fast, but 0 batting average means something specific in baseball`, q:'bad' },
-    { k:'D', text:`Impute age and games played with median, but for batting avg add a boolean flag column marking it missing, then impute.`, sub:`Preserves the information that the value was unknown`, q:'good' },
+    { k:'A', text:`Drop any row that has <em>any</em> null value, so every row left is complete and simple to model.`, sub:`Removes ~7 rows from a 20-row dataset`, q:'warn' },
+    { k:'B', text:`Impute missing values: fill each column's nulls with that column's median.`, sub:`Keeps all 20 rows; one rule for every column`, q:'good' },
+    { k:'C', text:`Fill all nulls with zero, since it's a number and the model won't crash.`, sub:`Keeps all 20 rows; nothing to compute`, q:'bad' },
+    { k:'D', text:`Median-impute age and games; for batting avg, add a was-missing flag, then impute.`, sub:`Keeps all 20 rows and adds one column`, q:'good' },
   ],
   outcomes: {
     A: { pts:1, q:'warn', title:'⚠ Aggressive - you lost a chunk of your data',
@@ -410,9 +410,9 @@ assert int(df['batting_avg_missing'].sum()) == 4, "The flag should mark the 4 pl
   slack: null,
   q: `How do you handle the duplicate rows?`,
   choices: [
-    { k:'A', text:`Drop the duplicates with <code>df.drop_duplicates()</code>, keeping the first occurrence.`, sub:`Standard practice - one copy of each record`, q:'good' },
-    { k:'B', text:`Leave the duplicates - more data is always better for training.`, sub:`Each duplicate is still a valid data point`, q:'bad' },
-    { k:'C', text:`Average the values across duplicates and keep one row per player_id.`, sub:`Treats duplicates as separate measurements`, q:'warn' },
+    { k:'B', text:`Leave the duplicates in, since more rows give the model more to train on.`, sub:`Each duplicate is still a valid data point`, q:'bad' },
+    { k:'C', text:`Average the values across each set of duplicates, keeping one row per player_id.`, sub:`Treats duplicates as separate measurements`, q:'warn' },
+    { k:'A', text:`Drop them with <code>df.drop_duplicates()</code>, keeping the first occurrence.`, sub:`One copy of each record remains`, q:'good' },
   ],
   outcomes: {
     A: { pts:2, q:'good', title:'✓ Correct - the standard approach',
@@ -442,9 +442,9 @@ assert int(df.duplicated().sum()) == 0, "There are still duplicate rows."`,
   slack: null,
   q: `The salary column is dtype <code>object</code> due to "$" and "," characters. How do you make it numeric?`,
   choices: [
-    { k:'A', text:`Strip the "$" and "," with string methods, then cast to float with <code>.astype(float)</code>.`, sub:`Removes formatting, preserves the value`, q:'good' },
-    { k:'B', text:`Use <code>pd.to_numeric(df['salary'], errors='coerce')</code> directly, without stripping first.`, sub:`Coerces unparseable values to NaN - you'd lose the column`, q:'bad' },
-    { k:'C', text:`Drop the salary column - salary isn't a performance stat anyway.`, sub:`The model may still need it for budget analysis`, q:'warn' },
+    { k:'B', text:`Use <code>pd.to_numeric(df['salary'], errors='coerce')</code> directly, without stripping first.`, sub:`One step: pandas converts what it can`, q:'bad' },
+    { k:'A', text:`Strip the "$" and "," with string methods, then cast to float with <code>.astype(float)</code>.`, sub:`Two steps: clean the text, then convert`, q:'good' },
+    { k:'C', text:`Drop the salary column, since salary isn't a performance stat anyway.`, sub:`Removes the problem column entirely`, q:'warn' },
   ],
   outcomes: {
     A: { pts:2, q:'good', title:'✓ Correct - strip, then cast',
@@ -476,10 +476,10 @@ assert df.loc[df['name']=='Noah Kim','salary'].iloc[0] == 760000.0, "Kim's salar
   slack: `Hey - I heard back from the Eagles front office. Kim's salary is correct. He's on a rehab assignment from their MLB affiliate - his 40-man roster contract pays the MLB minimum ($760,000 in 2025), and that travels with him to Single-A. The rest are on standard Single-A deals. The -3 home runs is definitely wrong though - a system bug on their end.`,
   q: `How do you handle the invalid home run value AND the legitimate salary outlier?`,
   choices: [
-    { k:'A', text:`Set <em>Home Runs = -3</em> to NaN, then impute with the median. Keep Kim's salary as-is since it's confirmed accurate.`, sub:`Correct for bad data; respects real data even when unusual`, q:'good' },
-    { k:'B', text:`Drop both rows - the -3 is clearly wrong and the outlier will skew the model.`, sub:`Loses a valid player (Kim) your client cares about`, q:'bad' },
-    { k:'C', text:`Cap all outliers with IQR clipping - handles the -3 and Kim's salary in one pass.`, sub:`Valid technique, but overrides confirmed-accurate data`, q:'warn' },
-    { k:'D', text:`Set the -3 to NaN and impute. Log-transform salary so the outlier has less influence.`, sub:`Preserves all data; log scaling handles skew well`, q:'good' },
+    { k:'B', text:`Drop both rows, since the -3 is clearly wrong and the outlier will skew the model.`, sub:`Removes both problem rows`, q:'bad' },
+    { k:'C', text:`Cap all outliers with IQR clipping, which handles the -3 and Kim's salary in one pass.`, sub:`One rule applied to every column`, q:'warn' },
+    { k:'A', text:`Set the -3 to NaN and impute the median. Leave Kim's salary as is; it is confirmed.`, sub:`Fixes one row, leaves the other alone`, q:'good' },
+    { k:'D', text:`Set the -3 to NaN and impute. Log-transform salary so the outlier has less influence.`, sub:`Fixes one row, rescales the other column`, q:'good' },
   ],
   outcomes: {
     A: { pts:2, q:'good', title:'✓ Good - you treated bad data and real data differently',
@@ -492,7 +492,7 @@ assert df.loc[df['name']=='Noah Kim','salary'].iloc[0] == 760000.0, "Kim's salar
          body:`Fixing the -3 and log-transforming salary is a solid path: you keep every real value, and the log compresses the huge MLB-vs-Single-A gap so it doesn't dominate the model. Just remember to interpret coefficients on the log scale afterward.` },
   },
   lab: {
-    task: `Run it live: turn the negative home-run value into NaN, impute it, and confirm no negative home runs remain - while Kim's salary stays untouched. Watch the mean-vs-median gap that proves why you don't blindly clip.`,
+    task: `Run it live: turn the negative home-run value into NaN, impute it, and confirm no negative home runs remain - while Kim's salary stays untouched. Watch the mean-vs-median gap that shows why you don't blindly clip.`,
     starter:
 `# salary is numeric from the previous step; reload+clean defensively
 df['salary'] = (df['salary'].astype(str)
@@ -520,9 +520,9 @@ assert df.loc[df['name']=='Noah Kim','salary'].iloc[0] == 760000.0, "Kim's salar
   slack: null,
   q: `How do you standardize the column names?`,
   choices: [
-    { k:'A', text:`Use <code>df.columns = df.columns.str.lower().str.replace(' ', '_')</code> - lowercase with underscores.`, sub:`The pandas standard - enables dot notation, consistent`, q:'good' },
-    { k:'B', text:`Use <code>df.rename()</code> to manually fix only the columns with spaces.`, sub:`Works, but misses capitalization and is error-prone at scale`, q:'warn' },
-    { k:'C', text:`Leave them - always use bracket notation like <code>df['Home Runs']</code>.`, sub:`Technically works, but adds friction for everyone`, q:'warn' },
+    { k:'B', text:`Use <code>df.rename()</code> to manually fix only the columns that have spaces in them.`, sub:`Renames only the columns you list`, q:'warn' },
+    { k:'A', text:`Run <code>df.columns = df.columns.str.lower().str.replace(' ', '_')</code> once.`, sub:`Renames every column with one rule`, q:'good' },
+    { k:'C', text:`Leave them, and always use bracket notation like <code>df['Home Runs']</code>.`, sub:`No renaming; the names stay as loaded`, q:'warn' },
   ],
   outcomes: {
     A: { pts:2, q:'good', title:'✓ Correct - the pandas standard',
@@ -558,7 +558,7 @@ function renderIntro() {
       <h1>The Dirty Dataset</h1>
       <p>The St. Davids Eagles handed you a roster export to feed your model. It's a mess: missing values, duplicate rows, a salary column pandas read as text, an impossible stat, and sloppy column names.</p>
       <p>For each problem you'll <strong>make the call</strong> a real analyst makes - then <strong>run the actual pandas live</strong> on the real roster and watch the fix land before you move on. Senior analyst Jonah Reyes is on Slack if you need context.</p>
-      <p style="color:var(--muted);font-size:13px;">Five decisions. Real pandas in your browser. Pick well - then prove it runs.</p>
+      <p style="color:var(--muted);font-size:13px;">Five decisions. Real pandas in your browser. Pick well, then run it for real.</p>
       <button class="btn-start" onclick="startSim()">Open the dataset</button>
     </div>`;
 }
@@ -597,9 +597,9 @@ function renderStage() {
       <div class="decision-label">⟩ Decision ${s.n}</div>
       <div class="decision-question">${s.q}</div>
       <div class="choices" id="choices">
-        ${s.choices.map(c => `
+        ${s.choices.map((c, i) => `
           <button class="choice-btn" id="ch-${c.k}" onclick="pick('${c.k}')">
-            <span class="choice-letter">${c.k}</span>
+            <span class="choice-letter">${'ABCD'[i]}</span>
             ${c.text}
             <span class="choice-sub">${c.sub}</span>
           </button>`).join('')}
