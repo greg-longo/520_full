@@ -645,7 +645,7 @@
 <!-- LANDING -->
 <div id="landing">
   <div class="lbox">
-    <div class="lbadge">Simulation &mdash; Module 04 &mdash; pandas / NumPy</div>
+    <div class="lbadge">Simulation · Module 04 · pandas / NumPy</div>
     <h1>Debug the <em>Pipeline</em></h1>
     <div class="situation">
       <div class="situation-who">6:47 AM - StatDeck Analytics, Eagles Office</div>
@@ -687,7 +687,7 @@
 
     <!-- Right: diagnosis -->
     <div class="diag-panel">
-      <span class="diag-label" id="diagLabel">Stage 1 of 5 &mdash; Diagnose the problem</span>
+      <span class="diag-label" id="diagLabel">Stage 1 of 5: Diagnose the problem</span>
       <div class="diag-symptom">
         <div class="sym-tag">What you're seeing</div>
         <div class="sym-text" id="symptomText"></div>
@@ -728,7 +728,7 @@
 <!-- RESULTS -->
 <div id="results">
   <div class="rbox">
-    <div class="r-kicker">Pipeline Report &mdash; Final Status</div>
+    <div class="r-kicker">Pipeline Report: Final Status</div>
     <div class="r-score" id="rScore">0</div>
     <div class="r-denom">out of 20 points</div>
     <div class="r-rank" id="rRank"></div>
@@ -761,7 +761,7 @@ const stages = [
   {
     who: 'Terminal',
     msg: 'Step 1: Load the roster CSV and check the first few rows.',
-    ppStep: 'Step 1 of 5 &mdash; pd.read_csv()',
+    ppStep: 'Step 1 of 5: pd.read_csv()',
     terminal: `<span class="term-prompt">$</span> <span class="term-cmd">python pipeline.py --step load</span>
 
 <span class="term-out">Running: roster = pd.read_csv('eagles_roster.csv', header=None)</span>
@@ -779,9 +779,9 @@ const stages = [
         ['3', {v:'Walker',c:'v-str'}, {v:'.301',c:'v-str'}, {v:'7',c:'v-str'}, {v:'19200',c:'v-str'}],
         ['4', {v:'Vasquez',c:'v-str'}, {v:'.268',c:'v-str'}, {v:'1',c:'v-str'}, {v:'760000',c:'v-str'}],
       ],
-      'roster.head() &mdash; something is off'
+      'roster.head(): something is off'
     ),
-    symptom: 'The DataFrame printed, but the column headers read <code>0, 1, 2, 3</code> instead of <code>player, avg, hr, salary</code>. Row 0 contains the actual column names from the CSV file. The shape is (7, 4) &mdash; one row too many.',
+    symptom: 'The DataFrame printed, but the column headers read <code>0, 1, 2, 3</code> instead of <code>player, avg, hr, salary</code>. Row 0 contains the actual column names from the CSV file. The shape is (7, 4): one row too many.',
     question: 'What does this output tell you about how the file was loaded?',
     choices: [
       { key:'A', text:'The CSV file uses tabs instead of commas as separators, so the columns merged into one.', pts:0 },
@@ -806,7 +806,7 @@ roster = pd.<span class="fn">read_csv</span>(<span class="st">'eagles_roster.csv
 
 <span class="df-out">{TABLE_FIXED_HEADER}</span>
 
-<span class="term-good">Shape: (6, 4) &mdash; 6 players, 4 columns. Column names correct.</span>`,
+<span class="term-good">Shape: (6, 4), 6 players, 4 columns. Column names correct.</span>`,
     tableHtmlFixed: buildTable(
       ['idx','player','avg','hr','salary'],
       [
@@ -824,7 +824,7 @@ roster = pd.<span class="fn">read_csv</span>(<span class="st">'eagles_roster.csv
   {
     who: 'Terminal',
     msg: 'Step 2: Inspect column data types before running any calculations.',
-    ppStep: 'Step 2 of 5 &mdash; roster.dtypes',
+    ppStep: 'Step 2 of 5: roster.dtypes',
     terminal: `<span class="term-prompt">$</span> <span class="term-cmd">python pipeline.py --step dtypes</span>
 
 <span class="term-out">Running: print(roster.dtypes)</span>
@@ -845,9 +845,9 @@ roster = pd.<span class="fn">read_csv</span>(<span class="st">'eagles_roster.csv
         ['3',{v:'Vasquez',c:'v-str'},{v:'.268',c:'v-bad'},{v:'1',c:'v-bad'},{v:'760000',c:'v-bad'}],
         ['4',{v:'Jones',c:'v-str'},{v:'.295',c:'v-bad'},{v:'3',c:'v-bad'},{v:'15600',c:'v-bad'}],
       ],
-      'roster.head() &mdash; numeric columns stored as text'
+      'roster.head(): numeric columns stored as text'
     ),
-    symptom: 'Every numeric column &mdash; <code>avg</code>, <code>hr</code>, <code>salary</code> &mdash; has dtype <code>object</code> instead of <code>float64</code> or <code>int64</code>. Calling <code>.mean()</code> on a column of strings will either raise a TypeError or return NaN.',
+    symptom: 'Every numeric column (<code>avg</code>, <code>hr</code>, <code>salary</code>) has dtype <code>object</code> instead of <code>float64</code> or <code>int64</code>. Calling <code>.mean()</code> on a column of strings will either raise a TypeError or return NaN.',
     question: 'What caused all the numeric columns to load as text, and what is the right fix?',
     choices: [
       { key:'A', text:'The previous bug (header=None) caused pandas to read everything as strings. Now that the header is fixed, use .astype() to convert each column to its correct numeric type.', pts:4, correct:true },
@@ -884,7 +884,7 @@ roster[<span class="st">'salary'</span>] = roster[<span class="st">'salary'</spa
         ['3',{v:'Vasquez',c:'v-str'},{v:'0.268',c:'v-num'},{v:'1',c:'v-num'},{v:'760000',c:'v-num'}],
         ['4',{v:'Jones',c:'v-str'},{v:'0.295',c:'v-num'},{v:'3',c:'v-num'},{v:'15600',c:'v-num'}],
       ],
-      'roster &mdash; types corrected'
+      'roster: types corrected'
     ),
   },
 
@@ -892,7 +892,7 @@ roster[<span class="st">'salary'</span>] = roster[<span class="st">'salary'</spa
   {
     who: 'Terminal',
     msg: 'Step 3: Filter to active players only. Emil Vasquez is on rehab assignment - flag him separately.',
-    ppStep: 'Step 3 of 5 &mdash; boolean filter',
+    ppStep: 'Step 3 of 5: boolean filter',
     terminal: `<span class="term-prompt">$</span> <span class="term-cmd">python pipeline.py --step filter</span>
 
 <span class="term-out">Running: active = roster[roster['status'] = 'active']</span>
@@ -913,7 +913,7 @@ roster[<span class="st">'salary'</span>] = roster[<span class="st">'salary'</spa
       ],
       'roster (with status column)'
     ),
-    symptom: 'The pipeline crashed with a <code>SyntaxError</code> on the filter line. Nothing was filtered &mdash; the entire analysis is blocked until this is resolved.',
+    symptom: 'The pipeline crashed with a <code>SyntaxError</code> on the filter line. Nothing was filtered: the entire analysis is blocked until this is resolved.',
     question: 'Python rejected this line. What is the problem and why?',
     choices: [
       { key:'A', text:"The column name 'status' doesn't exist - it should be 'active' to match the filter value.", pts:0 },
@@ -922,8 +922,8 @@ roster[<span class="st">'salary'</span>] = roster[<span class="st">'salary'</spa
       { key:'D', text:"Single = is the assignment operator, not a comparison. Boolean filtering requires == to produce a True/False result for each row.", pts:4, correct:true },
     ],
     feedback: {
-      correct: "Exactly. <code>=</code> means \"set this variable to this value\" &mdash; it is a statement, not an expression. Python cannot use a statement inside brackets. <code>==</code> is the equality comparison operator: it evaluates each row and returns True or False. That boolean Series is what pandas uses to decide which rows to keep.",
-      wrong: "The issue is the single <code>=</code>. In Python, <code>=</code> is the assignment operator &mdash; it assigns a value to a variable. Inside a filter bracket, pandas needs an expression that returns True or False for each row. That requires the comparison operator <code>==</code> (double equals). Python rejects <code>=</code> here with a SyntaxError because assignment is not a valid expression in that context."
+      correct: "Exactly. <code>=</code> means \"set this variable to this value\": it is a statement, not an expression. Python cannot use a statement inside brackets. <code>==</code> is the equality comparison operator: it evaluates each row and returns True or False. That boolean Series is what pandas uses to decide which rows to keep.",
+      wrong: "The issue is the single <code>=</code>. In Python, <code>=</code> is the assignment operator: it assigns a value to a variable. Inside a filter bracket, pandas needs an expression that returns True or False for each row. That requires the comparison operator <code>==</code> (double equals). Python rejects <code>=</code> here with a SyntaxError because assignment is not a valid expression in that context."
     },
     fixCode: `<span class="cmt"># Before: roster[roster['status'] = 'active']   # SyntaxError</span>
 active = roster[roster[<span class="st">'status'</span>] <span class="fix">==</span> <span class="st">'active'</span>]  <span class="fix"># == is comparison</span>
@@ -944,7 +944,7 @@ rehab  = roster[roster[<span class="st">'status'</span>] <span class="fix">==</s
         ['3',{v:'Walker',c:'v-str'},{v:'0.301',c:'v-num'},{v:'7',c:'v-num'},{v:'19200',c:'v-num'},{v:'active',c:'v-fix'}],
         ['4',{v:'Jones',c:'v-str'},{v:'0.295',c:'v-num'},{v:'3',c:'v-num'},{v:'15600',c:'v-num'},{v:'active',c:'v-fix'}],
       ],
-      'active roster &mdash; 4 players'
+      'active roster: 4 players'
     ),
   },
 
@@ -952,7 +952,7 @@ rehab  = roster[roster[<span class="st">'status'</span>] <span class="fix">==</s
   {
     who: 'Terminal',
     msg: "Step 4: One player is missing a salary entry. Fill it with the team average. Don't touch the others.",
-    ppStep: 'Step 4 of 5 &mdash; fillna()',
+    ppStep: 'Step 4 of 5: fillna()',
     terminal: `<span class="term-prompt">$</span> <span class="term-cmd">python pipeline.py --step clean</span>
 
 <span class="term-out">Running: active = active.fillna(0)</span>
@@ -971,9 +971,9 @@ rehab  = roster[roster[<span class="st">'status'</span>] <span class="fix">==</s
         ['3',{v:'Walker',c:'v-str'},{v:'0',c:'v-bad'}],
         ['4',{v:'Jones',c:'v-str'},{v:'0',c:'v-bad'}],
       ],
-      "active[['player','salary']] &mdash; all salaries zeroed"
+      "active[['player','salary']]: all salaries zeroed"
     ),
-    symptom: "<code>fillna(0)</code> was called on the whole DataFrame. It filled the one missing salary as intended &mdash; but it also replaced every other value that happened to be NaN anywhere in the table, including valid salary entries that were not missing.",
+    symptom: "<code>fillna(0)</code> was called on the whole DataFrame. It filled the one missing salary as intended, but it also replaced every other value that happened to be NaN anywhere in the table, including valid salary entries that were not missing.",
     question: "The fill zeroed out real salary data. What went wrong, and what is the right approach?",
     choices: [
       { key:'A', text:"fillna() should use the column mean, not 0 - otherwise the filled value distorts the average.", pts:1 },
@@ -982,8 +982,8 @@ rehab  = roster[roster[<span class="st">'status'</span>] <span class="fix">==</s
       { key:'D', text:"The issue is that active is a slice of roster. Assign back to roster first using .loc to avoid the fill applying incorrectly.", pts:1 },
     ],
     feedback: {
-      correct: "Right. <code>df.fillna(0)</code> replaces every NaN in the entire DataFrame &mdash; all columns, all rows. That wipes valid data wherever a NaN happened to appear. The fix is to target exactly the column you want: <code>active['salary'] = active['salary'].fillna(active['salary'].mean())</code>. That leaves every other column and every non-null salary untouched.",
-      wrong: "The problem is scope. <code>active.fillna(0)</code> applied the fill to the entire DataFrame &mdash; every column, every row. Any NaN anywhere got set to 0, including valid salary data in other columns that happened to be null. The correct approach is to fill only the specific column with a meaningful value: <code>active['salary'] = active['salary'].fillna(active['salary'].mean())</code>."
+      correct: "Right. <code>df.fillna(0)</code> replaces every NaN in the entire DataFrame: all columns, all rows. That wipes valid data wherever a NaN happened to appear. The fix is to target exactly the column you want: <code>active['salary'] = active['salary'].fillna(active['salary'].mean())</code>. That leaves every other column and every non-null salary untouched.",
+      wrong: "The problem is scope. <code>active.fillna(0)</code> applied the fill to the entire DataFrame: every column, every row. Any NaN anywhere got set to 0, including valid salary data in other columns that happened to be null. The correct approach is to fill only the specific column with a meaningful value: <code>active['salary'] = active['salary'].fillna(active['salary'].mean())</code>."
     },
     fixCode: `<span class="cmt"># Before: active = active.fillna(0)  # fills everything, everywhere</span>
 mean_sal = active[<span class="st">'salary'</span>].<span class="fn">mean</span>()
@@ -1004,7 +1004,7 @@ active[<span class="st">'salary'</span>] = active[<span class="st">'salary'</spa
         ['2',{v:'Walker',c:'v-str'},{v:'19200',c:'v-num'}],
         ['3',{v:'Jones',c:'v-str'},{v:'16800',c:'v-fix'}],
       ],
-      "active[['player','salary']] &mdash; only missing value filled"
+      "active[['player','salary']]: only missing value filled"
     ),
   },
 
@@ -1012,7 +1012,7 @@ active[<span class="st">'salary'</span>] = active[<span class="st">'salary'</spa
   {
     who: 'Terminal',
     msg: "Step 5: Final step - aggregate stats by position for the report. This is the last one.",
-    ppStep: 'Step 5 of 5 &mdash; groupby().agg()',
+    ppStep: 'Step 5 of 5: groupby().agg()',
     terminal: `<span class="term-prompt">$</span> <span class="term-cmd">python pipeline.py --step aggregate</span>
 
 <span class="term-out">Running: by_pos = active.groupby('position').agg(</span>
@@ -1030,9 +1030,9 @@ active[<span class="st">'salary'</span>] = active[<span class="st">'salary'</spa
         [{v:'IF',c:'v-str'},{v:'NaN',c:'v-nan'},{v:'6',c:'v-num'}],
         [{v:'OF',c:'v-str'},{v:'NaN',c:'v-nan'},{v:'10',c:'v-num'}],
       ],
-      'by_pos &mdash; groupby result'
+      'by_pos: groupby result'
     ),
-    symptom: "The <code>avg_avg</code> column is <code>NaN</code> for every position group, but <code>total_hr</code> computed correctly. The data is there &mdash; you can see the avg values in the DataFrame.",
+    symptom: "The <code>avg_avg</code> column is <code>NaN</code> for every position group, but <code>total_hr</code> computed correctly. The data is there: you can see the avg values in the DataFrame.",
     question: "hr summed fine but avg returned NaN. What does that tell you about the avg column specifically?",
     choices: [
       { key:'A', text:"The groupby key 'position' does not exist in the active DataFrame - it needs to be added before aggregating.", pts:0 },
@@ -1041,8 +1041,8 @@ active[<span class="st">'salary'</span>] = active[<span class="st">'salary'</spa
       { key:'D', text:"Use .mean() directly on the column instead of .agg() - groupby agg does not support 'mean' for decimal columns.", pts:0 },
     ],
     feedback: {
-      correct: "Exactly. <code>hr</code> is an integer column so <code>sum</code> worked fine. But <code>avg</code> is still <code>object</code> dtype in the active subset &mdash; when you filtered from roster, the type conversion from step 2 was not carried through correctly. Averaging a column of strings fails &mdash; older pandas returns NaN, newer pandas raises a TypeError. Fix: apply <code>active['avg'] = active['avg'].astype(float)</code> before the groupby, then the mean computes correctly.",
-      wrong: "The clue is that <code>hr</code> (integer) worked and <code>avg</code> (supposed float) did not. That asymmetry points to a data type issue: <code>avg</code> is still stored as <code>object</code> (strings) in the active DataFrame. Averaging strings fails &mdash; older pandas gives NaN, newer pandas raises a TypeError. Apply <code>active['avg'] = active['avg'].astype(float)</code> before the groupby."
+      correct: "Exactly. <code>hr</code> is an integer column so <code>sum</code> worked fine. But <code>avg</code> is still <code>object</code> dtype in the active subset: when you filtered from roster, the type conversion from step 2 was not carried through correctly. Averaging a column of strings fails: older pandas returns NaN, newer pandas raises a TypeError. Fix: apply <code>active['avg'] = active['avg'].astype(float)</code> before the groupby, then the mean computes correctly.",
+      wrong: "The clue is that <code>hr</code> (integer) worked and <code>avg</code> (supposed float) did not. That asymmetry points to a data type issue: <code>avg</code> is still stored as <code>object</code> (strings) in the active DataFrame. Averaging strings fails: older pandas gives NaN, newer pandas raises a TypeError. Apply <code>active['avg'] = active['avg'].astype(float)</code> before the groupby."
     },
     fixCode: `<span class="cmt"># Ensure avg is numeric in the active subset</span>
 active[<span class="st">'avg'</span>] = active[<span class="st">'avg'</span>].<span class="fn">astype</span>(<span class="nm">float</span>)  <span class="fix"># fix dtype before aggregating</span>
@@ -1064,7 +1064,7 @@ by_pos = active.<span class="fn">groupby</span>(<span class="st">'position'</spa
         [{v:'IF',c:'v-str'},{v:'0.300',c:'v-fix'},{v:'6',c:'v-num'}],
         [{v:'OF',c:'v-str'},{v:'0.298',c:'v-fix'},{v:'10',c:'v-num'}],
       ],
-      'by_pos &mdash; pipeline complete'
+      'by_pos: pipeline complete'
     ),
   }
 ];
@@ -1588,17 +1588,17 @@ function friendlyError(err) {
   return { kind: 'crash', text: lines.slice(-3).join('\n') };
 }
 function pandasCoach(text) {
-  if (/SyntaxError/.test(text)) return "Tip: Python couldn't parse the line — check your operators (= vs ==) and brackets.";
-  if (/KeyError/.test(text)) return "Tip: a KeyError means a column or label name doesn't match exactly — check spelling and quotes.";
-  if (/could not convert|invalid literal|ValueError/.test(text)) return "Tip: a value couldn't convert to that type — check the column you're casting with .astype().";
-  if (/AttributeError/.test(text)) return "Tip: that method may not exist on this object — try selecting a column first, e.g. df['col'].method().";
-  if (/NameError/.test(text)) return "Tip: a name isn't defined — make sure you didn't rename or delete a variable the rest of the cell needs.";
+  if (/SyntaxError/.test(text)) return "Tip: Python couldn't parse the line: check your operators (= vs ==) and brackets.";
+  if (/KeyError/.test(text)) return "Tip: a KeyError means a column or label name doesn't match exactly: check spelling and quotes.";
+  if (/could not convert|invalid literal|ValueError/.test(text)) return "Tip: a value couldn't convert to that type: check the column you're casting with .astype().";
+  if (/AttributeError/.test(text)) return "Tip: that method may not exist on this object: try selecting a column first, e.g. df['col'].method().";
+  if (/NameError/.test(text)) return "Tip: a name isn't defined: make sure you didn't rename or delete a variable the rest of the cell needs.";
   return null;
 }
 
 async function runFix() {
   if (pyFailed) return;
-  if (!pyReady) { fcLine('Engine still loading — one moment…', 'fc-sys'); return; }
+  if (!pyReady) { fcLine('Engine still loading: one moment…', 'fc-sys'); return; }
   const fx = FIX[current];
   const src = document.getElementById('fixEditor').value;
   const runBtn = document.getElementById('fixRunBtn');
@@ -1606,7 +1606,7 @@ async function runFix() {
   // Guard: nudge if they run the starter without editing it.
   if (src.trim() === (fx.starter || '').trim()) {
     clearFixConsole();
-    fcLine('⚠ You haven\'t changed the code yet — edit the line marked "# BUG", then run again.', 'fc-err');
+    fcLine('⚠ You haven\'t changed the code yet: edit the line marked "# BUG", then run again.', 'fc-err');
     return;
   }
 
@@ -1642,7 +1642,7 @@ async function runFix() {
   } catch (err) {
     const fe = friendlyError(err);
     if (fe.kind === 'check') {
-      fcLine('✗ Not quite — the data isn\'t fixed yet:', 'fc-err');
+      fcLine('✗ Not quite. The data isn\'t fixed yet:', 'fc-err');
       fcLine('  ' + fe.text, 'fc-err');
     } else {
       fcLine('✗ Error while checking (a variable may be missing or misnamed):', 'fc-err');
@@ -1663,7 +1663,7 @@ async function runFix() {
   }
 
   // PASS — heal the pipeline panel and unlock Next
-  fcLine('✔ Checks passed — pipeline step repaired.', 'fc-ok');
+  fcLine('✔ Checks passed: pipeline step repaired.', 'fc-ok');
   const s = stages[current];
   const terminal = document.getElementById('ppTerminal');
   terminal.innerHTML = s.terminalFixed.replace(/{TABLE_FIXED[^}]*}/, s.tableHtmlFixed);
@@ -1677,7 +1677,7 @@ async function runFix() {
   nb.classList.add('show');
   nb.disabled = false;
   nb.textContent = current < stages.length - 1 ? 'Next Stage ->' : 'See Results ->';
-  fcLine('Step repaired — the "' + nb.textContent + '" button is now active.', 'fc-ok');
+  fcLine('Step repaired: the "' + nb.textContent + '" button is now active.', 'fc-ok');
   nb.scrollIntoView({ behavior: 'smooth', block: 'center' });
   runBtn.disabled = false;
 }

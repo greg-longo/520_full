@@ -492,7 +492,7 @@ assert df.loc[df['name']=='Noah Kim','salary'].iloc[0] == 760000.0, "Kim's salar
          body:`Fixing the -3 and log-transforming salary is a solid path: you keep every real value, and the log compresses the huge MLB-vs-Single-A gap so it doesn't dominate the model. Just remember to interpret coefficients on the log scale afterward.` },
   },
   lab: {
-    task: `Run it live: turn the negative home-run value into NaN, impute it, and confirm no negative home runs remain - while Kim's salary stays untouched. Watch the mean-vs-median gap that proves why you don't blindly clip.`,
+    task: `Run it live: turn the negative home-run value into NaN, impute it, and confirm no negative home runs remain - while Kim's salary stays untouched. Watch the mean-vs-median gap that shows why you don't blindly clip.`,
     starter:
 `# salary is numeric from the previous step; reload+clean defensively
 df['salary'] = (df['salary'].astype(str)
@@ -558,7 +558,7 @@ function renderIntro() {
       <h1>The Dirty Dataset</h1>
       <p>The St. Davids Eagles handed you a roster export to feed your model. It's a mess: missing values, duplicate rows, a salary column pandas read as text, an impossible stat, and sloppy column names.</p>
       <p>For each problem you'll <strong>make the call</strong> a real analyst makes - then <strong>run the actual pandas live</strong> on the real roster and watch the fix land before you move on. Senior analyst Jonah Reyes is on Slack if you need context.</p>
-      <p style="color:var(--muted);font-size:13px;">Five decisions. Real pandas in your browser. Pick well - then prove it runs.</p>
+      <p style="color:var(--muted);font-size:13px;">Five decisions. Real pandas in your browser. Pick well, then run it for real.</p>
       <button class="btn-start" onclick="startSim()">Open the dataset</button>
     </div>`;
 }

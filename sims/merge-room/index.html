@@ -315,7 +315,7 @@ print(round(seen["paid"].mean(), 2))`,
     why: `There it is. The inner join does not just lose rows - it loses the
       <em>cheapest</em> rows, because the back catalogue is the part of the roster
       Vantage pays least. Drop them and the average payment per artist reads
-      &pound;41,785 instead of &pound;27,708: half again as generous as the truth,
+      $41,785 instead of $27,708: half again as generous as the truth,
       in a press release about how well the label treats its musicians.`,
   },
 ];
@@ -326,7 +326,7 @@ const DECISION = {
   desc: `The press office wants one number by five o'clock. Which do you give
     them, and can you say why in one sentence?`,
   options: [
-    { id:"inner", label:"&pound;41,785 - the artists with streaming data",
+    { id:"inner", label:"$41,785 - the artists with streaming data",
       verdict:"no",
       text:`This is the number the inner join hands you, and it is the one that
         will be wrong in public. The artists it excludes are not missing at
@@ -334,7 +334,7 @@ const DECISION = {
         biased in exactly the direction that flatters whoever is publishing it.
         "The data wasn't there" is not a defense when you chose the join that
         removed it.`},
-    { id:"left", label:"&pound;27,708 - every artist on the roster",
+    { id:"left", label:"$27,708 - every artist on the roster",
       verdict:"yes",
       text:`Correct, and for the right reason. The question was "average royalty
         per artist", and the artist roster is <code>artists</code>, not "artists
@@ -347,7 +347,7 @@ const DECISION = {
       text:`Defensible, and better than either number alone if the note is
         honest. But be careful: publishing two figures often means the reader
         picks the flattering one, and the press office has an obvious preference.
-        If you offer both, the headline number should be &pound;27,708 and the
+        If you offer both, the headline number should be $27,708 and the
         other should be labeled as covering only actively-promoted artists.`},
     { id:"more", label:"Neither - go back and ask what they mean by 'artist'",
       verdict:"ok",
@@ -355,7 +355,7 @@ const DECISION = {
         4:55pm. The whole ambiguity is in the word "artist": current roster, or
         everyone ever signed? You have found the question that decides the
         number, which is more useful than either number. Just be ready for the
-        answer to be "the roster", in which case it is &pound;27,708.`},
+        answer to be "the roster", in which case it is $27,708.`},
   ],
 };
 
@@ -543,8 +543,8 @@ function renderFinal(){
         <div class="row"><span>Artists after an inner join</span><span>7</span></div>
         <div class="row"><span>Dropped, all back catalogue</span><span>5</span></div>
         <div class="row"><span>Duplicate contract rows</span><span>2 (ids 4, 8)</span></div>
-        <div class="row"><span>True average payment</span><span>&pound;27,707.92</span></div>
-        <div class="row"><span>Inner-join average</span><span>&pound;41,785.00</span></div>
+        <div class="row"><span>True average payment</span><span>$27,707.92</span></div>
+        <div class="row"><span>Inner-join average</span><span>$41,785.00</span></div>
         <div class="row hero"><span>Overstated by</span><span>1.51&times;</span></div>
       </div>
       <p class="desc">Four one-line checks, and every one of them changed the

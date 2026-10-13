@@ -189,7 +189,7 @@
 <div id="appwin" class="hidden">
   <div class="titlebar">
     <span class="tb-dots"><i></i><i></i><i></i></span>
-    <span class="tb-title"><b>Institutional Research</b> &mdash; Cabinet Commission &mdash; case file</span>
+    <span class="tb-title"><b>Institutional Research</b> · Cabinet Commission · case file</span>
     <span class="tb-spacer"></span>
     <a class="tb-home" href="index.html">Save &amp; exit &rarr;</a>
   </div>
@@ -1089,7 +1089,7 @@ function buildBeats(){
     label:'Decision 1 of 3 · Scope',
     intro:"The Provost's framing memo asks: “Tell us what <em>causes</em> student success so we can fund it.”",
     q:'How do you scope what this observational dataset can deliver?',
-    onPick:(c)=>{ if(c.q==='good') addReportLine('Scope','This analysis reports <b>associations</b>, not proven causes. Causal claims would require a controlled study.'); },
+    onPick:(c)=>{ if(c.q==='good') addReportLine('Scope','This analysis reports <b>associations</b>, not causes. Causal claims would require a controlled study.'); },
     choices:[
       { t:'Promise associations and clearly actionable signals, but flag that causal claims need a controlled study or natural experiment.', q:'good',
         ot:'✓ Honest and useful', op:'Observational data yields associations. The mature deliverable says: here is what robustly co-occurs with success, here is where it plausibly points to a lever, and here is where we must not claim cause. The Cabinet can act on that responsibly.' },

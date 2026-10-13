@@ -424,6 +424,9 @@ fig.canvas.draw()
 assert len(ax.patches) == 4, f"The chart has {len(ax.patches)} bars - expected 4 (one per platform)."
 _h = sorted(round(p.get_height(), 6) for p in ax.patches)
 assert _h == ${pyList(sortedH)}, f"Bar heights are {_h} - expected ${pyList(sortedH)}. Pass the streams list to ax.bar()."
+_lab = {round(float(x), 6): t.get_text() for x, t in zip(ax.get_xticks(), ax.get_xticklabels())}
+_pairs = sorted((_lab.get(round(p.get_x() + p.get_width() / 2, 6), '?'), round(p.get_height(), 6)) for p in ax.patches)
+assert _pairs == sorted(zip(${pyList(platforms)}, ${pyList(V.streams)})), "Each bar has to sit over its own platform. Pass the labels and the values to ax.bar() in matching order."
 assert ax.get_xlabel().strip() != '', "The x-axis has no label - ax.set_xlabel('Platform')."
 assert ax.get_ylabel().strip() != '', "The y-axis has no label - what are the units? ax.set_ylabel(...)."
 assert ax.get_title().strip() != '', "The slide has no title - ax.set_title(...)."
@@ -531,6 +534,9 @@ fig.canvas.draw()
 assert len(ax.patches) == 4, f"The chart has {len(ax.patches)} bars - expected 4 (one per quarter)."
 _h = sorted(round(p.get_height(), 6) for p in ax.patches)
 assert _h == ${pyList(sortedH)}, f"Bar heights are {_h} - expected ${pyList(sortedH)}."
+_lab = {round(float(x), 6): t.get_text() for x, t in zip(ax.get_xticks(), ax.get_xticklabels())}
+_pairs = sorted((_lab.get(round(p.get_x() + p.get_width() / 2, 6), '?'), round(p.get_height(), 6)) for p in ax.patches)
+assert _pairs == sorted(zip(${pyList(quarters)}, ${pyList(V.revs)})), "Each bar has to sit over its own quarter. Pass the labels and the values to ax.bar() in matching order."
 assert ax.get_ylim()[0] <= 0, f"INTEGRITY CHECK FAILED: the y-axis starts at {ax.get_ylim()[0]:.1f}, not zero. Hartley got to you. Remove the set_ylim trick - a truncated bar chart is a lie with good posture."
 assert ax.get_xlabel().strip() != '', "Label the x-axis."
 assert ax.get_ylabel().strip() != '', "Label the y-axis - these are $ millions."
@@ -587,6 +593,8 @@ _pts = ax.collections[0].get_offsets()
 assert len(_pts) == 8, f"The scatter has {len(_pts)} points - expected 8 (one per city)."
 _x = sorted(round(float(p[0]), 6) for p in _pts)
 assert _x == ${pyList(sortedX)}, f"The x-values are {_x} - expected ${pyList(sortedX)}. Spend goes on the x-axis."
+_xy = sorted((round(float(p[0]), 6), round(float(p[1]), 6)) for p in _pts)
+assert _xy == sorted(zip(${pyList(V.spend)}, ${pyList(V.plays)})), "Each dot has to pair a city's spend with that same city's streams. Pass spend and streams to ax.scatter() in matching order."
 assert ax.get_xlabel().strip() != '', "Label the x-axis - spend, in $ thousands."
 assert ax.get_ylabel().strip() != '', "Label the y-axis - weekly streams, in thousands."
 assert ax.get_title().strip() != '', "Title the slide."

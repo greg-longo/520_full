@@ -1269,13 +1269,13 @@
       ],
       pftItems.map((item, i) => ({ ...item, href: 'sims/python_sim/' + ['index.html','module1.html','module2.html','module3.html'][i+1] || 'sims/python_sim/index.html' })),
       [ // mod3
-        { ...debugItem,    name: 'Debug Pipeline', href: 'sims/debug-pipeline/index.html' },
         { ...charttopItem, name: 'Chart Toppers',  href: 'sims/numpy-lab/index.html' },
       ],
       [ // mod4
         { ...dirtyItem, name: 'Dirty Dataset', href: 'sims/dirty-dataset/index.html' },
         { ...rtgItem,   name: 'RTG Investigation', href: 'sims/rtg-investigation/index.html' },
         { ...ariaItem,  name: 'ARIA Returns', href: 'sims/aria-returns/index.html' },
+        { ...debugItem, name: 'Debug Pipeline', href: 'sims/debug-pipeline/index.html' },
       ],
       [ // mod5
         { ...boardItem,    name: 'Board Meeting', href: 'sims/board-meeting/index.html' },
@@ -1410,18 +1410,18 @@
             } : null).filter(Boolean).slice(0, 1),
           ] },
         { name: 'NumPy',
-          complete: quizzes[3].state === 'complete' && debugItem.state === 'complete' && charttopItem.state === 'complete',
+          complete: quizzes[3].state === 'complete' && charttopItem.state === 'complete',
           actions: [
             ...(quizzes[3].state !== 'complete' ? [{ label: 'Take M3 Quiz', href: 'modules/module3/quiz.html' }] : []),
-            ...(debugItem.state !== 'complete'    ? [{ label: 'Debug Pipeline', href: 'sims/debug-pipeline/index.html' }] : []),
             ...(charttopItem.state !== 'complete' ? [{ label: 'Chart Toppers', href: 'sims/numpy-lab/index.html' }] : []),
           ] },
         { name: 'Pandas',
-          complete: quizzes[4].state === 'complete' && dirtyItem.state === 'complete' && rtgItem.state === 'complete',
+          complete: quizzes[4].state === 'complete' && dirtyItem.state === 'complete' && rtgItem.state === 'complete' && debugItem.state === 'complete',
           actions: [
             ...(quizzes[4].state !== 'complete' ? [{ label: 'Take M4 Quiz', href: 'modules/module4/quiz.html' }] : []),
             ...(dirtyItem.state !== 'complete'   ? [{ label: 'Dirty Dataset', href: 'sims/dirty-dataset/index.html' }] : []),
             ...(rtgItem.state !== 'complete'     ? [{ label: 'RTG Investigation', href: 'sims/rtg-investigation/index.html' }] : []),
+            ...(debugItem.state !== 'complete'   ? [{ label: 'Debug Pipeline', href: 'sims/debug-pipeline/index.html' }] : []),
           ] },
         { name: 'Visualization',
           complete: quizzes[5].state === 'complete' && boardItem.state === 'complete',

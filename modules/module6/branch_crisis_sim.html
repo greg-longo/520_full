@@ -1100,7 +1100,7 @@
       question: 'What should your first move be to understand the scope of the problem?',
       maxPts: 4,
       choices: [
-        { key: 'A', text: 'Immediately rewrite the fetch_roster function from scratch — you remember its general shape and can have it running again faster than any diagnosis would take', sub: 'Rewrite from memory', pts: 1 },
+        { key: 'A', text: 'Immediately rewrite the fetch_roster function from scratch: you remember its general shape and can have it running again faster than any diagnosis would take', sub: 'Rewrite from memory', pts: 1 },
         { key: 'B', text: 'Email the team asking who broke it and wait for someone to respond before touching anything', sub: 'Ask the team, then wait', pts: 1 },
         { key: 'C', text: 'Run git diff HEAD~1 HEAD to see exactly what changed in the last commit', sub: 'git diff HEAD~1 HEAD', pts: 4, correct: true },
         { key: 'D', text: 'Delete the utils.py file and start fresh', sub: 'rm utils.py, rewrite it', pts: 0 },
@@ -1128,7 +1128,7 @@
       question: 'What\'s the right way to set up your workspace before making the fix?',
       maxPts: 4,
       choices: [
-        { key: 'A', text: 'Edit utils.py directly on main and commit immediately — it\'s a one-line restore and the pipeline is down, so speed matters more than process right now', sub: 'Edit + commit on main', pts: 1 },
+        { key: 'A', text: 'Edit utils.py directly on main and commit immediately: it\'s a one-line restore and the pipeline is down, so speed matters more than process right now', sub: 'Edit + commit on main', pts: 1 },
         { key: 'B', text: 'Create a new branch called hotfix/restore-fetch-roster and work there', sub: 'git checkout -b hotfix/restore-fetch-roster', pts: 4, correct: true },
         { key: 'C', text: 'Fork the entire repository to your own GitHub account so you have a clean copy to work from without risking the shared repo', sub: 'Create a fork on GitHub', pts: 0 },
         { key: 'D', text: 'Stash your working directory and create the branch later', sub: 'git stash', pts: 2 },
@@ -1156,9 +1156,9 @@
       question: 'How should you stage and commit the fix?',
       maxPts: 4,
       choices: [
-        { key: 'A', text: 'git add . to stage all modified files, then git commit -m "fix" — short and to the point, everyone on the team will know what it means', sub: 'git add . && commit -m "fix"', pts: 2 },
+        { key: 'A', text: 'git add . to stage all modified files, then git commit -m "fix": short and to the point, everyone on the team will know what it means', sub: 'git add . && commit -m "fix"', pts: 2 },
         { key: 'B', text: 'git push origin hotfix/restore-fetch-roster without committing first', sub: 'git push (no commit yet)', pts: 0 },
-        { key: 'C', text: 'git commit -am "Restored the missing function — pipeline is running again" — the -a flag handles staging automatically so you can skip git add', sub: 'git commit -am "..."', pts: 2 },
+        { key: 'C', text: 'git commit -am "Restored the missing function, pipeline is running again": the -a flag handles staging automatically so you can skip git add', sub: 'git commit -am "..."', pts: 2 },
         { key: 'D', text: 'git add utils.py then git commit -m "Restore fetch_roster deleted in WIP refactor"', sub: 'git add utils.py, then commit', pts: 4, correct: true },
       ],
       feedback: {
@@ -1190,7 +1190,7 @@
       question: 'How do you resolve this conflict correctly?',
       maxPts: 4,
       choices: [
-        { key: 'A', text: 'Accept "theirs" entirely — your hotfix has the restored fetch_roster, which is the whole point of this branch, so your version should win', sub: 'git checkout --theirs utils.py', pts: 1 },
+        { key: 'A', text: 'Accept "theirs" entirely: your hotfix has the restored fetch_roster, which is the whole point of this branch, so your version should win', sub: 'git checkout --theirs utils.py', pts: 1 },
         { key: 'B', text: 'Abandon the merge with git merge --abort, then ask your teammate to pull your branch and resolve the conflict on their end before you retry', sub: 'git merge --abort', pts: 1 },
         { key: 'C', text: 'Edit utils.py to keep BOTH changes: the updated score_player signature AND the restored fetch_roster function', sub: 'Manually merge the best of both versions', pts: 4, correct: true },
         { key: 'D', text: 'Accept "ours" entirely - keep main\'s version and discard the hotfix', sub: 'git checkout --ours utils.py', pts: 0 },
@@ -1218,7 +1218,7 @@
       choices: [
         { key: 'A', text: 'Title: "fix" | Description: "fixed it"', sub: 'Minimal title and description', pts: 0 },
         { key: 'B', text: 'Title: "Hotfix: Restore fetch_roster deleted in WIP refactor" | Description: "Root cause: fetch_roster removed in commit a3f9d21 during refactor. Restored original function. Ran pipeline against full roster - 25 players processed clean."', sub: 'Detailed title and description', pts: 4, correct: true },
-        { key: 'C', text: 'Skip the PR entirely — merge directly into main from the command line since it\'s a production outage and the review process adds unnecessary delay when every minute counts', sub: 'Merge to main, skip the PR', pts: 1 },
+        { key: 'C', text: 'Skip the PR entirely: merge directly into main from the command line since it\'s a production outage and the review process adds unnecessary delay when every minute counts', sub: 'Merge to main, skip the PR', pts: 1 },
         { key: 'D', text: 'Title: "Hotfix: restore fetch_roster" | Description: "Restored the function. Pipeline is working again."', sub: 'Short title, brief description', pts: 2 },
       ],
       feedback: {

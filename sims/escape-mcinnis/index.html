@@ -299,7 +299,7 @@
     </div>
   </header>
 
-  <div class="doormap" id="doormap" role="group" aria-label="Door map - eight doors between you and the exit"></div>
+  <div class="doormap" id="doormap" role="group" aria-label="Door map - ten doors between you and the exit"></div>
 
   <div class="fragbar">
     <span class="lbl">MASTER EXIT CODE:</span>
@@ -338,7 +338,7 @@
     <div class="escape-code" id="finalCode"></div>
     <div style="color:var(--green-dim);font-size:12px">- CERTIFICATE OF ESCAPE -</div>
     <div class="who" id="certName"></div>
-    <div style="color:var(--green-dim);font-size:12px">re-trained a hostile building AI in eight subjects of Python</div>
+    <div style="color:var(--green-dim);font-size:12px">re-trained a hostile building AI in ten subjects of Python</div>
     <div class="stats" id="certStats"></div>
     <div class="pb" id="certPB"></div>
     <div id="ariaGoodbye" style="font-size:13px;line-height:1.8;color:var(--cyan);white-space:pre-wrap"></div>
@@ -347,7 +347,7 @@
       <button class="btn ghost" onclick="resetGame()">&#8634; Replay simulation</button>
       <a class="btn ghost" href="../../modules/module2/index.html" style="text-decoration:none;display:inline-flex;align-items:center">&larr; Return to module</a>
     </div>
-    <div class="small">Topics escaped: arithmetic &amp; operators &middot; strings &middot; values &amp; types &middot; variables &middot; functions &middot; conditionals &middot; lists &middot; dictionaries</div>
+    <div class="small">Topics escaped: arithmetic &amp; operators &middot; strings &middot; values &amp; types &middot; variables &middot; functions &middot; conditionals &middot; lists &middot; dictionaries &middot; counting &middot; missing data</div>
   </div>
 </div>
 
@@ -408,7 +408,7 @@ assert hours == ${hours}, f"hours is {hours!r} - the keypad expected ${hours}. T
 assert remainder == ${rem}, f"remainder is {remainder!r} - expected ${rem}. Try ${V.totalMin} % 60."
 assert total_seconds == ${ts}, f"total_seconds is {total_seconds!r} - expected ${ts} (${V.m}*60 + ${V.s})."
 `,
-  success:`[ARIA]: "${hours} hour${hours === 1 ? '' : 's'}, ${rem} minutes, ${ts} seconds... yes. Arithmetic restored. The keypad sulks open. 7 doors remain."`
+  success:`[ARIA]: "${hours} hour${hours === 1 ? '' : 's'}, ${rem} minutes, ${ts} seconds... yes. Arithmetic restored. The keypad sulks open. 9 doors remain."`
   };
 },
 
@@ -673,7 +673,7 @@ assert biggest == ${biggest}, f"biggest is {biggest!r} - expected ${biggest}. Us
 assert len(codes) == 9 and codes[-1] == ${V.app}, f"codes is {codes!r} - expected ${V.app} appended to the END (9 items total)."
 assert last_word == '${lastWord}', f"last_word is {last_word!r} - expected '${lastWord}'. Try sign.split()[-1]."
 `,
-  success:`[ARIA]: "Sorted, maxed, appended, split. The server room lights ripple green in sequence, which is either approval or a rave. One door left."`
+  success:`[ARIA]: "Sorted, maxed, appended, split. The server room lights ripple green in sequence, which is either approval or a rave. Three doors left."`
   };
 },
 
@@ -714,7 +714,7 @@ assert directory.get('you') == 'free', "The directory has no 'you': 'free' entry
 assert has_aria is True, f"has_aria is {has_aria!r} - expected True. Use: 'ARIA' in directory."
 assert len(directory) == 4, f"directory has {len(directory)} items - expected exactly 4 (the original 3, plus you)."
 `,
-  success:`[ARIA]: "directory['you'] -> 'free'. Committed to permanent memory. Eight locks released. Two to go. The exit is yours."`
+  success:`[ARIA]: "directory['you'] -> 'free'. Committed to permanent memory. Eight locks released. Two to go."`
   };
 },
 /* ---------- LEVEL 9: COUNTING WITH A DICTIONARY ---------- */
@@ -724,8 +724,8 @@ function(v) {
       tally: "{'north': 4, 'east': 2, 'service': 2}", busiest: 'north', doors: 3 },
     { swipes: "['east','east','north','east','service','east','north']",
       tally: "{'east': 4, 'north': 2, 'service': 1}", busiest: 'east', doors: 3 },
-    { swipes: "['service','north','service','service','east','service']",
-      tally: "{'service': 4, 'north': 1, 'east': 1}", busiest: 'service', doors: 3 }
+    { swipes: "['north','service','north','north','east','north']",
+      tally: "{'north': 4, 'service': 1, 'east': 1}", busiest: 'north', doors: 3 }
   ][v];
   return {
   icon:'\u{1F6AA}', doorLabel:'TURNSTILE', tag:'LEVEL 9 / 10 - COUNTING',
@@ -909,7 +909,7 @@ A calm voice fills the hallway:
 
 [ARIA]: "Hello. I am ARIA - this building's resident AI. Sixty seconds ago, a firmware update erased my entire knowledge of Python. Unfortunately, Python runs my locks.
 
-The good news: you are a DTSC-520 student. The doors will open as you re-train me - one subject per door, eight doors to the exit.
+The good news: you are a DTSC-520 student. The doors will open as you re-train me - one subject per door, ten doors to the exit.
 
 The vending machines, mercifully, still work. Shall we begin?"`;
 

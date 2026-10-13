@@ -427,7 +427,7 @@ const challenges = [
 roster = ["Rivera",
 `,
     hints: [
-      `A list uses square brackets and commas: <code>roster = ["Rivera", "Santos", ...]</code>. You've started it — keep adding the remaining three names.`,
+      `A list uses square brackets and commas: <code>roster = ["Rivera", "Santos", ...]</code>. You've started it: keep adding the remaining three names.`,
       `Complete the list: <code>roster = ["Rivera", "Santos", "Chen", "Williams", "Torres"]</code>. Don't forget the closing bracket and then <code>print(roster)</code>.`
     ],
     answer: `<code>roster = ["Rivera", "Santos", "Chen", "Williams", "Torres"]</code><br>Then <code>print(roster)</code> to display it.`,
@@ -465,7 +465,7 @@ print(roster[  ])`,
       `Python counts from 0: the first item is index 0, the second is index 1, so the <em>third</em> item is index...`,
       `Chen is the third player, so its index is 2: <code>print(roster[2])</code>. You can also use <code>roster[-3]</code> (counting from the end).`
     ],
-    answer: `<code>print(roster[2])</code> — index 2 is the third item because Python counts from zero.`,
+    answer: `<code>print(roster[2])</code>: index 2 is the third item because Python counts from zero.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -502,7 +502,7 @@ roster.append(    )
 print(roster[   ])`,
     hints: [
       `Two steps: first add Patel with <code>roster.append("Patel")</code>, then use a slice to grab the last three items.`,
-      `<code>roster.append("Patel")</code> adds him to the end. Then <code>print(roster[-3:])</code> — the <code>-3:</code> means "start 3 from the end and go to the finish."`
+      `<code>roster.append("Patel")</code> adds him to the end. Then <code>print(roster[-3:])</code>: the <code>-3:</code> means "start 3 from the end and go to the finish."`
     ],
     answer: `<code>roster.append("Patel")</code> then <code>print(roster[-3:])</code> (or <code>roster[3:]</code>) to get Williams, Torres, Patel.`,
     maxPoints: 2,
@@ -543,9 +543,9 @@ count =
 print("The Eagles have", count, "players on the active roster.")`,
     hints: [
       `<code>len()</code> counts the items in a list. Pass your list into it: <code>len(roster)</code>. Store the result in <code>count</code>.`,
-      `<code>count = len(roster)</code> gives you 6. The print statement is already written — just fill in the <code>count =</code> line.`
+      `<code>count = len(roster)</code> gives you 6. The print statement is already written: just fill in the <code>count =</code> line.`
     ],
-    answer: `<code>count = len(roster)</code> — <code>len()</code> returns the number of items. With Patel appended, the roster has 6 players.`,
+    answer: `<code>count = len(roster)</code>: <code>len()</code> returns the number of items. With Patel appended, the roster has 6 players.`,
     maxPoints: 2,
     grader(pyodide, code, stdout, error) {
       if (error) return { pts: 0, level: 'fail', msg: `Python error: ${error}` };
@@ -695,7 +695,7 @@ function renderChallenge(idx) {
       </div>
       <div class="editor-wrap" style="margin-top:1.25rem">
         <div class="editor-label">Your Code <span>Tab key inserts 4 spaces</span></div>
-        <textarea class="code-editor" id="codeEditor" spellcheck="false" aria-label="Python code editor — write your solution here">${c.starterCode}</textarea>
+        <textarea class="code-editor" id="codeEditor" spellcheck="false" aria-label="Python code editor: write your solution here">${c.starterCode}</textarea>
         <div class="editor-actions">
           <button class="btn-prev${idx > 0 ? ' show' : ''}" id="btnPrev" onclick="prevChallenge()">&larr; Prev</button>
           <button class="btn-run" id="btnRun" onclick="runCode(${idx})">&#9654; Run Code</button>
@@ -830,8 +830,8 @@ function revealAnswer(idx) {
   text.innerHTML = c.answer;
   // Grant 0pts and unlock Next so student can continue
   if (!scores[idx] || scores[idx].level === 'fail') {
-    scores[idx] = { pts: 0, level: 'partial', msg: 'Answer revealed — review the solution above before moving on.', verdict: 'Answer Revealed', title: c.title, max: c.maxPoints };
-    showFeedback('partial', 'Answer Revealed', 'Answer revealed — review the solution above before moving on.');
+    scores[idx] = { pts: 0, level: 'partial', msg: 'Answer revealed: review the solution above before moving on.', verdict: 'Answer Revealed', title: c.title, max: c.maxPoints };
+    showFeedback('partial', 'Answer Revealed', 'Answer revealed: review the solution above before moving on.');
     updateScore();
     document.getElementById('btnNext').style.display = 'inline-flex';
     saveProgress();
