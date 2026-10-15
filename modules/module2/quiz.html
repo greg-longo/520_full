@@ -660,12 +660,12 @@
         feedbackWrong: "Not quite. + joins strings with no separator. To include a space you would write 'data' + ' ' + 'science'."
       },
       {
-        text: "What does 'midterm'.replace('mid', 'final') return?",
-        options: ["'finalterm'", "'midterm'", "Error", "'finalmidterm'"],
+        text: "What does '  amaka okoroha '.strip().title() return?",
+        options: ["'Amaka Okoroha'", "'  Amaka Okoroha '", "'Amaka okoroha'", "'AMAKA OKOROHA'"],
         correctIndex: 0,
         difficulty: "medium",
-        feedbackCorrect: "Correct. str.replace(old, new) returns a new string with all occurrences of 'old' replaced by 'new'.",
-        feedbackWrong: "Not quite. replace() returns a new string. 'mid' is found in 'midterm' and replaced with 'final', giving 'finalterm'."
+        feedbackCorrect: "Correct. The chain runs left to right: .strip() removes the spaces at both ends, then .title() capitalizes the first letter of each word.",
+        feedbackWrong: "Not quite. Read the chain left to right. .strip() removes the outer spaces, and .title() then capitalizes each word, giving 'Amaka Okoroha'."
       },
       {
         text: "Which expression checks if 'gpa' appears in the string 'ug_gpa'?",
@@ -906,12 +906,12 @@
         feedbackWrong: "Not quite. 3.2 < 3.5 so the if condition is False. There's no else or second return, so the function falls off the end and returns None."
       },
       {
-        text: "What is a lambda function?",
-        options: ["A function that runs automatically when the script starts", "A small, unnamed one-line function made with lambda", "A function that only accepts numbers as its inputs", "A function that is only available inside of loops"],
-        correctIndex: 1,
+        text: "What does list(zip(['Park', 'Webb', 'Haddad'], [3.4, 2.9])) produce?",
+        options: ["[('Park', 3.4), ('Webb', 2.9)]", "[('Park', 3.4), ('Webb', 2.9), ('Haddad', None)]", "An error, because the two lists have different lengths", "[('Park', 'Webb', 'Haddad'), (3.4, 2.9)]"],
+        correctIndex: 0,
         difficulty: "hard",
-        feedbackCorrect: "Correct. lambda creates a small anonymous function. lambda x: x * 2 is equivalent to a def with one expression body.",
-        feedbackWrong: "Not quite. lambda creates a small, anonymous, single-expression function. Example: double = lambda x: x * 2. Useful in sorted(), map(), filter()."
+        feedbackCorrect: "Correct. zip pairs elements by position and stops at the end of the shorter list. 'Haddad' has no partner, so it is dropped with no error.",
+        feedbackWrong: "Not quite. zip stops at the end of the shorter list, silently. Only two pairs come out, and 'Haddad' is dropped. Check lengths before you zip."
       },
       {
         text: "Cell 1 sets honors_cutoff = 3.5 and cell 2 prints it. You restart the kernel and run only cell 2. What happens?",

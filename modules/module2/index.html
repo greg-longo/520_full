@@ -843,7 +843,6 @@
   <!-- SECTION TABS -->
   <div class="section-tabs">
   <a class="tab-link" data-section="getting-started">Getting Started</a>
-  <a class="tab-link" data-section="variables">Variables &amp; Types</a>
   <a class="tab-link" data-section="strings">Strings</a>
   <a class="tab-link" data-section="functions">Functions</a>
   <a class="tab-link" data-section="conditions">Conditions</a>
@@ -853,6 +852,7 @@
   <a class="tab-link" data-section="errors">Reading Errors</a>
   <a class="tab-link" data-section="notebooks">Notebook Skills</a>
   <a class="tab-link" data-section="challenges">Challenges</a>
+  <a class="tab-link" data-section="reference">Reference</a>
   <a href="quiz.html" class="tab-link">Quiz</a>
 </div>
 
@@ -875,8 +875,7 @@
     <!-- OVERVIEW / LANDING -->
     <section id="getting-started" class="content-section">
       <h2>Getting Started</h2>
-      <h3 id="python-fundamentals">Python Fundamentals</h3>
-      <h4 id="your-commission">Your commission</h4>
+      <h3 id="your-commission">Your commission</h3>
       <p>You&#x27;ve been hired into your University&#x27;s <strong>Institutional Research</strong> office. Your supervisor is <strong>Amy Lee</strong>, the Chief Data Officer, and she has a problem.</p>
       <p>The University Cabinet is writing a five-year strategic plan, and they want to know what actually supports student success. Dr. Lee has assembled a cohort dataset including six tables (see chart below) covering high school experience, undergraduate and graduate experiences, and work experience.</p>
       <p>Right now that data is just sitting there. Nobody has looked at it.</p>
@@ -885,666 +884,7 @@
       <p>That&#x27;s what we&#x27;ll cover this module. By the end you&#x27;ll have loaded all six tables in Python, computed summary stats, and printed a schema report for Lee. Later modules use the same cohort with better tools: NumPy in Module 3, pandas in Module 4, MatPlotLib in Module 5.</p>
       <p>The data is <strong>synthetic</strong> - generated for this course. <strong>No real student records are used anywhere in our courses.</strong></p>
       <figure class="nb-figure"><img src="assets/fig-672d2f2e80.png" alt="The six tables of the cohort, all joined on student_id" loading="lazy"><figcaption>The six tables of the cohort, all joined on student_id</figcaption></figure>
-      <h4 id="sources-and-acknowledgments">Sources and acknowledgments</h4>
-      <p>This notebook is a mix. Some of it is original to Eastern University, some is taken closely from published work, and some is adapted from it. You should know which is which, both because attribution matters and because the originals are worth reading on their own.</p>
-      <p><strong>Original to Eastern.</strong> The Institutional Research framing and the Lee commission, the synthetic cohort and all six tables, the Predict/Run/Debrief convention, the schema report and cohort briefing, the diagrams, the AI-assistant policy, and the connective tissue that ties this module to the capstone. You can learn syntax anywhere.  We&#x27;re trying to create learning materials you will enjoy and make you want to keep going.</p>
-      <p>**<a href="https://allendowney.github.io/ThinkPython/" target="_blank" rel="noopener"><em>Think Python</em>, 3rd edition</a>, by Allen B. Downey.** Free online, and the most direct influence here. The arithmetic-before-variables ordering, the treatment of floor division and modulus, the <code>&#x27;126&#x27; / 3</code> type-error demonstration, the <code>1,000,000</code> tuple surprise, the illegal-variable-name examples, the &quot;make errors on purpose&quot; exercise philosophy, and the passage on debugging as emotional management are all taken from or closely follow Downey. The <code>%%expect</code> convention is his idea; the implementation in this notebook is our own. Chapters 1, 2, 3, 5, 6, 7, 8, 9, and 10 overlap with this module. Licensed CC BY-NC-SA 4.0.</p>
-      <p>**<a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener"><em>Python Data Science Handbook</em></a>, by Jake VanderPlas.** Also free online. It shaped which notebook-craft topics are worth teaching - the help system, tab completion, <code>%timeit</code> - and it is the reference for the NumPy and pandas material in Modules 3 and 4. Its text is licensed CC BY-NC-ND, so nothing here reproduces it; the overlap is topic selection, written fresh.</p>
-      <p>Errors and infelicities are ours, not theirs.</p>
-      <h4 id="the-vocabulary">The vocabulary</h4>
-      <p>Programming has a precise vocabulary, and using it precisely is important - it&#x27;s what lets you ask for or search for help and get an answer. When you can write &quot;TypeError when concatenating str and int&quot; instead of &quot;my code is broken,&quot; your instructor, GAs, and the internet become useful to you.</p>
-      <p>Learning these is like learning addition and subtraction in math - you&#x27;ll use them in everything you do going forward.</p>
-      <ul><li><strong>operator</strong> - A symbol that performs a computation: <code>+</code>, <code>-</code>, <code>**</code>, <code>%</code>, <code>//</code>. What it does depends on the types either side of it.</li><li><strong>expression</strong> - Anything Python can evaluate down to a single value. <code>2 + 2</code>, <code>len(name)</code>, and <code>3.81</code> are all expressions.</li><li><strong>value</strong> - One piece of data: a number, a string, a list. Everything in Python is a value of some type.</li><li><strong>type</strong> - The kind of thing a value is - <code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code>, <code>list</code>, <code>dict</code>. Determines which operations are legal on it.</li><li><strong>statement</strong> - A line that does something rather than producing a value. An assignment, an <code>if</code>, a <code>for</code>, an <code>import</code>.</li><li><strong>assignment</strong> - Binding a name to a value with <code>=</code>. The name is a label, not a box: two names can label the same object.</li><li><strong>keyword</strong> - A word reserved by the language - <code>if</code>, <code>for</code>, <code>def</code>, <code>return</code>, <code>None</code>. You cannot use one as a variable name.</li><li><strong>function</strong> - A named block of code you can run on demand, optionally taking inputs and handing back a result.</li><li><strong>argument</strong> - The actual value you pass in when you call a function. <code>print(&quot;hi&quot;)</code> passes the argument <code>&quot;hi&quot;</code>.</li><li><strong>parameter</strong> - The name in a function&#x27;s definition that receives an argument. The parameter is the slot; the argument is what goes in it.</li><li><strong>return value</strong> - What a function hands back to the code that called it. A function that only prints returns <code>None</code>.</li><li><strong>local variable</strong> - A name created inside a function. It exists while the function runs and is gone afterwards.</li><li><strong>method</strong> - A function that belongs to an object and is called with a dot: <code>name.strip()</code>, <code>scores.append(3)</code>.</li><li><strong>module</strong> - A file of Python code you can <code>import</code> and use. <code>numpy</code> and <code>pandas</code> are modules other people wrote.</li><li><strong>sequence</strong> - An ordered collection you can index and iterate: a list, a string, a tuple.</li><li><strong>index</strong> - The position of an item in a sequence, counting from <strong>zero</strong>. <code>roster[0]</code> is the first name.</li><li><strong>slice</strong> - A range taken from a sequence, <code>start:stop</code>, where <code>stop</code> is <strong>excluded</strong>. <code>xs[1:3]</code> gives two items.</li><li><strong>mapping</strong> - A collection that pairs keys with values rather than positions with values. A dictionary is the mapping you will use.</li><li><strong>key</strong> - The lookup label in a dictionary. Must be unique and unchangeable; the value it points at can be anything.</li><li><strong>item</strong> - One key-value pair from a dictionary. <code>.items()</code> gives you them as tuples.</li><li><strong>iteration</strong> - Doing something once per element of a collection. What a <code>for</code> loop is for.</li></ul>
-      <h3 id="python-as-a-calculator">Python as a calculator</h3>
-      <p>We&#x27;ll start where every programmer starts: arithmetic. It&#x27;s the fastest way to get a feel for how Python reads what you type.</p>
-      <p>Along the way, notice the vocabulary. <code>30 + 12</code> is an <strong>expression</strong>. The <code>+</code> is an <strong>operator</strong>. The <code>42</code> you get back is a <strong>value</strong>. Small words, but you&#x27;ll need them.</p>
-      <div data-runnable>
-      <pre><code><span class="nm">30</span> + <span class="nm">12</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">42</span>
-      </div>
-      </div>
-      <p>Subtraction uses the minus sign, <code>-</code>:</p>
-      <div data-runnable>
-      <pre><code><span class="nm">43</span> - <span class="nm">1</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">42</span>
-      </div>
-      </div>
-      <p>Multiplication uses the asterisk, <code>*</code> - not <code>×</code>:</p>
-      <div data-runnable>
-      <pre><code><span class="nm">6</span> * <span class="nm">7</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">42</span>
-      </div>
-      </div>
-      <p>And division uses the forward slash, <code>/</code>:</p>
-      <div data-runnable>
-      <pre><code><span class="nm">84</span> / <span class="nm">2</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">42.0</span>
-      </div>
-      </div>
-      <p>Look closely at that last result: <code>42.0</code>, not <code>42</code>.</p>
-      <p>Python has two kinds of numbers. An <strong>integer</strong> (<code>int</code>) is a whole number. A <strong>floating-point number</strong> (<code>float</code>) can have a fractional part. Division always produces a float, even when the answer comes out even - because in general division <em>can&#x27;t</em> be relied on to give a whole number, so Python doesn&#x27;t pretend otherwise. <code>/</code> always hands back a float, which means you can reason about the type of the result without knowing the values.</p>
-      <p>If you want a whole number back, use <code>//</code>, called <strong>floor division</strong>:</p>
-      <div data-runnable>
-      <pre><code><span class="nm">84</span> // <span class="nm">2</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">42</span>
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code><span class="nm">7</span> // <span class="nm">2</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">3</span>
-      </div>
-      </div>
-      <p><code>7 // 2</code> is <code>3</code>, not <code>3.5</code> - floor division always rounds <em>down</em>, toward the floor. It throws away the remainder.</p>
-      <p>Often the remainder is exactly what you want, and for that there&#x27;s the <strong>modulus</strong> operator, <code>%</code>:</p>
-      <div data-runnable>
-      <pre><code><span class="nm">7</span> % <span class="nm">2</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">1</span>
-      </div>
-      </div>
-      <h5 id="both-of-these-behave-surprisingly-on-negative-numbers">Both of these behave surprisingly on negative numbers</h5>
-      <p>&quot;Rounds down&quot; means <em>down</em>, not &quot;toward zero.&quot; Those are the same thing for positive numbers and different for negative ones.</p>
-      <div class="callout callout-warn">
-        <div class="callout-label">Predict before you read on</div>
-        <strong>Predict.</strong> <code>7 // 2</code> is <code>3</code>. What is <code>-7 // 2</code>? Is it <code>-3</code> or <code>-4</code>?  Commit to an answer before you run the next cell.
-      </div>
-      <div data-runnable>
-      <pre><code><span class="fn">print</span>(-<span class="nm">7</span> // <span class="nm">2</span>)
-<span class="fn">print</span>(-<span class="nm">7</span> % <span class="nm">2</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
--<span class="out-num">4</span>
-<span class="out-num">1</span>
-      </div>
-      </div>
-      <details class="debrief"><summary>What happened</summary>
-      <p><code>-4</code> and <code>1</code>, and both are worth a second look.</p>
-      <p><code>-7 / 2</code> is <code>-3.5</code>. Rounding <em>down</em> from there gives <code>-4</code>, because -4 is below -3.5 on the number line. If you expected <code>-3</code> you were rounding toward zero, which is what most calculators do and what several other languages do.</p>
-      <p>The modulus is stranger: <code>-7 % 2</code> is <code>1</code>, not <code>-1</code>. In Python the sign of the result follows the <strong>divisor</strong>, not the dividend. One consequence is genuinely useful - <code>n % 2 == 0</code> correctly identifies even numbers whether <code>n</code> is positive or negative, which is not true in every language.</p>
-      <p>You will not meet negative numbers often in this course. But when a count or an index comes out negative unexpectedly, this is a good place to look.</p>
-      </details>
-      <p>Modulus looks like a curiosity and turns out to be one of the most useful operators you&#x27;ll meet. Here&#x27;s the case that makes it click.</p>
-      <p>Lee asks how much time a student spent on a task: 105 minutes. You&#x27;d like that as hours and minutes.</p>
-      <div data-runnable>
-      <pre><code>minutes = <span class="nm">105</span>
-minutes / <span class="nm">60</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">1.75</span>
-      </div>
-      </div>
-      <p><code>1.75</code> hours is correct but not how anyone says it. Use <code>//</code> for whole hours:</p>
-      <div data-runnable>
-      <pre><code>hours = minutes // <span class="nm">60</span>
-hours</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">1</span>
-      </div>
-      </div>
-      <p>And <code>%</code> for the minutes left over:</p>
-      <div data-runnable>
-      <pre><code>leftover = minutes % <span class="nm">60</span>
-leftover</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">45</span>
-      </div>
-      </div>
-      <p>So: 1 hour and 45 minutes. Two operators, no arithmetic on your part.</p>
-      <p>Two more modulus tricks worth knowing, because they show up constantly:</p>
-      <div data-runnable>
-      <pre><code><span class="cm"># the last digit of a number</span>
-student_id = <span class="nm">1069</span>
-student_id % <span class="nm">10</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">9</span>
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code><span class="cm"># is it even? even numbers have no remainder when divided by 2</span>
-<span class="nm">14</span> % <span class="nm">2</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">0</span>
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code><span class="nm">15</span> % <span class="nm">2</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">1</span>
-      </div>
-      </div>
-      <p>Finally, <code>**</code> raises a number to a power:</p>
-      <div data-runnable>
-      <pre><code><span class="nm">7</span> ** <span class="nm">2</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">49</span>
-      </div>
-      </div>
-      <h4 id="order-of-operations">Order of operations</h4>
-      <p>When an expression has several operators, Python doesn&#x27;t just work left to right. It follows the same precedence rules you learned in algebra: exponentiation first, then multiplication and division, then addition and subtraction.</p>
-      <div class="callout callout-warn">
-        <div class="callout-label">Predict before you read on</div>
-        <strong>Predict.</strong> What will <code>6 + 6 ** 2</code> produce? Is it <code>144</code> or <code>42</code>?  Commit to an answer before you run the next cell.
-      </div>
-      <div data-runnable>
-      <pre><code><span class="nm">6</span> + <span class="nm">6</span> ** <span class="nm">2</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">42</span>
-      </div>
-      </div>
-      <details class="debrief"><summary>What happened</summary>
-      <p><code>42</code>. The exponentiation happened first: <code>6 ** 2</code> is <code>36</code>, then <code>6 + 36</code>. If Python had worked strictly left to right you&#x27;d have gotten <code>12 ** 2</code>, or <code>144</code>.</p>
-      <p>Whitespace makes no difference to Python here: <code>6+6**2</code> gives the same answer. It&#x27;s only for your eyes.</p>
-      </details>
-      <div data-runnable>
-      <pre><code><span class="nm">12</span> + <span class="nm">5</span> * <span class="nm">6</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">42</span>
-      </div>
-      </div>
-      <p>Parentheses override precedence. Use them whenever the order isn&#x27;t obvious at a glance:</p>
-      <div data-runnable>
-      <pre><code>(<span class="nm">12</span> + <span class="nm">5</span>) * <span class="nm">6</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">102</span>
-      </div>
-      </div>
-      <h4 id="arithmetic-functions">Arithmetic functions</h4>
-      <p>Python also comes with <strong>functions</strong>. A function takes one or more values, does something with them, and hands a result back. When you use one, you are <strong>calling</strong> it, and the value in the parentheses is the <strong>argument</strong>.</p>
-      <p><code>round</code> rounds a float to the nearest whole number:</p>
-      <div data-runnable>
-      <pre><code><span class="fn">round</span>(<span class="nm">42.4</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">42</span>
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code><span class="fn">round</span>(<span class="nm">42.6</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">43</span>
-      </div>
-      </div>
-      <p><code>abs</code> gives the absolute value - the size of a number, ignoring its sign:</p>
-      <div data-runnable>
-      <pre><code><span class="fn">abs</span>(-<span class="nm">42</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">42</span>
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code><span class="fn">abs</span>(<span class="nm">42</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">42</span>
-      </div>
-      </div>
-      <p>Those parentheses aren&#x27;t decoration. Leave one out and Python can&#x27;t tell where the argument ends, so it gives up before running anything. That&#x27;s a <strong>SyntaxError</strong> - the code isn&#x27;t valid Python at all.</p>
-      <pre><code>abs(-42</code></pre>
-      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
-      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
-      <div class="output-block">
-        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
-    abs(-<span class="out-num">42</span>
-       ^
-SyntaxError: &#x27;(&#x27; was never closed</div>
-      </details>
-      <p>Notice what the error message gives you: the line, a caret pointing at roughly where Python got confused, and the words <code>SyntaxError: &#x27;(&#x27; was never closed</code>. That last part is unusually helpful. Most of the time, Python&#x27;s guess about <em>where</em> the problem is will be close but slightly after the real mistake - because Python only notices something is wrong once it hits something that can&#x27;t possibly follow.</p>
-      <h5 id="your-turn">Your turn</h5>
-      <p>Lee logged a study session as <strong>227 minutes</strong>. Print how many whole hours that is, and how many minutes are left over.</p>
-      <p>Use <code>//</code> and <code>%</code>. Two lines is plenty.</p>
-      <div class="exercise-block" data-exercise="exgetting-started-47">
-        <label class="exercise-label" for="exgetting-started-47-src">Your turn - run it here<span class="vh"> (exercise 1)</span></label>
-        <textarea id="exgetting-started-47-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
-        <div class="ex-controls">
-          <button class="ex-run" data-target="exgetting-started-47">Run</button>
-          <button class="ex-reset" data-target="exgetting-started-47">Reset</button>
-          <span class="ex-status" id="exgetting-started-47-status"></span>
-        </div>
-        <pre class="ex-output" id="exgetting-started-47-out"></pre>
-        <details class="ex-solution"><summary>Show a worked solution</summary><pre><code>session = <span class="nm">227</span>
-<span class="fn">print</span>(session // <span class="nm">60</span>, <span class="st">&quot;hours and&quot;</span>, session % <span class="nm">60</span>, <span class="st">&quot;minutes&quot;</span>)</code></pre></details>
-      </div>
-      <h5 id="your-turn-1">Your turn</h5>
-      <p>Here&#x27;s an oddity worth knowing about. Run both cells below and compare.</p>
-      <div data-runnable>
-      <pre><code><span class="fn">round</span>(<span class="nm">42.5</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">42</span>
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code><span class="fn">round</span>(<span class="nm">43.5</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">44</span>
-      </div>
-      </div>
-      <p><code>42.5</code> rounds down to <code>42</code>, but <code>43.5</code> rounds up to <code>44</code>. That isn&#x27;t a bug - Python rounds halves toward the nearest <em>even</em> number, a convention called banker&#x27;s rounding that avoids a systematic upward bias when you round thousands of values.</p>
-      <p>This is a good first thing to ask an AI assistant: <em>&quot;Why does Python round 0.5 to even instead of always up?&quot;</em> Compare what it tells you to what you just observed.</p>
-    
-      <div class="section-nav"><a class="section-next" data-goto="variables" href="#variables">Next: Variables &amp; Types &rarr;</a></div>
-    </section>
-
-<section id="variables" class="content-section">
-      <h2>Variables &amp; Types</h2>
-      <h3 id="values-and-types">Values and types</h3>
-      <p>Every value in Python has a <strong>type</strong>, and the type determines what you&#x27;re allowed to do with the value. Getting types wrong is probably the single most common source of errors in data work, so it&#x27;s worth being deliberate here.</p>
-      <p>The <code>type</code> function tells you what you&#x27;ve got.</p>
-      <div data-runnable>
-      <pre><code><span class="fn">type</span>(<span class="nm">42</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-int
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code><span class="fn">type</span>(<span class="nm">42.0</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-float
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code><span class="fn">type</span>(<span class="st">&#x27;Amaka Okoroha&#x27;</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-str
-      </div>
-      </div>
-      <p>Three types, three uses:</p>
-      <ul><li><code>int</code> - a whole number</li><li><code>float</code> - a number with a decimal point</li><li><code>str</code> - a <strong>string</strong>, meaning text (short for &quot;string of characters&quot;)</li></ul>
-      <p>The quotes are what make something a string. <code>42</code> is a number; <code>&#x27;42&#x27;</code> is text that happens to look like a number. Python treats them very differently.</p>
-      <div data-runnable>
-      <pre><code><span class="fn">type</span>(<span class="nm">42</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-int
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code><span class="fn">type</span>(<span class="st">&#x27;42&#x27;</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-str
-      </div>
-      </div>
-      <h4 id="why-the-difference-matters">Why the difference matters</h4>
-      <p>Data arrives from the registrar, and every value in it is text - that&#x27;s just how files work. Suppose a GPA came through as the string <code>&#x27;3.81&#x27;</code> and you try to do arithmetic with it.</p>
-      <div class="callout callout-warn">
-        <div class="callout-label">Predict before you read on</div>
-        <strong>Predict.</strong> What happens when you divide a string by a number?  Commit to an answer before you run the next cell.
-      </div>
-      <pre><code><span class="st">&#x27;126&#x27;</span> / <span class="nm">3</span></code></pre>
-      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
-      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
-      <div class="output-block">
-        <div class="output-block-label">output</div>Traceback (most recent call last):
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-TypeError: unsupported operand type(s) for /: &#x27;str&#x27; and &#x27;int&#x27;</div>
-      </details>
-      <details class="debrief"><summary>What happened</summary>
-      <p>A <strong>TypeError</strong>. The message is worth reading closely: <code>unsupported operand type(s) for /: &#x27;str&#x27; and &#x27;int&#x27;</code>.</p>
-      <p>Python is telling you exactly what went wrong: the <code>/</code> operator doesn&#x27;t know how to divide a <code>str</code> by an <code>int</code>. The values in an expression are called <strong>operands</strong>, which is where that wording comes from.</p>
-      <p>This error is not Python being difficult. It&#x27;s Python refusing to guess. In a language that guesses, <code>&#x27;126&#x27; / 3</code> might silently produce something wrong, and you&#x27;d find out three steps later.</p>
-      </details>
-      <p>The fix is to <strong>convert</strong> the string to a number first. <code>int</code> works as a function for exactly this:</p>
-      <div data-runnable>
-      <pre><code><span class="fn">int</span>(<span class="st">&#x27;126&#x27;</span>) / <span class="nm">3</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">42.0</span>
-      </div>
-      </div>
-      <p><code>float</code> does the same for values with a decimal point:</p>
-      <div data-runnable>
-      <pre><code><span class="fn">float</span>(<span class="st">&#x27;3.81&#x27;</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">3.81</span>
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code><span class="fn">float</span>(<span class="st">&#x27;3.81&#x27;</span>) * <span class="nm">2</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">7.62</span>
-      </div>
-      </div>
-      <p>Conversion goes the other way too. <code>str</code> turns a number into text:</p>
-      <div data-runnable>
-      <pre><code><span class="fn">str</span>(<span class="nm">42</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27;<span class="out-num">42</span>&#x27;
-      </div>
-      </div>
-      <p>And <code>int</code> on a float throws away the fractional part - it does not round:</p>
-      <div data-runnable>
-      <pre><code><span class="fn">int</span>(<span class="nm">42.9</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">42</span>
-      </div>
-      </div>
-      <h5 id="a-conversion-trap">A conversion trap</h5>
-      <p><code>int</code> converts a string of digits. It will not convert a string that <em>looks</em> like a float.</p>
-      <pre><code><span class="fn">int</span>(<span class="st">&#x27;3.7&#x27;</span>)</code></pre>
-      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
-      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
-      <div class="output-block">
-        <div class="output-block-label">output</div>Traceback (most recent call last):
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-ValueError: invalid literal for int() with base <span class="out-num">10</span>: &#x27;<span class="out-num">3.7</span>&#x27;</div>
-      </details>
-      <p>This one is a <strong>ValueError</strong>, not a TypeError, and the distinction is useful. A TypeError means <em>wrong kind of thing</em>. A ValueError means <em>right kind of thing, but its content doesn&#x27;t work</em> - <code>int</code> accepts strings, this just isn&#x27;t a string it can parse.</p>
-      <p>If you meant to get <code>3</code>, convert to float first, then to int:</p>
-      <div data-runnable>
-      <pre><code><span class="fn">int</span>(<span class="fn">float</span>(<span class="st">&#x27;3.7&#x27;</span>))</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">3</span>
-      </div>
-      </div>
-      <h4 id="the-comma-trap">The comma trap</h4>
-      <p>Write a large number the way you&#x27;d write it on paper and Python will not complain - which is exactly what makes this dangerous.</p>
-      <div class="callout callout-warn">
-        <div class="callout-label">Predict before you read on</div>
-        <strong>Predict.</strong> What do you get if you store <code>1,000,000</code> in a variable and print it?  Commit to an answer before you run the next cell.
-      </div>
-      <div data-runnable>
-      <pre><code>population = <span class="nm">1</span>,<span class="nm">000</span>,<span class="nm">000</span>
-<span class="fn">print</span>(population)
-<span class="fn">print</span>(<span class="fn">type</span>(population))</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-(<span class="out-num">1</span>, <span class="out-num">0</span>, <span class="out-num">0</span>)
-&lt;class &#x27;tuple&#x27;&gt;
-      </div>
-      </div>
-      <details class="debrief"><summary>What happened</summary>
-      <p>Not a number at all - <code>(1, 0, 0)</code>, of type <code>tuple</code>.</p>
-      <p>In Python, commas separate values, so <code>1,000,000</code> is three separate integers - <code>1</code>, <code>0</code>, and <code>0</code> - bundled into something called a <strong>tuple</strong>. No error, no warning, and every calculation downstream is quietly wrong.</p>
-      <p>This is the worst kind of bug: the silent kind. If you need a thousands separator for readability, Python accepts underscores instead.</p>
-      </details>
-      <div data-runnable>
-      <pre><code><span class="nm">1_000_000</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">1000000</span>
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code><span class="nm">1_000_000</span> + <span class="nm">1</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">1000001</span>
-      </div>
-      </div>
-      <h5 id="your-turn-2">Your turn</h5>
-      <p>Below are eight expressions. For each one, write down your guess for the type <em>before</em> running anything, then use <code>type()</code> to check.</p>
-      <pre><code><span class="nm">765</span>
-<span class="nm">2.718</span>
-<span class="st">&#x27;2 pi&#x27;</span>
-<span class="fn">abs</span>(-<span class="nm">7</span>)
-<span class="fn">abs</span>(-<span class="nm">7.0</span>)
-<span class="fn">abs</span>
-<span class="fn">int</span>
-<span class="fn">type</span></code></pre>
-      <p>The last three are the interesting ones. What is the type of a function itself?</p>
-      <div class="exercise-block" data-exercise="exvariables-30">
-        <label class="exercise-label" for="exvariables-30-src">Your turn - run it here<span class="vh"> (exercise 2)</span></label>
-        <textarea id="exvariables-30-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
-        <div class="ex-controls">
-          <button class="ex-run" data-target="exvariables-30">Run</button>
-          <button class="ex-reset" data-target="exvariables-30">Reset</button>
-          <span class="ex-status" id="exvariables-30-status"></span>
-        </div>
-        <pre class="ex-output" id="exvariables-30-out"></pre>
-        <details class="ex-solution"><summary>Show a worked solution</summary><pre><code><span class="fn">print</span>(<span class="fn">type</span>(<span class="nm">765</span>))          <span class="cm"># int</span>
-<span class="fn">print</span>(<span class="fn">type</span>(<span class="nm">2.718</span>))        <span class="cm"># float</span>
-<span class="fn">print</span>(<span class="fn">type</span>(<span class="st">&#x27;2 pi&#x27;</span>))       <span class="cm"># str -- quotes make it text, whatever is inside</span>
-<span class="fn">print</span>(<span class="fn">type</span>(<span class="fn">abs</span>(-<span class="nm">7</span>)))      <span class="cm"># int   -- abs of an int is an int</span>
-<span class="fn">print</span>(<span class="fn">type</span>(<span class="fn">abs</span>(-<span class="nm">7.0</span>)))    <span class="cm"># float -- abs of a float is a float</span>
-<span class="fn">print</span>(<span class="fn">type</span>(<span class="fn">abs</span>))          <span class="cm"># builtin_function_or_method</span>
-<span class="fn">print</span>(<span class="fn">type</span>(<span class="fn">int</span>))          <span class="cm"># type</span>
-<span class="fn">print</span>(<span class="fn">type</span>(<span class="fn">type</span>))         <span class="cm"># type</span>
-
-<span class="cm"># The last three are the interesting ones. Functions and types are themselves</span>
-<span class="cm"># values, which is why you can pass them around like any other value. That</span>
-<span class="cm"># idea comes back in Module 4, where you hand functions to pandas.</span></code></pre></details>
-      </div>
-      <h3 id="variables-and-statements">Variables and statements</h3>
-      <p>So far every result has vanished the moment it was displayed. A <strong>variable</strong> lets you keep a value and give it a name.</p>
-      <p>Naming things well is most of what makes code readable.</p>
-      <div data-runnable>
-      <pre><code>credits_earned = <span class="nm">124</span></code></pre>
-      </div>
-      <p>Notice: <strong>no output</strong>. This is an <strong>assignment statement</strong>, and a statement performs an action rather than producing a value. It has three parts - the variable name on the left, the <code>=</code> <strong>assignment operator</strong>, and an expression on the right.</p>
-      <p>The value is now stored under that name. Ask for the name and you get the value:</p>
-      <div data-runnable>
-      <pre><code>credits_earned</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">124</span>
-      </div>
-      </div>
-      <p>A variable can hold any type. Here&#x27;s a float and a string:</p>
-      <div data-runnable>
-      <pre><code>ug_gpa = <span class="nm">3.81</span>
-major = <span class="st">&#x27;Data Science&#x27;</span></code></pre>
-      </div>
-      <div data-runnable>
-      <pre><code>major</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27;Data Science&#x27;
-      </div>
-      </div>
-      <p>Once a variable exists, you can use it anywhere you&#x27;d use the value itself:</p>
-      <div data-runnable>
-      <pre><code>credits_earned + <span class="nm">6</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">130</span>
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code>ug_gpa * <span class="nm">2</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">7.62</span>
-      </div>
-      </div>
-      <p>Including as an argument to a function:</p>
-      <div data-runnable>
-      <pre><code><span class="fn">round</span>(ug_gpa)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">4</span>
-      </div>
-      </div>
-      <h4 id="reassignment">Reassignment</h4>
-      <p>A variable&#x27;s value can change. Assign to the same name again and the old value is simply gone.</p>
-      <div data-runnable>
-      <pre><code>attempts = <span class="nm">1</span>
-attempts = <span class="nm">2</span>
-attempts</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">2</span>
-      </div>
-      </div>
-      <p>This is worth pausing on, because the <code>=</code> sign is misleading. In mathematics, <code>=</code> asserts that two things <em>are</em> equal. In Python, <code>=</code> is an instruction: <em>take the value on the right and store it under the name on the left</em>. It&#x27;s an action, not a claim.</p>
-      <p>Which is why this works, and would be nonsense in algebra:</p>
-      <div class="callout callout-warn">
-        <div class="callout-label">Predict before you read on</div>
-        <strong>Predict.</strong> What is <code>count</code> after these two lines?  Commit to an answer before you run the next cell.
-      </div>
-      <div data-runnable>
-      <pre><code>count = <span class="nm">5</span>
-count = count + <span class="nm">3</span>
-count</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">8</span>
-      </div>
-      </div>
-      <details class="debrief"><summary>What happened</summary>
-      <p><code>8</code>. Python evaluates the right side first - <code>count + 3</code> is <code>5 + 3</code>, or <code>8</code> - and <em>then</em> stores that result back under the name <code>count</code>. The old value of <code>5</code> is overwritten in the process.</p>
-      <p>Read <code>=</code> as &quot;gets&quot; rather than &quot;equals&quot; and this stops being confusing: <code>count</code> <em>gets</em> <code>count + 3</code>.</p>
-      </details>
-      <p>Adding to a variable is common enough that Python has a shorthand. These two lines do the same thing:</p>
-      <pre><code>count = count + <span class="nm">3</span>
-count += <span class="nm">3</span></code></pre>
-      <div data-runnable>
-      <pre><code>count = <span class="nm">5</span>
-count += <span class="nm">3</span>
-count</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">8</span>
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code>count -= <span class="nm">2</span>
-count</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">6</span>
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code>count *= <span class="nm">10</span>
-count</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">60</span>
-      </div>
-      </div>
-      <p>You&#x27;ll see <code>+=</code> constantly once we get to loops, where it&#x27;s how you accumulate a running total.</p>
-      <h4 id="variable-names">Variable names</h4>
-      <p>Names can contain letters, digits, and underscores, but they cannot start with a digit and cannot contain spaces or punctuation. Break those rules and you get a SyntaxError.</p>
-      <pre><code>million! = <span class="nm">1000000</span></code></pre>
-      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
-      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
-      <div class="output-block">
-        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
-    million! = <span class="out-num">1000000</span>
-           ^
-SyntaxError: invalid syntax</div>
-      </details>
-      <pre><code><span class="nm">76</span>trombones = <span class="st">&#x27;big parade&#x27;</span></code></pre>
-      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
-      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
-      <div class="output-block">
-        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
-    76trombones = &#x27;big parade&#x27;
-     ^
-SyntaxError: invalid decimal literal</div>
-      </details>
-      <p>There&#x27;s a third category of illegal name that&#x27;s less obvious. Some words are <strong>keywords</strong> - words Python reserves for the structure of the language itself. You can&#x27;t use them as variable names.</p>
-      <pre><code><span class="kw">class</span> = <span class="st">&#x27;Introduction to Data Science&#x27;</span></code></pre>
-      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
-      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
-      <div class="output-block">
-        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
-    class = &#x27;Introduction to Data Science&#x27;
-          ^
-SyntaxError: invalid syntax</div>
-      </details>
-      <pre><code><span class="kw">False</span> = <span class="nm">6</span></code></pre>
-      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
-      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
-      <div class="output-block">
-        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
-    False = <span class="out-num">6</span>
-    ^^^^^
-SyntaxError: cannot assign to False</div>
-      </details>
-      <p><code>class</code> is a keyword because Python uses it to define a class (Module 5 territory). <code>False</code> is a built-in constant. There are about thirty-five of these, and you don&#x27;t need to memorize them - your editor will color them differently, which is warning enough.</p>
-      <p>If you&#x27;re curious, Python will list them:</p>
-      <div data-runnable>
-      <pre><code><span class="kw">import</span> keyword
-<span class="fn">print</span>(keyword.kwlist)
-<span class="fn">print</span>(<span class="fn">len</span>(keyword.kwlist), <span class="st">&#x27;keywords&#x27;</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-[&#x27;False&#x27;, &#x27;None&#x27;, &#x27;True&#x27;, &#x27;and&#x27;, &#x27;as&#x27;, &#x27;assert&#x27;, &#x27;async&#x27;, &#x27;await&#x27;, &#x27;break&#x27;, &#x27;class&#x27;, &#x27;continue&#x27;, &#x27;def&#x27;, &#x27;del&#x27;, &#x27;elif&#x27;, &#x27;else&#x27;, &#x27;except&#x27;, &#x27;finally&#x27;, &#x27;for&#x27;, &#x27;from&#x27;, &#x27;global&#x27;, &#x27;if&#x27;, &#x27;import&#x27;, &#x27;in&#x27;, &#x27;is&#x27;, &#x27;lambda&#x27;, &#x27;nonlocal&#x27;, &#x27;not&#x27;, &#x27;or&#x27;, &#x27;pass&#x27;, &#x27;raise&#x27;, &#x27;return&#x27;, &#x27;try&#x27;, &#x27;while&#x27;, &#x27;with&#x27;, &#x27;yield&#x27;]
-<span class="out-num">35</span> keywords
-      </div>
-      </div>
-      <h5 id="naming-style">Naming style</h5>
-      <p>Legal is a low bar. The convention in Python - and it is a strong one - is <code>lowercase_with_underscores</code> for variables, and names that say what the thing <em>is</em>:</p>
-      <pre><code>x = <span class="nm">3.81</span>                  <span class="cm"># legal, useless</span>
-g = <span class="nm">3.81</span>                  <span class="cm"># legal, still useless</span>
-ug_gpa = <span class="nm">3.81</span>             <span class="cm"># good</span>
-undergraduate_gpa = <span class="nm">3.81</span>  <span class="cm"># also fine, if a little long</span></code></pre>
-      <p>You will spend far more time reading code than writing it, including your own code six months from now. <code>ug_gpa</code> costs you four extra keystrokes and saves you a minute of puzzling every time you come back to it.</p>
-      <h4 id="comments">Comments</h4>
-      <p>A <strong>comment</strong> starts with <code>#</code>. Python ignores everything from the <code>#</code> to the end of the line.</p>
-      <div data-runnable>
-      <pre><code><span class="cm"># minutes a student spent on task, across the whole term</span>
-time_on_task = <span class="nm">9.5</span></code></pre>
-      </div>
-      <p>Comments can also sit at the end of a line of code:</p>
-      <div data-runnable>
-      <pre><code>attendance = <span class="nm">0.96</span>     <span class="cm"># proportion of classes attended, 0 to 1</span></code></pre>
-      </div>
-      <p>A comment that restates the code is noise:</p>
-      <pre><code>gpa = <span class="nm">3.81</span>     <span class="cm"># assign 3.81 to gpa</span></code></pre>
-      <p>A comment that supplies what the code <em>can&#x27;t</em> say is valuable:</p>
-      <pre><code>gpa = <span class="nm">3.81</span>     <span class="cm"># on the 4.0 scale; transfer credits excluded</span></code></pre>
-      <p>Units, scales, assumptions, and the reason you did something the odd way - those are what comments are for.</p>
-      <h5 id="your-turn-3">Your turn</h5>
-      <p>Make some errors on purpose. For each of these, predict what happens, then try it in the cell below. You&#x27;ll need to run them one at a time.</p>
-      <ol><li><code>17 = n</code> - we know <code>n = 17</code> is fine. Is the reverse?</li><li><code>x = y = 1</code> - does chained assignment work?</li><li>Put a semicolon at the end of a statement: <code>n = 17;</code></li><li>Put a period at the end: <code>n = 17.</code></li><li>Misspell a module name: <code>import maath</code></li></ol>
-      <p>Number 4 is sneakier than it looks. Check the <em>type</em> of what you get.</p>
-      <div class="exercise-block" data-exercise="exvariables-37">
-        <label class="exercise-label" for="exvariables-37-src">Your turn - run it here<span class="vh"> (exercise 3)</span></label>
-        <textarea id="exvariables-37-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
-        <div class="ex-controls">
-          <button class="ex-run" data-target="exvariables-37">Run</button>
-          <button class="ex-reset" data-target="exvariables-37">Reset</button>
-          <span class="ex-status" id="exvariables-37-status"></span>
-        </div>
-        <pre class="ex-output" id="exvariables-37-out"></pre>
-        <details class="ex-solution"><summary>Show a worked solution</summary><pre><code><span class="cm"># 1. SyntaxError -- cannot assign to literal. Assignment goes right to left.</span>
-<span class="cm"># 2. Works. Both x and y become 1.</span>
-<span class="cm"># 3. Works. Python allows a trailing semicolon; it just does nothing.</span>
-<span class="cm">#    (In a notebook, a trailing semicolon also suppresses cell output.)</span>
-<span class="cm"># 4. No error! 17. is a valid float literal, the same as 17.0.</span>
-<span class="cm"># 5. ModuleNotFoundError -- a different error type, covered in section 10.</span>
-
-x = y = <span class="nm">1</span>
-<span class="fn">print</span>(x, y)
-n = <span class="nm">17.</span>
-<span class="fn">print</span>(n, <span class="fn">type</span>(n))</code></pre></details>
-      </div>
+      <p><strong>Before you start.</strong> This module picks up where the Python warm-up at the end of Module 1 left off: arithmetic, types, and variables. If you skipped the warm-up, do it first.</p>
     
       <div class="section-nav"><a class="section-next" data-goto="strings" href="#strings">Next: Strings &rarr;</a></div>
     </section>
@@ -1606,17 +946,7 @@ advisor</code></pre>
 &quot;Lee&#x27;s office&quot;
       </div>
       </div>
-      <p>Text without quotes isn&#x27;t text at all - Python reads it as a variable name. Two words with a space between them isn&#x27;t a legal name, so this one fails before it runs:</p>
-      <pre><code>name = amaka okoroha</code></pre>
-      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
-      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
-      <div class="output-block">
-        <div class="output-block-label">output</div>  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>
-    name = amaka okoroha
-                 ^^^^^^^
-SyntaxError: invalid syntax</div>
-      </details>
-      <p>Remove the space and it becomes legal syntax - but there&#x27;s still no variable called <code>amaka</code>, so now you get a different error:</p>
+      <p>Text without quotes isn&#x27;t text at all - Python reads it as a variable name, and there is no variable called <code>amaka</code>:</p>
       <pre><code>name = amaka</code></pre>
       <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
       <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
@@ -1625,7 +955,7 @@ SyntaxError: invalid syntax</div>
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
 NameError: name &#x27;amaka&#x27; is not defined</div>
       </details>
-      <p>Two errors, one root cause: <strong>missing quotes</strong>. Worth internalizing, because it&#x27;s the mistake that produces the most confusing beginner errors.</p>
+      <p><strong>Missing quotes</strong> produce some of the most confusing beginner errors, so when a <code>NameError</code> names something that was meant to be text, check the quotes first.</p>
       <h3 id="length-joining-repeating">Length, joining, repeating</h3>
       <p><code>len</code> counts the characters in a string:</p>
       <div data-runnable>
@@ -1652,124 +982,23 @@ NameError: name &#x27;amaka&#x27; is not defined</div>
 &#x27;----------------------------------------&#x27;
       </div>
       </div>
-      <p>Which is a cheap way to draw a divider in a report. The other arithmetic operators don&#x27;t work on strings:</p>
-      <pre><code><span class="st">&#x27;Eastern&#x27;</span> - <span class="st">&#x27;East&#x27;</span></code></pre>
-      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
-      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
-      <div class="output-block">
-        <div class="output-block-label">output</div>Traceback (most recent call last):
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-TypeError: unsupported operand type(s) for -: &#x27;str&#x27; and &#x27;str&#x27;</div>
-      </details>
-      <h3 id="indexing">Indexing</h3>
-      <p>A string is a <strong>sequence</strong>, meaning its characters are in a definite order and each one has a numbered position called an <strong>index</strong>. You get a single character with square brackets.</p>
+      <p>Which is a cheap way to draw a divider in a report. The other arithmetic operators (<code>-</code>, <code>/</code>) don&#x27;t work on strings.</p>
+      <h3 id="indexing-and-slicing">Indexing and slicing</h3>
+      <p>A string is a <strong>sequence</strong>: its characters are in order, and each has a numbered position called an <strong>index</strong>, counting from zero. Square brackets get one character (<code>[0]</code>) or a range (<code>[start:stop]</code>, where <code>stop</code> is left out). Negative indices count from the end.</p>
       <figure class="nb-figure"><img src="assets/fig-856510c58d.png" alt="Positive and negative indices for &#x27;Eastern University&#x27;" loading="lazy"><figcaption>Positive and negative indices for &#x27;Eastern University&#x27;</figcaption></figure>
       <div data-runnable>
       <pre><code>university = <span class="st">&#x27;Eastern University&#x27;</span>
-university[<span class="nm">0</span>]</code></pre>
+<span class="fn">print</span>(university[<span class="nm">0</span>])      <span class="cm"># first character</span>
+<span class="fn">print</span>(university[-<span class="nm">1</span>])     <span class="cm"># last character</span>
+<span class="fn">print</span>(university[<span class="nm">0</span>:<span class="nm">7</span>])    <span class="cm"># characters 0 through 6</span></code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-&#x27;E&#x27;
+E
+y
+Eastern
       </div>
       </div>
-      <p><strong>Indexing starts at zero.</strong> <code>university[0]</code> is the first character, not the second. The index is an offset from the start, not a position in a count - <code>university[0]</code> means &quot;zero characters in&quot;. Zero-based indexing is worth getting into your bones now, because lists, arrays, and DataFrames all work the same way.</p>
-      <div data-runnable>
-      <pre><code>university[<span class="nm">6</span>]</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27;n&#x27;
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code>university[<span class="nm">7</span>]</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27; &#x27;
-      </div>
-      </div>
-      <p>Index 7 is the space. Spaces are characters like any other - a fact that matters a great deal when you&#x27;re cleaning data.</p>
-      <p>Negative indices count from the end, which saves you from computing the length first:</p>
-      <div data-runnable>
-      <pre><code>university[-<span class="nm">1</span>]</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27;y&#x27;
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code>university[-<span class="nm">2</span>]</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27;t&#x27;
-      </div>
-      </div>
-      <div class="callout callout-warn">
-        <div class="callout-label">Predict before you read on</div>
-        <strong>Predict.</strong> The string has 18 characters. What does <code>university[-0]</code> give you?  Commit to an answer before you run the next cell.
-      </div>
-      <div data-runnable>
-      <pre><code>university[-<span class="nm">0</span>]</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27;E&#x27;
-      </div>
-      </div>
-      <details class="debrief"><summary>What happened</summary>
-      <p><code>&#x27;E&#x27;</code> - the first character, not the last.</p>
-      <p>There is no <code>-0</code>. Zero and negative zero are the same number, so <code>[-0]</code> is just <code>[0]</code>. Counting forward starts at <code>0</code>; counting backward starts at <code>-1</code>. The asymmetry is annoying but you only have to learn it once.</p>
-      </details>
-      <p>Ask for an index that doesn&#x27;t exist and you get an <strong>IndexError</strong>:</p>
-      <pre><code>university[<span class="nm">18</span>]</code></pre>
-      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
-      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
-      <div class="output-block">
-        <div class="output-block-label">output</div>Traceback (most recent call last):
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-IndexError: string index out of range</div>
-      </details>
-      <p>The valid indices for an 18-character string are <code>0</code> through <code>17</code>. <code>18</code> is one past the end - which is exactly why the error type has its own name.</p>
-      <h3 id="slicing">Slicing</h3>
-      <p>A <strong>slice</strong> is a range of characters. The syntax is <code>[start:stop]</code>, and the character at <code>stop</code> is <em>not</em> included.</p>
-      <div data-runnable>
-      <pre><code>university[<span class="nm">0</span>:<span class="nm">7</span>]</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27;Eastern&#x27;
-      </div>
-      </div>
-      <p>Seven characters - indices 0 through 6. The stop index is exclusive.</p>
-      <p>That sounds like a design mistake and isn&#x27;t: it means <code>stop - start</code> is exactly the length of the slice, and it means <code>[0:7]</code> and <code>[7:18]</code> fit together with no overlap and no gap.</p>
-      <div data-runnable>
-      <pre><code>university[<span class="nm">8</span>:<span class="nm">18</span>]</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27;University&#x27;
-      </div>
-      </div>
-      <p>Leave out the start and the slice runs from the beginning:</p>
-      <div data-runnable>
-      <pre><code>university[:<span class="nm">7</span>]</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27;Eastern&#x27;
-      </div>
-      </div>
-      <p>Leave out the stop and it runs to the end:</p>
-      <div data-runnable>
-      <pre><code>university[<span class="nm">8</span>:]</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27;University&#x27;
-      </div>
-      </div>
-      <p>Leave out both and you get the whole thing - which looks pointless now but becomes useful with lists:</p>
-      <div data-runnable>
-      <pre><code>university[:]</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27;Eastern University&#x27;
-      </div>
-      </div>
+      <p>Lists work exactly the same way, and section 4 covers indexing and slicing properly, with lists. For now: zero-based, negatives from the end, and the stop index is excluded.</p>
       <h3 id="f-strings">f-strings</h3>
       <p>Here is the feature you might use more than any other in this notebook.</p>
       <p>Building output by concatenation gets ugly fast, and it breaks the moment a number is involved, because you can&#x27;t concatenate a <code>str</code> and an <code>int</code>:</p>
@@ -1825,7 +1054,7 @@ TypeError: can only concatenate str (not &quot;float&quot;) to str</div>
 &#x27;  amaka OKOROHA  &#x27;
       </div>
       </div>
-      <p><code>.strip()</code> removes whitespace from both ends. <strong>Only the ends</strong> - it will not touch anything in the middle of a string. That matters more than it sounds like it does, and it comes back to bite us in section 8.</p>
+      <p><code>.strip()</code> removes whitespace from both ends. <strong>Only the ends</strong> - it will not touch anything in the middle of a string. That matters more than it sounds like it does, and it comes back to bite us in section 5.</p>
       <div data-runnable>
       <pre><code>raw_name.<span class="fn">strip</span>()</code></pre>
       <div class="output-block" data-stored-output>
@@ -1877,7 +1106,7 @@ clean_name</code></pre>
 [&#x27;Amaka&#x27;, &#x27;Okoroha&#x27;]
       </div>
       </div>
-      <p>Those square brackets mean you&#x27;ve got a <strong>list</strong> - the subject of section 7. For now, note that splitting a full name gives you the parts separately:</p>
+      <p>Those square brackets mean you&#x27;ve got a <strong>list</strong> - the subject of section 4. For now, note that splitting a full name gives you the parts separately:</p>
       <div data-runnable>
       <pre><code>parts = clean_name.<span class="fn">split</span>()
 <span class="fn">print</span>(parts[<span class="nm">0</span>])
@@ -1886,31 +1115,6 @@ clean_name</code></pre>
         <div class="output-block-label">output</div>
 Amaka
 Okoroha
-      </div>
-      </div>
-      <p><code>.split()</code> takes an optional argument, the <strong>delimiter</strong>, for when the separator isn&#x27;t a space. CSV files are the obvious case:</p>
-      <div data-runnable>
-      <pre><code>row = <span class="st">&#x27;1003,Amaka Okoroha,Biology&#x27;</span>
-row.<span class="fn">split</span>(<span class="st">&#x27;,&#x27;</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-[&#x27;<span class="out-num">1003</span>&#x27;, &#x27;Amaka Okoroha&#x27;, &#x27;Biology&#x27;]
-      </div>
-      </div>
-      <p><code>.join()</code> is the reverse - it glues pieces back together with a separator of your choosing:</p>
-      <div data-runnable>
-      <pre><code><span class="st">&#x27; | &#x27;</span>.<span class="fn">join</span>([<span class="st">&#x27;1003&#x27;</span>, <span class="st">&#x27;Amaka Okoroha&#x27;</span>, <span class="st">&#x27;Biology&#x27;</span>])</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27;<span class="out-num">1003</span> | Amaka Okoroha | Biology&#x27;
-      </div>
-      </div>
-      <p>The string you call <code>.join()</code> on is the glue, which reads backwards until you&#x27;ve done it a few times. And <code>.replace()</code> swaps one substring for another:</p>
-      <div data-runnable>
-      <pre><code><span class="st">&#x27;MS Data Science&#x27;</span>.<span class="fn">replace</span>(<span class="st">&#x27;MS&#x27;</span>, <span class="st">&#x27;Master of Science&#x27;</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&#x27;Master of Science Data Science&#x27;
       </div>
       </div>
       <h4 id="methods-belong-to-types">Methods belong to types</h4>
@@ -1924,44 +1128,22 @@ gpa.<span class="fn">upper</span>()</code></pre>
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">2</span>, in &lt;module&gt;
 AttributeError: &#x27;float&#x27; object has no attribute &#x27;upper&#x27;</div>
       </details>
-      <p>An <strong>AttributeError</strong> means <em>this value has no such thing attached to it</em>. Read it as &quot;a float doesn&#x27;t know how to do <code>upper</code>.&quot;</p>
-      <p>This is the error you get most often when a variable holds something other than what you assumed - which, in data work, is most of the time. When you see an AttributeError, the useful question isn&#x27;t &quot;what&#x27;s wrong with this method,&quot; it&#x27;s &quot;what type is my variable <em>actually</em>?&quot; Check with <code>type()</code>.</p>
-      <p>To see everything a string can do, <code>dir()</code> will list the methods (ignore the ones starting with underscores):</p>
-      <div data-runnable>
-      <pre><code><span class="fn">print</span>(<span class="fn">dir</span>(<span class="fn">str</span>))</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-[&#x27;__add__&#x27;, &#x27;__class__&#x27;, &#x27;__contains__&#x27;, &#x27;__delattr__&#x27;, &#x27;__dir__&#x27;, &#x27;__doc__&#x27;, &#x27;__eq__&#x27;, &#x27;__format__&#x27;, &#x27;__ge__&#x27;, &#x27;__getattribute__&#x27;, &#x27;__getitem__&#x27;, &#x27;__getnewargs__&#x27;, &#x27;__gt__&#x27;, &#x27;__hash__&#x27;, &#x27;__init__&#x27;, &#x27;__init_subclass__&#x27;, &#x27;__iter__&#x27;, &#x27;__le__&#x27;, &#x27;__len__&#x27;, &#x27;__lt__&#x27;, &#x27;__mod__&#x27;, &#x27;__mul__&#x27;, &#x27;__ne__&#x27;, &#x27;__new__&#x27;, &#x27;__reduce__&#x27;, &#x27;__reduce_ex__&#x27;, &#x27;__repr__&#x27;, &#x27;__rmod__&#x27;, &#x27;__rmul__&#x27;, &#x27;__setattr__&#x27;, &#x27;__sizeof__&#x27;, &#x27;__str__&#x27;, &#x27;__subclasshook__&#x27;, &#x27;capitalize&#x27;, &#x27;casefold&#x27;, &#x27;center&#x27;, &#x27;count&#x27;, &#x27;encode&#x27;, &#x27;endswith&#x27;, &#x27;expandtabs&#x27;, &#x27;find&#x27;, &#x27;format&#x27;, &#x27;format_map&#x27;, &#x27;index&#x27;, &#x27;isalnum&#x27;, &#x27;isalpha&#x27;, &#x27;isascii&#x27;, &#x27;isdecimal&#x27;, &#x27;isdigit&#x27;, &#x27;isidentifier&#x27;, &#x27;islower&#x27;, &#x27;isnumeric&#x27;, &#x27;isprintable&#x27;, &#x27;isspace&#x27;, &#x27;istitle&#x27;, &#x27;isupper&#x27;, &#x27;join&#x27;, &#x27;ljust&#x27;, &#x27;lower&#x27;, &#x27;lstrip&#x27;, &#x27;maketrans&#x27;, &#x27;partition&#x27;, &#x27;removeprefix&#x27;, &#x27;removesuffix&#x27;, &#x27;replace&#x27;, &#x27;rfind&#x27;, &#x27;rindex&#x27;, &#x27;rjust&#x27;, &#x27;rpartition&#x27;, &#x27;rsplit&#x27;, &#x27;rstrip&#x27;, &#x27;split&#x27;, &#x27;splitlines&#x27;, &#x27;startswith&#x27;, &#x27;strip&#x27;, &#x27;swapcase&#x27;, &#x27;title&#x27;, &#x27;translate&#x27;, &#x27;upper&#x27;, &#x27;zfill&#x27;]
-      </div>
-      </div>
-      <p>Ignore everything starting with underscores - those are internal. You don&#x27;t need to know the rest of that list either. You need to know that it exists, and that <code>help(str.strip)</code> will explain any single item on it.</p>
-      <div data-runnable>
-      <pre><code><span class="fn">help</span>(<span class="fn">str</span>.strip)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-Help on method_descriptor:
-
-strip(self, chars=None, /)
-    Return a copy of the string with leading and trailing whitespace removed.
-    
-    If chars is given and not None, remove characters in chars instead.
-      </div>
-      </div>
-      <h4 id="your-turn-4">Your turn</h4>
+      <p>An <strong>AttributeError</strong> means <em>this value has no such thing attached to it</em>: a float doesn&#x27;t know how to do <code>upper</code>. When you see one, the useful question is &quot;what type is my variable <em>actually</em>?&quot; Check with <code>type()</code>.</p>
+      <h4 id="your-turn">Your turn</h4>
       <p>Lee needs names formatted as <code>&quot;Okoroha, Amaka&quot;</code> for an alphabetical roster.</p>
       <p>Starting from <code>raw_name</code>, produce that string. You&#x27;ll need <code>.strip()</code>, <code>.title()</code>, <code>.split()</code>, indexing, and an f-string.</p>
       <p>Do it in as many steps as you like - clarity beats cleverness.</p>
-      <div class="exercise-block" data-exercise="exstrings-90">
-        <label class="exercise-label" for="exstrings-90-src">Your turn - run it here<span class="vh"> (exercise 4)</span></label>
-        <textarea id="exstrings-90-src" class="ex-editor" spellcheck="false">raw_name = &quot;  amaka OKOROHA  &quot;
+      <div class="exercise-block" data-exercise="exstrings-56">
+        <label class="exercise-label" for="exstrings-56-src">Your turn - run it here<span class="vh"> (exercise 1)</span></label>
+        <textarea id="exstrings-56-src" class="ex-editor" spellcheck="false">raw_name = &quot;  amaka OKOROHA  &quot;
 
 ### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
-          <button class="ex-run" data-target="exstrings-90">Run</button>
-          <button class="ex-reset" data-target="exstrings-90">Reset</button>
-          <span class="ex-status" id="exstrings-90-status"></span>
+          <button class="ex-run" data-target="exstrings-56">Run</button>
+          <button class="ex-reset" data-target="exstrings-56">Reset</button>
+          <span class="ex-status" id="exstrings-56-status"></span>
         </div>
-        <pre class="ex-output" id="exstrings-90-out"></pre>
+        <pre class="ex-output" id="exstrings-56-out"></pre>
         <details class="ex-solution"><summary>Show a worked solution</summary><pre><code>raw_name = <span class="st">&quot;  amaka OKOROHA  &quot;</span>
 
 clean = raw_name.<span class="fn">strip</span>().<span class="fn">title</span>()
@@ -1974,7 +1156,7 @@ last = parts[<span class="nm">1</span>]
 <span class="fn">print</span>(<span class="st">f&quot;{raw_name.strip().title().split()[1]}, {raw_name.strip().title().split()[0]}&quot;</span>)
 <span class="cm"># The one-liner works but is harder to debug. The version above is better code.</span></code></pre></details>
       </div>
-      <h4 id="your-turn-5">Your turn</h4>
+      <h4 id="your-turn-1">Your turn</h4>
       <p>Predict, then check: what does each of these produce? One of them raises an error - which, and why?</p>
       <pre><code><span class="st">&#x27;Eastern&#x27;</span>[<span class="nm">2</span>:<span class="nm">5</span>]
 <span class="st">&#x27;Eastern&#x27;</span>[-<span class="nm">3</span>:]
@@ -1983,15 +1165,15 @@ last = parts[<span class="nm">1</span>]
 <span class="st">&#x27;Eastern&#x27;</span>.<span class="fn">strip</span>(<span class="st">&#x27;n&#x27;</span>)
 <span class="fn">len</span>(<span class="st">&#x27;Eastern&#x27;</span>[<span class="nm">3</span>:])
 <span class="st">&#x27;Eastern&#x27;</span> + <span class="nm">7</span></code></pre>
-      <div class="exercise-block" data-exercise="exstrings-93">
-        <label class="exercise-label" for="exstrings-93-src">Your turn - run it here<span class="vh"> (exercise 5)</span></label>
-        <textarea id="exstrings-93-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
+      <div class="exercise-block" data-exercise="exstrings-59">
+        <label class="exercise-label" for="exstrings-59-src">Your turn - run it here<span class="vh"> (exercise 2)</span></label>
+        <textarea id="exstrings-59-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
-          <button class="ex-run" data-target="exstrings-93">Run</button>
-          <button class="ex-reset" data-target="exstrings-93">Reset</button>
-          <span class="ex-status" id="exstrings-93-status"></span>
+          <button class="ex-run" data-target="exstrings-59">Run</button>
+          <button class="ex-reset" data-target="exstrings-59">Reset</button>
+          <span class="ex-status" id="exstrings-59-status"></span>
         </div>
-        <pre class="ex-output" id="exstrings-93-out"></pre>
+        <pre class="ex-output" id="exstrings-59-out"></pre>
         <details class="ex-solution"><summary>Show a worked solution</summary><pre><code><span class="fn">print</span>(<span class="st">&#x27;Eastern&#x27;</span>[<span class="nm">2</span>:<span class="nm">5</span>])            <span class="cm"># &#x27;ste&#x27;</span>
 <span class="fn">print</span>(<span class="st">&#x27;Eastern&#x27;</span>[-<span class="nm">3</span>:])            <span class="cm"># &#x27;ern&#x27;</span>
 <span class="fn">print</span>(<span class="st">&#x27;Eastern&#x27;</span>[<span class="nm">5</span>:<span class="nm">2</span>])            <span class="cm"># &#x27;&#x27; -- empty, not an error. Start after stop.</span>
@@ -2008,7 +1190,7 @@ last = parts[<span class="nm">1</span>]
 
 <section id="functions" class="content-section">
       <h2>Functions</h2>
-      <p>You&#x27;ve been calling functions since section 1 - <code>round</code>, <code>abs</code>, <code>len</code>, <code>type</code>. Now you&#x27;ll write your own.</p>
+      <p>You&#x27;ve been calling functions since the Module 1 warm-up - <code>round</code>, <code>abs</code>, <code>type</code> - and <code>len</code> in section 1. Now you&#x27;ll write your own.</p>
       <p>A <strong>function</strong> is a named block of code you can run whenever you want. Four reasons this matters, and none of them are about saving keystrokes:</p>
       <ul><li><strong>Naming.</strong> A well-named function tells a reader what a block of code is <em>for</em>. <code>clean_name(raw)</code> says more than six lines of <code>.strip()</code> and <code>.title()</code>.</li><li><strong>Repetition.</strong> Write it once, use it ten times. When the logic changes, you change one place instead of hunting for ten.</li><li><strong>Debugging.</strong> You can test a small function on its own. Testing a 200-line script as a single unit is how people lose weekends.</li><li><strong>Reuse.</strong> Lee&#x27;s schema report will need the same name-cleaning code the Module 4 pipeline needs.</li></ul>
       <h3 id="defining-a-function">Defining a function</h3>
@@ -2193,47 +1375,24 @@ NameError: name &#x27;login_score&#x27; is not defined</div>
       </details>
       <p><code>login_score</code> was never visible outside the function. This is a feature: you can write a function without worrying about whether one of its variable names collides with something elsewhere in a 200-line notebook.</p>
       <h3 id="docstrings">Docstrings</h3>
-      <p>A <strong>docstring</strong> is a string on the first line of a function body. It documents what the function does, and Python wires it into the help system automatically.</p>
+      <p>A <strong>docstring</strong> is a string on the first line of a function body that says what the function does. <code>help()</code> displays it. You will read docstrings constantly in NumPy and pandas; write one for anything you&#x27;ll use more than once.</p>
       <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">normalized_engagement</span>(logins, hours):
-    <span class="st">&quot;&quot;&quot;Return a 0-1 engagement score from weekly logins and hours on task.
-
-    logins -- logins per week, where 20 is treated as a full score
-    hours  -- hours on task per week, where 15 is a full score
-    &quot;&quot;&quot;</span>
+    <span class="st">&quot;&quot;&quot;Return a 0-1 engagement score from weekly logins and hours on task.&quot;&quot;&quot;</span>
     login_score = logins / <span class="nm">20</span>
     hour_score = hours / <span class="nm">15</span>
-    <span class="kw">return</span> (login_score + hour_score) / <span class="nm">2</span></code></pre>
-      </div>
-      <div data-runnable>
-      <pre><code><span class="fn">help</span>(normalized_engagement)</code></pre>
+    <span class="kw">return</span> (login_score + hour_score) / <span class="nm">2</span>
+
+
+<span class="fn">help</span>(normalized_engagement)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 Help on function normalized_engagement in module __main__:
 
 normalized_engagement(logins, hours)
     Return a <span class="out-num">0</span><span class="out-num">-1</span> engagement score from weekly logins and hours on task.
-    
-    logins -- logins per week, where <span class="out-num">20</span> is treated as a full score
-    hours  -- hours on task per week, where <span class="out-num">15</span> is a full score
       </div>
       </div>
-      <p>Write docstrings for anything you&#x27;ll use more than once. Three months from now you are a different person with no memory of this code, and <code>help()</code> is how you&#x27;ll talk to your past self.</p>
-      <p>The same <code>help()</code> works on anything, which is the fastest way to answer &quot;what arguments does this take again?&quot;:</p>
-      <div data-runnable>
-      <pre><code><span class="fn">help</span>(<span class="fn">round</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-Help on built-in function round in module builtins:
-
-round(number, ndigits=None)
-    Round a number to a given precision in decimal digits.
-    
-    The return value is an integer if ndigits is omitted or None.  Otherwise
-    the return value has the same type as the number.  ndigits may be negative.
-      </div>
-      </div>
-      <p>In Jupyter and Colab, <code>?round</code> does the same thing in a popup, and <code>round?</code> works too. Use whichever you&#x27;ll remember.</p>
       <h3 id="default-arguments">Default arguments</h3>
       <p>A parameter can have a default value, which makes it optional to supply.</p>
       <div data-runnable>
@@ -2253,19 +1412,19 @@ B or below
       </div>
       </div>
       <p>That second call names the argument explicitly - a <strong>keyword argument</strong>. Worth doing whenever a bare value wouldn&#x27;t be self-explanatory. <code>letter_grade(3.6, 3.7)</code> is legal and tells the reader nothing.</p>
-      <h4 id="your-turn-6">Your turn</h4>
+      <h4 id="your-turn-2">Your turn</h4>
       <p>Write a function <code>convert_to_celsius</code> that takes a Fahrenheit temperature and <strong>returns</strong> the Celsius equivalent:</p>
       <p>$$C = (F - 32) \times \frac{5}{9}$$</p>
       <p>Give it a docstring. Then uncomment the tests to check it.</p>
-      <div class="exercise-block" data-exercise="exfunctions-44">
-        <label class="exercise-label" for="exfunctions-44-src">Your turn - run it here<span class="vh"> (exercise 6)</span></label>
-        <textarea id="exfunctions-44-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
+      <div class="exercise-block" data-exercise="exfunctions-40">
+        <label class="exercise-label" for="exfunctions-40-src">Your turn - run it here<span class="vh"> (exercise 3)</span></label>
+        <textarea id="exfunctions-40-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
-          <button class="ex-run" data-target="exfunctions-44">Run</button>
-          <button class="ex-reset" data-target="exfunctions-44">Reset</button>
-          <span class="ex-status" id="exfunctions-44-status"></span>
+          <button class="ex-run" data-target="exfunctions-40">Run</button>
+          <button class="ex-reset" data-target="exfunctions-40">Reset</button>
+          <span class="ex-status" id="exfunctions-40-status"></span>
         </div>
-        <pre class="ex-output" id="exfunctions-44-out"></pre>
+        <pre class="ex-output" id="exfunctions-40-out"></pre>
         <details class="ex-solution"><summary>Show a worked solution</summary><pre><code><span class="kw">def</span> <span class="fn">convert_to_celsius</span>(fahrenheit):
     <span class="st">&quot;&quot;&quot;Return the Celsius equivalent of a Fahrenheit temperature.&quot;&quot;&quot;</span>
     <span class="kw">return</span> (fahrenheit - <span class="nm">32</span>) * <span class="nm">5</span> / <span class="nm">9</span></code></pre></details>
@@ -2277,18 +1436,18 @@ B or below
 <span class="cm"># print(convert_to_celsius(212))    # expected 100.0</span>
 <span class="cm"># print(convert_to_celsius(98.6))   # expected 37.0 (approximately)</span></code></pre>
       </div>
-      <h4 id="your-turn-7">Your turn</h4>
-      <p>Write <code>clean_name(raw)</code> that takes a messy name string and returns it stripped and title-cased. This is the function you&#x27;ll use on the whole cohort in section 8, so get it right here where there&#x27;s only one value to think about.</p>
+      <h4 id="your-turn-3">Your turn</h4>
+      <p>Write <code>clean_name(raw)</code> that takes a messy name string and returns it stripped and title-cased. This is the function you&#x27;ll use on the whole cohort in section 5, so get it right here where there&#x27;s only one value to think about.</p>
       <p>Then write <code>roster_name(raw)</code> that returns <code>&quot;Last, First&quot;</code> - and have it <em>call</em> <code>clean_name</code> rather than repeating the cleaning logic. Functions calling functions is the whole point.</p>
-      <div class="exercise-block" data-exercise="exfunctions-48">
-        <label class="exercise-label" for="exfunctions-48-src">Your turn - run it here<span class="vh"> (exercise 7)</span></label>
-        <textarea id="exfunctions-48-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
+      <div class="exercise-block" data-exercise="exfunctions-44">
+        <label class="exercise-label" for="exfunctions-44-src">Your turn - run it here<span class="vh"> (exercise 4)</span></label>
+        <textarea id="exfunctions-44-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
-          <button class="ex-run" data-target="exfunctions-48">Run</button>
-          <button class="ex-reset" data-target="exfunctions-48">Reset</button>
-          <span class="ex-status" id="exfunctions-48-status"></span>
+          <button class="ex-run" data-target="exfunctions-44">Run</button>
+          <button class="ex-reset" data-target="exfunctions-44">Reset</button>
+          <span class="ex-status" id="exfunctions-44-status"></span>
         </div>
-        <pre class="ex-output" id="exfunctions-48-out"></pre>
+        <pre class="ex-output" id="exfunctions-44-out"></pre>
         <details class="ex-solution"><summary>Show a worked solution</summary><pre><code><span class="kw">def</span> <span class="fn">clean_name</span>(raw):
     <span class="st">&quot;&quot;&quot;Return a name stripped of surrounding whitespace and title-cased.&quot;&quot;&quot;</span>
     <span class="kw">return</span> raw.<span class="fn">strip</span>().<span class="fn">title</span>()
@@ -2534,7 +1693,7 @@ at risk
       </div>
       </div>
       <h3 id="using-modulus-in-a-condition">Using modulus in a condition</h3>
-      <p>Back in section 1 you used <code>%</code> to get remainders. Combined with <code>==</code>, it&#x27;s how you test divisibility.</p>
+      <p>In the Module 1 warm-up you used <code>%</code> to get remainders. Combined with <code>==</code>, it&#x27;s how you test divisibility.</p>
       <div data-runnable>
       <pre><code><span class="kw">def</span> <span class="fn">parity</span>(n):
     <span class="st">&quot;&quot;&quot;Return &#x27;even&#x27; or &#x27;odd&#x27; for an integer.&quot;&quot;&quot;</span>
@@ -2551,9 +1710,8 @@ even
 odd
       </div>
       </div>
-      <p><code>n % 2 == 0</code> reads as &quot;the remainder when n is divided by 2 equals zero,&quot; which is the definition of even. The same pattern with other divisors tests for any multiple: <code>n % 5 == 0</code>, <code>n % 100 == 0</code>.</p>
       <h3 id="placeholders">Placeholders</h3>
-      <p>Python won&#x27;t accept an empty block. If you know you need a branch but haven&#x27;t written it yet, <code>pass</code> does nothing, legally.</p>
+      <p>Python won&#x27;t accept an empty block. <code>pass</code> does nothing, legally, while you decide what a branch should do.</p>
       <div data-runnable>
       <pre><code>gpa = <span class="nm">3.81</span>
 
@@ -2566,21 +1724,20 @@ odd
 Dean&#x27;s list
       </div>
       </div>
-      <p><code>TODO</code> in a comment is a widely-used convention, and most editors will highlight it and let you list every one in a project. Leave yourself notes.</p>
-      <h4 id="your-turn-8">Your turn</h4>
+      <h4 id="your-turn-4">Your turn</h4>
       <p>Write <code>flag_for_outreach(gpa, logins_per_week)</code> that returns <code>True</code> if a student should be flagged for advising outreach, <code>False</code> otherwise.</p>
       <p>Flag a student if <strong>either</strong>:</p>
       <ul><li>their GPA is below 3.0, <strong>or</strong></li><li>they log in fewer than 8 times per week</li></ul>
       <p>Then uncomment the tests.</p>
-      <div class="exercise-block" data-exercise="exconditions-40">
-        <label class="exercise-label" for="exconditions-40-src">Your turn - run it here<span class="vh"> (exercise 8)</span></label>
-        <textarea id="exconditions-40-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
+      <div class="exercise-block" data-exercise="exconditions-38">
+        <label class="exercise-label" for="exconditions-38-src">Your turn - run it here<span class="vh"> (exercise 5)</span></label>
+        <textarea id="exconditions-38-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
-          <button class="ex-run" data-target="exconditions-40">Run</button>
-          <button class="ex-reset" data-target="exconditions-40">Reset</button>
-          <span class="ex-status" id="exconditions-40-status"></span>
+          <button class="ex-run" data-target="exconditions-38">Run</button>
+          <button class="ex-reset" data-target="exconditions-38">Reset</button>
+          <span class="ex-status" id="exconditions-38-status"></span>
         </div>
-        <pre class="ex-output" id="exconditions-40-out"></pre>
+        <pre class="ex-output" id="exconditions-38-out"></pre>
         <details class="ex-solution"><summary>Show a worked solution</summary><pre><code><span class="kw">def</span> <span class="fn">flag_for_outreach</span>(gpa, logins_per_week):
     <span class="st">&quot;&quot;&quot;Return True if a student meets either outreach trigger.&quot;&quot;&quot;</span>
     <span class="kw">return</span> gpa &lt; <span class="nm">3.0</span> <span class="kw">or</span> logins_per_week &lt; <span class="nm">8</span></code></pre></details>
@@ -2602,7 +1759,7 @@ Dean&#x27;s list
 <span class="cm"># print(flag_for_outreach(3.88, 4))     # expected True  (engagement trigger)</span>
 <span class="cm"># print(flag_for_outreach(2.60, 13))    # expected True  (GPA trigger)</span></code></pre>
       </div>
-      <h4 id="your-turn-9">Your turn</h4>
+      <h4 id="your-turn-5">Your turn</h4>
       <p>Predict the output of each, then run them. The third one is the interesting case - think about what <code>elif</code> guarantees.</p>
       <pre><code>x = <span class="nm">5</span>
 <span class="kw">if</span> x &gt; <span class="nm">0</span>:
@@ -2619,15 +1776,15 @@ Dean&#x27;s list
     <span class="fn">print</span>(<span class="st">&quot;big&quot;</span>)
 <span class="kw">elif</span> x &gt; <span class="nm">0</span>:
     <span class="fn">print</span>(<span class="st">&quot;positive&quot;</span>)</code></pre>
-      <div class="exercise-block" data-exercise="exconditions-45">
-        <label class="exercise-label" for="exconditions-45-src">Your turn - run it here<span class="vh"> (exercise 9)</span></label>
-        <textarea id="exconditions-45-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
+      <div class="exercise-block" data-exercise="exconditions-43">
+        <label class="exercise-label" for="exconditions-43-src">Your turn - run it here<span class="vh"> (exercise 6)</span></label>
+        <textarea id="exconditions-43-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
-          <button class="ex-run" data-target="exconditions-45">Run</button>
-          <button class="ex-reset" data-target="exconditions-45">Reset</button>
-          <span class="ex-status" id="exconditions-45-status"></span>
+          <button class="ex-run" data-target="exconditions-43">Run</button>
+          <button class="ex-reset" data-target="exconditions-43">Reset</button>
+          <span class="ex-status" id="exconditions-43-status"></span>
         </div>
-        <pre class="ex-output" id="exconditions-45-out"></pre>
+        <pre class="ex-output" id="exconditions-43-out"></pre>
         <details class="ex-solution"><summary>Show a worked solution</summary><pre><code>x = <span class="nm">5</span>
 
 <span class="cm"># Block 1 prints BOTH &quot;positive&quot; and &quot;big&quot; -- two independent ifs.</span>
@@ -2695,9 +1852,9 @@ Dean&#x27;s list
 <span class="out-num">10</span>
       </div>
       </div>
-      <p>Two lists, matched by position: <code>roster[0]</code> and <code>ug_gpas[0]</code> describe the same student. This &quot;parallel lists&quot; arrangement works and is also fragile - sort one without the other and the data is silently corrupted. Section 9 shows a better structure, and Module 4 shows the right one.</p>
-      <h4 id="indexing-and-slicing">Indexing and slicing</h4>
-      <p>Everything you learned about string indexing applies unchanged. Zero-based, negative indices count from the end, slices exclude the stop.</p>
+      <p>Two lists, matched by position: <code>roster[0]</code> and <code>ug_gpas[0]</code> describe the same student. This &quot;parallel lists&quot; arrangement works and is also fragile - sort one without the other and the data is silently corrupted. Section 6 shows a better structure, and Module 4 shows the right one.</p>
+      <h4 id="indexing-and-slicing-1">Indexing and slicing</h4>
+      <p>Each element has a numbered position, its <strong>index</strong>, and you get one element with square brackets.</p>
       <figure class="nb-figure"><img src="assets/fig-3a9f3602da.png" alt="A list variable refers to a list; the list holds numbered positions" loading="lazy"><figcaption>A list variable refers to a list; the list holds numbered positions</figcaption></figure>
       <div data-runnable>
       <pre><code>roster[<span class="nm">0</span>]</code></pre>
@@ -2706,6 +1863,8 @@ Dean&#x27;s list
 &#x27;  amaka OKOROHA  &#x27;
       </div>
       </div>
+      <p><strong>Indexing starts at zero.</strong> <code>roster[0]</code> is the first element: the index is an offset from the start, so <code>[0]</code> means &quot;zero elements in&quot;. Strings, NumPy arrays and pandas all work the same way.</p>
+      <p>Negative indices count from the end, which saves you computing the length:</p>
       <div data-runnable>
       <pre><code>roster[-<span class="nm">1</span>]</code></pre>
       <div class="output-block" data-stored-output>
@@ -2713,6 +1872,7 @@ Dean&#x27;s list
 &#x27;JIAN-WEI CHEN&#x27;
       </div>
       </div>
+      <p>A <strong>slice</strong> takes a range, <code>[start:stop]</code>, and the element at <code>stop</code> is <em>not</em> included. That makes <code>stop - start</code> the length of the slice, and <code>[0:3]</code> and <code>[3:6]</code> fit together with no gap and no overlap.</p>
       <div data-runnable>
       <pre><code>ug_gpas[<span class="nm">0</span>:<span class="nm">3</span>]</code></pre>
       <div class="output-block" data-stored-output>
@@ -2720,6 +1880,17 @@ Dean&#x27;s list
 [<span class="out-num">2.48</span>, <span class="out-num">3.02</span>, <span class="out-num">2.8</span>]
       </div>
       </div>
+      <p>Leave out the start and the slice runs from the beginning; leave out the stop and it runs to the end:</p>
+      <div data-runnable>
+      <pre><code><span class="fn">print</span>(ug_gpas[:<span class="nm">3</span>])
+<span class="fn">print</span>(ug_gpas[<span class="nm">7</span>:])</code></pre>
+      <div class="output-block" data-stored-output>
+        <div class="output-block-label">output</div>
+[<span class="out-num">2.48</span>, <span class="out-num">3.02</span>, <span class="out-num">2.8</span>]
+[<span class="out-num">2.96</span>, <span class="out-num">3.4</span>, <span class="out-num">1.99</span>]
+      </div>
+      </div>
+      <p>Ask for a position that doesn&#x27;t exist and you get an <strong>IndexError</strong>:</p>
       <pre><code>roster[<span class="nm">10</span>]</code></pre>
       <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
       <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
@@ -2728,7 +1899,7 @@ Dean&#x27;s list
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
 IndexError: list index out of range</div>
       </details>
-      <p>Ten elements means valid indices <code>0</code> through <code>9</code>. <code>roster[10]</code> is one past the end - the same off-by-one you met with strings, and the reason <code>len(roster) - 1</code> is the last valid index.</p>
+      <p>Ten elements means valid indices <code>0</code> through <code>9</code>. <code>roster[10]</code> is one past the end, which is why <code>len(roster) - 1</code> is the last valid index.</p>
       <h4 id="lists-are-mutable">Lists are mutable</h4>
       <p>Here&#x27;s where lists differ from strings in a way that matters. Strings are immutable - no method changes one in place. Lists <strong>are</strong> mutable: you can assign to a position and change the list itself.</p>
       <div data-runnable>
@@ -2793,51 +1964,18 @@ length: <span class="out-num">7</span>
       <ol><li>Look at the output and you can see the inner brackets.</li></ol>
       <p><code>.extend()</code> unpacks; <code>.append()</code> wraps. When a &quot;sum&quot; or &quot;mean&quot; calculation suddenly fails with a TypeError about lists and ints, this is usually why.</p>
       </details>
-      <div data-runnable>
-      <pre><code>scores[<span class="nm">6</span>]</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-[<span class="out-num">70</span>, <span class="out-num">75</span>]
-      </div>
-      </div>
-      <div data-runnable>
-      <pre><code>scores[<span class="nm">6</span>][<span class="nm">0</span>]</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-<span class="out-num">70</span>
-      </div>
-      </div>
-      <p><code>scores[6]</code> is a list, so <code>scores[6][0]</code> reaches inside it. Double brackets are your signal that something is nested.</p>
       <h4 id="removing-things">Removing things</h4>
-      <p><code>.pop()</code> removes an element by index and <em>returns</em> it:</p>
+      <p><code>.pop()</code> removes an element by position and returns it; <code>.remove()</code> deletes by value:</p>
       <div data-runnable>
       <pre><code>letters = [<span class="st">&#x27;a&#x27;</span>, <span class="st">&#x27;b&#x27;</span>, <span class="st">&#x27;c&#x27;</span>, <span class="st">&#x27;d&#x27;</span>]
 removed = letters.<span class="fn">pop</span>(<span class="nm">1</span>)
+letters.<span class="fn">remove</span>(<span class="st">&#x27;c&#x27;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;removed {removed!r}, list is now {letters}&quot;</span>)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-removed &#x27;b&#x27;, list is now [&#x27;a&#x27;, &#x27;c&#x27;, &#x27;d&#x27;]
+removed &#x27;b&#x27;, list is now [&#x27;a&#x27;, &#x27;d&#x27;]
       </div>
       </div>
-      <p><code>.remove()</code> deletes by value rather than position, and returns nothing:</p>
-      <div data-runnable>
-      <pre><code>letters = [<span class="st">&#x27;a&#x27;</span>, <span class="st">&#x27;b&#x27;</span>, <span class="st">&#x27;c&#x27;</span>, <span class="st">&#x27;d&#x27;</span>]
-letters.<span class="fn">remove</span>(<span class="st">&#x27;c&#x27;</span>)
-letters</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;d&#x27;]
-      </div>
-      </div>
-      <p>Ask it to remove something that isn&#x27;t there and you get a <code>ValueError</code> - right type of argument, wrong content:</p>
-      <pre><code>letters.<span class="fn">remove</span>(<span class="st">&#x27;z&#x27;</span>)</code></pre>
-      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
-      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
-      <div class="output-block">
-        <div class="output-block-label">output</div>Traceback (most recent call last):
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-ValueError: list.remove(x): x not in list</div>
-      </details>
       <h4 id="testing-membership">Testing membership</h4>
       <p>The <code>in</code> operator asks whether a value appears in a list. It returns a boolean, so it drops straight into an <code>if</code>.</p>
       <div data-runnable>
@@ -2869,122 +2007,54 @@ max:  <span class="out-num">3.4</span>
 mean: <span class="out-num">2.686</span>
       </div>
       </div>
-      <p><code>sorted</code> returns a <strong>new</strong> list in order, leaving the original alone:</p>
+      <p><code>sorted</code> returns a <strong>new</strong> list in order and leaves the original alone; <code>reverse=True</code> sorts high to low. It sorts strings too, alphabetically.</p>
       <div data-runnable>
-      <pre><code><span class="fn">print</span>(<span class="fn">sorted</span>(ug_gpas))
-<span class="fn">print</span>(ug_gpas)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-[<span class="out-num">1.99</span>, <span class="out-num">2.13</span>, <span class="out-num">2.48</span>, <span class="out-num">2.6</span>, <span class="out-num">2.67</span>, <span class="out-num">2.8</span>, <span class="out-num">2.81</span>, <span class="out-num">2.96</span>, <span class="out-num">3.02</span>, <span class="out-num">3.4</span>]
-[<span class="out-num">2.48</span>, <span class="out-num">3.02</span>, <span class="out-num">2.8</span>, <span class="out-num">2.81</span>, <span class="out-num">2.67</span>, <span class="out-num">2.6</span>, <span class="out-num">2.13</span>, <span class="out-num">2.96</span>, <span class="out-num">3.4</span>, <span class="out-num">1.99</span>]
-      </div>
-      </div>
-      <p>The original is untouched. If you want to keep the sorted version, assign it:</p>
-      <div data-runnable>
-      <pre><code>ranked = <span class="fn">sorted</span>(ug_gpas, reverse=<span class="kw">True</span>)
-ranked[:<span class="nm">3</span>]</code></pre>
+      <pre><code><span class="fn">print</span>(<span class="fn">sorted</span>(ug_gpas, reverse=<span class="kw">True</span>)[:<span class="nm">3</span>])   <span class="cm"># top three</span>
+<span class="fn">print</span>(ug_gpas)                              <span class="cm"># unchanged</span></code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [<span class="out-num">3.4</span>, <span class="out-num">3.02</span>, <span class="out-num">2.96</span>]
-      </div>
-      </div>
-      <p><code>reverse=True</code> sorts high to low, so slicing the first three gives the top three GPAs. <code>sorted</code> works on strings too, alphabetically:</p>
-      <div data-runnable>
-      <pre><code><span class="fn">sorted</span>([<span class="st">&#x27;Nadia Haddad&#x27;</span>, <span class="st">&#x27;Amaka Okoroha&#x27;</span>, <span class="st">&#x27;Elliot Park&#x27;</span>])</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-[&#x27;Amaka Okoroha&#x27;, &#x27;Elliot Park&#x27;, &#x27;Nadia Haddad&#x27;]
+[<span class="out-num">2.48</span>, <span class="out-num">3.02</span>, <span class="out-num">2.8</span>, <span class="out-num">2.81</span>, <span class="out-num">2.67</span>, <span class="out-num">2.6</span>, <span class="out-num">2.13</span>, <span class="out-num">2.96</span>, <span class="out-num">3.4</span>, <span class="out-num">1.99</span>]
       </div>
       </div>
       <h4 id="copying-and-a-trap">Copying, and a trap</h4>
-      <p>This is subtle, it bites hard, and it comes directly from the fact that lists are mutable.</p>
-      <div class="callout callout-warn">
-        <div class="callout-label">Predict before you read on</div>
-        <strong>Predict.</strong> After <code>backup = scores</code> and then <code>scores.append(999)</code>, what is <code>len(backup)</code>?  Commit to an answer before you run the next cell.
-      </div>
+      <p><code>backup = scores</code> does <strong>not</strong> copy a list. It gives the same list a second name, so a change made through either name shows up in both. This is called <strong>aliasing</strong>. To make a real copy, use <code>list()</code>:</p>
       <div data-runnable>
       <pre><code>scores = [<span class="nm">88</span>, <span class="nm">92</span>, <span class="nm">79</span>]
-backup = scores
+backup = scores               <span class="cm"># a second name, not a copy</span>
+real_copy = <span class="fn">list</span>(scores)      <span class="cm"># an independent copy</span>
 scores.<span class="fn">append</span>(<span class="nm">999</span>)
 
-<span class="fn">print</span>(<span class="st">f&quot;scores: {scores}&quot;</span>)
-<span class="fn">print</span>(<span class="st">f&quot;backup: {backup}&quot;</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-scores: [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>, <span class="out-num">999</span>]
-backup: [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>, <span class="out-num">999</span>]
-      </div>
-      </div>
-      <details class="debrief"><summary>What happened</summary>
-      <p><code>backup</code> changed too.</p>
-      <p><code>backup = scores</code> did <strong>not</strong> copy the list. It gave the same list a second name. Both names refer to one object in memory, so a change made through either name is visible through both. This is called <strong>aliasing</strong>.</p>
-      </details>
-      <figure class="nb-figure"><img src="assets/fig-7be8920b80.png" alt="Two variable names referring to the same list object" loading="lazy"><figcaption>Two variable names referring to the same list object</figcaption></figure>
-      <p>To make a real copy, use <code>list()</code> or a full slice:</p>
-      <div data-runnable>
-      <pre><code>scores = [<span class="nm">88</span>, <span class="nm">92</span>, <span class="nm">79</span>]
-real_copy = <span class="fn">list</span>(scores)      <span class="cm"># or scores[:]</span>
-scores.<span class="fn">append</span>(<span class="nm">999</span>)
-
-<span class="fn">print</span>(<span class="st">f&quot;scores:    {scores}&quot;</span>)
+<span class="fn">print</span>(<span class="st">f&quot;backup:    {backup}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;real_copy: {real_copy}&quot;</span>)</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-scores:    [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>, <span class="out-num">999</span>]
+backup:    [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>, <span class="out-num">999</span>]
 real_copy: [<span class="out-num">88</span>, <span class="out-num">92</span>, <span class="out-num">79</span>]
       </div>
       </div>
-      <p>This is the reason to be careful with mutable values in general, and it&#x27;s worth remembering when a DataFrame in Module 4 changes when you didn&#x27;t expect it to. Same idea, bigger object.</p>
+      <p>Remember this when a DataFrame in Module 4 changes when you didn&#x27;t expect it to. Same idea, bigger object.</p>
       <h4 id="lists-can-hold-anything">Lists can hold anything</h4>
-      <p>Elements don&#x27;t have to share a type, and lists can contain lists:</p>
-      <div data-runnable>
-      <pre><code>mixed = [<span class="st">&#x27;1003&#x27;</span>, <span class="st">&#x27;Amaka Okoroha&#x27;</span>, <span class="nm">3.02</span>, <span class="kw">True</span>, [<span class="st">&#x27;Biology&#x27;</span>, <span class="st">&#x27;Chemistry&#x27;</span>]]
-
-<span class="fn">print</span>(<span class="fn">type</span>(mixed[<span class="nm">0</span>]))
-<span class="fn">print</span>(<span class="fn">type</span>(mixed[<span class="nm">2</span>]))
-<span class="fn">print</span>(<span class="fn">type</span>(mixed[<span class="nm">3</span>]))
-<span class="fn">print</span>(<span class="fn">type</span>(mixed[<span class="nm">4</span>]))</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-&lt;class &#x27;str&#x27;&gt;
-&lt;class &#x27;float&#x27;&gt;
-&lt;class &#x27;bool&#x27;&gt;
-&lt;class &#x27;list&#x27;&gt;
-      </div>
-      </div>
-      <p>That flexibility is convenient and, in data work, usually a warning sign - a column where the types vary is a column that will break something. One of the first things NumPy does in Module 3 is take that flexibility away, on purpose.</p>
-      <h4 id="lists-and-strings">Lists and strings</h4>
-      <p><code>.split()</code> turns a string into a list, which you saw in section 4. <code>.join()</code> turns a list back into a string, and it&#x27;s how you build readable output:</p>
-      <div data-runnable>
-      <pre><code>row = <span class="st">&quot;1003,Amaka Okoroha,Biology,3.02&quot;</span>
-fields = row.<span class="fn">split</span>(<span class="st">&quot;,&quot;</span>)
-<span class="fn">print</span>(fields)
-<span class="fn">print</span>(<span class="st">&quot; | &quot;</span>.<span class="fn">join</span>(fields))</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-[&#x27;<span class="out-num">1003</span>&#x27;, &#x27;Amaka Okoroha&#x27;, &#x27;Biology&#x27;, &#x27;<span class="out-num">3.02</span>&#x27;]
-<span class="out-num">1003</span> | Amaka Okoroha | Biology | <span class="out-num">3.02</span>
-      </div>
-      </div>
-      <h5 id="your-turn-10">Your turn</h5>
+      <p>Elements don&#x27;t have to share a type: <code>[&#x27;1003&#x27;, &#x27;Amaka Okoroha&#x27;, 3.02, True]</code> is a legal list. In data work that flexibility is usually a warning sign, and one of the first things NumPy does in Module 3 is take it away, on purpose.</p>
+      <h5 id="your-turn-6">Your turn</h5>
       <p>Using <code>ug_gpas</code>:</p>
-      <ol><li>Print the highest and lowest GPA.</li><li>Print the mean, rounded to two decimal places, using an f-string.</li><li>Print the top three GPAs, highest first.</li><li>Print how many students have a GPA of at least 3.5. (You can do this with <code>sorted</code> and a slice - no loop needed yet. A loop would be cleaner, and that&#x27;s section 8.)</li></ol>
-      <div class="exercise-block" data-exercise="exdata-structures-62">
-        <label class="exercise-label" for="exdata-structures-62-src">Your turn - run it here<span class="vh"> (exercise 10)</span></label>
-        <textarea id="exdata-structures-62-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
+      <ol><li>Print the highest and lowest GPA.</li><li>Print the mean, rounded to two decimal places, using an f-string.</li><li>Print the top three GPAs, highest first.</li><li>Print how many students have a GPA of at least 3.5. (You can do this with <code>sorted</code> and a slice - no loop needed yet. A loop would be cleaner, and that&#x27;s section 5.)</li></ol>
+      <div class="exercise-block" data-exercise="exdata-structures-47">
+        <label class="exercise-label" for="exdata-structures-47-src">Your turn - run it here<span class="vh"> (exercise 7)</span></label>
+        <textarea id="exdata-structures-47-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
-          <button class="ex-run" data-target="exdata-structures-62">Run</button>
-          <button class="ex-reset" data-target="exdata-structures-62">Reset</button>
-          <span class="ex-status" id="exdata-structures-62-status"></span>
+          <button class="ex-run" data-target="exdata-structures-47">Run</button>
+          <button class="ex-reset" data-target="exdata-structures-47">Reset</button>
+          <span class="ex-status" id="exdata-structures-47-status"></span>
         </div>
-        <pre class="ex-output" id="exdata-structures-62-out"></pre>
+        <pre class="ex-output" id="exdata-structures-47-out"></pre>
         <details class="ex-solution"><summary>Show a worked solution</summary><pre><code><span class="fn">print</span>(<span class="st">f&quot;highest: {max(ug_gpas)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;lowest:  {min(ug_gpas)}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;mean:    {sum(ug_gpas) / len(ug_gpas):.2f}&quot;</span>)
 <span class="fn">print</span>(<span class="st">f&quot;top 3:   {sorted(ug_gpas, reverse=True)[:3]}&quot;</span>)
 
 <span class="cm"># Counting, without a loop yet: sort descending and read off where the</span>
-<span class="cm"># cutoff falls. Clumsy on purpose -- section 8 does this properly.</span>
+<span class="cm"># cutoff falls. Clumsy on purpose -- section 5 does this properly.</span>
 ranked = <span class="fn">sorted</span>(ug_gpas, reverse=<span class="kw">True</span>)
 <span class="fn">print</span>(<span class="st">f&quot;ranked: {ranked}&quot;</span>)
 <span class="fn">print</span>(<span class="st">&quot;3.5 or above: 5 -- count them in the sorted list above&quot;</span>)
@@ -3130,7 +2200,7 @@ dict_values([<span class="out-num">3.02</span>, <span class="out-num">1.99</span
 dict_items([(&#x27;Amaka Okoroha&#x27;, <span class="out-num">3.02</span>), (&#x27;Devin Castellanos&#x27;, <span class="out-num">1.99</span>), (&#x27;Priya Raghunathan&#x27;, <span class="out-num">2.8</span>)])
       </div>
       </div>
-      <p><code>.items()</code> gives you key-value pairs. Look at how they print: <code>[(&#x27;Amaka Okoroha&#x27;, 3.02), ...]</code>. Those are <strong>tuples</strong>, the same thing <code>enumerate</code> handed you in section 8 - which is why the same two-name unpacking works on them.</p>
+      <p><code>.items()</code> gives you key-value pairs. Look at how they print: <code>[(&#x27;Amaka Okoroha&#x27;, 3.02), ...]</code>. Those are <strong>tuples</strong>, the same thing <code>enumerate</code> handed you in section 5 - which is why the same two-name unpacking works on them.</p>
       <h4 id="looping-over-a-dictionary">Looping over a dictionary</h4>
       <p>Loop over a dictionary directly and you get the <strong>keys</strong>:</p>
       <div data-runnable>
@@ -3166,50 +2236,8 @@ Priya Raghunathan      <span class="out-num">2.80</span>
       </div>
       </div>
       <p>That two-variable unpacking is the same mechanic as <code>enumerate</code>.</p>
-      <h4 id="counting-with-a-dictionary">Counting with a dictionary</h4>
-      <p>Here is the pattern that makes dictionaries indispensable. You have a list of majors, some repeated, and you want a count of each.</p>
-      <div data-runnable>
-      <pre><code>majors = [<span class="st">&quot;Biology&quot;</span>, <span class="st">&quot;Business&quot;</span>, <span class="st">&quot;Mathematics&quot;</span>, <span class="st">&quot;Psychology&quot;</span>, <span class="st">&quot;Economics&quot;</span>,
-          <span class="st">&quot;Communications&quot;</span>, <span class="st">&quot;Computer Science&quot;</span>, <span class="st">&quot;Sociology&quot;</span>, <span class="st">&quot;Chemistry&quot;</span>,
-          <span class="st">&quot;Engineering&quot;</span>]
-
-fields = [<span class="st">&quot;Science&quot;</span>, <span class="st">&quot;Business&quot;</span>, <span class="st">&quot;Science&quot;</span>, <span class="st">&quot;Social Science&quot;</span>, <span class="st">&quot;Business&quot;</span>,
-          <span class="st">&quot;Humanities&quot;</span>, <span class="st">&quot;Science&quot;</span>, <span class="st">&quot;Social Science&quot;</span>, <span class="st">&quot;Science&quot;</span>, <span class="st">&quot;Science&quot;</span>]
-
-counts = {}
-
-<span class="kw">for</span> field <span class="kw">in</span> fields:
-    <span class="kw">if</span> field <span class="kw">in</span> counts:
-        counts[field] += <span class="nm">1</span>
-    <span class="kw">else</span>:
-        counts[field] = <span class="nm">1</span>
-
-counts</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-{&#x27;Science&#x27;: <span class="out-num">5</span>, &#x27;Business&#x27;: <span class="out-num">2</span>, &#x27;Social Science&#x27;: <span class="out-num">2</span>, &#x27;Humanities&#x27;: <span class="out-num">1</span>}
-      </div>
-      </div>
-      <p>Walk through the logic: for each field, if it&#x27;s already a key, add one to its count; if not, create it with a count of <code>1</code>. That <code>if/else</code> is guarding against the KeyError you&#x27;d get from <code>counts[field] += 1</code> on a key that doesn&#x27;t exist yet.</p>
-      <p><code>.get()</code> collapses it to one line, which is the idiom you&#x27;ll see in real code:</p>
-      <div data-runnable>
-      <pre><code>counts = {}
-
-<span class="kw">for</span> field <span class="kw">in</span> fields:
-    counts[field] = counts.<span class="fn">get</span>(field, <span class="nm">0</span>) + <span class="nm">1</span>
-
-counts</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-{&#x27;Science&#x27;: <span class="out-num">5</span>, &#x27;Business&#x27;: <span class="out-num">2</span>, &#x27;Social Science&#x27;: <span class="out-num">2</span>, &#x27;Humanities&#x27;: <span class="out-num">1</span>}
-      </div>
-      </div>
-      <p>That one line is dense, so take it apart from the inside out. On the pass where <code>field</code> is <code>&quot;Science&quot;</code> for the second time:</p>
-      <table class="data-table"><thead><tr><th>Step</th><th>Expression</th><th>Value</th></tr></thead><tbody><tr><td>1</td><td><code>counts.get(&quot;Science&quot;, 0)</code></td><td><code>1</code> - it&#x27;s already a key, so we get its count</td></tr><tr><td>2</td><td><code>... + 1</code></td><td><code>2</code></td></tr><tr><td>3</td><td><code>counts[&quot;Science&quot;] = ...</code></td><td>stores <code>2</code> back under the key</td></tr></tbody></table>
-      <p>And on the pass where <code>&quot;Humanities&quot;</code> appears for the <em>first</em> time:</p>
-      <table class="data-table"><thead><tr><th>Step</th><th>Expression</th><th>Value</th></tr></thead><tbody><tr><td>1</td><td><code>counts.get(&quot;Humanities&quot;, 0)</code></td><td><code>0</code> - not a key yet, so the default</td></tr><tr><td>2</td><td><code>... + 1</code></td><td><code>1</code></td></tr><tr><td>3</td><td><code>counts[&quot;Humanities&quot;] = ...</code></td><td>creates the key with <code>1</code></td></tr></tbody></table>
-      <p>The whole trick is that <code>.get()</code> supplies a starting value for keys that don&#x27;t exist yet, so the same line handles both the first sighting and every one after. Read it as: <strong>take the current count, or zero if there isn&#x27;t one, add one, store it back.</strong></p>
-      <p>You now have a frequency table - the single most common summary in all of data analysis. In Module 4 this is <code>value_counts()</code>, one method call. It&#x27;s worth having built it by hand once, so you know what that method is doing.</p>
+      <h4 id="counting">Counting</h4>
+      <p>Counting how often each value appears is the most common summary in data work. In Module 4 it is one method call, <code>value_counts()</code>. (The Badge Turnstile room in <em>Escape from McInnis Hall</em> builds the count by hand with a dictionary, if you want to see how that method works inside.)</p>
       <h4 id="a-record-as-a-dictionary">A record as a dictionary</h4>
       <p>Dictionaries really come into their own for holding one thing with several attributes. Instead of matching up ten parallel lists, put one student in one dictionary:</p>
       <div data-runnable>
@@ -3247,33 +2275,9 @@ Amaka Okoroha studies Biology
 <span class="out-num">1024</span>  Priya Raghunathan    <span class="out-num">2.80</span>
       </div>
       </div>
-      <p>Look at what that loop does: <code>record</code> is a dictionary, so <code>record[&#x27;name&#x27;]</code> reaches inside it. Loop over a list, index into a dictionary. Combining the two structures is most of practical Python.</p>
-      <p>And now sorting is safe, because each record carries its own fields:</p>
-      <div data-runnable>
-      <pre><code>by_gpa = <span class="fn">sorted</span>(cohort, key=<span class="kw">lambda</span> r: r[<span class="st">&quot;ug_gpa&quot;</span>], reverse=<span class="kw">True</span>)
-
-<span class="kw">for</span> record <span class="kw">in</span> by_gpa:
-    <span class="fn">print</span>(<span class="st">f&quot;{record[&#x27;name&#x27;]:20} {record[&#x27;ug_gpa&#x27;]:.2f}&quot;</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-Amaka Okoroha        <span class="out-num">3.02</span>
-Priya Raghunathan    <span class="out-num">2.80</span>
-Devin Castellanos    <span class="out-num">1.99</span>
-      </div>
-      </div>
-      <p>The <code>key=lambda r: r[&quot;ug_gpa&quot;]</code> tells <code>sorted</code> which field to sort on. <code>lambda</code> is a compact way to write a tiny function; you don&#x27;t need to write these yet, but you should recognize one when you see it, because pandas uses the same idea constantly.</p>
+      <p>Look at what that loop does: <code>record</code> is a dictionary, so <code>record[&#x27;name&#x27;]</code> reaches inside it. Loop over a list, index into a dictionary. Combining the two structures is most of practical Python, and because each record carries its own fields, nothing comes apart when you sort.</p>
       <h4 id="what-can-be-a-key">What can be a key?</h4>
-      <p>Keys have to be immutable. Strings, numbers, and booleans are fine. Lists are not:</p>
-      <pre><code>bad = {}
-bad[[<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>]] = <span class="nm">1</span></code></pre>
-      <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
-      <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
-      <div class="output-block">
-        <div class="output-block-label">output</div>Traceback (most recent call last):
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">2</span>, in &lt;module&gt;
-TypeError: unhashable type: &#x27;list&#x27;</div>
-      </details>
-      <p><code>unhashable type: &#x27;list&#x27;</code> is the message, and &quot;hashable&quot; is effectively a synonym for &quot;usable as a dictionary key.&quot; Values, on the other hand, can be anything at all - including lists and other dictionaries:</p>
+      <p>Keys have to be immutable: strings and numbers are fine, and a list as a key raises <code>TypeError: unhashable type</code>. Values can be anything at all, including lists:</p>
       <div data-runnable>
       <pre><code>majors_by_field = {
     <span class="st">&quot;Science&quot;</span>: [<span class="st">&quot;Biology&quot;</span>, <span class="st">&quot;Mathematics&quot;</span>, <span class="st">&quot;Computer Science&quot;</span>, <span class="st">&quot;Chemistry&quot;</span>, <span class="st">&quot;Engineering&quot;</span>],
@@ -3345,7 +2349,7 @@ undergraduate = {
 }
 
 <span class="cm"># Note: Marcus Webb is still enrolled, so grad_gpa is None -- a real hole in</span>
-<span class="cm"># real data. Section 11 and Module 4 both come back to this.</span>
+<span class="cm"># real data. Module 4 comes back to this.</span>
 graduate = {
     <span class="nm">1002</span>: {<span class="st">&quot;grad_gpa&quot;</span>: <span class="nm">2.86</span>,    <span class="st">&quot;program&quot;</span>: <span class="st">&quot;MSW&quot;</span>,            <span class="st">&quot;completion_status&quot;</span>: <span class="st">&quot;completed&quot;</span>},
     <span class="nm">1003</span>: {<span class="st">&quot;grad_gpa&quot;</span>: <span class="nm">3.4</span>,     <span class="st">&quot;program&quot;</span>: <span class="st">&quot;MS Data Science&quot;</span>, <span class="st">&quot;completion_status&quot;</span>: <span class="st">&quot;completed&quot;</span>},
@@ -3393,29 +2397,8 @@ lms_activity = {
 Loaded <span class="out-num">10</span> students across <span class="out-num">6</span> tables.
       </div>
       </div>
-      <h5 id="is-versus"><code>is</code> versus <code>==</code></h5>
-      <p>One more operator before we use the data, because it&#x27;s about to appear and it isn&#x27;t the one you learned in section 6.</p>
-      <p><code>==</code> asks whether two values are <strong>equal</strong>. <code>is</code> asks whether two names refer to the <strong>very same object</strong> - the aliasing question from section 7.</p>
-      <div data-runnable>
-      <pre><code>a = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]
-b = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]      <span class="cm"># same contents, separately built</span>
-c = a              <span class="cm"># a second name for a&#x27;s list</span>
-
-<span class="fn">print</span>(a == b)      <span class="cm"># equal contents?</span>
-<span class="fn">print</span>(a <span class="kw">is</span> b)      <span class="cm"># the same object?</span>
-<span class="fn">print</span>(a <span class="kw">is</span> c)      <span class="cm"># this one is an alias</span></code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-True
-False
-True
-      </div>
-      </div>
-      <p><code>a == b</code> is <code>True</code> because the contents match. <code>a is b</code> is <code>False</code> because they are two separate lists that happen to look alike. <code>a is c</code> is <code>True</code> because <code>c = a</code> never made a copy.</p>
-      <p>In practice you will use <code>==</code> almost always. The one place <code>is</code> is the correct choice is checking for <code>None</code>:</p>
-      <pre><code><span class="kw">if</span> value <span class="kw">is</span> <span class="kw">None</span>:        <span class="cm"># do this</span>
-<span class="kw">if</span> value == <span class="kw">None</span>:        <span class="cm"># works, but not the convention</span></code></pre>
-      <p>There is exactly one <code>None</code> object in a running Python program, so identity is the precise question, and <code>is None</code> is what every Python codebase writes. You&#x27;ll see it in the next cell and throughout the rest of this notebook.</p>
+      <h5 id="is-none"><code>is None</code></h5>
+      <p>One more operator before we use the data. <code>==</code> asks whether two values are equal; <code>is</code> asks whether two names refer to the very same object. Use <code>==</code> for comparing values. The one place to write <code>is</code> is checking for a missing value: <code>if value is None:</code>. You&#x27;ll see it in the schema report below.</p>
       <p>Now a lookup crosses tables using the shared <code>student_id</code>, which is exactly what the schema diagram promised:</p>
       <div data-runnable>
       <pre><code>sid = <span class="nm">1069</span>
@@ -3498,21 +2481,21 @@ graduate
 ... [<span class="out-num">11</span> more lines]
       </div>
       </div>
-      <p>That&#x27;s a real deliverable. It uses a nested loop over a dictionary of dictionaries, a <code>None</code> check, <code>.join()</code> on a list of field names, and f-string alignment - everything from sections 3 through 9, doing actual work.</p>
+      <p>That&#x27;s a real deliverable. It uses a nested loop over a dictionary of dictionaries, a <code>None</code> check, <code>.join()</code> on a list of field names, and f-string alignment - everything in this module, doing actual work.</p>
       <p>It also surfaces the thing Lee most needs to know: <strong>the graduate table has a missing value.</strong> Student 1044 is still enrolled, so there&#x27;s no GPA to record. That single <code>None</code> will break a naive average, and how you handle it is a decision you&#x27;ll make properly in Module 4.</p>
-      <h5 id="your-turn-13">Your turn</h5>
+      <h5 id="your-turn-9">Your turn</h5>
       <p>Answer three of Lee&#x27;s questions using the six tables.</p>
-      <ol><li>What is the mean undergraduate GPA across the cohort?</li><li>How many students are in each <code>completion_status</code> category? (Use the counting pattern.)</li><li>Print every student whose <code>logins_per_week</code> is below 8, with their name and undergraduate GPA. Are they the students you&#x27;d expect?</li></ol>
+      <ol><li>What is the mean undergraduate GPA across the cohort?</li><li>How many students are in each <code>completion_status</code> category? (The Badge Turnstile room in <em>Escape from McInnis Hall</em> shows one way to count.)</li><li>Print every student whose <code>logins_per_week</code> is below 8, with their name and undergraduate GPA. Are they the students you&#x27;d expect?</li></ol>
       <p>For question 1 you&#x27;ll need to loop over <code>undergraduate.values()</code>.</p>
-      <div class="exercise-block" data-exercise="exdata-structures-64">
-        <label class="exercise-label" for="exdata-structures-64-src">Your turn - run it here<span class="vh"> (exercise 13)</span></label>
-        <textarea id="exdata-structures-64-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
+      <div class="exercise-block" data-exercise="exdata-structures-54">
+        <label class="exercise-label" for="exdata-structures-54-src">Your turn - run it here<span class="vh"> (exercise 10)</span></label>
+        <textarea id="exdata-structures-54-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
-          <button class="ex-run" data-target="exdata-structures-64">Run</button>
-          <button class="ex-reset" data-target="exdata-structures-64">Reset</button>
-          <span class="ex-status" id="exdata-structures-64-status"></span>
+          <button class="ex-run" data-target="exdata-structures-54">Run</button>
+          <button class="ex-reset" data-target="exdata-structures-54">Reset</button>
+          <span class="ex-status" id="exdata-structures-54-status"></span>
         </div>
-        <pre class="ex-output" id="exdata-structures-64-out"></pre>
+        <pre class="ex-output" id="exdata-structures-54-out"></pre>
         <details class="ex-solution"><summary>Show a worked solution</summary><pre><code><span class="cm"># 1 -- mean undergraduate GPA</span>
 total = <span class="nm">0</span>
 <span class="kw">for</span> record <span class="kw">in</span> undergraduate.<span class="fn">values</span>():
@@ -3610,7 +2593,7 @@ c
       <div class="output-block">
         <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-NameError: name &#x27;rooster&#x27; is not defined</div>
+NameError: name &#x27;rooster&#x27; is not defined. Did you mean: &#x27;roster&#x27;?</div>
       </details>
       <p>A <code>NameError</code> and a typo. Read the name in the message - <code>rooster</code> - and the fix is obvious. Most NameErrors are misspellings.</p>
       <p>You also can&#x27;t loop over something that isn&#x27;t a sequence:</p>
@@ -3724,8 +2707,36 @@ TypeError: &#x27;tuple&#x27; object does not support item assignment</div>
 Amaka Okoroha
       </div>
       </div>
-      <p>That is exactly what <code>for i, raw in enumerate(roster)</code> is doing on every pass through the loop. It&#x27;s also how you&#x27;ll take two values back from a function later, and how you&#x27;ll loop over a dictionary in section 9.</p>
+      <p>That is exactly what <code>for i, raw in enumerate(roster)</code> is doing on every pass through the loop. It&#x27;s also how you&#x27;ll take two values back from a function later, and how you&#x27;ll loop over a dictionary in section 6.</p>
       <p>You do not need to build tuples yourself in this course. You do need to recognize one when you see it, because Python hands them back constantly - and because the error message when you try to modify one is otherwise baffling.</p>
+      <h3 id="zip">zip</h3>
+      <p><code>enumerate</code> pairs each element with its position. When two lists are in the same order, <code>zip</code> pairs them with <em>each other</em>, one element from each on every pass:</p>
+      <div data-runnable>
+      <pre><code><span class="kw">for</span> raw, gpa <span class="kw">in</span> <span class="fn">zip</span>(roster, ug_gpas):
+    <span class="fn">print</span>(<span class="st">f&quot;{clean_name(raw):20} {gpa:.2f}&quot;</span>)</code></pre>
+      <div class="output-block" data-stored-output>
+        <div class="output-block-label">output</div>
+Amaka Okoroha        <span class="out-num">2.48</span>
+Devin Castellanos    <span class="out-num">3.02</span>
+Priya Raghunathan    <span class="out-num">2.80</span>
+Marcus Webb          <span class="out-num">2.81</span>
+Sofia  Marchetti     <span class="out-num">2.67</span>
+Tobias Lindqvist     <span class="out-num">2.60</span>
+Nadia Haddad         <span class="out-num">2.13</span>
+Elliot Park          <span class="out-num">2.96</span>
+Rosalind Achebe      <span class="out-num">3.40</span>
+Jian-Wei Chen        <span class="out-num">1.99</span>
+      </div>
+      </div>
+      <p>Each pass hands back a tuple, unpacked into two names exactly as with <code>enumerate</code>. One thing to know: <code>zip</code> stops at the end of the <strong>shorter</strong> list, silently.</p>
+      <div data-runnable>
+      <pre><code><span class="fn">print</span>(<span class="fn">list</span>(<span class="fn">zip</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>], [<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>])))</code></pre>
+      <div class="output-block" data-stored-output>
+        <div class="output-block-label">output</div>
+[(<span class="out-num">1</span>, &#x27;a&#x27;), (<span class="out-num">2</span>, &#x27;b&#x27;)]
+      </div>
+      </div>
+      <p>The <code>3</code> simply disappears, with no error. If two lists are supposed to line up, check that their lengths match before you zip them. You&#x27;ll see <code>zip</code> again in Modules 3 and 5.</p>
       <h3 id="the-accumulator-pattern">The accumulator pattern</h3>
       <p>Here is the single most important loop pattern in data work. You want a total, so you start at zero and add to a variable each time through.</p>
       <div data-runnable>
@@ -3779,7 +2790,7 @@ clean_roster</code></pre>
  &#x27;Rosalind Achebe&#x27;,
  &#x27;Jian-Wei Chen&#x27;]
       </div>
-      <p>That&#x27;s the payoff promised back in section 4: one cleaning function, one loop, the whole cohort done.</p>
+      <p>That&#x27;s the payoff promised back in section 1: one cleaning function, one loop, the whole cohort done.</p>
       <p>Except look closely at the output before you celebrate.</p>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
@@ -3804,7 +2815,7 @@ clean_roster</code></pre>
       </div>
       <details class="debrief"><summary>What happened</summary>
       <p><code>Sofia  Marchetti</code> still has two spaces between first and last name.</p>
-      <p><code>.strip()</code> only removes whitespace from the <strong>ends</strong> of a string, exactly as promised in section 4. It has nothing to say about whitespace in the middle. Our <code>clean_name</code> function did what it was written to do, and what it was written to do was not enough.</p>
+      <p><code>.strip()</code> only removes whitespace from the <strong>ends</strong> of a string, exactly as promised in section 1. It has nothing to say about whitespace in the middle. Our <code>clean_name</code> function did what it was written to do, and what it was written to do was not enough.</p>
       <p>This is the most common way data cleaning fails: the code runs happily, raises nothing, and leaves the problem in place. Had we not printed the values and looked at them, this would have traveled all the way into the Cabinet&#x27;s report.</p>
       <p>The fix is a small idiom worth memorizing. <code>.split()</code> breaks the string on <em>any</em> run of whitespace and discards the empties; <code>&quot; &quot;.join(...)</code> puts it back together with exactly one space between pieces:</p>
       </details>
@@ -3852,27 +2863,22 @@ O&#x27;Brien
       <p>Real name handling is genuinely hard and no one-line fix exists. <code>.title()</code> is fine for this cohort. On real data you would check the output against the source, which is the same lesson as above: <strong>look at your values.</strong></p>
       <p><code>clean_roster</code> is now usable data.</p>
       <h3 id="while-loops">while loops</h3>
-      <p>A <code>for</code> loop runs once per element. A <strong>while</strong> loop runs as long as a condition stays true - which means you use it when you don&#x27;t know in advance how many iterations you need.</p>
+      <p>A <strong>while</strong> loop runs as long as a condition stays true. You&#x27;ll rarely need one in this course: prefer <code>for</code> whenever you&#x27;re looping over a collection.</p>
       <div data-runnable>
       <pre><code>countdown = <span class="nm">3</span>
 
 <span class="kw">while</span> countdown &gt; <span class="nm">0</span>:
     <span class="fn">print</span>(countdown)
-    countdown -= <span class="nm">1</span>
-
-<span class="fn">print</span>(<span class="st">&quot;done&quot;</span>)</code></pre>
+    countdown -= <span class="nm">1</span>      <span class="cm"># without this line, the loop never ends</span></code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 <span class="out-num">3</span>
 <span class="out-num">2</span>
 <span class="out-num">1</span>
-done
       </div>
       </div>
-      <p>The <code>countdown -= 1</code> is doing critical work. <strong>If the condition never becomes false, the loop never ends.</strong> Remove that line and this cell would print <code>3</code> forever until you interrupted the kernel.</p>
-      <p>This is the most common way a notebook hangs. If a cell shows <code>[*]</code> and never finishes, an infinite loop is the first thing to suspect. Use <em>Kernel → Interrupt</em> to stop it.</p>
-      <p>Because of that hazard, prefer <code>for</code> whenever you&#x27;re iterating over a collection. Reach for <code>while</code> only when the stopping condition genuinely isn&#x27;t a count.</p>
-      <p><code>break</code> exits a loop immediately:</p>
+      <p>If a cell shows <code>[*]</code> and never finishes, an infinite loop is the first thing to suspect. <em>Kernel → Interrupt</em> stops it.</p>
+      <p><code>break</code> exits any loop immediately:</p>
       <div data-runnable>
       <pre><code>target = <span class="st">&quot;Nadia Haddad&quot;</span>
 
@@ -3885,39 +2891,21 @@ done
 found Nadia Haddad at index <span class="out-num">6</span>
       </div>
       </div>
-      <p>Without <code>break</code> the loop would keep checking the remaining names for no reason. On ten records that&#x27;s free; on ten million it isn&#x27;t.</p>
       <h3 id="nested-loops">Nested loops</h3>
-      <p>A loop can contain another loop. The inner one runs completely for every single iteration of the outer one.</p>
-      <div data-runnable>
-      <pre><code>terms = [<span class="st">&quot;Fall&quot;</span>, <span class="st">&quot;Spring&quot;</span>]
-
-<span class="kw">for</span> raw <span class="kw">in</span> roster[:<span class="nm">3</span>]:
-    <span class="kw">for</span> term <span class="kw">in</span> terms:
-        <span class="fn">print</span>(<span class="st">f&quot;{clean_name(raw):20} {term}&quot;</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-Amaka Okoroha        Fall
-Amaka Okoroha        Spring
-Devin Castellanos    Fall
-Devin Castellanos    Spring
-Priya Raghunathan    Fall
-Priya Raghunathan    Spring
-      </div>
-      </div>
-      <p>Three students times two terms is six lines. Watch the multiplication: nesting a 1,000-element loop inside another 1,000-element loop is a million iterations, and that&#x27;s how a cell that &quot;should be instant&quot; takes four minutes. Module 3 exists largely to make this kind of work fast.</p>
-      <h4 id="your-turn-11">Your turn</h4>
+      <p>A loop can contain another loop, and the inner one runs completely on every pass of the outer one. Watch the multiplication: a 1,000-element loop inside another is a million iterations, which is how a cell that &quot;should be instant&quot; takes four minutes. Module 3 exists largely to make that kind of work fast.</p>
+      <h4 id="your-turn-7">Your turn</h4>
       <p>Using <code>roster</code> and <code>ug_gpas</code> (same order, remember):</p>
-      <ol><li>Loop over both together with <code>enumerate</code> and print each student&#x27;s clean name and GPA, one per line, nicely aligned.</li><li>Count how many students are flagged <code>&quot;at risk&quot;</code> by the <code>standing</code> function from section 6.</li><li>Build a list called <code>honor_roll</code> containing the clean names of every student with a GPA of 3.5 or above.</li></ol>
-      <p>Rebuild <code>standing</code> first if you&#x27;ve restarted the kernel since section 6.</p>
-      <div class="exercise-block" data-exercise="exloops-50">
-        <label class="exercise-label" for="exloops-50-src">Your turn - run it here<span class="vh"> (exercise 11)</span></label>
-        <textarea id="exloops-50-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
+      <ol><li>Loop over both together with <code>enumerate</code> and print each student&#x27;s clean name and GPA, one per line, nicely aligned.</li><li>Count how many students are flagged <code>&quot;at risk&quot;</code> by the <code>standing</code> function from section 3.</li><li>Build a list called <code>honor_roll</code> containing the clean names of every student with a GPA of 3.5 or above.</li></ol>
+      <p>Rebuild <code>standing</code> first if you&#x27;ve restarted the kernel since section 3.</p>
+      <div class="exercise-block" data-exercise="exloops-52">
+        <label class="exercise-label" for="exloops-52-src">Your turn - run it here<span class="vh"> (exercise 8)</span></label>
+        <textarea id="exloops-52-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
-          <button class="ex-run" data-target="exloops-50">Run</button>
-          <button class="ex-reset" data-target="exloops-50">Reset</button>
-          <span class="ex-status" id="exloops-50-status"></span>
+          <button class="ex-run" data-target="exloops-52">Run</button>
+          <button class="ex-reset" data-target="exloops-52">Reset</button>
+          <span class="ex-status" id="exloops-52-status"></span>
         </div>
-        <pre class="ex-output" id="exloops-50-out"></pre>
+        <pre class="ex-output" id="exloops-52-out"></pre>
         <details class="ex-solution"><summary>Show a worked solution</summary><pre><code><span class="kw">def</span> <span class="fn">standing</span>(gpa):
     <span class="st">&quot;&quot;&quot;Return a student&#x27;s academic standing from their GPA.&quot;&quot;&quot;</span>
     <span class="kw">if</span> gpa &gt;= <span class="nm">3.5</span>:
@@ -3950,7 +2938,7 @@ honor_roll = []
         honor_roll.<span class="fn">append</span>(<span class="fn">clean_name</span>(raw))
 <span class="fn">print</span>(<span class="st">f&quot;honor roll ({len(honor_roll)}): {honor_roll}&quot;</span>)</code></pre></details>
       </div>
-      <h4 id="your-turn-12">Your turn</h4>
+      <h4 id="your-turn-8">Your turn</h4>
       <p>Predict the output of each loop before running it. All three are short; two of them do something surprising.</p>
       <pre><code><span class="cm"># A</span>
 <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):
@@ -3971,15 +2959,15 @@ values = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm"
     <span class="kw">if</span> <span class="fn">len</span>(values) &gt; <span class="nm">8</span>:
         <span class="kw">break</span>
 <span class="fn">print</span>(values)</code></pre>
-      <div class="exercise-block" data-exercise="exloops-53">
-        <label class="exercise-label" for="exloops-53-src">Your turn - run it here<span class="vh"> (exercise 12)</span></label>
-        <textarea id="exloops-53-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
+      <div class="exercise-block" data-exercise="exloops-55">
+        <label class="exercise-label" for="exloops-55-src">Your turn - run it here<span class="vh"> (exercise 9)</span></label>
+        <textarea id="exloops-55-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
-          <button class="ex-run" data-target="exloops-53">Run</button>
-          <button class="ex-reset" data-target="exloops-53">Reset</button>
-          <span class="ex-status" id="exloops-53-status"></span>
+          <button class="ex-run" data-target="exloops-55">Run</button>
+          <button class="ex-reset" data-target="exloops-55">Reset</button>
+          <span class="ex-status" id="exloops-55-status"></span>
         </div>
-        <pre class="ex-output" id="exloops-53-out"></pre>
+        <pre class="ex-output" id="exloops-55-out"></pre>
         <details class="ex-solution"><summary>Show a worked solution</summary><pre><code><span class="cm"># A prints 0 1 2 and then 2 again.</span>
 <span class="cm"># B prints 3, not 6.</span>
 <span class="cm"># C prints [1, 2, 3, 1, 2, 3, 1, 2, 3].</span></code></pre></details>
@@ -4069,9 +3057,7 @@ m.<span class="fn">sqrt</span>(<span class="nm">144</span>)</code></pre>
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
 ModuleNotFoundError: No module named &#x27;maath&#x27;</div>
       </details>
-      <p>This is one of the most common errors you&#x27;ll hit in a new environment, and it usually means the package isn&#x27;t installed rather than misspelled. In a notebook you can install it right there:</p>
-      <pre><code>!pip install some-package</code></pre>
-      <p>The <code>!</code> runs a shell command instead of Python. You&#x27;ll rarely need it in Colab, which comes with the data science stack preinstalled.</p>
+      <p>In a new environment it usually means the package isn&#x27;t installed rather than misspelled. The Appendix shows how to install one.</p>
       <h3 id="where-you-re-going">Where you&#x27;re going</h3>
       <p>Here&#x27;s the module that Module 3 is about:</p>
       <div data-runnable>
@@ -4085,37 +3071,18 @@ gpas = np.<span class="fn">array</span>([<span class="nm">2.48</span>, <span cla
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 mean:   <span class="out-num">2.686</span>
-
 stdev:  <span class="out-num">0.396</span>
 max:    <span class="out-num">3.4</span>
       </div>
       </div>
-      <p>Compare that to the accumulator loop you wrote in section 8. Same mean, one method call. And <code>.std()</code> would have taken you fifteen lines by hand.</p>
-      <p>That&#x27;s not the real reason NumPy exists, though. Try this:</p>
-      <div data-runnable>
-      <pre><code><span class="cm"># Add 0.1 to every GPA -- the pure Python way</span>
-curved = []
-<span class="kw">for</span> gpa <span class="kw">in</span> [<span class="nm">2.48</span>, <span class="nm">3.02</span>, <span class="nm">2.8</span>]:
-    curved.<span class="fn">append</span>(gpa + <span class="nm">0.1</span>)
-<span class="fn">print</span>(curved)
-
-<span class="cm"># The NumPy way</span>
-<span class="fn">print</span>(gpas[:<span class="nm">3</span>] + <span class="nm">0.1</span>)</code></pre>
-      <div class="output-block" data-stored-output>
-        <div class="output-block-label">output</div>
-[<span class="out-num">2.58</span>, <span class="out-num">3.12</span>, <span class="out-num">2.9</span>]
-[<span class="out-num">2.58</span> <span class="out-num">3.12</span> <span class="out-num">2.9</span> ]
-      </div>
-      </div>
-      <p>One operation applied to a whole array at once, with no loop. That&#x27;s called <strong>vectorization</strong>, and on a real cohort it&#x27;s not just shorter - it&#x27;s hundreds of times faster. Module 3 will race the two approaches against each other so you can watch the difference.</p>
-      <p><strong>Note:</strong> list comprehensions - the <code>[x + 0.1 for x in gpas]</code> syntax you may have seen - are covered in Module 3 as well, right next to vectorization, where the comparison actually means something.</p>
+      <p>Compare that to the accumulator loop you wrote in section 5: same mean, one method call. Module 3 starts here.</p>
     
       <div class="section-nav"><a class="section-next" data-goto="errors" href="#errors">Next: Reading Errors &rarr;</a></div>
     </section>
 
 <section id="errors" class="content-section">
       <h2>Reading Errors</h2>
-      <p>You&#x27;ve now triggered nine different error types on purpose. Time to consolidate, because reading errors well is a larger part of this job than writing code well.</p>
+      <p>You&#x27;ve now triggered a good number of error types on purpose. Time to consolidate, because reading errors well is a larger part of this job than writing code well.</p>
       <h3 id="a-word-about-how-this-feels">A word about how this feels</h3>
       <p>Programmers make mistakes constantly. The mistakes are called <strong>bugs</strong> and finding them is <strong>debugging</strong>, and if you&#x27;re new to this, the volume of errors can feel like evidence that you&#x27;re bad at it. It isn&#x27;t. Experienced programmers generate errors at a similar rate; they just recognize them faster and panic less.</p>
       <p>One framing that helps: think of the computer as an employee with unusual strengths - enormous speed, perfect precision, total consistency - and unusual weaknesses - no judgment, no context, no ability to guess what you meant. Your job is to be a good manager of that employee. When it does something absurd, it is following your instructions exactly. The instructions were the problem, and the error message is the employee telling you where it got stuck.</p>
@@ -4139,9 +3106,9 @@ curved = []
       <div class="output-block">
         <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-  File &quot;/sessions/youthful-keen-pascal/tmp/ipykernel_21/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">7</span>, in compare_students
+  File &quot;/tmp/ipykernel_39/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">7</span>, in compare_students
     return gpa_ratio(ug_table[sid_a][&quot;ug_gpa&quot;],
-  File &quot;/sessions/youthful-keen-pascal/tmp/ipykernel_21/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">2</span>, in gpa_ratio
+  File &quot;/tmp/ipykernel_39/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">2</span>, in gpa_ratio
     return a / b
 TypeError: unsupported operand type(s) for /: &#x27;float&#x27; and &#x27;NoneType&#x27;</div>
       </details>
@@ -4156,7 +3123,7 @@ TypeError: unsupported operand type(s) for /: &#x27;float&#x27; and &#x27;NoneTy
       <h3 id="a-good-use-of-an-ai-assistant">A good use of an AI assistant</h3>
       <p>Pasting an error message and asking what it means is a genuinely excellent use of these tools. They&#x27;re very good at it.</p>
       <p>Ask well, though. Include the full traceback, not just the last line, and include the code that produced it. Then ask <em>why</em> - &quot;why is this None?&quot; gets you a better answer than &quot;fix this.&quot;</p>
-      <h4 id="your-turn-14">Your turn</h4>
+      <h4 id="your-turn-10">Your turn</h4>
       <p>Each cell below is broken. For each one: read the error, name the type, say what caused it, and fix it. Don&#x27;t guess-and-check - diagnose first, then edit.</p>
       <p>Do them one at a time.</p>
       <div data-runnable>
@@ -4217,7 +3184,7 @@ IndentationError: expected an indented block after &#x27;for&#x27; statement on 
 
 <section id="notebooks" class="content-section">
       <h2>Notebook Skills</h2>
-      <p>Short section, all practical. These are the things that waste an afternoon if nobody tells you.</p>
+      <p>One thing that wastes an afternoon if nobody tells you. (Installing packages, getting help, <code>input()</code> and timing are in the Appendix.)</p>
       <h3 id="cells-share-one-memory-and-order-matters">Cells share one memory, and order matters</h3>
       <p>A notebook is not a script. Cells run when you run them, and they all share the same namespace. Which means the notebook you&#x27;re looking at may not reflect the state Python is actually in.</p>
       <p>Run the next two cells in order, then run the <em>first</em> one again and watch the value change.</p>
@@ -4239,25 +3206,6 @@ counter is now <span class="out-num">1</span>
       </div>
       <p>Run that second cell three times and <code>counter</code> is <code>3</code> - even though nothing on screen says so. This is the single biggest source of &quot;but it worked a minute ago.&quot;</p>
       <p>**The fix, and use it often: <em>Kernel → Restart &amp; Run All</em>.** It clears everything and runs the notebook top to bottom, which is the only way to know your notebook actually works. Do it before you submit anything. A notebook that only runs in the order you happened to click is a notebook that doesn&#x27;t run.</p>
-      <h3 id="shell-commands">Shell commands</h3>
-      <p>A <code>!</code> at the start of a line runs a shell command rather than Python. The main use is installing packages:</p>
-      <pre><code>!pip install seaborn</code></pre>
-      <p>Colab has the data science stack already, so you&#x27;ll rarely need it. Note that <code>!cd</code> doesn&#x27;t work the way you&#x27;d expect - each <code>!</code> command runs in its own temporary shell, so a directory change doesn&#x27;t stick. Command-line work proper is Module 6.</p>
-      <h3 id="getting-help-without-leaving-the-notebook">Getting help without leaving the notebook</h3>
-      <ul><li><code>help(round)</code> prints the documentation.</li><li><code>?round</code> or <code>round?</code> opens it in a panel.</li><li><strong>Tab completion:</strong> type a variable name, then a dot, then press &lt;kbd&gt;Tab&lt;/kbd&gt; to see every method available on it. Type a few letters first to filter. This is the fastest way to answer &quot;what can this thing do?&quot; and it works on everything.</li><li>&lt;kbd&gt;Shift&lt;/kbd&gt;+&lt;kbd&gt;Tab&lt;/kbd&gt; inside a function&#x27;s parentheses shows its arguments.</li></ul>
-      <p>Tab completion in particular is worth building into your muscle memory now.</p>
-      <h3 id="input-and-why-it-s-not-in-this-notebook">input(), and why it&#x27;s not in this notebook</h3>
-      <p>You may see <code>input()</code> in other Python tutorials - it pauses and waits for the user to type something:</p>
-      <pre><code>name = <span class="fn">input</span>(<span class="st">&quot;Enter your name: &quot;</span>)
-<span class="fn">print</span>(<span class="st">f&quot;Hello, {name}&quot;</span>)</code></pre>
-      <p>It works in Jupyter and Colab. It does <strong>not</strong> work in the browser-based practice sims for this course, which run Python without a keyboard input channel. More to the point, interactive prompts aren&#x27;t how data science code works: you read from files and databases, not from a person typing.</p>
-      <p>Note that <code>input()</code> always returns a <strong>string</strong>, even when the user types digits. Convert explicitly:</p>
-      <pre><code>age = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">&quot;Age: &quot;</span>))        <span class="cm"># int, correct</span>
-age = <span class="fn">input</span>(<span class="st">&quot;Age: &quot;</span>)             <span class="cm"># str -- &#x27;25&#x27; + 1 is a TypeError</span></code></pre>
-      <p>You may also encounter <code>eval(input(...))</code> in older material. Don&#x27;t use it. It executes whatever the user types as Python code, which is both a security hole and a way to hide type bugs from yourself.</p>
-      <h3 id="timing">Timing</h3>
-      <p>One magic command worth knowing, because Module 3 is built on it. <code>%timeit</code> runs a line repeatedly and reports how long it takes:</p>
-      <p>Keep that number in mind. In Module 3 you&#x27;ll run the same calculation with NumPy and race them.</p>
     
       <div class="section-nav"><a class="section-next" data-goto="challenges" href="#challenges">Next: Challenges &rarr;</a></div>
     </section>
@@ -4271,7 +3219,7 @@ age = <span class="fn">input</span>(<span class="st">&quot;Age: &quot;</span>)  
       <ul><li><code>&quot;negative&quot;</code> if it&#x27;s below zero</li><li><code>&quot;zero&quot;</code> if it&#x27;s exactly zero</li><li><code>&quot;small&quot;</code> if it&#x27;s between 1 and 99</li><li><code>&quot;large&quot;</code> if it&#x27;s 100 or more</li></ul>
       <p>Then test it on <code>-5</code>, <code>0</code>, <code>42</code>, and <code>1000</code>. Think carefully about the order of your conditions.</p>
       <div class="exercise-block" data-exercise="exchallenges-1">
-        <label class="exercise-label" for="exchallenges-1-src">Your turn - run it here<span class="vh"> (exercise 14)</span></label>
+        <label class="exercise-label" for="exchallenges-1-src">Your turn - run it here<span class="vh"> (exercise 11)</span></label>
         <textarea id="exchallenges-1-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exchallenges-1">Run</button>
@@ -4303,7 +3251,7 @@ age = <span class="fn">input</span>(<span class="st">&quot;Age: &quot;</span>)  
       <ul><li><code>f_to_c(f)</code> returns Celsius from Fahrenheit: $(F - 32) \times 5/9$</li><li><code>c_to_f(c)</code> returns Fahrenheit from Celsius: $C \times 9/5 + 32$</li></ul>
       <p>Then verify they undo each other - convert 98.6°F to Celsius and back, and confirm you get 98.6 again. Round to one decimal place in your output.</p>
       <div class="exercise-block" data-exercise="exchallenges-5">
-        <label class="exercise-label" for="exchallenges-5-src">Your turn - run it here<span class="vh"> (exercise 15)</span></label>
+        <label class="exercise-label" for="exchallenges-5-src">Your turn - run it here<span class="vh"> (exercise 12)</span></label>
         <textarea id="exchallenges-5-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exchallenges-5">Run</button>
@@ -4343,10 +3291,10 @@ back = <span class="fn">c_to_f</span>(celsius)
       <p>Here&#x27;s a list of scores:</p>
       <pre><code>scores = [<span class="nm">88</span>, <span class="nm">92</span>, <span class="nm">79</span>, <span class="nm">93</span>, <span class="nm">85</span>, <span class="nm">91</span>, <span class="nm">74</span>, <span class="nm">96</span>]</code></pre>
       <p>Compute the mean three different ways, and confirm all three agree:</p>
-      <ol><li><strong>By hand</strong> - add the elements with explicit indexing (<code>scores[0] + scores[1] + ...</code>) and divide by the count you typed in yourself.</li><li><strong>With a loop</strong> - the accumulator pattern from section 8.</li><li><strong>With built-ins</strong> - <code>sum()</code> and <code>len()</code>.</li></ol>
+      <ol><li><strong>By hand</strong> - add the elements with explicit indexing (<code>scores[0] + scores[1] + ...</code>) and divide by the count you typed in yourself.</li><li><strong>With a loop</strong> - the accumulator pattern from section 5.</li><li><strong>With built-ins</strong> - <code>sum()</code> and <code>len()</code>.</li></ol>
       <p>Then answer this: if someone appends a ninth score to the list, which of your three versions still gives the right answer? That&#x27;s the actual lesson.</p>
       <div class="exercise-block" data-exercise="exchallenges-9">
-        <label class="exercise-label" for="exchallenges-9-src">Your turn - run it here<span class="vh"> (exercise 16)</span></label>
+        <label class="exercise-label" for="exchallenges-9-src">Your turn - run it here<span class="vh"> (exercise 13)</span></label>
         <textarea id="exchallenges-9-src" class="ex-editor" spellcheck="false">scores = [88, 92, 79, 93, 85, 91, 74, 96]
 
 ### ENTER CODE HERE ###</textarea>
@@ -4393,7 +3341,7 @@ scores.<span class="fn">append</span>(<span class="nm">100</span>)
       <ul><li>What should the accumulator start at? Not zero - think about why.</li><li>What should <code>factorial(0)</code> return? Look it up if you&#x27;re unsure; the mathematical convention is not arbitrary.</li></ul>
       <p>Test it on 0, 1, 5, and 10. (10! is 3,628,800.)</p>
       <div class="exercise-block" data-exercise="exchallenges-13">
-        <label class="exercise-label" for="exchallenges-13-src">Your turn - run it here<span class="vh"> (exercise 17)</span></label>
+        <label class="exercise-label" for="exchallenges-13-src">Your turn - run it here<span class="vh"> (exercise 14)</span></label>
         <textarea id="exchallenges-13-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exchallenges-13">Run</button>
@@ -4425,7 +3373,7 @@ scores.<span class="fn">append</span>(<span class="nm">100</span>)
       <p>That last part is the point of the exercise. The code is straightforward; the discipline of not overclaiming is the skill the capstone will test.</p>
       <p>Write your interpretation in a markdown cell below your code.</p>
       <div class="exercise-block" data-exercise="exchallenges-17">
-        <label class="exercise-label" for="exchallenges-17-src">Your turn - run it here<span class="vh"> (exercise 18)</span></label>
+        <label class="exercise-label" for="exchallenges-17-src">Your turn - run it here<span class="vh"> (exercise 15)</span></label>
         <textarea id="exchallenges-17-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
           <button class="ex-run" data-target="exchallenges-17">Run</button>
@@ -4538,12 +3486,49 @@ holes = <span class="fn">find_missing</span>({<span class="st">&quot;students&qu
       <h3 id="what-you-ve-done">What you&#x27;ve done</h3>
       <p>You loaded six tables, computed real summary statistics, wrote a schema report and a briefing, and hedged your conclusions honestly. That&#x27;s Stage 2 of the capstone in miniature.</p>
       <p>You also know why the next module exists. Every summary in this notebook took a loop and an accumulator. In Module 3, <code>gpas.mean()</code> replaces all of it - and on a cohort of eighty thousand instead of ten, that difference stops being about elegance and starts being about whether the calculation finishes.</p>
+    
+      <div class="section-nav"><a class="section-next" data-goto="reference" href="#reference">Next: Reference &rarr;</a></div>
+    </section>
+
+<section id="reference" class="content-section">
+      <h2>Reference</h2>
+      <p>Look things up here when you need them: notebook extras, further reading, the vocabulary, sources, and the course AI policy.</p>
+      <h3 id="notebook-extras">Notebook extras</h3>
+      <h4 id="installing-a-package">Installing a package</h4>
+      <p>A <code>!</code> at the start of a line runs a shell command rather than Python. The main use is installing a package that isn&#x27;t there (the fix for a <code>ModuleNotFoundError</code>):</p>
+      <pre><code>!pip install some-package</code></pre>
+      <p>Colab has the data science stack already, so you&#x27;ll rarely need it. Note that <code>!cd</code> doesn&#x27;t work the way you&#x27;d expect - each <code>!</code> command runs in its own temporary shell, so a directory change doesn&#x27;t stick. Command-line work proper is Module 6.</p>
+      <h4 id="getting-help-without-leaving-the-notebook">Getting help without leaving the notebook</h4>
+      <ul><li><code>help(round)</code> prints the documentation.</li><li><code>?round</code> or <code>round?</code> opens it in a panel.</li><li><strong>Tab completion:</strong> type a variable name, then a dot, then press &lt;kbd&gt;Tab&lt;/kbd&gt; to see every method available on it. Type a few letters first to filter. This is the fastest way to answer &quot;what can this thing do?&quot; and it works on everything.</li><li>&lt;kbd&gt;Shift&lt;/kbd&gt;+&lt;kbd&gt;Tab&lt;/kbd&gt; inside a function&#x27;s parentheses shows its arguments.</li></ul>
+      <p>Tab completion in particular is worth building into your muscle memory now.</p>
+      <h4 id="input-and-why-it-s-not-in-this-notebook">input(), and why it&#x27;s not in this notebook</h4>
+      <p>You may see <code>input()</code> in other Python tutorials - it pauses and waits for the user to type something:</p>
+      <pre><code>name = <span class="fn">input</span>(<span class="st">&quot;Enter your name: &quot;</span>)
+<span class="fn">print</span>(<span class="st">f&quot;Hello, {name}&quot;</span>)</code></pre>
+      <p>It works in Jupyter and Colab. It does <strong>not</strong> work in the browser-based practice sims for this course, which run Python without a keyboard input channel. More to the point, interactive prompts aren&#x27;t how data science code works: you read from files and databases, not from a person typing.</p>
+      <p>Note that <code>input()</code> always returns a <strong>string</strong>, even when the user types digits. Convert explicitly:</p>
+      <pre><code>age = <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">&quot;Age: &quot;</span>))        <span class="cm"># int, correct</span>
+age = <span class="fn">input</span>(<span class="st">&quot;Age: &quot;</span>)             <span class="cm"># str -- &#x27;25&#x27; + 1 is a TypeError</span></code></pre>
+      <p>You may also encounter <code>eval(input(...))</code> in older material. Don&#x27;t use it. It executes whatever the user types as Python code, which is both a security hole and a way to hide type bugs from yourself.</p>
+      <h4 id="timing">Timing</h4>
+      <p>One magic command worth knowing, because Module 3 is built on it. <code>%timeit</code> runs a line repeatedly and reports how long it takes:</p>
+      <p>Keep that number in mind. In Module 3 you&#x27;ll run the same calculation with NumPy and race them.</p>
       <h3 id="where-to-go-if-you-want-more">Where to go if you want more</h3>
-      <p>This notebook covers the fundamentals DTSC 520 needs, not all of Python. Left out on purpose: sets, comprehensions, classes, file I/O, exception handling with <code>try</code>/<code>except</code>, and recursion. Tuples got the short version in section 8 - enough to recognize and unpack one, not enough to use them by choice.</p>
+      <p>This notebook covers the fundamentals DTSC 520 needs, not all of Python. Left out on purpose: sets, classes, file I/O, exception handling with <code>try</code>/<code>except</code>, and recursion (comprehensions are in Module 3). Tuples got the short version in section 5 - enough to recognize and unpack one, not enough to use them by choice.</p>
       <p>If you&#x27;re new to programming, <strong>DTSC 575: Principles of Python Programming</strong> covers those properly, and taking it before the machine learning courses is a good idea.</p>
       <p>For self-study, both of the books this module draws on are free online and worth your time:</p>
-      <ul><li>Allen Downey, <em><a href="https://allendowney.github.io/ThinkPython/" target="_blank" rel="noopener">Think Python</a></em> (3rd edition). Chapters 1, 2, 3, 5, 6, 7, 8, 9, and 10 overlap with this module; chapter 4 and chapters 11 through 13 are the natural next steps, and they cover most of what was left out above.</li><li>Jake VanderPlas, <em><a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener">Python Data Science Handbook</a></em>. Chapter 1 is the deep version of section 12 here. Chapters 2 and 3 are Modules 3 and 4 of this course, so reading ahead there is time well spent.</li></ul>
-      <p>See the acknowledgments at the top of this notebook for what came from where.</p>
+      <ul><li>Allen Downey, <em><a href="https://allendowney.github.io/ThinkPython/" target="_blank" rel="noopener">Think Python</a></em> (3rd edition). Chapters 1, 2, 3, 5, 6, 7, 8, 9, and 10 overlap with this module; chapter 4 and chapters 11 through 13 are the natural next steps, and they cover most of what was left out above.</li><li>Jake VanderPlas, <em><a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener">Python Data Science Handbook</a></em>. Chapter 1 is the deep version of section 9 and the notebook extras above. Chapters 2 and 3 are Modules 3 and 4 of this course, so reading ahead there is time well spent.</li></ul>
+      <p>The acknowledgments below say what came from where.</p>
+      <h3 id="sources-and-acknowledgments">Sources and acknowledgments</h3>
+      <p>This notebook is a mix. Some of it is original to Eastern University, some is taken closely from published work, and some is adapted from it. You should know which is which, both because attribution matters and because the originals are worth reading on their own.</p>
+      <p><strong>Original to Eastern.</strong> The Institutional Research framing and the Lee commission, the synthetic cohort and all six tables, the Predict/Run/Debrief convention, the schema report and cohort briefing, the diagrams, the AI-assistant policy, and the connective tissue that ties this module to the capstone. You can learn syntax anywhere.  We&#x27;re trying to create learning materials you will enjoy and make you want to keep going.</p>
+      <p>**<a href="https://allendowney.github.io/ThinkPython/" target="_blank" rel="noopener"><em>Think Python</em>, 3rd edition</a>, by Allen B. Downey.** Free online, and the most direct influence here. The arithmetic-before-variables ordering, the treatment of floor division and modulus, the <code>&#x27;126&#x27; / 3</code> type-error demonstration, the <code>1,000,000</code> tuple surprise, the illegal-variable-name examples, the &quot;make errors on purpose&quot; exercise philosophy, and the passage on debugging as emotional management are all taken from or closely follow Downey. The <code>%%expect</code> convention is his idea; the implementation in this notebook is our own. Chapters 1, 2, 3, 5, 6, 7, 8, 9, and 10 overlap with this module and the Module 1 warm-up. Licensed CC BY-NC-SA 4.0.</p>
+      <p>**<a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener"><em>Python Data Science Handbook</em></a>, by Jake VanderPlas.** Also free online. It shaped which notebook-craft topics are worth teaching - the help system, tab completion, <code>%timeit</code> - and it is the reference for the NumPy and pandas material in Modules 3 and 4. Its text is licensed CC BY-NC-ND, so nothing here reproduces it; the overlap is topic selection, written fresh.</p>
+      <p>Errors and infelicities are ours, not theirs.</p>
+      <h3 id="the-vocabulary">The vocabulary</h3>
+      <p>Programming has a precise vocabulary, and using it precisely is important - it&#x27;s what lets you ask for or search for help and get an answer. When you can write &quot;TypeError when concatenating str and int&quot; instead of &quot;my code is broken,&quot; your instructor, GAs, and the internet become useful to you.</p>
+      <p>Learning these is like learning addition and subtraction in math - you&#x27;ll use them in everything you do going forward.</p>
+      <ul><li><strong>operator</strong> - A symbol that performs a computation: <code>+</code>, <code>-</code>, <code>**</code>, <code>%</code>, <code>//</code>. What it does depends on the types either side of it.</li><li><strong>expression</strong> - Anything Python can evaluate down to a single value. <code>2 + 2</code>, <code>len(name)</code>, and <code>3.81</code> are all expressions.</li><li><strong>value</strong> - One piece of data: a number, a string, a list. Everything in Python is a value of some type.</li><li><strong>type</strong> - The kind of thing a value is - <code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code>, <code>list</code>, <code>dict</code>. Determines which operations are legal on it.</li><li><strong>statement</strong> - A line that does something rather than producing a value. An assignment, an <code>if</code>, a <code>for</code>, an <code>import</code>.</li><li><strong>assignment</strong> - Binding a name to a value with <code>=</code>. The name is a label, not a box: two names can label the same object.</li><li><strong>keyword</strong> - A word reserved by the language - <code>if</code>, <code>for</code>, <code>def</code>, <code>return</code>, <code>None</code>. You cannot use one as a variable name.</li><li><strong>function</strong> - A named block of code you can run on demand, optionally taking inputs and handing back a result.</li><li><strong>argument</strong> - The actual value you pass in when you call a function. <code>print(&quot;hi&quot;)</code> passes the argument <code>&quot;hi&quot;</code>.</li><li><strong>parameter</strong> - The name in a function&#x27;s definition that receives an argument. The parameter is the slot; the argument is what goes in it.</li><li><strong>return value</strong> - What a function hands back to the code that called it. A function that only prints returns <code>None</code>.</li><li><strong>local variable</strong> - A name created inside a function. It exists while the function runs and is gone afterwards.</li><li><strong>method</strong> - A function that belongs to an object and is called with a dot: <code>name.strip()</code>, <code>scores.append(3)</code>.</li><li><strong>module</strong> - A file of Python code you can <code>import</code> and use. <code>numpy</code> and <code>pandas</code> are modules other people wrote.</li><li><strong>sequence</strong> - An ordered collection you can index and iterate: a list, a string, a tuple.</li><li><strong>index</strong> - The position of an item in a sequence, counting from <strong>zero</strong>. <code>roster[0]</code> is the first name.</li><li><strong>slice</strong> - A range taken from a sequence, <code>start:stop</code>, where <code>stop</code> is <strong>excluded</strong>. <code>xs[1:3]</code> gives two items.</li><li><strong>mapping</strong> - A collection that pairs keys with values rather than positions with values. A dictionary is the mapping you will use.</li><li><strong>key</strong> - The lookup label in a dictionary. Must be unique and unchangeable; the value it points at can be anything.</li><li><strong>item</strong> - One key-value pair from a dictionary. <code>.items()</code> gives you them as tuples.</li><li><strong>iteration</strong> - Doing something once per element of a collection. What a <code>for</code> loop is for.</li></ul>
     
       <div class="section-nav"><a class="section-next" href="quiz.html">Take the Quiz &rarr;</a></div>
     </section>
@@ -5037,7 +4022,7 @@ holes = <span class="fn">find_missing</span>({<span class="st">&quot;students&qu
 
 
 <script>
-const SECTIONS = ['getting-started', 'variables', 'strings', 'functions', 'conditions', 'data-structures', 'loops', 'modules', 'errors', 'notebooks', 'challenges'];
+const SECTIONS = ['getting-started', 'strings', 'functions', 'conditions', 'data-structures', 'loops', 'modules', 'errors', 'notebooks', 'challenges', 'reference'];
 function showSection(id, noScroll, noHash) {
   SECTIONS.forEach(function(s) { var el = document.getElementById(s); if (el) el.classList.remove('active'); });
   var target = document.getElementById(id);
@@ -7328,7 +6313,7 @@ body[data-module="6"] .sim-cta p { color: #f0d8e0 !important; }
 </script>
 <script>
 (function () {
-  var LAST = "challenges";
+  var LAST = "reference";
   var quiz = document.getElementById('quiz');
   function syncQuiz(id) { if (quiz) quiz.hidden = (id !== LAST); }
 

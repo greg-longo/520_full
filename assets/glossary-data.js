@@ -29,6 +29,12 @@ window.DTSC_GLOSSARY = [
     "slug": "aggregation"
   },
   {
+    "term": "alpha",
+    "def": "Opacity, from 0 to 1. Below 1, overlapping points look darker than single ones, which is how a scatter plot admits that two students landed in the same place.",
+    "module": 5,
+    "slug": "alpha"
+  },
+  {
     "term": "argument",
     "def": "The actual value you pass in when you call a function. `print(\"hi\")` passes the argument `\"hi\"`.",
     "module": 2,
@@ -41,16 +47,46 @@ window.DTSC_GLOSSARY = [
     "slug": "array-ndarray"
   },
   {
+    "term": "Artist",
+    "def": "Anything matplotlib draws. Every line, dot, label and spine is one.",
+    "module": 5,
+    "slug": "artist"
+  },
+  {
     "term": "assignment",
     "def": "Binding a name to a value with `=`. The name is a label, not a box: two names can label the same object.",
     "module": 2,
     "slug": "assignment"
   },
   {
+    "term": "Axes",
+    "def": "One plot inside a Figure. It owns the data, the labels, the legend, and the two axis objects. An `Axes` is not an axis.",
+    "module": 5,
+    "slug": "axes"
+  },
+  {
+    "term": "axes-level function",
+    "def": "A seaborn function that draws onto an Axes you pass with `ax=`, such as `histplot` or `regplot`.",
+    "module": 5,
+    "slug": "axes-level-function"
+  },
+  {
     "term": "axis",
     "def": "The direction an operation runs along. `axis=0` collapses down the rows, `axis=1` across the columns.",
     "module": 3,
     "slug": "axis"
+  },
+  {
+    "term": "Axis",
+    "def": "A single scale on an Axes, with its ticks, limits and formatting.",
+    "module": 5,
+    "slug": "axis"
+  },
+  {
+    "term": "bin",
+    "def": "One interval a histogram counts values into. The bin count is a choice you make, and it changes the shape the reader sees.",
+    "module": 5,
+    "slug": "bin"
   },
   {
     "term": "boolean mask",
@@ -71,6 +107,30 @@ window.DTSC_GLOSSARY = [
     "slug": "chained-assignment"
   },
   {
+    "term": "colorbar",
+    "def": "The key for a colormap. Ask the Figure for it: `fig.colorbar(mappable, ax=ax)`.",
+    "module": 5,
+    "slug": "colorbar"
+  },
+  {
+    "term": "colormap",
+    "def": "The mapping from a number to a color. Sequential for ordered values, diverging for a meaningful middle, qualitative for unordered categories.",
+    "module": 5,
+    "slug": "colormap"
+  },
+  {
+    "term": "confounder",
+    "def": "A third variable that produces an apparent relationship between two others. Faceting or coloring by it is the visual control.",
+    "module": 5,
+    "slug": "confounder"
+  },
+  {
+    "term": "constrained layout",
+    "def": "The layout engine requested with `layout=\"constrained\"`, which sizes the gaps so labels do not collide. It replaces `tight_layout`, and calling `tight_layout()` switches it off.",
+    "module": 5,
+    "slug": "constrained-layout"
+  },
+  {
     "term": "copy",
     "def": "An independent array with its own memory. `.copy()` when you need the original left alone.",
     "module": 3,
@@ -87,6 +147,12 @@ window.DTSC_GLOSSARY = [
     "def": "One axis of an array. A column of numbers is one-dimensional; a table is two.",
     "module": 3,
     "slug": "dimension"
+  },
+  {
+    "term": "dpi",
+    "def": "Dots per inch when a figure is saved as a raster image. 72 is a thumbnail, 150 a document figure, 300 print.",
+    "module": 5,
+    "slug": "dpi"
   },
   {
     "term": "dtype",
@@ -107,10 +173,28 @@ window.DTSC_GLOSSARY = [
     "slug": "element-wise"
   },
   {
+    "term": "explicit interface",
+    "def": "Creating `fig, ax` and calling methods on them. Also called the object-oriented interface, and the only one this course uses.",
+    "module": 5,
+    "slug": "explicit-interface"
+  },
+  {
     "term": "expression",
     "def": "Anything Python can evaluate down to a single value. `2 + 2`, `len(name)`, and `3.81` are all expressions.",
     "module": 2,
     "slug": "expression"
+  },
+  {
+    "term": "Figure",
+    "def": "The whole image. It owns the figure-level title, the size, and saving to a file.",
+    "module": 5,
+    "slug": "figure"
+  },
+  {
+    "term": "figure-level function",
+    "def": "A seaborn function that builds its own figure and cannot take `ax=`, such as `pairplot` or `displot`. Customize it through the grid object it returns.",
+    "module": 5,
+    "slug": "figure-level-function"
   },
   {
     "term": "function",
@@ -123,6 +207,12 @@ window.DTSC_GLOSSARY = [
     "def": "Split rows into groups, apply a summary to each, combine the results. The dictionary-counting pattern, industrialized.",
     "module": 4,
     "slug": "groupby"
+  },
+  {
+    "term": "implicit interface",
+    "def": "The `plt.plot` style, which adds to whatever Axes matplotlib thinks is current. Convenient for one throwaway chart, and the reason a second chart lands in the wrong place.",
+    "module": 5,
+    "slug": "implicit-interface"
   },
   {
     "term": "index",
@@ -233,10 +323,28 @@ window.DTSC_GLOSSARY = [
     "slug": "parameter"
   },
   {
+    "term": "perceptually uniform",
+    "def": "A colormap in which equal steps in the data look like equal steps in color. `viridis` is; `jet` is not, which is why it invents boundaries the data does not have.",
+    "module": 5,
+    "slug": "perceptually-uniform"
+  },
+  {
     "term": "pivot table",
     "def": "A groupby arranged as a grid: one variable down the side, another across the top, a statistic in the cells.",
     "module": 4,
     "slug": "pivot-table"
+  },
+  {
+    "term": "raster and vector",
+    "def": "Raster formats (PNG) store pixels and blur when enlarged. Vector formats (PDF, SVG) store drawing instructions and do not.",
+    "module": 5,
+    "slug": "raster-and-vector"
+  },
+  {
+    "term": "relative luminance",
+    "def": "How bright a color is, and therefore what gray it prints as. Two colors of similar luminance are the same color to a monochrome printer.",
+    "module": 5,
+    "slug": "relative-luminance"
   },
   {
     "term": "return value",
@@ -269,6 +377,12 @@ window.DTSC_GLOSSARY = [
     "slug": "slice"
   },
   {
+    "term": "small multiples",
+    "def": "A grid of panels sharing a scale, so several comparisons can be read at once. `sharey=True` is what makes them comparable.",
+    "module": 5,
+    "slug": "small-multiples"
+  },
+  {
     "term": "statement",
     "def": "A line that does something rather than producing a value. An assignment, an `if`, a `for`, an `import`.",
     "module": 2,
@@ -279,6 +393,12 @@ window.DTSC_GLOSSARY = [
     "def": "Letting information about the outcome into a predictor. The model looks excellent in testing and fails in use.",
     "module": 4,
     "slug": "target-leakage"
+  },
+  {
+    "term": "truncated axis",
+    "def": "A value axis that does not start at zero. On a bar chart, where the reader compares lengths, it misrepresents the comparison.",
+    "module": 5,
+    "slug": "truncated-axis"
   },
   {
     "term": "type",

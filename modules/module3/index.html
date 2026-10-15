@@ -597,9 +597,9 @@ t_vector = %timeit -o -<span class="fn">q</span> (<span class="nm">1.0</span> / 
       <details class="debrief"><summary>What happened</summary>
       <div class="output-block">
         <div class="output-block-label">output</div>
-loop over big_list        <span class="out-num">8.40</span> ms
-loop over big_array     <span class="out-num">231.45</span> ms
-vectorized               <span class="out-num">0.105</span> ms
+loop over big_list        <span class="out-num">8.51</span> ms
+loop over big_array     <span class="out-num">225.25</span> ms
+vectorized               <span class="out-num">0.103</span> ms
       </div>
       <p>Two things to notice, and the second one is the surprise.</p>
       <p><strong>The vectorized version is enormously faster than the loop.</strong> Two orders of magnitude, from code that is also shorter. That is the difference between an analysis that runs while you read the question and one that runs while you go get coffee. On Lee&#x27;s eighty thousand rows, across the dozen metrics the Cabinet will eventually ask for, it is the difference between a working pipeline and an abandoned one.</p>
@@ -615,9 +615,9 @@ tax = t_array.average / t_list.average
 <span class="fn">print</span>(<span class="st">f&quot;cost of looping an array at all  {tax:8.1f}x slower&quot;</span>)</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>
-vectorized vs. looping a LIST          80x     &lt;- the fair claim
-vectorized vs. looping an ARRAY      2197x     &lt;- the flattering claim
-cost of looping an array at all      <span class="out-num">27.</span>6x slower
+vectorized vs. looping a LIST          82x     &lt;- the fair claim
+vectorized vs. looping an ARRAY      2182x     &lt;- the flattering claim
+cost of looping an array at all      <span class="out-num">26.</span>5x slower
       </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
@@ -919,7 +919,7 @@ size   <span class="out-num">10</span>
 dtype  float64
       </div>
       </div>
-      <p><code>shape</code> is a tuple, which is why a one-dimensional array reports <code>(10,)</code> with the trailing comma - Module 2, section 8. On a 2D array all four get more interesting:</p>
+      <p><code>shape</code> is a tuple, which is why a one-dimensional array reports <code>(10,)</code> with the trailing comma - Module 2, section 5. On a 2D array all four get more interesting:</p>
       <div data-runnable>
       <pre><code>M = np.<span class="fn">array</span>([[<span class="nm">21</span>, <span class="nm">30</span>, <span class="nm">6</span>, <span class="nm">7</span>], [<span class="nm">12</span>, <span class="nm">13</span>, <span class="nm">24</span>, <span class="nm">41</span>]])
 <span class="fn">print</span>(<span class="st">f&quot;shape  {M.shape}     &lt;- (rows, columns)&quot;</span>)
@@ -1009,7 +1009,7 @@ ints = floats.<span class="fn">astype</span>(np.int32)
 [<span class="out-num">1</span> <span class="out-num">2</span> <span class="out-num">3</span>]
       </div>
       </div>
-      <p>**<code>.astype()</code> to an integer truncates, it does not round.** <code>1.9</code> became <code>1</code>, and <code>3.7</code> became <code>3</code>. Same behavior as <code>int()</code> in Module 2. If you want rounding, round first:</p>
+      <p>**<code>.astype()</code> to an integer truncates, it does not round.** <code>1.9</code> became <code>1</code>, and <code>3.7</code> became <code>3</code>. Same behavior as <code>int()</code> in the Module 1 warm-up. If you want rounding, round first:</p>
       <div data-runnable>
       <pre><code><span class="fn">print</span>(np.<span class="fn">round</span>(floats).<span class="fn">astype</span>(np.int32))</code></pre>
       <div class="output-block" data-stored-output>
@@ -1980,7 +1980,7 @@ sub[<span class="nm">0</span>] = <span class="nm">999</span>
       <p>Rounding has three variants worth telling apart:</p>
       <div data-runnable>
       <pre><code>vals = np.<span class="fn">array</span>([<span class="nm">1.4</span>, <span class="nm">1.5</span>, <span class="nm">2.5</span>, -<span class="nm">1.5</span>])
-<span class="fn">print</span>(<span class="st">f&quot;round: {np.round(vals)}&quot;</span>)     <span class="cm"># to even on .5, as in Module 2</span>
+<span class="fn">print</span>(<span class="st">f&quot;round: {np.round(vals)}&quot;</span>)     <span class="cm"># to even on .5, as in the Module 1 warm-up</span>
 <span class="fn">print</span>(<span class="st">f&quot;floor: {np.floor(vals)}&quot;</span>)     <span class="cm"># always down</span>
 <span class="fn">print</span>(<span class="st">f&quot;ceil:  {np.ceil(vals)}&quot;</span>)      <span class="cm"># always up</span></code></pre>
       <div class="output-block" data-stored-output>
@@ -2544,7 +2544,7 @@ Devin Castellanos    needs support
 []
       </div>
       </div>
-      <p>The trailing comma means it&#x27;s a tuple with one array in it, one per dimension. Tuples, from Module 2 section 8.</p>
+      <p>The trailing comma means it&#x27;s a tuple with one array in it, one per dimension. Tuples, from Module 2 section 5.</p>
       <h4 id="your-turn-12">Your turn</h4>
       <ol><li>Label each student <code>&quot;full&quot;</code> or <code>&quot;partial&quot;</code> based on whether their submission rate is 1.0.</li><li>Create an array of adjusted hours where anyone below 5 hours is set to exactly 5, and everyone else keeps their value. Do it with <code>np.where</code>, then again with <code>np.maximum</code>, and confirm the results match.</li><li>Use nested <code>np.where</code> to bucket <code>engagement_index</code> into <code>&quot;high&quot;</code>, <code>&quot;medium&quot;</code>, and <code>&quot;low&quot;</code> at cutoffs of 0.66 and 0.33.</li></ol>
       <div class="exercise-block" data-exercise="exconditional-13">
