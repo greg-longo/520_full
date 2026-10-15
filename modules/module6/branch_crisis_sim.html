@@ -704,6 +704,17 @@
 
     .retry-btn:hover { background: var(--bg-card2); color: var(--text); }
 
+    /* Bonus round (Oct 2026): optional, scored on its own, never part of the 20-point total */
+    .bonus-cta { margin-top: 1.75rem; padding: 1rem 1.1rem; border: 1px solid var(--border); border-left: 3px solid var(--maroon-light); border-radius: 4px; background: var(--bg-card); }
+    .bonus-cta p { color: var(--text-dim); font-size: 0.875rem; line-height: 1.55; margin: 0.35rem 0 0.8rem; }
+    .bonus-cta .bonus-title { font-family: 'Zilla Slab', serif; font-size: 1.1rem; color: var(--text-bright); }
+    .bonus-btn { background: var(--maroon); color: #fff; border: none; padding: 0.6rem 1.3rem; border-radius: 4px; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.875rem; cursor: pointer; }
+    .bonus-btn:hover { background: var(--maroon-light); }
+    .bonus-sheet { margin-top: 1rem; border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+    .bonus-sheet td { padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--border); color: var(--text-dim); vertical-align: top; }
+    .bonus-sheet td:first-child { white-space: nowrap; }
+    .bonus-sheet code { color: var(--text); }
+
     footer {
       border-top: 1px solid var(--border);
       padding: 1.25rem 1.5rem;
@@ -1060,9 +1071,18 @@
           <div class="badge-sub">Demonstrated professional-level Git workflow under pressure.</div>
         </div>
 
+        <div class="bonus-cta">
+          <div class="bonus-title">Bonus round: Git you'll meet on the job</div>
+          <p>Jonah has a few minutes. Eleven quick situations from working teams: stash, fetch, bisect, rebase and more. Optional, scored on its own, and not on the Module 6 quiz.</p>
+          <button class="bonus-btn" onclick="startBonus()">Start the bonus round</button>
+        </div>
+
         <button class="retry-btn" onclick="resetSim()">Replay simulation</button>
         <a class="retry-btn" href="index.html" style="display:block;text-align:center;margin-top:0.6rem;text-decoration:none;">Return to module</a>
       </div>
+
+      <!-- BONUS ROUND (rendered by JS) -->
+      <div class="screen challenge-screen" id="screen-bonus" aria-live="polite"></div>
 
     </div><!-- /scenario-panel -->
   </div>
@@ -1511,12 +1531,12 @@
       title = 'Partial Recovery';
       tagline = 'The pipeline is running, but the repo is messier than it needed to be.';
       verdict = 'Developing Git Skills';
-      sub = totalScore + '/20 - Some solid choices, some risky ones. Revisit the branching and conflict sections in Module 4 before the next incident.';
+      sub = totalScore + '/20 - Some solid choices, some risky ones. Revisit the branching and conflict sections in Module 6 before the next incident.';
     } else {
       title = 'Crisis Escalated';
       tagline = 'Jonah had to step in and sort it out. He was understanding - but suggested more Git practice.';
       verdict = 'Keep Practicing';
-      sub = totalScore + '/20 - A few missteps created more problems than they solved. Re-read Module 4 and try again - this workflow clicks with practice.';
+      sub = totalScore + '/20 - A few missteps created more problems than they solved. Re-read Module 6 and try again - this workflow clicks with practice.';
     }
 
     document.getElementById('debriefTitle').textContent = title;
@@ -1572,6 +1592,189 @@
     hideAllScreens();
     document.getElementById('screen-intro').classList.add('active');
     renderGraph(0);
+  }
+
+
+  // ============================================================
+  //  BONUS ROUND (optional; Git beyond the intro course)
+  //  Scored separately from the 20-point incident. Nothing here is
+  //  logged as a completion, and none of it is on the Module 6 quiz.
+  // ============================================================
+  const BONUS = [
+    { cmd: 'git stash', title: 'Interrupted mid-edit',
+      intro: 'You are halfway through editing <code>clean.py</code> when Jonah asks you to look at a bug on main right now. Your edits are not ready to commit.',
+      choices: [
+        { text: 'Commit the half-finished edits to main so that nothing gets lost' },
+        { text: 'Shelve the edits with git stash, switch, and restore them later', correct: true },
+        { text: 'Run git reset --hard so your working directory is clean again' },
+        { text: 'Copy clean.py to your desktop, then throw away the local changes' } ],
+      why: '<code>git stash</code> sets uncommitted changes aside and gives you a clean working directory. <code>git stash pop</code> brings them back and drops the saved copy; <code>git stash apply</code> brings them back and keeps it. <code>reset --hard</code> would destroy the edits.',
+      sheet: 'Set uncommitted work aside; pop it back later' },
+    { cmd: 'git fetch', title: 'Look before you merge',
+      intro: 'Teammates pushed overnight. You want to see what changed on GitHub before any of it touches your files.',
+      choices: [
+        { text: 'git pull origin main, then read through whatever it merged in' },
+        { text: 'git clone the repository again into a second, separate folder' },
+        { text: 'git fetch, then compare origin/main against your own branch', correct: true },
+        { text: 'git push --force so that the remote matches your copy' } ],
+      why: '<code>git fetch</code> downloads new commits without merging them. <code>git pull</code> is a fetch followed by a merge, so it changes your files right away. After a fetch, <code>git log main..origin/main</code> lists what is new.',
+      sheet: 'Download new commits without merging them' },
+    { cmd: 'git bisect', title: 'The bug with no birthday',
+      intro: 'A chart that used to be right is wrong now. It broke at some point in the last 200 commits, and nobody knows when.',
+      choices: [
+        { text: 'git bisect: mark a good and a bad commit, and let Git halve the search', correct: true },
+        { text: 'git blame on the chart file, then read every line that changed' },
+        { text: 'Read all 200 commit messages in git log until one looks suspicious' },
+        { text: 'git revert the last 200 commits one at a time until the chart is fixed' } ],
+      why: '<code>git bisect</code> is a binary search through history. You test the commit it checks out and answer good or bad; 200 commits take about 8 steps. <code>git bisect reset</code> returns you to where you started.',
+      sheet: 'Binary-search history for the commit that broke something' },
+    { cmd: 'git blame', title: 'Who wrote this, and why?',
+      intro: 'A line in <code>utils.py</code> multiplies every score by 1.07. There is no comment. Before you touch it, you want to know where it came from.',
+      choices: [
+        { text: 'git bisect, marking the current commit as bad' },
+        { text: 'git tag the line so that the team can find it again' },
+        { text: 'git stash the file and ask in the team channel' },
+        { text: 'git blame utils.py, then git show that commit', correct: true } ],
+      why: '<code>git blame</code> shows, for every line, the commit and author that last changed it. <code>git show</code> on that commit gives the message and the full change, which usually explains the why.',
+      sheet: 'Show who last changed each line, and in which commit' },
+    { cmd: 'git cherry-pick', title: 'Just that one fix',
+      intro: 'A teammate\'s branch has one commit that fixes a date-parsing bug you need. The rest of the branch is not ready to merge.',
+      choices: [
+        { text: 'Merge their whole branch now and clean up the unfinished parts later' },
+        { text: 'git cherry-pick that one commit\'s hash onto your branch', correct: true },
+        { text: 'Retype the fix by hand on your branch and commit it as your own' },
+        { text: 'git rebase your branch onto theirs so the fix comes along' } ],
+      why: '<code>git cherry-pick &lt;hash&gt;</code> copies one commit\'s changes onto the branch you are on, as a new commit. Merging or rebasing would bring the unfinished work too.',
+      sheet: 'Copy one commit onto the current branch' },
+    { cmd: 'git rebase', title: 'A straight line for review',
+      intro: 'Your feature branch is 12 commits behind main. The team prefers a straight-line history, so they ask you to bring the branch up to date that way before they review the PR.',
+      choices: [
+        { text: 'git push --force to main so that your branch becomes the new main' },
+        { text: 'Delete the branch and redo all of the work on a fresh copy of main' },
+        { text: 'git rebase main, so your commits are replayed on top of main', correct: true },
+        { text: 'git reset --hard main, then reapply your changes from memory' } ],
+      why: '<code>git rebase main</code> replays your commits on top of the latest main, so history reads as a straight line. Merging main into your branch also works; it just adds a merge commit. Never rebase commits that other people have already pulled.',
+      sheet: 'Replay your commits on top of another branch' },
+    { cmd: 'git revert', title: 'Already pushed, already pulled',
+      intro: 'You pushed a commit to shared main that breaks the dashboard. Two teammates have already pulled it.',
+      choices: [
+        { text: 'git revert that commit, then push the new commit that undoes it', correct: true },
+        { text: 'git reset --hard HEAD~1, then git push --force to overwrite main' },
+        { text: 'git commit --amend to rewrite the bad commit, then push again' },
+        { text: 'Delete the repository on GitHub and push your local copy fresh' } ],
+      why: '<code>git revert</code> adds a commit that undoes the bad one, so everyone\'s history still matches. <code>reset</code> plus <code>push --force</code> rewrites history your teammates already have, and their next push can bring the bad commit straight back or wipe out work.',
+      sheet: 'Undo a pushed commit safely; avoid push --force on shared branches' },
+    { cmd: 'git tag', title: 'The version behind the report',
+      intro: 'The board report used the code exactly as it is today. In six months someone will ask which version produced those numbers.',
+      choices: [
+        { text: 'Make a branch called board-report and never commit to it again' },
+        { text: 'Put the word FINAL in your next commit message for later' },
+        { text: 'git stash a copy of the project that you can restore later' },
+        { text: 'git tag v1.0-board-report on this commit, then push the tag', correct: true } ],
+      why: 'A tag is a permanent name for one commit. A branch moves every time someone commits to it, so it cannot pin a version. Tags are not pushed by default: <code>git push origin v1.0-board-report</code>.',
+      sheet: 'Give one commit a permanent name, such as a release' },
+    { cmd: 'squash merge', title: '23 commits called wip',
+      intro: 'Your PR has 23 commits with messages like "wip", "fix typo" and "try again". The team wants main to get one clean commit for the feature.',
+      choices: [
+        { text: 'Use a regular merge so every one of the 23 commits lands in main' },
+        { text: 'Choose Squash and merge on the PR, with one clear commit message', correct: true },
+        { text: 'git cherry-pick each of the 23 commits onto main one at a time' },
+        { text: 'git push --force your branch straight onto main to replace it' } ],
+      why: 'A squash merge combines all of a branch\'s commits into a single commit on main. GitHub offers it as a button on the pull request.',
+      sheet: 'Combine a branch\'s commits into one commit on main' },
+    { cmd: 'protected branches + CI', title: 'Make it impossible',
+      intro: 'Last month someone pushed straight to main and broke the nightly run. Jonah wants that to be impossible, and wants tests to run on every pull request.',
+      choices: [
+        { text: 'Add a pre-commit hook on your laptop that runs the tests first' },
+        { text: 'Make the repository private so fewer people are able to push' },
+        { text: 'Protect main so it needs a reviewed PR, and add CI checks', correct: true },
+        { text: 'Post a reminder in the team channel and trust everyone to follow it' } ],
+      why: 'A <strong>protected branch</strong> on GitHub refuses direct pushes and can require review and passing checks. <strong>CI</strong> (continuous integration, for example GitHub Actions) runs the tests on every push or PR. A <strong>hook</strong> is a script Git runs on one machine; it is useful, but each person has to install it and it can be skipped.',
+      sheet: 'Server-side rules plus automatic tests; hooks are local scripts' },
+    { cmd: 'HTTPS token or SSH key', title: 'The password that never works',
+      intro: 'On your own laptop (not Codespaces), <code>git push</code> asks for your GitHub password and then rejects it, every time.',
+      choices: [
+        { text: 'Use a personal access token over HTTPS, or set up an SSH key', correct: true },
+        { text: 'Reset your GitHub password and then type the new one instead' },
+        { text: 'Delete the folder and git clone the repository again from scratch' },
+        { text: 'Add --force to the push so GitHub skips its password check' } ],
+      why: 'GitHub no longer accepts account passwords for Git. Over an <strong>HTTPS</strong> remote you sign in with a personal access token (or a credential helper); with an <strong>SSH</strong> remote, a key pair on your machine proves who you are. Codespaces handles this for you, which is why you have not seen it yet.',
+      sheet: 'How your machine proves who you are to GitHub' }
+  ];
+  const BONUS_KEYS = ['A', 'B', 'C', 'D'];
+  let bonusIdx = 0, bonusScore = 0, bonusAnswered = false;
+
+  function startBonus() {
+    bonusIdx = 0; bonusScore = 0;
+    hideAllScreens();
+    document.getElementById('screen-bonus').classList.add('active');
+    renderBonus();
+  }
+
+  function renderBonus() {
+    const b = BONUS[bonusIdx];
+    bonusAnswered = false;
+    const el = document.getElementById('screen-bonus');
+    const choices = b.choices.map((c, i) => `
+      <button class="choice-btn" data-correct="${c.correct ? 'true' : 'false'}" onclick="pickBonus(this)">
+        <span class="choice-key">${BONUS_KEYS[i]}</span>
+        <div><div class="choice-text">${c.text}</div></div>
+      </button>`).join('');
+    el.innerHTML = `
+      <div class="challenge-header">
+        <div class="challenge-num">Bonus &middot; ${bonusIdx + 1} / ${BONUS.length} &middot; not on the quiz</div>
+        <h2>${b.title}</h2>
+        <p>${b.intro}</p>
+      </div>
+      <div class="choices-label">What do you reach for?</div>
+      <div class="choices">${choices}</div>
+      <div class="feedback-box" id="fb-bonus"></div>
+      <button class="next-btn" id="next-bonus" onclick="nextBonus()">${bonusIdx < BONUS.length - 1 ? 'Next &rarr;' : 'See the summary &rarr;'}</button>`;
+    el.scrollTop = 0;
+    const panel = el.closest('.scenario-panel');
+    if (panel) panel.scrollTop = 0;
+    try { window.scrollTo(0, 0); } catch (e) {}
+  }
+
+  function pickBonus(btn) {
+    if (bonusAnswered) return;
+    bonusAnswered = true;
+    const b = BONUS[bonusIdx];
+    btn.closest('.choices').querySelectorAll('.choice-btn').forEach(x => {
+      x.disabled = true;
+      if (x.dataset.correct === 'true') x.classList.add('reveal-correct');
+    });
+    const ok = btn.dataset.correct === 'true';
+    btn.classList.add(ok ? 'chosen-correct' : 'chosen-wrong');
+    if (ok) bonusScore++;
+    try { if (ok) { window.sfx.pass(); } else { window.sfx.hint(); } } catch (e) {}
+    const fb = document.getElementById('fb-bonus');
+    fb.innerHTML = `<div class="fb-title">${ok ? 'Good call' : 'Not this time'} &middot; <code>${b.cmd}</code></div><p>${b.why}</p>`;
+    fb.className = 'feedback-box show ' + (ok ? 'correct-fb' : 'wrong-fb');
+    const next = document.getElementById('next-bonus');
+    next.classList.add('show');
+    try { next.focus(); } catch (e) {}
+  }
+
+  function nextBonus() {
+    if (bonusIdx < BONUS.length - 1) { bonusIdx++; renderBonus(); return; }
+    let best = 0;
+    try {
+      const prev = JSON.parse(localStorage.getItem('dtsc520_branchcrisis_bonus') || '{}');
+      best = Math.max(prev.best || 0, bonusScore);
+      localStorage.setItem('dtsc520_branchcrisis_bonus', JSON.stringify({ best: best, last: bonusScore, of: BONUS.length }));
+    } catch (e) { best = bonusScore; }
+    try { window.sfx.win(); if (bonusScore >= 9) window.confettiBurst(); } catch (e) {}
+    const rows = BONUS.map(b => `<tr><td><code>${b.cmd}</code></td><td>${b.sheet}</td></tr>`).join('');
+    document.getElementById('screen-bonus').innerHTML = `
+      <div class="challenge-header">
+        <div class="challenge-num">Bonus round &middot; summary</div>
+        <h2>${bonusScore} / ${BONUS.length}</h2>
+        <p>None of this is on the Module 6 quiz. You will meet all of it on a working team, and now none of it will be a surprise. Best so far: ${best} / ${BONUS.length}.</p>
+      </div>
+      <table class="bonus-sheet"><tbody>${rows}</tbody></table>
+      <button class="retry-btn" onclick="startBonus()">Replay the bonus round</button>
+      <button class="retry-btn" onclick="hideAllScreens(); document.getElementById('screen-debrief').classList.add('active');">Back to your results</button>`;
   }
 
   // ============================================================

@@ -682,20 +682,20 @@
         feedbackWrong: "Not quite. git remote -v lists remote names and their URLs. The standard remote is called 'origin'."
       },
       {
-        text: "You accidentally committed to main instead of a feature branch. What is the safest way to undo the last commit while keeping your changes?",
-        options: ["git revert HEAD", "git reset --soft HEAD~1", "git delete HEAD --keep-changes", "git pull --undo"],
-        correctIndex: 1,
-        difficulty: "hard",
-        feedbackCorrect: "Correct. git reset --soft HEAD~1 undoes the last commit but keeps the changes staged, so you can recommit to the right branch.",
-        feedbackWrong: "Not quite. git reset --soft HEAD~1 moves HEAD back one commit but keeps changes staged. git revert creates a new undo commit (better for shared history)."
-      },
-      {
-        text: "What is the difference between git fetch and git pull?",
-        options: ["They are identical commands with two different names", "fetch downloads but does not merge; pull does both", "pull downloads but does not merge; fetch does both", "fetch only works on branches; pull also works on tags"],
+        text: "You staged hello.txt by mistake. What does git restore --staged hello.txt do?",
+        options: ["Deletes hello.txt from your working directory", "Unstages it; your edits stay in the file", "Commits hello.txt with an empty message", "Restores hello.txt to its last committed version"],
         correctIndex: 1,
         difficulty: "medium",
-        feedbackCorrect: "Correct. git fetch gets the remote changes into your local copy of the remote branch without merging. git pull = git fetch + git merge.",
-        feedbackWrong: "Not quite. fetch = download only. pull = fetch + merge. fetch lets you inspect remote changes before integrating them."
+        feedbackCorrect: "Correct. restore --staged takes the file out of the staging area. Your edits are still in the working directory, just no longer queued for the next commit.",
+        feedbackWrong: "Not quite. --staged only touches the staging area. The file and your edits stay exactly as they are; git status will show them as not staged again."
+      },
+      {
+        text: "You commit, then notice a typo in the message. What does git commit --amend let you do?",
+        options: ["Replace the last commit, fixing its message or a missed file", "Undo every commit on the branch since the day you created it", "Send the last commit to GitHub with a corrected message", "Create a second commit that reverses the first one"],
+        correctIndex: 0,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. --amend rewrites the most recent commit instead of adding a new one. Use it before you push, not after.",
+        feedbackWrong: "Not quite. --amend replaces the last commit with a corrected version, so the log still shows one commit. Use it only before pushing."
       },
       {
         text: "What does git clone <URL> do?",
@@ -706,12 +706,12 @@
         feedbackWrong: "Not quite. git clone downloads the entire repository including full history, sets up the remote tracking, and creates a local copy."
       },
       {
-        text: "What does git stash do?",
-        options: ["Permanently deletes all of your uncommitted changes", "Shelves uncommitted changes so you can switch", "Stages every modified file in the working directory", "Saves the current state of your work to a new branch"],
-        correctIndex: 1,
-        difficulty: "medium",
-        feedbackCorrect: "Correct. git stash saves uncommitted changes in a temporary storage area, cleaning your working directory without committing.",
-        feedbackWrong: "Not quite. git stash temporarily puts aside your current changes so you can switch contexts. git stash pop restores them."
+        text: "You run git branch feature while on main. Which branch are you on afterwards?",
+        options: ["feature, because creating a branch switches to it", "Neither, until you commit something new", "main; the branch exists but you have not switched", "Both, since the two branches share every commit"],
+        correctIndex: 2,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. git branch feature only creates the branch. To move onto it, run git switch feature (or git checkout feature).",
+        feedbackWrong: "Not quite. Creating a branch does not move you. git branch shows * main until you run git switch feature. git checkout -b does both steps at once."
       },
       {
         text: "What does a .gitignore file do?",
@@ -780,20 +780,20 @@
         feedbackWrong: "Not quite. revert = add an undo commit (history preserved, safe to share). reset = move pointer back (rewrites history, dangerous after push)."
       },
       {
-        text: "What does git tag v1.0 do?",
-        options: ["Creates a new branch named v1.0 from the current commit", "Labels the current commit v1.0 as a permanent reference", "Adds a v1.0 label to the top of the project's README file", "Locks the repository so no further commits can be made"],
+        text: "What does git switch feature do?",
+        options: ["Creates a brand new branch named feature", "Moves you onto the existing feature branch", "Merges feature into the branch you are on now", "Renames your current branch to feature"],
         correctIndex: 1,
-        difficulty: "medium",
-        feedbackCorrect: "Correct. Tags mark specific commits - typically used for releases. Unlike branches, tags don't move as new commits are added.",
-        feedbackWrong: "Not quite. git tag creates a permanent label pointing to a specific commit. Used for release versions (v1.0, v2.0)."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. git switch moves you onto an existing branch, and your files change to match it. git checkout feature does the same thing.",
+        feedbackWrong: "Not quite. git switch changes which branch you are on. To create one, use git branch feature or git switch -c feature."
       },
       {
-        text: "What does git cherry-pick <commit-hash> do?",
-        options: ["Deletes the specified commit from the branch history", "Applies one commit's changes onto the current branch", "Creates a copy of the specified commit on GitHub", "Reverts every commit made after the specified hash"],
-        correctIndex: 1,
-        difficulty: "hard",
-        feedbackCorrect: "Correct. cherry-pick applies the changes from one specific commit to your current branch - useful when you want just one fix without a full merge.",
-        feedbackWrong: "Not quite. git cherry-pick applies one specific commit's changes to the current branch. Handy for applying a bug fix from another branch."
+        text: "What does git diff --staged show?",
+        options: ["Changes you have staged but not yet committed", "Changes you made but have not staged yet", "Every commit you have made that is not pushed yet", "Files that Git is not tracking at all"],
+        correctIndex: 0,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. --staged (also spelled --cached) compares the staging area with the last commit: exactly what your next commit will contain.",
+        feedbackWrong: "Not quite. Plain git diff shows unstaged changes. git diff --staged shows what is staged, which is what the next commit will contain."
       },
       {
         text: "In a GitHub Pull Request, what does the 'Files changed' tab show?",
@@ -804,44 +804,44 @@
         feedbackWrong: "Not quite. 'Files changed' shows the diff: what was added (+) and what was removed (-) from each modified file."
       },
       {
-        text: "What is a 'squash merge'?",
-        options: ["A merge that can never be undone once it is pushed", "Combining a branch's commits into one commit on main", "Merging two remote branches into each other at once", "A merge that skips the staging area and commits directly"],
+        text: "You stage all your changes with git add ., then run plain git diff. What do you see?",
+        options: ["Every change you just staged, line by line", "Nothing; plain git diff shows unstaged changes only", "An error, because the staging area is not empty yet", "The diff of your most recent commit instead"],
         correctIndex: 1,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Plain git diff compares your files with the staging area, and they now match. Use git diff --staged to see what you staged.",
+        feedbackWrong: "Not quite. Once everything is staged, plain git diff has nothing to show. git diff --staged shows the staged changes."
+      },
+      {
+        text: "main and feature both have new commits since they split. With no conflicts, what does git merge feature do on main?",
+        options: ["Moves the main pointer forward; no new commit", "Deletes feature after copying its files over", "Creates a merge commit joining both histories", "Replaces main's new commits with feature's"],
+        correctIndex: 2,
         difficulty: "hard",
-        feedbackCorrect: "Correct. Squash merge combines all feature branch commits into one clean commit on main - keeping history cleaner for reviewers.",
-        feedbackWrong: "Not quite. Squash merge collapses all the feature branch commits into one before merging. Keeps main's history clean and linear."
+        feedbackCorrect: "Correct. When both branches moved, Git does a three-way merge and records a merge commit with two parents. A fast-forward only happens when main has not moved.",
+        feedbackWrong: "Not quite. A fast-forward needs main to be unchanged. When both branches have new commits, Git makes a merge commit that ties the two histories together."
       },
       {
-        text: "What does git blame do?",
-        options: ["Creates an error report that lists every bug in the code", "Shows who last changed each line, and in which commit", "Reverts every change that one specific author has made", "Compares your code's quality against the team's standards"],
-        correctIndex: 1,
+        text: "feature has been merged into main. What does git branch -d feature do?",
+        options: ["Deletes the feature branch; its commits stay in main", "Deletes feature and removes its commits from main", "Undoes the merge and puts feature back the way it was", "Deletes feature on GitHub but keeps your local copy"],
+        correctIndex: 0,
         difficulty: "medium",
-        feedbackCorrect: "Correct. git blame annotates each line of a file with who last changed it and when - useful for understanding code history.",
-        feedbackWrong: "Not quite. git blame shows per-line attribution: who edited each line and in which commit."
+        feedbackCorrect: "Correct. The merged commits are part of main now, so deleting the branch label loses nothing. Git refuses -d on a branch that is not merged yet.",
+        feedbackWrong: "Not quite. A branch is a label pointing at commits. After the merge those commits belong to main, so -d removes only the label."
       },
       {
-        text: "What is a protected branch on GitHub?",
-        options: ["A branch whose contents are encrypted on the GitHub server", "A branch with rules that block pushes and require review", "A branch that only one person on the team can see or access", "A branch that automatically runs the tests on every commit"],
-        correctIndex: 1,
+        text: "matplotlib.ipynb is in the notebooks folder. From the repo root you run git add matplotlib.ipynb. What happens?",
+        options: ["Git finds the file anyway and stages it", "Git stages every notebook in the repo", "Git reports the path matched no files", "Git creates an empty matplotlib.ipynb"],
+        correctIndex: 2,
         difficulty: "medium",
-        feedbackCorrect: "Correct. Branch protection enforces quality gates: require PRs, require approvals, require passing CI checks before merging to main.",
-        feedbackWrong: "Not quite. Protected branches enforce rules like 'no direct push to main' and 'require 1 approval' before merging."
+        feedbackCorrect: "Correct. Git resolves paths from your current folder: pathspec 'matplotlib.ipynb' did not match any files. Use git add notebooks/matplotlib.ipynb, or cd notebooks first.",
+        feedbackWrong: "Not quite. Paths are relative to where you are. From the root, Git looks for ./matplotlib.ipynb, finds nothing, and says the pathspec did not match any files."
       },
       {
-        text: "What does git push --force do and why is it dangerous?",
-        options: ["Pushes all of your local branches to the remote at once", "Overwrites remote history and can discard others' work", "Forces a merge through even when there are conflicts left", "Pushes your changes without requiring any authentication"],
+        text: "You create hello.txt in a repository and run git status. Where is it listed?",
+        options: ["Under Changes to be committed", "Under Untracked files", "Under Changes not staged for commit", "Nowhere until you commit it"],
         correctIndex: 1,
-        difficulty: "hard",
-        feedbackCorrect: "Correct. --force overwrites remote history. If teammates have pulled the old commits, their local repos will diverge, causing significant problems.",
-        feedbackWrong: "Not quite. --force replaces the remote branch with your local version. Dangerous on shared branches: it can destroy teammates' commits."
-      },
-      {
-        text: "What is continuous integration (CI) in the context of GitHub workflows?",
-        options: ["Continuously bringing new team members into the project", "Running tests on every push or pull request", "Connecting GitHub to the team's project management tool", "A way to continuously back up the repository to a server"],
-        correctIndex: 1,
-        difficulty: "medium",
-        feedbackCorrect: "Correct. CI automatically runs tests on every push. If tests fail, the PR is blocked. This catches bugs before they reach main.",
-        feedbackWrong: "Not quite. Continuous integration = automated testing on every push/PR. If tests pass, the code can be merged. Tools: GitHub Actions, Jenkins."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. Git has never seen hello.txt, so it is untracked until you git add it.",
+        feedbackWrong: "Not quite. A brand-new file is untracked. After git add it moves to Changes to be committed."
       },
       {
         text: "What does the branch naming convention 'feature/', 'fix/', 'hotfix/' indicate?",
@@ -852,28 +852,28 @@
         feedbackWrong: "Not quite. Branch naming conventions are team agreements, not Git requirements. They make branch purpose clear at a glance."
       },
       {
-        text: "What is a Git hook?",
-        options: ["A way to link two separate repositories together permanently", "A script Git runs automatically, such as before each commit", "A GitHub feature for tagging teammates in a pull request", "A command that undoes whatever the last hook command did"],
-        correctIndex: 1,
-        difficulty: "hard",
-        feedbackCorrect: "Correct. Git hooks are scripts in .git/hooks/ that run automatically at events like pre-commit (run linter) or pre-push (run tests).",
-        feedbackWrong: "Not quite. Git hooks are automation scripts triggered by Git events. pre-commit hooks can run code formatters or linters automatically."
+        text: "Which of these belongs in a data project's .gitignore?",
+        options: [".ipynb_checkpoints/ and large raw data files", "README.md, so the project stays private", "Your analysis notebooks, to keep them clean", "The .gitignore file itself, so nobody edits it"],
+        correctIndex: 0,
+        difficulty: "medium",
+        feedbackCorrect: "Correct. Checkpoints are autosave clutter, and raw data is often too large or too sensitive for a repo. The README and your notebooks are the point of the repo.",
+        feedbackWrong: "Not quite. .gitignore is for files that should never be tracked: autosaves like .ipynb_checkpoints/, big raw data, and anything holding credentials."
       },
       {
-        text: "When would you use git stash pop vs. git stash apply?",
-        options: ["They are identical commands, so you can use either one", "pop restores and drops the entry; apply restores and keeps it", "git stash apply is for merging, and git stash pop is for rebasing", "git stash pop is for branches; git stash apply is for files"],
+        text: "What does git push origin main do?",
+        options: ["Downloads new commits from origin into your main", "Sends your local main commits to the remote origin", "Creates a new remote repository named origin", "Merges origin into main, then deletes the remote copy"],
         correctIndex: 1,
-        difficulty: "hard",
-        feedbackCorrect: "Correct. pop = restore and delete from stash. apply = restore but keep the stash in case you need it again.",
-        feedbackWrong: "Not quite. stash pop = restore + remove from stash. stash apply = restore but leave the stash (so you can apply it to another branch too)."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. push uploads your commits on main to the remote named origin (usually your GitHub repo). Teammates get them with git pull.",
+        feedbackWrong: "Not quite. push sends commits up to the remote. pull brings commits down from it."
       },
       {
-        text: "What does git rebase do?",
-        options: ["Deletes all commits on the branch so you can start fresh", "Replays commits on another commit for a linear history", "Merges two branches without ever creating a merge commit", "Copies the repository to a new base URL on the remote"],
+        text: "You run git pull origin main and Git prints Already up to date. What does that mean?",
+        options: ["Your files have no uncommitted changes in them", "The remote has nothing new for your branch", "Your push succeeded and GitHub now matches you", "Git could not reach GitHub, so it skipped"],
         correctIndex: 1,
-        difficulty: "hard",
-        feedbackCorrect: "Correct. Rebase replays your branch's commits on top of the target branch tip, producing a linear history without merge commits.",
-        feedbackWrong: "Not quite. Rebase replays commits on top of another branch, producing linear history. Unlike merge, it doesn't create a merge commit."
+        difficulty: "easy",
+        feedbackCorrect: "Correct. The remote main has no commits you do not already have, so there was nothing to merge. It says nothing about your own unpushed work.",
+        feedbackWrong: "Not quite. Already up to date describes the remote: it has no new commits for you. Check git status for your own changes."
       },
       {
         text: "What is the typical Git workflow for contributing to an open-source project?",
@@ -897,23 +897,23 @@
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. A divergence in the commit graph means two branches both have commits not present in the other - they need to be merged eventually.",
-        feedbackWrong: "Not quite. A divergence means both branches have unique commits. This is normal and is resolved by a merge or rebase."
+        feedbackWrong: "Not quite. A divergence means both branches have unique commits since they split. This is normal, and a merge brings them back together."
       },
       {
-        text: "What does git bisect help you do?",
-        options: ["Split a repository into two separate, smaller projects", "Binary-search history for the commit that added a bug", "Compare two branches side by side, one file at a time", "Divide one large commit into several smaller commits"],
-        correctIndex: 1,
-        difficulty: "hard",
-        feedbackCorrect: "Correct. git bisect uses binary search through history: mark commits as 'good' or 'bad' to quickly find where a bug was introduced.",
-        feedbackWrong: "Not quite. git bisect is a debugging tool. It binary searches commit history to find the exact commit that introduced a regression."
+        text: "What does git log -n 1 show?",
+        options: ["Only the most recent commit", "The first commit ever made", "One line per commit, all of them", "The last commit on the remote"],
+        correctIndex: 0,
+        difficulty: "easy",
+        feedbackCorrect: "Correct. -n 1 limits the log to one commit, the newest. Use -n 5 for the last five.",
+        feedbackWrong: "Not quite. -n limits how many commits are shown, starting from the newest. git log --oneline is the one-line-per-commit view."
       },
       {
-        text: "What does HTTPS vs. SSH mean when choosing a remote URL for a GitHub repository?",
-        options: ["HTTPS is for public repositories; SSH is for private ones", "HTTPS signs in with a token; SSH uses a key pair instead", "SSH is faster, while HTTPS is always the more secure choice", "HTTPS supports large files, while SSH cannot transfer them"],
+        text: "You type git status and get fatal: not a git repository. What is the most likely cause?",
+        options: ["Git is not installed on this computer yet", "You are in a folder outside any repository", "Your last commit has been corrupted somehow", "You have not pushed to GitHub yet"],
         correctIndex: 1,
         difficulty: "medium",
-        feedbackCorrect: "Correct. SSH uses a key pair stored on your machine - no password prompt each time. HTTPS requires a token or credential manager.",
-        feedbackWrong: "Not quite. SSH = key-based authentication (set up once, then seamless). HTTPS = token/password based authentication."
+        feedbackCorrect: "Correct. Git looks for a repository in the current folder and its parents. cd into the project folder (or run git init to start one there).",
+        feedbackWrong: "Not quite. Git commands work inside a repository. This message means the current folder is not in one: cd into your project first."
       },
       {
         text: "After you run git push, your teammate runs git pull. What exactly happens on their machine?",

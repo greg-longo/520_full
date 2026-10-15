@@ -1081,6 +1081,37 @@
         <p>Write commit messages as if you're finishing the sentence "This commit will..." - so "Add batting average normalization step" rather than "stuff" or "fixed it". Your future self will thank you when you're scrolling through history three months later.</p>
       </div>
 
+      <h3>Checking your work</h3>
+      <p>Before you commit, look. These commands only read; none of them changes anything, so run them as often as you like.</p>
+
+<pre><code><span class="cmd">git status</span>            <span class="cmt"># what is modified, staged, or untracked</span>
+<span class="cmd">git diff</span>              <span class="cmt"># changes you have NOT staged yet, line by line</span>
+<span class="cmd">git diff --staged</span>     <span class="cmt"># changes you HAVE staged: your next commit</span>
+<span class="cmd">git log --oneline</span>     <span class="cmt"># one line per commit, newest first</span>
+<span class="cmd">git log -n 1</span>          <span class="cmt"># just the most recent commit</span>
+<span class="cmd">git show</span>              <span class="cmt"># the newest commit in detail, with its diff</span></code></pre>
+
+      <p><code>git status</code> sorts files into three groups that match the three states: <strong>Untracked files</strong> (new files Git has never seen), <strong>Changes not staged for commit</strong> (edited, not yet added), and <strong>Changes to be committed</strong> (staged). Once everything is staged, plain <code>git diff</code> shows nothing; use <code>git diff --staged</code> to see what you are about to commit. In <code>git log</code> or <code>git show</code>, press <code>q</code> to get back to the prompt.</p>
+
+      <p>Git commands work on the folder you are in. If <code>git status</code> answers <code>fatal: not a git repository</code>, you are outside your project: <code>cd</code> into it. Paths are relative too, so if a notebook lives in <code>notebooks/</code>, either <code>cd notebooks</code> first or type <code>git add notebooks/matplotlib.ipynb</code>. Otherwise Git replies that the pathspec did not match any files.</p>
+
+      <h3>Undoing things</h3>
+<pre><code><span class="cmt"># Staged a file by mistake? Take it out of the staging area (your edits stay)</span>
+<span class="cmd">git restore --staged hello.txt</span>
+
+<span class="cmt"># Typo in the last commit message, or forgot a file? Replace the last commit</span>
+<span class="cmd">git add forgotten_file.py</span>
+<span class="cmd">git commit --amend</span>
+
+<span class="cmt"># Undo a commit that is already pushed: add a new commit that reverses it</span>
+<span class="cmd">git log --oneline</span>     <span class="cmt"># find the commit's hash, e.g. 3c1e2a8</span>
+<span class="cmd">git revert 3c1e2a8</span></code></pre>
+
+      <div class="callout warn">
+        <div class="callout-title">revert vs. reset</div>
+        <p><code>git revert</code> writes a correction on top of your history; nothing disappears, so it is safe on commits other people already have. <code>git reset</code> moves your branch back as if later commits never happened. That rewrites history, so keep it for local work you have not pushed. The same goes for <code>--amend</code>: amend before you push, not after.</p>
+      </div>
+
         <div class="subpage-nav">
           <button class="subpage-nav-btn" onclick="showSection('three-states')">← Three States</button>
           <span class="subpage-nav-center">4 / 9</span>
@@ -1150,6 +1181,21 @@
         <p>A common mistake: cloning the original repo instead of your fork. If you do that, you won't have push access. Always copy the URL from <em>your</em> forked version of the repo on GitHub.</p>
       </div>
 
+      <h3>What goes in a repository</h3>
+      <p>Every repo should have a <code>README.md</code> at the top level. GitHub shows it on the repo's front page, so it is where you explain what the project does, how to run it, and where the data comes from. For a portfolio project, the README is often the only thing a reader looks at.</p>
+      <p>A <code>.gitignore</code> file lists files Git should never track. For a data project that usually means:</p>
+
+<pre><code><span class="cmt"># .gitignore</span>
+.ipynb_checkpoints/     <span class="cmt"># Jupyter autosaves</span>
+__pycache__/            <span class="cmt"># Python's compiled files</span>
+data/raw/               <span class="cmt"># large or sensitive source data</span>
+.env                    <span class="cmt"># passwords and API keys</span></code></pre>
+
+      <div class="callout warn">
+        <div class="callout-title">Never commit a secret</div>
+        <p>Git keeps every snapshot, so a password or API key that was ever committed stays in the history even after you delete it in a later commit. If one reaches GitHub, treat it as exposed: revoke the key first, then remove it from the code. Keeping secrets in a <code>.env</code> file listed in <code>.gitignore</code> prevents the problem.</p>
+      </div>
+
         <div class="subpage-nav">
           <button class="subpage-nav-btn" onclick="showSection('basic-workflow')">← Core Workflow</button>
           <span class="subpage-nav-center">5 / 9</span>
@@ -1178,6 +1224,8 @@
 
 <span class="cmt"># Switch back to main</span>
 <span class="cmd">git checkout main</span></code></pre>
+
+      <p><code>git branch new-name</code> only creates a branch; you stay where you were until you switch. <code>git switch new-name</code> (or <code>git checkout new-name</code>) moves you onto an existing branch, and <code>git checkout -b new-name</code> or <code>git switch -c new-name</code> does both at once. Your terminal prompt and <code>git branch</code> show which branch you are on.</p>
 
       <p>
         The convention is to keep <strong>main</strong> always in a working, deployable state. All active development happens on branches. This is how professional teams prevent broken code from reaching the shared codebase.
@@ -1214,6 +1262,13 @@
 <span class="cmt"># Edit the file to resolve, then:</span>
 <span class="cmd">git add analysis.py</span>
 <span class="cmd">git commit -m <span class="str">"Merge salary viz feature, resolve conflict"</span></span></code></pre>
+
+      <h3>Two kinds of merge</h3>
+      <p>Git always merges <em>into</em> the branch you are on, so switch to <code>main</code> first. What happens next depends on history. If <code>main</code> has no new commits since your branch started, Git does a <strong>fast-forward</strong>: it simply moves the <code>main</code> pointer up to your branch, and no new commit is made. If both branches have new commits, Git does a <strong>three-way merge</strong> and records a <strong>merge commit</strong> that ties the two histories together.</p>
+      <p>A conflict only happens when both branches changed the same lines of the same file. The markers show both versions: <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code> starts your current branch's version, <code>=======</code> separates it from the incoming one, and <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> ends it. Edit the file so it says what it should (often a combination of both), delete the markers, then <code>git add</code> and <code>git commit</code>. Until you commit, <code>git status</code> reminds you the merge is still in progress. VS Code and Codespaces highlight conflicts and offer buttons to accept the current change, the incoming change, or both.</p>
+
+<pre><code><span class="cmt"># Once a branch is merged, delete it; its commits stay in main</span>
+<span class="cmd">git branch -d feature/add-salary-viz</span></code></pre>
 
       <div class="callout warn">
         <div class="callout-title">Conflicts aren't failures</div>
@@ -1267,6 +1322,14 @@
         <div class="sim-cta-label">Simulation &middot; Part 3</div>
         <h3>Terminal Trainer - Git in Action</h3>
         <p>Branch, edit, diff, stage, commit, and push - eleven challenges using the Git commands from this module against a real bug in the StatDeck analytics pipeline.</p>
+      </a>
+
+      <p>Then try <strong>The Branch Crisis</strong>: five decisions under pressure when a bad merge breaks the team's pipeline. After the debrief, an optional bonus round introduces Git you will meet on the job but do not need yet, such as stashing, rebasing, tags, and finding the commit that introduced a bug. The bonus round is not on the quiz.</p>
+
+      <a class="sim-cta" href="branch_crisis_sim.html" style="display:block; margin:1.25rem 0;">
+        <div class="sim-cta-label">Simulation &middot; Judgment</div>
+        <h3>The Branch Crisis</h3>
+        <p>Diagnose, branch, commit, resolve a conflict, and write the pull request. Plus an optional bonus round with eleven situations from working teams.</p>
       </a>
 
         <div class="subpage-nav">
