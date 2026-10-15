@@ -601,13 +601,18 @@
       <p>Module 4 took the 102-row export down to 100 clean rows: it dropped two duplicated rows, turned one impossible attendance value and any impossible GPA into <code>NaN</code>, and converted <code>submission_rate</code> from the string <code>&quot;84%&quot;</code> into the number <code>0.84</code>.</p>
       <p>That work is done. This module loads the result and does not repeat it.</p>
       <p>One thing Module 4 deliberately did <strong>not</strong> do is drop the students whose LMS records are missing, because those records are missing more often for struggling students, so removing them would bias every answer that follows. The holes are still here, which means some of your figures will have fewer points than students. Knowing which is part of the job.</p>
+      <div data-runnable>
       <pre><code>cohort = pd.<span class="fn">read_csv</span>(<span class="st">&quot;data/cohort_clean.csv&quot;</span>)
 
-<span class="fn">print</span>(<span class="st">f&quot;rows: {len(cohort)}, columns: {cohort.shape[1]}&quot;</span>)
-cohort.<span class="fn">head</span>()</code></pre>
-      <div class="output-block">
+<span class="fn">print</span>(<span class="st">f&quot;rows: {len(cohort)}, columns: {cohort.shape[1]}&quot;</span>)</code></pre>
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 rows: <span class="out-num">100</span>, columns: <span class="out-num">15</span>
+      </div>
+      </div>
+      <pre><code>cohort.<span class="fn">head</span>()</code></pre>
+      <div class="output-block">
+        <div class="output-block-label">output</div>
    student_id            name  hs_gpa  hs_clubs  hs_sports  hs_attendance  \
 <span class="out-num">0</span>        <span class="out-num">1001</span>    Kofi Pereira    <span class="out-num">2.87</span>         <span class="out-num">3</span>          <span class="out-num">1</span>          <span class="out-num">0.915</span>   
 <span class="out-num">1</span>        <span class="out-num">1002</span>     Elliot Park    <span class="out-num">2.20</span>         <span class="out-num">1</span>          <span class="out-num">1</span>          <span class="out-num">0.866</span>   
@@ -625,14 +630,16 @@ rows: <span class="out-num">100</span>, columns: <span class="out-num">15</span>
    time_on_task_hrs  submission_rate  course_score  success  
 <span class="out-num">0</span>               NaN              NaN          <span class="out-num">85.8</span>        <span class="out-num">1</span>  
 <span class="out-num">1</span>               <span class="out-num">2.5</span>             <span class="out-num">0.69</span>          <span class="out-num">57.1</span>        <span class="out-num">0</span>  
-... [<span class="out-num">3</span> more lines]
+<span class="out-num">2</span>               <span class="out-num">1.8</span>             <span class="out-num">0.84</span>          <span class="out-num">75.5</span>        <span class="out-num">1</span>  
+... [<span class="out-num">2</span> more lines]
       </div>
+      <div data-runnable>
       <pre><code><span class="cm"># Say your n. Which columns have holes, and how big are they?</span>
 holes = cohort.<span class="fn">isna</span>().<span class="fn">sum</span>()
 <span class="fn">print</span>(holes[holes &gt; <span class="nm">0</span>])
 <span class="fn">print</span>(<span class="st">f&quot;\nstudents with no LMS record at all: &quot;</span>
       <span class="st">f&quot;{cohort[[&#x27;logins_per_week&#x27;, &#x27;time_on_task_hrs&#x27;, &#x27;submission_rate&#x27;]].isna().all(axis=1).sum()}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 hs_attendance        <span class="out-num">1</span>
 logins_per_week     <span class="out-num">15</span>
@@ -642,16 +649,28 @@ dtype: int64
 
 students with no LMS record at all: <span class="out-num">15</span>
       </div>
+      </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><code>cohort</code> has 100 rows, and the three LMS columns are missing for 15 of them. Any figure built on engagement is therefore a figure about 85 students, not 100. matplotlib will not warn you about this. It drops what it cannot plot and draws the rest.</p>
       </div>
+      <script type="application/x-dtsc-setup">import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+# The versions this notebook was written and verified against. Printed rather
+# than asserted, so the line stays true when you run it somewhere else.
+print(f"matplotlib {matplotlib.__version__}")
+print(f"pandas     {pd.__version__}")
+print(f"numpy      {np.__version__}")</script>
       <h3 id="1-why-draw-it-at-all">1. Why draw it at all</h3>
       <p>You can already summarize a column with <code>describe()</code>. So what does a picture add that a table of statistics does not?</p>
       <p>The honest answer is a demonstration rather than an argument, and it is nearly fifty years old.</p>
       <div class="nb-narrative nb-narrative-open">
         <p>Francis Anscombe published four small datasets in 1973 for exactly this purpose. They are chosen so that the summary statistics a careful analyst would reach for first are, to two decimal places, the same for all four. If those statistics were enough, the four datasets would be interchangeable.</p>
       </div>
+      <div data-runnable>
       <pre><code><span class="cm"># Anscombe&#x27;s quartet (Anscombe, 1973). Four x/y datasets, eleven points each.</span>
 ans = {
     <span class="st">&quot;I&quot;</span>:   ([<span class="nm">10</span>, <span class="nm">8</span>, <span class="nm">13</span>, <span class="nm">9</span>, <span class="nm">11</span>, <span class="nm">14</span>, <span class="nm">6</span>, <span class="nm">4</span>, <span class="nm">12</span>, <span class="nm">7</span>, <span class="nm">5</span>],
@@ -670,17 +689,19 @@ ans = {
     <span class="fn">print</span>(<span class="st">f&quot;{name:4} mean x {x.mean():.2f}  mean y {y.mean():.2f}  &quot;</span>
           <span class="st">f&quot;sd y {y.std(ddof=1):.2f}  r {np.corrcoef(x, y)[0, 1]:.2f}  &quot;</span>
           <span class="st">f&quot;fit y = {slope:.2f}x + {intercept:.2f}&quot;</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 I    mean x <span class="out-num">9.00</span>  mean y <span class="out-num">7.50</span>  sd y <span class="out-num">2.03</span>  r <span class="out-num">0.82</span>  fit y = <span class="out-num">0.</span>50x + <span class="out-num">3.00</span>
 II   mean x <span class="out-num">9.00</span>  mean y <span class="out-num">7.50</span>  sd y <span class="out-num">2.03</span>  r <span class="out-num">0.82</span>  fit y = <span class="out-num">0.</span>50x + <span class="out-num">3.00</span>
 III  mean x <span class="out-num">9.00</span>  mean y <span class="out-num">7.50</span>  sd y <span class="out-num">2.03</span>  r <span class="out-num">0.82</span>  fit y = <span class="out-num">0.</span>50x + <span class="out-num">3.00</span>
 IV   mean x <span class="out-num">9.00</span>  mean y <span class="out-num">7.50</span>  sd y <span class="out-num">2.03</span>  r <span class="out-num">0.82</span>  fit y = <span class="out-num">0.</span>50x + <span class="out-num">3.00</span>
       </div>
+      </div>
       <div class="callout callout-warn">
         <div class="callout-label">Predict before you read on</div>
         <strong>Predict.</strong> Four datasets, one set of summary statistics. Sketch what you think the four scatter plots look like.  Commit to an answer before you run the next cell.
       </div>
+      <div data-runnable>
       <pre><code>fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">2</span>, <span class="nm">2</span>, figsize=(<span class="nm">7</span>, <span class="nm">5.5</span>), sharex=<span class="kw">True</span>, sharey=<span class="kw">True</span>,
                          layout=<span class="st">&quot;constrained&quot;</span>)
 
@@ -697,8 +718,9 @@ fig.<span class="fn">supxlabel</span>(<span class="st">&quot;x&quot;</span>)
 fig.<span class="fn">supylabel</span>(<span class="st">&quot;y&quot;</span>)
 
 plt.<span class="fn">show</span>()</code></pre>
-      <details class="debrief"><summary>What happened</summary>
       <figure class="nb-figure"><img src="assets/fig-1f508b19c2.png" alt="Figure: Same means, same spread, same correlation, same fitted line" loading="lazy"></figure>
+      </div>
+      <details class="debrief"><summary>What happened</summary>
       <p>One is the relationship the statistics describe. Two is curved, so a straight line is the wrong summary of it. Three is a straight line plus a single point pulling the fit upward. Four has no relationship at all: one point at x = 19 manufactures the entire correlation. The statistics could not tell you any of that, and one glance can.</p>
       </details>
       <h4 id="three-things-a-figure-is-for">Three things a figure is for</h4>
@@ -711,8 +733,9 @@ plt.<span class="fn">show</span>()</code></pre>
       <p>Three to be wary of, all of which section 9 takes apart: <strong>pie charts</strong>, because comparing angles is harder than comparing lengths; <strong>three-dimensional charts</strong>, where the depth carries no data and distorts the comparison; and <strong>dual-axis charts</strong>, which let the person drawing them decide how related two series appear.</p>
       <h4 id="the-same-column-twice">The same column, twice</h4>
       <p>Here is <code>course_score</code> as a table, and as a picture. Read both, then decide which one you would put in a report and which one you would keep for yourself.</p>
+      <div data-runnable>
       <pre><code>cohort.course_score.<span class="fn">describe</span>().<span class="fn">round</span>(<span class="nm">2</span>)</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 count    <span class="out-num">100.00</span>
 mean      <span class="out-num">68.34</span>
@@ -724,6 +747,8 @@ min       <span class="out-num">46.00</span>
 max       <span class="out-num">91.90</span>
 Name: course_score, dtype: float64
       </div>
+      </div>
+      <div data-runnable>
       <pre><code>scores = cohort.course_score
 fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">6</span>, <span class="nm">3</span>), layout=<span class="st">&quot;constrained&quot;</span>)
 
@@ -735,6 +760,7 @@ ax.<span class="fn">set_title</span>(<span class="st">f&quot;Course scores cente
 
 plt.<span class="fn">show</span>()</code></pre>
       <figure class="nb-figure"><img src="assets/fig-f08ff3bc3c.png" alt="Figure: Course scores center on ... , spread about ... points (n = ... )" loading="lazy"></figure>
+      </div>
       <details class="debrief"><summary>What happened</summary>
       <p>The table gives you the quartiles exactly, which the picture only implies. The picture gives you the shape, which the table hides: a mean of 68.3 and a median of 68.1 are equally consistent with one hump, with two, or with a long tail on one side, and you cannot tell which from the two numbers. Here it is a single hump, roughly balanced, which is worth knowing before you report a mean as though it described every student.</p>
       </details>
@@ -846,6 +872,7 @@ plt.<span class="fn">show</span>()</code></pre>
       <p>The tutorial sites largely did not follow. Roughly two thirds of the widely used introductions still lead with the implicit interface, and that includes several whose pages carry a recent update date, because a page can be revised for formatting without its code being modernized. One well known reference site teaches plotting without ever using the words Figure or Axes.</p>
       <p>So expect a mismatch, and read it as a historical artifact rather than a disagreement about what is correct. The translation table above is the tool for it.</p>
       <p>Two honest notes on our own rule. First, matplotlib <em>suggests</em> the explicit style, which is weaker than a requirement, and the implicit style is genuinely convenient for a throwaway look at something. This module uses the explicit form everywhere anyway, for consistency and because every multi-panel figure needs it. Second, <code>plt.subplots()</code> is itself a pyplot function. &quot;Explicit&quot; does not mean avoiding <code>plt.</code>; it means that once the Figure and Axes exist, you address them by name.</p>
+      <p>You will also see <code>plt.show()</code> at the end of every figure in this module. A notebook draws the figure when the cell ends, so there it changes nothing. A script does not, and leaves you with no window at all. It is here because the habit transfers to the place where it matters.</p>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
         <p><code>fig, ax = plt.subplots()</code> is the first line of every figure in this module. The Figure owns the image, the Axes owns one plot inside it. The implicit interface adds to whatever axes it thinks you meant, which is convenient until there is more than one, and there is nearly always more than one.</p>
@@ -885,16 +912,6 @@ plt.<span class="fn">show</span>()</code></pre></details>
         <div class="callout-label">Takeaway</div>
         <p>Note what you did not have to do: no <code>plt.subplot(1, 2, 1)</code>, no keeping track of which panel is current. You named both panels up front and then addressed them. The explicit interface exists for that, and it is why the next twelve sections never mention the other one again.</p>
       </div>
-      <script type="application/x-dtsc-setup">import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-
-# The versions this notebook was written and verified against. Printed rather
-# than asserted, so the line stays true when you run it somewhere else.
-print(f"matplotlib {matplotlib.__version__}")
-print(f"pandas     {pd.__version__}")
-print(f"numpy      {np.__version__}")</script>
     
       <div class="section-nav"><a class="section-next" data-goto="distributions" href="#distributions">Next: Distributions &rarr;</a></div>
     </section>
@@ -1083,7 +1100,7 @@ ax.<span class="fn">set_title</span>(<span class="st">f&quot;About {slope:.1f} p
              <span class="st">f&quot;(n = {len(sub)})&quot;</span>)
 
 plt.<span class="fn">show</span>()</code></pre>
-      <figure class="nb-figure"><img src="assets/fig-9bc53c1ec2.png" alt="Figure: About ... points per extra login per week (n = ... )" loading="lazy"></figure>
+      <figure class="nb-figure"><img src="assets/fig-c5b6140e5c.png" alt="Figure: About ... points per extra login per week (n = ... )" loading="lazy"></figure>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -1297,7 +1314,7 @@ axes[<span class="nm">0</span>].<span class="fn">set_ylabel</span>(<span class="
 fig.<span class="fn">suptitle</span>(<span class="st">&quot;Inside a GPA band, clubs and score barely move together&quot;</span>)
 
 plt.<span class="fn">show</span>()</code></pre>
-      <figure class="nb-figure"><img src="assets/fig-d0c1155659.png" alt="Figure: Inside a GPA band, clubs and score barely move together" loading="lazy"></figure>
+      <figure class="nb-figure"><img src="assets/fig-3d997905d0.png" alt="Figure: Inside a GPA band, clubs and score barely move together" loading="lazy"></figure>
       </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Across the whole cohort the correlation is 0.43. Inside the three GPA thirds it is 0.14, 0.01 and 0.04. The relationship did not weaken, it essentially disappeared, which means it was never between clubs and scores. It was between GPA and both of them: stronger students join more clubs, and stronger students score better.</p>
@@ -1335,7 +1352,7 @@ ax.<span class="fn">legend</span>(title=<span class="st">&quot;high school GPA&q
 ax.<span class="fn">set_title</span>(<span class="st">&quot;The bands stack by GPA, and each one is flat&quot;</span>)
 
 plt.<span class="fn">show</span>()</code></pre>
-      <figure class="nb-figure"><img src="assets/fig-8139ec8c9b.png" alt="Figure: The bands stack by GPA, and each one is flat" loading="lazy"></figure>
+      <figure class="nb-figure"><img src="assets/fig-f9cc860c6b.png" alt="Figure: The bands stack by GPA, and each one is flat" loading="lazy"></figure>
       </div>
       <details class="debrief"><summary>What happened</summary>
       <p>Read it as three flat clouds sitting at three heights. The upward slope in the first figure was the <em>stacking</em>, not the slope of any one band. Once you can see that shape, you can recognize it in other people&#x27;s figures.</p>
@@ -1693,7 +1710,7 @@ axes[<span class="nm">1</span>].<span class="fn">legend</span>()
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;One axis: they move at very different rates&quot;</span>)
 
 plt.<span class="fn">show</span>()</code></pre>
-      <figure class="nb-figure"><img src="assets/fig-e262d26f36.png" alt="Figure: Two y axes: the lines look locked together" loading="lazy"></figure>
+      <figure class="nb-figure"><img src="assets/fig-7f472455b7.png" alt="Figure: Two y axes: the lines look locked together" loading="lazy"></figure>
       </div>
       <details class="debrief"><summary>What happened</summary>
       <p>On two axes the lines sit on top of each other and imply a tight coupling. Put both on one scale and course score rises by about 21 percent across the bands while logins roughly double. The dual axis did not add information. It let the person drawing it choose, through the scaling, how related the two series appear.</p>
@@ -1942,7 +1959,7 @@ axes[<span class="nm">1</span>].<span class="fn">set_xlabel</span>(<span class="
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;Encoded by color and shape&quot;</span>)
 
 plt.<span class="fn">show</span>()</code></pre>
-      <figure class="nb-figure"><img src="assets/fig-6b2ae2cf7a.png" alt="Figure: Encoded by color only" loading="lazy"></figure>
+      <figure class="nb-figure"><img src="assets/fig-ebfdffeb96.png" alt="Figure: Encoded by color only" loading="lazy"></figure>
       </div>
       <div class="callout">
         <div class="callout-label">Takeaway</div>
@@ -2084,7 +2101,7 @@ axes[<span class="nm">1</span>].<span class="fn">set_xlabel</span>(<span class="
 axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">&quot;boxplot: groups without the loop&quot;</span>)
 
 plt.<span class="fn">show</span>()</code></pre>
-      <figure class="nb-figure"><img src="assets/fig-67201d6b00.png" alt="Figure: regplot: fit and confidence band" loading="lazy"></figure>
+      <figure class="nb-figure"><img src="assets/fig-7b5b369495.png" alt="Figure: regplot: fit and confidence band" loading="lazy"></figure>
       <p>Every seaborn call above passed <code>ax=</code>. Those are seaborn&#x27;s <strong>axes-level</strong> functions, and <code>ax=</code> is how seaborn&#x27;s own documentation says to use them with the object-oriented interface.</p>
       <p>The other kind is different, and it is worth being explicit about rather than surprised by.</p>
       <pre><code><span class="cm"># A figure-level function builds its OWN figure. It does not take ax=.</span>
@@ -2243,13 +2260,11 @@ plt.<span class="fn">show</span>()</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">2</span>, in &lt;module&gt;
-  File &quot;/usr/local/lib/python3.<span class="out-num">11</span>/dist-packages/matplotlib/_api/deprecation.py&quot;, line <span class="out-num">453</span>, in wrapper
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/matplotlib/_api/deprecation.py&quot;, line <span class="out-num">453</span>, in wrapper
     return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File &quot;/usr/local/lib/python3.<span class="out-num">11</span>/dist-packages/matplotlib/__init__.py&quot;, line <span class="out-num">1524</span>, in inner
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/matplotlib/__init__.py&quot;, line <span class="out-num">1524</span>, in inner
     return func(
-           ^^^^^
-  File &quot;/usr/local/lib/python3.<span class="out-num">11</span>/dist-packages/matplotlib/axes/_axes.py&quot;, line <span class="out-num">4936</span>, in scatter
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/matplotlib/axes/_axes.py&quot;, line <span class="out-num">4936</span>, in scatter
     raise ValueError(&quot;x and y must be the same size&quot;)
 ValueError: x and y must be the same size</div>
       <figure class="nb-figure"><img src="assets/fig-44e0b76150.png" alt="Figure produced by the code above." loading="lazy"></figure>
@@ -2264,12 +2279,11 @@ plt.<span class="fn">show</span>()</code></pre>
       <div class="output-block">
         <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">3</span>, in &lt;module&gt;
-  File &quot;/usr/local/lib/python3.<span class="out-num">11</span>/dist-packages/matplotlib/axes/_base.py&quot;, line <span class="out-num">74</span>, in wrapper
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/matplotlib/axes/_base.py&quot;, line <span class="out-num">74</span>, in wrapper
     return get_method(self)(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File &quot;/usr/local/lib/python3.<span class="out-num">11</span>/dist-packages/matplotlib/axis.py&quot;, line <span class="out-num">2220</span>, in set_ticks
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/matplotlib/axis.py&quot;, line <span class="out-num">2220</span>, in set_ticks
     self.set_ticklabels(labels, minor=minor, **kwargs)
-  File &quot;/usr/local/lib/python3.<span class="out-num">11</span>/dist-packages/matplotlib/axis.py&quot;, line <span class="out-num">2106</span>, in set_ticklabels
+  File &quot;/usr/local/lib/python3.<span class="out-num">10</span>/dist-packages/matplotlib/axis.py&quot;, line <span class="out-num">2106</span>, in set_ticklabels
     raise ValueError(
 ValueError: The number of FixedLocator locations (<span class="out-num">2</span>), usually from a call to set_ticks, does not match the number of labels (<span class="out-num">3</span>).</div>
       <figure class="nb-figure"><img src="assets/fig-1722180a39.png" alt="Figure produced by the code above." loading="lazy"></figure>
@@ -2358,7 +2372,8 @@ axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="s
 plt.<span class="fn">show</span>()</code></pre>
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
-dtype of the text version: str
+dtype of the text version:
+ object
       </div>
       <figure class="nb-figure"><img src="assets/fig-78176348eb.png" alt="Figure: course_score as text" loading="lazy"></figure>
       </div>
@@ -2586,7 +2601,6 @@ plt.<span class="fn">show</span>()</code></pre></details>
           </a>
           <div id="railTools"></div>
         </div>
-        
         <div class="rail-card">
           <h3>The notebook</h3>
           <a class="rail-item" href="../../notebooks/DTSC520_Module5_Matplotlib_STUDENT.ipynb" download>

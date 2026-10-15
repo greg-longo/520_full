@@ -71,6 +71,12 @@
        notebook students downloaded, on the very first thing they run. */
     "                if isinstance(val, type):",
     "                    buf.write(getattr(val, '__name__', repr(val)) + '\\n')",
+    "                elif type(val) in (list, dict, tuple):",
+    /* IPython wraps a long list or dict one item per line; plain repr() does
+       not. pprint at width 79 matches it, so a re-run shows what the notebook
+       showed. Keep in step with _pretty() in tools/notebook_to_site.py. */
+    "                    import pprint",
+    "                    buf.write(pprint.pformat(val, width=79, sort_dicts=False) + '\\n')",
     "                else:",
     "                    buf.write(repr(val) + '\\n')",
     "        elif tail:",

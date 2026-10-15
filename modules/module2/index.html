@@ -833,7 +833,7 @@
     <div class="banner-inner">
       <div class="banner-eyebrow">Module 02 &nbsp;·&nbsp; DTSC 520</div>
       <h1>Introduction to Python</h1>
-      <p>From your first print statement to custom functions and data structures. Learn to think like a programmer and write Python code that actually runs - with exercises throughout.</p>
+      <p>From strings and your own functions to lists, loops, and dictionaries. Learn to think like a programmer and write Python code that actually runs - with exercises throughout.</p>
 
     
         <div class="banner-rail"><span class="rail-step here">dict</span><span class="rail-join"></span><span class="rail-step">ndarray</span><span class="rail-join"></span><span class="rail-step">DataFrame</span><span class="rail-join"></span><span class="rail-step">figure</span><span class="rail-join"></span><span class="rail-step">report</span></div>
@@ -1001,39 +1001,49 @@ Eastern
       <p>Lists work exactly the same way, and section 4 covers indexing and slicing properly, with lists. For now: zero-based, negatives from the end, and the stop index is excluded.</p>
       <h3 id="f-strings">f-strings</h3>
       <p>Here is the feature you might use more than any other in this notebook.</p>
-      <p>Building output by concatenation gets ugly fast, and it breaks the moment a number is involved, because you can&#x27;t concatenate a <code>str</code> and an <code>int</code>:</p>
+      <p>Building output by concatenation gets ugly fast, and it breaks the moment a number is involved, because you can&#x27;t concatenate a <code>str</code> and a number:</p>
+      <div data-runnable>
       <pre><code>name = <span class="st">&#x27;Amaka Okoroha&#x27;</span>
-gpa = <span class="nm">3.02</span>
-<span class="st">&#x27;Student &#x27;</span> + name + <span class="st">&#x27; has GPA &#x27;</span> + gpa</code></pre>
+gpa = <span class="nm">3.02</span></code></pre>
+      </div>
+      <pre><code><span class="st">&#x27;Student &#x27;</span> + name + <span class="st">&#x27; has GPA &#x27;</span> + gpa</code></pre>
       <details class="debrief expect-reveal"><summary>What happens when you run this?</summary>
       <p class="expect-note">This cell is meant to fail. Read the error rather than avoiding it.</p>
       <div class="output-block">
         <div class="output-block-label">output</div>Traceback (most recent call last):
-  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">3</span>, in &lt;module&gt;
+  File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
 TypeError: can only concatenate str (not &quot;float&quot;) to str</div>
       </details>
       <p>An <strong>f-string</strong> solves this. Put an <code>f</code> before the opening quote, and then anything inside curly braces <code>{}</code> is evaluated as Python and dropped into the text.</p>
+      <div data-runnable>
       <pre><code><span class="st">f&quot;Student {name} has GPA {gpa}&quot;</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Student Amaka Okoroha has GPA <span class="out-num">3.02</span>&#x27;
       </div>
+      </div>
       <p>No conversion needed, no manual spaces, and you can read it. Any expression works inside the braces, not just a variable name:</p>
+      <div data-runnable>
       <pre><code><span class="st">f&quot;{name} needs {124 - 118} more credits.&quot;</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Amaka Okoroha needs <span class="out-num">6</span> more credits.&#x27;
       </div>
+      </div>
+      <div data-runnable>
       <pre><code><span class="st">f&quot;Rounded GPA: {round(gpa, 1)}&quot;</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;Rounded GPA: <span class="out-num">3.0</span>&#x27;
       </div>
+      </div>
       <p>You can also control formatting after a colon. <code>:.2f</code> means &quot;as a float with 2 decimal places,&quot; which matters when you&#x27;re reporting numbers to a Cabinet that will notice <code>3.8100000000000005</code>.</p>
+      <div data-runnable>
       <pre><code><span class="st">f&quot;GPA to two places: {gpa:.2f}&quot;</span></code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 &#x27;GPA to two places: <span class="out-num">3.02</span>&#x27;
+      </div>
       </div>
       <div data-runnable>
       <pre><code>attendance = <span class="nm">0.9612</span>
@@ -1133,17 +1143,17 @@ AttributeError: &#x27;float&#x27; object has no attribute &#x27;upper&#x27;</div
       <p>Lee needs names formatted as <code>&quot;Okoroha, Amaka&quot;</code> for an alphabetical roster.</p>
       <p>Starting from <code>raw_name</code>, produce that string. You&#x27;ll need <code>.strip()</code>, <code>.title()</code>, <code>.split()</code>, indexing, and an f-string.</p>
       <p>Do it in as many steps as you like - clarity beats cleverness.</p>
-      <div class="exercise-block" data-exercise="exstrings-56">
-        <label class="exercise-label" for="exstrings-56-src">Your turn - run it here<span class="vh"> (exercise 1)</span></label>
-        <textarea id="exstrings-56-src" class="ex-editor" spellcheck="false">raw_name = &quot;  amaka OKOROHA  &quot;
+      <div class="exercise-block" data-exercise="exstrings-57">
+        <label class="exercise-label" for="exstrings-57-src">Your turn - run it here<span class="vh"> (exercise 1)</span></label>
+        <textarea id="exstrings-57-src" class="ex-editor" spellcheck="false">raw_name = &quot;  amaka OKOROHA  &quot;
 
 ### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
-          <button class="ex-run" data-target="exstrings-56">Run</button>
-          <button class="ex-reset" data-target="exstrings-56">Reset</button>
-          <span class="ex-status" id="exstrings-56-status"></span>
+          <button class="ex-run" data-target="exstrings-57">Run</button>
+          <button class="ex-reset" data-target="exstrings-57">Reset</button>
+          <span class="ex-status" id="exstrings-57-status"></span>
         </div>
-        <pre class="ex-output" id="exstrings-56-out"></pre>
+        <pre class="ex-output" id="exstrings-57-out"></pre>
         <details class="ex-solution"><summary>Show a worked solution</summary><pre><code>raw_name = <span class="st">&quot;  amaka OKOROHA  &quot;</span>
 
 clean = raw_name.<span class="fn">strip</span>().<span class="fn">title</span>()
@@ -1165,15 +1175,15 @@ last = parts[<span class="nm">1</span>]
 <span class="st">&#x27;Eastern&#x27;</span>.<span class="fn">strip</span>(<span class="st">&#x27;n&#x27;</span>)
 <span class="fn">len</span>(<span class="st">&#x27;Eastern&#x27;</span>[<span class="nm">3</span>:])
 <span class="st">&#x27;Eastern&#x27;</span> + <span class="nm">7</span></code></pre>
-      <div class="exercise-block" data-exercise="exstrings-59">
-        <label class="exercise-label" for="exstrings-59-src">Your turn - run it here<span class="vh"> (exercise 2)</span></label>
-        <textarea id="exstrings-59-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
+      <div class="exercise-block" data-exercise="exstrings-60">
+        <label class="exercise-label" for="exstrings-60-src">Your turn - run it here<span class="vh"> (exercise 2)</span></label>
+        <textarea id="exstrings-60-src" class="ex-editor" spellcheck="false">### ENTER CODE HERE ###</textarea>
         <div class="ex-controls">
-          <button class="ex-run" data-target="exstrings-59">Run</button>
-          <button class="ex-reset" data-target="exstrings-59">Reset</button>
-          <span class="ex-status" id="exstrings-59-status"></span>
+          <button class="ex-run" data-target="exstrings-60">Run</button>
+          <button class="ex-reset" data-target="exstrings-60">Reset</button>
+          <span class="ex-status" id="exstrings-60-status"></span>
         </div>
-        <pre class="ex-output" id="exstrings-59-out"></pre>
+        <pre class="ex-output" id="exstrings-60-out"></pre>
         <details class="ex-solution"><summary>Show a worked solution</summary><pre><code><span class="fn">print</span>(<span class="st">&#x27;Eastern&#x27;</span>[<span class="nm">2</span>:<span class="nm">5</span>])            <span class="cm"># &#x27;ste&#x27;</span>
 <span class="fn">print</span>(<span class="st">&#x27;Eastern&#x27;</span>[-<span class="nm">3</span>:])            <span class="cm"># &#x27;ern&#x27;</span>
 <span class="fn">print</span>(<span class="st">&#x27;Eastern&#x27;</span>[<span class="nm">5</span>:<span class="nm">2</span>])            <span class="cm"># &#x27;&#x27; -- empty, not an error. Start after stop.</span>
@@ -1821,8 +1831,9 @@ Dean&#x27;s list
 ]</code></pre>
       </div>
       <p>No output - that&#x27;s an assignment. Ask for the name to see it:</p>
+      <div data-runnable>
       <pre><code>roster</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [&#x27;  amaka OKOROHA  &#x27;,
  &#x27;devin castellanos&#x27;,
@@ -1834,6 +1845,7 @@ Dean&#x27;s list
  &#x27;elliot PARK  &#x27;,
  &#x27;Rosalind Achebe&#x27;,
  &#x27;JIAN-WEI CHEN&#x27;]
+      </div>
       </div>
       <p><code>len</code> gives the number of elements, exactly as it did for strings:</p>
       <div data-runnable>
@@ -2127,24 +2139,28 @@ None
       <p>This becomes important in Module 4. Real cohort data has holes, and whether you crash, skip, or substitute on a missing value is an analytical decision with consequences - not a technicality.</p>
       <h4 id="changing-a-dictionary">Changing a dictionary</h4>
       <p>Dictionaries are mutable. Assign to a key that doesn&#x27;t exist and it&#x27;s added:</p>
+      <div data-runnable>
       <pre><code>gpa_by_name[<span class="st">&quot;Marcus Webb&quot;</span>] = <span class="nm">2.6</span>
 gpa_by_name</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 {&#x27;Amaka Okoroha&#x27;: <span class="out-num">3.02</span>,
  &#x27;Devin Castellanos&#x27;: <span class="out-num">1.99</span>,
  &#x27;Priya Raghunathan&#x27;: <span class="out-num">2.8</span>,
  &#x27;Marcus Webb&#x27;: <span class="out-num">2.6</span>}
       </div>
+      </div>
       <p>Assign to a key that does exist and the old value is replaced - no warning, no error:</p>
+      <div data-runnable>
       <pre><code>gpa_by_name[<span class="st">&quot;Marcus Webb&quot;</span>] = <span class="nm">3.05</span>
 gpa_by_name</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 {&#x27;Amaka Okoroha&#x27;: <span class="out-num">3.02</span>,
  &#x27;Devin Castellanos&#x27;: <span class="out-num">1.99</span>,
  &#x27;Priya Raghunathan&#x27;: <span class="out-num">2.8</span>,
  &#x27;Marcus Webb&#x27;: <span class="out-num">3.05</span>}
+      </div>
       </div>
       <p><code>del</code> removes an item:</p>
       <div data-runnable>
@@ -2771,13 +2787,14 @@ mean:  <span class="out-num">2.686</span>
       </div>
       </div>
       <p>And you can accumulate into a list instead of a number, with <code>.append()</code>:</p>
+      <div data-runnable>
       <pre><code>clean_roster = []
 
 <span class="kw">for</span> raw <span class="kw">in</span> roster:
     clean_roster.<span class="fn">append</span>(<span class="fn">clean_name</span>(raw))
 
 clean_roster</code></pre>
-      <div class="output-block">
+      <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 [&#x27;Amaka Okoroha&#x27;,
  &#x27;Devin Castellanos&#x27;,
@@ -2789,6 +2806,7 @@ clean_roster</code></pre>
  &#x27;Elliot Park&#x27;,
  &#x27;Rosalind Achebe&#x27;,
  &#x27;Jian-Wei Chen&#x27;]
+      </div>
       </div>
       <p>That&#x27;s the payoff promised back in section 1: one cleaning function, one loop, the whole cohort done.</p>
       <p>Except look closely at the output before you celebrate.</p>
@@ -3071,6 +3089,7 @@ gpas = np.<span class="fn">array</span>([<span class="nm">2.48</span>, <span cla
       <div class="output-block" data-stored-output>
         <div class="output-block-label">output</div>
 mean:   <span class="out-num">2.686</span>
+
 stdev:  <span class="out-num">0.396</span>
 max:    <span class="out-num">3.4</span>
       </div>
@@ -3106,9 +3125,9 @@ max:    <span class="out-num">3.4</span>
       <div class="output-block">
         <div class="output-block-label">output</div>Traceback (most recent call last):
   File &quot;&lt;expected to fail&gt;&quot;, line <span class="out-num">1</span>, in &lt;module&gt;
-  File &quot;/tmp/ipykernel_39/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">7</span>, in compare_students
+  File &quot;/tmp/ipykernel_10/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">7</span>, in compare_students
     return gpa_ratio(ug_table[sid_a][&quot;ug_gpa&quot;],
-  File &quot;/tmp/ipykernel_39/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">2</span>, in gpa_ratio
+  File &quot;/tmp/ipykernel_10/<span class="out-num">3156039102.</span>py&quot;, line <span class="out-num">2</span>, in gpa_ratio
     return a / b
 TypeError: unsupported operand type(s) for /: &#x27;float&#x27; and &#x27;NoneType&#x27;</div>
       </details>
