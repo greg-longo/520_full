@@ -578,6 +578,20 @@ footer { background: #010409; border-top: 1px solid var(--term-border); padding:
   <script src="/520_full/auth/auth.js" defer></script>
   <script src="/520_full/assets/player.js" defer></script>
   <script src="/520_full/assets/shell.js" defer></script>
+<style id="a11y-contrast-oct16">
+/* Contrast fixes from a real-browser axe audit, Oct 16 2026. Dark theme only
+   where the light theme has its own colors. Each value keeps the original hue
+   and clears WCAG AA (4.5:1). */
+:root:not(.theme-light) #coursenav a { color: rgba(255,255,255,0.6); }
+:root:not(.theme-light) #coursenav .cn-cur { color: rgba(255,255,255,0.55); }
+:root:not(.theme-light) .landing-eyebrow, :root:not(.theme-light) .platform-card-cta { color: #ca6286; }
+:root:not(.theme-light) .landing-wrap a[href*="terminal-intro"] { color: #ca6286 !important; }
+/* Light theme: these pages kept some dark panels and dark-mode accents in light mode. */
+:root.theme-light .landing-eyebrow { color: #a83a62; }
+:root.theme-light .landing-wrap a[href*="terminal-intro"] { color: #a83a62 !important; }
+:root.theme-light footer { color: #5f5850; }
+:root.theme-light footer { color: #5f5850 !important; }
+</style>
 </head>
 <body data-auth-required>
 <div id="auth-slot" class="auth-slot-fixed"></div>

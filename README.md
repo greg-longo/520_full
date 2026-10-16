@@ -12,13 +12,16 @@ This site provides students with module content, quizzes, interactive Python san
 
 ### Simulations
 
-- **The Morning Brief** - DS lifecycle role-play set in a healthcare analytics context (Module 1)
-- **Find Your Path** - Career assessment quiz mapping instincts to one of 6 data roles (Module 1)
-- **Python Field Training** - Hands-on Python fundamentals with real in-browser code execution (Module 2)
-- **The Dirty Dataset** - Data cleaning role-play set in a sports analytics context (Module 4)
-- **Debug the Pipeline** - Diagnose a broken pandas pipeline from live DataFrame output (Module 4)
-- **Pitch the Viz** - Live committee room chart-selection sim set in a music label (Module 5)
-- **The Branch Crisis** - Git branching and merge conflict scenario (Module 6)
+All simulations are listed on the [simulations hub](https://greg-longo.github.io/520_full/sims/index.html).
+
+- **Module 1:** The Morning Brief (data science lifecycle), Find Your Path (data roles)
+- **Module 2:** Python Field Training and The Scouting Report, Escape from McInnis Hall
+- **Module 3:** NumPy Lab, Shape Mismatch
+- **Module 4:** The Dirty Dataset, Debug the Pipeline, The Merge Room, RTG Investigation, ARIA Returns
+- **Module 5:** The Board Meeting
+- **Module 6:** Terminal Trainer, The Branch Crisis
+
+Contributors: please read [CONTRIBUTING.md](CONTRIBUTING.md) before your first pull request.
 
 ---
 

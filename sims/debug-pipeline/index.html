@@ -548,6 +548,20 @@
   <script src="/520_full/auth/auth.js" defer></script>
   <script src="/520_full/assets/player.js" defer></script>
   <script src="/520_full/assets/shell.js" defer></script>
+<style id="a11y-contrast-oct16">
+/* Contrast fixes from a real-browser axe audit, Oct 16 2026. Dark theme only
+   where the light theme has its own colors. Each value keeps the original hue
+   and clears WCAG AA (4.5:1). */
+.start-btn { color: #1a1206; }
+:root:not(.theme-light) .lbox > p { color: #727c92 !important; }
+/* Light theme: these pages kept some dark panels and dark-mode accents in light mode. */
+:root.theme-light { --bg-panel: #ffffff; }
+:root.theme-light .topbar { background: var(--bg-card2); }
+:root.theme-light .lbadge, :root.theme-light .lbox h1 em, :root.theme-light .lmeta-val, :root.theme-light .tb-score strong { color: #9a5a0c; }
+:root.theme-light .start-btn:hover { background: #e8a040; }
+:root.theme-light #pyStatus { color: #9a4a30 !important; }
+:root.theme-light #tbTime, :root.theme-light .situation-who { color: #9a5a0c !important; }
+</style>
 </head>
 <body data-auth-required>
 <div id="auth-slot" class="auth-slot-fixed"></div>

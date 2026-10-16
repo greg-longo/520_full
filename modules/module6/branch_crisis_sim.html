@@ -865,6 +865,27 @@
   <script src="/520_full/auth/auth.js" defer></script>
   <script src="/520_full/assets/player.js" defer></script>
   <script src="/520_full/assets/shell.js" defer></script>
+<style id="a11y-contrast-oct16">
+/* Contrast fixes from a real-browser axe audit, Oct 16 2026. Dark theme only
+   where the light theme has its own colors. Each value keeps the original hue
+   and clears WCAG AA (4.5:1). */
+:root:not(.theme-light) .scenario-tag { color: #de5082; }
+:root:not(.theme-light) .scoring-pip:nth-child(3) > .scoring-pip-pts { color: #c86767 !important; }
+/* Light theme: these pages kept some dark panels and dark-mode accents in light mode. */
+:root.theme-light { --bg-panel: #ffffff; }
+:root.theme-light .topbar, :root.theme-light .panel-header { background: var(--bg-card2); }
+:root.theme-light .landing-prose code { color: #1e7a43; }
+:root.theme-light .scoring-pip:nth-child(1) > .scoring-pip-pts { color: #2e7d4f !important; }
+:root.theme-light .scoring-pip:nth-child(2) > .scoring-pip-pts { color: #a2590f !important; }
+:root.theme-light .scoring-pip:nth-child(3) > .scoring-pip-pts { color: #a33a3a !important; }
+:root.theme-light .slack-sender { color: #1f6a91; }
+:root.theme-light .landing-sub { color: #2e7d4f; }
+:root.theme-light .branch-label.head { color: #1f5c39; }
+:root.theme-light .landing-prose code { color: #1a6b3a; }
+:root.theme-light .topbar a[href="index.html"] { color: var(--text-dim) !important; }
+:root.theme-light .commit-hash { color: #7d6418; }
+:root.theme-light .branch-label.main { color: #8f2a4b; }
+</style>
 </head>
 <body>
 <div id="auth-slot" class="auth-slot-fixed"></div>

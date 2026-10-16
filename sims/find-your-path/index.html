@@ -821,6 +821,18 @@
   <script src="/520_full/auth/auth.js" defer></script>
   <script src="/520_full/assets/player.js" defer></script>
   <script src="/520_full/assets/shell.js" defer></script>
+<style id="a11y-contrast-oct16">
+/* Contrast fixes from a real-browser axe audit, Oct 16 2026. Dark theme only
+   where the light theme has its own colors. Each value keeps the original hue
+   and clears WCAG AA (4.5:1). */
+:root:not(.theme-light) { --muted: #708661; }
+:root:not(.theme-light) .nav-title, :root:not(.theme-light) .landing-badge { color: #329158; }
+.landing-note { opacity: 1; }
+:root:not(.theme-light) .landing-note { color: #747f65; }
+/* Light theme: these pages kept some dark panels and dark-mode accents in light mode. */
+:root.theme-light .landing-badge { color: #236a3f; }
+:root.theme-light #sim-footer { color: #6b645b; }
+</style>
 </head>
 <body data-auth-required>
 <div id="auth-slot" class="auth-slot-fixed"></div>

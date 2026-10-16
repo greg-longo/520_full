@@ -1071,14 +1071,14 @@
 <span class="cmd">git add .</span>                    <span class="cmt"># stage everything</span>
 
 <span class="cmt"># 4. Commit with a descriptive message</span>
-<span class="cmd">git commit -m <span class="str">"Add batting average normalization step"</span></span>
+<span class="cmd">git commit -m <span class="str">"Add submission_rate cleaning step"</span></span>
 
 <span class="cmt"># 5. Push your commits to GitHub</span>
 <span class="cmd">git push origin main</span></code></pre>
 
       <div class="callout">
         <div class="callout-title">Good commit messages</div>
-        <p>Write commit messages as if you're finishing the sentence "This commit will..." - so "Add batting average normalization step" rather than "stuff" or "fixed it". Your future self will thank you when you're scrolling through history three months later.</p>
+        <p>Write commit messages as if you're finishing the sentence "This commit will..." - so "Add submission_rate cleaning step" rather than "stuff" or "fixed it". Your future self will thank you when you're scrolling through history three months later.</p>
       </div>
 
       <h3>Checking your work</h3>
@@ -1217,10 +1217,10 @@ data/raw/               <span class="cmt"># large or sensitive source data</span
 <span class="cmd">git branch</span>
 
 <span class="cmt"># Create a new branch and switch to it</span>
-<span class="cmd">git checkout -b feature/add-salary-viz</span>
+<span class="cmd">git checkout -b feature/add-gpa-chart</span>
 
 <span class="cmt"># Do your work, commit as normal, then push the branch</span>
-<span class="cmd">git push origin feature/add-salary-viz</span>
+<span class="cmd">git push origin feature/add-gpa-chart</span>
 
 <span class="cmt"># Switch back to main</span>
 <span class="cmd">git checkout main</span></code></pre>
@@ -1250,25 +1250,25 @@ data/raw/               <span class="cmt"># large or sensitive source data</span
 
 <pre><code><span class="cmt"># Merge a branch into main</span>
 <span class="cmd">git checkout main</span>
-<span class="cmd">git merge feature/add-salary-viz</span>
+<span class="cmd">git merge feature/add-gpa-chart</span>
 
 <span class="cmt"># If a conflict occurs, Git marks the file:</span>
 <span class="cmt"># <<<<<<< HEAD</span>
 <span class="cmt"># your version of the code</span>
 <span class="cmt"># =======</span>
 <span class="cmt"># the incoming version</span>
-<span class="cmt"># >>>>>>> feature/add-salary-viz</span>
+<span class="cmt"># >>>>>>> feature/add-gpa-chart</span>
 
 <span class="cmt"># Edit the file to resolve, then:</span>
 <span class="cmd">git add analysis.py</span>
-<span class="cmd">git commit -m <span class="str">"Merge salary viz feature, resolve conflict"</span></span></code></pre>
+<span class="cmd">git commit -m <span class="str">"Merge GPA chart feature, resolve conflict"</span></span></code></pre>
 
       <h3>Two kinds of merge</h3>
       <p>Git always merges <em>into</em> the branch you are on, so switch to <code>main</code> first. What happens next depends on history. If <code>main</code> has no new commits since your branch started, Git does a <strong>fast-forward</strong>: it simply moves the <code>main</code> pointer up to your branch, and no new commit is made. If both branches have new commits, Git does a <strong>three-way merge</strong> and records a <strong>merge commit</strong> that ties the two histories together.</p>
       <p>A conflict only happens when both branches changed the same lines of the same file. The markers show both versions: <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code> starts your current branch's version, <code>=======</code> separates it from the incoming one, and <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> ends it. Edit the file so it says what it should (often a combination of both), delete the markers, then <code>git add</code> and <code>git commit</code>. Until you commit, <code>git status</code> reminds you the merge is still in progress. VS Code and Codespaces highlight conflicts and offer buttons to accept the current change, the incoming change, or both.</p>
 
 <pre><code><span class="cmt"># Once a branch is merged, delete it; its commits stay in main</span>
-<span class="cmd">git branch -d feature/add-salary-viz</span></code></pre>
+<span class="cmd">git branch -d feature/add-gpa-chart</span></code></pre>
 
       <div class="callout warn">
         <div class="callout-title">Conflicts aren't failures</div>

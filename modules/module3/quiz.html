@@ -701,17 +701,12 @@
       },
       // --- STATISTICAL METHODS ---
       {
-        text: "The Eagles roster has salaries [16800, 14400, 19200, 760000]. np.mean(salaries) returns about 202,600. Which function gives the more representative typical salary?",
-        options: [
-          "np.std(salaries)",
-          "np.median(salaries)",
-          "np.var(salaries)",
-          "np.sum(salaries) / np.max(salaries)"
-        ],
+        text: "Weekly time_on_task_hrs for four students is hours = [2.5, 1.8, 3.1, 40.0]; the 40.0 is a logging error. np.mean(hours) returns about 11.85. Which function gives the more representative typical value?",
+        options: ["np.std(hours)", "np.median(hours)", "np.var(hours)", "np.sum(hours) / np.max(hours)"],
         correctIndex: 1,
         difficulty: "easy",
-        feedbackCorrect: "Correct. The median is resistant to outliers. Kim's $760,000 salary inflates the mean while the median accurately reflects what a typical player earns.",
-        feedbackWrong: "Not quite. np.median() is the answer. It is not affected by extreme values. np.std and np.var measure spread, not center."
+        feedbackCorrect: "Correct. The median is resistant to outliers. The one bad 40.0 drags the mean to 11.85, while the median (2.8) reflects what a typical student actually logs.",
+        feedbackWrong: "Not quite. np.median() is the answer: it is not pulled by extreme values. np.std and np.var measure spread, not center."
       },
       {
         text: "You have a stats array with shape (4, 3). What does stats.mean(axis=0) return?",
@@ -727,7 +722,7 @@
         feedbackWrong: "Not quite. axis=0 collapses rows, giving one value per column. For a (4, 3) array the result has shape (3,)."
       },
       {
-        text: "What does np.argmax(avgs) return?",
+        text: "What does np.argmax(gpas) return?",
         options: [
           "The maximum value in the array.",
           "The index (position) of the maximum value.",
@@ -737,7 +732,7 @@
         correctIndex: 1,
         difficulty: "easy",
         feedbackCorrect: "Correct. np.argmax() returns the integer index of the maximum value.",
-        feedbackWrong: "Not quite. np.max(avgs) returns the value. np.argmax(avgs) returns the position (index) of the maximum."
+        feedbackWrong: "Not quite. np.max(gpas) returns the value. np.argmax(gpas) returns the position (index) of the maximum."
       },
       {
         text: "What does np.std(a) measure?",
@@ -762,24 +757,19 @@
       },
       // --- BOOLEAN INDEXING ---
       {
-        text: "Given avgs = np.array([.312, .287, .301, .268]), what does avgs[avgs > .295] return?",
-        options: ["[True, False, True, False], a boolean mask", "The indices where avgs > .295, which are [0, 2]", "The count of values above .295, which is 2", "[.312, .301], the values where it is True"],
+        text: "Given gpas = np.array([3.12, 2.87, 3.01, 2.68]), what does gpas[gpas > 2.95] return?",
+        options: ["[True, False, True, False], a boolean mask", "The indices where gpas > 2.95, which are [0, 2]", "The count of values above 2.95, which is 2", "[3.12, 3.01], the values where it is True"],
         correctIndex: 3,
         difficulty: "medium",
-        feedbackCorrect: "Correct. Boolean indexing uses the boolean mask to select elements. avgs[avgs > .295] returns the actual values [.312, .301].",
-        feedbackWrong: "Not quite. avgs > .295 alone returns the boolean mask. But avgs[avgs > .295] uses that mask to select values: [.312, .301]."
+        feedbackCorrect: "Correct. Boolean indexing uses the mask to select elements. gpas[gpas > 2.95] returns the actual values [3.12, 3.01].",
+        feedbackWrong: "Not quite. gpas > 2.95 alone returns the boolean mask. gpas[gpas > 2.95] uses that mask to select values: [3.12, 3.01]."
       },
       {
-        text: "What does (avgs > .300) & (avgs < .350) return for avgs = np.array([.312, .287, .341, .268])?",
-        options: [
-          "[True, False, True, False]",
-          "[.312, .341]",
-          "[False, False, False, False]",
-          "Error - cannot use & on float arrays"
-        ],
+        text: "What does (gpas > 3.0) & (gpas < 3.5) return for gpas = np.array([3.12, 2.87, 3.41, 2.68])?",
+        options: ["[True, False, True, False]", "[3.12, 3.41]", "[False, False, False, False]", "Error - cannot use & on float arrays"],
         correctIndex: 0,
         difficulty: "medium",
-        feedbackCorrect: "Correct. & is element-wise 'and'. .312 is between .300 and .350 (True), .287 is not (False), .341 is (True), .268 is not (False).",
+        feedbackCorrect: "Correct. & is element-wise 'and'. 3.12 is between 3.0 and 3.5 (True), 2.87 is not (False), 3.41 is (True), 2.68 is not (False).",
         feedbackWrong: "Not quite. & between two boolean arrays is element-wise. Each element is True only if both conditions are satisfied."
       },
       {
@@ -791,8 +781,8 @@
         feedbackWrong: "Not quite. Slices return views (shared memory). Fancy indexing returns a copy. Modifying a slice modifies the original."
       },
       {
-        text: "What does np.where(avgs > .300, 'hot', 'cold') do for avgs = np.array([.312, .287, .301])?",
-        options: ["Returns the indices where avgs > .300, as a tuple", "Returns ['hot', 'cold', 'hot'], one per element", "Returns True or False for each element of avgs", "Returns only the elements of avgs that are > .300"],
+        text: "What does np.where(gpas > 3.0, 'honors', 'standard') do for gpas = np.array([3.12, 2.87, 3.01])?",
+        options: ["Returns the indices where gpas > 3.0, as a tuple", "Returns ['honors', 'standard', 'honors']", "Returns True or False for each element of gpas", "Returns only the elements of gpas that are > 3.0"],
         correctIndex: 1,
         difficulty: "medium",
         feedbackCorrect: "Correct. np.where(condition, val_if_true, val_if_false) creates an array choosing between two values based on the condition.",
@@ -976,7 +966,7 @@
         feedbackWrong: "Not quite. np.abs() applies element-wise. Negative values become positive: [-3, 1, -4, 1, 5] → [3, 1, 4, 1, 5]."
       },
       {
-        text: "What does np.random.choice(['OF', '1B', 'SS'], size=5) do?",
+        text: "What does np.random.choice(['Business', 'Nursing', 'Psychology'], size=5) do?",
         options: ["Returns the first 5 characters of the joined strings", "Picks 5 elements at random, with replacement", "Shuffles the list and returns 5 copies of it", "Error: np.random.choice only works on numbers"],
         correctIndex: 1,
         difficulty: "medium",

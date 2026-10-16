@@ -859,6 +859,12 @@ textarea.editor:read-only { opacity: 0.7; cursor: default; }
   <script src="/520_full/auth/auth.js" defer></script>
   <script src="/520_full/assets/player.js" defer></script>
   <script src="/520_full/assets/shell.js" defer></script>
+<style id="a11y-contrast-oct16">
+/* Contrast fixes from a real-browser axe audit, Oct 16 2026. Dark theme only
+   where the light theme has its own colors. Each value keeps the original hue
+   and clears WCAG AA (4.5:1). */
+#run-0 { color: #1b1530; }
+</style>
 </head>
 <body data-auth-required>
 <div id="auth-slot" class="auth-slot-fixed"></div>
@@ -945,7 +951,7 @@ textarea.editor:read-only { opacity: 0.7; cursor: default; }
 <div class="main-layout">
 
   <!-- Left: dataset -->
-  <div class="left-panel">
+  <div class="left-panel" tabindex="0" role="region" aria-label="Challenge instructions">
     <div class="left-panel-header">
       <div class="panel-eyebrow">StreamChart Dataset</div>
       <div class="panel-heading">10 Songs &middot; 5 Artists</div>

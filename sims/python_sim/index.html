@@ -504,6 +504,19 @@
   <script src="/520_full/auth/auth.js" defer></script>
   <script src="/520_full/assets/player.js" defer></script>
   <script src="/520_full/assets/shell.js" defer></script>
+<style id="a11y-contrast-oct16">
+/* Contrast fixes from a real-browser axe audit, Oct 16 2026. Dark theme only
+   where the light theme has its own colors. Each value keeps the original hue
+   and clears WCAG AA (4.5:1). */
+:root:not(.theme-light) .brand-name span, :root:not(.theme-light) .scenario-label { color: #df5988; }
+:root:not(.theme-light) .header-right, :root:not(.theme-light) .progress-label, :root:not(.theme-light) .section-heading, :root:not(.theme-light) .btn-reset { color: #8a8176; }
+:root:not(.theme-light) #pctLabel { color: #3185af; }
+:root:not(.theme-light) footer, :root:not(.theme-light) .site-footer { color: #7c7c82 !important; }
+:root:not(.theme-light) a[href="../../index.html"] { color: rgba(255,255,255,0.6) !important; }
+/* Light theme: these pages kept some dark panels and dark-mode accents in light mode. */
+:root.theme-light .section-heading, :root.theme-light .btn-reset { color: #6b645b; }
+:root.theme-light footer { color: #55555a !important; }
+</style>
 </head>
 <body>
 <div id="auth-slot" class="auth-slot-fixed"></div>

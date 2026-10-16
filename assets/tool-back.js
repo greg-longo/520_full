@@ -160,6 +160,13 @@
       el.type = "button";
       el.textContent = "← Back";
       el.addEventListener("click", function () { history.back(); });
+      /* Without these the button renders as the browser's grey default box,
+         with the page's link color on it: 2.3:1, found by axe Oct 16 2026. */
+      el.style.background = "none";
+      el.style.border = "0";
+      el.style.padding = "0";
+      el.style.font = "inherit";
+      el.style.cursor = "pointer";
     } else {
       return;   // opened cold: no honest back link exists
     }
